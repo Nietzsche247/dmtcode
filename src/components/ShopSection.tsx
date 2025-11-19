@@ -189,9 +189,11 @@ export const ShopSection = () => {
           </div>
         )}
 
-        {/* Journey Gift Bundles */}
-        <div className="space-y-6 pt-8">
-          <h3 className="text-2xl font-bold text-center">Journey Gift Bundles</h3>
+          <div className="space-y-6 pt-8">
+            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 text-center">
+              <p className="text-sm font-semibold">⚠️ Stock drops extremely limited – waitlist gets 72-hour early access</p>
+            </div>
+            <h3 className="text-2xl font-bold text-center">Journey Gift Bundles</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {bundleData.map((bundle) => (
               <Card
