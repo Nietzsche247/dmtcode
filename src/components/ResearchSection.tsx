@@ -8,6 +8,15 @@ import { ExternalLink } from "lucide-react";
 
 const researchPapers = [
   {
+    title: "Detailing a Pilot Study: The \"Code of Reality\" Protocol",
+    authors: "Goler, D.",
+    year: 2025,
+    journal: "IPI Letters",
+    doi: "10.59973/ipil.158",
+    url: "https://doi.org/10.59973/ipil.158",
+    summary: "First published peer-reviewed paper documenting the 650nm laser glyph phenomenon."
+  },
+  {
     title: "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine",
     authors: "Davis et al.",
     year: 2021,
@@ -51,15 +60,6 @@ const researchPapers = [
     doi: "N/A",
     url: "https://www.amazon.com/DMT-Molecule-Revolutionary-Near-Death-Experiences/dp/0892819278",
     summary: "Landmark clinical study documenting consistent entity encounters in controlled medical settings."
-  },
-  {
-    title: "Detailing a Pilot Study: The \"Code of Reality\" Protocol",
-    authors: "Goler, D.",
-    year: 2025,
-    journal: "IPI Letters",
-    doi: "10.59973/ipil.158",
-    url: "https://doi.org/10.59973/ipil.158",
-    summary: "First published peer-reviewed paper documenting the 650nm laser glyph phenomenon."
   },
   {
     title: "The varieties of the psychedelic experience: A preliminary study of entity encounter experiences",

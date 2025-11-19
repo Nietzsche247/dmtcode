@@ -9,50 +9,50 @@ const seedTheories = [
     title: "Simulation Source Code Theory",
     author: "Community Aggregate",
     summary: "Hypothesis that glyphs represent the underlying code or programming language of our simulated reality. Proponents cite consistency across independent observers and surface-independence as evidence that these symbols exist 'behind' physical matter rather than being projected onto it.",
-    supportPercent: 68,
+    supportPercent: 64,
     upvotes: 2847,
     comments: 412,
     tags: ["simulation", "programming", "consistency"],
   },
   {
     id: 2,
-    title: "Hyperdimensional Entity Script",
+    title: "Hyperdimensional Entity Language",
     author: "Community Aggregate",
     summary: "Theory proposing glyphs are a form of communication or written language from entities existing in dimensions beyond our three spatial dimensions. Supported by reports of entities 'showing' or 'teaching' the symbols, and apparent intelligent responses to observer attention.",
-    supportPercent: 51,
+    supportPercent: 52,
     upvotes: 1923,
     comments: 289,
     tags: ["entities", "communication", "hyperdimensional"],
   },
   {
     id: 3,
-    title: "Neural Pattern Recognition Artifact",
+    title: "Enhanced Laser Speckle Pareidolia + Neurovisual Amplification",
     author: "Community Aggregate",
     summary: "Skeptical hypothesis suggesting glyphs emerge from the brain's pattern recognition systems interpreting random laser speckle patterns. Challenges include explaining surface-independence, inter-observer consistency, and why symbols appear to respond to mental focus.",
-    supportPercent: 22,
+    supportPercent: 19,
     upvotes: 891,
     comments: 178,
     tags: ["neuroscience", "skeptical", "pareidolia"],
   },
   {
     id: 4,
-    title: "Quantum Information Display",
+    title: "Ancient or Human-Independent Script",
     author: "Community Aggregate",
-    summary: "Theory that DMT allows perception of quantum-level information structures normally hidden from consciousness. Glyphs may represent wavefunction patterns, entanglement networks, or other quantum phenomena made visible through altered neurochemistry.",
-    supportPercent: 43,
+    summary: "Theory that glyphs may represent an ancient writing system or script that exists independently of human creation. Consistency across observers suggests accessing a shared visual/symbolic substrate that predates modern human consciousness.",
+    supportPercent: 41,
     upvotes: 1654,
     comments: 321,
-    tags: ["quantum", "physics", "information"],
+    tags: ["ancient", "script", "archeology"],
   },
   {
     id: 5,
-    title: "Archetypal Symbol Matrix",
+    title: "Quantum Consciousness Interface",
     author: "Community Aggregate",
-    summary: "Jungian-inspired theory proposing glyphs access a universal symbolic substrate shared across human consciousness. Consistency explained through collective unconscious rather than external reality. Symbols may represent fundamental psychological or metaphysical archetypes.",
+    summary: "Theory that DMT allows perception of quantum-level information structures normally hidden from consciousness. Glyphs may represent wavefunction patterns, entanglement networks, or other quantum phenomena made visible through altered neurochemistry.",
     supportPercent: 37,
     upvotes: 1432,
     comments: 256,
-    tags: ["psychology", "jung", "archetypes"],
+    tags: ["quantum", "physics", "consciousness"],
   },
 ];
 
@@ -70,7 +70,7 @@ export const TheoriesSection = () => {
             Aggregating Human Experience – Toward a Probability-Based Rosetta Stone
           </h3>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-            This moderated blog collects replicator-submitted theories. Logged-in users can post. We score each theory by replication rate, inter-replicator agreement, and surface-independence to estimate likelihood the glyphs represent an objective language or phenomenon.
+            Crowdsourced likelihood assessment of competing explanations for the observed glyphs. This moderated blog collects replicator-submitted theories. Logged-in users can post. We score each theory by replication rate, inter-replicator agreement, and surface-independence to estimate likelihood the glyphs represent an objective language or phenomenon.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-primary pt-2">
             <TrendingUp className="w-4 h-4" />
