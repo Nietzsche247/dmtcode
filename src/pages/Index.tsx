@@ -1,9 +1,12 @@
 import { ParticleBackground } from '@/components/ParticleBackground';
+import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { ExplainerSection } from '@/components/ExplainerSection';
+import { ResearchSection } from '@/components/ResearchSection';
+import { TheoriesSection } from '@/components/TheoriesSection';
 import { CommunityCodex } from '@/components/CommunityCodex';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
-import { BundlesSection } from '@/components/BundlesSection';
+import { ShopSection } from '@/components/ShopSection';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -156,11 +159,14 @@ const Index = () => {
         <ParticleBackground />
         
         <main className="relative z-10">
+          <Navigation />
           <HeroSection />
           <ExplainerSection />
+          <ResearchSection />
+          <TheoriesSection />
           <CommunityCodex />
           <TestimonialsCarousel />
-          <BundlesSection />
+          <ShopSection />
           <EmailCapture />
         </main>
 
