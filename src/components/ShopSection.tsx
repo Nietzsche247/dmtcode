@@ -190,8 +190,9 @@ export const ShopSection = () => {
         )}
 
           <div className="space-y-6 pt-8">
-            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 text-center">
+            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 text-center space-y-2">
               <p className="text-sm font-semibold">⚠️ Stock drops extremely limited – waitlist gets 72-hour early access</p>
+              <p className="text-sm font-bold text-primary">First 500 waitlist members get lifetime 20% off when stock drops</p>
             </div>
             <h3 className="text-2xl font-bold text-center">Journey Gift Bundles</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -247,24 +248,32 @@ export const ShopSection = () => {
                     ))}
                   </ul>
 
-                  <Button 
-                    size="lg" 
-                    className={`w-full ${
-                      bundle.premium
-                        ? 'bg-gradient-to-r from-primary to-primary/70 hover:from-primary/90 hover:to-primary/60'
-                        : bundle.popular 
-                        ? 'glow-button bg-primary hover:bg-primary/90' 
-                        : 'bg-secondary hover:bg-secondary/80'
-                    }`}
-                    disabled={bundle.soldOut}
-                  >
-                    {bundle.soldOut ? 'Sold Out' : 'Add to Cart'}
-                  </Button>
-
-                  {bundle.soldOut && (
-                    <p className="text-xs text-center text-muted-foreground">
-                      Bundles available after individual products are added to Shopify
-                    </p>
+                  {bundle.soldOut ? (
+                    <div className="space-y-3">
+                      <Badge variant="destructive" className="w-full justify-center py-2 text-sm">
+                        Sold Out
+                      </Badge>
+                      <Button 
+                        size="lg" 
+                        variant="outline"
+                        className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        Join Waitlist
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      size="lg" 
+                      className={`w-full ${
+                        bundle.premium
+                          ? 'bg-gradient-to-r from-primary to-primary/70 hover:from-primary/90 hover:to-primary/60'
+                          : bundle.popular 
+                          ? 'glow-button bg-primary hover:bg-primary/90' 
+                          : 'bg-secondary hover:bg-secondary/80'
+                      }`}
+                    >
+                      Add to Cart
+                    </Button>
                   )}
                 </div>
               </Card>
