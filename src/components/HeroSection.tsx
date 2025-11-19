@@ -26,7 +26,7 @@ export const HeroSection = () => {
           DMT Code – See Reality's Source Code
         </h1>
         <p className="text-xl md:text-2xl text-primary/90 font-semibold leading-relaxed max-w-4xl mx-auto">
-          Over 3,000 replicators served · 87% glyph consistency rate across independent reports
+          The most complete community archive, research hub, and store for Danny Goler's 650nm red laser experiment · 3,000+ replicators · 87% glyph consistency rate
         </p>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes that lets thousands of people see animated glyphs, katakana-like symbols, and moving geometric code on any surface under DMT

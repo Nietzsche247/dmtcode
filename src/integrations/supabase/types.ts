@@ -14,7 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      glyph_votes: {
+        Row: {
+          created_at: string
+          glyph_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          glyph_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          glyph_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glyph_votes_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "glyphs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "glyph_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      glyphs: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          title: string
+          updated_at: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          title: string
+          updated_at?: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          title?: string
+          updated_at?: string
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glyphs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      surface_tags: {
+        Row: {
+          created_at: string
+          glyph_id: string
+          id: string
+          tag_name: string
+          upvotes: number
+        }
+        Insert: {
+          created_at?: string
+          glyph_id: string
+          id?: string
+          tag_name: string
+          upvotes?: number
+        }
+        Update: {
+          created_at?: string
+          glyph_id?: string
+          id?: string
+          tag_name?: string
+          upvotes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "surface_tags_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tag_votes: {
+        Row: {
+          created_at: string
+          id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tag_votes_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "surface_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tag_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      theories: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          probability_percentage: number | null
+          summary: string
+          title: string
+          updated_at: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          probability_percentage?: number | null
+          summary: string
+          title: string
+          updated_at?: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          probability_percentage?: number | null
+          summary?: string
+          title?: string
+          updated_at?: string
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "theories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      theory_votes: {
+        Row: {
+          created_at: string
+          id: string
+          theory_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          theory_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          theory_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "theory_votes_theory_id_fkey"
+            columns: ["theory_id"]
+            isOneToOne: false
+            referencedRelation: "theories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "theory_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
