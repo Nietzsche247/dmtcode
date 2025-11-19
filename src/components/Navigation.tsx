@@ -1,13 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { CartDrawer } from '@/components/CartDrawer';
 import { useCartStore } from '@/stores/cartStore';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { Session } from '@supabase/supabase-js';
+import { toast } from 'sonner';
 
 export const Navigation = () => {
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
   const items = useCartStore(state => state.items);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -15,6 +35,12 @@ export const Navigation = () => {
       element.scrollIntoView({ behavior: 'smooth' });
       setMobileMenuOpen(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out successfully");
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -46,6 +72,27 @@ export const Navigation = () => {
               Shop
             </button>
             <CartDrawer />
+            {session ? (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            ) : (
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={() => navigate('/auth')}
+                className="gap-2"
+              >
+                <User className="h-4 w-4" />
+                Login
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -79,6 +126,21 @@ export const Navigation = () => {
             <button onClick={() => scrollToSection('shop')} className="block w-full text-left py-2 hover:text-primary transition-colors">
               Shop
             </button>
+            {session ? (
+              <button 
+                onClick={handleLogout}
+                className="block w-full text-left py-2 hover:text-primary transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <button 
+                onClick={() => navigate('/auth')}
+                className="block w-full text-left py-2 hover:text-primary transition-colors"
+              >
+                Login
+              </button>
+            )}
           </div>
         )}
       </div>
