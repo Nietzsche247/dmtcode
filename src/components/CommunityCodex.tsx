@@ -1,102 +1,139 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, TrendingUp, Calendar } from 'lucide-react';
+import { CheckCircle2, Target, Users, ThumbsUp } from 'lucide-react';
+import { useState } from 'react';
+
+const glyphs = [
+  {
+    id: 1,
+    symbol: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=100&h=100&fit=crop",
+    agreement: 87,
+    description: "Katakana-like symbol, appears across multiple surfaces",
+    upvotes: 243,
+    tags: [
+      { name: "Wall", votes: 156 },
+      { name: "Skin", votes: 89 },
+      { name: "Outdoors", votes: 67 },
+    ]
+  },
+  {
+    id: 2,
+    symbol: "https://images.unsplash.com/photo-1635070041409-e63e783e6f1f?w=100&h=100&fit=crop",
+    agreement: 76,
+    description: "Rotating geometric pattern, consistent reports",
+    upvotes: 198,
+    tags: [
+      { name: "Wall", votes: 134 },
+      { name: "Bathroom", votes: 56 },
+      { name: "Grass", votes: 43 },
+    ]
+  },
+  {
+    id: 3,
+    symbol: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=100&h=100&fit=crop",
+    agreement: 82,
+    description: "Angular script formation, surface-independent",
+    upvotes: 221,
+    tags: [
+      { name: "Skin", votes: 145 },
+      { name: "Outdoors", votes: 98 },
+      { name: "Wall", votes: 76 },
+    ]
+  },
+];
 
 export const CommunityCodex = () => {
+  const [glyphVotes, setGlyphVotes] = useState<Record<number, number>>({});
+  const [tagVotes, setTagVotes] = useState<Record<string, number>>({});
+
+  const handleGlyphUpvote = (id: number) => {
+    setGlyphVotes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+
+  const handleTagUpvote = (glyphId: number, tagName: string) => {
+    const key = `${glyphId}-${tagName}`;
+    setTagVotes(prev => ({
+      ...prev,
+      [key]: (prev[key] || 0) + 1
+    }));
+  };
+
   return (
-    <section className="relative py-20 px-4 bg-muted/30">
+    <section id="codex" className="relative py-20 px-4 bg-muted/30">
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-4xl md:text-5xl font-bold glow-text">
             The Living DMT Scripture
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Community-Verified Glyph Codex – Help build the first crowdsourced dictionary of Reality's Code
+            Community-Verified Glyph Codex – 30×30px emoji-scale glyphs with upvoting
           </p>
         </div>
 
-        <Card className="p-8 md:p-12 bg-card border-primary/30 glow-border">
-          <div className="space-y-8">
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 border border-primary/50 rounded-full">
-                <Calendar className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">Coming Q1 2026 – Early Access for Subscribers</span>
-              </div>
-              
-              <p className="text-lg leading-relaxed max-w-2xl mx-auto">
-                Upload your observed symbols (photo/drawing + surface + dose notes) and help us map the most commonly reported glyphs across thousands of replicators worldwide
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center space-y-3 p-6 bg-background/50 rounded-lg border border-border">
-                <Upload className="w-10 h-10 text-primary mx-auto" />
-                <h3 className="font-semibold text-lg">Upload Your Symbols</h3>
-                <p className="text-sm text-muted-foreground">
-                  Photo, drawing, or detailed description with context (surface type, timing, dosage notes)
-                </p>
-              </div>
-
-              <div className="text-center space-y-3 p-6 bg-background/50 rounded-lg border border-border">
-                <TrendingUp className="w-10 h-10 text-primary mx-auto" />
-                <h3 className="font-semibold text-lg">Community Verification</h3>
-                <p className="text-sm text-muted-foreground">
-                  Upvote/downvote system to identify the most commonly observed patterns across experiences
-                </p>
-              </div>
-
-              <div className="text-center space-y-3 p-6 bg-background/50 rounded-lg border border-border">
-                <div className="text-3xl font-bold text-primary mx-auto">87%</div>
-                <h3 className="font-semibold text-lg">Agreement Tracking</h3>
-                <p className="text-sm text-muted-foreground">
-                  See which glyphs are most consistently reported across independent replications
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-6 space-y-4">
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
-                  <img 
-                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc288309a-200d-40f9-b70b-59bc97165a44_1498x832.png"
-                    alt="Katakana-style raining code symbols observed during DMT breakthrough experiences by 91% of replicators using 650nm red laser with diffraction grating"
-                    className="w-full h-48 object-cover rounded"
-                  />
-                  <p className="text-center text-sm text-primary mt-2 font-semibold">91% agreement</p>
-                  <p className="text-center text-xs text-muted-foreground">Katakana-style raining code</p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {glyphs.map((glyph) => (
+            <Card key={glyph.id} className="p-6 bg-card border-border hover:border-primary/50 transition-all">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-[30px] h-[30px] bg-secondary/20 rounded overflow-hidden flex-shrink-0">
+                    <img 
+                      src={glyph.symbol} 
+                      alt={`Glyph ${glyph.id}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-primary">{glyph.agreement}% Agreement</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="gap-1 h-7 px-2"
+                        onClick={() => handleGlyphUpvote(glyph.id)}
+                      >
+                        <ThumbsUp className="w-3 h-3" />
+                        {glyph.upvotes + (glyphVotes[glyph.id] || 0)}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
-                  <img 
-                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F95a51b04-e3b9-4f4e-914f-af9e1be604f7_1362x864.png"
-                    alt="Geometric entity script glyphs consistently reported across independent DMT replications with 88% agreement rate using Danny Goler's laser method"
-                    className="w-full h-48 object-cover rounded"
-                  />
-                  <p className="text-center text-sm text-primary mt-2 font-semibold">88% agreement</p>
-                  <p className="text-center text-xs text-muted-foreground">Geometric entity script</p>
-                </div>
-                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
-                  <img 
-                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb39c1a1-2ccb-4a64-96fb-04c1b2098fdf_2480x1634.jpeg"
-                    alt="Rainbow tunnel of symbols and moving code patterns seen by 85% of DMT code experiment participants on various surfaces"
-                    className="w-full h-48 object-cover rounded"
-                  />
-                  <p className="text-center text-sm text-primary mt-2 font-semibold">85% agreement</p>
-                  <p className="text-center text-xs text-muted-foreground">Rainbow tunnel of symbols</p>
+                
+                <p className="text-sm text-muted-foreground">{glyph.description}</p>
+                
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground font-semibold">Observed on:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {glyph.tags.map((tag) => {
+                      const tagKey = `${glyph.id}-${tag.name}`;
+                      const currentVotes = tag.votes + (tagVotes[tagKey] || 0);
+                      return (
+                        <Button
+                          key={tag.name}
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 gap-1 text-xs"
+                          onClick={() => handleTagUpvote(glyph.id, tag.name)}
+                        >
+                          <ThumbsUp className="w-3 h-3" />
+                          {tag.name} ({currentVotes})
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
+            </Card>
+          ))}
+        </div>
 
-              <div className="text-center">
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="border-primary/50 text-foreground hover:bg-primary/10 hover:border-primary"
-                >
-                  Join Waitlist for Early Access
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <div className="text-center pt-8">
+          <Button size="lg" className="glow-button">
+            Join Waitlist for Early Access
+          </Button>
+        </div>
       </div>
     </section>
   );
