@@ -166,7 +166,7 @@ const Index = () => {
           <ExplainerSection />
           <ResearchSection />
           <TheoriesSection />
-          <CommunityCodex />
+          <CommunityGlyphCodex />
           <TestimonialsCarousel />
           <ShopSection />
           <EmailCapture />
