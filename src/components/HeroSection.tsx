@@ -24,10 +24,10 @@ export const HeroSection = () => {
       {/* Hero content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto space-y-8 py-20">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight glow-text leading-tight">
-          Unlock Reality's Source Code
+          DMT Code – See Reality's Source Code Tonight
         </h1>
-        <p className="text-2xl md:text-3xl lg:text-4xl font-light text-foreground/90 leading-relaxed max-w-4xl mx-auto">
-          The DMT Laser Experiment
+        <p className="text-xl md:text-2xl text-primary/90 font-semibold leading-relaxed max-w-4xl mx-auto">
+          Over 3,000 replicators served · 87% glyph consistency rate
         </p>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes that lets thousands of people see animated glyphs, katakana-like symbols, and moving geometric code on any surface under DMT

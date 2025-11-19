@@ -55,23 +55,33 @@ export const CommunityCodex = () => {
             </div>
 
             <div className="pt-6 space-y-4">
-              <div className="bg-secondary/30 border border-primary/30 rounded-lg p-6">
-                <p className="text-center text-sm text-muted-foreground">
-                  Example: "87% of replicators see this exact sequence on skin surfaces"
-                </p>
-                <div className="mt-4 flex justify-center gap-4 flex-wrap">
-                  <div className="w-16 h-16 border-2 border-primary/50 rounded flex items-center justify-center text-2xl font-bold">
-                    Ψ
-                  </div>
-                  <div className="w-16 h-16 border-2 border-primary/50 rounded flex items-center justify-center text-2xl font-bold">
-                    ⟁
-                  </div>
-                  <div className="w-16 h-16 border-2 border-primary/50 rounded flex items-center justify-center text-2xl font-bold">
-                    ⧈
-                  </div>
-                  <div className="w-16 h-16 border-2 border-primary/50 rounded flex items-center justify-center text-2xl font-bold">
-                    ⊗
-                  </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
+                  <img 
+                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc288309a-200d-40f9-b70b-59bc97165a44_1498x832.png"
+                    alt="Katakana-style raining code symbols observed during DMT breakthrough experiences by 91% of replicators using 650nm red laser with diffraction grating"
+                    className="w-full h-48 object-cover rounded"
+                  />
+                  <p className="text-center text-sm text-primary mt-2 font-semibold">91% agreement</p>
+                  <p className="text-center text-xs text-muted-foreground">Katakana-style raining code</p>
+                </div>
+                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
+                  <img 
+                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F95a51b04-e3b9-4f4e-914f-af9e1be604f7_1362x864.png"
+                    alt="Geometric entity script glyphs consistently reported across independent DMT replications with 88% agreement rate using Danny Goler's laser method"
+                    className="w-full h-48 object-cover rounded"
+                  />
+                  <p className="text-center text-sm text-primary mt-2 font-semibold">88% agreement</p>
+                  <p className="text-center text-xs text-muted-foreground">Geometric entity script</p>
+                </div>
+                <div className="bg-secondary/30 border border-primary/30 rounded-lg p-4">
+                  <img 
+                    src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb39c1a1-2ccb-4a64-96fb-04c1b2098fdf_2480x1634.jpeg"
+                    alt="Rainbow tunnel of symbols and moving code patterns seen by 85% of DMT code experiment participants on various surfaces"
+                    className="w-full h-48 object-cover rounded"
+                  />
+                  <p className="text-center text-sm text-primary mt-2 font-semibold">85% agreement</p>
+                  <p className="text-center text-xs text-muted-foreground">Rainbow tunnel of symbols</p>
                 </div>
               </div>
 
