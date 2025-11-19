@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Check, Package, ShoppingCart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
@@ -18,6 +19,7 @@ const bundleData = [
       "Safety guidelines card",
       "Worldwide shipping",
     ],
+    soldOut: true,
   },
   {
     name: "Pro Bundle", 
@@ -32,6 +34,7 @@ const bundleData = [
       "Private Discord access",
     ],
     popular: true,
+    soldOut: true,
   },
   {
     name: "Ultimate Bundle",
@@ -45,6 +48,43 @@ const bundleData = [
       "Exclusive early access to codex updates",
       "Premium gift packaging",
     ],
+    soldOut: true,
+  },
+  {
+    name: "Master Replicator Bundle",
+    price: "$379",
+    description: "Professional-grade equipment for serious researchers",
+    features: [
+      "100mW adjustable focus 650nm laser",
+      "Full 10-pattern diffraction grating set",
+      "Premium blackout mask",
+      "15 lb weighted blanket",
+      "Glyph log book (premium edition)",
+      "Professional drawing pens set",
+      "Digital research archive access",
+      "Lifetime codex access",
+      "Priority community support",
+    ],
+    soldOut: true,
+  },
+  {
+    name: "Ultimate Discovery Suite",
+    price: "$879",
+    description: "Complete professional setup with lifetime access",
+    features: [
+      "Everything in Master Replicator Bundle",
+      "High-end vaporizer device",
+      "Multiple laser modules (5mW + 100mW)",
+      "Luxury 20 lb organic cotton weighted blanket",
+      "Custom journal bundle",
+      "Lifetime premium codex access",
+      "1-on-1 protocol consultation",
+      "VIP Discord channel access",
+      "Early access to all new equipment",
+      "Free lifetime equipment upgrades",
+    ],
+    premium: true,
+    soldOut: true,
   },
 ];
 
@@ -152,12 +192,14 @@ export const ShopSection = () => {
         {/* Journey Gift Bundles */}
         <div className="space-y-6 pt-8">
           <h3 className="text-2xl font-bold text-center">Journey Gift Bundles</h3>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {bundleData.map((bundle) => (
               <Card
                 key={bundle.name}
                 className={`relative p-8 bg-card border transition-all hover:scale-105 ${
-                  bundle.popular 
+                  bundle.premium
+                    ? 'border-primary shadow-lg shadow-primary/20 glow-border ring-2 ring-primary/20' 
+                    : bundle.popular 
                     ? 'border-primary shadow-lg shadow-primary/20 glow-border' 
                     : 'border-border'
                 }`}
@@ -167,6 +209,18 @@ export const ShopSection = () => {
                     <div className="px-4 py-1 bg-primary text-primary-foreground text-sm font-semibold rounded-full">
                       Most Popular
                     </div>
+                  </div>
+                )}
+                {bundle.premium && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="px-4 py-1 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground text-sm font-semibold rounded-full">
+                      Premium Suite
+                    </div>
+                  </div>
+                )}
+                {bundle.soldOut && (
+                  <div className="absolute -top-3 -right-3">
+                    <Badge variant="destructive" className="text-xs">Sold Out</Badge>
                   </div>
                 )}
 
@@ -194,18 +248,22 @@ export const ShopSection = () => {
                   <Button 
                     size="lg" 
                     className={`w-full ${
-                      bundle.popular 
+                      bundle.premium
+                        ? 'bg-gradient-to-r from-primary to-primary/70 hover:from-primary/90 hover:to-primary/60'
+                        : bundle.popular 
                         ? 'glow-button bg-primary hover:bg-primary/90' 
                         : 'bg-secondary hover:bg-secondary/80'
                     }`}
-                    disabled={true}
+                    disabled={bundle.soldOut}
                   >
-                    Coming Soon
+                    {bundle.soldOut ? 'Sold Out' : 'Add to Cart'}
                   </Button>
 
-                  <p className="text-xs text-center text-muted-foreground">
-                    Bundles available after individual products are added to Shopify
-                  </p>
+                  {bundle.soldOut && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      Bundles available after individual products are added to Shopify
+                    </p>
+                  )}
                 </div>
               </Card>
             ))}

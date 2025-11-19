@@ -66,10 +66,10 @@ export const CommunityCodex = () => {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-4xl md:text-5xl font-bold glow-text">
-            The Living DMT Scripture
+            Reality's Living Code – Community-Verified Glyph Codex
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Community-Verified Glyph Codex – 30×30px emoji-scale glyphs with upvoting
+            30×30 px emoji-scale glyphs with upvoting and surface/environment tagging
           </p>
         </div>
 
@@ -131,8 +131,11 @@ export const CommunityCodex = () => {
 
         <div className="text-center pt-8">
           <Button size="lg" className="glow-button">
-            Join Waitlist for Early Access
+            Upload Your Symbols
           </Button>
+          <p className="text-sm text-muted-foreground mt-2">
+            Login required to upload and contribute to the codex
+          </p>
         </div>
       </div>
     </section>
