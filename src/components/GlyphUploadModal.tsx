@@ -8,6 +8,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Upload, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { z } from "zod";
+
+const glyphSchema = z.object({
+  title: z.string().trim().min(3, "Title must be at least 3 characters").max(100, "Title must be less than 100 characters"),
+  description: z.string().trim().max(500, "Description must be less than 500 characters").optional()
+});
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 interface GlyphUploadModalProps {
   open: boolean;
@@ -32,10 +41,18 @@ export const GlyphUploadModal = ({ open, onOpenChange, onSuccess }: GlyphUploadM
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
+      // Validate file type
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        toast.error("Only JPG, PNG, WEBP, and GIF images are allowed");
+        return;
+      }
+      
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
         toast.error("Image must be less than 5MB");
         return;
       }
+      
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -58,6 +75,16 @@ export const GlyphUploadModal = ({ open, onOpenChange, onSuccess }: GlyphUploadM
     
     if (!imageFile || !title || selectedTags.length === 0) {
       toast.error("Please fill in all required fields and select at least one surface tag");
+      return;
+    }
+
+    // Validate input with zod
+    try {
+      glyphSchema.parse({ title, description });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.issues[0].message);
+      }
       return;
     }
 
