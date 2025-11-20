@@ -8,6 +8,7 @@ import { CommunityGlyphCodex } from '@/components/CommunityGlyphCodex';
 import { ResearchPapersSection } from '@/components/ResearchPapersSection';
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
+import { LaserGuide } from '@/components/LaserGuide';
 import { ShopSection } from '@/components/ShopSection';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
@@ -168,6 +169,7 @@ const Index = () => {
           <TheoriesSection />
           <CommunityGlyphCodex />
           <TestimonialsCarousel />
+          <LaserGuide />
           <ShopSection />
           <EmailCapture />
         </main>
