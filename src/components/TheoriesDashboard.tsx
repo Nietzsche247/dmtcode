@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+const theorySchema = z.object({
+  title: z.string().trim().min(10, "Title must be at least 10 characters").max(200, "Title must be less than 200 characters"),
+  summary: z.string().trim().min(20, "Summary must be at least 20 characters").max(500, "Summary must be less than 500 characters"),
+  content: z.string().trim().min(50, "Content must be at least 50 characters").max(5000, "Content must be less than 5000 characters")
+});
 
 const DEFAULT_THEORIES = [
   {
@@ -161,8 +168,13 @@ export const TheoriesDashboard = () => {
       return;
     }
 
-    if (!newTheory.title || !newTheory.summary || !newTheory.content) {
-      toast.error("Please fill in all fields");
+    // Validate input with zod
+    try {
+      theorySchema.parse(newTheory);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.issues[0].message);
+      }
       return;
     }
 
