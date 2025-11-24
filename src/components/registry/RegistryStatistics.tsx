@@ -57,28 +57,28 @@ export const RegistryStatistics = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
         <Card className="p-6 text-center bg-card border-border">
-          <div className="text-3xl md:text-4xl font-bold text-[hsl(var(--gold))] mb-2">
+          <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
             {stats.totalSubmissions}
           </div>
           <div className="text-sm text-muted-foreground">Total Submissions</div>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
-          <div className="text-3xl md:text-4xl font-bold text-[hsl(var(--gold))] mb-2">
+          <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
             {stats.uniqueSymbols}
           </div>
           <div className="text-sm text-muted-foreground">Unique Symbols</div>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
-          <div className="text-3xl md:text-4xl font-bold text-[hsl(var(--gold))] mb-2">
+          <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
             {stats.multipleReports}
           </div>
           <div className="text-sm text-muted-foreground">Symbols Reported by ≥3 Participants</div>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
-          <div className="text-3xl md:text-4xl font-bold text-[hsl(var(--gold))] mb-2">
+          <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
             {stats.lastUpdated ? stats.lastUpdated.toLocaleDateString() : 'N/A'}
           </div>
           <div className="text-sm text-muted-foreground">Last Updated</div>

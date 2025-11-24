@@ -101,7 +101,7 @@ const products = [
     title: "HigherDose Ultimate Biohacking Bundle (Sauna + PEMF)",
     price: 1500,
     image: "https://images.unsplash.com/photo-1606890658317-7d14490b76fd",
-    description: "Michael et al. integration accelerator: infrared sauna blanket + PEMF mat combo. Sauna purges metabolites post-journey; PEMF pulses (3-30 Hz) align with DMT's theta/delta EEG shifts. Gwyneth Paltrow-tier luxury for whale psychonauts—pairs sauna detox with electromagnetic grounding. Infrared PEMF for thematic resets.",
+    description: "Michael et al. integration accelerator enhancing infrared sauna recovery with PEMF electromagnetic field therapy. Infrared wavelengths support metabolite clearance post-experience; PEMF pulses (3-30 Hz) theoretically align with N,N-DMT's reported theta/delta EEG shifts per Timmermann 2019. Premium wellness bundle pairing thermal detoxification with grounding electromagnetic stimulation. PEMF resets echo Strassman's clinical integration frameworks for extended recovery phases.",
     tier: "high",
     type: "product"
   },
@@ -405,10 +405,10 @@ const Tools = () => {
                 {/* Disclaimer */}
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
-                    <strong>Disclaimer:</strong> Products listed are affiliate-linked or curated recommendations. Links may earn commissions—fuels research.
+                    <strong>Affiliate Disclosure:</strong> Affiliate links may earn commissions supporting glyph cataloguing and open research.
                     No medical claims made—equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001). 
-                    DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund independent community archive, 
-                    not affiliated with Code of Reality LLC. All "sold out" statuses accurate as of Jan 2025; waitlist notified upon restock.
+                    N,N-DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund independent community archive. 
+                    All "sold out" statuses accurate as of Nov 2025; waitlist notified upon restock.
                   </p>
                 </div>
               </div>

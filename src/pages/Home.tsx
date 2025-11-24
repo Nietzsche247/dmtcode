@@ -21,6 +21,10 @@ const Home = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
         <link rel="canonical" href="https://dmtcode.com/" />
+        <meta property="og:title" content="DMT Code - The Complete 650nm Laser Protocol" />
+        <meta property="og:description" content="The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dmtcode.com" />
       </Helmet>
 
       <div className="relative min-h-screen">
@@ -35,12 +39,13 @@ const Home = () => {
           
           {/* Registry Link */}
           <div className="container mx-auto px-4 py-8 text-center">
-            <p className="text-[hsl(var(--gold))] mb-4">
+            <p className="text-gold mb-4">
               Contribute to the open research catalogue →
             </p>
             <a 
               href="/registry"
               className="inline-block px-6 py-3 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium"
+              aria-label="Navigate to DMT Code Glyph Registry"
             >
               GLYPH REGISTRY
             </a>

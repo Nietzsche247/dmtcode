@@ -50,6 +50,9 @@ export default {
         glow: {
           DEFAULT: "hsl(var(--glow-primary))",
         },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
