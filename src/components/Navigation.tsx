@@ -1,149 +1,196 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
-import { CartDrawer } from '@/components/CartDrawer';
-import { useCartStore } from '@/stores/cartStore';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { Session } from '@supabase/supabase-js';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { Menu, X, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { NavLink } from "./NavLink";
+import { CartDrawer } from "./CartDrawer";
+import { useCartStore } from "@/stores/cartStore";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const Navigation = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const itemCount = useCartStore((state) => state.items.length);
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
-  const items = useCartStore(state => state.items);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    checkAuth();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkAuth();
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-      }
-    );
-
     return () => subscription.unsubscribe();
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setMobileMenuOpen(false);
-    }
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAuthenticated(!!session);
   };
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
-    toast.success("Logged out successfully");
-    setMobileMenuOpen(false);
+    navigate('/');
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <button 
-            onClick={() => scrollToSection('hero')}
-            className="text-xl font-bold glow-text cursor-pointer"
-          >
-            DMT Code
-          </button>
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-8">
+              <NavLink to="/" className="text-2xl font-bold glow-text">
+                DMT Code
+              </NavLink>
+              <div className="hidden md:flex items-center space-x-6">
+                <button
+                  onClick={() => handleNavigation('/')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/' ? 'text-primary' : ''
+                  }`}
+                >
+                  Home
+                </button>
+                <button
+                  onClick={() => handleNavigation('/research')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/research' ? 'text-primary' : ''
+                  }`}
+                >
+                  Research
+                </button>
+                <button
+                  onClick={() => handleNavigation('/tools')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/tools' ? 'text-primary' : ''
+                  }`}
+                >
+                  Tools
+                </button>
+                <button
+                  onClick={() => handleNavigation('/waitlist')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/waitlist' ? 'text-primary' : ''
+                  }`}
+                >
+                  Join Waitlist
+                </button>
+              </div>
+            </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollToSection('explainer')} className="text-sm hover:text-primary transition-colors">
-              How It Works
-            </button>
-            <button onClick={() => scrollToSection('research')} className="text-sm hover:text-primary transition-colors">
-              Research
-            </button>
-            <button onClick={() => scrollToSection('theories')} className="text-sm hover:text-primary transition-colors">
-              Theories
-            </button>
-            <button onClick={() => scrollToSection('codex')} className="text-sm hover:text-primary transition-colors">
-              Codex
-            </button>
-            <button onClick={() => scrollToSection('shop')} className="text-sm hover:text-primary transition-colors">
-              Shop
-            </button>
-            <CartDrawer />
-            {session ? (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout}
-                className="gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            ) : (
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={() => navigate('/auth')}
-                className="gap-2"
-              >
-                <User className="h-4 w-4" />
-                Login
-              </Button>
-            )}
-          </div>
+            <div className="hidden md:flex items-center space-x-4">
+              <CartDrawer />
+              {isAuthenticated ? (
+                <>
+                  <Button onClick={() => navigate('/admin')} variant="ghost" size="sm">
+                    Admin
+                  </Button>
+                  <Button onClick={handleSignOut} variant="outline" size="sm">
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <NavLink to="/auth">
+                  <Button variant="default" size="sm">
+                    Sign In
+                  </Button>
+                </NavLink>
+              )}
+            </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
-            <CartDrawer />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                {isOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden pt-4 pb-2 space-y-2">
-            <button onClick={() => scrollToSection('explainer')} className="block w-full text-left py-2 hover:text-primary transition-colors">
-              How It Works
-            </button>
-            <button onClick={() => scrollToSection('research')} className="block w-full text-left py-2 hover:text-primary transition-colors">
-              Research
-            </button>
-            <button onClick={() => scrollToSection('theories')} className="block w-full text-left py-2 hover:text-primary transition-colors">
-              Theories
-            </button>
-            <button onClick={() => scrollToSection('codex')} className="block w-full text-left py-2 hover:text-primary transition-colors">
-              Codex
-            </button>
-            <button onClick={() => scrollToSection('shop')} className="block w-full text-left py-2 hover:text-primary transition-colors">
-              Shop
-            </button>
-            {session ? (
-              <button 
-                onClick={handleLogout}
-                className="block w-full text-left py-2 hover:text-primary transition-colors"
+        {isOpen && (
+          <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border">
+            <div className="px-4 pt-2 pb-3 space-y-1">
+              <button
+                onClick={() => handleNavigation('/')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
               >
-                Logout
+                Home
               </button>
-            ) : (
-              <button 
-                onClick={() => navigate('/auth')}
-                className="block w-full text-left py-2 hover:text-primary transition-colors"
+              <button
+                onClick={() => handleNavigation('/research')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
               >
-                Login
+                Research
               </button>
-            )}
+              <button
+                onClick={() => handleNavigation('/tools')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Tools
+              </button>
+              <button
+                onClick={() => handleNavigation('/waitlist')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Join Waitlist
+              </button>
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    onClick={() => handleNavigation('/admin')}
+                    variant="ghost"
+                    size="sm"
+                    className="w-full mt-2"
+                  >
+                    Admin
+                  </Button>
+                  <Button
+                    onClick={handleSignOut}
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-2"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <NavLink to="/auth" className="block w-full">
+                  <Button variant="default" size="sm" className="w-full mt-2">
+                    Sign In
+                  </Button>
+                </NavLink>
+              )}
+            </div>
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+
+      <CartDrawer />
+    </>
   );
 };

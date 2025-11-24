@@ -95,7 +95,7 @@ export const Footer = () => {
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
-          <p>© 2024 DMT Code. All rights reserved.</p>
+          <p>© 2025 DMT Code. All rights reserved.</p>
           <p className="mt-2">Built for the curious explorers seeking to understand Reality's source code.</p>
         </div>
       </div>
