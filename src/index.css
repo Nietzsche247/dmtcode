@@ -48,6 +48,9 @@ All colors MUST be HSL.
     
     /* Particle animation */
     --particle-speed: 60s;
+
+    /* Gold for links and accents - WCAG AA compliant */
+    --gold: 45 100% 61%;
   }
 }
 

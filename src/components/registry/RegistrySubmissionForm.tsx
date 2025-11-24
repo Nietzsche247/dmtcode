@@ -259,7 +259,13 @@ export const RegistrySubmissionForm = () => {
             />
           </div>
 
-          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            size="lg" 
+            className="w-full" 
+            disabled={isSubmitting}
+            aria-label="Submit glyph symbol to registry"
+          >
             {isSubmitting ? 'Submitting...' : 'Add to Registry'}
           </Button>
         </form>

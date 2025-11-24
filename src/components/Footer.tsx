@@ -95,8 +95,8 @@ export const Footer = () => {
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
-          <p>© 2025 DMT Code. All rights reserved.</p>
-          <p className="mt-2">Built for the curious explorers seeking to understand Reality's source code.</p>
+          <p>© 2025 DMT Code Project. All rights reserved.</p>
+          <p className="mt-2">An open research catalogue maintained by the community.</p>
         </div>
       </div>
     </footer>

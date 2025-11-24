@@ -17,8 +17,12 @@ const Registry = () => {
           name="description" 
           content="An open, community-maintained catalogue of discrete 100 × 100 px visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Open data for academic research." 
         />
-        <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue" />
+        <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
+        <meta property="og:title" content="DMT Code Glyph Registry - Scientific Visual Symbol Catalogue" />
+        <meta property="og:description" content="An open, community-maintained catalogue of discrete 100 × 100 px visual symbols reported during 650 nm laser exposure and N,N-DMT experiences." />
+        <meta property="og:url" content="https://dmtcode.com/registry" />
+        <meta property="og:type" content="website" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -32,16 +36,17 @@ const Registry = () => {
             },
             "license": "https://creativecommons.org/licenses/by/4.0/",
             "temporalCoverage": "2025/..",
+            "keywords": "DMT, 650nm laser, visual symbols, psychedelic research, open data",
             "distribution": [
               {
                 "@type": "DataDownload",
                 "encodingFormat": "application/json",
-                "contentUrl": "https://dmtcode.com/registry/data.json"
+                "contentUrl": "https://dmtcode.com/registry/export.json"
               },
               {
                 "@type": "DataDownload",
                 "encodingFormat": "text/csv",
-                "contentUrl": "https://dmtcode.com/registry/data.csv"
+                "contentUrl": "https://dmtcode.com/registry/export.csv"
               }
             ]
           })}

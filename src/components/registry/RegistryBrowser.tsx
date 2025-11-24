@@ -106,11 +106,12 @@ export const RegistryBrowser = () => {
           {glyphs.map((glyph) => (
             <Card key={glyph.id} className="p-6 bg-card border-border">
               <div className="flex justify-center mb-4">
-                <img 
+               <img 
                   src={glyph.image_data} 
-                  alt="Registry glyph symbol"
+                  alt={`Registry glyph symbol - ${glyph.motif_tags?.slice(0, 3).join(', ') || 'visual symbol'} - reported ${glyph.confirmation_count} times`}
                   className="w-[100px] h-[100px] border border-border"
                   style={{ imageRendering: 'pixelated' }}
+                  loading="lazy"
                 />
               </div>
 
@@ -136,6 +137,7 @@ export const RegistryBrowser = () => {
                   size="sm" 
                   className="w-full"
                   onClick={() => handleVote(glyph.id, 'exact')}
+                  aria-label={`Vote exact match for glyph with ${glyph.confirmation_count} confirmations`}
                 >
                   Exact Match
                 </Button>
@@ -144,6 +146,7 @@ export const RegistryBrowser = () => {
                   size="sm" 
                   className="w-full"
                   onClick={() => handleVote(glyph.id, 'similar')}
+                  aria-label={`Vote highly similar for glyph with ${glyph.confirmation_count} confirmations`}
                 >
                   Highly Similar
                 </Button>
@@ -152,6 +155,7 @@ export const RegistryBrowser = () => {
                   size="sm" 
                   className="w-full"
                   onClick={() => handleVote(glyph.id, 'not_match')}
+                  aria-label={`Vote not this symbol for glyph with ${glyph.confirmation_count} confirmations`}
                 >
                   Not This Symbol
                 </Button>

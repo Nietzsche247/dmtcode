@@ -15,7 +15,7 @@ export const RegistryHero = () => {
         DMT Code Glyph Registry
       </h1>
       
-      <p className="text-lg md:text-xl text-[hsl(var(--gold))] max-w-4xl mx-auto mb-12 leading-relaxed">
+      <p className="text-lg md:text-xl text-gold max-w-4xl mx-auto mb-12 leading-relaxed">
         An open, community-maintained catalogue of discrete 100 × 100 px visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.
       </p>
 
