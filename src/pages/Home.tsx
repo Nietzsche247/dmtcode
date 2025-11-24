@@ -11,20 +11,16 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>DMT Code - Unlock Reality's Source Code with the 650nm Laser Experiment</title>
+        <title>DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research</title>
         <meta 
           name="description" 
-          content="dmtcode.com is the #1 community resource and store for Danny Goler's 650nm red laser DMT experiment. Buy verified lasers & bundles, upload/vote on glyphs with surface tagging, access 20+ peer-reviewed papers, and view real-time probability dashboard." 
+          content="Open catalogue of visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, full dataset downloads, and research resources available." 
         />
-        <meta property="og:title" content="DMT Code - The Complete 650nm Laser Protocol" />
-        <meta property="og:description" content="The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes." />
+        <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650 nm Laser Research" />
+        <meta property="og:description" content="Open catalogue of visual symbols reported during 650 nm laser exposure and N,N-DMT experiences." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
         <link rel="canonical" href="https://dmtcode.com/" />
-        <meta property="og:title" content="DMT Code - The Complete 650nm Laser Protocol" />
-        <meta property="og:description" content="The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dmtcode.com" />
       </Helmet>
 
       <div className="relative min-h-screen">

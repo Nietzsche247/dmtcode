@@ -6,17 +6,17 @@ export const ExplainerSection = () => {
     <section id="explainer" className="relative py-20 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
-          What Is the DMT Code Experiment?
+          What Is the 650 nm Laser Protocol?
         </h2>
         
         <Card className="p-8 md:p-12 bg-card border-border glow-border">
           <div className="prose prose-invert max-w-none space-y-6">
             <p className="text-lg leading-relaxed">
-              In 2020, researcher Danny Goler discovered that shining a specific 650nm red laser through a diffraction grating while under the influence of DMT produces an unprecedented phenomenon: observers consistently report seeing animated, symbol-like glyphs and geometric patterns that appear to be the "source code" of reality itself.
+              In 2020, researcher Danny Goler documented that shining a 650 nm red laser through a diffraction grating during N,N-DMT administration produces a replicable phenomenon: observers consistently report discrete visual symbols resembling alphabetic characters appearing on various surfaces.
             </p>
             
             <p className="text-lg leading-relaxed">
-              This protocol has since been replicated by thousands of individuals worldwide, with many reporting similar katakana-like characters, moving geometric sequences, and what appears to be a consistent visual "language" emerging across independent observations. Chase Hughes and other researchers have documented these patterns, noting remarkable consistency in what experiencers describe.
+              This protocol has been replicated by thousands of individuals worldwide, with many reporting similar character-like symbols and geometric sequences. Chase Hughes and other researchers have documented these visual elements, noting inter-subject consistency in reported observations across independent sessions.
             </p>
 
             <div className="bg-secondary/30 border border-primary/30 rounded-lg p-6 my-8">
