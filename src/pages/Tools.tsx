@@ -12,115 +12,115 @@ const products = [
   {
     title: "Psychedelic Fractal Sticker Pack (Vinyl, Holographic)",
     price: 12,
-    image: "https://printify.com/cdn/shop/products/holographic-psy-sticker-pack.jpg",
-    description: "Wormhole talismans for EEG rituals—fractal adhesive tokens amplifying visual entrainment during DMT sessions. Layer them on ceremony spaces or journals to anchor Timmermann's 2019 neural oscillation patterns. Holographic vinyl withstands humidity, reflecting laser speckle in ambient light.",
+    image: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809",
+    description: "Wormhole talismans for EEG rituals—fractal adhesive tokens amplifying visual entrainment during DMT sessions. Layer them on ceremony spaces or journals to anchor Timmermann's 2019 neural oscillation patterns. Holographic vinyl withstands humidity, reflecting laser speckle in ambient light. Impulse anchor for code visualizations.",
     tier: "low",
     type: "product"
   },
   {
     title: "DMT Entity Oracle Card Deck (Mini, 22-Card)",
     price: 15,
-    image: "https://enchantedsoul.store/cdn/shop/products/oracle-cards-mini.jpg",
-    description: "Intention prompts for Davis et al.'s 2021 entity encounter surveys. Each card poses pre-journey questions (e.g., 'What knowledge do you seek?') aligning with phenomenological frameworks. Pocket-sized for travel, designed for solo or group preparation rituals.",
+    image: "https://images.unsplash.com/photo-1580130775522-0b9d5b7c2565",
+    description: "Intention prompts for Davis et al.'s 2021 entity encounter surveys. Each card poses pre-journey questions (e.g., 'What knowledge do you seek?') aligning with phenomenological frameworks. Pocket-sized for travel, designed for solo or group preparation rituals. Pocket guides to entity dialogues.",
     tier: "low",
     type: "product"
   },
   {
     title: "Sacred Geometry Incense Sticks (Palo Santo Blend, 10-Pack)",
     price: 18,
-    image: "https://spocket.co/cdn/products/palo-santo-incense-pack.jpg",
-    description: "Grounding aromatherapy for clinical prep phases per Strassman's 2001 Spirit Molecule protocols. Palo santo smoke clears anxiety pre-dose; sacred geometry packaging primes geometric visual expectations. Burns 30 min per stick—ideal for extended integration sessions post-journey.",
+    image: "https://images.unsplash.com/photo-1583481839300-e3e5b4c1e0b5",
+    description: "Grounding aromatherapy for clinical prep phases per Strassman's 2001 Spirit Molecule protocols. Palo santo smoke clears anxiety pre-dose; sacred geometry packaging primes geometric visual expectations. Burns 30 min per stick—ideal for extended integration sessions post-journey. Scent rituals pre-laser diffraction.",
     tier: "low",
     type: "product"
   },
   {
     title: "Custom Psychedelic Journal (Fractal Cover, Guided)",
     price: 22,
-    image: "https://www.printful.com/cdn-cgi/image/quality=85,format=auto/on/demandware.static/-/Sites-master-catalog/default/dwabc123/psy-journal-cover.jpg",
-    description: "Scribbles for Michael et al.'s 2021 thematic analysis flows. Guided prompts capture glyph sketches, entity dialogues, color shifts. Fractal mandala cover primes pattern recognition. 150 acid-free pages for archival replicator logs—compatible with Goler's 2025 protocol documentation standards.",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    description: "Scribbles for Michael et al.'s 2021 thematic analysis flows. Guided prompts capture glyph sketches, entity dialogues, color shifts. Fractal mandala cover primes pattern recognition. 150 acid-free pages for archival replicator logs—compatible with Goler's 2025 protocol documentation standards. Post-journey integration notebook.",
     tier: "low",
     type: "product"
   },
   {
     title: "Amethyst Worry Stone (Tumbled, Palm-Sized)",
     price: 45,
-    image: "https://modalyst.co/cdn/products/amethyst-worry-stone.jpg",
-    description: "Calming tactile anchor for Lawrence et al.'s 2022 phenomenology terror-reduction. Smooth tumbled amethyst fits palm grip during peak anxiety; violet hues match DMT's reported color spectra. Not a placebo—somatic grounding stabilizes hyperspace navigation per reported integrations.",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176",
+    description: "Calming tactile anchor for Lawrence et al.'s 2022 phenomenology terror-reduction. Smooth tumbled amethyst fits palm grip during peak anxiety; violet hues match DMT's reported color spectra. Not a placebo—somatic grounding stabilizes hyperspace navigation per reported integrations. Palm anchor during 650nm gazing.",
     tier: "mid",
     type: "product"
   },
   {
     title: "Rose Quartz Intention Roller (Oil Blend, 10ml)",
     price: 55,
-    image: "https://dropcommerce.com/cdn/shop/products/rose-quartz-roller.jpg",
-    description: "Heart-softener for entity encounters per Davis survey compassion metrics. Rose quartz roller applies lavender-sandalwood blend to pulse points; reported to ease empathogenic waves. 10ml vial lasts 50+ applications—pre-dose ritual item for vulnerability-amplifying ceremonies.",
+    image: "https://images.unsplash.com/photo-1587376969818-f1d2e6c79b00",
+    description: "Heart-softener for entity encounters per Davis survey compassion metrics. Rose quartz roller applies lavender-sandalwood blend to pulse points; reported to ease empathogenic waves. 10ml vial lasts 50+ applications—pre-dose ritual item for vulnerability-amplifying ceremonies. Essential oil primer for entity openness.",
     tier: "mid",
     type: "product"
   },
   {
     title: "SOL Seed of Life Tunic Dress (Psy Trance Print)",
     price: 450,
-    image: "https://contrado.co/cdn/shop/products/seed-of-life-psy-trance-tunic.jpg",
-    description: "Flowing ritual attire for immersive ceremony aesthetics. Seed of Life geometry mirrors visual reports; breathable fabric prevents overheating during 15-min peak phases. Psy trance festivals meet academic phenomenology—wearable art bridging McKenna's 'archaic revival' with Goler's laser protocol.",
+    image: "https://images.unsplash.com/photo-1445205170230-053b83016050",
+    description: "Flowing ritual attire for immersive ceremony aesthetics. Seed of Life geometry mirrors visual reports; breathable fabric prevents overheating during 15-min peak phases. Psy trance festivals meet academic phenomenology—wearable art bridging McKenna's 'archaic revival' with Goler's laser protocol. Ethical fabrics for trance-state mobility.",
     tier: "mid",
     type: "product"
   },
   {
     title: "Paradisiac Psychedelic Tie-Dye Ritual Robe (Silk-Blend)",
     price: 550,
-    image: "https://www.printful.com/cdn-cgi/image/quality=85,format=auto/on/demandware.static/-/Sites-master-catalog/default/dw123abc/psychedelic-silk-robe.jpg",
-    description: "Fractal post-journey integration wear inspired by McKenna's 'heroic dose' theatrics. Silk-blend prevents static cling during laser sessions; tie-dye spirals echo visual recursion patterns. Luxury gift for whale-tier psychonauts—pairs with weighted blankets for comedown cocooning rituals.",
-    tier: "mid",
+    image: "https://images.unsplash.com/photo-1564709686824-33d194ab2796",
+    description: "Fractal post-journey integration wear inspired by McKenna's 'heroic dose' theatrics. Silk-blend prevents static cling during laser sessions; tie-dye spirals echo visual recursion patterns. Luxury gift for whale-tier psychonauts—pairs with weighted blankets for comedown cocooning rituals. Handmade silk for hyperspace recovery.",
+    tier: "high",
     type: "product"
   },
   {
     title: "iEDM Galaxy Hoodie (Wormhole Design)",
     price: 625,
-    image: "https://iedm.com/cdn/shop/files/blue-galaxy-hoodie-front.jpg",
-    description: "Integration layer apparel visualizing Timmermann's EEG 'wormhole' theta bursts. Sublimation-printed galaxy vortex mirrors hyperspace tunnel reports. Premium cotton-poly blend for post-ceremony comfort—hooded design blocks external light during extended closed-eye meditation phases.",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    description: "Integration layer apparel visualizing Timmermann's EEG 'wormhole' theta bursts. Sublimation-printed galaxy vortex mirrors hyperspace tunnel reports. Premium cotton-poly blend for post-ceremony comfort—hooded design blocks external light during extended closed-eye meditation phases. Organic cotton for festival code decoding.",
     tier: "high",
     type: "product"
   },
   {
     title: "Bon Charge Max Red Light Device (660nm Lamp)",
     price: 799,
-    image: "https://boncharge.com/cdn/shop/files/Max-Red-Light-Device-Portable.jpg",
-    description: "Goler protocol priming enhancer—660nm wavelength near DMT's 650nm laser resonance. Portable LED panel (30 LEDs) theorized to pre-stimulate retinal photoreceptors for glyph sensitivity. 20-min pre-dose sessions reported to sharpen visual acuity; biohacker-approved convergence of neuroplasticity + journey prep.",
+    image: "https://images.unsplash.com/photo-1612872087729-bb6e2f5b7e5f",
+    description: "Goler protocol priming enhancer—660nm wavelength near DMT's 650nm laser resonance. Portable LED panel (30 LEDs) theorized to pre-stimulate retinal photoreceptors for glyph sensitivity. 20-min pre-dose sessions reported to sharpen visual acuity; biohacker-approved convergence of neuroplasticity + journey prep. Portable lamp for targeted neural sessions.",
     tier: "high",
     type: "product"
   },
   {
     title: "MitoMAT Yoga Mat (3,740 LEDs, 660nm)",
     price: 1299,
-    image: "https://mitoredlight.com/cdn/shop/files/MitoMAT_Full_Body_Red_Light_Therapy_Mat_1.jpg",
-    description: "Neural meditation mat fusing red light therapy with DMT integration. 3,740 LEDs (660nm) stimulate mitochondrial ATP production; users report breakthrough clarity during post-journey yoga. Lay supine for 15-min sessions—Goler-adjacent wavelength theory applied to full-body reset rituals.",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b",
+    description: "Neural meditation mat fusing red light therapy with DMT integration. 3,740 LEDs (660nm) stimulate mitochondrial ATP production; users report breakthrough clarity during post-journey yoga. Lay supine for 15-min sessions—Goler-adjacent wavelength theory applied to full-body reset rituals. LED mat mirrors laser for deeper access.",
     tier: "high",
     type: "product"
   },
   {
     title: "HigherDose Ultimate Biohacking Bundle (Sauna + PEMF)",
     price: 1500,
-    image: "https://higherdose.com/cdn/shop/files/UltimateBiohackerBundle_1.jpg",
-    description: "Michael et al. integration accelerator: infrared sauna blanket + PEMF mat combo. Sauna purges metabolites post-journey; PEMF pulses (3-30 Hz) align with DMT's theta/delta EEG shifts. Gwyneth Paltrow-tier luxury for whale psychonauts—pairs sauna detox with electromagnetic grounding.",
+    image: "https://images.unsplash.com/photo-1606890658317-7d14490b76fd",
+    description: "Michael et al. integration accelerator: infrared sauna blanket + PEMF mat combo. Sauna purges metabolites post-journey; PEMF pulses (3-30 Hz) align with DMT's theta/delta EEG shifts. Gwyneth Paltrow-tier luxury for whale psychonauts—pairs sauna detox with electromagnetic grounding. Infrared PEMF for thematic resets.",
     tier: "high",
     type: "product"
   },
   {
     title: "MitoPRO-Inspired Full Body Red Light Panel (4x Modular)",
     price: 1999,
-    image: "https://mitoredlight.com/cdn/shop/files/MitoPRO_1500_660_850_Front.jpg",
-    description: "Entity prep accelerator for affluent replicators. 4-panel modular array (660nm/850nm) bathes full body in red/NIR—amplifies Goler's laser priming hypothesis at clinical scale. Stand 12 inches away for 20-min pre-dose sessions; biohackers report 40% sharper glyph definition vs. control groups.",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
+    description: "Entity prep accelerator for affluent replicators. 4-panel modular array (660nm/850nm) bathes full body in red/NIR—amplifies Goler's laser priming hypothesis at clinical scale. Stand 12 inches away for 20-min pre-dose sessions; biohackers report 40% sharper glyph definition vs. control groups. Modular 660nm for whole-body phenomenology.",
     tier: "high",
     type: "product"
   },
   {
     title: "Peyote Way Church of God Spirit Walk (3-Day Peyote Ceremony)",
     price: 2000,
-    image: "https://peyoteway.org/wp-content/uploads/2023/05/peyote-spirit-walk.jpg",
-    description: "Legal peyote journeys in Aravaipa wilderness (Willcox, AZ: 1hr E of Tucson). Non-Native welcome for shamanic tea rituals blending ancient Huichol roots with modern integration. Revelation experiences tie to Strassman's clinical frameworks + Goler's laser protocol consciousness research. Three days on 160 sacred acres—entity encounters meet desert healing.",
+    image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+    description: "Legal peyote journeys in Aravaipa wilderness (Willcox, AZ: 1hr E of Tucson). Non-Native welcome for shamanic tea rituals blending ancient Huichol roots with modern integration. Revelation experiences tie to Strassman's clinical frameworks + Goler's laser protocol consciousness research. Three days on 160 sacred acres—entity encounters meet desert healing. Tea rituals for revelations.",
     tier: "retreat",
     type: "retreat",
-    url: "https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=spirit_walk"
+    url: "https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=dmtcode"
   }
 ];
 
@@ -168,7 +168,7 @@ const Tools = () => {
           content="Curated 650nm protocol equipment & legal peyote journeys. $12 impulse sparks to $2,000 sacred ceremonies. Goler 2025 verified. Affordable entry to luxury transformation gifts." 
         />
         <link rel="canonical" href="https://dmtcode.com/tools" />
-        <meta name="keywords" content="affordable psychedelic journey merch, DMT laser tools, biohacking equipment, peyote journeys near Tucson, psychedelic gifts" />
+        <meta name="keywords" content="affordable psychedelic journey merch, DMT laser tools, biohacking equipment, peyote journeys near Tucson, psychedelic gifts, 650nm neural priming mat, DMT code reality tools" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -212,7 +212,7 @@ const Tools = () => {
                 
                 <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Curated for 650nm Protocol—Goler 2025. Affordable entry to luxury gifts & journeys (Strassman 2001). 
-                  $12 talismans to $2,000 legal peyote ceremonies. Every item ties to peer-reviewed research.
+                  Limited stock—join waitlist for exclusives. $12 talismans to $2,000 legal peyote ceremonies.
                 </p>
 
                 <div className="pt-4 space-y-3">
@@ -255,7 +255,7 @@ const Tools = () => {
                         <div className="w-32 h-32 flex-shrink-0 bg-secondary/20 rounded-lg overflow-hidden">
                           <img 
                             src={product.image} 
-                            alt={product.title}
+                            alt={`DMT code journey ${product.title} - ${product.tier} tier biohacking equipment`}
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />
@@ -263,7 +263,7 @@ const Tools = () => {
                         
                         <div className="flex-1 space-y-2">
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="font-semibold text-lg leading-tight">{product.title}</h3>
+                            <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.title}</h3>
                             <Badge variant="outline" className="flex-shrink-0">
                               {product.tier}
                             </Badge>
@@ -296,7 +296,7 @@ const Tools = () => {
                               className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                               onClick={() => handleWaitlistClick(product.title, product.tier)}
                             >
-                              Join Waitlist
+                              Join Waitlist for Restock
                             </Button>
                           </>
                         )}
@@ -359,10 +359,10 @@ const Tools = () => {
 
                 {/* Sacred Journeys Section */}
                 <div className="pt-12 space-y-6">
-                  <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-background border border-primary/40 rounded-xl p-8 max-w-4xl mx-auto space-y-6">
-                    <h3 className="text-2xl md:text-3xl font-bold text-center glow-text">
+                  <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-background border border-primary/40 rounded-xl p-8 max-w-4xl mx-auto space-y-6 shadow-lg shadow-primary/20">
+                    <h2 className="text-2xl md:text-3xl font-bold text-center glow-text">
                       Sacred Journeys
-                    </h3>
+                    </h2>
                     
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                       Extend your protocol beyond gear—discover legal, vetted peyote experiences. The <strong>Peyote Way Church of God</strong> (peyoteway.org) 
@@ -374,7 +374,7 @@ const Tools = () => {
                       <Button 
                         size="lg"
                         className="bg-primary hover:bg-primary/90 glow-button shadow-lg shadow-primary/30"
-                        onClick={() => window.open('https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=explore', '_blank')}
+                        onClick={() => window.open('https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=dmtcode', '_blank')}
                       >
                         Explore Peyote Way
                       </Button>
@@ -384,21 +384,28 @@ const Tools = () => {
 
                 {/* CTA Section */}
                 <div className="pt-8 text-center space-y-4">
-                  <div className="bg-primary/10 border border-primary/30 rounded-lg p-6 max-w-3xl mx-auto">
-                    <p className="text-lg font-semibold mb-2">
-                      Sold-Out Tiers Fuel Ongoing Research
+                  <div className="bg-destructive/20 border-2 border-destructive/50 rounded-lg p-8 max-w-4xl mx-auto shadow-lg shadow-destructive/20">
+                    <p className="text-xl md:text-2xl font-bold mb-4 text-foreground">
+                      All Items Sold Out—Purchases Fuel Research
                     </p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                       All waitlist members get 72-hour early access to restocks + exclusive Q1 2025 bundle drops. 
                       Affiliate commissions support decentralized glyph archive development and citizen science correlation analytics.
                     </p>
+                    <Button 
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 glow-button"
+                      onClick={() => navigate('/waitlist?utm_source=tools_cta&utm_campaign=soldout')}
+                    >
+                      Get First Dibs—Join Waitlist
+                    </Button>
                   </div>
                 </div>
 
                 {/* Disclaimer */}
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
-                    <strong>Disclaimer:</strong> Products listed are affiliate-linked or curated recommendations. 
+                    <strong>Disclaimer:</strong> Products listed are affiliate-linked or curated recommendations. Links may earn commissions—fuels research.
                     No medical claims made—equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001). 
                     DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund independent community archive, 
                     not affiliated with Code of Reality LLC. All "sold out" statuses accurate as of Jan 2025; waitlist notified upon restock.
