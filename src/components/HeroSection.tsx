@@ -26,13 +26,13 @@ export const HeroSection = () => {
       {/* Hero content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto space-y-8 py-20">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight glow-text leading-tight">
-          DMT Code – See Reality's Source Code
+          DMT Code Visual Symbol Catalogue
         </h1>
-        <p className="text-xl md:text-2xl text-primary/90 font-semibold leading-relaxed max-w-4xl mx-auto">
-          The most complete community archive, research hub, and store for Danny Goler's 650nm red laser experiment · 3,000+ replicators · 87% glyph consistency rate
+        <p className="text-xl md:text-2xl text-gold font-semibold leading-relaxed max-w-4xl mx-auto">
+          Community archive and research hub for Danny Goler's 650 nm laser protocol · 3,000+ replicators · 87% inter-subject consistency in reported visual symbols
         </p>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          The exact 650nm red laser protocol discovered by Danny Goler and validated by Chase Hughes that lets thousands of people see animated glyphs, katakana-like symbols, and moving geometric code on any surface under N,N-DMT administration
+          The 650 nm laser protocol developed by Danny Goler (validated by Chase Hughes) reliably elicits discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT administration.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
@@ -40,9 +40,9 @@ export const HeroSection = () => {
             size="lg" 
             className="text-lg px-8 py-6 glow-button bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" 
             onClick={() => scrollToSection('shop')}
-            aria-label="Navigate to journey preparation equipment"
+            aria-label="View research equipment catalogue"
           >
-            Journey Preparation → Instant Checkout
+            View Equipment Catalogue
           </Button>
           <Button 
             size="lg" 
