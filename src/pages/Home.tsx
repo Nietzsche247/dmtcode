@@ -32,6 +32,19 @@ const Home = () => {
           <ExplainerSection />
           <TestimonialsCarousel />
           <EmailCapture />
+          
+          {/* Registry Link */}
+          <div className="container mx-auto px-4 py-8 text-center">
+            <p className="text-[hsl(var(--gold))] mb-4">
+              Contribute to the open research catalogue →
+            </p>
+            <a 
+              href="/registry"
+              className="inline-block px-6 py-3 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium"
+            >
+              GLYPH REGISTRY
+            </a>
+          </div>
         </main>
 
         <Footer />

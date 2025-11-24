@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Research from "./pages/Research";
 import Tools from "./pages/Tools";
+import Registry from "./pages/Registry";
 import Waitlist from "./pages/Waitlist";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
           <Route path="/tools" element={<Tools />} />
+          <Route path="/registry" element={<Registry />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />
