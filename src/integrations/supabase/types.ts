@@ -115,6 +115,110 @@ export type Database = {
         }
         Relationships: []
       }
+      registry_confirmations: {
+        Row: {
+          confirmation_type: string
+          created_at: string
+          glyph_id: string
+          id: string
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          confirmation_type: string
+          created_at?: string
+          glyph_id: string
+          id?: string
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          confirmation_type?: string
+          created_at?: string
+          glyph_id?: string
+          id?: string
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registry_confirmations_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registry_glyphs: {
+        Row: {
+          approximate_dose: string | null
+          communicative_intent: string | null
+          confirmation_count: number
+          created_at: string
+          depth: string | null
+          emotional_valence: string | null
+          free_text_notes: string | null
+          id: string
+          image_data: string
+          is_unique: boolean
+          motif_tags: string[] | null
+          motion: string | null
+          perceived_surface: string | null
+          prior_exposure: boolean | null
+          route_of_administration: string | null
+          source: string
+          symmetry: string | null
+          updated_at: string
+          user_id: string | null
+          voice_note_url: string | null
+        }
+        Insert: {
+          approximate_dose?: string | null
+          communicative_intent?: string | null
+          confirmation_count?: number
+          created_at?: string
+          depth?: string | null
+          emotional_valence?: string | null
+          free_text_notes?: string | null
+          id?: string
+          image_data: string
+          is_unique?: boolean
+          motif_tags?: string[] | null
+          motion?: string | null
+          perceived_surface?: string | null
+          prior_exposure?: boolean | null
+          route_of_administration?: string | null
+          source: string
+          symmetry?: string | null
+          updated_at?: string
+          user_id?: string | null
+          voice_note_url?: string | null
+        }
+        Update: {
+          approximate_dose?: string | null
+          communicative_intent?: string | null
+          confirmation_count?: number
+          created_at?: string
+          depth?: string | null
+          emotional_valence?: string | null
+          free_text_notes?: string | null
+          id?: string
+          image_data?: string
+          is_unique?: boolean
+          motif_tags?: string[] | null
+          motion?: string | null
+          perceived_surface?: string | null
+          prior_exposure?: boolean | null
+          route_of_administration?: string | null
+          source?: string
+          symmetry?: string | null
+          updated_at?: string
+          user_id?: string | null
+          voice_note_url?: string | null
+        }
+        Relationships: []
+      }
       surface_tags: {
         Row: {
           created_at: string

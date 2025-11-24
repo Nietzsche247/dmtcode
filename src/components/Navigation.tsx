@@ -87,6 +87,14 @@ export const Navigation = () => {
                   Tools
                 </button>
                 <button
+                  onClick={() => handleNavigation('/registry')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/registry' ? 'text-primary' : ''
+                  }`}
+                >
+                  Glyph Registry
+                </button>
+                <button
                   onClick={() => handleNavigation('/waitlist')}
                   className={`text-sm hover:text-primary transition-colors ${
                     location.pathname === '/waitlist' ? 'text-primary' : ''
@@ -152,6 +160,12 @@ export const Navigation = () => {
                 className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
               >
                 Tools
+              </button>
+              <button
+                onClick={() => handleNavigation('/registry')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Glyph Registry
               </button>
               <button
                 onClick={() => handleNavigation('/waitlist')}
