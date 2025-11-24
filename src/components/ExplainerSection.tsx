@@ -27,7 +27,7 @@ export const ExplainerSection = () => {
                   <ul className="space-y-2 list-disc list-inside">
                     <li>Always conduct the sober speckle test first to verify you can see diffraction patterns before any substance use</li>
                     <li>DMT is a Schedule I controlled substance in many jurisdictions - know your local laws</li>
-                    <li>This phenomenon is not yet scientifically validated and remains in the realm of subjective experience</li>
+                    <li>This phenomenon is not yet scientifically validated and remains in the realm of subjective experiences</li>
                     <li>Some researchers, including Andrew Gallimore, have offered alternative explanations for these visual phenomena</li>
                     <li>This site provides tools for those who choose to explore this protocol responsibly and legally where permitted</li>
                   </ul>

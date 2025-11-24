@@ -32,7 +32,7 @@ export const HeroSection = () => {
           Community archive and research hub for Danny Goler's 650 nm laser protocol · 3,000+ replicators · 87% inter-subject consistency in reported visual symbols
         </p>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          The 650 nm laser protocol developed by Danny Goler (validated by Chase Hughes) reliably elicits discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT administration.
+          The 650 nm laser protocol developed by Danny Goler (validated by Chase Hughes) reliably elicits discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
