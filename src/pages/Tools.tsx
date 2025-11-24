@@ -390,7 +390,7 @@ const Tools = () => {
                     </p>
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                       All waitlist members get 72-hour early access to restocks + exclusive Q1 2025 bundle drops.
-                      Affiliate commissions support decentralized visual symbol archive development and citizen science correlation analytics.
+                      Affiliate commissions support symbol cataloguing research and open data infrastructure.
                     </p>
                     <Button 
                       size="lg"
@@ -405,9 +405,9 @@ const Tools = () => {
                 {/* Disclaimer */}
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
-                    <strong>Affiliate Disclosure:</strong> Affiliate links may earn commissions supporting visual symbol cataloguing and open research.
+                    <strong>Affiliate Disclosure:</strong> Affiliate commissions support symbol cataloguing.
                     No medical claims made—equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001). 
-                    N,N-DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund independent community archive. 
+                    N,N-DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund community symbol catalogue. 
                     All "sold out" statuses accurate as of Nov 2025; waitlist notified upon restock.
                   </p>
                 </div>

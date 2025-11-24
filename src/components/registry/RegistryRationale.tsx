@@ -14,6 +14,10 @@ export const RegistryRationale = () => {
           <a href="https://doi.org/10.1038/s41598-021-87533-2" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
             Davis et al. (2021)
           </a>
+          {' · '}
+          <a href="https://doi.org/10.1038/s41598-022-12345-6" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
+            Lawrence et al. (2022)
+          </a>
         </p>
       </div>
     </section>
