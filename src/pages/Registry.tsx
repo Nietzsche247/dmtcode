@@ -7,6 +7,7 @@ import { RegistryStatistics } from '@/components/registry/RegistryStatistics';
 import { RegistrySubmissionForm } from '@/components/registry/RegistrySubmissionForm';
 import { RegistryBrowser } from '@/components/registry/RegistryBrowser';
 import { RegistryResources } from '@/components/registry/RegistryResources';
+import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Registry = () => {
   return (
@@ -82,6 +83,9 @@ const Registry = () => {
         <Navigation />
         
         <main className="relative z-10 pt-20">
+          <div className="block md:hidden">
+            <Breadcrumb />
+          </div>
           <RegistryHero />
           <RegistryRationale />
           <RegistryStatistics />

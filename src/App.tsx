@@ -10,6 +10,10 @@ import Registry from "./pages/Registry";
 import Waitlist from "./pages/Waitlist";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
+import FAQ from "./pages/FAQ";
+import Bibliography from "./pages/Bibliography";
+import Glossary from "./pages/Glossary";
+import ProtocolGuide from "./pages/ProtocolGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +30,10 @@ const App = () => (
           <Route path="/tools" element={<Tools />} />
           <Route path="/registry" element={<Registry />} />
           <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/bibliography" element={<Bibliography />} />
+          <Route path="/glossary" element={<Glossary />} />
+          <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />

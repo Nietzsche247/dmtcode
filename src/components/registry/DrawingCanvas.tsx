@@ -89,8 +89,8 @@ export const DrawingCanvas = ({ onImageChange }: DrawingCanvasProps) => {
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}
-          aria-label="Drawing canvas for 100x100 pixel glyph symbol"
           role="img"
+          aria-label="Draw visual symbol on 100 by 100 pixel canvas"
         >
           Your browser does not support the canvas element.
         </canvas>
