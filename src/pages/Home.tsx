@@ -14,13 +14,46 @@ const Home = () => {
         <title>DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research</title>
         <meta 
           name="description" 
-          content="Open catalogue of visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, full dataset downloads, and research resources available." 
+          content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." 
         />
-        <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650 nm Laser Research" />
-        <meta property="og:description" content="Open catalogue of visual symbols reported during 650 nm laser exposure and N,N-DMT experiences." />
+        <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research" />
+        <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
         <link rel="canonical" href="https://dmtcode.com/" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/" />
+        <meta name="robots" content="index, follow" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "DMT Code Visual Symbol Catalogue",
+            "url": "https://dmtcode.com",
+            "description": "Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://dmtcode.com/registry?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "license": "https://creativecommons.org/licenses/by/4.0/"
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "DMT Code Project",
+            "url": "https://dmtcode.com",
+            "description": "Community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
+            "foundingDate": "2025",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Research Inquiries",
+              "email": "research@dmtcode.com"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen">
