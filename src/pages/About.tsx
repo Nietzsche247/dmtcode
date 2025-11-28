@@ -35,11 +35,9 @@ const About = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
-          <div className="block md:hidden">
-            <Breadcrumb />
-          </div>
+        <main className="relative z-10 pt-4">
 
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">About DMT Code Project</h1>
@@ -150,6 +148,24 @@ const About = () => {
                 <strong>Note:</strong> We do not provide sourcing information for controlled substances, dosing guidance, or medical advice. All inquiries requesting such information will not receive responses. Consult licensed medical professionals for health-related questions.
               </p>
             </Card>
+
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/critiques" className="text-gold hover:underline font-medium">
+                  Scientific Critiques →
+                </a>
+                <a href="/methods" className="text-gold hover:underline font-medium">
+                  Research Methods →
+                </a>
+                <a href="/bibliography" className="text-gold hover:underline font-medium">
+                  Bibliography →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
+            </div>
           </section>
         </main>
 

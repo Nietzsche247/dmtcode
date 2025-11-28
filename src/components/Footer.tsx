@@ -97,25 +97,24 @@ export const Footer = () => {
         <div className="text-center text-sm text-muted-foreground space-y-3">
           <p>© 2025 DMT Code Project. All rights reserved.</p>
           <p className="mt-2">An open research catalogue maintained by the community.</p>
-          <div className="flex items-center justify-center gap-4 mt-4">
+          <div className="flex items-center justify-center gap-4 mb-3">
             <a 
               href="https://creativecommons.org/licenses/by/4.0/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-gold hover:underline text-xs"
+              className="inline-flex items-center gap-2 text-gold hover:underline"
             >
-              <svg className="w-5 h-5" viewBox="0 0 32 32" fill="currentColor">
-                <path d="M16 2c-7.732 0-14 6.268-14 14s6.268 14 14 14 14-6.268 14-14-6.268-14-14-14zm0 2c6.651 0 12 5.349 12 12s-5.349 12-12 12-12-5.349-12-12 5.349-12 12-12zm-5.5 8c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5-1.119-2.5-2.5-2.5zm11 0c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5-1.119-2.5-2.5-2.5z"/>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3-8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm6 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z"/>
               </svg>
-              CC-BY-4.0 License
+              CC-BY-4.0
             </a>
-            <span className="text-muted-foreground">•</span>
-            <p className="text-xs">All registry data available for academic research</p>
           </div>
-          <p className="text-xs text-muted-foreground/70 max-w-3xl mx-auto leading-relaxed">
-            This site documents reported visual phenomena from 650 nm laser exposure during N,N-DMT administration. 
-            All content is for educational and research purposes. Citations: Davis et al. (2021) DOI:10.1002/hup.2806, 
-            Timmermann et al. (2019) DOI:10.1038/s41598-019-51974-4.
+          <p className="mb-2">
+            © 2025 DMT Code Visual Symbol Catalogue. Cite as: <em>DMT Code Visual Symbol Catalogue, 2025, https://dmtcode.com</em>
+          </p>
+          <p className="text-xs">
+            Registry data available for academic research at <a href="/data.json" className="text-gold hover:underline">dmtcode.com/data.json</a>
           </p>
         </div>
       </div>

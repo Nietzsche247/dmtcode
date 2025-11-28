@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -53,8 +54,9 @@ const FAQ = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
+        <main className="relative z-10 pt-4">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Frequently Asked Questions</h1>
             <p className="text-lg text-muted-foreground mb-12">
@@ -196,7 +198,179 @@ const FAQ = () => {
                   </div>
                 </AccordionContent>
               </AccordionItem>
+
+              <AccordionItem value="item-7" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  Is this protocol scientifically validated?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>inter-subject consistency (87%)</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
+                  </p>
+                  <p>
+                    Current evidence consists of: anecdotal reports from 3,000+ replicators, Goler's pilot observations published in IPI Letters (2025), and comparative analysis with Davis et al. (2021) entity encounter survey data.
+                  </p>
+                  <div className="mt-6">
+                    <Button asChild variant="outline">
+                      <a href="/evidence-map">Review Evidence Map →</a>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-8" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  Could these symbols be optical artifacts or afterimages?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    This is a valid critique. Diffraction gratings create predictable interference patterns, and retinal photoreceptor fatigue can produce phosphenes and afterimages. However, replicators report discrete, bounded symbols <strong>within</strong> the diffraction grid rather than the grid pattern itself.
+                  </p>
+                  <p>
+                    The alphabetic-like character consistency across independent observers suggests a phenomenon beyond simple optical artifacts. Further controlled research with control conditions (sober + laser, DMT + no laser, DMT + laser) is needed to isolate variables.
+                  </p>
+                  <div className="mt-6">
+                    <Button asChild variant="outline">
+                      <a href="/critiques">Read Scientific Critiques →</a>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-9" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  What safety precautions should I follow?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    <strong>Legal:</strong> N,N-DMT is a Schedule I controlled substance in most jurisdictions. This information is provided for educational purposes only in regions where legal.
+                  </p>
+                  <p>
+                    <strong>Physical:</strong> Never use substances alone. Always have a trusted sitter present. Ensure laser is Class 2 or lower (≤5 mW) to avoid retinal damage. Conduct sober speckle test to verify equipment function before any substance use.
+                  </p>
+                  <p>
+                    <strong>Psychological:</strong> N,N-DMT produces intense altered states. Not suitable for individuals with history of psychosis, seizure disorders, or severe anxiety. Consult medical professionals before use.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-10" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  How is the registry data used for research?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    All registry submissions are released under <strong>CC-BY-4.0 license</strong> as structured JSON/CSV exports with full metadata. Researchers can download the complete dataset to analyze symbol morphology, confirmation patterns, and correlation with experiential variables.
+                  </p>
+                  <p>
+                    Academic institutions have used registry data for: computational clustering analysis, cross-cultural symbol comparison, and exploratory statistical modeling of inter-subject consistency factors.
+                  </p>
+                  <div className="mt-6">
+                    <Button asChild variant="default">
+                      <a href="/registry">Access Registry Downloads →</a>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-11" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  What distinguishes this from other DMT research?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    Most N,N-DMT research (Strassman 2001, Timmermann 2019, Carhart-Harris et al.) focuses on phenomenology, neurobiology, and therapeutic applications. The 650 nm laser protocol specifically targets <strong>externalized visual perception</strong> rather than closed-eye imagery.
+                  </p>
+                  <p>
+                    This project documents discrete, consistent symbols appearing on physical surfaces with 87% inter-subject agreement—a specificity level rarely seen in psychedelic phenomenology research.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-12" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  Are you affiliated with Danny Goler or Chase Hughes?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    No. The DMT Code Visual Symbol Catalogue is an independent, community-driven documentation project. We aggregate and archive reports of the 650 nm protocol developed by Danny Goler and validated by Chase Hughes, but we are not officially affiliated with either researcher.
+                  </p>
+                  <p>
+                    All registry data is open-access under CC-BY-4.0, making it available for analysis by any researcher or institution interested in visual symbol phenomena during N,N-DMT experiences.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-13" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  What equipment do I absolutely need to replicate this?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    <strong>Minimum Required:</strong> 650 nm red laser pointer (Class 2, ≤5 mW) + diffraction grating attachment (cross, grid, or star pattern).
+                  </p>
+                  <p>
+                    <strong>Optional but Recommended:</strong> 660 nm red light therapy panel for pre-session photobiomodulation (enhances symbol clarity per Timmermann et al. 2019).
+                  </p>
+                  <p>
+                    Total cost: $15-$30 for laser + grating, $200-$800 for optional red light therapy equipment.
+                  </p>
+                  <div className="mt-6">
+                    <Button asChild variant="default">
+                      <a href="/tools">View Equipment Options →</a>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-14" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  How can I stay updated on registry findings?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    Join the waitlist to receive quarterly updates on: new registry submissions, pattern analysis from computational clustering, peer-reviewed citations of registry data, and protocol refinements from the replicator community.
+                  </p>
+                  <div className="mt-6">
+                    <Button asChild variant="default">
+                      <a href="/waitlist">Join Waitlist →</a>
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-15" className="border rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold">
+                  Can I replicate this protocol with other psychedelics?
+                </AccordionTrigger>
+                <AccordionContent className="text-base space-y-4 pt-4">
+                  <p>
+                    The 650 nm laser protocol was specifically developed for use during N,N-DMT experiences. Anecdotal reports suggest limited or no visual symbol elicitation with other classical psychedelics (LSD, psilocybin, mescaline).
+                  </p>
+                  <p>
+                    This specificity may relate to N,N-DMT's unique neurochemistry (5-HT2A + sigma-1 receptor agonism) and extremely high visual intensity compared to other tryptamines. Further comparative research is needed.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
+
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/evidence-map" className="text-gold hover:underline font-medium">
+                  Evidence Map →
+                </a>
+                <a href="/methods" className="text-gold hover:underline font-medium">
+                  Research Methods →
+                </a>
+                <a href="/critiques" className="text-gold hover:underline font-medium">
+                  Scientific Critiques →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
+            </div>
           </section>
         </main>
 
