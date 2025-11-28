@@ -12,9 +12,10 @@ const ProtocolGuide = () => {
         <title>Complete 650 nm Laser Protocol Guide | DMT Code</title>
         <meta 
           name="description" 
-          content="Step-by-step guide to Danny Goler's 650 nm laser protocol for N,N-DMT visual symbol elicitation. Safety requirements, equipment specifications, and documentation procedures." 
+          content="Complete guide to the 650 nm laser protocol for discrete visual symbol documentation during N,N-DMT administration. Safety requirements and equipment specifications." 
         />
         <link rel="canonical" href="https://dmtcode.com/protocol-guide" />
+        <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
           {JSON.stringify({

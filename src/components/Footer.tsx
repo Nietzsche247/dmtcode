@@ -94,9 +94,29 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground space-y-3">
           <p>© 2025 DMT Code Project. All rights reserved.</p>
           <p className="mt-2">An open research catalogue maintained by the community.</p>
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <a 
+              href="https://creativecommons.org/licenses/by/4.0/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-gold hover:underline text-xs"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 2c-7.732 0-14 6.268-14 14s6.268 14 14 14 14-6.268 14-14-6.268-14-14-14zm0 2c6.651 0 12 5.349 12 12s-5.349 12-12 12-12-5.349-12-12 5.349-12 12-12zm-5.5 8c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5-1.119-2.5-2.5-2.5zm11 0c-1.381 0-2.5 1.119-2.5 2.5s1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5-1.119-2.5-2.5-2.5z"/>
+              </svg>
+              CC-BY-4.0 License
+            </a>
+            <span className="text-muted-foreground">•</span>
+            <p className="text-xs">All registry data available for academic research</p>
+          </div>
+          <p className="text-xs text-muted-foreground/70 max-w-3xl mx-auto leading-relaxed">
+            This site documents reported visual phenomena from 650 nm laser exposure during N,N-DMT administration. 
+            All content is for educational and research purposes. Citations: Davis et al. (2021) DOI:10.1002/hup.2806, 
+            Timmermann et al. (2019) DOI:10.1038/s41598-019-51974-4.
+          </p>
         </div>
       </div>
     </footer>
