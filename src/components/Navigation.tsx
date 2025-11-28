@@ -94,13 +94,29 @@ export const Navigation = () => {
                 >
                   Glyph Registry
                 </button>
-                <button
+              <button
                   onClick={() => handleNavigation('/waitlist')}
                   className={`text-sm hover:text-primary transition-colors ${
                     location.pathname === '/waitlist' ? 'text-primary' : ''
                   }`}
                 >
                   Join Waitlist
+                </button>
+                <button
+                  onClick={() => handleNavigation('/evidence-map')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/evidence-map' ? 'text-primary' : ''
+                  }`}
+                >
+                  Evidence
+                </button>
+                <button
+                  onClick={() => handleNavigation('/about')}
+                  className={`text-sm hover:text-primary transition-colors ${
+                    location.pathname === '/about' ? 'text-primary' : ''
+                  }`}
+                >
+                  About
                 </button>
               </div>
             </div>
@@ -172,6 +188,30 @@ export const Navigation = () => {
                 className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
               >
                 Join Waitlist
+              </button>
+              <button
+                onClick={() => handleNavigation('/evidence-map')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Evidence Map
+              </button>
+              <button
+                onClick={() => handleNavigation('/methods')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Methods
+              </button>
+              <button
+                onClick={() => handleNavigation('/critiques')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                Critiques
+              </button>
+              <button
+                onClick={() => handleNavigation('/about')}
+                className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors"
+              >
+                About
               </button>
               {isAuthenticated ? (
                 <>
