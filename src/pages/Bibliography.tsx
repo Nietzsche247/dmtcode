@@ -30,6 +30,26 @@ const Bibliography = () => {
             "dateModified": "2025-11-27"
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://dmtcode.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Bibliography",
+                "item": "https://dmtcode.com/bibliography"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
