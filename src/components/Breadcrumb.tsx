@@ -15,6 +15,11 @@ export const Breadcrumb = () => {
     'bibliography': 'Bibliography',
     'glossary': 'Glossary',
     'protocol-guide': 'Protocol Guide',
+    'evidence-map': 'Evidence Map',
+    'methods': 'Methods',
+    'critiques': 'Critiques',
+    'about': 'About',
+    'open-questions': 'Open Questions',
     'admin': 'Admin',
     'auth': 'Login'
   };

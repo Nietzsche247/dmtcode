@@ -26,15 +26,6 @@ const researchPapers = [
     summary: "Survey documenting entity encounters during DMT experiences across diverse participant populations."
   },
   {
-    title: "Phenomenology and content of the inhaled N,N-dimethyltryptamine experience",
-    authors: "Lawrence et al.",
-    year: 2022,
-    journal: "Scientific Reports",
-    doi: "10.1038/s41598-022-11999-8",
-    url: "https://doi.org/10.1038/s41598-022-11999-8",
-    summary: "Qualitative analysis of visual phenomena during N,N-DMT experiences, documenting recurring geometric and alphabetic-like symbols."
-  },
-  {
     title: "An Encounter With the Other: Thematic analysis of DMT entity experiences",
     authors: "Michael et al.",
     year: 2021,

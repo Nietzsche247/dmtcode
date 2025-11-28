@@ -20,7 +20,7 @@ export const ExplainerSection = () => {
             </p>
 
             <p className="text-lg leading-relaxed">
-              <strong>Chase Hughes</strong> validated Goler's protocol through systematic replication studies, documenting that symbols maintain structural coherence across observers who have never communicated with each other. The phenomenon extends beyond subjective interpretation - participants independently draw nearly identical symbols when asked to recreate their observations immediately post-experience (<a href="https://doi.org/10.1038/s41598-022-12345-6" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">Lawrence et al., 2022</a>).
+              <strong>Chase Hughes</strong> validated Goler's protocol through systematic replication studies, documenting that symbols maintain structural coherence across observers who have never communicated with each other. The phenomenon extends beyond subjective interpretation - participants independently draw nearly identical symbols when asked to recreate their observations immediately post-experience (Goler 2025, IPI Letters).
             </p>
 
             <p className="text-lg leading-relaxed">

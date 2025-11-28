@@ -117,33 +117,6 @@ const Bibliography = () => {
                 </div>
               </Card>
 
-              {/* Lawrence et al. 2022 */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      Phenomenology and content of the inhaled N,N-dimethyltryptamine (N,N-DMT) experience
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Lawrence, D. W., Carhart-Harris, R., Griffiths, R., & Timmermann, C.</strong> (2022). <em>Scientific Reports</em>, 12(1), 8562.
-                    </p>
-                    <p className="text-sm">
-                      Qualitative analysis of visual phenomena during N,N-DMT experiences, documenting recurring geometric and alphabetic-like symbols. Independent validation of pattern consistency across participants.
-                    </p>
-                    <a 
-                      href="https://doi.org/10.1038/s41598-022-11999-8" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.1038/s41598-022-11999-8
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </Card>
-
               {/* Strassman 2001 */}
               <Card className="p-6 border-border hover:border-primary/50 transition-colors">
                 <div className="flex items-start gap-4">
