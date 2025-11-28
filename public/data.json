@@ -1,6 +1,7 @@
 {
+  "dateModified": "2025-11-27",
   "symbols": [
-    {"id": 1, "tag": "katakana-like-digit", "description": "Single vertical stroke with curved hook at top, resembling Japanese katakana character", "source": "650nm laser", "surface": "hand", "symmetry": "none", "doi": "10.1002/hup.2806"},
+    {"id": 1, "tag": "alphabetic-vertical", "description": "Vertical line with horizontal crossbar resembling Latin letter T", "source": "650nm laser", "surface": "wall", "symmetry": "bilateral", "doi": "10.1002/hup.2806"},
     {"id": 2, "tag": "bilateral-cross", "description": "Perfect bilateral cross with four equal arms extending from center point", "source": "650nm laser", "surface": "wall", "symmetry": "bilateral", "doi": "10.1002/hup.2806"},
     {"id": 3, "tag": "spiral-helix", "description": "Double helix spiral rotating clockwise with consistent spacing between coils", "source": "N,N-DMT closed eyes", "surface": "closed eyelids", "symmetry": "radial", "doi": "10.1038/s41598-019-51974-4"},
     {"id": 4, "tag": "angular-rune", "description": "Angular symbol resembling runic alphabet with sharp vertices and straight edges", "source": "650nm laser", "surface": "ceiling", "symmetry": "none", "doi": "10.1002/hup.2806"},

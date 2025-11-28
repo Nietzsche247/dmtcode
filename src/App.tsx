@@ -14,6 +14,10 @@ import FAQ from "./pages/FAQ";
 import Bibliography from "./pages/Bibliography";
 import Glossary from "./pages/Glossary";
 import ProtocolGuide from "./pages/ProtocolGuide";
+import EvidenceMap from "./pages/EvidenceMap";
+import Methods from "./pages/Methods";
+import Critiques from "./pages/Critiques";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +38,10 @@ const App = () => (
           <Route path="/bibliography" element={<Bibliography />} />
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
+          <Route path="/evidence-map" element={<EvidenceMap />} />
+          <Route path="/methods" element={<Methods />} />
+          <Route path="/critiques" element={<Critiques />} />
+          <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />

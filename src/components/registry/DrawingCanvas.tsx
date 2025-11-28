@@ -91,6 +91,7 @@ export const DrawingCanvas = ({ onImageChange }: DrawingCanvasProps) => {
           onMouseLeave={stopDrawing}
           role="img"
           aria-label="Draw visual symbol on 100 by 100 pixel canvas"
+          aria-describedby="metadata-form"
         >
           Your browser does not support the canvas element.
         </canvas>
