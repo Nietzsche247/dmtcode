@@ -77,9 +77,36 @@ const Glossary = () => {
         <title>Glossary - Visual Symbol & 650 nm Protocol Terminology | DMT Code</title>
         <meta 
           name="description" 
-          content="Comprehensive glossary defining technical terminology for N,N-DMT visual symbols, 650 nm laser protocol, and glyph registry classification systems." 
+          content="Comprehensive glossary defining technical terminology for discrete visual symbols, 650 nm laser protocol, and registry classification systems." 
         />
         <link rel="canonical" href="https://dmtcode.com/glossary" />
+        <meta name="robots" content="index, follow" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "DefinedTermSet",
+            "name": "DMT Code Glossary of Terms",
+            "description": "Technical definitions for 650 nm laser protocol and visual symbol classification",
+            "hasDefinedTerm": [
+              {
+                "@type": "DefinedTerm",
+                "name": "650 nm Laser Protocol",
+                "description": "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration"
+              },
+              {
+                "@type": "DefinedTerm",
+                "name": "Discrete Visual Symbol",
+                "description": "Distinct, bounded geometric or alphabetic-like element perceived as separate from surrounding visual field"
+              },
+              {
+                "@type": "DefinedTerm",
+                "name": "Inter-subject Consistency",
+                "description": "Degree to which independent observers report identical or highly similar phenomena under controlled conditions"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

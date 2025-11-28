@@ -32,15 +32,27 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "DMT Code",
-      "url": "https://dmtcode.com",
-      "description": "DMT glyph registry & 650nm gear for entity research",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://dmtcode.com/registry?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "DMT Code",
+          "url": "https://dmtcode.com",
+          "description": "An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://dmtcode.com/registry?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "name": "DMT Code Project",
+          "url": "https://dmtcode.com",
+          "description": "Open research catalogue for documenting visual symbols reported during 650 nm laser exposure and N,N-DMT administration.",
+          "foundingDate": "2024",
+          "sameAs": []
+        }
+      ]
     }
   </script>
 </head>

@@ -11,9 +11,25 @@ const Bibliography = () => {
         <title>Research Bibliography - Peer-Reviewed Citations | DMT Code</title>
         <meta 
           name="description" 
-          content="Complete bibliography of peer-reviewed research on N,N-DMT visual phenomena, 650 nm laser protocol, and photobiomodulation. Full DOI links and PDF access." 
+          content="Complete bibliography of peer-reviewed research on discrete visual symbols during N,N-DMT administration, 650 nm laser protocol, and photobiomodulation studies." 
         />
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
+        <meta name="robots" content="index, follow" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ScholarlyArticle",
+            "headline": "Research Bibliography - Peer-Reviewed Citations on Visual Symbol Phenomena",
+            "description": "Comprehensive bibliography of peer-reviewed research documenting discrete visual symbols during 650 nm laser exposure and N,N-DMT administration",
+            "author": {
+              "@type": "Organization",
+              "name": "DMT Code Project"
+            },
+            "datePublished": "2024-01-15",
+            "dateModified": "2025-11-27"
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
