@@ -141,6 +141,9 @@ const Glossary = () => {
           content="Comprehensive glossary defining technical terminology for discrete visual symbols, 650 nm laser protocol, and registry classification systems." 
         />
         <link rel="canonical" href="https://dmtcode.com/glossary" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/glossary" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/glossary" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/glossary" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

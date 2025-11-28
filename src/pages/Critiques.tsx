@@ -16,6 +16,8 @@ const Critiques = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/critiques" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/critiques" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/critiques" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/critiques" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
@@ -41,11 +43,9 @@ const Critiques = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
-          <div className="block md:hidden">
-            <Breadcrumb />
-          </div>
+        <main className="relative z-10 pt-4">
 
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Critical Perspectives: Skepticism & Ethics</h1>
@@ -162,6 +162,25 @@ const Critiques = () => {
                 </div>
               </div>
             </Card>
+
+            {/* Related Resources */}
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/evidence-map" className="text-gold hover:underline font-medium">
+                  Evidence Map →
+                </a>
+                <a href="/methods" className="text-gold hover:underline font-medium">
+                  Research Methods →
+                </a>
+                <a href="/about" className="text-gold hover:underline font-medium">
+                  About & Ethics →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
+            </div>
 
             {/* Response Statement */}
             <Card className="p-8 bg-muted/30 border-border">

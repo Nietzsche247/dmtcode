@@ -17,6 +17,8 @@ const Methods = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/methods" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/methods" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/methods" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/methods" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
@@ -47,12 +49,9 @@ const Methods = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
-          <div className="block md:hidden">
-            <Breadcrumb />
-          </div>
-
+        <main className="relative z-10 pt-4">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Research Methods: Replication Design</h1>
             <p className="text-lg text-muted-foreground mb-12">
@@ -207,6 +206,25 @@ const Methods = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+
+            {/* Related Resources */}
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/evidence-map" className="text-gold hover:underline font-medium">
+                  Evidence Map →
+                </a>
+                <a href="/critiques" className="text-gold hover:underline font-medium">
+                  Scientific Critiques →
+                </a>
+                <a href="/protocol-guide" className="text-gold hover:underline font-medium">
+                  Protocol Guide →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
+            </div>
           </section>
         </main>
 

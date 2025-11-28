@@ -18,6 +18,8 @@ const EvidenceMap = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/evidence-map" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/evidence-map" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
@@ -38,11 +40,9 @@ const EvidenceMap = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
-          <div className="block md:hidden">
-            <Breadcrumb />
-          </div>
+        <main className="relative z-10 pt-4">
 
           <section className="container mx-auto px-4 py-16 max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Evidence Map: Claims & Counter-Evidence</h1>
@@ -180,21 +180,24 @@ const EvidenceMap = () => {
               </table>
             </div>
 
-            {/* Call to Action */}
-            <Card className="p-8 bg-primary/5 border-primary/20">
-              <h3 className="text-2xl font-semibold mb-4">Experimental Next Steps</h3>
-              <p className="text-muted-foreground mb-6">
-                Rigorous experimental designs could resolve key uncertainties: double-blind trials with sham laser devices, control experiments with non-psychoactive substances, analysis of symbol morphology vs. classical form constants, replication with diverse light wavelengths.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button asChild variant="default" size="lg">
-                  <a href="/methods">View Research Methods →</a>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <a href="/critiques">Read Full Critiques →</a>
-                </Button>
+            {/* Related Resources */}
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/evidence-map" className="text-gold hover:underline font-medium">
+                  Evidence Map →
+                </a>
+                <a href="/critiques" className="text-gold hover:underline font-medium">
+                  Scientific Critiques →
+                </a>
+                <a href="/bibliography" className="text-gold hover:underline font-medium">
+                  Bibliography →
+                </a>
               </div>
-            </Card>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
+            </div>
           </section>
         </main>
 
