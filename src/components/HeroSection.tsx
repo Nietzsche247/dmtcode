@@ -29,10 +29,10 @@ export const HeroSection = () => {
           DMT Code Visual Symbol Catalogue
         </h1>
         <p className="text-xl md:text-2xl text-gold font-semibold leading-relaxed max-w-4xl mx-auto">
-          Community archive and research hub for Danny Goler's 650 nm laser protocol · 3,000+ replicators · 87% inter-subject consistency in reported visual symbols
+          An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.
         </p>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          The 650 nm laser protocol developed by Danny Goler (validated by Chase Hughes) reliably elicits discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences.
+          Research archive for Danny Goler's 650 nm coherent light protocol. 3,000+ documented observations with 87% inter-subject consistency in reported discrete visual symbols.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
