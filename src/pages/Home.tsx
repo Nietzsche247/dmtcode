@@ -99,17 +99,31 @@ const Home = () => {
           <EmailCapture />
           
           {/* Registry Link */}
-          <div className="container mx-auto px-4 py-12 text-center">
-            <p className="text-gold mb-4 text-lg">
-              Contribute to the open research catalogue →
-            </p>
-            <a 
-              href="/registry"
-              className="inline-block px-8 py-4 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium text-lg"
-              aria-label="Navigate to DMT Code Glyph Registry"
-            >
-              GLYPH REGISTRY
-            </a>
+          <div className="container mx-auto px-4 py-12 text-center space-y-8">
+            <div>
+              <p className="text-gold mb-4 text-lg">
+                Contribute to the open research catalogue →
+              </p>
+              <a 
+                href="/registry"
+                className="inline-block px-8 py-4 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium text-lg"
+                aria-label="Navigate to DMT Code Glyph Registry"
+              >
+                GLYPH REGISTRY
+              </a>
+            </div>
+            <div className="pt-4 border-t border-border">
+              <p className="text-muted-foreground mb-4 text-base">
+                Explore balanced analysis of claims and counter-evidence →
+              </p>
+              <a 
+                href="/evidence-map"
+                className="inline-block px-8 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-md transition-colors font-medium"
+                aria-label="View Evidence Map with claims and counter-evidence"
+              >
+                EVIDENCE MAP
+              </a>
+            </div>
           </div>
         </main>
 

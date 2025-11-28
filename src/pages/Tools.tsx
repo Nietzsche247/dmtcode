@@ -354,7 +354,10 @@ const Tools = () => {
                           <Button 
                             variant="outline" 
                             className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                            onClick={() => handleWaitlistClick(bundle.name + ' Bundle', bundle.tier)}
+                            onClick={() => {
+                              const utm = `?utm_source=bundle&utm_campaign=${encodeURIComponent(bundle.name)}&utm_tier=${bundle.tier}`;
+                              navigate(`/waitlist${utm}`);
+                            }}
                           >
                             Join Waitlist
                           </Button>
