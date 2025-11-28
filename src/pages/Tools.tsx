@@ -111,12 +111,27 @@ const Tools = () => {
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <meta name="keywords" content="affordable psychedelic journey merch, DMT laser tools, biohacking equipment, peyote journeys near Tucson, psychedelic gifts, 650nm neural priming mat, DMT code reality tools" />
         <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "Research Equipment Catalogue",
-            "description": "Curated equipment for 650nm laser protocol and N,N-DMT research"
-          })}
+          {JSON.stringify(
+            products.map(product => ({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              "name": product.node.title,
+              "description": product.node.description,
+              "image": product.node.images.edges[0]?.node.url,
+              "category": product.node.title.includes("Red Light") || product.node.title.includes("MitoMAT") || product.node.title.includes("Bon Charge") ? "Red Light Therapy" : "Psychedelic Integration",
+              "brand": {
+                "@type": "Brand",
+                "name": "DMT Code"
+              },
+              "offers": {
+                "@type": "Offer",
+                "url": `https://dmtcode.com/tools#${product.node.handle}`,
+                "priceCurrency": product.node.priceRange.minVariantPrice.currencyCode,
+                "price": product.node.priceRange.minVariantPrice.amount,
+                "availability": "https://schema.org/InStock"
+              }
+            }))
+          )}
         </script>
       </Helmet>
 

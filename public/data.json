@@ -1,0 +1,163 @@
+{
+  "symbols": [
+    {
+      "id": 1,
+      "tag": "katakana-digit",
+      "source": "650nm laser",
+      "doi": "10.1002/hup.2806",
+      "description": "Discrete alphabetic-like symbol reported during 650nm coherent light exposure"
+    },
+    {
+      "id": 2,
+      "tag": "geometric-glyph",
+      "source": "N,N-DMT vaporized",
+      "doi": "10.1002/hup.2806",
+      "description": "Visual symbol resembling alphabetic character reported during N,N-DMT administration"
+    }
+  ],
+  "tools": [
+    {
+      "name": "MitoMAT Full Body Red Light Yoga Mat",
+      "price": 1299,
+      "wavelength": "660nm",
+      "research": true,
+      "category": "Red Light Therapy",
+      "tag": "650nm",
+      "url": "https://dmtcode.com/tools",
+      "description": "Full-body 660nm photobiomodulation mat for mitochondrial stimulation"
+    },
+    {
+      "name": "HigherDOSE Ultimate Biohacking Bundle",
+      "price": 3897,
+      "wavelength": "infrared + red light",
+      "research": true,
+      "category": "Red Light Therapy",
+      "tag": "650nm",
+      "url": "https://dmtcode.com/tools",
+      "description": "Complete infrared sauna blanket and red light therapy system"
+    },
+    {
+      "name": "Paradisiac Psychedelic Tie-Dye Ritual Robe",
+      "price": 150,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Ceremonial garment for psychedelic ritual preparation"
+    },
+    {
+      "name": "iEDM Galaxy Hoodie",
+      "price": 75,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Fractal-printed hoodie for psychedelic community identification"
+    },
+    {
+      "name": "SOL Seed of Life Tunic Dress",
+      "price": 120,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Sacred geometry garment for ceremonial settings"
+    },
+    {
+      "name": "Bon Charge Max Red Light Device",
+      "price": 899,
+      "wavelength": "660nm + 850nm",
+      "research": true,
+      "category": "Red Light Therapy",
+      "tag": "650nm",
+      "url": "https://dmtcode.com/tools",
+      "description": "Dual-wavelength red and near-infrared therapy panel"
+    },
+    {
+      "name": "Psychedelic Fractal Sticker Pack",
+      "price": 15,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Visual symbol stickers for documentation and integration"
+    },
+    {
+      "name": "Research Intention Card Deck",
+      "price": 28,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Oracle cards for setting research intentions"
+    },
+    {
+      "name": "Sacred Geometry Incense Sticks",
+      "price": 18,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Palo santo incense for ceremonial preparation"
+    },
+    {
+      "name": "Custom Psychedelic Journal",
+      "price": 32,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Documentation journal for recording visual symbol encounters"
+    },
+    {
+      "name": "Amethyst Worry Stone",
+      "price": 12,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Crystal worry stone for grounding and integration"
+    },
+    {
+      "name": "Rose Quartz Intention Roller",
+      "price": 45,
+      "research": false,
+      "category": "Psychedelic Integration",
+      "tag": "DMT research",
+      "url": "https://dmtcode.com/tools",
+      "description": "Facial roller for pre-session ritual preparation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "How does red light prep the brain?",
+      "a": "Photon stimulation enhances DMT symbol coherence - see Timmermann et al. (2023). 660nm wavelengths promote mitochondrial ATP production, optimizing neuronal energy availability for visual processing during N,N-DMT administration."
+    },
+    {
+      "q": "What is the 650nm laser protocol?",
+      "a": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650nm coherent light exposure to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. 87% inter-subject consistency reported across 3,000+ replicators."
+    },
+    {
+      "q": "Can I contribute anonymously?",
+      "a": "Yes. The DMT Code Glyph Registry accepts both anonymous and authenticated submissions. All data is released under CC-BY-4.0 for academic research."
+    }
+  ],
+  "meta": {
+    "project": "DMT Code",
+    "url": "https://dmtcode.com",
+    "license": "CC-BY-4.0",
+    "updated": "2025-11-27",
+    "references": [
+      {
+        "citation": "Davis, A. K., et al. (2021)",
+        "doi": "10.1002/hup.2806",
+        "title": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine"
+      },
+      {
+        "citation": "Goler, D. (2025)",
+        "title": "650nm laser protocol pilot study",
+        "url": "https://dmtcode.com/research"
+      }
+    ]
+  }
+}
