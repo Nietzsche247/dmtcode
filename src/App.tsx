@@ -18,6 +18,7 @@ import EvidenceMap from "./pages/EvidenceMap";
 import Methods from "./pages/Methods";
 import Critiques from "./pages/Critiques";
 import About from "./pages/About";
+import OpenQuestions from "./pages/OpenQuestions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/methods" element={<Methods />} />
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
+          <Route path="/open-questions" element={<OpenQuestions />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
