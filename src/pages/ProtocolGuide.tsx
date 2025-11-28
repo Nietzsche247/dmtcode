@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,8 +56,9 @@ const ProtocolGuide = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
+        <main className="relative z-10 pt-4">
           <section className="container mx-auto px-4 py-16 max-w-5xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Complete 650 nm Laser Protocol</h1>
             <p className="text-lg text-muted-foreground mb-12">
@@ -284,6 +286,24 @@ const ProtocolGuide = () => {
                   View Complete Bibliography →
                 </a>
               </div>
+            </div>
+
+            <div className="mt-8 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/methods" className="text-gold hover:underline font-medium">
+                  Research Methods →
+                </a>
+                <a href="/faq" className="text-gold hover:underline font-medium">
+                  FAQ →
+                </a>
+                <a href="/tools" className="text-gold hover:underline font-medium">
+                  Equipment Catalogue →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
             </div>
           </section>
         </main>

@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
 
@@ -68,6 +69,66 @@ const Glossary = () => {
     {
       term: "Visual Cortex Coherence",
       definition: "Synchronized neural activity in primary and secondary visual processing regions. Timmermann et al. (2019) demonstrated enhanced coherence during N,N-DMT administration correlating with discrete symbol perception."
+    },
+    {
+      term: "Anecdotal Evidence",
+      definition: "First-person subjective reports not obtained through controlled experimental design. While valuable for hypothesis generation, anecdotal data lacks the rigor of double-blind randomized trials."
+    },
+    {
+      term: "Blinded Experiment",
+      definition: "Research methodology where participants (single-blind) or both participants and experimenters (double-blind) do not know which condition is being tested. Essential for controlling expectancy bias and placebo effects."
+    },
+    {
+      term: "CC-BY-4.0 License",
+      definition: "Creative Commons Attribution 4.0 International license. Permits redistribution and modification of registry data with proper attribution. All DMT Code registry submissions are released under this open-access license."
+    },
+    {
+      term: "Control Condition",
+      definition: "Experimental baseline for comparison (e.g., sober + laser, DMT + no laser). Required to isolate the causal effect of the 650 nm laser on visual symbol perception during N,N-DMT experiences."
+    },
+    {
+      term: "Cross-Replication",
+      definition: "Independent verification of reported phenomena by multiple observers under similar conditions. The 87% inter-subject consistency rate represents partial cross-replication of symbol observations."
+    },
+    {
+      term: "Dose-Response Relationship",
+      definition: "Correlation between substance quantity administered and intensity of observed effects. Registry metadata tracks approximate DMT dose to assess potential dose-symbol clarity relationships."
+    },
+    {
+      term: "Expectancy Bias",
+      definition: "Psychological phenomenon where prior knowledge or beliefs influence subjective perception and reporting. A key critique of non-blinded visual symbol reports during N,N-DMT experiences."
+    },
+    {
+      term: "JSON-LD Schema",
+      definition: "Structured data markup format for embedding machine-readable metadata in web pages. DMT Code uses JSON-LD for Dataset, FAQPage, and Product schemas to enhance search engine discoverability."
+    },
+    {
+      term: "Longitudinal Analysis",
+      definition: "Research tracking the same participants across multiple sessions over time. Authenticated registry submissions enable longitudinal comparison of symbol reports from the same observer."
+    },
+    {
+      term: "Null Hypothesis",
+      definition: "Statistical assumption that no relationship exists between variables being tested. For the 650 nm protocol: 'Laser exposure during DMT has no effect on visual symbol perception beyond placebo.'"
+    },
+    {
+      term: "Open-Access Data",
+      definition: "Research data freely available for download, analysis, and redistribution without paywalls or institutional barriers. All registry submissions are open-access under CC-BY-4.0."
+    },
+    {
+      term: "Pareidolia",
+      definition: "Cognitive tendency to perceive meaningful patterns (faces, symbols) in random or ambiguous stimuli. Potential alternative explanation for alphabetic-like symbol observations during altered states."
+    },
+    {
+      term: "Phosphene",
+      definition: "Sensation of seeing light without light actually entering the eye, caused by mechanical or electrical stimulation of retinal photoreceptors. Potential optical artifact explanation for laser-elicited symbols."
+    },
+    {
+      term: "Replication Crisis",
+      definition: "Scientific recognition that many published findings cannot be independently reproduced. The 650 nm protocol relies on anecdotal replication reports rather than controlled laboratory replication."
+    },
+    {
+      term: "Retinal Afterimage",
+      definition: "Visual impression that persists after exposure to bright light ceases. Diffraction grating patterns could produce afterimages misinterpreted as discrete symbols during altered states."
     }
   ];
 
@@ -111,8 +172,9 @@ const Glossary = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
+        <Breadcrumb />
         
-        <main className="relative z-10 pt-20">
+        <main className="relative z-10 pt-4">
           <section className="container mx-auto px-4 py-16 max-w-5xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Glossary of Terms</h1>
             <p className="text-lg text-muted-foreground mb-12">
@@ -136,6 +198,24 @@ const Glossary = () => {
               <a href="/registry" className="text-gold hover:underline font-medium">
                 Access Registry →
               </a>
+            </div>
+
+            <div className="mt-8 p-8 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <a href="/faq" className="text-gold hover:underline font-medium">
+                  FAQ →
+                </a>
+                <a href="/protocol-guide" className="text-gold hover:underline font-medium">
+                  Protocol Guide →
+                </a>
+                <a href="/bibliography" className="text-gold hover:underline font-medium">
+                  Bibliography →
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-6">
+                Last updated: 2025-11-28
+              </p>
             </div>
           </section>
         </main>
