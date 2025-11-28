@@ -103,13 +103,15 @@ const Tools = () => {
   return (
     <>
       <Helmet>
-        <title>Research Equipment - DMT Code Visual Symbol Catalogue</title>
+        <title>Research Equipment | DMT Code Visual Symbol Catalogue</title>
         <meta 
           name="description" 
           content="Curated 650 nm protocol equipment and research tools. $12 entry items to $2,000 research experiences. Verified equipment for symbol documentation." 
         />
         <link rel="canonical" href="https://dmtcode.com/tools" />
-        <meta name="keywords" content="affordable psychedelic journey merch, DMT laser tools, biohacking equipment, peyote journeys near Tucson, psychedelic gifts, 650nm neural priming mat, DMT code reality tools" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content="650nm laser equipment, red light therapy, DMT research tools, psychedelic integration, biohacking equipment" />
         <script type="application/ld+json">
           {JSON.stringify(
             products.map(product => ({
@@ -128,8 +130,10 @@ const Tools = () => {
                 "url": `https://dmtcode.com/tools#${product.node.handle}`,
                 "priceCurrency": product.node.priceRange.minVariantPrice.currencyCode,
                 "price": product.node.priceRange.minVariantPrice.amount,
-                "availability": "https://schema.org/InStock"
-              }
+                "availability": "https://schema.org/InStock",
+                "itemCondition": "https://schema.org/NewCondition"
+              },
+              "license": "https://creativecommons.org/licenses/by/4.0/"
             }))
           )}
         </script>
