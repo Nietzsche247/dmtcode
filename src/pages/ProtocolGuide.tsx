@@ -55,6 +55,26 @@ const ProtocolGuide = () => {
             ]
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://dmtcode.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Protocol Guide",
+                "item": "https://dmtcode.com/protocol-guide"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

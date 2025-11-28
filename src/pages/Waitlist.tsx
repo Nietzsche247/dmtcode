@@ -14,6 +14,26 @@ const Waitlist = () => {
           content="Join the DMT Code waitlist for early access to new experiments, verified equipment drops, and exclusive community updates. Be part of the Reality exploration movement." 
         />
         <link rel="canonical" href="https://dmtcode.com/waitlist" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://dmtcode.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Waitlist",
+                "item": "https://dmtcode.com/waitlist"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen">
