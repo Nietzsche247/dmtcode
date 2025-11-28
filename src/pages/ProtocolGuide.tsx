@@ -16,6 +16,9 @@ const ProtocolGuide = () => {
           content="Complete guide to the 650 nm laser protocol for discrete visual symbol documentation during N,N-DMT administration. Safety requirements and equipment specifications." 
         />
         <link rel="canonical" href="https://dmtcode.com/protocol-guide" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/protocol-guide" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/protocol-guide" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/protocol-guide" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
