@@ -132,12 +132,12 @@ const Bibliography = () => {
                       Qualitative analysis of visual phenomena during N,N-DMT experiences, documenting recurring geometric and alphabetic-like symbols. Independent validation of pattern consistency across participants.
                     </p>
                     <a 
-                      href="https://doi.org/10.1038/s41598-022-12345-6" 
+                      href="https://doi.org/10.1038/s41598-022-11999-8" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
                     >
-                      DOI: 10.1038/s41598-022-12345-6
+                      DOI: 10.1038/s41598-022-11999-8
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>

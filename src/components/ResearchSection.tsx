@@ -21,8 +21,8 @@ const researchPapers = [
     authors: "Davis et al.",
     year: 2021,
     journal: "Human Psychopharmacology",
-    doi: "10.1002/hup.2832",
-    url: "https://doi.org/10.1002/hup.2832",
+    doi: "10.1002/hup.2806",
+    url: "https://doi.org/10.1002/hup.2806",
     summary: "Survey documenting entity encounters during DMT experiences across diverse participant populations."
   },
   {
@@ -32,7 +32,7 @@ const researchPapers = [
     journal: "Scientific Reports",
     doi: "10.1038/s41598-022-11999-8",
     url: "https://doi.org/10.1038/s41598-022-11999-8",
-    summary: "Analysis of 3,779 DMT experience reports revealing 45.5% encountered entities or presences."
+    summary: "Qualitative analysis of visual phenomena during N,N-DMT experiences, documenting recurring geometric and alphabetic-like symbols."
   },
   {
     title: "An Encounter With the Other: Thematic analysis of DMT entity experiences",
