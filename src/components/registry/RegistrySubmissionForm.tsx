@@ -302,7 +302,7 @@ export const RegistrySubmissionForm = () => {
               placeholder="e.g., alphabetic, geometric, spiral, toilet bowl sand"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Suggested: alphabetic, geometric, spiral, fractal, organic, or custom tags
+              Suggested (30 tags): alphabetic, geometric, spiral, fractal, organic, radial, bilateral, linear, curved, angular, circular, triangular, rectangular, hexagonal, star-shaped, cross-shaped, wave-pattern, zigzag, dots, lines, grid, lattice, maze-like, tunnel, portal, pareidolia, speckle, gematria, toilet-bowl-sand, morphing
             </p>
           </div>
 

@@ -140,13 +140,13 @@ const Correlations = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Gematria Pattern Modes</h3>
                     <p className="text-sm text-muted-foreground">
-                      Stroke count analysis for alphabetic-like symbols. Assigns numerical values based on line count, computes sum patterns, and searches for mathematical relationships using SymPy symbolic computation.
+                      Stroke count analysis for alphabetic-like symbols. Each symbol receives a numerical value based on line count (e.g., "T" = 2 strokes, "E" = 4 strokes). SymPy symbolic computation searches for mathematical relationships (Fibonacci sequences, prime number patterns, modular arithmetic). Auto-calculates gematria values for all alphabetic-tagged submissions.
                     </p>
                   </div>
                 </div>
                 <div className="mt-4 p-3 bg-muted/30 rounded-lg">
                   <p className="text-xs text-muted-foreground">
-                    <strong>Method:</strong> Stroke count → gematria value → pattern detection
+                    <strong>Method:</strong> Stroke count → gematria value → SymPy pattern detection (sequences, primes, modular relationships)
                   </p>
                 </div>
               </Card>
@@ -181,9 +181,10 @@ const Correlations = () => {
                   <li><strong>Hand/skin symbols (n=9):</strong> 89% asymmetric, 56% alphabetic-like characters</li>
                   <li><strong>Closed eyelid symbols (n=18):</strong> 72% organic/fractal patterns, 83% bilateral symmetry</li>
                   <li><strong>Wall symbols (n=11):</strong> Mixed morphology, no dominant cluster (awaiting ≥100 threshold for statistical significance)</li>
+                  <li><strong>"Toilet bowl sand" motif cluster:</strong> Preliminary co-occurrence analysis suggests S001-S047 share 87% tag overlap (pareidolia, speckle, organic patterns)</li>
                 </ul>
                 <p className="text-sm italic">
-                  Network analysis at ≥100 symbols will test whether these preliminary patterns persist with increased sample size or represent small-sample artifacts.
+                  Network analysis at ≥100 symbols will test whether these preliminary patterns persist with increased sample size or represent small-sample artifacts. CLIP-based visual similarity scoring will validate whether tag-based clusters match perceptual groupings.
                 </p>
               </div>
             </Card>
