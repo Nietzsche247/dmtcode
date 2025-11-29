@@ -110,6 +110,8 @@ const Tools = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/tools" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/tools" />
         <meta name="robots" content="index, follow" />
         <meta name="keywords" content="650nm laser equipment, red light therapy, DMT research tools, psychedelic integration, biohacking equipment" />
         <script type="application/ld+json">

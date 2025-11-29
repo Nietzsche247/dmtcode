@@ -14,6 +14,9 @@ const Bibliography = () => {
           content="Complete bibliography of peer-reviewed research on discrete visual symbols during N,N-DMT administration, 650 nm laser protocol, and photobiomodulation studies." 
         />
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/bibliography" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/bibliography" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/bibliography" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
