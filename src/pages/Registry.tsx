@@ -6,6 +6,7 @@ import { RegistryRationale } from '@/components/registry/RegistryRationale';
 import { RegistryStatistics } from '@/components/registry/RegistryStatistics';
 import { RegistrySubmissionForm } from '@/components/registry/RegistrySubmissionForm';
 import { RegistryBrowser } from '@/components/registry/RegistryBrowser';
+import { RegistryDownloads } from '@/components/registry/RegistryDownloads';
 import { RegistryResources } from '@/components/registry/RegistryResources';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
@@ -122,6 +123,7 @@ const Registry = () => {
           <RegistryStatistics />
           <RegistrySubmissionForm />
           <RegistryBrowser />
+          <RegistryDownloads />
           <RegistryResources />
         </main>
 
