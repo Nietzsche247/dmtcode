@@ -27,8 +27,15 @@ export const RegistrySubmissionForm = () => {
     priorExposure: false,
     symmetry: '',
     tags: '',
-    notes: ''
+    notes: '',
+    timeSinceAppearance: '',
+    clarityRating: 3,
+    confidenceRating: 3,
+    symbolRecurrence: '',
+    lightingConditions: '',
+    bodyPosition: ''
   });
+  const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,6 +78,8 @@ export const RegistrySubmissionForm = () => {
         }
       }
       
+      const drawingDuration = drawingStartTime ? Math.floor((Date.now() - drawingStartTime) / 1000) : null;
+
       const { error } = await supabase.from('registry_glyphs').insert({
         user_id: userData.user?.id || null,
         image_data: imageData,
@@ -86,7 +95,14 @@ export const RegistrySubmissionForm = () => {
         symmetry: formData.symmetry || null,
         motif_tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
         free_text_notes: formData.notes || null,
-        voice_note_url: voiceNoteUrl
+        voice_note_url: voiceNoteUrl,
+        time_since_appearance: formData.timeSinceAppearance || null,
+        drawing_duration_seconds: drawingDuration,
+        clarity_rating: formData.clarityRating,
+        confidence_rating: formData.confidenceRating,
+        symbol_recurrence: formData.symbolRecurrence || null,
+        lighting_conditions: formData.lightingConditions || null,
+        body_position: formData.bodyPosition || null
       });
 
       if (error) throw error;
@@ -96,6 +112,7 @@ export const RegistrySubmissionForm = () => {
       // Reset form
       setImageData('');
       setVoiceNote(null);
+      setDrawingStartTime(null);
       setFormData({
         source: '',
         route: '',
@@ -109,7 +126,13 @@ export const RegistrySubmissionForm = () => {
         priorExposure: false,
         symmetry: '',
         tags: '',
-        notes: ''
+        notes: '',
+        timeSinceAppearance: '',
+        clarityRating: 3,
+        confidenceRating: 3,
+        symbolRecurrence: '',
+        lightingConditions: '',
+        bodyPosition: ''
       });
       
     } catch (error) {
@@ -125,11 +148,16 @@ export const RegistrySubmissionForm = () => {
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Submit a New Symbol</h2>
       
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8" id="metadata-form">
           {/* Canvas */}
           <div>
-            <Label className="text-lg mb-4 block">Draw Symbol (100 × 100 px)</Label>
-            <FabricDrawingCanvas onImageChange={setImageData} />
+            <Label className="text-lg mb-4 block">Draw Symbol (400 × 400 px, exports to 800 × 800 px)</Label>
+            <FabricDrawingCanvas onImageChange={(data) => {
+              setImageData(data);
+              if (!drawingStartTime && data) {
+                setDrawingStartTime(Date.now());
+              }
+            }} />
             <p className="text-sm text-muted-foreground mt-2">
               White background, 3 px brush. Available colors: black · white · red · gold
             </p>
@@ -283,6 +311,96 @@ export const RegistrySubmissionForm = () => {
               </Select>
             </div>
 
+            <div>
+              <Label htmlFor="timeSince">Time Since Symbol Appeared</Label>
+              <Select value={formData.timeSinceAppearance} onValueChange={(val) => setFormData({...formData, timeSinceAppearance: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select time" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="<5min">Less than 5 minutes</SelectItem>
+                  <SelectItem value="5-15min">5-15 minutes</SelectItem>
+                  <SelectItem value="15-30min">15-30 minutes</SelectItem>
+                  <SelectItem value="30min-1hr">30 minutes - 1 hour</SelectItem>
+                  <SelectItem value="1-6hr">1-6 hours</SelectItem>
+                  <SelectItem value="next-day">Next day</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="clarity">How Clearly Did You See This? (1-5)</Label>
+              <Input
+                id="clarity"
+                type="range"
+                min="1"
+                max="5"
+                value={formData.clarityRating}
+                onChange={(e) => setFormData({...formData, clarityRating: parseInt(e.target.value)})}
+                className="w-full"
+              />
+              <div className="text-center text-sm text-muted-foreground">{formData.clarityRating}/5</div>
+            </div>
+
+            <div>
+              <Label htmlFor="confidence">Confidence in This Drawing (1-5)</Label>
+              <Input
+                id="confidence"
+                type="range"
+                min="1"
+                max="5"
+                value={formData.confidenceRating}
+                onChange={(e) => setFormData({...formData, confidenceRating: parseInt(e.target.value)})}
+                className="w-full"
+              />
+              <div className="text-center text-sm text-muted-foreground">{formData.confidenceRating}/5</div>
+            </div>
+
+            <div>
+              <Label htmlFor="recurrence">Symbol Recurrence</Label>
+              <Select value={formData.symbolRecurrence} onValueChange={(val) => setFormData({...formData, symbolRecurrence: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select recurrence" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="first-time">First time seeing this</SelectItem>
+                  <SelectItem value="same-session">Same session</SelectItem>
+                  <SelectItem value="previous-sessions">Previous sessions</SelectItem>
+                  <SelectItem value="multiple-sessions">Multiple sessions</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="lighting">Lighting Conditions</Label>
+              <Select value={formData.lightingConditions} onValueChange={(val) => setFormData({...formData, lightingConditions: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select lighting" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="dim">Dim</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="bright">Bright</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="bodyPosition">Body Position</Label>
+              <Select value={formData.bodyPosition} onValueChange={(val) => setFormData({...formData, bodyPosition: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select position" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lying">Lying down</SelectItem>
+                  <SelectItem value="sitting">Sitting</SelectItem>
+                  <SelectItem value="reclining">Reclining</SelectItem>
+                  <SelectItem value="standing">Standing</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="prior" 
@@ -302,7 +420,7 @@ export const RegistrySubmissionForm = () => {
               placeholder="e.g., alphabetic, geometric, spiral, toilet bowl sand"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Suggested (30 tags): alphabetic, geometric, spiral, fractal, organic, radial, bilateral, linear, curved, angular, circular, triangular, rectangular, hexagonal, star-shaped, cross-shaped, wave-pattern, zigzag, dots, lines, grid, lattice, maze-like, tunnel, portal, pareidolia, speckle, gematria, toilet-bowl-sand, morphing
+              Suggested tags: geometric, alphabetic, radial, spiral, fractal, organic, bilateral, linear, curved, angular, circular, triangular, rectangular, hexagonal, star-shaped, cross-shaped, wave-pattern, zigzag, dots, lines, grid, lattice, maze-like, tunnel, portal, pareidolia, speckle, gematria, pulsing, scrolling, morphing, instructional, benevolent, unsettling
             </p>
           </div>
 

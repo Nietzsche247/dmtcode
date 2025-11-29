@@ -19,10 +19,17 @@ interface UserSymbol {
   source: string;
 }
 
+interface UserStats {
+  totalSubmissions: number;
+  totalValidations: number;
+  totalStarred: number;
+}
+
 const Profile = () => {
   const navigate = useNavigate();
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [starredSymbols, setStarredSymbols] = useState<UserSymbol[]>([]);
+  const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalValidations: 0, totalStarred: 0 });
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -40,6 +47,7 @@ const Profile = () => {
     setUserId(user.id);
     loadMySymbols(user.id);
     loadStarredSymbols(user.id);
+    loadStats(user.id);
   };
 
   const loadMySymbols = async (uid: string) => {
@@ -77,6 +85,28 @@ const Profile = () => {
     }
   };
 
+  const loadStats = async (uid: string) => {
+    // Count total validations received
+    const { data: myGlyphs } = await supabase
+      .from('registry_glyphs')
+      .select('id, confirmation_count')
+      .eq('user_id', uid);
+    
+    const totalValidations = myGlyphs?.reduce((sum, g) => sum + g.confirmation_count, 0) || 0;
+    
+    // Count starred
+    const { count: starredCount } = await supabase
+      .from('glyph_votes')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', uid);
+
+    setStats({
+      totalSubmissions: myGlyphs?.length || 0,
+      totalValidations,
+      totalStarred: starredCount || 0
+    });
+  };
+
   const unstar = async (glyphId: string) => {
     if (!userId) return;
     const { error } = await supabase
@@ -106,6 +136,28 @@ const Profile = () => {
           <div className="container mx-auto px-4">
             <h1 className="text-4xl font-bold mb-8">My Profile</h1>
 
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <Card className="p-6 bg-card/50 border-border">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalSubmissions}</div>
+                  <div className="text-sm text-muted-foreground">Symbols Submitted</div>
+                </div>
+              </Card>
+              <Card className="p-6 bg-card/50 border-border">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalValidations}</div>
+                  <div className="text-sm text-muted-foreground">Validations Received</div>
+                </div>
+              </Card>
+              <Card className="p-6 bg-card/50 border-border">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalStarred}</div>
+                  <div className="text-sm text-muted-foreground">Symbols Starred</div>
+                </div>
+              </Card>
+            </div>
+
             <Tabs defaultValue="my-symbols" className="w-full">
               <TabsList className="grid w-full grid-cols-2 max-w-md">
                 <TabsTrigger value="my-symbols">My Symbols ({mySymbols.length})</TabsTrigger>
@@ -128,8 +180,8 @@ const Profile = () => {
                           <img
                             src={symbol.image_data}
                             alt={`Your symbol - ${symbol.motif_tags?.slice(0, 3).join(', ') || 'visual symbol'}`}
-                            className="w-[100px] h-[100px] border border-border"
-                            style={{ imageRendering: 'pixelated' }}
+                            className="w-[200px] h-[200px] border border-border"
+                            style={{ imageRendering: 'auto' }}
                             loading="lazy"
                           />
                         </div>
@@ -166,8 +218,8 @@ const Profile = () => {
                           <img
                             src={symbol.image_data}
                             alt={`Starred symbol - ${symbol.motif_tags?.slice(0, 3).join(', ') || 'visual symbol'}`}
-                            className="w-[100px] h-[100px] border border-border"
-                            style={{ imageRendering: 'pixelated' }}
+                            className="w-[200px] h-[200px] border border-border"
+                            style={{ imageRendering: 'auto' }}
                             loading="lazy"
                           />
                         </div>

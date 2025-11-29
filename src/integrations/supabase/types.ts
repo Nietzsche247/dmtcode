@@ -153,66 +153,87 @@ export type Database = {
       registry_glyphs: {
         Row: {
           approximate_dose: string | null
+          body_position: string | null
+          clarity_rating: number | null
           communicative_intent: string | null
+          confidence_rating: number | null
           confirmation_count: number
           created_at: string
           depth: string | null
+          drawing_duration_seconds: number | null
           emotional_valence: string | null
           free_text_notes: string | null
           id: string
           image_data: string
           is_unique: boolean
+          lighting_conditions: string | null
           motif_tags: string[] | null
           motion: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
           route_of_administration: string | null
           source: string
+          symbol_recurrence: string | null
           symmetry: string | null
+          time_since_appearance: string | null
           updated_at: string
           user_id: string | null
           voice_note_url: string | null
         }
         Insert: {
           approximate_dose?: string | null
+          body_position?: string | null
+          clarity_rating?: number | null
           communicative_intent?: string | null
+          confidence_rating?: number | null
           confirmation_count?: number
           created_at?: string
           depth?: string | null
+          drawing_duration_seconds?: number | null
           emotional_valence?: string | null
           free_text_notes?: string | null
           id?: string
           image_data: string
           is_unique?: boolean
+          lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           route_of_administration?: string | null
           source: string
+          symbol_recurrence?: string | null
           symmetry?: string | null
+          time_since_appearance?: string | null
           updated_at?: string
           user_id?: string | null
           voice_note_url?: string | null
         }
         Update: {
           approximate_dose?: string | null
+          body_position?: string | null
+          clarity_rating?: number | null
           communicative_intent?: string | null
+          confidence_rating?: number | null
           confirmation_count?: number
           created_at?: string
           depth?: string | null
+          drawing_duration_seconds?: number | null
           emotional_valence?: string | null
           free_text_notes?: string | null
           id?: string
           image_data?: string
           is_unique?: boolean
+          lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           route_of_administration?: string | null
           source?: string
+          symbol_recurrence?: string | null
           symmetry?: string | null
+          time_since_appearance?: string | null
           updated_at?: string
           user_id?: string | null
           voice_note_url?: string | null
@@ -226,6 +247,7 @@ export type Database = {
           id: string
           tag_name: string
           upvotes: number
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -233,6 +255,7 @@ export type Database = {
           id?: string
           tag_name: string
           upvotes?: number
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -240,6 +263,7 @@ export type Database = {
           id?: string
           tag_name?: string
           upvotes?: number
+          user_id?: string | null
         }
         Relationships: [
           {

@@ -28,8 +28,8 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     if (!canvasRef.current) return;
 
     const canvas = new FabricCanvas(canvasRef.current, {
-      width: 100,
-      height: 100,
+      width: 400,
+      height: 400,
       backgroundColor: '#FFFFFF',
       isDrawingMode: true,
     });
@@ -42,14 +42,14 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     setFabricCanvas(canvas);
 
     // Save initial state
-    const initialState = canvas.toDataURL({ multiplier: 1 });
+    const initialState = canvas.toDataURL({ format: 'png', multiplier: 2 });
     setHistory([initialState]);
     setHistoryStep(0);
 
     // Track changes
     canvas.on('path:created', () => {
       saveState(canvas);
-      onImageChange(canvas.toDataURL({ multiplier: 1 }));
+      onImageChange(canvas.toDataURL({ format: 'png', multiplier: 2 }));
     });
 
     return () => {
@@ -64,7 +64,7 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
   }, [currentColor, fabricCanvas]);
 
   const saveState = (canvas: FabricCanvas) => {
-    const newState = canvas.toDataURL({ multiplier: 1 });
+    const newState = canvas.toDataURL({ format: 'png', multiplier: 2 });
     const newHistory = history.slice(0, historyStep + 1);
     newHistory.push(newState);
     setHistory(newHistory);
@@ -96,7 +96,7 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
       const ctx = fabricCanvas.getContext();
       ctx.drawImage(img, 0, 0);
       fabricCanvas.renderAll();
-      onImageChange(fabricCanvas.toDataURL({ multiplier: 1 }));
+      onImageChange(fabricCanvas.toDataURL({ format: 'png', multiplier: 2 }));
     };
     img.src = dataUrl;
   };
@@ -106,7 +106,7 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     fabricCanvas.clear();
     fabricCanvas.backgroundColor = '#FFFFFF';
     fabricCanvas.renderAll();
-    const clearedState = fabricCanvas.toDataURL({ multiplier: 1 });
+    const clearedState = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
     const newHistory = [...history.slice(0, historyStep + 1), clearedState];
     setHistory(newHistory);
     setHistoryStep(newHistory.length - 1);
@@ -119,9 +119,9 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
         <canvas
           ref={canvasRef}
           className="border-2 border-border cursor-crosshair"
-          style={{ width: '300px', height: '300px', imageRendering: 'pixelated' }}
+          style={{ width: '400px', height: '400px', imageRendering: 'auto' }}
           role="img"
-          aria-label="Draw visual symbol on 100 by 100 pixel canvas"
+          aria-label="Draw visual symbol on 400 by 400 pixel canvas"
           aria-describedby="metadata-form"
         />
       </div>
