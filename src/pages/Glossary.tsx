@@ -129,6 +129,18 @@ const Glossary = () => {
     {
       term: "Retinal Afterimage",
       definition: "Visual impression that persists after exposure to bright light ceases. Diffraction grating patterns could produce afterimages misinterpreted as discrete symbols during altered states."
+    },
+    {
+      term: "Speckle Pattern",
+      definition: "Random granular interference pattern produced when coherent light scatters from rough surfaces. Laser speckle may contribute to fine-scale visual texture during 650 nm protocol, potentially enhancing perceived symbol detail."
+    },
+    {
+      term: "Entoptic Phenomenon",
+      definition: "Visual effect originating within the eye itself rather than external light sources. Includes floaters, blood vessel shadows, and Haidinger's brushes. Coherent light exposure enhances visibility of normally subliminal entoptic structures."
+    },
+    {
+      term: "Form Constant",
+      definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states. Arise from primary visual cortex (V1) architecture. Distinguished from discrete alphabetic-like symbols reported in 650 nm protocol (Michael et al. 2021, DOI: 10.1098/rstb.2000.0769)."
     }
   ];
 

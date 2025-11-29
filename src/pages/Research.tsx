@@ -5,6 +5,7 @@ import { TheoriesSection } from '@/components/TheoriesSection';
 import { CommunityGlyphCodex } from '@/components/CommunityGlyphCodex';
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 
 const Research = () => {
@@ -18,6 +19,8 @@ const Research = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/research" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/research" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/research" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/research" />
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -64,7 +67,8 @@ const Research = () => {
         
         <main className="relative z-10">
           <Navigation />
-          <div className="pt-24">
+          <Breadcrumb />
+          <div className="pt-4">
             <ResearchSection />
             <TheoriesSection />
             <TheoriesDashboard />

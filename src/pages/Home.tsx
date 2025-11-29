@@ -66,8 +66,37 @@ const Home = () => {
           <HeroSection />
           <ExplainerSection />
           
+          {/* TL;DR Section */}
+          <section className="container mx-auto px-4 py-12 max-w-4xl">
+            <div className="p-8 bg-primary/5 border-2 border-primary/30 rounded-lg">
+              <h2 className="text-2xl font-bold mb-6 text-primary">TL;DR: What Is This?</h2>
+              <ul className="space-y-3 text-base">
+                <li className="flex items-start gap-3">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span><strong>650 nm laser protocol:</strong> Shining coherent red light through diffraction grating during N,N-DMT experiences elicits discrete visual symbols (Goler 2025, 3,000+ replicators)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span><strong>87% consistency:</strong> Independent observers report identical symbol morphology—alphabetic-like characters, geometric patterns (Davis et al. 2021, DOI: 10.1002/hup.2806)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span><strong>Open registry:</strong> Anonymous submissions, 100×100 px canvas drawings, structured metadata, CSV/JSON downloads under CC-BY-4.0</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span><strong>Neutral science:</strong> No medical claims, no mystical framing—just systematic documentation for academic research and pattern analysis</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span><strong>Critical perspectives:</strong> Methodological critiques, optical artifact hypotheses, and ethical considerations prominently featured (<a href="/evidence-map" className="text-gold hover:underline">Evidence Map</a>)</span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
           {/* Project Mission Section */}
-          <section className="container mx-auto px-4 py-16 max-w-4xl">
+          <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border">
             <h2 className="text-3xl font-bold mb-8">Project Mission</h2>
             <div className="space-y-6 text-lg leading-relaxed">
               <p>

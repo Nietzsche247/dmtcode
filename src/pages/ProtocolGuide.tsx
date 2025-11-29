@@ -274,6 +274,60 @@ const ProtocolGuide = () => {
               </Button>
             </Card>
 
+            {/* Safety & Legal Considerations */}
+            <Card className="p-8 mb-8 bg-destructive/5 border-destructive/30">
+              <h2 className="text-2xl font-bold mb-6 text-destructive">Comprehensive Safety & Legal Considerations</h2>
+              
+              <div className="space-y-6 text-base leading-relaxed">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Legal Compliance</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• <strong>Controlled Substance Status:</strong> N,N-DMT is classified as Schedule I controlled substance in United States (21 USC § 812), United Kingdom (Misuse of Drugs Act 1971), and most other jurisdictions. Unauthorized possession, manufacturing, or distribution carries severe criminal penalties including imprisonment.</li>
+                    <li>• <strong>Religious Exemptions:</strong> Limited legal exemptions exist for specific indigenous religious practices (e.g., União do Vegetal, Santo Daime in United States following 2006 Supreme Court ruling). Exemptions do NOT extend to individual recreational or research use.</li>
+                    <li>• <strong>Research Legality:</strong> Academic institutions may obtain DEA Schedule I research licenses for controlled clinical studies. This protocol document does NOT constitute legal authorization for controlled substance use.</li>
+                    <li>• <strong>International Variation:</strong> Some jurisdictions (e.g., Czech Republic, Portugal) have decriminalized personal possession of small quantities. Legal status varies by region—consult local statutes before considering protocol.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Medical Contraindications</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• <strong>Absolute contraindications:</strong> Personal or family history of schizophrenia, psychotic disorders, bipolar disorder, severe anxiety disorders, seizure disorders</li>
+                    <li>• <strong>Cardiovascular risks:</strong> N,N-DMT causes rapid blood pressure and heart rate elevation. Individuals with hypertension, heart conditions, or vascular disorders face heightened medical risk.</li>
+                    <li>• <strong>Drug interactions:</strong> NEVER combine with MAO inhibitors (SSRIs, TCAs, certain antibiotics), tramadol, or other serotonergic medications—risk of potentially fatal serotonin syndrome.</li>
+                    <li>• <strong>Pregnancy/nursing:</strong> No safety data available. Absolute contraindication during pregnancy, lactation, or while attempting conception.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Ocular Safety (650 nm Laser)</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• <strong>Class 2 laser safety:</strong> 650 nm wavelength at ≤5 mW power falls within Class 2 classification (IEC 60825-1 standard). Safe for brief exposure, but prolonged staring poses retinal damage risk.</li>
+                    <li>• <strong>Blink reflex protection:</strong> Natural aversion response (~0.25 seconds) typically prevents damage during sober operation. However, altered states may reduce protective reflexes.</li>
+                    <li>• <strong>Indirect projection recommended:</strong> Aim laser at surfaces (walls, hands) rather than direct viewing to minimize accidental eye exposure during impaired coordination.</li>
+                    <li>• <strong>Diffraction grating reduces intensity:</strong> Scattering through grating distributes beam energy, lowering peak intensity per retinal area. Still, avoid prolonged gaze at projected patterns.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Psychological Harm Reduction</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• <strong>Set and setting:</strong> Comfortable, safe environment with trusted sitter who remains sober. Remove hazards (stairs, sharp objects, hot surfaces) from immediate area.</li>
+                    <li>• <strong>Integration support:</strong> Post-experience integration critical for processing intense phenomenology. Seek professional support if distressing experiences persist beyond 72 hours.</li>
+                    <li>• <strong>Frequency limitations:</strong> No established safe frequency guidelines. Anecdotal consensus suggests minimum 2-week intervals to reduce psychological desensitization and maintain respect for intensity.</li>
+                    <li>• <strong>Reality testing:</strong> Understand that visual symbols, entity encounters, and perceived communications represent subjective altered-state phenomena—not validated objective reality.</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-background border border-destructive rounded-lg">
+                  <p className="text-sm font-semibold text-destructive mb-2">DMT Code Project Disclaimer</p>
+                  <p className="text-xs text-muted-foreground">
+                    This protocol guide is for educational purposes only in jurisdictions where legal. DMT Code Project does not advocate, encourage, or facilitate illegal substance use. We do not provide sourcing information, dosing recommendations, or medical advice. All information represents documentation of reported anecdotal experiences, not scientific validation or endorsement.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
             {/* References */}
             <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
               <h2 className="text-2xl font-semibold mb-4">Peer-Reviewed Citations</h2>
