@@ -1,0 +1,177 @@
+import { useEffect, useRef, useState } from 'react';
+import { Canvas as FabricCanvas, PencilBrush } from 'fabric';
+import { Button } from '@/components/ui/button';
+import { Undo2, Redo2, Trash2 } from 'lucide-react';
+
+interface FabricCanvasProps {
+  onImageChange: (imageData: string) => void;
+}
+
+export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
+  const [currentColor, setCurrentColor] = useState('#000000');
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyStep, setHistoryStep] = useState(-1);
+
+  const colors = [
+    { name: 'Black', value: '#000000' },
+    { name: 'White', value: '#FFFFFF' },
+    { name: 'Red', value: '#FF0000' },
+    { name: 'Gold', value: '#FFD700' }
+  ];
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = new FabricCanvas(canvasRef.current, {
+      width: 100,
+      height: 100,
+      backgroundColor: '#FFFFFF',
+      isDrawingMode: true,
+    });
+
+    const brush = new PencilBrush(canvas);
+    brush.color = currentColor;
+    brush.width = 3;
+    canvas.freeDrawingBrush = brush;
+
+    setFabricCanvas(canvas);
+
+    // Save initial state
+    const initialState = canvas.toDataURL({ multiplier: 1 });
+    setHistory([initialState]);
+    setHistoryStep(0);
+
+    // Track changes
+    canvas.on('path:created', () => {
+      saveState(canvas);
+      onImageChange(canvas.toDataURL({ multiplier: 1 }));
+    });
+
+    return () => {
+      canvas.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!fabricCanvas || !fabricCanvas.freeDrawingBrush) return;
+    fabricCanvas.freeDrawingBrush.color = currentColor;
+  }, [currentColor, fabricCanvas]);
+
+  const saveState = (canvas: FabricCanvas) => {
+    const newState = canvas.toDataURL({ multiplier: 1 });
+    const newHistory = history.slice(0, historyStep + 1);
+    newHistory.push(newState);
+    setHistory(newHistory);
+    setHistoryStep(newHistory.length - 1);
+  };
+
+  const undo = () => {
+    if (historyStep > 0 && fabricCanvas) {
+      const newStep = historyStep - 1;
+      setHistoryStep(newStep);
+      loadFromHistory(history[newStep]);
+    }
+  };
+
+  const redo = () => {
+    if (historyStep < history.length - 1 && fabricCanvas) {
+      const newStep = historyStep + 1;
+      setHistoryStep(newStep);
+      loadFromHistory(history[newStep]);
+    }
+  };
+
+  const loadFromHistory = (dataUrl: string) => {
+    if (!fabricCanvas) return;
+    const img = new Image();
+    img.onload = () => {
+      fabricCanvas.clear();
+      fabricCanvas.backgroundColor = '#FFFFFF';
+      const ctx = fabricCanvas.getContext();
+      ctx.drawImage(img, 0, 0);
+      fabricCanvas.renderAll();
+      onImageChange(fabricCanvas.toDataURL({ multiplier: 1 }));
+    };
+    img.src = dataUrl;
+  };
+
+  const clearCanvas = () => {
+    if (!fabricCanvas) return;
+    fabricCanvas.clear();
+    fabricCanvas.backgroundColor = '#FFFFFF';
+    fabricCanvas.renderAll();
+    const clearedState = fabricCanvas.toDataURL({ multiplier: 1 });
+    const newHistory = [...history.slice(0, historyStep + 1), clearedState];
+    setHistory(newHistory);
+    setHistoryStep(newHistory.length - 1);
+    onImageChange('');
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-center">
+        <canvas
+          ref={canvasRef}
+          className="border-2 border-border cursor-crosshair"
+          style={{ width: '300px', height: '300px', imageRendering: 'pixelated' }}
+          role="img"
+          aria-label="Draw visual symbol on 100 by 100 pixel canvas"
+          aria-describedby="metadata-form"
+        />
+      </div>
+
+      <div className="flex gap-2 justify-center flex-wrap">
+        {colors.map((color) => (
+          <button
+            key={color.value}
+            type="button"
+            onClick={() => setCurrentColor(color.value)}
+            className={`w-10 h-10 rounded border-2 transition-all ${
+              currentColor === color.value ? 'border-primary scale-110' : 'border-border'
+            }`}
+            style={{ backgroundColor: color.value }}
+            title={color.name}
+            aria-label={`Select ${color.name} color`}
+          />
+        ))}
+      </div>
+
+      <div className="flex justify-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={undo}
+          disabled={historyStep <= 0}
+          aria-label="Undo last drawing action"
+        >
+          <Undo2 className="w-4 h-4 mr-1" />
+          Undo
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={redo}
+          disabled={historyStep >= history.length - 1}
+          aria-label="Redo drawing action"
+        >
+          <Redo2 className="w-4 h-4 mr-1" />
+          Redo
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={clearCanvas}
+          aria-label="Clear canvas"
+        >
+          <Trash2 className="w-4 h-4 mr-1" />
+          Clear
+        </Button>
+      </div>
+    </div>
+  );
+};

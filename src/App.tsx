@@ -19,7 +19,9 @@ import Methods from "./pages/Methods";
 import Critiques from "./pages/Critiques";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -44,7 +46,8 @@ const App = () => (
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -7,16 +7,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { DrawingCanvas } from './DrawingCanvas';
+import { FabricDrawingCanvas } from './FabricCanvas';
+import { VoiceNoteRecorder } from './VoiceNoteRecorder';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const RegistrySubmissionForm = () => {
   const [imageData, setImageData] = useState<string>('');
+  const [voiceNote, setVoiceNote] = useState<Blob | null>(null);
   const [formData, setFormData] = useState({
     source: '',
     route: '',
     dose: '',
     surface: '',
+    color: '',
     depth: '',
     motion: '',
     valence: '',
@@ -46,6 +49,28 @@ export const RegistrySubmissionForm = () => {
     try {
       const { data: userData } = await supabase.auth.getUser();
       
+      // Generate symbol ID with user initials
+      const userEmail = userData.user?.email || 'anon';
+      const initials = userEmail.split('@')[0].substring(0, 3).toUpperCase();
+      const timestamp = Date.now().toString().slice(-4);
+      const symbolId = `S${timestamp}-${initials}`;
+
+      // Upload voice note if exists
+      let voiceNoteUrl = null;
+      if (voiceNote && userData.user?.id) {
+        const fileName = `${userData.user.id}/${symbolId}-voice.webm`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('glyphs')
+          .upload(fileName, voiceNote);
+
+        if (!uploadError && uploadData) {
+          const { data: urlData } = supabase.storage
+            .from('glyphs')
+            .getPublicUrl(fileName);
+          voiceNoteUrl = urlData.publicUrl;
+        }
+      }
+      
       const { error } = await supabase.from('registry_glyphs').insert({
         user_id: userData.user?.id || null,
         image_data: imageData,
@@ -60,20 +85,23 @@ export const RegistrySubmissionForm = () => {
         prior_exposure: formData.priorExposure,
         symmetry: formData.symmetry || null,
         motif_tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
-        free_text_notes: formData.notes || null
+        free_text_notes: formData.notes || null,
+        voice_note_url: voiceNoteUrl
       });
 
       if (error) throw error;
 
-      toast.success('Symbol submitted to registry');
+      toast.success(`Symbol ${symbolId} added—star similar ones in gallery!`);
       
       // Reset form
       setImageData('');
+      setVoiceNote(null);
       setFormData({
         source: '',
         route: '',
         dose: '',
         surface: '',
+        color: '',
         depth: '',
         motion: '',
         valence: '',
@@ -101,7 +129,7 @@ export const RegistrySubmissionForm = () => {
           {/* Canvas */}
           <div>
             <Label className="text-lg mb-4 block">Draw Symbol (100 × 100 px)</Label>
-            <DrawingCanvas onImageChange={setImageData} />
+            <FabricDrawingCanvas onImageChange={setImageData} />
             <p className="text-sm text-muted-foreground mt-2">
               White background, 3 px brush. Available colors: black · white · red · gold
             </p>
@@ -136,79 +164,106 @@ export const RegistrySubmissionForm = () => {
 
             <div>
               <Label htmlFor="dose">Approximate Dose</Label>
-              <Input
-                id="dose"
-                value={formData.dose}
-                onChange={(e) => setFormData({...formData, dose: e.target.value})}
-                placeholder="e.g., 20 mg, unknown"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="surface">Perceived Surface</Label>
-              <Input
-                id="surface"
-                value={formData.surface}
-                onChange={(e) => setFormData({...formData, surface: e.target.value})}
-                placeholder="e.g., wall, ceiling, eyelids"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="depth">Depth</Label>
-              <Select value={formData.depth} onValueChange={(val) => setFormData({...formData, depth: val})}>
+              <Select value={formData.dose} onValueChange={(val) => setFormData({...formData, dose: val})}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select depth" />
+                  <SelectValue placeholder="Select dose level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="surface">Surface level</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="deep">Deep immersion</SelectItem>
+                  <SelectItem value="sub-threshold">Sub-threshold</SelectItem>
+                  <SelectItem value="breakthrough">Breakthrough</SelectItem>
+                  <SelectItem value="megadose">Megadose</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label htmlFor="motion">Motion</Label>
+              <Label htmlFor="surface">Perceived Surface</Label>
+              <Select value={formData.surface} onValueChange={(val) => setFormData({...formData, surface: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select surface" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="wall">Wall</SelectItem>
+                  <SelectItem value="ceiling">Ceiling</SelectItem>
+                  <SelectItem value="eyelids">Eyelids (closed eyes)</SelectItem>
+                  <SelectItem value="toilet-bowl">Toilet bowl</SelectItem>
+                  <SelectItem value="hand">Hand/skin</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="color">Symbol Color</Label>
+              <Select value={formData.color} onValueChange={(val) => setFormData({...formData, color: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select color" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="red">Red</SelectItem>
+                  <SelectItem value="emerald">Emerald green</SelectItem>
+                  <SelectItem value="shifting">Shifting/multi-color</SelectItem>
+                  <SelectItem value="sand">Sand/beige</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="depth">Depth Perception</Label>
+              <Select value={formData.depth} onValueChange={(val) => setFormData({...formData, depth: val})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select depth" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2d">2D (flat)</SelectItem>
+                  <SelectItem value="3d">3D (depth)</SelectItem>
+                  <SelectItem value="4d-morph">4D morphing</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="motion">Motion Pattern</Label>
               <Select value={formData.motion} onValueChange={(val) => setFormData({...formData, motion: val})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select motion" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="static">Static</SelectItem>
-                  <SelectItem value="rotating">Rotating</SelectItem>
                   <SelectItem value="pulsing">Pulsing</SelectItem>
+                  <SelectItem value="scrolling">Scrolling/moving</SelectItem>
                   <SelectItem value="morphing">Morphing</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label htmlFor="valence">Emotional Valence</Label>
+              <Label htmlFor="valence">Emotional Tone</Label>
               <Select value={formData.valence} onValueChange={(val) => setFormData({...formData, valence: val})}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select valence" />
+                  <SelectValue placeholder="Select emotional tone" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="instructional">Instructional</SelectItem>
+                  <SelectItem value="benevolent">Benevolent</SelectItem>
                   <SelectItem value="neutral">Neutral</SelectItem>
-                  <SelectItem value="positive">Positive</SelectItem>
-                  <SelectItem value="negative">Negative</SelectItem>
-                  <SelectItem value="mixed">Mixed</SelectItem>
+                  <SelectItem value="unsettling">Unsettling</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <Label htmlFor="intent">Apparent Communicative Intent</Label>
+              <Label htmlFor="intent">Communicative Intent</Label>
               <Select value={formData.intent} onValueChange={(val) => setFormData({...formData, intent: val})}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select intent" />
+                  <SelectValue placeholder="Perceived communication" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None apparent</SelectItem>
-                  <SelectItem value="instructive">Instructive</SelectItem>
-                  <SelectItem value="welcoming">Welcoming</SelectItem>
-                  <SelectItem value="warning">Warning</SelectItem>
+                  <SelectItem value="yes">Yes—felt intentional</SelectItem>
+                  <SelectItem value="no">No—purely visual</SelectItem>
+                  <SelectItem value="uncertain">Uncertain</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -244,17 +299,25 @@ export const RegistrySubmissionForm = () => {
               id="tags"
               value={formData.tags}
               onChange={(e) => setFormData({...formData, tags: e.target.value})}
-              placeholder="e.g., geometric, organic, spiral"
+              placeholder="e.g., alphabetic, geometric, spiral, toilet bowl sand"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              Suggested: alphabetic, geometric, spiral, fractal, organic, or custom tags
+            </p>
           </div>
 
           <div>
-            <Label htmlFor="notes">Additional Notes</Label>
+            <Label>Voice Note (Optional)</Label>
+            <VoiceNoteRecorder onRecordingChange={setVoiceNote} />
+          </div>
+
+          <div>
+            <Label htmlFor="notes">Additional Free-Text Notes</Label>
             <Textarea
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({...formData, notes: e.target.value})}
-              placeholder="Any additional context or observations"
+              placeholder="Any additional context, sensations, or observations"
               rows={4}
             />
           </div>
