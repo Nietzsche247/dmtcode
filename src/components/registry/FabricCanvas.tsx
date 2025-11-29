@@ -14,6 +14,10 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     const saved = localStorage.getItem('dmtcode-canvas-color');
     return saved || '#000000';
   });
+  const [brushSize, setBrushSize] = useState(() => {
+    const saved = localStorage.getItem('dmtcode-brush-size');
+    return saved ? parseInt(saved) : 3;
+  });
   const [history, setHistory] = useState<string[]>([]);
   const [historyStep, setHistoryStep] = useState(-1);
 
@@ -36,7 +40,7 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
 
     const brush = new PencilBrush(canvas);
     brush.color = currentColor;
-    brush.width = 3;
+    brush.width = brushSize;
     canvas.freeDrawingBrush = brush;
 
     setFabricCanvas(canvas);
@@ -49,8 +53,23 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     // Track changes
     canvas.on('path:created', () => {
       saveState(canvas);
-      onImageChange(canvas.toDataURL({ format: 'png', multiplier: 2 }));
+      const dataUrl = canvas.toDataURL({ format: 'png', multiplier: 2 });
+      onImageChange(dataUrl);
+      // Auto-save to localStorage
+      localStorage.setItem('dmtcode-canvas-draft', dataUrl);
     });
+
+    // Load draft if exists
+    const draft = localStorage.getItem('dmtcode-canvas-draft');
+    if (draft) {
+      const img = new Image();
+      img.onload = () => {
+        const ctx = canvas.getContext();
+        ctx.drawImage(img, 0, 0);
+        canvas.renderAll();
+      };
+      img.src = draft;
+    }
 
     return () => {
       canvas.dispose();
@@ -62,6 +81,12 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     fabricCanvas.freeDrawingBrush.color = currentColor;
     localStorage.setItem('dmtcode-canvas-color', currentColor);
   }, [currentColor, fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas || !fabricCanvas.freeDrawingBrush) return;
+    fabricCanvas.freeDrawingBrush.width = brushSize;
+    localStorage.setItem('dmtcode-brush-size', brushSize.toString());
+  }, [brushSize, fabricCanvas]);
 
   const saveState = (canvas: FabricCanvas) => {
     const newState = canvas.toDataURL({ format: 'png', multiplier: 2 });
@@ -111,7 +136,10 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
     setHistory(newHistory);
     setHistoryStep(newHistory.length - 1);
     onImageChange('');
+    localStorage.removeItem('dmtcode-canvas-draft');
   };
+
+  const brushSizes = [1, 3, 5, 8];
 
   return (
     <div className="space-y-4">
@@ -126,20 +154,39 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
         />
       </div>
 
-      <div className="flex gap-2 justify-center flex-wrap">
-        {colors.map((color) => (
-          <button
-            key={color.value}
-            type="button"
-            onClick={() => setCurrentColor(color.value)}
-            className={`w-10 h-10 rounded border-2 transition-all ${
-              currentColor === color.value ? 'border-primary scale-110' : 'border-border'
-            }`}
-            style={{ backgroundColor: color.value }}
-            title={color.name}
-            aria-label={`Select ${color.name} color`}
-          />
-        ))}
+      <div className="space-y-3">
+        <div className="flex gap-2 justify-center flex-wrap">
+          {colors.map((color) => (
+            <button
+              key={color.value}
+              type="button"
+              onClick={() => setCurrentColor(color.value)}
+              className={`w-10 h-10 rounded border-2 transition-all ${
+                currentColor === color.value ? 'border-primary scale-110' : 'border-border'
+              }`}
+              style={{ backgroundColor: color.value }}
+              title={color.name}
+              aria-label={`Select ${color.name} color`}
+            />
+          ))}
+        </div>
+
+        <div className="flex gap-2 justify-center items-center flex-wrap">
+          <span className="text-sm text-muted-foreground">Brush:</span>
+          {brushSizes.map((size) => (
+            <button
+              key={size}
+              type="button"
+              onClick={() => setBrushSize(size)}
+              className={`w-10 h-10 rounded border-2 transition-all flex items-center justify-center text-xs ${
+                brushSize === size ? 'border-primary bg-primary/10' : 'border-border'
+              }`}
+              aria-label={`Select ${size}px brush size`}
+            >
+              {size}px
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex justify-center gap-2">

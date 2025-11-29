@@ -275,6 +275,70 @@ export type Database = {
           },
         ]
       }
+      symbol_tag_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symbol_tag_votes_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      symbol_tags: {
+        Row: {
+          created_at: string | null
+          glyph_id: string
+          id: string
+          tag_name: string
+          upvotes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          glyph_id: string
+          id?: string
+          tag_name: string
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          glyph_id?: string
+          id?: string
+          tag_name?: string
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symbol_tags_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tag_votes: {
         Row: {
           created_at: string

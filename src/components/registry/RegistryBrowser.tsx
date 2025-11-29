@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Star, Flag } from 'lucide-react';
 import { toast } from 'sonner';
+import { TagsManager } from './TagsManager';
 
 interface RegistryGlyph {
   id: string;
@@ -279,15 +280,18 @@ export const RegistryBrowser = () => {
                 </Button>
               </div>
 
-              <div className="text-center mb-4">
-                <p className="text-sm text-muted-foreground mb-2">
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground mb-3 text-center">
                   Independently reported by <span className="font-semibold text-foreground">{glyph.confirmation_count}</span> participant{glyph.confirmation_count !== 1 ? 's' : ''}
                 </p>
                 
+                <TagsManager glyphId={glyph.id} />
+                
                 {glyph.motif_tags && glyph.motif_tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 justify-center mb-4">
+                  <div className="flex flex-wrap gap-2 justify-center mt-3">
+                    <span className="text-xs text-muted-foreground">Original tags:</span>
                     {glyph.motif_tags.slice(0, 3).map((tag, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs">
+                      <Badge key={idx} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
                     ))}

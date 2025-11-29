@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { FabricDrawingCanvas } from './FabricCanvas';
 import { VoiceNoteRecorder } from './VoiceNoteRecorder';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DuplicateDetection } from './DuplicateDetection';
 
 export const RegistrySubmissionForm = () => {
   const [imageData, setImageData] = useState<string>('');
@@ -37,8 +38,10 @@ export const RegistrySubmissionForm = () => {
   });
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDuplicateCheck, setShowDuplicateCheck] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePreview = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!imageData) {
@@ -51,6 +54,45 @@ export const RegistrySubmissionForm = () => {
       return;
     }
 
+    setIsPreview(true);
+    setShowDuplicateCheck(true);
+  };
+
+  const handleDuplicateDecision = async (decision: 'same' | 'similar' | 'unique', matchedId?: string) => {
+    if (decision === 'same' && matchedId) {
+      // Add validation to existing symbol
+      const { data: userData } = await supabase.auth.getUser();
+      await supabase.from('registry_confirmations').insert({
+        glyph_id: matchedId,
+        user_id: userData.user?.id || null,
+        session_id: `session_${Date.now()}`,
+        confirmation_type: 'exact'
+      });
+      
+      // Update count
+      const { data: glyph } = await supabase
+        .from('registry_glyphs')
+        .select('confirmation_count')
+        .eq('id', matchedId)
+        .single();
+      
+      if (glyph) {
+        await supabase
+          .from('registry_glyphs')
+          .update({ confirmation_count: glyph.confirmation_count + 1 })
+          .eq('id', matchedId);
+      }
+
+      toast.success('Added validation to existing symbol!');
+      resetForm();
+      return;
+    }
+
+    // Continue with submission for unique/similar
+    await submitSymbol();
+  };
+
+  const submitSymbol = async () => {
     setIsSubmitting(true);
 
     try {
@@ -108,32 +150,7 @@ export const RegistrySubmissionForm = () => {
       if (error) throw error;
 
       toast.success(`Symbol ${symbolId} added—star similar ones in gallery!`);
-      
-      // Reset form
-      setImageData('');
-      setVoiceNote(null);
-      setDrawingStartTime(null);
-      setFormData({
-        source: '',
-        route: '',
-        dose: '',
-        surface: '',
-        color: '',
-        depth: '',
-        motion: '',
-        valence: '',
-        intent: '',
-        priorExposure: false,
-        symmetry: '',
-        tags: '',
-        notes: '',
-        timeSinceAppearance: '',
-        clarityRating: 3,
-        confidenceRating: 3,
-        symbolRecurrence: '',
-        lightingConditions: '',
-        bodyPosition: ''
-      });
+      resetForm();
       
     } catch (error) {
       console.error('Submission error:', error);
@@ -143,12 +160,48 @@ export const RegistrySubmissionForm = () => {
     }
   };
 
+  const resetForm = () => {
+    setImageData('');
+    setVoiceNote(null);
+    setDrawingStartTime(null);
+    setIsPreview(false);
+    setShowDuplicateCheck(false);
+    setFormData({
+      source: '',
+      route: '',
+      dose: '',
+      surface: '',
+      color: '',
+      depth: '',
+      motion: '',
+      valence: '',
+      intent: '',
+      priorExposure: false,
+      symmetry: '',
+      tags: '',
+      notes: '',
+      timeSinceAppearance: '',
+      clarityRating: 3,
+      confidenceRating: 3,
+      symbolRecurrence: '',
+      lightingConditions: '',
+      bodyPosition: ''
+    });
+    localStorage.removeItem('dmtcode-canvas-draft');
+  };
+
   return (
     <section id="submit" className="container mx-auto px-4 py-16">
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Submit a New Symbol</h2>
       
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
-        <form onSubmit={handleSubmit} className="space-y-8" id="metadata-form">
+        {showDuplicateCheck ? (
+          <DuplicateDetection 
+            currentImage={imageData}
+            onDecision={handleDuplicateDecision}
+          />
+        ) : (
+        <form onSubmit={handlePreview} className="space-y-8" id="metadata-form">
           {/* Canvas */}
           <div>
             <Label className="text-lg mb-4 block">Draw Symbol (400 × 400 px, exports to 800 × 800 px)</Label>
@@ -159,7 +212,7 @@ export const RegistrySubmissionForm = () => {
               }
             }} />
             <p className="text-sm text-muted-foreground mt-2">
-              White background, 3 px brush. Available colors: black · white · red · gold
+              White background, brush sizes: 1px, 3px, 5px, 8px. Colors: black · white · red · gold. Auto-saves every 30 seconds.
             </p>
           </div>
 
@@ -445,11 +498,12 @@ export const RegistrySubmissionForm = () => {
             size="lg" 
             className="w-full" 
             disabled={isSubmitting}
-            aria-label="Submit glyph symbol to registry"
+            aria-label="Preview and check for duplicates"
           >
-            {isSubmitting ? 'Submitting...' : 'Add to Registry'}
+            Preview & Check Duplicates
           </Button>
         </form>
+        )}
       </Card>
     </section>
   );
