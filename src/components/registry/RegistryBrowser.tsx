@@ -261,11 +261,11 @@ export const RegistryBrowser = () => {
           {filteredGlyphs.map((glyph) => (
             <Card key={glyph.id} className="p-6 bg-card border-border">
               <div className="flex justify-center mb-4 relative">
-               <img 
+                <img 
                   src={glyph.image_data} 
                   alt={`Registry glyph symbol - ${glyph.motif_tags?.slice(0, 3).join(', ') || 'visual symbol'} - reported ${glyph.confirmation_count} times`}
-                  className="w-[100px] h-[100px] border border-border"
-                  style={{ imageRendering: 'pixelated' }}
+                  className="w-[200px] h-[200px] border border-border"
+                  style={{ imageRendering: 'auto' }}
                   loading="lazy"
                 />
                 <Button
@@ -301,38 +301,38 @@ export const RegistryBrowser = () => {
                   size="sm" 
                   className="w-full"
                   onClick={() => handleVote(glyph.id, 'exact')}
-                  aria-label={`Vote exact match for glyph with ${glyph.confirmation_count} confirmations`}
+                  aria-label={`Vote I've seen this too - exact match for glyph with ${glyph.confirmation_count} confirmations`}
                 >
-                  Exact Match
+                  ★ I've Seen This Too
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => handleVote(glyph.id, 'similar')}
-                  aria-label={`Vote highly similar for glyph with ${glyph.confirmation_count} confirmations`}
-                >
-                  Highly Similar
-                </Button>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleVote(glyph.id, 'similar')}
+                    aria-label={`Vote similar for glyph with ${glyph.confirmation_count} confirmations`}
+                  >
+                    👍 Similar
+                  </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="flex-1"
                     onClick={() => handleVote(glyph.id, 'not_match')}
-                    aria-label={`Vote not this symbol for glyph with ${glyph.confirmation_count} confirmations`}
+                    aria-label={`Vote not matching for glyph with ${glyph.confirmation_count} confirmations`}
                   >
-                    Not This Symbol
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleFlag(glyph.id)}
-                    aria-label="Flag symbol for review"
-                  >
-                    <Flag className="w-4 h-4" />
+                    Different
                   </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleFlag(glyph.id)}
+                  aria-label="Flag symbol for review"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Flag className="w-4 h-4 mr-1" />
+                  Flag
+                </Button>
               </div>
             </Card>
           ))}

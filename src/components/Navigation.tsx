@@ -11,6 +11,7 @@ export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,6 +35,14 @@ export const Navigation = () => {
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     setIsAuthenticated(!!session);
+    if (session?.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', session.user.id)
+        .single();
+      setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'User');
+    }
   };
 
   const handleSignOut = async () => {
@@ -76,6 +85,7 @@ export const Navigation = () => {
               <CartDrawer />
               {isAuthenticated ? (
                 <>
+                  <span className="text-sm text-muted-foreground">Hi, {userName}</span>
                   <Button onClick={() => navigate('/profile')} variant="ghost" size="sm">Profile</Button>
                   <Button onClick={() => navigate('/admin')} variant="ghost" size="sm">Admin</Button>
                   <Button onClick={handleSignOut} variant="outline" size="sm">Sign Out</Button>
