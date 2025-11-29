@@ -10,7 +10,10 @@ interface FabricCanvasProps {
 export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
-  const [currentColor, setCurrentColor] = useState('#000000');
+  const [currentColor, setCurrentColor] = useState(() => {
+    const saved = localStorage.getItem('dmtcode-canvas-color');
+    return saved || '#000000';
+  });
   const [history, setHistory] = useState<string[]>([]);
   const [historyStep, setHistoryStep] = useState(-1);
 
@@ -57,6 +60,7 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
   useEffect(() => {
     if (!fabricCanvas || !fabricCanvas.freeDrawingBrush) return;
     fabricCanvas.freeDrawingBrush.color = currentColor;
+    localStorage.setItem('dmtcode-canvas-color', currentColor);
   }, [currentColor, fabricCanvas]);
 
   const saveState = (canvas: FabricCanvas) => {
