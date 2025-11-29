@@ -22,6 +22,8 @@ const Registry = () => {
         <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/registry" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/registry" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/registry" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Glyph Registry | DMT Code Visual Symbol Catalogue" />
         <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." />
