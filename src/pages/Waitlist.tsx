@@ -2,6 +2,7 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 
 const Waitlist = () => {
@@ -14,6 +15,10 @@ const Waitlist = () => {
           content="Join the DMT Code waitlist for early access to new experiments, verified equipment drops, and exclusive community updates. Be part of the Reality exploration movement." 
         />
         <link rel="canonical" href="https://dmtcode.com/waitlist" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/waitlist" />
+        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/waitlist" />
+        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/waitlist" />
+        <meta name="robots" content="index, follow" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -41,7 +46,8 @@ const Waitlist = () => {
         
         <main className="relative z-10">
           <Navigation />
-          <div className="pt-24">
+          <Breadcrumb />
+          <div className="pt-4">
             <section className="py-20 px-4">
               <div className="max-w-4xl mx-auto text-center space-y-8">
                 <h1 className="text-4xl md:text-6xl font-bold glow-text">
