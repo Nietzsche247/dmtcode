@@ -32,8 +32,8 @@ const EvidenceMap = () => {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
-            "datePublished": "2025-11-27",
-            "dateModified": "2025-11-27"
+            "datePublished": "2025-11-29",
+            "dateModified": "2025-11-29"
           })}
         </script>
         <script type="application/ld+json">
@@ -215,7 +215,7 @@ const EvidenceMap = () => {
                 </a>
               </div>
               <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-28
+                Last updated: 2025-11-29
               </p>
             </div>
           </section>
