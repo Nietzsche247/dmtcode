@@ -109,6 +109,7 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
       const newVoted = new Set(votedTags);
       newVoted.delete(tagId);
       setVotedTags(newVoted);
+      toast.success('Vote removed');
     } else {
       await supabase
         .from('symbol_tag_votes')
@@ -118,6 +119,7 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
         });
 
       setVotedTags(new Set([...votedTags, tagId]));
+      toast.success('Recorded');
     }
 
     loadTags();
@@ -162,7 +164,7 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
       )}
 
       <p className="text-xs text-muted-foreground">
-        Suggested: geometric, alphabetic, radial, spiral, pulsing, instructional, katakana-like
+        Suggested (30 tags): geometric, alphabetic, radial, spiral, pulsing, instructional, pareidolia, speckle, gematria, organic, fractal, bilateral, asymmetric, morphing, static, scrolling, archetypes, sand, toilet-bowl, ceiling, eyelids, hand, katakana-like, benevolent, unsettling, neutral, 2D, 3D, 4D, symbolic
       </p>
     </div>
   );
