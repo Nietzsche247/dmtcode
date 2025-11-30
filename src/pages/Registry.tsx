@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { RegistryHero } from '@/components/registry/RegistryHero';
 import { RegistryRationale } from '@/components/registry/RegistryRationale';
 import { RegistryStatistics } from '@/components/registry/RegistryStatistics';
-import { RegistrySubmissionForm } from '@/components/registry/RegistrySubmissionForm';
+import { LayeredSubmissionForm } from '@/components/registry/LayeredSubmissionForm';
 import { RegistryBrowser } from '@/components/registry/RegistryBrowser';
 import { RegistryDownloads } from '@/components/registry/RegistryDownloads';
 import { RegistryResources } from '@/components/registry/RegistryResources';
@@ -123,7 +123,7 @@ const Registry = () => {
           <RegistryHero />
           <RegistryRationale />
           <RegistryStatistics />
-          <RegistrySubmissionForm />
+          <LayeredSubmissionForm />
           <RegistryBrowser />
           <RegistryDownloads />
           <RegistryResources />
