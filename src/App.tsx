@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Research from "./pages/Research";
 import Tools from "./pages/Tools";
+import Woo from "./pages/Woo";
 import Registry from "./pages/Registry";
 import Correlations from "./pages/Correlations";
 import Waitlist from "./pages/Waitlist";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
           <Route path="/tools" element={<Tools />} />
+          <Route path="/woo" element={<Woo />} />
           <Route path="/registry" element={<Registry />} />
           <Route path="/correlations" element={<Correlations />} />
           <Route path="/waitlist" element={<Waitlist />} />

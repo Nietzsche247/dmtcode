@@ -74,6 +74,7 @@ export const Navigation = () => {
                 <button onClick={() => handleNavigation('/')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : ''}`}>Home</button>
                 <button onClick={() => handleNavigation('/research')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/research' ? 'text-primary' : ''}`}>Research</button>
                 <button onClick={() => handleNavigation('/tools')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/tools' ? 'text-primary' : ''}`}>Tools</button>
+                <button onClick={() => handleNavigation('/woo')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/woo' ? 'text-primary' : ''}`}>Mysticism</button>
                 <button onClick={() => handleNavigation('/registry')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/registry' ? 'text-primary' : ''}`}>Glyph Registry</button>
                 <button onClick={() => handleNavigation('/waitlist')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/waitlist' ? 'text-primary' : ''}`}>Join Waitlist</button>
                 <button onClick={() => handleNavigation('/evidence-map')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/evidence-map' ? 'text-primary' : ''}`}>Evidence</button>
@@ -109,6 +110,7 @@ export const Navigation = () => {
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Home</button>
               <button onClick={() => handleNavigation('/research')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Research</button>
               <button onClick={() => handleNavigation('/tools')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Tools</button>
+              <button onClick={() => handleNavigation('/woo')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Mysticism</button>
               <button onClick={() => handleNavigation('/registry')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Glyph Registry</button>
               <button onClick={() => handleNavigation('/waitlist')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Join Waitlist</button>
               <button onClick={() => handleNavigation('/evidence-map')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Evidence Map</button>
