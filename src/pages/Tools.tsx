@@ -418,6 +418,47 @@ const Tools = () => {
                   </div>
                 </div>
 
+                {/* Registry CTA */}
+                <div className="pt-8 text-center">
+                  <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-8 max-w-4xl mx-auto">
+                    <h3 className="text-xl md:text-2xl font-bold mb-4 glow-text">
+                      Test Your Equipment
+                    </h3>
+                    <p className="text-sm md:text-base text-muted-foreground mb-6">
+                      Upload symbols from your laser experiments to the community registry. 
+                      Help validate reproducibility across different wavelengths and refractive indices.
+                    </p>
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => navigate('/registry?utm_source=tools&utm_campaign=upload_cta')}
+                    >
+                      Upload Symbols from This Lens →
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Mysticism Store CTA */}
+                <div className="pt-8 text-center">
+                  <div className="bg-secondary/20 border-2 border-secondary/40 rounded-lg p-8 max-w-4xl mx-auto">
+                    <h3 className="text-xl md:text-2xl font-bold mb-4">
+                      Explore Mysticism & Symbolism
+                    </h3>
+                    <p className="text-sm md:text-base text-muted-foreground mb-6">
+                      Discover Jewish mysticism symbols and protective amulets. 
+                      Each item represents the power of characters and sacred letters in faith traditions.
+                    </p>
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      onClick={() => navigate('/woo?utm_source=tools&utm_campaign=mysticism_cta')}
+                    >
+                      View Mysticism Store →
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Disclaimer */}
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
