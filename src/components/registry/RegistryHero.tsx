@@ -5,6 +5,11 @@ export const RegistryHero = () => {
     document.getElementById('submit')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToNullReport = () => {
+    // Set null report mode and scroll to submit
+    window.location.href = '/registry?null=true#submit';
+  };
+
   const scrollToBrowse = () => {
     document.getElementById('browse')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -26,7 +31,15 @@ export const RegistryHero = () => {
           size="lg"
           className="text-lg"
         >
-          Submit a New Symbol
+          Submit a Symbol
+        </Button>
+        <Button 
+          onClick={scrollToNullReport}
+          variant="secondary"
+          size="lg"
+          className="text-lg border border-border"
+        >
+          I Saw Nothing
         </Button>
         <Button 
           onClick={scrollToBrowse}
@@ -37,6 +50,10 @@ export const RegistryHero = () => {
           Browse the Registry
         </Button>
       </div>
+      
+      <p className="text-sm text-muted-foreground mt-6 max-w-2xl mx-auto">
+        Null reports establish valuable baseline data for comparison
+      </p>
     </section>
   );
 };

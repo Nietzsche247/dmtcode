@@ -19,7 +19,7 @@ const Registry = () => {
           name="description" 
           content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." 
         />
-        <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0" />
+        <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0, null reports, baseline data" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/registry" />
         <link rel="alternate" hrefLang="es" href="https://dmtcode.com/registry" />
