@@ -1,39 +1,69 @@
+import { useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
-import { Button } from '@/components/ui/button';
 
 const EvidenceMap = () => {
+  useEffect(() => {
+    // Load TimelineJS CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css';
+    document.head.appendChild(link);
+
+    // Load TimelineJS script
+    const script = document.createElement('script');
+    script.src = 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js';
+    script.async = true;
+    script.onload = () => {
+      // Initialize timeline after script loads
+      if (window.TL && window.TL.Timeline) {
+        new window.TL.Timeline('timeline-embed', '/timeline.json', {
+          initial_zoom: 5,
+          start_at_end: false,
+          hash_bookmark: true,
+          scale_factor: 2,
+          timenav_height: 200,
+          marker_height_min: 30,
+          marker_width_min: 100,
+          default_bg_color: { r: 0, g: 0, b: 0 },
+          font: 'bitter-raleway'
+        });
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.head.removeChild(link);
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
-        <title>Evidence Map - Claims & Counter-Evidence | DMT Code</title>
+        <title>Evidence Timeline - 100 Years of DMT Research | DMT Code</title>
         <meta 
           name="description" 
-          content="Balanced analysis of claims and counter-evidence for 650 nm laser protocol and N,N-DMT visual symbols. Pro/con table with peer-reviewed citations." 
+          content="Interactive timeline from Klüver 1926 to Goler 2025. Explore 100 years of research into geometric hallucinations, N,N-DMT visual effects, and the 650 nm laser protocol." 
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/evidence-map" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/evidence-map" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "headline": "Evidence Map - Claims & Counter-Evidence Analysis",
-            "description": "Balanced analysis of claims and counter-evidence for 650 nm laser protocol and N,N-DMT visual symbols",
+            "headline": "Evidence Timeline - 100 Years of DMT Visual Research",
+            "description": "Interactive timeline covering Klüver's form constants (1926) to the 650 nm laser protocol (2025). 30 key events with peer-reviewed citations.",
             "author": {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
-            "datePublished": "2025-11-29",
-            "dateModified": "2025-11-29"
+            "datePublished": "2025-11-30",
+            "dateModified": "2025-11-30"
           })}
         </script>
         <script type="application/ld+json">
@@ -50,7 +80,7 @@ const EvidenceMap = () => {
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Evidence Map",
+                "name": "Evidence Timeline",
                 "item": "https://dmtcode.com/evidence-map"
               }
             ]
@@ -63,160 +93,57 @@ const EvidenceMap = () => {
         <Breadcrumb />
         
         <main className="relative z-10 pt-4">
+          <section className="container mx-auto px-4 py-12 max-w-7xl">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                Evidence Timeline: 100 Years of DMT Research
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                From Klüver's form constants (1926) to the 650 nm laser protocol (2025) — explore 30 key milestones with clickable DOIs and peer-reviewed citations
+              </p>
+            </div>
 
-          <section className="container mx-auto px-4 py-16 max-w-6xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8">Evidence Map: Claims & Counter-Evidence</h1>
-            <p className="text-lg text-muted-foreground mb-12">
-              Balanced analysis of reported phenomena, methodological critiques, and alternative explanations with peer-reviewed citations
-            </p>
+            {/* Timeline Container */}
+            <div 
+              id="timeline-embed" 
+              style={{ 
+                width: '100%', 
+                height: '700px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                backgroundColor: 'hsl(var(--background))'
+              }}
+            />
 
-            {/* Summary Overview */}
-            <Card className="p-8 bg-muted/30 border-border mb-12">
-              <h2 className="text-2xl font-semibold mb-6">Research Landscape Overview</h2>
-              <div className="space-y-4 text-base leading-relaxed">
-                <p>
-                  The 650 nm laser protocol developed by Danny Goler (2025) reports discrete visual symbols during N,N-DMT administration with 87% inter-subject consistency across 3,000+ replicators. This phenomenon intersects multiple research domains: psychopharmacology (Timmermann 2019), neuroscience of geometric hallucinations (Michael et al. 2021), and phenomenology of psychedelic experiences (Davis et al. 2021).
-                </p>
-                <p>
-                  Critical perspectives include optical artifact hypotheses (retinal afterimages, phosphene phenomena), methodological concerns about blinding and expectation effects, and simulation hypothesis interpretations. This evidence map presents claims and counter-evidence with equal weight.
-                </p>
-                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  <li><strong>Primary claim:</strong> 650 nm coherent light exposure during N,N-DMT experiences elicits consistent, reproducible visual symbols</li>
-                  <li><strong>Key critique:</strong> Lack of double-blind, placebo-controlled experimental validation</li>
-                  <li><strong>Alternative explanation:</strong> Optical artifacts (retinal phosphenes, afterimages) combined with pattern-seeking cognition</li>
-                  <li><strong>Methodological gap:</strong> No control experiments with non-psychoactive substances or sham laser devices</li>
-                </ul>
-              </div>
-            </Card>
-
-            {/* Evidence Table */}
-            <div className="overflow-x-auto mb-12">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-primary/10 border-b-2 border-primary">
-                    <th className="text-left p-4 font-semibold">Claim</th>
-                    <th className="text-left p-4 font-semibold">Supporting Evidence</th>
-                    <th className="text-left p-4 font-semibold">Counter-Evidence / Critique</th>
-                    <th className="text-left p-4 font-semibold">Citation</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-border hover:bg-muted/20 transition-colors">
-                    <td className="p-4 align-top">
-                      <strong>Goler Protocol Reproducibility</strong>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        650 nm laser + diffraction grating elicits consistent visual symbols during N,N-DMT experiences
-                      </p>
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      87% inter-subject consistency across 3,000+ replicators. Independent reports describe identical symbol morphology (alphabetic-like characters, geometric patterns).
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      No peer-reviewed, double-blind trials published. Consistency could result from shared expectations, online discussion groups priming observations, or optical artifacts common to all participants.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      <a href="https://dmtcode.com/research" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline inline-flex items-center gap-1">
-                        Goler 2025 <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr className="border-b border-border hover:bg-muted/20 transition-colors">
-                    <td className="p-4 align-top">
-                      <strong>Morris Skepticism</strong>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Critique of reproducibility claims and lack of controlled experimental design
-                      </p>
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Morris (unpublished observations) notes absence of control groups, placebo conditions, or blinded experimenters. Argues anecdotal reports cannot establish causal relationship between laser and symbol appearance.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Goler/Hughes dataset shows consistent reports across geographically dispersed, independent observers with no prior contact. Pattern complexity exceeds simple retinal phosphenes.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      <span className="text-muted-foreground">Morris critique (unpublished)</span>
-                    </td>
-                  </tr>
-
-                  <tr className="border-b border-border hover:bg-muted/20 transition-colors">
-                    <td className="p-4 align-top">
-                      <strong>Optical Artifact Hypothesis</strong>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Symbols are retinal afterimages, phosphenes, or diffraction grating visual effects
-                      </p>
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      650 nm coherent light exposure can produce retinal afterimages and phosphene phenomena. Diffraction gratings create predictable visual patterns. These effects occur without psychoactive substances.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Participants report symbols appearing on diverse surfaces (walls, ceilings, skin, closed eyelids) beyond retinal field. Symbol complexity and alphabetic-like structures exceed typical phosphene morphology. Persistence differs from afterimage timescales.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      <a href="https://doi.org/10.1098/rstb.2000.0769" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline inline-flex items-center gap-1">
-                        Michael et al. 2021 <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr className="border-b border-border hover:bg-muted/20 transition-colors">
-                    <td className="p-4 align-top">
-                      <strong>Simulation Hypothesis</strong>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Visual symbols represent "base code" of simulated reality revealed during altered consciousness
-                      </p>
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Alphabetic-like character morphology suggests information encoding. Consistent appearance across observers implies non-subjective origin. Participants describe symbols as "alien writing" or "reality substrate."
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Simulation hypothesis lacks testable predictions or falsifiable framework. Pattern recognition in ambiguous stimuli is well-documented cognitive phenomenon (pareidolia). No mechanism proposed for how DMT would "reveal" computational substrate.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      <span className="text-muted-foreground">Speculative interpretation</span>
-                    </td>
-                  </tr>
-
-                  <tr className="border-b border-border hover:bg-muted/20 transition-colors">
-                    <td className="p-4 align-top">
-                      <strong>Visual Cortex Form Constants</strong>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Geometric hallucinations arise from V1 cortex architecture during altered states
-                      </p>
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Michael et al. (2021) mathematical model explains how V1 cortex generates tunnels, spirals, honeycombs during psychedelic states. Form constants show cross-cultural consistency. Neuroanatomical basis well-established.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      Goler protocol symbols differ from classical form constants (tunnels, spirals). Alphabetic-like characters not predicted by V1 architecture models. Laser-dependent appearance suggests external stimulus interaction beyond endogenous cortical patterns.
-                    </td>
-                    <td className="p-4 align-top text-sm">
-                      <a href="https://doi.org/10.1098/rstb.2000.0769" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline inline-flex items-center gap-1">
-                        Michael et al. 2021 <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Context Note */}
+            <div className="mt-12 p-6 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 text-foreground">How to Use This Timeline</h2>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• <strong>Click any event</strong> to read full details and access DOI links</li>
+                <li>• <strong>Drag the timeline</strong> to explore different periods</li>
+                <li>• <strong>Zoom controls</strong> at bottom adjust detail level</li>
+                <li>• <strong>Gold links</strong> connect to peer-reviewed publications</li>
+              </ul>
             </div>
 
             {/* Related Resources */}
-            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
-              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <a href="/evidence-map" className="text-gold hover:underline font-medium">
-                  Evidence Map →
+            <div className="mt-8 p-6 bg-muted/30 border border-border rounded-lg">
+              <h2 className="text-xl font-semibold mb-4 text-foreground">Related Resources</h2>
+              <div className="grid md:grid-cols-4 gap-4">
+                <a href="/bibliography" className="text-gold hover:underline font-medium">
+                  Bibliography →
                 </a>
                 <a href="/critiques" className="text-gold hover:underline font-medium">
                   Scientific Critiques →
                 </a>
-                <a href="/bibliography" className="text-gold hover:underline font-medium">
-                  Bibliography →
+                <a href="/methods" className="text-gold hover:underline font-medium">
+                  Methodology →
+                </a>
+                <a href="/null-reports" className="text-gold hover:underline font-medium">
+                  Null Reports →
                 </a>
               </div>
-              <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-29
-              </p>
             </div>
           </section>
         </main>
@@ -226,5 +153,14 @@ const EvidenceMap = () => {
     </>
   );
 };
+
+// Extend Window type for TimelineJS
+declare global {
+  interface Window {
+    TL: {
+      Timeline: new (containerId: string, dataSource: string, options?: any) => void;
+    };
+  }
+}
 
 export default EvidenceMap;
