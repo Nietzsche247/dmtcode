@@ -6,6 +6,8 @@ import { SeoInsights } from './SeoInsights';
 import { OnPageAuditor } from './OnPageAuditor';
 import { ConversionFunnel } from './ConversionFunnel';
 import { SymbolModeration } from './SymbolModeration';
+import { NullDashboard } from './NullDashboard';
+import { AdminNotifications } from './AdminNotifications';
 
 export const AdminDashboard = () => {
   return (
@@ -21,18 +23,27 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="symbols" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8">
+            <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
+            <TabsTrigger value="nulls">Null Reports</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="competitor">Competitors</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="audit">Audit</TabsTrigger>
-            <TabsTrigger value="funnel">Funnel</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="alerts" className="space-y-4">
+            <AdminNotifications />
+          </TabsContent>
 
           <TabsContent value="symbols" className="space-y-4">
             <SymbolModeration />
+          </TabsContent>
+
+          <TabsContent value="nulls" className="space-y-4">
+            <NullDashboard />
           </TabsContent>
 
           <TabsContent value="geo" className="space-y-4">
@@ -53,10 +64,6 @@ export const AdminDashboard = () => {
 
           <TabsContent value="audit" className="space-y-4">
             <OnPageAuditor />
-          </TabsContent>
-
-          <TabsContent value="funnel" className="space-y-4">
-            <ConversionFunnel />
           </TabsContent>
         </Tabs>
       </div>
