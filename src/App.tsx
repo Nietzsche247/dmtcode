@@ -25,6 +25,7 @@ import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import Leaderboard from "./pages/Leaderboard";
+import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/my-symbols" element={<MySymbols />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/null-reports" element={<NullReports />} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
