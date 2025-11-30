@@ -22,6 +22,8 @@ interface FormData {
   observationMethod: '650nm_laser' | 'closed_eyes' | 'other' | '';
 
   // 650nm Laser fields
+  wavelength: 'wavelength_650' | 'wavelength_red_other' | 'wavelength_blue' | 'wavelength_green' | 'wavelength_white' | 'wavelength_other' | '';
+  wavelengthOther: string;
   locationType: 'indoor' | 'outdoor' | '';
   roomTypes: string[];
   outdoorSettings: string[];
@@ -66,6 +68,8 @@ export const LayeredSubmissionForm = () => {
     primingExposure: '',
     imageData: '',
     observationMethod: '',
+    wavelength: '',
+    wavelengthOther: '',
     locationType: '',
     roomTypes: [],
     outdoorSettings: [],
@@ -132,9 +136,15 @@ export const LayeredSubmissionForm = () => {
     }
     if (step === 3) {
       // Validate context fields
-      if (formData.observationMethod === '650nm_laser' && !formData.surface) {
-        toast.error('Please specify the projection surface');
-        return;
+      if (formData.observationMethod === '650nm_laser') {
+        if (!formData.wavelength) {
+          toast.error('Please select a wavelength');
+          return;
+        }
+        if (!formData.surface) {
+          toast.error('Please specify the projection surface');
+          return;
+        }
       }
       if (formData.observationMethod === 'closed_eyes' && !formData.closedEyesMethod) {
         toast.error('Please specify the method');
@@ -167,9 +177,13 @@ export const LayeredSubmissionForm = () => {
       const tags = [
         formData.primingExposure,
         formData.observationMethod,
+        formData.wavelength,
+        formData.wavelengthOther ? `wavelength_${formData.wavelengthOther}nm` : null,
         formData.locationType,
         ...formData.roomTypes,
+        formData.roomTypeOther ? `room_${formData.roomTypeOther}` : null,
         ...formData.outdoorSettings,
+        formData.outdoorSettingOther ? `outdoor_${formData.outdoorSettingOther}` : null,
         formData.surface,
         formData.timeOfDay,
         formData.closedEyesMethod,
@@ -230,6 +244,11 @@ export const LayeredSubmissionForm = () => {
       earnedBadges.push('primacy_validated');
     }
 
+    // Award "Spectrum Hunter" badge for non-650nm wavelength
+    if (formData.wavelength && formData.wavelength !== 'wavelength_650') {
+      earnedBadges.push('spectrum_hunter');
+    }
+
     const badgeThresholds = [
       { name: 'first_symbol', threshold: 1 },
       { name: 'contributor', threshold: 5 },
@@ -274,6 +293,8 @@ export const LayeredSubmissionForm = () => {
       primingExposure: '',
       imageData: '',
       observationMethod: '',
+      wavelength: '',
+      wavelengthOther: '',
       locationType: '',
       roomTypes: [],
       outdoorSettings: [],
@@ -502,6 +523,79 @@ export const LayeredSubmissionForm = () => {
             {/* 650nm Laser Context */}
             {formData.observationMethod === '650nm_laser' && (
               <div className="space-y-6">
+                <div>
+                  <Label className="text-base mb-3 block font-medium">Wavelength *</Label>
+                  <RadioGroup 
+                    value={formData.wavelength} 
+                    onValueChange={(val: any) => setFormData(prev => ({ ...prev, wavelength: val }))}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <RadioGroupItem value="wavelength_650" id="wavelength_650" />
+                        <Label htmlFor="wavelength_650" className="flex-1 cursor-pointer">
+                          <span className="font-medium">650 nm red (classic protocol)</span>
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <RadioGroupItem value="wavelength_red_other" id="wavelength_red_other" />
+                        <Label htmlFor="wavelength_red_other" className="flex-1 cursor-pointer">
+                          <span className="font-medium">630–670 nm (other red)</span>
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <RadioGroupItem value="wavelength_blue" id="wavelength_blue" />
+                        <Label htmlFor="wavelength_blue" className="flex-1 cursor-pointer">
+                          <span className="font-medium">Blue laser</span>
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <RadioGroupItem value="wavelength_green" id="wavelength_green" />
+                        <Label htmlFor="wavelength_green" className="flex-1 cursor-pointer">
+                          <span className="font-medium">Green laser</span>
+                        </Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <RadioGroupItem value="wavelength_white" id="wavelength_white" />
+                        <Label htmlFor="wavelength_white" className="flex-1 cursor-pointer">
+                          <span className="font-medium">White light / LED panel</span>
+                        </Label>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 p-3 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                          <RadioGroupItem value="wavelength_other" id="wavelength_other" />
+                          <Label htmlFor="wavelength_other" className="flex-1 cursor-pointer">
+                            <span className="font-medium">Other wavelength</span>
+                          </Label>
+                        </div>
+                        {formData.wavelength === 'wavelength_other' && (
+                          <Input 
+                            placeholder="Specify wavelength in nm (e.g., 532)"
+                            value={formData.wavelengthOther}
+                            onChange={(e) => setFormData(prev => ({ ...prev, wavelengthOther: e.target.value }))}
+                            className="ml-6"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </RadioGroup>
+
+                  {formData.wavelength && formData.wavelength !== 'wavelength_650' && (
+                    <Card className="p-4 bg-primary/5 border-primary/20 mt-4">
+                      <div className="flex items-center gap-2 text-sm text-gold">
+                        <Award className="w-5 h-5" />
+                        <span className="font-medium">
+                          You'll earn the "Spectrum Hunter" badge for testing non-standard wavelengths!
+                        </span>
+                      </div>
+                    </Card>
+                  )}
+                </div>
+
                 <div>
                   <Label className="text-base mb-3 block">Location Type</Label>
                   <RadioGroup 
