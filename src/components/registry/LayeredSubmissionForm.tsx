@@ -18,6 +18,9 @@ interface FormData {
   // Priming control
   primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | '';
   
+  // Null report flag
+  isNullReport: boolean;
+  
   imageData: string;
   observationMethod: '650nm_laser' | 'closed_eyes' | 'other' | '';
 
@@ -63,9 +66,11 @@ export const LayeredSubmissionForm = () => {
   const [userStats, setUserStats] = useState<any>(null);
   const [similarSymbols, setSimilarSymbols] = useState<any[]>([]);
   const [newBadges, setNewBadges] = useState<string[]>([]);
+  const [isNullReport, setIsNullReport] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
+    isNullReport: false,
     imageData: '',
     observationMethod: '',
     wavelength: '',
@@ -95,6 +100,13 @@ export const LayeredSubmissionForm = () => {
   useEffect(() => {
     checkUser();
     loadTotalSymbols();
+    
+    // Check URL for null report mode
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('null') === 'true') {
+      setIsNullReport(true);
+      setFormData(prev => ({ ...prev, isNullReport: true }));
+    }
   }, []);
 
   const checkUser = async () => {
@@ -126,7 +138,7 @@ export const LayeredSubmissionForm = () => {
       toast.error('Please answer the priming question');
       return;
     }
-    if (step === 1 && !formData.imageData) {
+    if (step === 1 && !isNullReport && !formData.imageData) {
       toast.error('Please draw a symbol first');
       return;
     }
@@ -175,6 +187,7 @@ export const LayeredSubmissionForm = () => {
       
       // Build tags from all selections
       const tags = [
+        formData.isNullReport ? 'null_report' : null,
         formData.primingExposure,
         formData.observationMethod,
         formData.wavelength,
@@ -239,6 +252,11 @@ export const LayeredSubmissionForm = () => {
     const newSubmissions = (userStats?.total_submissions || 0) + 1;
     const earnedBadges: string[] = [];
 
+    // Award "Skeptic Contributor" badge for null report
+    if (formData.isNullReport) {
+      earnedBadges.push('skeptic_contributor');
+    }
+
     // Award "Primacy Validated" badge for no priming
     if (formData.primingExposure === 'priming_none') {
       earnedBadges.push('primacy_validated');
@@ -291,6 +309,7 @@ export const LayeredSubmissionForm = () => {
   const resetForm = () => {
     setFormData({
       primingExposure: '',
+      isNullReport: false,
       imageData: '',
       observationMethod: '',
       wavelength: '',
@@ -320,6 +339,7 @@ export const LayeredSubmissionForm = () => {
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
+    setIsNullReport(false);
     localStorage.removeItem('dmtcode-canvas-draft');
     loadTotalSymbols();
     if (userId) loadUserStats(userId);
@@ -331,7 +351,14 @@ export const LayeredSubmissionForm = () => {
 
   return (
     <section id="submit" className="container mx-auto px-4 py-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Submit a New Symbol</h2>
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+        {isNullReport ? 'Report Null Experience' : 'Submit a New Symbol'}
+      </h2>
+      {isNullReport && (
+        <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Your null report is valuable for baseline comparison. Complete the same metadata form to document what you didn't see.
+        </p>
+      )}
       
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
@@ -416,35 +443,56 @@ export const LayeredSubmissionForm = () => {
           </div>
         )}
 
-        {/* Step 1: Draw Symbol */}
+        {/* Step 1: Draw Symbol (or skip for null reports) */}
         {step === 1 && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-4">Step 1: Draw Symbol (30 seconds)</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                {isNullReport ? 'Step 1: No Symbol Observed' : 'Step 1: Draw Symbol (30 seconds)'}
+              </h3>
               <p className="text-sm text-muted-foreground mb-6">
-                Draw the symbol as accurately as you remember it. Take about 30 seconds.
+                {isNullReport 
+                  ? 'Since you saw no symbols, you can skip drawing. We still need your metadata to establish baseline conditions.'
+                  : 'Draw the symbol as accurately as you remember it. Take about 30 seconds.'}
               </p>
             </div>
             
-            <FabricDrawingCanvas
-              onImageChange={(data) => {
-                setFormData(prev => ({ ...prev, imageData: data }));
-                if (!drawingStartTime && data) {
-                  setDrawingStartTime(Date.now());
-                }
-              }}
-              onFirstStroke={() => {
-                if (!drawingStartTime) {
-                  setDrawingStartTime(Date.now());
-                }
-              }}
-            />
+            {!isNullReport && (
+              <FabricDrawingCanvas
+                onImageChange={(data) => {
+                  setFormData(prev => ({ ...prev, imageData: data }));
+                  if (!drawingStartTime && data) {
+                    setDrawingStartTime(Date.now());
+                  }
+                }}
+                onFirstStroke={() => {
+                  if (!drawingStartTime) {
+                    setDrawingStartTime(Date.now());
+                  }
+                }}
+              />
+            )}
+
+            {isNullReport && (
+              <Card className="p-6 bg-muted/30 border-border text-center">
+                <p className="text-lg font-medium mb-2">No visual symbols observed</p>
+                <p className="text-sm text-muted-foreground">
+                  Your null report helps establish baseline conditions. Continue to provide metadata about your experience.
+                </p>
+                <div className="flex items-center justify-center gap-2 text-sm text-gold mt-4">
+                  <Award className="w-5 h-5" />
+                  <span className="font-medium">
+                    You'll earn the "Skeptic Contributor" badge for this valuable baseline data!
+                  </span>
+                </div>
+              </Card>
+            )}
             
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
-              <Button onClick={handleNext} disabled={!formData.imageData}>
+              <Button onClick={handleNext} disabled={!isNullReport && !formData.imageData}>
                 Next: Observation Method <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
             </div>

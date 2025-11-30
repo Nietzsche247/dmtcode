@@ -168,13 +168,25 @@ const Home = () => {
               <p className="text-gold mb-4 text-lg">
                 Contribute to the open research catalogue →
               </p>
-              <a 
-                href="/registry"
-                className="inline-block px-8 py-4 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium text-lg"
-                aria-label="Navigate to DMT Code Glyph Registry"
-              >
-                GLYPH REGISTRY
-              </a>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a 
+                  href="/registry#submit"
+                  className="inline-block px-8 py-4 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium text-lg"
+                  aria-label="Submit symbol to DMT Code Glyph Registry"
+                >
+                  SUBMIT SYMBOL
+                </a>
+                <a 
+                  href="/registry?null=true#submit"
+                  className="inline-block px-8 py-4 bg-secondary hover:bg-secondary/90 text-secondary-foreground border border-border rounded-md transition-colors font-medium text-lg"
+                  aria-label="Report null experience to establish baseline data"
+                >
+                  I SAW NOTHING
+                </a>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                Null reports help establish baseline conditions for comparison
+              </p>
             </div>
             <div className="pt-4 border-t border-border">
               <p className="text-muted-foreground mb-4 text-base">
