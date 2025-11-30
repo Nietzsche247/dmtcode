@@ -6,9 +6,10 @@ import { Undo2, Redo2, Trash2 } from 'lucide-react';
 interface FabricCanvasProps {
   onImageChange: (imageData: string) => void;
   onFirstStroke?: () => void;
+  onSvgExport?: (svgData: string) => void;
 }
 
-export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke }: FabricCanvasProps) => {
+export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke, onSvgExport }: FabricCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [currentColor, setCurrentColor] = useState(() => {
@@ -60,6 +61,16 @@ export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke }: FabricCanv
       saveState(canvas);
       const dataUrl = canvas.toDataURL({ format: 'png', multiplier: 2 });
       onImageChange(dataUrl);
+      
+      // Generate SVG export at 1200×1200px (300 DPI)
+      if (onSvgExport) {
+        const svgData = canvas.toSVG({
+          width: '1200',
+          height: '1200'
+        });
+        onSvgExport(svgData);
+      }
+      
       // Auto-save to localStorage
       localStorage.setItem('dmtcode-canvas-draft', dataUrl);
     });

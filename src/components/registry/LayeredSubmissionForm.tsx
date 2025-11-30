@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { FabricDrawingCanvas } from './FabricCanvas';
 import { ChevronRight, ChevronLeft, Award } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { CanvasExport } from './CanvasExport';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -67,6 +68,8 @@ export const LayeredSubmissionForm = () => {
   const [similarSymbols, setSimilarSymbols] = useState<any[]>([]);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [isNullReport, setIsNullReport] = useState(false);
+  const [svgData, setSvgData] = useState<string>('');
+  const [submittedSymbolId, setSubmittedSymbolId] = useState<string>('');
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
@@ -228,6 +231,9 @@ export const LayeredSubmissionForm = () => {
         .single();
 
       if (error) throw error;
+
+      // Store submitted symbol ID
+      setSubmittedSymbolId(insertedGlyph.id);
 
       // Check for new badges
       await checkBadges();
@@ -470,6 +476,7 @@ export const LayeredSubmissionForm = () => {
                     setDrawingStartTime(Date.now());
                   }
                 }}
+                onSvgExport={(svg) => setSvgData(svg)}
               />
             )}
 
@@ -1041,6 +1048,15 @@ export const LayeredSubmissionForm = () => {
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Canvas Export Section */}
+            {!isNullReport && formData.imageData && (
+              <CanvasExport 
+                imageData={formData.imageData}
+                svgData={svgData}
+                symbolId={submittedSymbolId}
+              />
             )}
 
             {similarSymbols.length > 0 && (
