@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          threshold: number | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          threshold?: number | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          threshold?: number | null
+        }
+        Relationships: []
+      }
       glyph_votes: {
         Row: {
           created_at: string
@@ -458,6 +488,27 @@ export type Database = {
           },
         ]
       }
+      user_badges: {
+        Row: {
+          badge_name: string
+          earned_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          badge_name: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          badge_name?: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -476,6 +527,45 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          badges_earned: string[] | null
+          created_at: string | null
+          id: string
+          rank: number | null
+          session_id: string
+          total_submissions: number | null
+          total_tags_added: number | null
+          total_validations: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          badges_earned?: string[] | null
+          created_at?: string | null
+          id?: string
+          rank?: number | null
+          session_id: string
+          total_submissions?: number | null
+          total_tags_added?: number | null
+          total_validations?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          badges_earned?: string[] | null
+          created_at?: string | null
+          id?: string
+          rank?: number | null
+          session_id?: string
+          total_submissions?: number | null
+          total_tags_added?: number | null
+          total_validations?: number | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
