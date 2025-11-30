@@ -22,6 +22,8 @@ import Critiques from "./pages/Critiques";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
+import MySymbols from "./pages/MySymbols";
+import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -51,6 +53,8 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/my-symbols" element={<MySymbols />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
