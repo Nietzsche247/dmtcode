@@ -12,9 +12,12 @@ import { FabricDrawingCanvas } from './FabricCanvas';
 import { ChevronRight, ChevronLeft, Award } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 interface FormData {
+  // Priming control
+  primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | '';
+  
   imageData: string;
   observationMethod: '650nm_laser' | 'closed_eyes' | 'other' | '';
 
@@ -50,7 +53,7 @@ interface FormData {
 }
 
 export const LayeredSubmissionForm = () => {
-  const [step, setStep] = useState<Step>(1);
+  const [step, setStep] = useState<Step>(0);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -60,6 +63,7 @@ export const LayeredSubmissionForm = () => {
   const [newBadges, setNewBadges] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
+    primingExposure: '',
     imageData: '',
     observationMethod: '',
     locationType: '',
@@ -114,6 +118,10 @@ export const LayeredSubmissionForm = () => {
   };
 
   const handleNext = () => {
+    if (step === 0 && !formData.primingExposure) {
+      toast.error('Please answer the priming question');
+      return;
+    }
     if (step === 1 && !formData.imageData) {
       toast.error('Please draw a symbol first');
       return;
@@ -146,7 +154,7 @@ export const LayeredSubmissionForm = () => {
   };
 
   const handleBack = () => {
-    setStep((prev) => Math.max(1, prev - 1) as Step);
+    setStep((prev) => Math.max(0, prev - 1) as Step);
   };
 
   const handleSubmit = async () => {
@@ -157,6 +165,7 @@ export const LayeredSubmissionForm = () => {
       
       // Build tags from all selections
       const tags = [
+        formData.primingExposure,
         formData.observationMethod,
         formData.locationType,
         ...formData.roomTypes,
@@ -216,6 +225,11 @@ export const LayeredSubmissionForm = () => {
     const newSubmissions = (userStats?.total_submissions || 0) + 1;
     const earnedBadges: string[] = [];
 
+    // Award "Primacy Validated" badge for no priming
+    if (formData.primingExposure === 'priming_none') {
+      earnedBadges.push('primacy_validated');
+    }
+
     const badgeThresholds = [
       { name: 'first_symbol', threshold: 1 },
       { name: 'contributor', threshold: 5 },
@@ -257,6 +271,7 @@ export const LayeredSubmissionForm = () => {
 
   const resetForm = () => {
     setFormData({
+      primingExposure: '',
       imageData: '',
       observationMethod: '',
       locationType: '',
@@ -280,7 +295,7 @@ export const LayeredSubmissionForm = () => {
       customTags: '',
       description: ''
     });
-    setStep(1);
+    setStep(0);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
@@ -300,7 +315,7 @@ export const LayeredSubmissionForm = () => {
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
         <div className="flex justify-center items-center gap-2 mb-8">
-          {[1, 2, 3, 4, 5].map((s) => (
+          {[0, 1, 2, 3, 4, 5].map((s) => (
             <div 
               key={s}
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -309,10 +324,76 @@ export const LayeredSubmissionForm = () => {
                 'bg-muted text-muted-foreground'
               }`}
             >
-              {s}
+              {s === 0 ? '?' : s}
             </div>
           ))}
         </div>
+
+        {/* Step 0: Priming Control */}
+        {step === 0 && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Before You Begin: Priming Control</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                This question helps us understand whether your experience was influenced by prior exposure to similar visual content.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <Label className="text-base font-medium">
+                Before your experience, had you ever seen Danny Goler videos, The Discovery trailer, or Matrix-style digital rain? *
+              </Label>
+              <RadioGroup
+                value={formData.primingExposure}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  primingExposure: value as FormData['primingExposure']
+                }))}
+              >
+                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                  <RadioGroupItem value="priming_none" id="priming_none" />
+                  <Label htmlFor="priming_none" className="flex-1 cursor-pointer">
+                    <span className="font-medium block mb-1">No – I had never seen any of it</span>
+                    <span className="text-sm text-muted-foreground">No prior exposure to laser protocol videos or Matrix-style rain</span>
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                  <RadioGroupItem value="priming_matrix_only" id="priming_matrix_only" />
+                  <Label htmlFor="priming_matrix_only" className="flex-1 cursor-pointer">
+                    <span className="font-medium block mb-1">Yes – but only Matrix-style rain, not laser-specific</span>
+                    <span className="text-sm text-muted-foreground">Seen Matrix digital rain effect but no DMT laser protocol content</span>
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                  <RadioGroupItem value="priming_laser_exposed" id="priming_laser_exposed" />
+                  <Label htmlFor="priming_laser_exposed" className="flex-1 cursor-pointer">
+                    <span className="font-medium block mb-1">Yes – I had watched Goler or Discovery trailer content</span>
+                    <span className="text-sm text-muted-foreground">Seen Danny Goler videos or The Discovery trailer before my experience</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+
+              {formData.primingExposure === 'priming_none' && (
+                <Card className="p-4 bg-primary/5 border-primary/20">
+                  <div className="flex items-center gap-2 text-sm text-gold">
+                    <Award className="w-5 h-5" />
+                    <span className="font-medium">
+                      You'll earn the "Primacy Validated" badge for contributing a baseline observation!
+                    </span>
+                  </div>
+                </Card>
+              )}
+            </div>
+            
+            <div className="flex justify-end">
+              <Button onClick={handleNext} disabled={!formData.primingExposure}>
+                Next: Draw Symbol <ChevronRight className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Step 1: Draw Symbol */}
         {step === 1 && (
@@ -338,7 +419,10 @@ export const LayeredSubmissionForm = () => {
               }}
             />
             
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={handleBack}>
+                <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              </Button>
               <Button onClick={handleNext} disabled={!formData.imageData}>
                 Next: Observation Method <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
