@@ -5,6 +5,7 @@ import { CompetitorSpy } from './CompetitorSpy';
 import { SeoInsights } from './SeoInsights';
 import { OnPageAuditor } from './OnPageAuditor';
 import { ConversionFunnel } from './ConversionFunnel';
+import { SymbolModeration } from './SymbolModeration';
 
 export const AdminDashboard = () => {
   return (
@@ -19,8 +20,9 @@ export const AdminDashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <Tabs defaultValue="geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
+        <Tabs defaultValue="symbols" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7">
+            <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="competitor">Competitors</TabsTrigger>
@@ -28,6 +30,10 @@ export const AdminDashboard = () => {
             <TabsTrigger value="audit">Audit</TabsTrigger>
             <TabsTrigger value="funnel">Funnel</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="symbols" className="space-y-4">
+            <SymbolModeration />
+          </TabsContent>
 
           <TabsContent value="geo" className="space-y-4">
             <GeoAeoInsights />
