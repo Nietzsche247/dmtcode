@@ -260,17 +260,85 @@ export const LayeredSubmissionForm = () => {
 
     // Award "Skeptic Contributor" badge for null report
     if (formData.isNullReport) {
-      earnedBadges.push('skeptic_contributor');
+      const { error } = await supabase
+        .from('user_badges')
+        .insert({ user_id: userId, badge_name: 'skeptic_contributor' });
+      
+      if (!error) {
+        earnedBadges.push('skeptic_contributor');
+      }
+      
+      // Notify admin of null report
+      try {
+        await supabase.functions.invoke('notify-admin', {
+          body: {
+            type: 'null_report',
+            symbolId: submittedSymbolId,
+            wavelength: formData.wavelength,
+            surface: formData.surface
+          }
+        });
+      } catch (error) {
+        console.error('Failed to notify admin:', error);
+      }
     }
 
     // Award "Primacy Validated" badge for no priming
     if (formData.primingExposure === 'priming_none') {
-      earnedBadges.push('primacy_validated');
+      const { error } = await supabase
+        .from('user_badges')
+        .insert({ user_id: userId, badge_name: 'primacy_validated' });
+      
+      if (!error) {
+        earnedBadges.push('primacy_validated');
+      }
     }
 
     // Award "Spectrum Hunter" badge for non-650nm wavelength
     if (formData.wavelength && formData.wavelength !== 'wavelength_650') {
-      earnedBadges.push('spectrum_hunter');
+      const { error } = await supabase
+        .from('user_badges')
+        .insert({ user_id: userId, badge_name: 'spectrum_hunter' });
+      
+      if (!error) {
+        earnedBadges.push('spectrum_hunter');
+      }
+      
+      // Check if this is the FIRST non-red submission globally
+      const { data: existingNonRed } = await supabase
+        .from('registry_glyphs')
+        .select('id')
+        .contains('motif_tags', [formData.wavelength])
+        .neq('id', submittedSymbolId)
+        .limit(1);
+
+      if (!existingNonRed || existingNonRed.length === 0) {
+        // This is the first non-red submission!
+        const { triggerConfetti } = await import('@/utils/confetti');
+        triggerConfetti();
+        
+        toast.success('🎉 You unlocked Spectrum Hunter badge!', {
+          description: 'You submitted the FIRST non-red wavelength symbol!',
+          duration: 6000
+        });
+
+        // Notify admin
+        try {
+          await supabase.functions.invoke('notify-admin', {
+            body: {
+              type: 'first_non_red',
+              symbolId: submittedSymbolId,
+              wavelength: formData.wavelength.replace('wavelength_', ''),
+              metadata: {
+                source: formData.observationMethod,
+                surface: formData.surface
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Failed to notify admin:', error);
+        }
+      }
     }
 
     const badgeThresholds = [
