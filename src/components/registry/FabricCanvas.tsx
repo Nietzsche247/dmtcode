@@ -5,9 +5,10 @@ import { Undo2, Redo2, Trash2 } from 'lucide-react';
 
 interface FabricCanvasProps {
   onImageChange: (imageData: string) => void;
+  onFirstStroke?: () => void;
 }
 
-export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
+export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke }: FabricCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [currentColor, setCurrentColor] = useState(() => {
@@ -52,6 +53,10 @@ export const FabricDrawingCanvas = ({ onImageChange }: FabricCanvasProps) => {
 
     // Track changes
     canvas.on('path:created', () => {
+      // Trigger onFirstStroke callback
+      if (onFirstStroke) {
+        onFirstStroke();
+      }
       saveState(canvas);
       const dataUrl = canvas.toDataURL({ format: 'png', multiplier: 2 });
       onImageChange(dataUrl);

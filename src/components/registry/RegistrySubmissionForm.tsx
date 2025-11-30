@@ -205,12 +205,19 @@ export const RegistrySubmissionForm = () => {
           {/* Canvas */}
           <div>
             <Label className="text-lg mb-4 block">Draw Symbol (400 × 400 px, exports to 800 × 800 px)</Label>
-            <FabricDrawingCanvas onImageChange={(data) => {
-              setImageData(data);
-              if (!drawingStartTime && data) {
-                setDrawingStartTime(Date.now());
-              }
-            }} />
+            <FabricDrawingCanvas
+              onImageChange={(data) => {
+                setImageData(data);
+                if (!drawingStartTime && data) {
+                  setDrawingStartTime(Date.now());
+                }
+              }}
+              onFirstStroke={() => {
+                if (!drawingStartTime) {
+                  setDrawingStartTime(Date.now());
+                }
+              }}
+            />
             <p className="text-sm text-muted-foreground mt-2">
               White background, brush sizes: 1px, 3px, 5px, 8px. Colors: black · white · red · gold. Auto-saves every 30 seconds.
             </p>
@@ -465,15 +472,47 @@ export const RegistrySubmissionForm = () => {
           </div>
 
           <div>
-            <Label htmlFor="tags">Motif Tags (comma-separated)</Label>
-            <Input
-              id="tags"
-              value={formData.tags}
-              onChange={(e) => setFormData({...formData, tags: e.target.value})}
-              placeholder="e.g., alphabetic, geometric, spiral, toilet bowl sand"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Suggested tags: geometric, alphabetic, radial, spiral, fractal, organic, bilateral, linear, curved, angular, circular, triangular, rectangular, hexagonal, star-shaped, cross-shaped, wave-pattern, zigzag, dots, lines, grid, lattice, maze-like, tunnel, portal, pareidolia, speckle, gematria, pulsing, scrolling, morphing, instructional, benevolent, unsettling
+            <Label htmlFor="tags">Motif Tags (select all that apply)</Label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-4 border border-border rounded-md max-h-64 overflow-y-auto">
+              {[
+                'alphabetic', 'numeric', 'geometric', 'organic', 'fractal', 'mandala',
+                'spiral', 'grid', 'lattice', 'honeycomb', 'crystalline', 'flowing',
+                'angular', 'curved', 'symmetrical', 'asymmetrical', 'repeating', 'unique',
+                'pareidolia', 'speckle', 'gematria', 'hieroglyphic', 'runic', 'sanskrit-like',
+                'aramaic-like', 'cuneiform-like', 'alien', 'entity-like', 'instructional', 'decorative'
+              ].map((tag) => {
+                const isSelected = formData.tags.split(',').map(t => t.trim()).includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      const currentTags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+                      if (isSelected) {
+                        setFormData({
+                          ...formData,
+                          tags: currentTags.filter(t => t !== tag).join(', ')
+                        });
+                      } else {
+                        setFormData({
+                          ...formData,
+                          tags: [...currentTags, tag].join(', ')
+                        });
+                      }
+                    }}
+                    className={`px-3 py-2 text-sm rounded border transition-all ${
+                      isSelected 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background border-border hover:border-primary/50'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Select multiple tags that describe the visual motifs in your symbol
             </p>
           </div>
 

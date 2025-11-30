@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Network, TrendingUp, GitBranch, Database } from 'lucide-react';
+import { CorrelationsNetwork } from '@/components/registry/CorrelationsNetwork';
 
 const Correlations = () => {
   return (
@@ -69,7 +70,10 @@ const Correlations = () => {
               Computational pattern recognition and clustering analysis for visual symbol taxonomy
             </p>
 
-            {/* Activation Threshold Notice */}
+            {/* Network Analysis Dashboard */}
+            <CorrelationsNetwork />
+
+            {/* Activation Threshold Notice (shown only when < 100 symbols) */}
             <Card className="p-8 bg-primary/5 border-primary/20 mb-12">
               <div className="flex items-start gap-4">
                 <Database className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
