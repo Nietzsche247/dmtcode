@@ -12,6 +12,8 @@ import { FabricDrawingCanvas } from './FabricCanvas';
 import { ChevronRight, ChevronLeft, Award } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CanvasExport } from './CanvasExport';
+import { usePrimacyCheck } from '@/hooks/usePrimacyCheck';
+import { AlertTriangle } from 'lucide-react';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -99,6 +101,9 @@ export const LayeredSubmissionForm = () => {
     customTags: '',
     description: ''
   });
+
+  // Primacy contamination check (after formData is defined)
+  const primacyCheck = usePrimacyCheck(formData.description, formData.primingExposure);
 
   useEffect(() => {
     checkUser();
@@ -475,7 +480,10 @@ export const LayeredSubmissionForm = () => {
                 <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
                   <RadioGroupItem value="priming_none" id="priming_none" />
                   <Label htmlFor="priming_none" className="flex-1 cursor-pointer">
-                    <span className="font-medium block mb-1">No – I had never seen any of it</span>
+                    <span className="font-medium block mb-1 flex items-center gap-2">
+                      No – I had never seen any of it
+                      <span className="text-xs px-2 py-0.5 bg-gold/20 text-gold rounded-full">⭐ Auto-badge</span>
+                    </span>
                     <span className="text-sm text-muted-foreground">No prior exposure to laser protocol videos or Matrix-style rain</span>
                   </Label>
                 </div>
@@ -499,11 +507,17 @@ export const LayeredSubmissionForm = () => {
 
               {formData.primingExposure === 'priming_none' && (
                 <Card className="p-4 bg-primary/5 border-primary/20">
-                  <div className="flex items-center gap-2 text-sm text-gold">
-                    <Award className="w-5 h-5" />
-                    <span className="font-medium">
-                      You'll earn the "Primacy Validated" badge for contributing a baseline observation!
-                    </span>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Award className="w-5 h-5 text-gold flex-shrink-0" />
+                    <div>
+                      <span className="font-medium text-gold">
+                        ⭐ Auto-granted: "Primacy Validated" Badge
+                      </span>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Your submission qualifies for the Primacy Validated badge because you had no prior exposure. 
+                        We'll run a soft check on your description to ensure transparency—you can still submit regardless.
+                      </p>
+                    </div>
                   </div>
                 </Card>
               )}
@@ -1081,6 +1095,25 @@ export const LayeredSubmissionForm = () => {
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
+              
+              {/* Primacy contamination warning */}
+              {formData.primingExposure === 'priming_none' && primacyCheck.isContaminated && (
+                <Card className="mt-3 p-4 bg-amber-500/10 border-amber-500/30">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-amber-500 mb-1">Primacy Transparency Notice</h4>
+                      <p className="text-sm text-amber-200">
+                        Your description mentions terms like "matrix rain," "katakana," or "digital rain" that may indicate prior exposure. 
+                        This could affect the Primacy Validated badge, which requires genuinely zero-shot observations.
+                      </p>
+                      <p className="text-xs text-amber-300/70 mt-2">
+                        You can still submit—this is just for transparency. If you saw these symbols without any prior knowledge of the protocol, that's fine.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              )}
             </div>
 
             <div className="flex justify-between">
