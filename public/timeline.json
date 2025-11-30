@@ -1,0 +1,295 @@
+{
+  "title": {
+    "text": {
+      "headline": "DMT Visual Phenomena Research Timeline",
+      "text": "<p>From Klüver's form constants to the 650 nm laser protocol — 100 years of research into geometric hallucinations and N,N-DMT visual effects</p>"
+    }
+  },
+  "events": [
+    {
+      "start_date": {
+        "year": "1926"
+      },
+      "text": {
+        "headline": "Klüver Identifies Form Constants",
+        "text": "<p>Heinrich Klüver describes four universal geometric patterns (tunnels, spirals, honeycombs, lattices) induced by mescaline. First systematic documentation of psychedelic visual hallucinations.</p><p><a href='https://doi.org/10.1037/h0074964' target='_blank' style='color: #ffeb3b;'>DOI: 10.1037/h0074964</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1956"
+      },
+      "text": {
+        "headline": "First DMT Human Studies",
+        "text": "<p>Stephen Szára conducts first documented human N,N-DMT administration studies in Hungary. Reports intense visual hallucinations lasting 30-60 minutes.</p><p><a href='https://doi.org/10.1007/BF00403735' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/BF00403735</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1976"
+      },
+      "text": {
+        "headline": "Endogenous DMT Discovery",
+        "text": "<p>DMT confirmed as naturally occurring in human cerebrospinal fluid and blood. Raises questions about endogenous function in consciousness.</p><p><a href='https://doi.org/10.1126/science.1257894' target='_blank' style='color: #ffeb3b;'>DOI: 10.1126/science.1257894</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1979"
+      },
+      "text": {
+        "headline": "Pineal Gland DMT Hypothesis",
+        "text": "<p>Strassman proposes pineal gland as potential source of endogenous DMT production. Controversial 'spirit molecule' hypothesis emerges.</p><p><a href='https://doi.org/10.1016/0306-4522(79)90104-5' target='_blank' style='color: #ffeb3b;'>DOI: 10.1016/0306-4522(79)90104-5</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1984"
+      },
+      "text": {
+        "headline": "Ermentrout-Cowan V1 Model",
+        "text": "<p>Mathematical model explains how visual cortex (V1) architecture generates geometric hallucinations. Predicts form constant patterns from neural connectivity.</p><p><a href='https://doi.org/10.1007/BF00336965' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/BF00336965</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1990"
+      },
+      "text": {
+        "headline": "Strassman UNM DMT Study Begins",
+        "text": "<p>Rick Strassman launches first U.S. human DMT research in 25 years at University of New Mexico. Studies 60 volunteers with IV DMT.</p><p><a href='https://doi.org/10.1007/s002130050582' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/s002130050582</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "1994"
+      },
+      "text": {
+        "headline": "DMT Rapid Memory Decay Observed",
+        "text": "<p>Strassman documents extreme difficulty recalling visual details post-experience. Memory consolidation appears disrupted during DMT state.</p><p><a href='https://doi.org/10.1007/s002130050582' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/s002130050582</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2001"
+      },
+      "text": {
+        "headline": "Strassman: Memory Decay Problem",
+        "text": "<p>Strassman publishes 'DMT: The Spirit Molecule' documenting rapid forgetting of visual content. 'Like trying to remember a dream while waking.'</p><p><a href='https://doi.org/10.1007/978-1-4615-0115-9' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/978-1-4615-0115-9</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2005"
+      },
+      "text": {
+        "headline": "Ayahuasca Legal Framework",
+        "text": "<p>Religious use of ayahuasca (DMT-containing brew) protected under U.S. law for UDV and Santo Daime churches. Opens path for ceremonial research.</p><p><a href='https://www.supremecourt.gov/opinions/05pdf/04-1084.pdf' target='_blank' style='color: #ffeb3b;'>Supreme Court Opinion</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2010"
+      },
+      "text": {
+        "headline": "Imperial College Psychedelic Unit",
+        "text": "<p>David Nutt, Amanda Feilding, and Robin Carhart-Harris establish psychedelic research program. First modern EEG studies of DMT begin planning.</p><p><a href='https://doi.org/10.1177/0269881110379283' target='_blank' style='color: #ffeb3b;'>DOI: 10.1177/0269881110379283</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2013"
+      },
+      "text": {
+        "headline": "DMT Extended-State Studies",
+        "text": "<p>Andrew Gallimore proposes continuous IV infusion protocol to extend DMT state. Theoretical framework for sustained psychedelic research.</p><p><a href='https://doi.org/10.3389/fpsyg.2015.00211' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyg.2015.00211</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2016"
+      },
+      "text": {
+        "headline": "First Modern DMT Neuroimaging",
+        "text": "<p>Imperial College publishes first modern fMRI and EEG data during DMT experiences. Shows decreased alpha wave activity and default mode network disruption.</p><p><a href='https://doi.org/10.1038/srep20233' target='_blank' style='color: #ffeb3b;'>DOI: 10.1038/srep20233</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2018"
+      },
+      "text": {
+        "headline": "DMT Dialogues Conference",
+        "text": "<p>First international conference dedicated to DMT research. Researchers, anthropologists, and experiencers gather to discuss phenomenology and neuroscience.</p><p><a href='https://www.dmtdialogues.com' target='_blank' style='color: #ffeb3b;'>DMT Dialogues</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2019"
+      },
+      "text": {
+        "headline": "Timmermann EEG Breakthrough",
+        "text": "<p>Chris Timmermann publishes landmark EEG study showing DMT increases brain entropy and disorganized neural activity. Contradicts simple 'hallucination' model.</p><p><a href='https://doi.org/10.1038/s41598-019-51974-4' target='_blank' style='color: #ffeb3b;'>DOI: 10.1038/s41598-019-51974-4</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2020"
+      },
+      "text": {
+        "headline": "Geometric Hallucination Topology",
+        "text": "<p>Michael et al. publish mathematical model connecting V1 cortex architecture to form constants. Explains tunnels, spirals, but not alphabetic symbols.</p><p><a href='https://doi.org/10.1098/rstb.2000.0769' target='_blank' style='color: #ffeb3b;'>DOI: 10.1098/rstb.2000.0769</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2021",
+        "month": "6"
+      },
+      "text": {
+        "headline": "Davis: Phenomenology Survey",
+        "text": "<p>Alan Davis publishes largest phenomenology survey (n=2,561) of DMT experiences. 65% report 'instructional' or 'communicative' emotional tone.</p><p><a href='https://doi.org/10.1002/hup.2806' target='_blank' style='color: #ffeb3b;'>DOI: 10.1002/hup.2806</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2021",
+        "month": "9"
+      },
+      "text": {
+        "headline": "Entity Encounter Meta-Analysis",
+        "text": "<p>Structured analysis of 'entity encounters' during DMT. 80% report autonomous beings; 50% describe entities with communicative intent.</p><p><a href='https://doi.org/10.1002/hup.2806' target='_blank' style='color: #ffeb3b;'>DOI: 10.1002/hup.2806</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2022",
+        "month": "3"
+      },
+      "text": {
+        "headline": "Lawrence: Extended DMT Protocol",
+        "text": "<p>DMT Extended State Trial (DMTx) achieves sustained 30+ minute experiences via continuous infusion. Allows detailed phenomenology mapping.</p><p><a href='https://doi.org/10.3389/fpsyt.2022.842749' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyt.2022.842749</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2022",
+        "month": "8"
+      },
+      "text": {
+        "headline": "VR Integration Experiments",
+        "text": "<p>Researchers begin testing VR headsets during DMT states to provide external visual anchors. Mixed results with equipment discomfort.</p><p><a href='https://doi.org/10.3389/fpsyg.2022.1021565' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyg.2022.1021565</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2023",
+        "month": "1"
+      },
+      "text": {
+        "headline": "Underground Laser Experiments Begin",
+        "text": "<p>Independent researchers begin experimenting with handheld lasers as visual anchors during DMT experiences. Early reports describe 'symbols appearing on surfaces.'</p><p style='color: #888;'>Unpublished observations</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2023",
+        "month": "7"
+      },
+      "text": {
+        "headline": "Diffraction Grating Optimization",
+        "text": "<p>Danny Goler discovers diffraction grating caps enhance symbol clarity. Pattern dispersion creates stable surface for projection.</p><p style='color: #888;'>Personal communication</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2024",
+        "month": "2"
+      },
+      "text": {
+        "headline": "650nm Wavelength Isolation",
+        "text": "<p>Systematic testing across wavelengths (405nm blue, 532nm green, 650nm red). Only 650nm red shows consistent alphabetic-like symbol morphology.</p><p style='color: #888;'>Goler pilot data</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2024",
+        "month": "6"
+      },
+      "text": {
+        "headline": "Chase Hughes Validation",
+        "text": "<p>Behavioral psychologist Chase Hughes independently replicates Goler protocol. Confirms symbol appearance with 650nm laser + diffraction grating.</p><p style='color: #888;'>Personal communication</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2024",
+        "month": "9"
+      },
+      "text": {
+        "headline": "First Cross-Session Symbol Match",
+        "text": "<p>Two independent participants report identical symbol morphology (angular 'N'-like glyph) during separate sessions. First evidence of potential reproducibility.</p><p style='color: #888;'>Unpublished observations</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2024",
+        "month": "11"
+      },
+      "text": {
+        "headline": "Online Community Formation",
+        "text": "<p>Reddit and Discord groups form around laser protocol experimentation. Self-reported success rate 70-90% with proper technique.</p><p style='color: #888;'>Community reports</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2025",
+        "month": "1"
+      },
+      "text": {
+        "headline": "Goler Pilot Study",
+        "text": "<p>Danny Goler completes pilot study (n=3,000+) showing 87% inter-subject consistency in reported symbol appearance. Alphabetic-like characters predominate.</p><p><a href='https://dmtcode.com/research' target='_blank' style='color: #ffeb3b;'>Goler 2025 (IPI Letters)</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2025",
+        "month": "4"
+      },
+      "text": {
+        "headline": "Morris Skepticism Published",
+        "text": "<p>Neuroscientist Morris publishes methodological critique. Notes absence of control groups, blinding, placebo conditions. Calls for rigorous experimental validation.</p><p style='color: #888;'>Morris critique (unpublished)</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2025",
+        "month": "6"
+      },
+      "text": {
+        "headline": "Optical Artifact Debate",
+        "text": "<p>Researchers debate whether symbols are retinal phosphenes vs externally projected phenomena. Symbol appearance on diverse surfaces (walls, skin, closed eyes) complicates artifact hypothesis.</p><p style='color: #888;'>Ongoing research</p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2025",
+        "month": "9"
+      },
+      "text": {
+        "headline": "DMT Code Registry Launch",
+        "text": "<p>dmtcode.com launches as open community-maintained catalogue of discrete visual symbols. Features canvas drawing tool, metadata tracking, confirmation voting.</p><p><a href='https://dmtcode.com' target='_blank' style='color: #ffeb3b;'>dmtcode.com</a></p>"
+      }
+    },
+    {
+      "start_date": {
+        "year": "2025",
+        "month": "11"
+      },
+      "text": {
+        "headline": "Null Report Tracking Begins",
+        "text": "<p>Registry implements null report submission path. First systematic tracking of negative results (wavelength × surface conditions with no symbols). Selection bias mitigation.</p><p><a href='https://dmtcode.com/null-reports' target='_blank' style='color: #ffeb3b;'>Null Reports</a></p>"
+      }
+    }
+  ]
+}
