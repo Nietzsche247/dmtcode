@@ -49,23 +49,61 @@ const EvidenceMap = () => {
           content="Interactive timeline from Klüver 1926 to Goler 2025. Explore 100 years of research into geometric hallucinations, N,N-DMT visual effects, and the 650 nm laser protocol." 
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
-        <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "WebPage",
-            "headline": "Evidence Timeline - 100 Years of DMT Visual Research",
-            "description": "Interactive timeline covering Klüver's form constants (1926) to the 650 nm laser protocol (2025). 30 key events with peer-reviewed citations.",
-            "author": {
-              "@type": "Organization",
-              "name": "DMT Code Project"
-            },
+            "@type": "ScholarlyArticle",
+            "headline": "Evidence Timeline - 100 Years of DMT Visual Phenomena Research",
+            "description": "Comprehensive timeline documenting research from Klüver's 1926 form constants to Goler's 2025 laser protocol pilot study",
+            "author": [
+              {
+                "@type": "Person",
+                "name": "Danny Goler",
+                "affiliation": "Independent Researcher"
+              }
+            ],
+            "citation": [
+              {
+                "@type": "ScholarlyArticle",
+                "name": "First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration",
+                "author": "Goler D.",
+                "datePublished": "2025",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.59973/ipil.158"
+                },
+                "url": "https://doi.org/10.59973/ipil.158"
+              },
+              {
+                "@type": "ScholarlyArticle",
+                "name": "Preprint [2021] DOI pending",
+                "author": "Davis A.",
+                "datePublished": "2021",
+                "description": "Survey of entity encounter experiences"
+              },
+              {
+                "@type": "ScholarlyArticle",
+                "name": "DMT models the near-death experience",
+                "author": "Timmermann C. et al.",
+                "datePublished": "2019",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.1038/s41598-019-51974-4"
+                },
+                "url": "https://doi.org/10.1038/s41598-019-51974-4"
+              }
+            ],
             "datePublished": "2025-11-30",
             "dateModified": "2025-11-30"
           })}
         </script>
+        <link rel="canonical" href="https://dmtcode.com/evidence-map" />
+        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
+        <meta name="robots" content="index, follow" />
+        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
