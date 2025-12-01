@@ -40,7 +40,7 @@ const Events = () => {
           </AlertDescription>
         </Alert>
 
-        <Breadcrumb items={[{ label: "Events & Trials" }]} />
+        <Breadcrumb />
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4 text-foreground">
