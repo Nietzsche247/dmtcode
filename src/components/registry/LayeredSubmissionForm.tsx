@@ -1165,10 +1165,10 @@ export const LayeredSubmissionForm = () => {
                 <h4 className="text-lg font-semibold mb-4">Similar Symbols</h4>
                 <div className="grid grid-cols-3 gap-4">
                   {similarSymbols.map(sym => (
-                    <div key={sym.id} className="border border-border rounded-lg p-4">
+                     <div key={sym.id} className="border border-border rounded-lg p-4">
                       <img 
                         src={sym.image_data} 
-                        alt="Similar symbol" 
+                        alt={`DMT glyph archetype similar to your submission, reported ${sym.confirmation_count} times`}
                         className="w-full h-auto mb-2"
                         style={{ imageRendering: 'pixelated' }}
                       />
