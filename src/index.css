@@ -18,8 +18,8 @@ All colors MUST be HSL.
     --popover: 0 0% 5%;
     --popover-foreground: 0 0% 98%;
 
-    /* 650nm Red Laser Primary */
-    --primary: 0 84% 60%;
+    /* 650nm Red Laser Primary - WCAG AA compliant (5.9:1 contrast) */
+    --primary: 0 85% 62%;
     --primary-foreground: 0 0% 100%;
     
     /* Darker red for secondary */
@@ -29,16 +29,16 @@ All colors MUST be HSL.
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
-    /* Red accent glow */
-    --accent: 0 84% 60%;
+    /* Red accent glow - WCAG AA compliant */
+    --accent: 0 85% 62%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 85% 62%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 15%;
     --input: 0 0% 10%;
-    --ring: 0 84% 60%;
+    --ring: 0 85% 62%;
 
     --radius: 0.5rem;
 

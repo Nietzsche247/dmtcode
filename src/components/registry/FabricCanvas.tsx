@@ -162,12 +162,17 @@ export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke, onSvgExport 
       <div className="flex justify-center">
         <canvas
           ref={canvasRef}
-          className="border-2 border-border cursor-crosshair"
+          className="border-2 border-border cursor-crosshair focus:outline-none focus:ring-2 focus:ring-primary"
           style={{ width: '400px', height: '400px', imageRendering: 'auto' }}
-          role="img"
-          aria-label="Draw visual symbol on 400 by 400 pixel canvas"
-          aria-describedby="metadata-form"
+          role="application"
+          tabIndex={0}
+          aria-label="Draw visual symbol on 400 by 400 pixel canvas using mouse or touch"
+          aria-describedby="canvas-instructions"
         />
+      </div>
+
+      <div id="canvas-instructions" className="sr-only">
+        Draw your visual symbol using your mouse or touch input. Select colors and brush sizes from the controls below. Use Undo, Redo, and Clear buttons to modify your drawing.
       </div>
 
       <div className="space-y-3">
