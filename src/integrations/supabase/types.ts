@@ -483,6 +483,39 @@ export type Database = {
         }
         Relationships: []
       }
+      scraper_runs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          last_run_at: string
+          scraper_name: string
+          status: string
+          trials_added: number | null
+          trials_found: number | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_run_at?: string
+          scraper_name: string
+          status: string
+          trials_added?: number | null
+          trials_found?: number | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_run_at?: string
+          scraper_name?: string
+          status?: string
+          trials_added?: number | null
+          trials_found?: number | null
+        }
+        Relationships: []
+      }
       surface_tags: {
         Row: {
           created_at: string

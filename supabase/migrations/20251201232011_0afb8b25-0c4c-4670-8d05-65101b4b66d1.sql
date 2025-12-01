@@ -1,0 +1,1 @@
+CREATE POLICY "ratings_delete_own" ON public.trust_ratings FOR DELETE USING (auth.uid() = user_id);
