@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import TrialDetailModal from "./TrialDetailModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ClinicalTrial {
   id: string;
@@ -30,11 +31,20 @@ const TrialsTimeline = () => {
   const [trials, setTrials] = useState<ClinicalTrial[]>([]);
   const [selectedTrial, setSelectedTrial] = useState<ClinicalTrial | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showScrollHint, setShowScrollHint] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchTrials();
   }, []);
+
+  useEffect(() => {
+    if (!isMobile && trials.length > 0) {
+      setShowScrollHint(true);
+      const timer = setTimeout(() => setShowScrollHint(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, trials.length]);
 
   const fetchTrials = async () => {
     const { data, error } = await supabase
@@ -105,12 +115,26 @@ const TrialsTimeline = () => {
 
   return (
     <div className="relative">
+      {/* Scroll hint */}
+      {showScrollHint && !isMobile && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/95 backdrop-blur border border-border rounded px-3 py-1.5 shadow-lg">
+            <ChevronLeft className="w-4 h-4" />
+            <span>scroll for more</span>
+            <ChevronRight className="w-4 h-4" />
+          </div>
+        </div>
+      )}
+
       <div className="overflow-x-auto pb-4" style={{ scrollBehavior: "smooth" }}>
         <div className="relative h-32 min-w-[2000px]" style={{ width: `${totalDays * 4}px` }}>
-          {/* Today marker */}
+          {/* Today marker - 4px thick with soft glow */}
           <div 
-            className="absolute top-0 h-full w-0.5 bg-[hsl(var(--gold))] z-10"
-            style={{ left: `${(todayPosition / totalDays) * 100}%` }}
+            className="absolute top-0 h-full w-1 bg-[hsl(var(--gold))] z-10"
+            style={{ 
+              left: `${(todayPosition / totalDays) * 100}%`,
+              boxShadow: '0 0 12px hsl(var(--gold) / 0.5)'
+            }}
           />
 
           {/* Trial bars */}
@@ -148,8 +172,13 @@ const TrialsTimeline = () => {
             );
           })}
 
-          {/* Month/Year labels */}
+          {/* Month/Year labels - skip every 2nd on mobile to prevent overlap */}
           {Array.from({ length: Math.ceil(totalDays / 30) }).map((_, i) => {
+            // On narrow screens, only show even-indexed months
+            if (typeof window !== 'undefined' && window.innerWidth < 768 && i % 2 !== 0) {
+              return null;
+            }
+
             const labelDate = new Date(minDate);
             labelDate.setMonth(labelDate.getMonth() + i);
             const position = daysSinceMin(labelDate);
