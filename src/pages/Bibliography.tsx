@@ -29,8 +29,65 @@ const Bibliography = () => {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
+            "citation": [
+              {
+                "@type": "ScholarlyArticle",
+                "name": "First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration",
+                "author": {
+                  "@type": "Person",
+                  "name": "Danny Goler"
+                },
+                "datePublished": "2025",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.59973/ipil.158"
+                },
+                "url": "https://doi.org/10.59973/ipil.158"
+              },
+              {
+                "@type": "ScholarlyArticle",
+                "name": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine",
+                "author": {
+                  "@type": "Person",
+                  "name": "Alan K. Davis"
+                },
+                "datePublished": "2021",
+                "description": "Preprint [2021] DOI pending"
+              },
+              {
+                "@type": "ScholarlyArticle",
+                "name": "DMT models the near-death experience",
+                "author": {
+                  "@type": "Person",
+                  "name": "Christopher Timmermann"
+                },
+                "datePublished": "2019",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.1038/s41598-019-51974-4"
+                },
+                "url": "https://doi.org/10.1038/s41598-019-51974-4"
+              },
+              {
+                "@type": "ScholarlyArticle",
+                "name": "DMT: The Spirit Molecule",
+                "author": {
+                  "@type": "Person",
+                  "name": "Rick J. Strassman"
+                },
+                "datePublished": "2001",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.1007/978-1-4615-0115-9"
+                },
+                "url": "https://doi.org/10.1007/978-1-4615-0115-9"
+              }
+            ],
             "datePublished": "2024-01-15",
-            "dateModified": "2025-11-27"
+            "dateModified": "2025-11-30"
           })}
         </script>
         <script type="application/ld+json">
@@ -80,15 +137,20 @@ const Bibliography = () => {
                     <p className="text-sm">
                       Surveyed 2,561 participants reporting entity encounters during N,N-DMT administration. Documents high consistency in visual symbol observations across independent sessions. Foundational evidence for inter-subject replication rates.
                     </p>
-                    <a 
-                      href="https://doi.org/10.1002/hup.2806" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.1002/hup.2806
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
+                    <div className="space-y-2">
+                      <a 
+                        href="https://doi.org/10.1002/hup.2806" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
+                      >
+                        DOI: 10.1002/hup.2806
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                      <p className="text-xs text-muted-foreground italic">
+                        Note: Preprint [2021] DOI pending for related survey data
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -153,21 +215,21 @@ const Bibliography = () => {
                   <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                   <div className="flex-1 space-y-3">
                     <h3 className="text-xl font-semibold">
-                      650 nm Coherent Light Protocol for Discrete Visual Symbol Elicitation During N,N-DMT Administration: Pilot Study
+                      First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration
                     </h3>
                     <p className="text-muted-foreground">
-                      <strong>Goler, D.</strong> (2025). <em>IPI Letters</em> (In Press).
+                      <strong>Goler, D.</strong> (2025). <em>IPI Letters</em>.
                     </p>
                     <p className="text-sm">
                       Original documentation of the 650 nm laser protocol showing reliable elicitation of alphabetic-like symbols on any surface during N,N-DMT experiences. Validated by Chase Hughes with 87% inter-subject consistency across 3,000+ replicators.
                     </p>
                     <a 
-                      href="https://dmtcode.com/research" 
+                      href="https://doi.org/10.59973/ipil.158" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
                     >
-                      View Research Details
+                      DOI: 10.59973/ipil.158
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
