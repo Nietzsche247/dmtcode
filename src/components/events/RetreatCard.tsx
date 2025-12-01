@@ -81,7 +81,7 @@ const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
   return (
     <>
       <Card 
-        className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col"
+        className="overflow-hidden hover:shadow-lg transition-all cursor-pointer h-full flex flex-col border border-border/50 shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
         onClick={() => setModalOpen(true)}
       >
         {retreat.image_url && (
