@@ -74,6 +74,141 @@ export type Database = {
         }
         Relationships: []
       }
+      clinical_trials: {
+        Row: {
+          created_at: string
+          description: string | null
+          doi: string | null
+          end_date: string | null
+          id: string
+          institution: string
+          is_approved: boolean
+          principal_investigator: string | null
+          start_date: string
+          status: string
+          submitted_by: string | null
+          title: string
+          trial_registry_id: string | null
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          doi?: string | null
+          end_date?: string | null
+          id?: string
+          institution: string
+          is_approved?: boolean
+          principal_investigator?: string | null
+          start_date: string
+          status: string
+          submitted_by?: string | null
+          title: string
+          trial_registry_id?: string | null
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          doi?: string | null
+          end_date?: string | null
+          id?: string
+          institution?: string
+          is_approved?: boolean
+          principal_investigator?: string | null
+          start_date?: string
+          status?: string
+          submitted_by?: string | null
+          title?: string
+          trial_registry_id?: string | null
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      community_notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          is_approved: boolean
+          note_text: string
+          updated_at: string
+          upvotes: number
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          is_approved?: boolean
+          note_text: string
+          updated_at?: string
+          upvotes?: number
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          is_approved?: boolean
+          note_text?: string
+          updated_at?: string
+          upvotes?: number
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          event_type: string
+          id: string
+          is_approved: boolean
+          location: string | null
+          organizer: string | null
+          submitted_by: string | null
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_type: string
+          id?: string
+          is_approved?: boolean
+          location?: string | null
+          organizer?: string | null
+          submitted_by?: string | null
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_type?: string
+          id?: string
+          is_approved?: boolean
+          location?: string | null
+          organizer?: string | null
+          submitted_by?: string | null
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       glyph_votes: {
         Row: {
           created_at: string
@@ -300,6 +435,54 @@ export type Database = {
         }
         Relationships: []
       }
+      retreats: {
+        Row: {
+          contact_email: string | null
+          country: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_approved: boolean
+          location: string
+          name: string
+          submitted_by: string | null
+          tags: string[] | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          location: string
+          name: string
+          submitted_by?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          location?: string
+          name?: string
+          submitted_by?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       surface_tags: {
         Row: {
           created_at: string
@@ -514,6 +697,53 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_ratings: {
+        Row: {
+          authenticity_rating: number
+          created_at: string
+          id: string
+          integration_rating: number
+          retreat_id: string
+          review_text: string | null
+          safety_rating: number
+          updated_at: string
+          user_id: string
+          value_rating: number
+        }
+        Insert: {
+          authenticity_rating: number
+          created_at?: string
+          id?: string
+          integration_rating: number
+          retreat_id: string
+          review_text?: string | null
+          safety_rating: number
+          updated_at?: string
+          user_id: string
+          value_rating: number
+        }
+        Update: {
+          authenticity_rating?: number
+          created_at?: string
+          id?: string
+          integration_rating?: number
+          retreat_id?: string
+          review_text?: string | null
+          safety_rating?: number
+          updated_at?: string
+          user_id?: string
+          value_rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_ratings_retreat_id_fkey"
+            columns: ["retreat_id"]
+            isOneToOne: false
+            referencedRelation: "retreats"
             referencedColumns: ["id"]
           },
         ]
