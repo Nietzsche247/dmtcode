@@ -2,7 +2,7 @@
   "name": "DMT Code Visual Symbol Catalogue",
   "short_name": "DMT Code",
   "description": "Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#ff0000",
@@ -29,8 +29,37 @@
   ],
   "screenshots": [],
   "share_target": {
-    "action": "/submit",
+    "action": "/registry",
     "method": "GET",
-    "enctype": "application/x-www-form-urlencoded"
-  }
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Submit Symbol",
+      "short_name": "Submit",
+      "description": "Draw and submit a new visual symbol",
+      "url": "/registry?submit=true",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Browse Registry",
+      "short_name": "Browse",
+      "description": "View community symbol catalogue",
+      "url": "/registry",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Null Report",
+      "short_name": "Null",
+      "description": "Report seeing nothing",
+      "url": "/null-reports",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }

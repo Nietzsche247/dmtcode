@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.png'],
+      includeAssets: ['favicon.png', 'data.json'],
       manifest: {
         name: 'DMT Code Visual Symbol Catalogue',
         short_name: 'DMT Code',
@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
         background_color: '#000000',
         display: 'standalone',
         scope: '/',
-        start_url: '/',
+        start_url: '/?source=pwa',
         orientation: 'portrait-primary',
         icons: [
           {
@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -75,6 +75,35 @@ export default defineConfig(({ mode }) => ({
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 5
               }
+            }
+          },
+          {
+            urlPattern: /\/data\.json$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'data-json-cache',
+              expiration: {
+                maxEntries: 5,
+                maxAgeSeconds: 60 * 60
+              }
+            }
+          },
+          {
+            urlPattern: /\/registry/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'registry-cache',
+              networkTimeoutSeconds: 5,
+              plugins: [
+                {
+                  handlerDidError: async () => {
+                    return new Response(
+                      JSON.stringify({ offline: true, message: 'Offline - saved symbols will sync when online' }),
+                      { headers: { 'Content-Type': 'application/json' } }
+                    );
+                  }
+                }
+              ]
             }
           }
         ]
