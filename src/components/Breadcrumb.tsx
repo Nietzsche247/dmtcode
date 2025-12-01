@@ -19,6 +19,7 @@ export const Breadcrumb = () => {
     'methods': 'Methods',
     'critiques': 'Critiques',
     'about': 'About',
+    'events': 'Events & Trials',
     'open-questions': 'Open Questions',
     'admin': 'Admin',
     'auth': 'Login'
