@@ -6,12 +6,22 @@ import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Search, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
+import { getPlaceholderImage } from '@/utils/placeholderImage';
+import { supabase } from '@/integrations/supabase/client';
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 const peyoteRetreat = {
   title: "Peyote Way Church of God Spirit Walk (3-Day Peyote Ceremony)",
@@ -53,15 +63,31 @@ const bundles = [
 const Tools = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [affiliateProducts, setAffiliateProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
   const addItem = useCartStore(state => state.addItem);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await storefrontApiRequest(STOREFRONT_PRODUCTS_QUERY, { first: 20 });
+        // Fetch Shopify products
+        const data = await storefrontApiRequest(STOREFRONT_PRODUCTS_QUERY, { first: 50 });
         if (data?.data?.products?.edges) {
           setProducts(data.data.products.edges);
+        }
+
+        // Fetch affiliate-only products from database
+        const { data: affiliateData } = await supabase
+          .from('products')
+          .select('*')
+          .eq('affiliate_only', true)
+          .eq('is_approved', true);
+        
+        if (affiliateData) {
+          setAffiliateProducts(affiliateData);
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -73,8 +99,39 @@ const Tools = () => {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (product: ShopifyProduct) => {
-    const variant = product.node.variants.edges[0]?.node;
+  // Filter products based on search and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.node.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
+  const filteredAffiliateProducts = affiliateProducts.filter(product => {
+    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
+  const allProducts = [...filteredProducts, ...filteredAffiliateProducts];
+
+  const handleAddToCart = (product: ShopifyProduct | any) => {
+    // Check if affiliate-only product
+    if (product.affiliate_only || product.affiliate_url) {
+      // Track affiliate click with PostHog
+      if (window.posthog) {
+        window.posthog.capture('affiliate_click', {
+          product_id: product.id,
+          product_title: product.title || product.node?.title,
+          product_price: product.price,
+          affiliate_url: product.affiliate_url
+        });
+      }
+      window.open(product.affiliate_url, '_blank');
+      return;
+    }
+
+    // Handle Shopify products
+    const variant = product.node?.variants?.edges[0]?.node;
     if (!variant) {
       toast.error("Product variant not available");
       return;
@@ -93,6 +150,11 @@ const Tools = () => {
     toast.success("Added to cart", {
       description: product.node.title,
     });
+  };
+
+  const handleProductClick = (product: ShopifyProduct | any) => {
+    const productId = product.node?.id || product.id;
+    navigate(`/products/${productId}`);
   };
 
   const handleWaitlistClick = (productTitle: string, tier: string) => {
@@ -183,6 +245,28 @@ const Tools = () => {
             {/* Laser Guide */}
             <LaserGuide />
 
+            {/* Search and Filters */}
+            <section className="px-4 py-8 bg-muted/30">
+              <div className="max-w-7xl mx-auto space-y-4">
+                <div className="flex gap-4 items-center">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Button onClick={() => setSubmissionModalOpen(true)} className="flex items-center gap-2">
+                    <Plus className="h-5 w-5" />
+                    Submit Product
+                  </Button>
+                </div>
+              </div>
+            </section>
+
             {/* Products Grid */}
             <section className="px-4 py-16 bg-muted/30">
               <div className="max-w-7xl mx-auto space-y-12">
@@ -200,19 +284,26 @@ const Tools = () => {
                     <div className="col-span-2 text-center py-12">
                       <p className="text-muted-foreground">Loading products...</p>
                     </div>
+                  ) : allProducts.length === 0 ? (
+                    <div className="col-span-2 text-center py-12">
+                      <p className="text-muted-foreground">No products found</p>
+                    </div>
                   ) : (
                     <>
-                      {products.map((product) => {
+                      {filteredProducts.map((product) => {
                         const variant = product.node.variants.edges[0]?.node;
                         const image = product.node.images.edges[0]?.node;
                         const price = variant ? parseFloat(variant.price.amount) : 0;
                         
+                        const imageUrl = image?.url || getPlaceholderImage(product.node.title, 'product');
+
                         return (
                           <Card 
                             key={product.node.id} 
-                            className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4"
+                            className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4 cursor-pointer"
                             itemScope
                             itemType="https://schema.org/Product"
+                            onClick={() => handleProductClick(product)}
                           >
                             <meta itemProp="name" content={product.node.title} />
                             <meta itemProp="description" content={product.node.description} />
@@ -225,14 +316,12 @@ const Tools = () => {
 
                             <div className="flex gap-4">
                               <div className="w-32 h-32 flex-shrink-0 bg-secondary/20 rounded-lg overflow-hidden">
-                                {image && (
-                                  <img 
-                                    src={image.url} 
-                                    alt={image.altText || `${product.node.title} - 650nm laser research equipment`}
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                  />
-                                )}
+                                <img 
+                                  src={imageUrl} 
+                                  alt={image?.altText || `${product.node.title} - 650nm laser research equipment`}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
                               </div>
                               
                               <div className="flex-1 space-y-2">
@@ -250,7 +339,10 @@ const Tools = () => {
                             <div className="pt-2">
                               <Button 
                                 className="w-full bg-primary hover:bg-primary/90 glow-button touch-manipulation"
-                                onClick={() => handleAddToCart(product)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(product);
+                                }}
                                 aria-label={`Add ${product.node.title} to cart`}
                                 size="lg"
                               >
@@ -262,11 +354,62 @@ const Tools = () => {
                         );
                       })}
                       
-                      {/* Peyote Way Retreat */}
+                      {/* Affiliate-only products */}
+                      {filteredAffiliateProducts.map((product) => {
+                        const imageUrl = product.image_url || getPlaceholderImage(product.title, product.category);
+                        
+                        return (
+                          <Card 
+                            key={product.id}
+                            className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4 cursor-pointer"
+                            itemScope
+                            itemType="https://schema.org/Product"
+                            onClick={() => navigate(`/products/${product.id}`)}
+                          >
+                            <div className="flex gap-4">
+                              <div className="w-32 h-32 flex-shrink-0 bg-secondary/20 rounded-lg overflow-hidden">
+                                <img 
+                                  src={imageUrl}
+                                  alt={product.title}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                              </div>
+                              
+                              <div className="flex-1 space-y-2">
+                                <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.title}</h3>
+                                <p className="text-2xl font-bold text-primary">
+                                  ${product.price.toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+
+                            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                              {product.description}
+                            </p>
+
+                            <div className="pt-2">
+                              <Button 
+                                className="w-full bg-primary hover:bg-primary/90 glow-button touch-manipulation"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(product);
+                                }}
+                                size="lg"
+                              >
+                                Visit Retailer →
+                              </Button>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                      
+                      {/* Keep Peyote Way as legacy */}
                       <Card 
-                        className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4"
+                        className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4 cursor-pointer"
                         itemScope
                         itemType="https://schema.org/Product"
+                        onClick={() => window.open(peyoteRetreat.url, '_blank')}
                       >
                         <meta itemProp="name" content={peyoteRetreat.title} />
                         <meta itemProp="description" content={peyoteRetreat.description} />
@@ -475,6 +618,7 @@ const Tools = () => {
 
         <Footer />
       </div>
+      <ProductSubmissionModal open={submissionModalOpen} onOpenChange={setSubmissionModalOpen} />
     </>
   );
 };

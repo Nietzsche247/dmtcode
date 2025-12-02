@@ -335,6 +335,7 @@ export type Database = {
       }
       products: {
         Row: {
+          affiliate_only: boolean | null
           affiliate_url: string | null
           category: string
           created_at: string
@@ -352,6 +353,7 @@ export type Database = {
           wavelength: string | null
         }
         Insert: {
+          affiliate_only?: boolean | null
           affiliate_url?: string | null
           category: string
           created_at?: string
@@ -369,6 +371,7 @@ export type Database = {
           wavelength?: string | null
         }
         Update: {
+          affiliate_only?: boolean | null
           affiliate_url?: string | null
           category?: string
           created_at?: string

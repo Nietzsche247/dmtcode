@@ -10,6 +10,13 @@ import { useCartStore } from "@/stores/cartStore";
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from "@/lib/shopify";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 const Woo = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -61,6 +68,10 @@ const Woo = () => {
     });
   };
 
+  const handleProductClick = (product: ShopifyProduct) => {
+    navigate(`/products/${product.node.id}`);
+  };
+
   return (
     <>
       <Helmet>
@@ -105,21 +116,24 @@ const Woo = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => {
                 const image = product.node.images?.edges?.[0]?.node;
+                const imageUrl = image?.url || getPlaceholderImage(product.node.title, 'mysticism');
                 const variant = product.node.variants.edges[0]?.node;
                 const price = variant?.price;
 
                 return (
-                  <Card key={product.node.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card 
+                    key={product.node.id} 
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() => handleProductClick(product)}
+                  >
                     <CardHeader className="p-0">
-                      {image && (
-                        <div className="aspect-square overflow-hidden bg-secondary/20">
-                          <img
-                            src={image.url}
-                            alt={image.altText || product.node.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
+                      <div className="aspect-square overflow-hidden bg-secondary/20">
+                        <img
+                          src={imageUrl}
+                          alt={image?.altText || product.node.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                     </CardHeader>
                     <CardContent className="p-6">
                       <CardTitle className="text-xl mb-2">{product.node.title}</CardTitle>
@@ -134,7 +148,10 @@ const Woo = () => {
                     </CardContent>
                     <CardFooter className="p-6 pt-0">
                       <Button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product);
+                        }}
                         className="w-full"
                         disabled={!variant?.availableForSale}
                       >
