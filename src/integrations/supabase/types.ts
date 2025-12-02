@@ -286,6 +286,107 @@ export type Database = {
           },
         ]
       }
+      product_ratings: {
+        Row: {
+          accuracy_rating: number
+          created_at: string
+          id: string
+          product_id: string
+          quality_rating: number
+          research_rating: number
+          review_text: string | null
+          updated_at: string
+          user_id: string
+          value_rating: number
+        }
+        Insert: {
+          accuracy_rating: number
+          created_at?: string
+          id?: string
+          product_id: string
+          quality_rating: number
+          research_rating: number
+          review_text?: string | null
+          updated_at?: string
+          user_id: string
+          value_rating: number
+        }
+        Update: {
+          accuracy_rating?: number
+          created_at?: string
+          id?: string
+          product_id?: string
+          quality_rating?: number
+          research_rating?: number
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string
+          value_rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ratings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          affiliate_url: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          is_affiliate: boolean
+          is_approved: boolean
+          manufacturer_url: string | null
+          price: number
+          specs: Json | null
+          submitted_by: string | null
+          title: string
+          updated_at: string
+          wavelength: string | null
+        }
+        Insert: {
+          affiliate_url?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url: string
+          is_affiliate?: boolean
+          is_approved?: boolean
+          manufacturer_url?: string | null
+          price: number
+          specs?: Json | null
+          submitted_by?: string | null
+          title: string
+          updated_at?: string
+          wavelength?: string | null
+        }
+        Update: {
+          affiliate_url?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          is_affiliate?: boolean
+          is_approved?: boolean
+          manufacturer_url?: string | null
+          price?: number
+          specs?: Json | null
+          submitted_by?: string | null
+          title?: string
+          updated_at?: string
+          wavelength?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
