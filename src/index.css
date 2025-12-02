@@ -2,54 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Meng To 2025 Aesthetic - Design System */
 
 @layer base {
   :root {
-    /* Cosmic Dark Theme - DMT Code */
-    --background: 0 0% 4%;
+    /* Dark Mode - Meng To style deep blacks */
+    --background: 0 0% 3%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 6%;
+    --card: 0 0% 5%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 5%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
 
-    /* 650nm Red Laser Primary - WCAG AA compliant (5.9:1 contrast) */
-    --primary: 0 85% 62%;
+    /* 650nm Red Laser Primary */
+    --primary: 0 85% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Darker red for secondary */
-    --secondary: 0 70% 25%;
+    /* Soft secondary */
+    --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 55%;
 
-    /* Red accent glow - WCAG AA compliant */
-    --accent: 0 85% 62%;
+    --accent: 0 85% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 62%;
+    --destructive: 0 85% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 10%;
-    --ring: 0 85% 62%;
+    --border: 0 0% 12%;
+    --input: 0 0% 8%;
+    --ring: 0 85% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Glow effects */
     --glow-primary: 0 100% 50%;
-    --glow-intensity: 0.6;
+    --glow-intensity: 0.5;
     
-    /* Particle animation */
-    --particle-speed: 60s;
-
-    /* Gold for links and accents - WCAG AA compliant */
+    /* Gold accent */
     --gold: 45 100% 61%;
   }
 }
@@ -60,14 +54,15 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 12pt;
+    @apply bg-background text-foreground overflow-x-hidden antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
   }
   
-  h1, h2, h3, h4, h5, h6, nav {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 18pt;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
   }
 
   html {
@@ -75,68 +70,167 @@ All colors MUST be HSL.
   }
 }
 
+/* Meng To Style Animations */
 @layer utilities {
-  .glow-text {
-    text-shadow: 0 0 20px hsl(var(--glow-primary) / var(--glow-intensity)),
-                 0 0 40px hsl(var(--glow-primary) / 0.4);
-  }
-
-  .glow-border {
-    box-shadow: 0 0 15px hsl(var(--glow-primary) / 0.5),
-                0 0 30px hsl(var(--glow-primary) / 0.3),
-                inset 0 0 15px hsl(var(--glow-primary) / 0.1);
-  }
-
-  .glow-button {
-    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.6),
-                0 0 40px hsl(var(--glow-primary) / 0.4),
-                0 0 60px hsl(var(--glow-primary) / 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .glow-button:hover {
-    box-shadow: 0 0 30px hsl(var(--glow-primary) / 0.8),
-                0 0 60px hsl(var(--glow-primary) / 0.6),
-                0 0 90px hsl(var(--glow-primary) / 0.4);
-  }
-
-  @keyframes particle-float {
+  /* Blur-in fade-up animation */
+  @keyframes blur-in-up {
     0% {
-      transform: translate(0, 0) scale(1);
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(24px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+  }
+
+  .animate-blur-in-up {
+    animation: blur-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .animation-delay-100 { animation-delay: 0.1s; }
+  .animation-delay-200 { animation-delay: 0.2s; }
+  .animation-delay-300 { animation-delay: 0.3s; }
+  .animation-delay-400 { animation-delay: 0.4s; }
+  .animation-delay-500 { animation-delay: 0.5s; }
+  .animation-delay-600 { animation-delay: 0.6s; }
+
+  /* Border beam animation for CTAs */
+  @keyframes border-beam {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .border-beam {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .border-beam::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary)) 25%,
+      hsl(var(--primary) / 0.8) 50%,
+      hsl(var(--primary)) 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: border-beam 3s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .border-beam:hover::before {
+    opacity: 1;
+  }
+
+  /* Lickable button effect */
+  .btn-lickable {
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-lickable:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.4),
+                0 0 60px hsl(var(--primary) / 0.2);
+  }
+
+  .btn-lickable:active {
+    transform: scale(0.98);
+  }
+
+  /* Subtle grain texture */
+  .grain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Marquee animation for social proof */
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+
+  /* Floating particles */
+  @keyframes float-particle {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
       opacity: 0;
     }
     10% {
-      opacity: 0.6;
+      opacity: 0.3;
     }
     90% {
-      opacity: 0.6;
+      opacity: 0.3;
     }
     100% {
-      transform: translate(var(--tx), var(--ty)) scale(0.5);
+      transform: translateY(-100vh) translateX(50px);
       opacity: 0;
     }
   }
 
-  @keyframes pulse-glow {
-    0%, 100% {
-      opacity: 0.6;
-      filter: blur(8px);
+  /* Glow text (kept from original) */
+  .glow-text {
+    text-shadow: 0 0 30px hsl(var(--glow-primary) / 0.4),
+                 0 0 60px hsl(var(--glow-primary) / 0.2);
+  }
+
+  /* Section fade in */
+  @keyframes section-reveal {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
     }
-    50% {
+    100% {
       opacity: 1;
-      filter: blur(12px);
+      transform: translateY(0);
     }
   }
 
-  @keyframes grid-pulse {
-    0%, 100% {
-      opacity: 0.3;
-    }
-    50% {
-      opacity: 0.6;
-    }
+  .animate-section-reveal {
+    animation: section-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
+  /* Laser reveal animation */
   @keyframes laser-reveal {
     0% {
       transform: scaleX(1);

@@ -14,10 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        'garamond': ['EB Garamond', 'Georgia', 'serif'],
-        'helvetica': ['Helvetica Neue', 'Arial', 'sans-serif'],
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Inter', 'system-ui', 'sans-serif'],
         'playfair': ['Playfair Display', 'Georgia', 'serif'],
-        'inter': ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
