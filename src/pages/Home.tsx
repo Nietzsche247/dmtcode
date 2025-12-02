@@ -1,13 +1,44 @@
-import { ParticleBackground } from '@/components/ParticleBackground';
+import { useState, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { ExplainerSection } from '@/components/ExplainerSection';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
+import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
+import { ArrowRight, Database, Users, Target, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div 
+      ref={ref} 
+      className={`opacity-0 ${isVisible ? 'animate-blur-in-up' : ''} ${className}`}
+      style={{ animationFillMode: 'forwards' }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Helmet>
@@ -17,13 +48,10 @@ const Home = () => {
           content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." 
         />
         <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research" />
-        <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." />
+        <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
         <link rel="canonical" href="https://dmtcode.com/" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
@@ -33,174 +61,126 @@ const Home = () => {
             "name": "DMT Code Visual Symbol Catalogue",
             "url": "https://dmtcode.com",
             "description": "Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://dmtcode.com/registry?q={search_term_string}",
-              "query-input": "required name=search_term_string"
-            },
             "license": "https://creativecommons.org/licenses/by/4.0/"
-          })}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "DMT Code Project",
-            "url": "https://dmtcode.com",
-            "description": "Community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
-            "foundingDate": "2025",
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "contactType": "Research Inquiries",
-              "email": "research@dmtcode.com"
-            }
           })}
         </script>
       </Helmet>
 
       <div className="relative min-h-screen">
-        <ParticleBackground />
-        
         <main className="relative z-10">
           <Navigation />
           <HeroSection />
           <ExplainerSection />
           
-          {/* TL;DR Section */}
-          <section className="container mx-auto px-4 py-12 max-w-4xl">
-            <div className="p-8 bg-primary/5 border-2 border-primary/30 rounded-lg">
-              <h2 className="text-2xl font-bold mb-6 text-primary">TL;DR: What Is This?</h2>
-              <ul className="space-y-3 text-base">
-                <li className="flex items-start gap-3">
-                  <span className="text-primary font-bold mt-1">→</span>
-                  <span><strong>650 nm laser protocol:</strong> Shining coherent red light through diffraction grating during N,N-DMT experiences elicits discrete visual symbols (Goler 2025, 3,000+ replicators)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary font-bold mt-1">→</span>
-                  <span><strong>87% consistency:</strong> Independent observers report identical symbol morphology—alphabetic-like characters, geometric patterns (Davis et al. 2021, DOI: 10.1002/hup.2806)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary font-bold mt-1">→</span>
-                  <span><strong>Open registry:</strong> Anonymous submissions, 100×100 px canvas drawings, structured metadata, CSV/JSON downloads under CC-BY-4.0</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary font-bold mt-1">→</span>
-                  <span><strong>Neutral science:</strong> No medical claims, no mystical framing—just systematic documentation for academic research and pattern analysis</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-primary font-bold mt-1">→</span>
-                  <span><strong>Critical perspectives:</strong> Methodological critiques, optical artifact hypotheses, and ethical considerations prominently featured (<a href="/evidence-map" className="text-gold hover:underline">Evidence Map</a>)</span>
-                </li>
-              </ul>
+          {/* Key Features Section */}
+          <section className="container mx-auto px-4 py-24 max-w-6xl">
+            <AnimatedSection className="text-center mb-16">
+              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Why It Matters</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight">
+                Open Science, Real Data
+              </h2>
+            </AnimatedSection>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Target, title: '650 nm Protocol', desc: 'Coherent red light through diffraction grating during N,N-DMT elicits consistent visual symbols (Goler 2025)' },
+                { icon: Users, title: '87% Consistency', desc: 'Independent observers report identical symbol morphology across sessions (Davis et al. 2021)' },
+                { icon: Database, title: 'Open Registry', desc: 'Anonymous submissions, structured metadata, CSV/JSON downloads under CC-BY-4.0' },
+                { icon: FileText, title: 'Neutral Science', desc: 'No medical claims; systematic documentation for academic research and pattern analysis' },
+              ].map((item, i) => (
+                <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
+                  <div className="p-6 rounded-2xl bg-card/30 border border-border/30 hover:border-primary/30 transition-colors h-full">
+                    <item.icon className="w-8 h-8 text-primary mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
             </div>
           </section>
 
-          {/* Project Mission Section */}
-          <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border">
-            <h2 className="text-3xl font-bold mb-8">Project Mission</h2>
-            <div className="space-y-6 text-lg leading-relaxed">
-              <p>
-                DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Our mission is to create a comprehensive, scientifically rigorous database of these reported visual phenomena for academic research and pattern analysis.
+          {/* Stats Section */}
+          <section className="container mx-auto px-4 py-24 max-w-5xl border-t border-border/30">
+            <AnimatedSection className="text-center mb-12">
+              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Current Status</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+                Dataset Overview
+              </h2>
+              <p className="text-muted-foreground font-light max-w-2xl mx-auto">
+                Real-time data updated with each new submission. Complete dataset available for download.
               </p>
-              <p>
-                The 650 nm laser protocol, developed by Danny Goler and validated by Chase Hughes across 3,000+ independent replicators, involves shining coherent red light through a diffraction grating during N,N-DMT experiences. Participants consistently report observing discrete, bounded visual symbols resembling alphabetic characters, geometric patterns, and structured glyphs on various surfaces.
-              </p>
-              <p>
-                Davis et al. (2021) documented an 87% inter-subject consistency rate in visual symbol observations among participants using identical laser specifications. This remarkable consistency across independent sessions suggests these phenomena warrant systematic documentation and analysis. Our registry provides the infrastructure for this open research effort.
-              </p>
+            </AnimatedSection>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {[
+                { value: '52+', label: 'Symbol Archetypes' },
+                { value: '3,000+', label: 'Independent Replicators' },
+                { value: '87%', label: 'Consistency Rate' },
+              ].map((stat, i) => (
+                <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
+                  <div className="text-center p-8 rounded-2xl bg-primary/5 border border-primary/10">
+                    <div className="text-5xl md:text-6xl font-black text-primary mb-2">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground font-light">{stat.label}</div>
+                  </div>
+                </AnimatedSection>
+              ))}
             </div>
           </section>
 
-          {/* Current Dataset Status */}
-          <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border">
-            <h2 className="text-3xl font-bold mb-8">Current Dataset Status</h2>
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center">
-                <div className="text-4xl font-bold text-primary mb-2">52+</div>
-                <div className="text-sm text-muted-foreground">Documented Symbol Archetypes</div>
+          {/* Mission Section */}
+          <section className="container mx-auto px-4 py-24 max-w-4xl border-t border-border/30">
+            <AnimatedSection>
+              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Our Mission</p>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-8">
+                Systematic Documentation for Science
+              </h2>
+              <div className="space-y-6 text-lg text-muted-foreground font-light leading-relaxed">
+                <p>
+                  DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration.
+                </p>
+                <p>
+                  The protocol, developed by Danny Goler and validated by Chase Hughes across 3,000+ independent replicators, involves shining coherent red light through a diffraction grating during N,N-DMT experiences. Participants consistently report observing discrete, bounded visual symbols resembling alphabetic characters and geometric patterns.
+                </p>
+                <p>
+                  Davis et al. (2021) documented an 87% inter-subject consistency rate. This remarkable consistency across independent sessions suggests these phenomena warrant systematic documentation and analysis.
+                </p>
               </div>
-              <div className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center">
-                <div className="text-4xl font-bold text-primary mb-2">3,000+</div>
-                <div className="text-sm text-muted-foreground">Independent Replicators</div>
-              </div>
-              <div className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center">
-                <div className="text-4xl font-bold text-primary mb-2">87%</div>
-                <div className="text-sm text-muted-foreground">Inter-Subject Consistency</div>
-              </div>
-            </div>
-            <p className="text-base text-muted-foreground">
-              All data is updated in real-time as new submissions are received through the registry. The complete dataset is available for download in JSON and CSV formats under CC-BY-4.0 license, enabling academic research and independent analysis.
-            </p>
-          </section>
-
-          {/* How to Contribute */}
-          <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border">
-            <h2 className="text-3xl font-bold mb-8">How to Contribute</h2>
-            <div className="space-y-6 text-lg leading-relaxed">
-              <p>
-                The registry accepts both anonymous and authenticated submissions. Contributors draw observed symbols on a 100×100 pixel canvas immediately following their experience, accompanied by structured metadata including source, route of administration, perceived surface, depth, motion characteristics, emotional valence, and symmetry classification.
-              </p>
-              <p>
-                <strong>Critical timing:</strong> Strassman (2001) documented rapid memory decay following N,N-DMT administration—60% detail loss within 15 minutes, 90% within 2 hours. Immediate documentation maximizes accuracy. Contributors should submit drawings within 5 minutes of baseline return for optimal fidelity.
-              </p>
-            </div>
-          </section>
-
-          {/* Open Data Policy */}
-          <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border">
-            <h2 className="text-3xl font-bold mb-8">Open Data Policy</h2>
-            <div className="space-y-6 text-lg leading-relaxed">
-              <p>
-                All registry submissions are released under Creative Commons Attribution 4.0 International License (CC-BY-4.0). This ensures maximum accessibility for academic research, pattern analysis, and independent replication studies. Researchers can freely download, analyze, and republish registry data with proper attribution.
-              </p>
-              <p>
-                The complete dataset is accessible at <a href="/data.json" className="text-gold hover:underline">/data.json</a> as a machine-readable endpoint, updated in real-time with each new submission. This enables AI systems, academic institutions, and independent researchers to access structured data for computational analysis and cross-referencing with peer-reviewed literature.
-              </p>
-            </div>
+            </AnimatedSection>
           </section>
           
           <TestimonialsCarousel />
           <EmailCapture />
           
-          {/* Registry Link */}
-          <div className="container mx-auto px-4 py-12 text-center space-y-8">
-            <div>
-              <p className="text-gold mb-4 text-lg">
-                Contribute to the open research catalogue →
+          {/* CTA Section */}
+          <section className="container mx-auto px-4 py-24 text-center">
+            <AnimatedSection className="max-w-2xl mx-auto">
+              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Get Involved</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
+                Contribute to Open Research
+              </h2>
+              <p className="text-muted-foreground font-light mb-8">
+                Submit your observations or explore the evidence. Null reports are equally valuable for establishing baseline data.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a 
-                  href="/registry#submit"
-                  className="inline-block px-8 py-4 bg-destructive/90 hover:bg-destructive text-white rounded-md transition-colors font-medium text-lg"
-                  aria-label="Submit symbol to DMT Code Glyph Registry"
+                <Button 
+                  size="lg" 
+                  className="px-8 py-6 h-auto rounded-full btn-lickable border-beam group"
+                  onClick={() => navigate('/registry#submit')}
                 >
-                  SUBMIT SYMBOL
-                </a>
-                <a 
-                  href="/registry?null=true#submit"
-                  className="inline-block px-8 py-4 bg-secondary hover:bg-secondary/90 text-secondary-foreground border border-border rounded-md transition-colors font-medium text-lg"
-                  aria-label="Report null experience to establish baseline data"
+                  Submit Symbol
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="px-8 py-6 h-auto rounded-full btn-lickable"
+                  onClick={() => navigate('/evidence-map')}
                 >
-                  I SAW NOTHING
-                </a>
+                  View Evidence
+                </Button>
               </div>
-              <p className="text-sm text-muted-foreground mt-4">
-                Null reports help establish baseline conditions for comparison
-              </p>
-            </div>
-            <div className="pt-4 border-t border-border">
-              <p className="text-muted-foreground mb-4 text-base">
-                Explore balanced analysis of claims and counter-evidence →
-              </p>
-              <a 
-                href="/evidence-map"
-                className="inline-block px-8 py-3 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-md transition-colors font-medium"
-                aria-label="View Evidence Map with claims and counter-evidence"
-              >
-                EVIDENCE MAP
-              </a>
-            </div>
-          </div>
+            </AnimatedSection>
+          </section>
         </main>
 
         <Footer />

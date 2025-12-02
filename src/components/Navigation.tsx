@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "./NavLink";
 import { CartDrawer } from "./CartDrawer";
@@ -58,40 +58,56 @@ export const Navigation = () => {
     setIsOpen(false);
   };
 
+  const navItems = [
+    { path: '/', label: 'Home' },
+    { path: '/research', label: 'Research' },
+    { path: '/tools', label: 'Tools' },
+    { path: '/registry', label: 'Registry' },
+    { path: '/events', label: 'Events' },
+    { path: '/evidence-map', label: 'Evidence' },
+    { path: '/about', label: 'About' },
+  ];
+
   return (
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg"
+            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
             : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center gap-8">
               {/* Logo */}
               <button
                 onClick={() => handleNavigation("/")}
-                className="cursor-pointer bg-transparent border-none"
+                className="cursor-pointer bg-transparent border-none hover:opacity-80 transition-opacity"
                 aria-label="DMT Code Project Home"
               >
                 <Logo size={isMobile ? "sm" : "md"} />
               </button>
-              <div className="hidden md:flex items-center space-x-6 font-helvetica">
-                <button onClick={() => handleNavigation('/')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : ''}`}>Home</button>
-                <button onClick={() => handleNavigation('/research')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/research' ? 'text-primary' : ''}`}>Research</button>
-                <button onClick={() => handleNavigation('/tools')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/tools' ? 'text-primary' : ''}`}>Tools</button>
-                <button onClick={() => handleNavigation('/woo')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/woo' ? 'text-primary' : ''}`}>Mysticism</button>
-                <button onClick={() => handleNavigation('/registry')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/registry' ? 'text-primary' : ''}`}>Glyph Registry</button>
-                <button onClick={() => handleNavigation('/events')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/events' ? 'text-primary' : ''}`}>Events</button>
-                <button onClick={() => handleNavigation('/waitlist')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/waitlist' ? 'text-primary' : ''}`}>Join Waitlist</button>
-                <button onClick={() => handleNavigation('/evidence-map')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/evidence-map' ? 'text-primary' : ''}`}>Evidence</button>
-                <button onClick={() => handleNavigation('/about')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/about' ? 'text-primary' : ''}`}>About</button>
+              
+              {/* Desktop nav links */}
+              <div className="hidden md:flex items-center gap-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavigation(item.path)}
+                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      location.pathname === item.path
+                        ? 'text-primary bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center gap-3">
               <CartDrawer />
               {isAuthenticated ? (
                 <>
@@ -101,7 +117,13 @@ export const Navigation = () => {
                   <Button onClick={handleSignOut} variant="outline" size="sm">Sign Out</Button>
                 </>
               ) : (
-                <NavLink to="/auth"><Button variant="default" size="sm">Sign In</Button></NavLink>
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  size="sm"
+                  className="rounded-full px-4"
+                >
+                  Sign In
+                </Button>
               )}
             </div>
 
@@ -118,29 +140,34 @@ export const Navigation = () => {
           </div>
         </div>
 
+        {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border">
-            <div className="px-4 pt-2 pb-3 space-y-1 font-helvetica">
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Home</button>
-              <button onClick={() => handleNavigation('/research')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Research</button>
-              <button onClick={() => handleNavigation('/tools')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Tools</button>
-              <button onClick={() => handleNavigation('/woo')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Mysticism</button>
-              <button onClick={() => handleNavigation('/registry')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Glyph Registry</button>
-              <button onClick={() => handleNavigation('/events')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Events</button>
-              <button onClick={() => handleNavigation('/waitlist')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Join Waitlist</button>
-              <button onClick={() => handleNavigation('/evidence-map')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Evidence Map</button>
-              <button onClick={() => handleNavigation('/methods')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Methods</button>
-              <button onClick={() => handleNavigation('/critiques')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Critiques</button>
-              <button onClick={() => handleNavigation('/about')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">About</button>
-              {isAuthenticated ? (
-                <>
-                  <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full mt-2">Profile</Button>
-                  <Button onClick={() => handleNavigation('/admin')} variant="ghost" size="sm" className="w-full mt-2">Admin</Button>
-                  <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2">Sign Out</Button>
-                </>
-              ) : (
-                <NavLink to="/auth" className="block mt-2"><Button variant="default" size="sm" className="w-full">Sign In</Button></NavLink>
-              )}
+          <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/50">
+            <div className="px-4 pt-2 pb-4 space-y-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleNavigation(item.path)}
+                  className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                    location.pathname === item.path
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+              <div className="pt-4 border-t border-border/50 mt-4">
+                {isAuthenticated ? (
+                  <>
+                    <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start">Profile</Button>
+                    <Button onClick={() => handleNavigation('/admin')} variant="ghost" size="sm" className="w-full justify-start">Admin</Button>
+                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2">Sign Out</Button>
+                  </>
+                ) : (
+                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full">Sign In</Button>
+                )}
+              </div>
             </div>
           </div>
         )}
