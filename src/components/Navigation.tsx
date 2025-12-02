@@ -6,6 +6,8 @@ import { CartDrawer } from "./CartDrawer";
 import { useCartStore } from "@/stores/cartStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Logo } from "./Logo";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +17,7 @@ export const Navigation = () => {
   const itemCount = useCartStore((state) => state.items.length);
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,16 +70,13 @@ export const Navigation = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-8">
-              {/* Logo - Stacked */}
+              {/* Logo */}
               <button
                 onClick={() => handleNavigation("/")}
-                className="cursor-pointer bg-transparent border-none hover:opacity-80 transition-opacity"
+                className="cursor-pointer bg-transparent border-none"
                 aria-label="DMT Code Project Home"
               >
-                <div className="flex flex-col items-start leading-none">
-                  <span className="font-garamond font-bold text-[#C41E3A] text-2xl">DMT Code</span>
-                  <span className="font-helvetica font-light text-[#C41E3A] text-sm">Project</span>
-                </div>
+                <Logo size={isMobile ? "sm" : "md"} />
               </button>
               <div className="hidden md:flex items-center space-x-6 font-helvetica">
                 <button onClick={() => handleNavigation('/')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : ''}`}>Home</button>
