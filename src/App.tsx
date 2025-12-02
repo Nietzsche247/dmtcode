@@ -27,6 +27,8 @@ import MySymbols from "./pages/MySymbols";
 import Leaderboard from "./pages/Leaderboard";
 import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
+import ProductDetail from "./pages/ProductDetail";
+import SubmitProduct from "./pages/SubmitProduct";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -59,6 +61,8 @@ const App = () => (
           <Route path="/my-symbols" element={<MySymbols />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/null-reports" element={<NullReports />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/submit-product" element={<SubmitProduct />} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
