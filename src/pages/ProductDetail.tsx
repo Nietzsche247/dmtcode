@@ -9,45 +9,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Star, ExternalLink, ShoppingCart, ArrowLeft } from "lucide-react";
+import { Star, ExternalLink, ShoppingCart, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { storefrontApiRequest } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
-import CommunityNotes from "@/components/events/CommunityNotes";
+import { getPlaceholderImage } from "@/utils/placeholderImage";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  image_url: string;
-  manufacturer_url: string | null;
-  specs: any;
-  category: string;
-  wavelength: string | null;
-  is_affiliate: boolean;
-  affiliate_url: string | null;
-}
-
-interface Rating {
-  id: string;
-  quality_rating: number;
-  accuracy_rating: number;
-  value_rating: number;
-  research_rating: number;
-  review_text: string | null;
-  created_at: string;
-  user_id: string;
+declare global {
+  interface Window {
+    posthog?: any;
+  }
 }
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const addItem = useCartStore(state => state.addItem);
+  
+  const [product, setProduct] = useState<any>(null);
+  const [ratings, setRatings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userRating, setUserRating] = useState<Rating | null>(null);
+  const [userRating, setUserRating] = useState<any>(null);
   const [newRating, setNewRating] = useState({
     quality_rating: 5,
     accuracy_rating: 5,
@@ -56,50 +40,174 @@ const ProductDetail = () => {
     review_text: ""
   });
 
+  // Check if this is a Shopify product ID (starts with gid://)
+  const isShopifyProduct = id?.startsWith('gid://');
+
   useEffect(() => {
     if (id) {
       fetchProduct();
-      fetchRatings();
     }
   }, [id]);
 
   const fetchProduct = async () => {
     try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", id)
-        .single();
+      if (isShopifyProduct) {
+        // Fetch from Shopify
+        const query = `
+          query GetProduct($id: ID!) {
+            product(id: $id) {
+              id
+              title
+              description
+              handle
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              images(first: 5) {
+                edges {
+                  node {
+                    url
+                    altText
+                  }
+                }
+              }
+              variants(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    availableForSale
+                    selectedOptions {
+                      name
+                      value
+                    }
+                  }
+                }
+              }
+              options {
+                name
+                values
+              }
+            }
+          }
+        `;
+        
+        const data = await storefrontApiRequest(query, { id });
+        const shopifyProduct = data?.data?.product;
+        
+        if (shopifyProduct) {
+          setProduct({
+            ...shopifyProduct,
+            price: parseFloat(shopifyProduct.priceRange.minVariantPrice.amount),
+            image_url: shopifyProduct.images.edges[0]?.node.url,
+            category: 'product',
+            isShopify: true
+          });
+        }
 
-      if (error) throw error;
-      setProduct(data);
+        // Try to fetch database enhancements (ratings) by handle or ID
+        const handle = shopifyProduct?.handle;
+        if (handle) {
+          const { data: dbData } = await supabase
+            .from('products')
+            .select('id, category')
+            .or(`id.eq.${handle},specs->>shopify_id.eq.${id}`)
+            .maybeSingle();
+          
+          if (dbData) {
+            // Fetch ratings for this product
+            const { data: ratingsData } = await supabase
+              .from('product_ratings')
+              .select('*')
+              .eq('product_id', dbData.id)
+              .order('created_at', { ascending: false });
+            
+            setRatings(ratingsData || []);
+            
+            // Check if user has rated
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              const existing = ratingsData?.find(r => r.user_id === user.id);
+              if (existing) setUserRating(existing);
+            }
+            
+            // Merge category from DB
+            setProduct((prev: any) => ({ ...prev, category: dbData.category, dbId: dbData.id }));
+          }
+        }
+      } else {
+        // Fetch from database (affiliate-only products)
+        const { data: dbProduct, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) throw error;
+        
+        setProduct({
+          ...dbProduct,
+          isShopify: false
+        });
+
+        // Fetch ratings
+        const { data: ratingsData } = await supabase
+          .from('product_ratings')
+          .select('*')
+          .eq('product_id', id)
+          .order('created_at', { ascending: false });
+
+        setRatings(ratingsData || []);
+
+        // Check if user has rated
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const existing = ratingsData?.find(r => r.user_id === user.id);
+          if (existing) setUserRating(existing);
+        }
+      }
     } catch (error) {
-      console.error("Error fetching product:", error);
+      console.error('Error fetching product:', error);
       toast.error("Failed to load product");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchRatings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("product_ratings")
-        .select("*")
-        .eq("product_id", id)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setRatings(data || []);
-
-      // Check if user has already rated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const existing = data?.find(r => r.user_id === user.id);
-        if (existing) setUserRating(existing);
+  const handleAddToCart = () => {
+    // Track affiliate click with PostHog
+    if (product.affiliate_only || product.affiliate_url) {
+      if (window.posthog) {
+        window.posthog.capture('affiliate_click', {
+          product_id: product.id,
+          product_title: product.title,
+          product_price: product.price,
+          affiliate_url: product.affiliate_url
+        });
       }
-    } catch (error) {
-      console.error("Error fetching ratings:", error);
+      window.open(product.affiliate_url, '_blank');
+      return;
+    }
+
+    // Add to cart for Shopify products
+    if (product.isShopify && product.variants?.edges?.[0]) {
+      const variant = product.variants.edges[0].node;
+      addItem({
+        product: { node: product },
+        variantId: variant.id,
+        variantTitle: variant.title,
+        price: variant.price,
+        quantity: 1,
+        selectedOptions: variant.selectedOptions || []
+      });
+      toast.success("Added to cart");
     }
   };
 
@@ -112,10 +220,13 @@ const ProductDetail = () => {
         return;
       }
 
+      // Use dbId for Shopify products, or regular id for database products
+      const productId = product.dbId || id;
+
       const { error } = await supabase
         .from("product_ratings")
         .insert({
-          product_id: id,
+          product_id: productId,
           user_id: user.id,
           ...newRating
         });
@@ -123,7 +234,7 @@ const ProductDetail = () => {
       if (error) throw error;
 
       toast.success("Rating submitted!");
-      fetchRatings();
+      fetchProduct();
       setNewRating({
         quality_rating: 5,
         accuracy_rating: 5,
@@ -148,7 +259,7 @@ const ProductDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading product...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -164,33 +275,15 @@ const ProductDetail = () => {
     );
   }
 
+  const imageUrl = product.image_url || getPlaceholderImage(product.title, product.category || 'product');
+  const specs = product.specs || {};
+
   return (
     <>
       <Helmet>
         <title>{product.title} | DMT Code</title>
-        <meta name="description" content={product.description.slice(0, 160)} />
+        <meta name="description" content={product.description?.slice(0, 160)} />
         <link rel="canonical" href={`https://dmtcode.com/products/${id}`} />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            "name": product.title,
-            "description": product.description,
-            "image": product.image_url,
-            "brand": { "@type": "Brand", "name": "DMT Code" },
-            "offers": {
-              "@type": "Offer",
-              "price": product.price,
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
-            },
-            "aggregateRating": ratings.length > 0 ? {
-              "@type": "AggregateRating",
-              "ratingValue": calculateAverageRating(),
-              "reviewCount": ratings.length
-            } : undefined
-          })}
-        </script>
       </Helmet>
 
       <ParticleBackground />
@@ -198,7 +291,6 @@ const ProductDetail = () => {
 
       <main className="min-h-screen pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-8">
-          {/* Breadcrumb */}
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -215,11 +307,10 @@ const ProductDetail = () => {
             </BreadcrumbList>
           </Breadcrumb>
 
-          {/* Product Header */}
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-4">
               <img
-                src={product.image_url}
+                src={imageUrl}
                 alt={product.title}
                 className="w-full aspect-square object-cover rounded-lg border border-border"
               />
@@ -228,7 +319,7 @@ const ProductDetail = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Badge>{product.category}</Badge>
+                  <Badge>{product.category || 'product'}</Badge>
                   {product.wavelength && (
                     <Badge variant="outline">{product.wavelength}</Badge>
                   )}
@@ -246,29 +337,27 @@ const ProductDetail = () => {
               <Separator />
 
               <div className="space-y-4">
-                <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-primary">${product.price?.toFixed(2)}</p>
                 
-                {product.is_affiliate && product.affiliate_url ? (
-                  <Button 
-                    size="lg" 
-                    className="w-full"
-                    onClick={() => window.open(product.affiliate_url!, '_blank')}
-                  >
-                    <ExternalLink className="w-5 h-5 mr-2" />
-                    Buy Now (Affiliate Link)
-                  </Button>
-                ) : (
-                  <Button size="lg" className="w-full">
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Add to Cart
-                  </Button>
-                )}
+                <Button size="lg" className="w-full" onClick={handleAddToCart}>
+                  {product.affiliate_only || product.affiliate_url ? (
+                    <>
+                      <ExternalLink className="w-5 h-5 mr-2" />
+                      Visit Retailer →
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Add to Cart
+                    </>
+                  )}
+                </Button>
 
                 {product.manufacturer_url && (
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => window.open(product.manufacturer_url!, '_blank')}
+                    onClick={() => window.open(product.manufacturer_url, '_blank')}
                   >
                     View Manufacturer Site
                   </Button>
@@ -277,7 +366,6 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* Tabs */}
           <Tabs defaultValue="description" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="description">Description</TabsTrigger>
@@ -294,9 +382,9 @@ const ProductDetail = () => {
 
             <TabsContent value="specs" className="space-y-4">
               <Card className="p-6">
-                {Object.keys(product.specs).length > 0 ? (
+                {Object.keys(specs).length > 0 ? (
                   <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(product.specs).map(([key, value]) => (
+                    {Object.entries(specs).map(([key, value]) => (
                       <div key={key} className="space-y-1">
                         <dt className="text-sm font-semibold text-muted-foreground uppercase">
                           {key.replace(/_/g, ' ')}
