@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import CommunityNotes from "./CommunityNotes";
 import NotifyMeForm from "./NotifyMeForm";
+import SocialShare from "./SocialShare";
 
 interface Retreat {
   id: string;
@@ -260,7 +261,12 @@ const RetreatDetailModal = ({ retreat, metrics, open, onOpenChange }: RetreatDet
             </a>
           )}
 
-          <div className="border-t pt-4">
+          <div className="border-t pt-4 space-y-3">
+            <SocialShare
+              title={retreat.name}
+              description={retreat.description || undefined}
+              entityType="retreat"
+            />
             <NotifyMeForm
               entityType="retreat"
               entityName={retreat.name}

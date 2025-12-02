@@ -4,6 +4,7 @@ import { Calendar, MapPin, User, ExternalLink } from "lucide-react";
 import CommunityNotes from "./CommunityNotes";
 import NotifyMeForm from "./NotifyMeForm";
 import ICalExport from "./ICalExport";
+import SocialShare from "./SocialShare";
 
 interface Event {
   id: string;
@@ -79,6 +80,11 @@ const EventDetailModal = ({ event, open, onOpenChange }: EventDetailModalProps) 
           )}
 
           <div className="border-t pt-4 space-y-3">
+            <SocialShare
+              title={event.title}
+              description={event.description || undefined}
+              entityType="event"
+            />
             <ICalExport
               title={event.title}
               description={event.description || undefined}
