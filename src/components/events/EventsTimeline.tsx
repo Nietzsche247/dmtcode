@@ -118,9 +118,9 @@ const EventsTimeline = () => {
       )}
       
       <div className="overflow-x-auto pb-4" style={{ scrollBehavior: "smooth" }}>
-        <div className="relative h-32 min-w-[2000px]" style={{ width: `${totalDays * 4}px` }}>
-          {/* Dark red horizontal bar */}
-          <div className="absolute top-12 w-full h-2 bg-[#C41E3A]" />
+        <div className="relative min-w-[2000px]" style={{ width: `${totalDays * 4}px`, height: '180px' }}>
+          {/* Dark red horizontal bar - taller */}
+          <div className="absolute w-full bg-[#C41E3A]" style={{ top: '40px', height: '100px' }} />
 
           {/* Today marker - 4px thick with soft glow */}
           <div 
@@ -135,33 +135,37 @@ const EventsTimeline = () => {
             </span>
           </div>
 
-          {/* Event ticks */}
+          {/* Event markers with inline labels */}
           {events.map((event) => {
             const eventDate = new Date(event.event_date);
             const position = daysSinceMin(eventDate);
             const leftPercent = (position / totalDays) * 100;
+            const shortDate = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const truncatedTitle = event.title.length > 40 ? event.title.substring(0, 40) + '…' : event.title;
 
             return (
               <div
                 key={event.id}
-                className="absolute top-8 cursor-pointer hover:opacity-80 transition-opacity group"
-                style={{ left: `${leftPercent}%` }}
+                className="absolute cursor-pointer hover:opacity-80 transition-opacity group"
+                style={{ left: `${leftPercent}%`, top: '20px' }}
                 onClick={() => setSelectedEvent(event)}
               >
-                <div className="w-0.5 h-8 bg-foreground" />
-                <div className="absolute top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-card border border-border rounded px-2 py-1 whitespace-nowrap shadow-lg z-20">
-                  <p className="text-xs font-semibold">{event.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {eventDate.toLocaleDateString()}
-                  </p>
+                {/* Vertical tick */}
+                <div className="w-0.5 h-24 bg-white/80" />
+                {/* Inline label on bar */}
+                <div 
+                  className="absolute top-4 left-2 text-white text-xs whitespace-nowrap pointer-events-none"
+                  style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+                >
+                  <div className="font-semibold">{truncatedTitle}</div>
+                  <div className="opacity-90">{shortDate}{event.location && ` • ${event.location.substring(0, 20)}`}</div>
                 </div>
               </div>
             );
           })}
 
-          {/* Month/Year labels - skip every 2nd on mobile to prevent overlap */}
+          {/* Month/Year labels at bottom */}
           {Array.from({ length: Math.ceil(totalDays / 30) }).map((_, i) => {
-            // On narrow screens, only show even-indexed months
             if (typeof window !== 'undefined' && window.innerWidth < 768 && i % 2 !== 0) {
               return null;
             }
@@ -174,8 +178,8 @@ const EventsTimeline = () => {
             return (
               <div
                 key={i}
-                className="absolute top-16 text-xs text-muted-foreground"
-                style={{ left: `${leftPercent}%` }}
+                className="absolute text-xs text-muted-foreground"
+                style={{ left: `${leftPercent}%`, top: '150px' }}
               >
                 {labelDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               </div>

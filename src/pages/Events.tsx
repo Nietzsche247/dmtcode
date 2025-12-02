@@ -6,6 +6,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import EventsTimeline from "@/components/events/EventsTimeline";
 import TrialsTimeline from "@/components/events/TrialsTimeline";
 import RetreatGrid from "@/components/events/RetreatGrid";
+import UpcomingEventsList from "@/components/events/UpcomingEventsList";
+import ActiveTrialsList from "@/components/events/ActiveTrialsList";
 import EventSubmissionModal from "@/components/events/EventSubmissionModal";
 import TrialSubmissionModal from "@/components/events/TrialSubmissionModal";
 import RetreatSubmissionModal from "@/components/events/RetreatSubmissionModal";
@@ -67,7 +69,7 @@ const Events = () => {
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4 text-foreground">
-            Research Events & Clinical Trials Timeline
+            Roadmap of Upcoming Psychedelic Events & Clinical Trials
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl">
             Scholarly reference of psychedelic research milestones, community gatherings, and ongoing clinical studies. 
@@ -166,15 +168,28 @@ const Events = () => {
           </Collapsible>
         </div>
 
-        {/* Dual Timeline Section */}
+        {/* Dual Timeline Section with Summary Columns */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Events Timeline</h2>
           <p className="text-sm text-muted-foreground mb-4">
             Top: Public & private events (dark red) • Bottom: Clinical trials (color-coded by status)
           </p>
-          <div className="space-y-6">
-            <EventsTimeline />
-            <TrialsTimeline />
+          <div className="flex gap-8">
+            <div className="flex-1 space-y-6">
+              <EventsTimeline />
+              <TrialsTimeline />
+            </div>
+            {/* Summary Columns - Desktop only */}
+            <div className="hidden lg:flex flex-col gap-6 w-80 flex-shrink-0">
+              <div className="border border-border rounded-lg p-4 bg-card sticky top-24">
+                <h3 className="text-lg font-semibold mb-3 text-foreground">Next 10 Events</h3>
+                <UpcomingEventsList />
+              </div>
+              <div className="border border-border rounded-lg p-4 bg-card sticky top-96">
+                <h3 className="text-lg font-semibold mb-3 text-foreground">Active & Recruiting Trials</h3>
+                <ActiveTrialsList />
+              </div>
+            </div>
           </div>
         </section>
 
