@@ -10,13 +10,36 @@ import EventSubmissionModal from "@/components/events/EventSubmissionModal";
 import TrialSubmissionModal from "@/components/events/TrialSubmissionModal";
 import RetreatSubmissionModal from "@/components/events/RetreatSubmissionModal";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Filter } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Events = () => {
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [retreatModalOpen, setRetreatModalOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  
+  // Multi-select filters
+  const [compoundFilters, setCompoundFilters] = useState<string[]>([]);
+  const [typeFilters, setTypeFilters] = useState<string[]>([]);
+
+  const compounds = ['DMT', 'Psilocybin', 'LSD', 'MDMA', 'Ayahuasca', 'Ibogaine', '5-MeO-DMT'];
+  const types = ['Conference', 'Workshop', 'Retreat', 'Clinical Trial'];
+
+  const toggleCompoundFilter = (compound: string) => {
+    setCompoundFilters(prev =>
+      prev.includes(compound) ? prev.filter(c => c !== compound) : [...prev, compound]
+    );
+  };
+
+  const toggleTypeFilter = (type: string) => {
+    setTypeFilters(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -52,29 +75,95 @@ const Events = () => {
           </p>
         </div>
 
-        {/* Submission Buttons */}
-        <div className="flex flex-wrap gap-4 mb-8">
-          <Button
-            onClick={() => setEventModalOpen(true)}
-            className="bg-[#C41E3A] hover:bg-[#C41E3A]/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Event
-          </Button>
-          <Button
-            onClick={() => setTrialModalOpen(true)}
-            className="bg-[#2E5C8A] hover:bg-[#2E5C8A]/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Clinical Trial
-          </Button>
-          <Button
-            onClick={() => setRetreatModalOpen(true)}
-            className="bg-[#28A745] hover:bg-[#28A745]/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Retreat
-          </Button>
+        {/* Submission Buttons + Filters */}
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <Button
+              onClick={() => setEventModalOpen(true)}
+              className="bg-[#C41E3A] hover:bg-[#C41E3A]/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Event
+            </Button>
+            <Button
+              onClick={() => setTrialModalOpen(true)}
+              className="bg-[#2E5C8A] hover:bg-[#2E5C8A]/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Clinical Trial
+            </Button>
+            <Button
+              onClick={() => setRetreatModalOpen(true)}
+              className="bg-[#28A745] hover:bg-[#28A745]/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Retreat
+            </Button>
+          </div>
+
+          {/* Multi-select Filters */}
+          <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Filter className="w-4 h-4 mr-2" />
+                Filters {(compoundFilters.length + typeFilters.length > 0) && `(${compoundFilters.length + typeFilters.length})`}
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4 space-y-4 border border-border rounded-lg p-4">
+              <div>
+                <h3 className="text-sm font-semibold mb-3">Compounds</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {compounds.map((compound) => (
+                    <div key={compound} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`compound-${compound}`}
+                        checked={compoundFilters.includes(compound)}
+                        onCheckedChange={() => toggleCompoundFilter(compound)}
+                      />
+                      <Label
+                        htmlFor={`compound-${compound}`}
+                        className="text-sm cursor-pointer"
+                      >
+                        {compound}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold mb-3">Event Type</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {types.map((type) => (
+                    <div key={type} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`type-${type}`}
+                        checked={typeFilters.includes(type)}
+                        onCheckedChange={() => toggleTypeFilter(type)}
+                      />
+                      <Label
+                        htmlFor={`type-${type}`}
+                        className="text-sm cursor-pointer"
+                      >
+                        {type}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {(compoundFilters.length > 0 || typeFilters.length > 0) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setCompoundFilters([]);
+                    setTypeFilters([]);
+                  }}
+                >
+                  Clear All Filters
+                </Button>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         {/* Dual Timeline Section */}

@@ -67,6 +67,14 @@ const CommunityNotes = ({ entityType, entityId }: CommunityNotesProps) => {
       toast.error("Failed to submit note");
       console.error(error);
     } else {
+      // Track GA4 event
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'note_submission', {
+          entity_type: entityType,
+          entity_id: entityId,
+          event_category: 'engagement'
+        });
+      }
       toast.success("Note submitted for moderation");
       setNewNote("");
       setShowForm(false);
@@ -91,6 +99,13 @@ const CommunityNotes = ({ entityType, entityId }: CommunityNotesProps) => {
     if (error) {
       console.error("Error upvoting:", error);
     } else {
+      // Track GA4 event
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'note_upvote', {
+          note_id: noteId,
+          event_category: 'engagement'
+        });
+      }
       fetchNotes();
     }
   };

@@ -9,6 +9,7 @@ import { MapPin, ExternalLink, Mail, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import CommunityNotes from "./CommunityNotes";
+import NotifyMeForm from "./NotifyMeForm";
 
 interface Retreat {
   id: string;
@@ -258,6 +259,13 @@ const RetreatDetailModal = ({ retreat, metrics, open, onOpenChange }: RetreatDet
               Visit Website <ExternalLink className="w-4 h-4" />
             </a>
           )}
+
+          <div className="border-t pt-4">
+            <NotifyMeForm
+              entityType="retreat"
+              entityName={retreat.name}
+            />
+          </div>
 
           <CommunityNotes entityType="retreat" entityId={retreat.id} />
         </div>

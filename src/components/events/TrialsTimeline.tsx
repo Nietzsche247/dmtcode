@@ -128,6 +128,9 @@ const TrialsTimeline = () => {
 
       <div className="overflow-x-auto pb-4" style={{ scrollBehavior: "smooth" }}>
         <div className="relative h-32 min-w-[2000px]" style={{ width: `${totalDays * 4}px` }}>
+          {/* Color-coded horizontal bar - fixed alignment */}
+          <div className="absolute top-12 w-full h-2 bg-gradient-to-r from-gray-500 via-blue-500 to-green-600" style={{ transform: 'translateY(0.5px)' }} />
+
           {/* Today marker - 4px thick with soft glow */}
           <div 
             className="absolute top-0 h-full w-1 bg-[hsl(var(--gold))] z-10"

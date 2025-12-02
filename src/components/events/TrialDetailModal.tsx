@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Building2, User, ExternalLink, FileText } from "lucide-react";
 import CommunityNotes from "./CommunityNotes";
+import NotifyMeForm from "./NotifyMeForm";
+import ICalExport from "./ICalExport";
 
 interface ClinicalTrial {
   id: string;
@@ -107,6 +109,22 @@ const TrialDetailModal = ({ trial, open, onOpenChange }: TrialDetailModalProps) 
                 Trial Website <ExternalLink className="w-4 h-4" />
               </a>
             )}
+          </div>
+
+          <div className="border-t pt-4 space-y-3">
+            <ICalExport
+              title={trial.title}
+              description={trial.description || undefined}
+              startDate={trial.start_date}
+              endDate={trial.end_date || undefined}
+              location={trial.institution}
+              url={trial.url || undefined}
+            />
+            <NotifyMeForm
+              entityType="trial"
+              entityName={trial.title}
+              entityDate={trial.start_date}
+            />
           </div>
 
           <CommunityNotes entityType="trial" entityId={trial.id} />
