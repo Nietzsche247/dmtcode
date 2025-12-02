@@ -9,7 +9,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-primary">DMT Code</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              The community-driven platform for documenting and understanding the DMT laser phenomenon, where to buy the exact laser Danny Goler uses for the DMT code experiment, and how thousands are safely exploring Reality's source code.
+              Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Equipment resources and research references for independent replication.
             </p>
           </div>
 

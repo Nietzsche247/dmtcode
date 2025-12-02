@@ -207,7 +207,7 @@ export const ResearchSection = () => {
             Scientific Research & References
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Peer-reviewed research on DMT, entities, other realities, and the laser protocol
+            Peer-reviewed research on N,N-DMT phenomenology, visual perception, and the 650 nm laser protocol
           </p>
         </div>
 

@@ -67,10 +67,10 @@ export const TheoriesSection = () => {
             Community Theories Blog
           </h2>
           <h3 className="text-2xl font-semibold text-primary">
-            Aggregating Human Experience – Toward a Probability-Based Rosetta Stone
+            Systematic Analysis of Symbol Reproducibility
           </h3>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-            Crowdsourced likelihood assessment of competing explanations for the observed glyphs. This moderated blog collects replicator-submitted theories. Logged-in users can post. We score each theory by replication rate, inter-replicator agreement, and surface-independence to estimate likelihood the glyphs represent an objective language or phenomenon.
+            Community-submitted explanatory theories for reported visual symbols. Logged-in users can post. Each theory scored by replication rate, inter-observer agreement, and surface-independence to assess reproducibility.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-primary pt-2">
             <TrendingUp className="w-4 h-4" />
