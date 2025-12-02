@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         'garamond': ['EB Garamond', 'Georgia', 'serif'],
         'helvetica': ['Helvetica Neue', 'Arial', 'sans-serif'],
+        'playfair': ['Playfair Display', 'Georgia', 'serif'],
+        'inter': ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -56,6 +58,12 @@ export default {
         },
         gold: {
           DEFAULT: "hsl(var(--gold))",
+        },
+        logo: {
+          icon: "#1e3a8a",
+          "icon-dark": "#e2e8f0",
+          secondary: "#4b5563",
+          "secondary-dark": "#94a3b8",
         },
       },
       borderRadius: {
