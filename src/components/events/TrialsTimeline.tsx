@@ -127,9 +127,9 @@ const TrialsTimeline = () => {
       )}
 
       <div className="overflow-x-auto pb-4" style={{ scrollBehavior: "smooth" }}>
-        <div className="relative h-32 min-w-[2000px]" style={{ width: `${totalDays * 4}px` }}>
-          {/* Color-coded horizontal bar - fixed alignment */}
-          <div className="absolute top-12 w-full h-2 bg-gradient-to-r from-gray-500 via-blue-500 to-green-600" style={{ transform: 'translateY(0.5px)' }} />
+        <div className="relative min-w-[2000px]" style={{ width: `${totalDays * 4}px`, height: '180px' }}>
+          {/* Color-coded horizontal bar - taller */}
+          <div className="absolute w-full bg-gradient-to-r from-gray-500 via-blue-500 to-green-600" style={{ top: '40px', height: '100px' }} />
 
           {/* Today marker - 4px thick with soft glow */}
           <div 
@@ -140,7 +140,7 @@ const TrialsTimeline = () => {
             }}
           />
 
-          {/* Trial bars */}
+          {/* Trial bars with inline labels */}
           {trials.map((trial) => {
             const startDate = new Date(trial.start_date);
             const endDate = trial.end_date ? new Date(trial.end_date) : new Date();
@@ -148,36 +148,42 @@ const TrialsTimeline = () => {
             const endPos = daysSinceMin(endDate);
             const leftPercent = (startPos / totalDays) * 100;
             const widthPercent = ((endPos - startPos) / totalDays) * 100;
+            const truncatedTitle = trial.title.length > 35 ? trial.title.substring(0, 35) + '…' : trial.title;
+            const shortDate = startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
             return (
               <div
                 key={trial.id}
-                className="absolute top-12 h-4 cursor-pointer hover:opacity-80 transition-opacity rounded group"
+                className="absolute cursor-pointer hover:opacity-80 transition-opacity rounded group"
                 style={{
                   left: `${leftPercent}%`,
-                  width: `${widthPercent}%`,
+                  width: `${Math.max(widthPercent, 2)}%`,
                   backgroundColor: statusColors[trial.status],
+                  top: '40px',
+                  height: '100px'
                 }}
                 onClick={() => setSelectedTrial(trial)}
               >
                 {trial.status === 'completed' && (
                   <div 
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#28A745]"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#28A745]"
                     style={{ boxShadow: '0 0 10px #28A745' }}
                   />
                 )}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-card border border-border rounded px-2 py-1 whitespace-nowrap shadow-lg z-20">
-                  <p className="text-xs font-semibold">{trial.title}</p>
-                  <p className="text-xs text-muted-foreground">{trial.institution}</p>
-                  <p className="text-xs capitalize">{trial.status}</p>
+                {/* Inline label on bar */}
+                <div 
+                  className="absolute top-2 left-2 right-2 text-white text-xs pointer-events-none"
+                  style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+                >
+                  <div className="font-semibold truncate">{truncatedTitle}</div>
+                  <div className="opacity-90 truncate">{shortDate} • {trial.institution.substring(0, 25)}</div>
                 </div>
               </div>
             );
           })}
 
-          {/* Month/Year labels - skip every 2nd on mobile to prevent overlap */}
+          {/* Month/Year labels at bottom */}
           {Array.from({ length: Math.ceil(totalDays / 30) }).map((_, i) => {
-            // On narrow screens, only show even-indexed months
             if (typeof window !== 'undefined' && window.innerWidth < 768 && i % 2 !== 0) {
               return null;
             }
@@ -190,8 +196,8 @@ const TrialsTimeline = () => {
             return (
               <div
                 key={i}
-                className="absolute top-20 text-xs text-muted-foreground"
-                style={{ left: `${leftPercent}%` }}
+                className="absolute text-xs text-muted-foreground"
+                style={{ left: `${leftPercent}%`, top: '150px' }}
               >
                 {labelDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               </div>
