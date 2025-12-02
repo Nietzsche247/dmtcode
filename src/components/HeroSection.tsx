@@ -25,14 +25,14 @@ export const HeroSection = () => {
 
       {/* Hero content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto space-y-8 py-20">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight glow-text leading-tight">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-helvetica font-bold tracking-tight glow-text leading-tight">
           DMT Code Visual Symbol Catalogue
         </h1>
-        <p className="text-xl md:text-2xl text-gold font-semibold leading-relaxed max-w-4xl mx-auto">
+        <p className="text-xl md:text-2xl text-gold font-semibold leading-relaxed max-w-4xl mx-auto font-helvetica">
           An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.
         </p>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          Research archive for Danny Goler's 650 nm coherent light protocol. 3,000+ documented observations with 87% inter-subject consistency in reported discrete visual symbols.
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 font-garamond">
+          Research archive for Danny Goler's 650 nm coherent light protocol: 3,000+ documented observations with 87% inter-subject consistency in reported discrete visual symbols.
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">

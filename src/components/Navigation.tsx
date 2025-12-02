@@ -67,10 +67,18 @@ export const Navigation = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-8">
-              <NavLink to="/" className="text-2xl font-bold glow-text">
-                DMT Code
-              </NavLink>
-              <div className="hidden md:flex items-center space-x-6">
+              {/* Logo - Stacked */}
+              <button
+                onClick={() => handleNavigation("/")}
+                className="cursor-pointer bg-transparent border-none hover:opacity-80 transition-opacity"
+                aria-label="DMT Code Project Home"
+              >
+                <div className="flex flex-col items-start leading-none">
+                  <span className="font-garamond font-bold text-[#C41E3A] text-2xl">DMT Code</span>
+                  <span className="font-helvetica font-light text-[#C41E3A] text-sm">Project</span>
+                </div>
+              </button>
+              <div className="hidden md:flex items-center space-x-6 font-helvetica">
                 <button onClick={() => handleNavigation('/')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : ''}`}>Home</button>
                 <button onClick={() => handleNavigation('/research')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/research' ? 'text-primary' : ''}`}>Research</button>
                 <button onClick={() => handleNavigation('/tools')} className={`text-sm hover:text-primary transition-colors ${location.pathname === '/tools' ? 'text-primary' : ''}`}>Tools</button>
@@ -98,7 +106,12 @@ export const Navigation = () => {
             </div>
 
             <div className="md:hidden">
-              <button onClick={() => setIsOpen(!isOpen)} className="text-foreground hover:text-primary transition-colors">
+              <button 
+                onClick={() => setIsOpen(!isOpen)} 
+                className="text-foreground hover:text-primary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Toggle navigation menu"
+                aria-expanded={isOpen}
+              >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
@@ -107,18 +120,18 @@ export const Navigation = () => {
 
         {isOpen && (
           <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border">
-            <div className="px-4 pt-2 pb-3 space-y-1">
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Home</button>
-              <button onClick={() => handleNavigation('/research')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Research</button>
-              <button onClick={() => handleNavigation('/tools')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Tools</button>
-              <button onClick={() => handleNavigation('/woo')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Mysticism</button>
-              <button onClick={() => handleNavigation('/registry')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Glyph Registry</button>
-              <button onClick={() => handleNavigation('/events')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Events</button>
-              <button onClick={() => handleNavigation('/waitlist')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Join Waitlist</button>
-              <button onClick={() => handleNavigation('/evidence-map')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Evidence Map</button>
-              <button onClick={() => handleNavigation('/methods')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Methods</button>
-              <button onClick={() => handleNavigation('/critiques')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">Critiques</button>
-              <button onClick={() => handleNavigation('/about')} className="block w-full text-left px-3 py-2 text-base hover:text-primary transition-colors">About</button>
+            <div className="px-4 pt-2 pb-3 space-y-1 font-helvetica">
+              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Home</button>
+              <button onClick={() => handleNavigation('/research')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Research</button>
+              <button onClick={() => handleNavigation('/tools')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Tools</button>
+              <button onClick={() => handleNavigation('/woo')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Mysticism</button>
+              <button onClick={() => handleNavigation('/registry')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Glyph Registry</button>
+              <button onClick={() => handleNavigation('/events')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Events</button>
+              <button onClick={() => handleNavigation('/waitlist')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Join Waitlist</button>
+              <button onClick={() => handleNavigation('/evidence-map')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Evidence Map</button>
+              <button onClick={() => handleNavigation('/methods')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Methods</button>
+              <button onClick={() => handleNavigation('/critiques')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">Critiques</button>
+              <button onClick={() => handleNavigation('/about')} className="block w-full text-left px-3 py-3 min-h-[44px] text-base hover:text-primary transition-colors">About</button>
               {isAuthenticated ? (
                 <>
                   <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full mt-2">Profile</Button>
