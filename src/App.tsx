@@ -11,6 +11,7 @@ import Woo from "./pages/Woo";
 import Registry from "./pages/Registry";
 import Correlations from "./pages/Correlations";
 import Waitlist from "./pages/Waitlist";
+import Events from "./pages/Events";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import FAQ from "./pages/FAQ";
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/registry" element={<Registry />} />
           <Route path="/correlations" element={<Correlations />} />
           <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/bibliography" element={<Bibliography />} />
           <Route path="/glossary" element={<Glossary />} />
