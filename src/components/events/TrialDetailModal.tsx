@@ -4,6 +4,7 @@ import { Calendar, Building2, User, ExternalLink, FileText } from "lucide-react"
 import CommunityNotes from "./CommunityNotes";
 import NotifyMeForm from "./NotifyMeForm";
 import ICalExport from "./ICalExport";
+import SocialShare from "./SocialShare";
 
 interface ClinicalTrial {
   id: string;
@@ -112,6 +113,11 @@ const TrialDetailModal = ({ trial, open, onOpenChange }: TrialDetailModalProps) 
           </div>
 
           <div className="border-t pt-4 space-y-3">
+            <SocialShare
+              title={trial.title}
+              description={trial.description || undefined}
+              entityType="trial"
+            />
             <ICalExport
               title={trial.title}
               description={trial.description || undefined}
