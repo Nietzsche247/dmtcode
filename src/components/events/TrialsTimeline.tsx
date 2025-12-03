@@ -5,6 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import TrialDetailModal from "./TrialDetailModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ShareButtons } from "@/components/ShareButtons";
 
 interface ClinicalTrial {
   id: string;
@@ -74,15 +75,18 @@ const TrialsTimeline = () => {
             onClick={() => setSelectedTrial(trial)}
           >
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-foreground">{trial.title}</h3>
-              <span 
-                className="text-xs px-2 py-1 rounded"
-                style={{ backgroundColor: statusColors[trial.status], color: 'white' }}
-              >
-                {trial.status}
-              </span>
+              <h3 className="font-black text-foreground uppercase tracking-tight text-sm" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{trial.title}</h3>
+              <div className="flex items-center gap-2">
+                <ShareButtons title={trial.title} description={trial.institution} className="ml-2" />
+                <span 
+                  className="text-xs px-2 py-1 rounded whitespace-nowrap"
+                  style={{ backgroundColor: statusColors[trial.status], color: 'white' }}
+                >
+                  {trial.status}
+                </span>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">{trial.institution}</p>
+            <p className="text-xs text-muted-foreground font-light" style={{ fontWeight: 300 }}>{trial.institution}</p>
           </Card>
         ))}
         {trials.length === 0 && (
@@ -170,13 +174,13 @@ const TrialsTimeline = () => {
                     style={{ boxShadow: '0 0 10px #28A745' }}
                   />
                 )}
-                {/* Inline label on bar */}
+                {/* Inline label on bar - always visible */}
                 <div 
-                  className="absolute top-2 left-2 right-2 text-white text-xs pointer-events-none"
+                  className="absolute top-2 left-2 right-2 text-white pointer-events-none"
                   style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
                 >
-                  <div className="font-semibold truncate">{truncatedTitle}</div>
-                  <div className="opacity-90 truncate">{shortDate} • {trial.institution.substring(0, 25)}</div>
+                  <div className="text-sm font-black uppercase tracking-tight truncate" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{truncatedTitle}</div>
+                  <div className="text-xs font-light truncate" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}>{shortDate} · {trial.institution.substring(0, 25)}</div>
                 </div>
               </div>
             );
