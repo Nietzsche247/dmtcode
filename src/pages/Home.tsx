@@ -138,7 +138,7 @@ const Home = () => {
           </section>
 
           {/* Mission Section */}
-          <section className="container mx-auto px-4 py-24 max-w-4xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-32 max-w-4xl border-t border-border/30">
             <AnimatedSection>
               <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-4">Our Mission</p>
               <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
