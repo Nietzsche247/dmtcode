@@ -11,12 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
-import { ShoppingCart, Search, Plus } from 'lucide-react';
+import { ShoppingCart, Search, Plus, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
 import { getPlaceholderImage } from '@/utils/placeholderImage';
 import { supabase } from '@/integrations/supabase/client';
 import { ShareButtons } from '@/components/ShareButtons';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 declare global {
   interface Window {
@@ -173,6 +174,27 @@ const Tools = () => {
     const utm = `?utm_source=tools_soldout&utm_product=${encodeURIComponent(productTitle)}&utm_tier=${tier}`;
     navigate(`/waitlist${utm}`);
   };
+
+  // Error fallback UI
+  if (error) {
+    return (
+      <div className="relative min-h-screen bg-background">
+        <ParticleBackground />
+        <Navigation />
+        <div className="relative z-10 flex items-center justify-center min-h-[80vh] p-4">
+          <div className="max-w-md text-center space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-destructive" />
+            </div>
+            <h2 className="text-2xl font-bold">Unable to load products</h2>
+            <p className="text-muted-foreground">{error}</p>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <>
