@@ -324,7 +324,7 @@ const FAQ = () => {
                     Most N,N-DMT research (Strassman 2001, Timmermann 2019, Carhart-Harris et al.) focuses on phenomenology, neurobiology, and therapeutic applications. The 650 nm laser protocol specifically targets <strong>externalized visual perception</strong> rather than closed-eye imagery.
                   </p>
                   <p>
-                    This project documents discrete, consistent symbols appearing on physical surfaces with 87% inter-subject agreement—a specificity level rarely seen in psychedelic phenomenology research.
+                    This project documents discrete, consistent symbols appearing on physical surfaces with 87% inter-subject agreement: a specificity level rarely seen in psychedelic phenomenology research.
                   </p>
                 </AccordionContent>
               </AccordionItem>

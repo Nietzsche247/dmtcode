@@ -208,10 +208,10 @@ export const LaserGuide = () => {
                 Like Paul Stamets' <strong>Microdose.me app</strong> (Quantified Citizen platform, 14,000+ participants collecting microdosing data for correlation analysis – Stamets, 2022), this site serves as a <strong>decentralized repository</strong> for the DMT code phenomenon.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Logged-in users upload glyphs with surface, environment, and dose tags. Community upvoting legitimizes recurring patterns. Future analytics will reveal correlations—for example, whether specific symbols appear 4× more frequently on skin versus walls, or if certain geometric structures correlate with dose ranges.
+                Logged-in users upload glyphs with surface, environment, and dose tags. Community upvoting legitimizes recurring patterns. Future analytics will reveal correlations: for example, whether specific symbols appear 4× more frequently on skin versus walls, or if certain geometric structures correlate with dose ranges.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                The goal: build a <strong>Rosetta Stone-style decoding system</strong> for what may be objective, reproducible phenomena emerging at the intersection of psychedelics, coherent light physics, and human consciousness. This is <strong>tool-first citizen science</strong>—rigorous, transparent, and community-driven.
+                The goal: build a <strong>Rosetta Stone-style decoding system</strong> for what may be objective, reproducible phenomena emerging at the intersection of psychedelics, coherent light physics, and human consciousness. This is <strong>tool-first citizen science</strong>: rigorous, transparent, and community-driven.
               </p>
             </div>
           </Card>

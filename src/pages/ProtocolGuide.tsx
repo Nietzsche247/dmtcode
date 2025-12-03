@@ -285,7 +285,7 @@ const ProtocolGuide = () => {
                     <li>• <strong>Controlled Substance Status:</strong> N,N-DMT is classified as Schedule I controlled substance in United States (21 USC § 812), United Kingdom (Misuse of Drugs Act 1971), and most other jurisdictions. Unauthorized possession, manufacturing, or distribution carries severe criminal penalties including imprisonment.</li>
                     <li>• <strong>Religious Exemptions:</strong> Limited legal exemptions exist for specific indigenous religious practices (e.g., União do Vegetal, Santo Daime in United States following 2006 Supreme Court ruling). Exemptions do NOT extend to individual recreational or research use.</li>
                     <li>• <strong>Research Legality:</strong> Academic institutions may obtain DEA Schedule I research licenses for controlled clinical studies. This protocol document does NOT constitute legal authorization for controlled substance use.</li>
-                    <li>• <strong>International Variation:</strong> Some jurisdictions (e.g., Czech Republic, Portugal) have decriminalized personal possession of small quantities. Legal status varies by region—consult local statutes before considering protocol.</li>
+                    <li>• <strong>International Variation:</strong> Some jurisdictions (e.g., Czech Republic, Portugal) have decriminalized personal possession of small quantities. Legal status varies by region: consult local statutes before considering protocol.</li>
                   </ul>
                 </div>
 
@@ -294,7 +294,7 @@ const ProtocolGuide = () => {
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li>• <strong>Absolute contraindications:</strong> Personal or family history of schizophrenia, psychotic disorders, bipolar disorder, severe anxiety disorders, seizure disorders</li>
                     <li>• <strong>Cardiovascular risks:</strong> N,N-DMT causes rapid blood pressure and heart rate elevation. Individuals with hypertension, heart conditions, or vascular disorders face heightened medical risk.</li>
-                    <li>• <strong>Drug interactions:</strong> NEVER combine with MAO inhibitors (SSRIs, TCAs, certain antibiotics), tramadol, or other serotonergic medications—risk of potentially fatal serotonin syndrome.</li>
+                    <li>• <strong>Drug interactions:</strong> NEVER combine with MAO inhibitors (SSRIs, TCAs, certain antibiotics), tramadol, or other serotonergic medications: risk of potentially fatal serotonin syndrome.</li>
                     <li>• <strong>Pregnancy/nursing:</strong> No safety data available. Absolute contraindication during pregnancy, lactation, or while attempting conception.</li>
                   </ul>
                 </div>
@@ -315,7 +315,7 @@ const ProtocolGuide = () => {
                     <li>• <strong>Set and setting:</strong> Comfortable, safe environment with trusted sitter who remains sober. Remove hazards (stairs, sharp objects, hot surfaces) from immediate area.</li>
                     <li>• <strong>Integration support:</strong> Post-experience integration critical for processing intense phenomenology. Seek professional support if distressing experiences persist beyond 72 hours.</li>
                     <li>• <strong>Frequency limitations:</strong> No established safe frequency guidelines. Anecdotal consensus suggests minimum 2-week intervals to reduce psychological desensitization and maintain respect for intensity.</li>
-                    <li>• <strong>Reality testing:</strong> Understand that visual symbols, entity encounters, and perceived communications represent subjective altered-state phenomena—not validated objective reality.</li>
+                    <li>• <strong>Reality testing:</strong> Understand that visual symbols, entity encounters, and perceived communications represent subjective altered-state phenomena: not validated objective reality.</li>
                   </ul>
                 </div>
 
