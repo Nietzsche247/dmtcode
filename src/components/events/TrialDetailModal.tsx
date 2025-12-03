@@ -5,6 +5,7 @@ import CommunityNotes from "./CommunityNotes";
 import NotifyMeForm from "./NotifyMeForm";
 import ICalExport from "./ICalExport";
 import SocialShare from "./SocialShare";
+import TrialNotifyButton from "./TrialNotifyButton";
 
 interface ClinicalTrial {
   id: string;
@@ -113,19 +114,22 @@ const TrialDetailModal = ({ trial, open, onOpenChange }: TrialDetailModalProps) 
           </div>
 
           <div className="border-t pt-4 space-y-3">
-            <SocialShare
-              title={trial.title}
-              description={trial.description || undefined}
-              entityType="trial"
-            />
-            <ICalExport
-              title={trial.title}
-              description={trial.description || undefined}
-              startDate={trial.start_date}
-              endDate={trial.end_date || undefined}
-              location={trial.institution}
-              url={trial.url || undefined}
-            />
+            <div className="flex flex-wrap gap-3 items-center">
+              <TrialNotifyButton trialId={trial.id} trialTitle={trial.title} />
+              <SocialShare
+                title={trial.title}
+                description={trial.description || undefined}
+                entityType="trial"
+              />
+              <ICalExport
+                title={trial.title}
+                description={trial.description || undefined}
+                startDate={trial.start_date}
+                endDate={trial.end_date || undefined}
+                location={trial.institution}
+                url={trial.url || undefined}
+              />
+            </div>
             <NotifyMeForm
               entityType="trial"
               entityName={trial.title}

@@ -590,9 +590,11 @@ export type Database = {
       scraper_runs: {
         Row: {
           created_at: string
+          email_sent: boolean | null
           error_message: string | null
           id: string
           last_run_at: string
+          new_trials_count: number | null
           scraper_name: string
           status: string
           trials_added: number | null
@@ -600,9 +602,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email_sent?: boolean | null
           error_message?: string | null
           id?: string
           last_run_at?: string
+          new_trials_count?: number | null
           scraper_name: string
           status: string
           trials_added?: number | null
@@ -610,9 +614,11 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email_sent?: boolean | null
           error_message?: string | null
           id?: string
           last_run_at?: string
+          new_trials_count?: number | null
           scraper_name?: string
           status?: string
           trials_added?: number | null
@@ -834,6 +840,38 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trial_watchlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          trial_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          trial_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          trial_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_watchlist_trial_id_fkey"
+            columns: ["trial_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_trials"
             referencedColumns: ["id"]
           },
         ]
