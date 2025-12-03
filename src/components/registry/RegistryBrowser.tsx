@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Star, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 import { TagsManager } from './TagsManager';
+import { ShareButtons } from '@/components/ShareButtons';
 
 interface RegistryGlyph {
   id: string;
@@ -269,15 +270,21 @@ export const RegistryBrowser = () => {
                   style={{ imageRendering: 'auto' }}
                   loading="lazy"
                 />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-0 right-0"
-                  onClick={() => handleStar(glyph.id)}
-                  aria-label={starredIds.has(glyph.id) ? "Unstar symbol" : "Star symbol"}
-                >
-                  <Star className={`w-5 h-5 ${starredIds.has(glyph.id) ? 'fill-primary text-primary' : ''}`} />
-                </Button>
+                <div className="absolute top-0 right-0 flex items-center gap-1">
+                  <ShareButtons 
+                    title={`DMT Glyph #${glyph.id.slice(0, 8)}`} 
+                    description={glyph.motif_tags?.slice(0, 3).join(', ') || 'Visual symbol'} 
+                    url={`https://dmtcode.com/registry#${glyph.id}`}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleStar(glyph.id)}
+                    aria-label={starredIds.has(glyph.id) ? "Unstar symbol" : "Star symbol"}
+                  >
+                    <Star className={`w-5 h-5 ${starredIds.has(glyph.id) ? 'fill-primary text-primary' : ''}`} />
+                  </Button>
+                </div>
               </div>
 
               <div className="mb-4">

@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
 import { getPlaceholderImage } from '@/utils/placeholderImage';
 import { supabase } from '@/integrations/supabase/client';
+import { ShareButtons } from '@/components/ShareButtons';
 
 declare global {
   interface Window {
@@ -330,7 +331,14 @@ const Tools = () => {
                               </div>
                               
                               <div className="flex-1 space-y-2">
-                                <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.node.title}</h3>
+                                <div className="flex items-start justify-between gap-2">
+                                  <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.node.title}</h3>
+                                  <ShareButtons 
+                                    title={product.node.title} 
+                                    description={product.node.description?.slice(0, 100)} 
+                                    url={`https://dmtcode.com/products/${product.node.handle}`}
+                                  />
+                                </div>
                                 <p className="text-2xl font-bold text-primary">
                                   ${price.toFixed(2)}
                                 </p>

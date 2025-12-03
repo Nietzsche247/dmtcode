@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Download, FileJson, FileSpreadsheet, FolderArchive } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ShareButtons } from '@/components/ShareButtons';
 
 export const RegistryDownloads = () => {
   const [isExporting, setIsExporting] = useState(false);
@@ -163,7 +164,7 @@ export const RegistryDownloads = () => {
           </p>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 flex items-center justify-center gap-4">
           <a 
             href="/data.json" 
             target="_blank"
@@ -172,6 +173,11 @@ export const RegistryDownloads = () => {
           >
             View live /data.json endpoint →
           </a>
+          <ShareButtons 
+            title="DMT Code Visual Symbol Dataset" 
+            description="Open-source research data - CC-BY-4.0 licensed" 
+            url="https://dmtcode.com/data.json"
+          />
         </div>
       </Card>
     </section>

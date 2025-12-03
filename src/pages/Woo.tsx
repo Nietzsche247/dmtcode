@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useCartStore } from "@/stores/cartStore";
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from "@/lib/shopify";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, ImageOff } from "lucide-react";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
 
 declare global {
@@ -127,12 +127,21 @@ const Woo = () => {
                     onClick={() => handleProductClick(product)}
                   >
                     <CardHeader className="p-0">
-                      <div className="aspect-square overflow-hidden bg-secondary/20">
+                      <div className="aspect-square overflow-hidden bg-secondary/20 relative">
                         <img
                           src={imageUrl}
                           alt={image?.altText || product.node.title}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = getPlaceholderImage(product.node.title, 'mysticism');
+                          }}
                         />
+                        {!image?.url && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-secondary/40">
+                            <ImageOff className="w-12 h-12 text-muted-foreground/50" />
+                          </div>
+                        )}
                       </div>
                     </CardHeader>
                     <CardContent className="p-6">

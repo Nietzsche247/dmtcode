@@ -148,7 +148,7 @@ export const Navigation = () => {
                 <button
                   key={item.path}
                   onClick={() => handleNavigation(item.path)}
-                  className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                  className={`block w-full text-left px-4 py-3 min-h-[44px] min-w-[44px] text-base rounded-lg transition-colors ${
                     location.pathname === item.path
                       ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -157,15 +157,31 @@ export const Navigation = () => {
                   {item.label}
                 </button>
               ))}
+              {/* Primary CTAs at end of group */}
+              <div className="pt-4 border-t border-border/50 mt-4 space-y-2">
+                <Button 
+                  onClick={() => handleNavigation('/registry')} 
+                  className="w-full rounded-full min-h-[44px] btn-lickable border-beam"
+                >
+                  Browse Registry
+                </Button>
+                <Button 
+                  onClick={() => handleNavigation('/tools')} 
+                  variant="outline"
+                  className="w-full rounded-full min-h-[44px]"
+                >
+                  View Tools
+                </Button>
+              </div>
               <div className="pt-4 border-t border-border/50 mt-4">
                 {isAuthenticated ? (
                   <>
-                    <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start">Profile</Button>
-                    <Button onClick={() => handleNavigation('/admin')} variant="ghost" size="sm" className="w-full justify-start">Admin</Button>
-                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2">Sign Out</Button>
+                    <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Profile</Button>
+                    <Button onClick={() => handleNavigation('/admin')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Admin</Button>
+                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">Sign Out</Button>
                   </>
                 ) : (
-                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full">Sign In</Button>
+                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full min-h-[44px]">Sign In</Button>
                 )}
               </div>
             </div>

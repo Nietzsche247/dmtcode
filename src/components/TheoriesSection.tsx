@@ -67,7 +67,7 @@ export const TheoriesSection = () => {
             Community Theories Blog
           </h2>
           <h3 className="text-2xl font-semibold text-primary">
-            Systematic Analysis of Symbol Reproducibility
+            Structured Analysis of Symbol Reproducibility
           </h3>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
             Community-submitted explanatory theories for reported visual symbols. Logged-in users can post. Each theory scored by replication rate, inter-observer agreement, and surface-independence to assess reproducibility.

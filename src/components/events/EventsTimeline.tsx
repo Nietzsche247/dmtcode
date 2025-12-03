@@ -5,6 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import EventDetailModal from "./EventDetailModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ShareButtons } from "@/components/ShareButtons";
 
 interface Event {
   id: string;
@@ -65,14 +66,13 @@ const EventsTimeline = () => {
             onClick={() => setSelectedEvent(event)}
           >
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-foreground">{event.title}</h3>
-              <span className="text-xs text-muted-foreground">
-                {new Date(event.event_date).toLocaleDateString()}
-              </span>
+              <h3 className="font-black text-foreground uppercase tracking-tight text-sm" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{event.title}</h3>
+              <ShareButtons title={event.title} description={event.description || ''} className="ml-2" />
             </div>
-            {event.location && (
-              <p className="text-sm text-muted-foreground">{event.location}</p>
-            )}
+            <span className="text-xs font-light text-muted-foreground" style={{ fontWeight: 300 }}>
+              {new Date(event.event_date).toLocaleDateString()}
+              {event.location && ` · ${event.location}`}
+            </span>
           </Card>
         ))}
         {events.length === 0 && (
@@ -152,13 +152,13 @@ const EventsTimeline = () => {
               >
                 {/* Vertical tick */}
                 <div className="w-0.5 h-24 bg-white/80" />
-                {/* Inline label on bar */}
+                {/* Inline label on bar - always visible */}
                 <div 
-                  className="absolute top-4 left-2 text-white text-xs whitespace-nowrap pointer-events-none"
+                  className="absolute top-4 left-2 text-white whitespace-nowrap pointer-events-none"
                   style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
                 >
-                  <div className="font-semibold">{truncatedTitle}</div>
-                  <div className="opacity-90">{shortDate}{event.location && ` • ${event.location.substring(0, 20)}`}</div>
+                  <div className="text-sm font-black uppercase tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{truncatedTitle}</div>
+                  <div className="text-xs font-light" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}>{shortDate}{event.location && ` · ${event.location.substring(0, 20)}`}</div>
                 </div>
               </div>
             );
