@@ -515,7 +515,7 @@ export const LayeredSubmissionForm = () => {
                       </span>
                       <p className="text-xs text-muted-foreground mt-1">
                         Your submission qualifies for the Primacy Validated badge because you had no prior exposure. 
-                        We'll run a soft check on your description to ensure transparency—you can still submit regardless.
+                        We'll run a soft check on your description to ensure transparency. You can still submit regardless.
                       </p>
                     </div>
                   </div>
@@ -1108,7 +1108,7 @@ export const LayeredSubmissionForm = () => {
                         This could affect the Primacy Validated badge, which requires genuinely zero-shot observations.
                       </p>
                       <p className="text-xs text-amber-300/70 mt-2">
-                        You can still submit—this is just for transparency. If you saw these symbols without any prior knowledge of the protocol, that's fine.
+                        You can still submit. This is just for transparency. If you saw these symbols without any prior knowledge of the protocol, that's fine.
                       </p>
                     </div>
                   </div>

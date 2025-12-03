@@ -149,7 +149,7 @@ export const RegistrySubmissionForm = () => {
 
       if (error) throw error;
 
-      toast.success(`Symbol ${symbolId} added—star similar ones in gallery!`);
+      toast.success(`Symbol ${symbolId} added. Star similar ones in gallery!`);
       resetForm();
       
     } catch (error) {
@@ -349,8 +349,8 @@ export const RegistrySubmissionForm = () => {
                   <SelectValue placeholder="Perceived communication" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="yes">Yes—felt intentional</SelectItem>
-                  <SelectItem value="no">No—purely visual</SelectItem>
+                  <SelectItem value="yes">Yes: felt intentional</SelectItem>
+                  <SelectItem value="no">No: purely visual</SelectItem>
                   <SelectItem value="uncertain">Uncertain</SelectItem>
                 </SelectContent>
               </Select>

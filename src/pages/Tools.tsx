@@ -537,9 +537,9 @@ const Tools = () => {
                     </h2>
                     
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                      Extend your protocol beyond equipment—discover legal, vetted peyote experiences. The <strong>Peyote Way Church of God</strong> (peyoteway.org) 
+                      Extend your protocol beyond equipment: discover legal, vetted peyote experiences. The <strong>Peyote Way Church of God</strong> (peyoteway.org) 
                       offers Spirit Walks on 160 acres near <strong>Willcox, AZ</strong> (east of Tucson, north of Wilcox). Non-Native welcome; 
-                      ceremonial experiences blend ancient Huichol roots with modern integration (ties to Davis phenomenology surveys). Book via affiliate link—supports research.
+                      ceremonial experiences blend ancient Huichol roots with modern integration (ties to Davis phenomenology surveys). Book via affiliate link to support research.
                     </p>
 
                     <div className="flex justify-center">
@@ -558,7 +558,7 @@ const Tools = () => {
                 <div className="pt-8 text-center space-y-4">
                   <div className="bg-destructive/20 border-2 border-destructive/50 rounded-lg p-8 max-w-4xl mx-auto shadow-lg shadow-destructive/20">
                     <p className="text-xl md:text-2xl font-bold mb-4 text-foreground">
-                      All Items Sold Out—Purchases Support Research
+                      All Items Sold Out: Purchases Support Research
                     </p>
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
                       All waitlist members get 72-hour early access to restocks + exclusive Q1 2025 bundle drops.
@@ -569,7 +569,7 @@ const Tools = () => {
                       className="bg-primary hover:bg-primary/90 glow-button"
                       onClick={() => navigate('/waitlist?utm_source=tools_cta&utm_campaign=soldout')}
                     >
-                      Get First Dibs—Join Waitlist
+                      Get First Dibs: Join Waitlist
                     </Button>
                   </div>
                 </div>
@@ -619,7 +619,7 @@ const Tools = () => {
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
                     <strong>Affiliate Disclosure:</strong> Affiliate commissions support symbol cataloguing.
-                    No medical claims made—equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001). 
+                    No medical claims made: equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001).
                     N,N-DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund community symbol catalogue. 
                     All "sold out" statuses accurate as of Nov 2025; waitlist notified upon restock.
                   </p>

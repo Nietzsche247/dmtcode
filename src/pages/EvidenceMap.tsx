@@ -137,7 +137,7 @@ const EvidenceMap = () => {
                 Evidence Timeline: 100 Years of DMT Research
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                From Klüver's form constants (1926) to the 650 nm laser protocol (2025) — explore 30 key milestones with clickable DOIs and peer-reviewed citations
+                From Klüver's form constants (1926) to the 650 nm laser protocol (2025): explore 30 key milestones with clickable DOIs and peer-reviewed citations
               </p>
             </div>
 
