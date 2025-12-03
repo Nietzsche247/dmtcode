@@ -73,26 +73,26 @@ const Home = () => {
           <ExplainerSection />
           
           {/* Key Features Section */}
-          <section className="container mx-auto px-4 py-24 max-w-6xl">
-            <AnimatedSection className="text-center mb-16">
-              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Why It Matters</p>
+          <section className="container mx-auto px-4 py-32 max-w-6xl">
+            <AnimatedSection className="text-center mb-20">
+              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Why It Matters</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight">
                 Open Science, Real Data
               </h2>
             </AnimatedSection>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { icon: Target, title: '650 nm Protocol', desc: 'Coherent red light through diffraction grating during N,N-DMT elicits consistent visual symbols (Goler 2025)' },
-                { icon: Users, title: '87% Consistency', desc: 'Independent observers report identical symbol morphology across sessions (Davis et al. 2021)' },
+                { icon: Target, title: '650 nm Protocol', desc: 'Coherent red light through diffraction grating during N,N-DMT elicits consistent visual symbols' },
+                { icon: Users, title: '87% Consistency', desc: 'Independent observers report identical symbol morphology across sessions' },
                 { icon: Database, title: 'Open Registry', desc: 'Anonymous submissions, structured metadata, CSV/JSON downloads under CC-BY-4.0' },
-                { icon: FileText, title: 'Neutral Science', desc: 'No medical claims; systematic documentation for academic research and pattern analysis' },
+                { icon: FileText, title: 'Neutral Science', desc: 'No medical claims; systematic documentation for academic research' },
               ].map((item, i) => (
                 <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
-                  <div className="p-6 rounded-2xl bg-card/30 border border-border/30 hover:border-primary/30 transition-colors h-full">
-                    <item.icon className="w-8 h-8 text-primary mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground font-light">{item.desc}</p>
+                  <div className="p-8 rounded-3xl bg-card/50 border border-border/40 hover:border-primary/40 transition-all duration-300 h-full group hover:bg-card/80">
+                    <item.icon className="w-10 h-10 text-primary mb-6 transition-transform group-hover:scale-110" />
+                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground font-light leading-relaxed">{item.desc}</p>
                   </div>
                 </AnimatedSection>
               ))}
@@ -100,27 +100,27 @@ const Home = () => {
           </section>
 
           {/* Stats Section */}
-          <section className="container mx-auto px-4 py-24 max-w-5xl border-t border-border/30">
-            <AnimatedSection className="text-center mb-12">
-              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Current Status</p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+          <section className="container mx-auto px-4 py-32 max-w-5xl border-t border-border/20">
+            <AnimatedSection className="text-center mb-16">
+              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Current Status</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
                 Dataset Overview
               </h2>
-              <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-                Real-time data updated with each new submission. Complete dataset available for download.
+              <p className="text-muted-foreground font-light max-w-2xl mx-auto text-lg">
+                Real-time data updated with each new submission
               </p>
             </AnimatedSection>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="grid md:grid-cols-3 gap-8">
               {[
                 { value: '52+', label: 'Symbol Archetypes' },
                 { value: '3,000+', label: 'Independent Replicators' },
                 { value: '87%', label: 'Consistency Rate' },
               ].map((stat, i) => (
                 <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
-                  <div className="text-center p-8 rounded-2xl bg-primary/5 border border-primary/10">
-                    <div className="text-5xl md:text-6xl font-black text-primary mb-2">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground font-light">{stat.label}</div>
+                  <div className="text-center p-10 rounded-3xl bg-card/50 border border-border/30 hover:border-primary/30 transition-colors">
+                    <div className="text-6xl md:text-7xl font-black text-primary mb-4">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground font-light tracking-wide uppercase">{stat.label}</div>
                   </div>
                 </AnimatedSection>
               ))}
@@ -152,28 +152,28 @@ const Home = () => {
           <EmailCapture />
           
           {/* CTA Section */}
-          <section className="container mx-auto px-4 py-24 text-center">
-            <AnimatedSection className="max-w-2xl mx-auto">
-              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Get Involved</p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
+          <section className="container mx-auto px-4 py-32 text-center">
+            <AnimatedSection className="max-w-3xl mx-auto">
+              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Get Involved</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-8">
                 Contribute to Open Research
               </h2>
-              <p className="text-muted-foreground font-light mb-8">
-                Submit your observations or explore the evidence. Null reports are equally valuable for establishing baseline data.
+              <p className="text-muted-foreground font-light mb-12 text-lg max-w-xl mx-auto">
+                Submit your observations or explore the evidence. Null reports are equally valuable.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-5 justify-center">
                 <Button 
                   size="lg" 
-                  className="px-8 py-6 h-auto rounded-full btn-lickable border-beam group"
+                  className="px-10 py-7 h-auto rounded-full btn-lickable border-beam group text-lg"
                   onClick={() => navigate('/registry#submit')}
                 >
                   Submit Symbol
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="px-8 py-6 h-auto rounded-full btn-lickable"
+                  className="px-10 py-7 h-auto rounded-full btn-lickable border-primary/50 hover:border-primary text-lg"
                   onClick={() => navigate('/evidence-map')}
                 >
                   View Evidence
