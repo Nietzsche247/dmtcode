@@ -43,7 +43,7 @@ export const ExplainerSection = () => {
         >
           <div className="prose prose-invert max-w-none space-y-6">
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              In 2020, researcher <span className="text-foreground font-medium">Danny Goler</span> documented a novel phenomenon: shining a <span className="text-foreground font-medium">650 nm red laser</span> through a diffraction grating during N,N-dimethyltryptamine (N,N-DMT) administration reliably elicits discrete visual symbols resembling alphabetic characters on any surface. This protocol has been independently replicated by over <span className="text-foreground font-medium">3,000 participants worldwide</span>, with <span className="text-foreground font-medium">87% reporting consistent symbol observations</span> across independent sessions (<a href="https://doi.org/10.1002/hup.2806" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Davis et al., 2021</a>).
+              In 2020, researcher <span className="text-foreground font-medium">Danny Goler</span> reported a novel phenomenon. He found that shining a <span className="text-foreground font-medium">650 nm red laser</span> through a diffraction grating during N,N-DMT administration produces discrete visual symbols resembling alphabetic characters on any surface. Over <span className="text-foreground font-medium">3,000 participants</span> have since replicated this protocol, with <span className="text-foreground font-medium">87% reporting consistent symbol observations</span> (<a href="https://doi.org/10.1002/hup.2806" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Davis et al., 2021</a>).
             </p>
             
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
@@ -51,7 +51,7 @@ export const ExplainerSection = () => {
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              <span className="text-foreground font-medium">Chase Hughes</span> validated Goler's protocol through systematic replication studies, documenting that symbols maintain structural coherence across observers who have never communicated with each other. The phenomenon extends beyond subjective interpretation: participants independently draw nearly identical symbols when asked to recreate their observations immediately post-experience (Goler 2025, IPI Letters).
+              <span className="text-foreground font-medium">Chase Hughes</span> validated Goler's protocol through structured replication studies. He documented that symbols maintain structural coherence across observers who have never communicated with each other. Participants independently draw nearly identical symbols when asked to recreate their observations immediately after the experience (Goler 2025, IPI Letters).
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
@@ -59,7 +59,7 @@ export const ExplainerSection = () => {
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              The DMT Code Glyph Registry catalogues these recurring atomic visual elements in a structured, machine-readable format. <span className="text-foreground font-medium">Memory decay is critical:</span> <a href="https://doi.org/10.1007/978-1-4615-0115-9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Strassman (2001)</a> documented that detailed visual recall drops by 60% within 15 minutes and 90% within 2 hours post-experience. Immediate documentation using the registry's canvas with structured metadata maximizes data accuracy for longitudinal analysis.
+              The DMT Code Glyph Registry collects these recurring visual elements in a structured, machine-readable format. <span className="text-foreground font-medium">Memory decay matters:</span> <a href="https://doi.org/10.1007/978-1-4615-0115-9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Strassman (2001)</a> found that detailed visual recall drops by 60% within 15 minutes and 90% within 2 hours. Drawing symbols immediately using the registry canvas improves data accuracy.
             </p>
 
             <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 my-8">

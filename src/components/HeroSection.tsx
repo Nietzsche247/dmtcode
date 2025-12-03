@@ -78,8 +78,8 @@ export const HeroSection = () => {
           className={`text-lg md:text-xl lg:text-2xl font-light italic text-[#9CA3AF] max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
           style={{ animationFillMode: 'forwards', fontFamily: "'Montserrat', system-ui, sans-serif" }}
         >
-          An open, community-maintained catalogue of discrete visual symbols 
-          reported during 650 nm laser exposure and N,N-DMT experiences.
+          Documenting visual symbols from 3,000+ sessions using the 650 nm laser protocol.
+          Community-curated. Peer-reviewed metadata. CC-BY-4.0 licensed.
         </p>
 
         {/* Stats row */}
