@@ -206,68 +206,54 @@ const Tools = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/tools" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/tools" />
         <meta name="robots" content="index, follow" />
-        <meta name="keywords" content="650nm laser equipment, red light therapy, DMT research tools, psychedelic integration, biohacking equipment" />
         {products.length > 0 && (
           <script type="application/ld+json">
             {JSON.stringify(
-              products.map(product => ({
+              products.filter(p => p?.node).map(product => ({
                 "@context": "https://schema.org",
                 "@type": "Product",
                 "name": product.node?.title || '',
                 "description": product.node?.description || '',
                 "image": product.node?.images?.edges?.[0]?.node?.url || '',
-                "category": (product.node?.title || '').includes("Red Light") || (product.node?.title || '').includes("MitoMAT") || (product.node?.title || '').includes("Bon Charge") ? "Red Light Therapy" : "Psychedelic Integration",
-                "brand": {
-                  "@type": "Brand",
-                  "name": "DMT Code"
-                },
                 "offers": {
                   "@type": "Offer",
                   "url": `https://dmtcode.com/tools#${product.node?.handle || ''}`,
                   "priceCurrency": product.node?.priceRange?.minVariantPrice?.currencyCode || 'USD',
                   "price": product.node?.priceRange?.minVariantPrice?.amount || '0',
-                  "availability": "https://schema.org/InStock",
-                  "itemCondition": "https://schema.org/NewCondition"
-                },
-                "license": "https://creativecommons.org/licenses/by/4.0/"
+                  "availability": "https://schema.org/InStock"
+                }
               }))
             )}
           </script>
         )}
       </Helmet>
 
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen bg-background">
         <ParticleBackground />
         
         <main className="relative z-10">
           <Navigation />
           
           <div className="pt-24 pb-12">
-            {/* Hero Section - Meng To Style */}
+            {/* Hero Section */}
             <section className="relative px-4 py-20 md:py-28 overflow-hidden">
-              <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-                <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" style={{ top: '20%' }} />
-              </div>
-              
               <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
-                <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
+                <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase">
                   Curated for 650nm Protocol
                 </p>
                 
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9]">
                   Research Equipment
                   <span className="block text-primary mt-2">$12 → $2,000</span>
                 </h1>
                 
-                <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+                <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   Entry-level to premium research equipment for the 650 nm protocol. 
                   Sold out items fund ongoing symbol cataloguing research.
                 </p>
 
-                <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center animate-blur-in-up animation-delay-300" style={{ animationFillMode: 'forwards' }}>
+                <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
                   <Button 
                     size="lg" 
                     onClick={() => handleWaitlistClick('Hero CTA', 'mixed')}

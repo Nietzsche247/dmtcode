@@ -5,9 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Suspense, lazy } from "react";
 import Home from "./pages/Home";
 import Research from "./pages/Research";
-import Tools from "./pages/Tools";
 import Woo from "./pages/Woo";
 import Registry from "./pages/Registry";
 import Correlations from "./pages/Correlations";
@@ -33,7 +34,20 @@ import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
+// Lazy load Tools page to isolate potential crashes
+const Tools = lazy(() => import("./pages/Tools"));
+
 const queryClient = new QueryClient();
+
+// Loading fallback for Tools page
+const ToolsLoading = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="text-center space-y-4">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+      <p className="text-muted-foreground">Loading products...</p>
+    </div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -46,7 +60,13 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
-          <Route path="/tools" element={<Tools />} />
+          <Route path="/tools" element={
+            <ErrorBoundary>
+              <Suspense fallback={<ToolsLoading />}>
+                <Tools />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/woo" element={<Woo />} />
           <Route path="/registry" element={<Registry />} />
           <Route path="/correlations" element={<Correlations />} />
