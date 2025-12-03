@@ -73,7 +73,7 @@ const Events = () => {
             </h1>
             
             <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-              Scholarly reference of psychedelic research milestones, community gatherings, and ongoing clinical studies.
+              Community-sourced and moderator-reviewed research with transparent trust metrics.
             </p>
           </div>
         </section>
@@ -210,7 +210,7 @@ const Events = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Verified Retreats & Centers</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Community-rated retreat centers with transparent trust metrics. Ratings are independently verified and moderated.
+            Retreat centers rated by community members. Ratings reflect participant feedback and are reviewed by moderators before publication.
           </p>
           <RetreatGrid />
         </section>

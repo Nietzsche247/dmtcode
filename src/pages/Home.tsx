@@ -7,7 +7,7 @@ import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
-import { ArrowRight, Database, Users, Target, FileText } from 'lucide-react';
+import { ArrowRight, Database, Users, Target, FileText, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
@@ -72,31 +72,41 @@ const Home = () => {
           <HeroSection />
           <ExplainerSection />
           
-          {/* Key Features Section */}
-          <section className="container mx-auto px-4 py-32 max-w-6xl">
-            <AnimatedSection className="text-center mb-20">
-              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Why It Matters</p>
+          {/* Key Takeaways Section */}
+          <section className="container mx-auto px-4 py-32 max-w-4xl">
+            <AnimatedSection className="text-center mb-16">
+              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">The Research</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-white" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Open Science, Real Data
+                Key Takeaways
               </h2>
             </AnimatedSection>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { icon: Target, title: '650 nm Protocol', desc: 'Coherent red light through diffraction grating during N,N-DMT elicits consistent visual symbols' },
-                { icon: Users, title: '87% Consistency', desc: 'Independent observers report identical symbol morphology across sessions' },
-                { icon: Database, title: 'Open Registry', desc: 'Anonymous submissions, structured metadata, CSV/JSON downloads under CC-BY-4.0' },
-                { icon: FileText, title: 'Neutral Science', desc: 'No medical claims; systematic documentation for academic research' },
-              ].map((item, i) => (
-                <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
-                  <div className="p-8 rounded-3xl bg-card/50 border border-border/40 hover:border-primary/40 transition-all duration-300 h-full group hover:bg-card/80">
-                    <item.icon className="w-10 h-10 text-primary mb-6 transition-transform group-hover:scale-110" />
-                    <h3 className="text-xl font-semibold mb-3 text-white" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>{item.title}</h3>
-                    <p className="text-sm text-[#6B7280] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{item.desc}</p>
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
+            <AnimatedSection className="animation-delay-200">
+              <div className="p-8 md:p-12 rounded-3xl bg-card/50 border border-border/40">
+                <ul className="space-y-6 text-lg text-[#9CA3AF] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                  <li className="flex gap-4">
+                    <Target className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <span>The 650 nm protocol uses coherent red light through a diffraction grating during N,N-DMT administration to produce discrete visual symbols on any surface.</span>
+                  </li>
+                  <li className="flex gap-4">
+                    <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <span>Davis et al. (2021) documented 87% inter-subject consistency: independent observers draw nearly identical symbols without prior communication.</span>
+                  </li>
+                  <li className="flex gap-4">
+                    <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <span>The registry accepts anonymous submissions with structured metadata. All data is downloadable as CSV or JSON under a CC-BY-4.0 license.</span>
+                  </li>
+                  <li className="flex gap-4">
+                    <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <span>This project makes no medical claims. It exists solely to document reported phenomena for academic analysis.</span>
+                  </li>
+                  <li className="flex gap-4">
+                    <AlertTriangle className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                    <span>Critical perspectives are welcome. The /critiques page presents counter-arguments and alternative explanations for these observations.</span>
+                  </li>
+                </ul>
+              </div>
+            </AnimatedSection>
           </section>
 
           {/* Stats Section */}
@@ -107,7 +117,7 @@ const Home = () => {
                 Dataset Overview
               </h2>
               <p className="text-[#6B7280] font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                Real-time data updated with each new submission
+                Numbers update as new submissions arrive
               </p>
             </AnimatedSection>
 
@@ -132,17 +142,17 @@ const Home = () => {
             <AnimatedSection>
               <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-4">Our Mission</p>
               <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Systematic Documentation for Science
+                Structured Documentation for Science
               </h2>
               <div className="space-y-6 text-lg text-[#6B7280] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 <p>
-                  DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration.
+                  DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone can contribute. All submissions are reviewed by moderators before publication.
                 </p>
                 <p>
-                  The protocol, developed by Danny Goler and validated by Chase Hughes across 3,000+ independent replicators, involves shining coherent red light through a diffraction grating during N,N-DMT experiences. Participants consistently report observing discrete, bounded visual symbols resembling alphabetic characters and geometric patterns.
+                  Danny Goler developed this protocol and Chase Hughes validated it across 3,000+ independent sessions. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
                 </p>
                 <p>
-                  Davis et al. (2021) documented an 87% inter-subject consistency rate. This remarkable consistency across independent sessions suggests these phenomena warrant systematic documentation and analysis.
+                  Davis et al. (2021) documented an 87% inter-subject consistency rate. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
                 </p>
               </div>
             </AnimatedSection>
