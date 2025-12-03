@@ -1,6 +1,7 @@
-import { MessageCircle, Share2 } from "lucide-react";
+import { MessageCircle, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 interface ShareButtonsProps {
   title: string;
@@ -23,8 +24,15 @@ const RedditIcon = () => (
 
 export const ShareButtons = ({ title, description, url, className = "" }: ShareButtonsProps) => {
   const isMobile = useIsMobile();
+  const [copied, setCopied] = useState(false);
   const currentUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const shareText = `${title}${description ? ` - ${description.slice(0, 100)}` : ''}`;
+
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText(currentUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSmsShare = () => {
     const body = encodeURIComponent(`${shareText}\n${currentUrl}`);
@@ -45,6 +53,15 @@ export const ShareButtons = ({ title, description, url, className = "" }: ShareB
   if (isMobile) {
     return (
       <div className={`flex items-center gap-1 ${className}`}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleCopyLink}
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          aria-label="Copy link"
+        >
+          {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+        </Button>
         <Button
           variant="ghost"
           size="icon"
@@ -69,6 +86,15 @@ export const ShareButtons = ({ title, description, url, className = "" }: ShareB
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleCopyLink}
+        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+        aria-label="Copy link"
+      >
+        {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+      </Button>
       <Button
         variant="ghost"
         size="icon"
