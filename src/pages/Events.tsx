@@ -55,48 +55,61 @@ const Events = () => {
 
       <Navigation />
 
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Sticky Scholarly Disclaimer Banner */}
-        <Alert className="mb-8 sticky top-20 z-40 border-[hsl(var(--gold))] bg-background/95 backdrop-blur">
-          <AlertDescription className="text-sm">
-            <strong>Scholarly Reference Only:</strong> This timeline aggregates community-reported events and publicly available clinical trial data. 
-            Inclusion does not constitute endorsement. Verify all information independently before participation. For retreat trust scores, 
-            see individual rating breakdowns and community notes.
-          </AlertDescription>
-        </Alert>
+      <main className="container mx-auto px-4 max-w-7xl">
+        {/* Hero Section - Meng To Style */}
+        <section className="relative py-20 md:py-28 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" style={{ top: '20%' }} />
+          </div>
+          
+          <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
+            <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
+              Research Timeline
+            </p>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
+              Events & Trials
+              <span className="block text-primary mt-2">Live Dashboard</span>
+            </h1>
+            
+            <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+              Scholarly reference of psychedelic research milestones, community gatherings, and ongoing clinical studies.
+            </p>
+          </div>
+        </section>
 
         <Breadcrumb />
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-foreground">
-            Roadmap of Upcoming Psychedelic Events & Clinical Trials
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl">
-            Scholarly reference of psychedelic research milestones, community gatherings, and ongoing clinical studies. 
-            Community-sourced, moderator-reviewed, with transparent trust metrics.
-          </p>
-        </div>
+        {/* Sticky Scholarly Disclaimer Banner */}
+        <Alert className="mb-8 sticky top-20 z-40 border-border/50 bg-card/80 backdrop-blur rounded-2xl">
+          <AlertDescription className="text-sm font-light">
+            <strong className="font-semibold">Scholarly Reference Only:</strong> This timeline aggregates community-reported events and publicly available clinical trial data. 
+            Inclusion does not constitute endorsement.
+          </AlertDescription>
+        </Alert>
 
         {/* Submission Buttons + Filters */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-wrap gap-4">
             <Button
               onClick={() => setEventModalOpen(true)}
-              className="bg-[#C41E3A] hover:bg-[#C41E3A]/90"
+              className="rounded-full btn-lickable"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Event
             </Button>
             <Button
               onClick={() => setTrialModalOpen(true)}
-              className="bg-[#2E5C8A] hover:bg-[#2E5C8A]/90"
+              variant="outline"
+              className="rounded-full btn-lickable"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Clinical Trial
             </Button>
             <Button
               onClick={() => setRetreatModalOpen(true)}
-              className="bg-[#28A745] hover:bg-[#28A745]/90"
+              variant="outline"
+              className="rounded-full btn-lickable"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Retreat

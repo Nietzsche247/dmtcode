@@ -57,15 +57,33 @@ const About = () => {
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
-        <Breadcrumb />
         
-        <main className="relative z-10 pt-4">
+        <main className="relative z-10 pt-20">
+          {/* Hero Section */}
+          <section className="relative px-4 py-20 md:py-28 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+              <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" style={{ top: '30%' }} />
+            </div>
+            
+            <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+              <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
+                Our Team
+              </p>
+              
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
+                About DMT Code
+                <span className="block text-primary mt-2">Project</span>
+              </h1>
+              
+              <p className="text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+                Team credentials, ethical framework, and commitment to neutral science
+              </p>
+            </div>
+          </section>
+          
+          <Breadcrumb />
 
           <section className="container mx-auto px-4 py-16 max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8">About DMT Code Project</h1>
-            <p className="text-lg text-muted-foreground mb-12">
-              Team credentials, ethical framework, and commitment to neutral science
-            </p>
 
             {/* Mission Statement */}
             <Card className="p-8 bg-card border-border mb-8">
