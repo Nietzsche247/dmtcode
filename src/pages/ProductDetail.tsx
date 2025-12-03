@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Star, ExternalLink, ShoppingCart, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ShareButtons } from "@/components/ShareButtons";
 import { storefrontApiRequest } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
@@ -325,12 +326,16 @@ const ProductDetail = () => {
                   )}
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold">{product.title}</h1>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <Star className="h-5 w-5 fill-primary text-primary" />
                     <span className="font-semibold">{calculateAverageRating()}</span>
                     <span className="text-muted-foreground">({ratings.length} reviews)</span>
                   </div>
+                  <ShareButtons 
+                    title={product.title} 
+                    description={product.description?.slice(0, 100)}
+                  />
                 </div>
               </div>
 
