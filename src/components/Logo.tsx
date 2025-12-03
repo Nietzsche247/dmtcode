@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 export const Logo = ({ className, size = "md" }: LogoProps) => {
-  const height = size === "sm" ? 44 : 48;
+  const height = size === "sm" ? 70 : 77;
   
   return (
     <img 
