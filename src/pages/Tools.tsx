@@ -66,6 +66,7 @@ const Tools = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [affiliateProducts, setAffiliateProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
@@ -73,28 +74,34 @@ const Tools = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setError(null);
       try {
         // Fetch Shopify products
         const data = await storefrontApiRequest(STOREFRONT_PRODUCTS_QUERY, { first: 50 });
         if (data?.data?.products?.edges) {
           setProducts(data.data.products.edges);
         }
+      } catch (err) {
+        console.error('Error fetching Shopify products:', err);
+      }
 
+      try {
         // Fetch affiliate-only products from database
-        const { data: affiliateData } = await supabase
+        const { data: affiliateData, error: dbError } = await supabase
           .from('products')
           .select('*')
           .eq('affiliate_only', true)
           .eq('is_approved', true);
         
+        if (dbError) throw dbError;
         if (affiliateData) {
           setAffiliateProducts(affiliateData);
         }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching affiliate products:', err);
       }
+
+      setLoading(false);
     };
 
     fetchProducts();
@@ -392,7 +399,7 @@ const Tools = () => {
                               <div className="flex-1 space-y-2">
                                 <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.title}</h3>
                                 <p className="text-2xl font-bold text-primary">
-                                  ${product.price.toFixed(2)}
+                                  ${parseFloat(String(product.price || 0)).toFixed(2)}
                                 </p>
                               </div>
                             </div>

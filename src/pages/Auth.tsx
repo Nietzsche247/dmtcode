@@ -133,10 +133,23 @@ const Auth = () => {
       });
 
       if (error) {
-        toast.error(error.message);
+        // Provide helpful error messages for OAuth configuration issues
+        if (error.message.includes('Provider') || error.message.includes('not enabled')) {
+          toast.error(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login is not configured yet`, {
+            description: "Please contact the administrator to enable this login method."
+          });
+        } else if (error.message.includes('redirect')) {
+          toast.error("Redirect URL not configured", {
+            description: "Please check OAuth settings in the backend."
+          });
+        } else {
+          toast.error(error.message);
+        }
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      toast.error("An unexpected error occurred", {
+        description: "Please try again or use email login."
+      });
     } finally {
       setIsLoading(false);
     }
