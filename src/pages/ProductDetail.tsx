@@ -285,6 +285,22 @@ const ProductDetail = () => {
         <title>{product.title} | DMT Code</title>
         <meta name="description" content={product.description?.slice(0, 160)} />
         <link rel="canonical" href={`https://dmtcode.com/products/${id}`} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={`${product.title} | DMT Code`} />
+        <meta property="og:description" content={product.description?.slice(0, 160)} />
+        <meta property="og:url" content={`https://dmtcode.com/products/${id}`} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:site_name" content="DMT Code Project" />
+        {product.price && <meta property="product:price:amount" content={product.price.toString()} />}
+        <meta property="product:price:currency" content="USD" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.title} | DMT Code`} />
+        <meta name="twitter:description" content={product.description?.slice(0, 160)} />
+        <meta name="twitter:image" content={imageUrl} />
       </Helmet>
 
       <ParticleBackground />
