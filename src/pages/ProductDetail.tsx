@@ -301,6 +301,48 @@ const ProductDetail = () => {
         <meta name="twitter:title" content={`${product.title} | DMT Code`} />
         <meta name="twitter:description" content={product.description?.slice(0, 160)} />
         <meta name="twitter:image" content={imageUrl} />
+        
+        {/* JSON-LD Product Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.title,
+            "description": product.description,
+            "image": imageUrl,
+            "url": `https://dmtcode.com/products/${id}`,
+            "brand": {
+              "@type": "Brand",
+              "name": "DMT Code Project"
+            },
+            "category": product.category || "Research Equipment",
+            ...(product.wavelength && { "additionalProperty": {
+              "@type": "PropertyValue",
+              "name": "Wavelength",
+              "value": product.wavelength
+            }}),
+            "offers": {
+              "@type": "Offer",
+              "url": `https://dmtcode.com/products/${id}`,
+              "priceCurrency": "USD",
+              "price": product.price?.toFixed(2),
+              "availability": "https://schema.org/InStock",
+              "seller": {
+                "@type": "Organization",
+                "name": "DMT Code Project"
+              }
+            },
+            ...(ratings.length > 0 && {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": calculateAverageRating(),
+                "reviewCount": ratings.length,
+                "bestRating": "5",
+                "worstRating": "1"
+              }
+            })
+          })}
+        </script>
       </Helmet>
 
       <ParticleBackground />
