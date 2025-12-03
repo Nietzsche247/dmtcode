@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
+import { RefreshCw, Calendar, CheckCircle, XCircle, Clock, Mail, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 interface ScraperRun {
@@ -14,10 +14,13 @@ interface ScraperRun {
   trials_added: number;
   status: string;
   error_message: string | null;
+  email_sent?: boolean;
+  new_trials_count?: number;
 }
 
 export const ScraperStatus = () => {
   const [lastRun, setLastRun] = useState<ScraperRun | null>(null);
+  const [runs, setRuns] = useState<ScraperRun[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
 
@@ -31,13 +34,13 @@ export const ScraperStatus = () => {
       .select("*")
       .eq("scraper_name", "clinicaltrials_gov")
       .order("last_run_at", { ascending: false })
-      .limit(1)
-      .single();
+      .limit(5);
 
     if (error && error.code !== "PGRST116") {
       console.error("Error fetching scraper status:", error);
-    } else {
-      setLastRun(data);
+    } else if (data && data.length > 0) {
+      setLastRun(data[0]);
+      setRuns(data);
     }
     setLoading(false);
   };
@@ -48,12 +51,12 @@ export const ScraperStatus = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke("scrape-clinical-trials", {
-        body: {},
+        body: { adminEmail: "" }, // Add admin email here if needed
       });
 
       if (error) throw error;
 
-      toast.success(`Scraper completed: ${data.trialsAdded} trials added`);
+      toast.success(`Scraper completed: ${data.trialsAdded} new, ${data.trialsUpdated || 0} updated`);
       fetchLastRun();
     } catch (error) {
       console.error("Error triggering scraper:", error);
@@ -77,17 +80,19 @@ export const ScraperStatus = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       success: "bg-green-500",
       error: "bg-red-500",
       running: "bg-yellow-500",
     };
     return (
-      <Badge className={colors[status as keyof typeof colors] || "bg-gray-500"}>
+      <Badge className={colors[status] || "bg-gray-500"}>
         {status}
       </Badge>
     );
   };
+
+  const functionUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-clinical-trials`;
 
   if (loading) {
     return (
@@ -120,11 +125,36 @@ export const ScraperStatus = () => {
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm text-muted-foreground">
-          <strong>Schedule:</strong> Every Sunday at 03:00 UTC
+        <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-muted-foreground" />
+            <strong>Schedule:</strong> Every Sunday at 03:00 UTC (via cron-job.org)
+          </div>
+          <div className="text-muted-foreground">
+            <strong>Compounds:</strong> DMT, N,N-DMT, psilocybin, ayahuasca, 5-MeO-DMT, ibogaine, LSD, MDMA
+          </div>
+          <div className="text-muted-foreground">
+            <strong>Filters:</strong> Recruiting/Active/Not-yet-recruiting, start date ≥ 2024
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground">
-          <strong>Substances Tracked:</strong> DMT, psilocybin, LSD, MDMA, ayahuasca, ibogaine, 5-MeO-DMT
+
+        {/* Cron Setup Instructions */}
+        <div className="border border-dashed rounded-lg p-3 space-y-2">
+          <p className="text-sm font-medium">Setup Weekly Cron (cron-job.org)</p>
+          <div className="bg-background rounded p-2 text-xs font-mono break-all">
+            {functionUrl}
+          </div>
+          <a
+            href="https://cron-job.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            Open cron-job.org <ExternalLink className="w-3 h-3" />
+          </a>
+          <p className="text-xs text-muted-foreground">
+            Cron expression: <code className="bg-muted px-1 rounded">0 3 * * 0</code> (Sunday 03:00 UTC)
+          </p>
         </div>
 
         {lastRun ? (
@@ -134,7 +164,15 @@ export const ScraperStatus = () => {
                 {getStatusIcon(lastRun.status)}
                 <span className="font-semibold">Last Run</span>
               </div>
-              {getStatusBadge(lastRun.status)}
+              <div className="flex items-center gap-2">
+                {lastRun.email_sent && (
+                  <Badge variant="outline" className="gap-1">
+                    <Mail className="w-3 h-3" />
+                    Email Sent
+                  </Badge>
+                )}
+                {getStatusBadge(lastRun.status)}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -150,7 +188,7 @@ export const ScraperStatus = () => {
               </div>
               <div>
                 <span className="text-muted-foreground">New Trials Added:</span>
-                <p className="font-medium">{lastRun.trials_added}</p>
+                <p className="font-medium text-green-600">{lastRun.trials_added}</p>
               </div>
               <div>
                 <span className="text-muted-foreground">Duplicates Skipped:</span>
@@ -173,6 +211,25 @@ export const ScraperStatus = () => {
           <p className="text-sm text-muted-foreground">
             No scraper runs recorded yet. Click "Run Now" to start.
           </p>
+        )}
+
+        {/* Run History */}
+        {runs.length > 1 && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Recent Runs</p>
+            <div className="space-y-1">
+              {runs.slice(1).map((run) => (
+                <div
+                  key={run.id}
+                  className="flex items-center justify-between text-xs text-muted-foreground py-1 border-b last:border-0"
+                >
+                  <span>{new Date(run.last_run_at).toLocaleDateString()}</span>
+                  <span>+{run.trials_added} trials</span>
+                  {getStatusBadge(run.status)}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>

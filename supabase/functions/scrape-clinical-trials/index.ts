@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { Resend } from 'https://esm.sh/resend@2.0.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,9 +15,83 @@ interface TrialData {
   locations: string;
   startDate: string;
   completionDate: string | null;
+  compound: string;
+  url: string;
 }
 
-const SUBSTANCES = ['DMT', 'psilocybin', 'LSD', 'MDMA', 'ayahuasca', 'ibogaine', '5-MeO-DMT'];
+// Psychedelic compounds to search
+const SEARCH_TERMS = [
+  'DMT',
+  'N,N-DMT',
+  'psilocybin',
+  'ayahuasca',
+  '5-MeO-DMT',
+  'ibogaine',
+  'LSD',
+  'MDMA'
+];
+
+// Map ClinicalTrials.gov status to our status
+function mapStatus(overallStatus: string): string {
+  const statusLower = overallStatus.toLowerCase();
+  if (statusLower.includes('recruiting') && !statusLower.includes('not')) return 'recruiting';
+  if (statusLower.includes('not yet recruiting')) return 'planned';
+  if (statusLower.includes('active')) return 'active';
+  if (statusLower.includes('completed')) return 'completed';
+  if (statusLower.includes('terminated') || statusLower.includes('withdrawn')) return 'completed';
+  return 'planned';
+}
+
+// Detect compound from study data
+function detectCompound(title: string, conditions: string[]): string {
+  const text = `${title} ${conditions.join(' ')}`.toLowerCase();
+  if (text.includes('psilocybin')) return 'Psilocybin';
+  if (text.includes('dmt') || text.includes('n,n-dmt') || text.includes('dimethyltryptamine')) return 'DMT';
+  if (text.includes('ayahuasca')) return 'Ayahuasca';
+  if (text.includes('5-meo-dmt')) return '5-MeO-DMT';
+  if (text.includes('ibogaine')) return 'Ibogaine';
+  if (text.includes('lsd') || text.includes('lysergic')) return 'LSD';
+  if (text.includes('mdma')) return 'MDMA';
+  return 'Psychedelic';
+}
+
+async function sendWeeklyEmail(resend: Resend, trialsAdded: number, trialsUpdated: number, adminEmail: string) {
+  if (!adminEmail) {
+    console.log('No admin email configured, skipping email notification');
+    return false;
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: 'DMT Code <notifications@resend.dev>',
+      to: [adminEmail],
+      subject: `Clinical Trials Update: ${trialsAdded} new trials this week`,
+      html: `
+        <h1>Weekly Clinical Trials Summary</h1>
+        <p>The automated scraper has completed its weekly run.</p>
+        <ul>
+          <li><strong>${trialsAdded}</strong> new trials added</li>
+          <li><strong>${trialsUpdated}</strong> trials updated</li>
+        </ul>
+        <p>View the full timeline at <a href="https://dmtcode.com/events">dmtcode.com/events</a></p>
+        <p>Manage trials in the <a href="https://dmtcode.com/admin">Admin Dashboard</a></p>
+        <hr>
+        <p style="color: #666; font-size: 12px;">DMT Code Project - Automated notification</p>
+      `,
+    });
+
+    if (error) {
+      console.error('Failed to send email:', error);
+      return false;
+    }
+    
+    console.log('Weekly summary email sent successfully');
+    return true;
+  } catch (err) {
+    console.error('Email sending error:', err);
+    return false;
+  }
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -25,9 +100,22 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const resendApiKey = Deno.env.get('RESEND_API_KEY');
+  
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
-  console.log('Starting ClinicalTrials.gov scraper...');
+  // Parse request body for optional admin email
+  let adminEmail = '';
+  try {
+    const body = await req.json();
+    adminEmail = body?.adminEmail || '';
+  } catch {
+    // No body or invalid JSON, continue without admin email
+  }
+
+  console.log('Starting ClinicalTrials.gov scraper with enhanced filters...');
+  console.log(`Searching for: ${SEARCH_TERMS.join(', ')}`);
 
   // Log scraper start
   const { data: runData, error: runError } = await supabase
@@ -37,6 +125,7 @@ Deno.serve(async (req) => {
       status: 'running',
       trials_found: 0,
       trials_added: 0,
+      new_trials_count: 0,
     })
     .select()
     .single();
@@ -52,65 +141,93 @@ Deno.serve(async (req) => {
   const runId = runData.id;
   let trialsFound = 0;
   let trialsAdded = 0;
+  let trialsUpdated = 0;
 
   try {
     const allTrials: TrialData[] = [];
 
-    // Fetch trials for each substance
-    for (const substance of SUBSTANCES) {
-      console.log(`Fetching trials for: ${substance}`);
+    // Fetch trials for each compound
+    for (const term of SEARCH_TERMS) {
+      console.log(`Fetching trials for: ${term}`);
       
-      const apiUrl = `https://clinicaltrials.gov/api/v2/studies?query.cond=${encodeURIComponent(substance)}&pageSize=100&format=json`;
+      // Use ClinicalTrials.gov v2 API with filters
+      // Filter: recruiting, active, or not yet recruiting
+      // Start date >= 2024
+      const statusFilter = 'RECRUITING,ACTIVE_NOT_RECRUITING,NOT_YET_RECRUITING';
+      const apiUrl = `https://clinicaltrials.gov/api/v2/studies?query.cond=${encodeURIComponent(term)}&filter.overallStatus=${statusFilter}&pageSize=100&format=json`;
       
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        console.error(`Failed to fetch trials for ${substance}: ${response.statusText}`);
-        continue;
-      }
+      try {
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+          console.error(`Failed to fetch trials for ${term}: ${response.statusText}`);
+          continue;
+        }
 
-      const data = await response.json();
-      console.log(`Found ${data.studies?.length || 0} studies for ${substance}`);
+        const data = await response.json();
+        console.log(`Found ${data.studies?.length || 0} studies for ${term}`);
 
-      if (data.studies && Array.isArray(data.studies)) {
-        for (const study of data.studies) {
-          const protocolSection = study.protocolSection;
-          if (!protocolSection) continue;
+        if (data.studies && Array.isArray(data.studies)) {
+          for (const study of data.studies) {
+            const protocolSection = study.protocolSection;
+            if (!protocolSection) continue;
 
-          const identification = protocolSection.identificationModule;
-          const statusModule = protocolSection.statusModule;
-          const sponsorModule = protocolSection.sponsorCollaboratorsModule;
-          const designModule = protocolSection.designModule;
-          const contactsModule = protocolSection.contactsLocationsModule;
+            const identification = protocolSection.identificationModule;
+            const statusModule = protocolSection.statusModule;
+            const sponsorModule = protocolSection.sponsorCollaboratorsModule;
+            const designModule = protocolSection.designModule;
+            const contactsModule = protocolSection.contactsLocationsModule;
+            const conditionsModule = protocolSection.conditionsModule;
 
-          // Map ClinicalTrials.gov status to our status
-          const overallStatus = statusModule?.overallStatus || 'UNKNOWN';
-          let mappedStatus = 'planned';
-          if (overallStatus.includes('RECRUITING')) mappedStatus = 'recruiting';
-          else if (overallStatus.includes('ACTIVE')) mappedStatus = 'active';
-          else if (overallStatus.includes('COMPLETED')) mappedStatus = 'completed';
+            // Filter by start date >= 2024
+            const startDateStr = statusModule?.startDateStruct?.date;
+            if (startDateStr) {
+              const startYear = parseInt(startDateStr.substring(0, 4));
+              if (startYear < 2024) {
+                continue; // Skip older trials
+              }
+            }
 
-          // Extract locations
-          const locations = contactsModule?.locations
-            ?.map((loc: any) => `${loc.facility || ''}, ${loc.city || ''}, ${loc.country || ''}`)
-            .filter((loc: string) => loc.trim() !== ', ,')
-            .join('; ') || 'Not specified';
+            const overallStatus = statusModule?.overallStatus || 'UNKNOWN';
+            const mappedStatus = mapStatus(overallStatus);
 
-          const trial: TrialData = {
-            nctId: identification?.nctId || '',
-            title: identification?.officialTitle || identification?.briefTitle || 'Untitled Study',
-            status: mappedStatus,
-            phase: designModule?.phases?.join(', ') || 'Not specified',
-            sponsor: sponsorModule?.leadSponsor?.name || 'Unknown',
-            locations: locations,
-            startDate: statusModule?.startDateStruct?.date || new Date().toISOString().split('T')[0],
-            completionDate: statusModule?.completionDateStruct?.date || null,
-          };
+            // Extract locations
+            const locations = contactsModule?.locations
+              ?.slice(0, 3) // Limit to first 3 locations
+              ?.map((loc: any) => `${loc.city || ''}, ${loc.country || ''}`)
+              .filter((loc: string) => loc.trim() !== ',')
+              .join('; ') || 'Not specified';
 
-          if (trial.nctId) {
-            allTrials.push(trial);
+            // Detect compound from title and conditions
+            const conditions = conditionsModule?.conditions || [];
+            const compound = detectCompound(
+              identification?.officialTitle || identification?.briefTitle || '',
+              conditions
+            );
+
+            const nctId = identification?.nctId || '';
+            
+            const trial: TrialData = {
+              nctId,
+              title: identification?.officialTitle || identification?.briefTitle || 'Untitled Study',
+              status: mappedStatus,
+              phase: designModule?.phases?.join(', ') || 'Not specified',
+              sponsor: sponsorModule?.leadSponsor?.name || 'Unknown',
+              locations,
+              startDate: startDateStr || new Date().toISOString().split('T')[0],
+              completionDate: statusModule?.completionDateStruct?.date || null,
+              compound,
+              url: `https://clinicaltrials.gov/study/${nctId}`,
+            };
+
+            if (trial.nctId) {
+              allTrials.push(trial);
+            }
           }
         }
+      } catch (fetchError) {
+        console.error(`Error fetching ${term}:`, fetchError);
+        continue;
       }
     }
 
@@ -124,17 +241,33 @@ Deno.serve(async (req) => {
 
     console.log(`Unique trials after deduplication: ${uniqueTrials.length}`);
 
-    // Insert trials into database (skip if already exists)
+    // Upsert trials into database
     for (const trial of uniqueTrials) {
       // Check if trial already exists
       const { data: existing } = await supabase
         .from('clinical_trials')
-        .select('id')
+        .select('id, status')
         .eq('trial_registry_id', trial.nctId)
-        .single();
+        .maybeSingle();
 
       if (existing) {
-        console.log(`Trial ${trial.nctId} already exists, skipping`);
+        // Update existing trial if status changed
+        if (existing.status !== trial.status) {
+          const { error: updateError } = await supabase
+            .from('clinical_trials')
+            .update({
+              status: trial.status,
+              title: trial.title,
+              description: `Phase: ${trial.phase} | Sponsor: ${trial.sponsor} | Compound: ${trial.compound}`,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existing.id);
+
+          if (!updateError) {
+            trialsUpdated++;
+            console.log(`Updated trial ${trial.nctId} - status changed to ${trial.status}`);
+          }
+        }
         continue;
       }
 
@@ -143,14 +276,14 @@ Deno.serve(async (req) => {
         .from('clinical_trials')
         .insert({
           title: trial.title,
-          description: `Phase: ${trial.phase} | Sponsor: ${trial.sponsor}`,
+          description: `Phase: ${trial.phase} | Sponsor: ${trial.sponsor} | Compound: ${trial.compound}`,
           institution: trial.sponsor,
           principal_investigator: null,
           start_date: trial.startDate,
           end_date: trial.completionDate,
           status: trial.status,
           trial_registry_id: trial.nctId,
-          url: `https://clinicaltrials.gov/study/${trial.nctId}`,
+          url: trial.url,
           is_approved: true, // Auto-approve scraped trials
         });
 
@@ -158,8 +291,14 @@ Deno.serve(async (req) => {
         console.error(`Error inserting trial ${trial.nctId}:`, insertError);
       } else {
         trialsAdded++;
-        console.log(`Successfully added trial: ${trial.nctId}`);
+        console.log(`Successfully added trial: ${trial.nctId} (${trial.compound})`);
       }
+    }
+
+    // Send weekly email summary if configured
+    let emailSent = false;
+    if (resend && (trialsAdded > 0 || trialsUpdated > 0)) {
+      emailSent = await sendWeeklyEmail(resend, trialsAdded, trialsUpdated, adminEmail);
     }
 
     // Update scraper run status
@@ -169,17 +308,21 @@ Deno.serve(async (req) => {
         status: 'success',
         trials_found: trialsFound,
         trials_added: trialsAdded,
+        new_trials_count: trialsAdded,
+        email_sent: emailSent,
       })
       .eq('id', runId);
 
-    console.log(`Scraper completed: ${trialsAdded} trials added out of ${trialsFound} found`);
+    console.log(`Scraper completed: ${trialsAdded} added, ${trialsUpdated} updated out of ${trialsFound} found`);
 
     return new Response(
       JSON.stringify({
         success: true,
         trialsFound,
         trialsAdded,
-        message: `Successfully scraped and added ${trialsAdded} new trials`,
+        trialsUpdated,
+        emailSent,
+        message: `Successfully processed ${trialsAdded} new + ${trialsUpdated} updated trials`,
       }),
       {
         status: 200,
