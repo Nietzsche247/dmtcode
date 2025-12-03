@@ -210,33 +210,43 @@ const Tools = () => {
           <Navigation />
           
           <div className="pt-24 pb-12">
-            {/* Hero Section */}
-            <section className="px-4 py-16 bg-gradient-to-b from-background via-muted/20 to-background">
-              <div className="max-w-5xl mx-auto text-center space-y-6">
-                <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/30 rounded-full mb-4">
-                  <span className="text-sm font-semibold text-primary">Curated for 650nm Protocol</span>
-                </div>
+            {/* Hero Section - Meng To Style */}
+            <section className="relative px-4 py-20 md:py-28 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+                <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" style={{ top: '20%' }} />
+              </div>
+              
+              <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
+                <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
+                  Curated for 650nm Protocol
+                </p>
                 
-                <h1 className="text-4xl md:text-6xl font-bold glow-text leading-tight">
-                  Research Equipment Catalogue:<br />
-                  <span className="text-primary">From Entry Items to Research Experiences</span>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
+                  Research Equipment
+                  <span className="block text-primary mt-2">$12 → $2,000</span>
                 </h1>
                 
-                <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  Curated for 650 nm Protocol—Goler 2025. Entry-level to premium research equipment (Strassman 2001). 
-                  Limited stock—join waitlist for exclusives. $12 items to $2,000 legal research experiences.
+                <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+                  Entry-level to premium research equipment for the 650 nm protocol. 
+                  Sold out items fund ongoing symbol cataloguing research.
                 </p>
 
-                <div className="pt-4 space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">Sold out?</span> Join for restocks.
-                  </p>
+                <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center animate-blur-in-up animation-delay-300" style={{ animationFillMode: 'forwards' }}>
                   <Button 
                     size="lg" 
                     onClick={() => handleWaitlistClick('Hero CTA', 'mixed')}
-                    className="bg-primary hover:bg-primary/90 glow-button"
+                    className="px-8 py-6 h-auto rounded-full btn-lickable border-beam"
                   >
-                    Join Waitlist for Exclusive Restocks
+                    Join Waitlist
+                  </Button>
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    onClick={() => setSubmissionModalOpen(true)}
+                    className="px-8 py-6 h-auto rounded-full btn-lickable"
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Submit Product
                   </Button>
                 </div>
               </div>
@@ -246,36 +256,31 @@ const Tools = () => {
             <LaserGuide />
 
             {/* Search and Filters */}
-            <section className="px-4 py-8 bg-muted/30">
-              <div className="max-w-7xl mx-auto space-y-4">
-                <div className="flex gap-4 items-center">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Search products..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Button onClick={() => setSubmissionModalOpen(true)} className="flex items-center gap-2">
-                    <Plus className="h-5 w-5" />
-                    Submit Product
-                  </Button>
+            <section className="px-4 py-8">
+              <div className="max-w-7xl mx-auto">
+                <div className="relative max-w-md mx-auto">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 h-12 rounded-full bg-card/50 border-border/50 focus:border-primary/50"
+                  />
                 </div>
               </div>
             </section>
 
             {/* Products Grid */}
-            <section className="px-4 py-16 bg-muted/30">
+            <section className="px-4 py-16">
               <div className="max-w-7xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold">
-                    Research Equipment: $12 → $2,000
+                  <p className="text-primary text-sm font-medium tracking-widest uppercase">Product Catalogue</p>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight">
+                    Curated Equipment
                   </h2>
-                  <p className="text-muted-foreground max-w-2xl mx-auto">
-                    Research-backed equipment and experiences for every researcher. Sold out items fund ongoing symbol cataloguing research.
+                  <p className="text-muted-foreground font-light max-w-2xl mx-auto">
+                    Research-backed equipment and experiences for every researcher.
                   </p>
                 </div>
 
