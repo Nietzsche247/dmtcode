@@ -109,14 +109,18 @@ const Tools = () => {
 
   // Filter products based on search and category
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.node.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const title = product.node?.title || '';
+    const description = product.node?.description || '';
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
   const filteredAffiliateProducts = affiliateProducts.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const title = product.title || '';
+    const description = product.description || '';
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -156,7 +160,7 @@ const Tools = () => {
     
     addItem(cartItem);
     toast.success("Added to cart", {
-      description: product.node.title,
+      description: product.node?.title || 'Product',
     });
   };
 
@@ -184,31 +188,33 @@ const Tools = () => {
         <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/tools" />
         <meta name="robots" content="index, follow" />
         <meta name="keywords" content="650nm laser equipment, red light therapy, DMT research tools, psychedelic integration, biohacking equipment" />
-        <script type="application/ld+json">
-          {JSON.stringify(
-            products.map(product => ({
-              "@context": "https://schema.org",
-              "@type": "Product",
-              "name": product.node.title,
-              "description": product.node.description,
-              "image": product.node.images.edges[0]?.node.url,
-              "category": product.node.title.includes("Red Light") || product.node.title.includes("MitoMAT") || product.node.title.includes("Bon Charge") ? "Red Light Therapy" : "Psychedelic Integration",
-              "brand": {
-                "@type": "Brand",
-                "name": "DMT Code"
-              },
-              "offers": {
-                "@type": "Offer",
-                "url": `https://dmtcode.com/tools#${product.node.handle}`,
-                "priceCurrency": product.node.priceRange.minVariantPrice.currencyCode,
-                "price": product.node.priceRange.minVariantPrice.amount,
-                "availability": "https://schema.org/InStock",
-                "itemCondition": "https://schema.org/NewCondition"
-              },
-              "license": "https://creativecommons.org/licenses/by/4.0/"
-            }))
-          )}
-        </script>
+        {products.length > 0 && (
+          <script type="application/ld+json">
+            {JSON.stringify(
+              products.map(product => ({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": product.node?.title || '',
+                "description": product.node?.description || '',
+                "image": product.node?.images?.edges?.[0]?.node?.url || '',
+                "category": (product.node?.title || '').includes("Red Light") || (product.node?.title || '').includes("MitoMAT") || (product.node?.title || '').includes("Bon Charge") ? "Red Light Therapy" : "Psychedelic Integration",
+                "brand": {
+                  "@type": "Brand",
+                  "name": "DMT Code"
+                },
+                "offers": {
+                  "@type": "Offer",
+                  "url": `https://dmtcode.com/tools#${product.node?.handle || ''}`,
+                  "priceCurrency": product.node?.priceRange?.minVariantPrice?.currencyCode || 'USD',
+                  "price": product.node?.priceRange?.minVariantPrice?.amount || '0',
+                  "availability": "https://schema.org/InStock",
+                  "itemCondition": "https://schema.org/NewCondition"
+                },
+                "license": "https://creativecommons.org/licenses/by/4.0/"
+              }))
+            )}
+          </script>
+        )}
       </Helmet>
 
       <div className="relative min-h-screen">
@@ -304,11 +310,17 @@ const Tools = () => {
                   ) : (
                     <>
                       {filteredProducts.map((product) => {
-                        const variant = product.node.variants.edges[0]?.node;
-                        const image = product.node.images.edges[0]?.node;
-                        const price = variant ? parseFloat(variant.price.amount) : 0;
+                        // Skip products with missing node data
+                        if (!product?.node) return null;
                         
-                        const imageUrl = image?.url || getPlaceholderImage(product.node.title, 'product');
+                        const variant = product.node.variants?.edges?.[0]?.node;
+                        const image = product.node.images?.edges?.[0]?.node;
+                        const price = variant ? parseFloat(variant.price?.amount || '0') : 0;
+                        const title = product.node.title || 'Untitled Product';
+                        const description = product.node.description || '';
+                        const handle = product.node.handle || product.node.id;
+                        
+                        const imageUrl = image?.url || getPlaceholderImage(title, 'product');
 
                         return (
                           <Card 
@@ -318,12 +330,12 @@ const Tools = () => {
                             itemType="https://schema.org/Product"
                             onClick={() => handleProductClick(product)}
                           >
-                            <meta itemProp="name" content={product.node.title} />
-                            <meta itemProp="description" content={product.node.description} />
+                            <meta itemProp="name" content={title} />
+                            <meta itemProp="description" content={description} />
                             {image && <meta itemProp="image" content={image.url} />}
                             <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
                               <meta itemProp="price" content={price.toString()} />
-                              <meta itemProp="priceCurrency" content={variant?.price.currencyCode || 'USD'} />
+                              <meta itemProp="priceCurrency" content={variant?.price?.currencyCode || 'USD'} />
                               <meta itemProp="availability" content="https://schema.org/InStock" />
                             </div>
 
@@ -331,19 +343,22 @@ const Tools = () => {
                               <div className="w-32 h-32 flex-shrink-0 bg-secondary/20 rounded-lg overflow-hidden">
                                 <img 
                                   src={imageUrl} 
-                                  alt={image?.altText || `${product.node.title} - 650nm laser research equipment`}
+                                  alt={image?.altText || `${title} - 650nm laser research equipment`}
                                   className="w-full h-full object-cover"
                                   loading="lazy"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = getPlaceholderImage(title, 'product');
+                                  }}
                                 />
                               </div>
                               
                               <div className="flex-1 space-y-2">
                                 <div className="flex items-start justify-between gap-2">
-                                  <h3 className="font-semibold text-lg leading-tight line-clamp-2">{product.node.title}</h3>
+                                  <h3 className="font-semibold text-lg leading-tight line-clamp-2">{title}</h3>
                                   <ShareButtons 
-                                    title={product.node.title} 
-                                    description={product.node.description?.slice(0, 100)} 
-                                    url={`https://dmtcode.com/products/${product.node.handle}`}
+                                    title={title} 
+                                    description={description?.slice(0, 100)} 
+                                    url={`https://dmtcode.com/products/${handle}`}
                                   />
                                 </div>
                                 <p className="text-2xl font-bold text-primary">
@@ -353,7 +368,7 @@ const Tools = () => {
                             </div>
 
                             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-                              {product.node.description}
+                              {description}
                             </p>
 
                             <div className="pt-2">
@@ -363,7 +378,7 @@ const Tools = () => {
                                   e.stopPropagation();
                                   handleAddToCart(product);
                                 }}
-                                aria-label={`Add ${product.node.title} to cart`}
+                                aria-label={`Add ${title} to cart`}
                                 size="lg"
                               >
                                 <ShoppingCart className="w-5 h-5 mr-2" />
