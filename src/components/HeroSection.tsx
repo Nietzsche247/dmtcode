@@ -19,30 +19,44 @@ export const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-      {/* Subtle animated background */}
+      {/* Unicorn Studio remix background - subtle laser beams/noodles */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {/* Floating particles */}
-        {[...Array(12)].map((_, i) => (
+        {[...Array(16)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 rounded-full bg-primary/25"
+            className="absolute w-1 h-1 rounded-full bg-primary/30"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animation: `float-particle ${20 + Math.random() * 15}s linear infinite`,
-              animationDelay: `${Math.random() * 10}s`,
+              animation: `float-particle ${15 + Math.random() * 20}s linear infinite`,
+              animationDelay: `${Math.random() * 8}s`,
             }}
           />
         ))}
         
-        {/* Subtle laser beam lines */}
+        {/* Noodle beam lines connecting to circles */}
         <div 
-          className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent"
-          style={{ top: '30%' }}
+          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"
+          style={{ top: '25%' }}
         />
         <div 
-          className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/8 to-transparent"
-          style={{ top: '70%' }}
+          className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
+          style={{ top: '45%' }}
+        />
+        <div 
+          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/15 to-transparent"
+          style={{ top: '75%' }}
+        />
+        
+        {/* Sonar circle details */}
+        <div 
+          className="absolute w-64 h-64 rounded-full border border-primary/10"
+          style={{ right: '-5%', top: '20%', animation: 'sonar-pulse 4s ease-out infinite' }}
+        />
+        <div 
+          className="absolute w-48 h-48 rounded-full border border-primary/5"
+          style={{ left: '-3%', bottom: '30%', animation: 'sonar-pulse 5s ease-out infinite 1s' }}
         />
       </div>
 
@@ -73,10 +87,10 @@ export const HeroSection = () => {
           <span className="block text-primary mt-2">Visual Catalogue</span>
         </h1>
 
-        {/* Subheadline - Montserrat Light Italic, light grey */}
+        {/* Subheadline - Inter Light 300, light grey, airy flow */}
         <p 
-          className={`text-lg md:text-xl lg:text-2xl font-light italic text-[#9CA3AF] max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
-          style={{ animationFillMode: 'forwards', fontFamily: "'Montserrat', system-ui, sans-serif" }}
+          className={`text-lg md:text-xl lg:text-2xl text-[#9CA3AF] max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
+          style={{ animationFillMode: 'forwards', fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
         >
           Documenting visual symbols from 3,000+ sessions using the 650 nm laser protocol.
           Community-curated. Peer-reviewed metadata. CC-BY-4.0 licensed.
@@ -144,26 +158,26 @@ export const HeroSection = () => {
         </div>
       </div>
 
-      {/* Social proof marquee */}
+      {/* Social proof marquee - infinite loop with alpha mask */}
       <div 
         className={`absolute bottom-28 left-0 right-0 overflow-hidden marquee-mask opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-600' : ''}`}
         style={{ animationFillMode: 'forwards' }}
       >
         <div className="flex animate-marquee whitespace-nowrap">
-          {[...Array(2)].map((_, setIndex) => (
-            <div key={setIndex} className="flex items-center gap-16 px-8">
-              <span className="text-muted-foreground/50 text-sm font-light">Goler 2025</span>
-              <span className="text-primary/30">◆</span>
-              <span className="text-muted-foreground/50 text-sm font-light">Davis et al. 2021</span>
-              <span className="text-primary/30">◆</span>
-              <span className="text-muted-foreground/50 text-sm font-light">Timmermann 2019</span>
-              <span className="text-primary/30">◆</span>
-              <span className="text-muted-foreground/50 text-sm font-light">Strassman 2001</span>
-              <span className="text-primary/30">◆</span>
-              <span className="text-muted-foreground/50 text-sm font-light">CC-BY-4.0</span>
-              <span className="text-primary/30">◆</span>
-              <span className="text-muted-foreground/50 text-sm font-light">Open Data</span>
-              <span className="text-primary/30">◆</span>
+          {[...Array(4)].map((_, setIndex) => (
+            <div key={setIndex} className="flex items-center gap-12 px-6">
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>Goler 2025</span>
+              <span className="text-primary/40">◆</span>
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>Gallimore</span>
+              <span className="text-primary/40">◆</span>
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>Timmermann 2019</span>
+              <span className="text-primary/40">◆</span>
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>Davis et al. 2021</span>
+              <span className="text-primary/40">◆</span>
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>Strassman 2001</span>
+              <span className="text-primary/40">◆</span>
+              <span className="text-muted-foreground/60 text-sm" style={{ fontWeight: 300 }}>CC-BY-4.0</span>
+              <span className="text-primary/40">◆</span>
             </div>
           ))}
         </div>
