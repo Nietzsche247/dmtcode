@@ -57,14 +57,40 @@
     @apply bg-background text-foreground overflow-x-hidden antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
-    font-optical-sizing: auto;
+    color: #6B7280; /* Medium grey for body text */
   }
   
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 900;
-    letter-spacing: -0.03em;
+  /* Headings: Montserrat Bold (Founders Grotesk fallback) */
+  h1, h2 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     line-height: 1;
+    text-transform: uppercase;
+    color: #FFFFFF;
+  }
+  
+  h3, h4, h5, h6 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    color: #FFFFFF;
+  }
+
+  /* Subtext/eyebrows: Montserrat Light Italic */
+  .eyebrow, .subtext {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-weight: 300;
+    font-style: italic;
+    color: #9CA3AF;
+  }
+
+  /* Labels/small text: Inter Regular */
+  .label, .small-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    color: #6B7280;
   }
 
   html {

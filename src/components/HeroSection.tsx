@@ -54,29 +54,29 @@ export const HeroSection = () => {
 
       {/* Hero content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto space-y-8 py-24">
-        {/* Eyebrow text */}
+        {/* Eyebrow text - Montserrat Light Italic */}
         <div 
-          className={`flex items-center justify-center gap-3 text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase opacity-0 ${isLoaded ? 'animate-blur-in-up' : ''}`}
+          className={`flex items-center justify-center gap-3 opacity-0 ${isLoaded ? 'animate-blur-in-up' : ''}`}
           style={{ animationFillMode: 'forwards' }}
         >
           <Sparkles className="w-4 h-4 text-primary" />
-          <span>Open-source glyph research archive</span>
+          <span className="font-montserrat font-light italic text-[#9CA3AF] text-lg md:text-xl tracking-wide">Open-source glyph research archive</span>
           <Sparkles className="w-4 h-4 text-primary" />
         </div>
 
-        {/* Main headline - Inter Black 80-120px */}
+        {/* Main headline - Montserrat Bold, uppercase, pure white */}
         <h1 
-          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[110px] font-black tracking-[-0.03em] leading-[0.85] text-foreground opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-100' : ''}`}
-          style={{ animationFillMode: 'forwards' }}
+          className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[96px] font-bold uppercase tracking-[0.02em] leading-[0.9] text-white opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-100' : ''}`}
+          style={{ animationFillMode: 'forwards', fontFamily: "'Montserrat', system-ui, sans-serif" }}
         >
           DMT Code
           <span className="block text-primary mt-2">Visual Catalogue</span>
         </h1>
 
-        {/* Subheadline - Inter Light 300 */}
+        {/* Subheadline - Montserrat Light Italic, light grey */}
         <p 
-          className={`text-lg md:text-xl lg:text-2xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
-          style={{ animationFillMode: 'forwards' }}
+          className={`text-lg md:text-xl lg:text-2xl font-light italic text-[#9CA3AF] max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
+          style={{ animationFillMode: 'forwards', fontFamily: "'Montserrat', system-ui, sans-serif" }}
         >
           An open, community-maintained catalogue of discrete visual symbols 
           reported during 650 nm laser exposure and N,N-DMT experiences.
@@ -88,16 +88,16 @@ export const HeroSection = () => {
           style={{ animationFillMode: 'forwards' }}
         >
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-black text-foreground">3,000+</div>
-            <div className="text-xs text-muted-foreground font-light tracking-wider uppercase mt-1">Sessions</div>
+            <div className="text-3xl md:text-4xl font-bold text-white uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>3,000+</div>
+            <div className="text-xs text-[#6B7280] font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Sessions</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-black text-foreground">87%</div>
-            <div className="text-xs text-muted-foreground font-light tracking-wider uppercase mt-1">Consistency</div>
+            <div className="text-3xl md:text-4xl font-bold text-white uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>87%</div>
+            <div className="text-xs text-[#6B7280] font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Consistency</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-black text-primary">52+</div>
-            <div className="text-xs text-muted-foreground font-light tracking-wider uppercase mt-1">Symbols</div>
+            <div className="text-3xl md:text-4xl font-bold text-primary uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>52+</div>
+            <div className="text-xs text-[#6B7280] font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Symbols</div>
           </div>
         </div>
 
