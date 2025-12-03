@@ -18,7 +18,7 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-32 overflow-hidden">
       {/* Unicorn Studio remix background - subtle laser beams/noodles */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         {/* Floating particles */}
