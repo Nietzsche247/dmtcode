@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 export const Footer = () => {
   return (
@@ -7,7 +8,7 @@ export const Footer = () => {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4 md:col-span-2">
-            <h3 className="text-2xl font-black text-foreground">DMT Code</h3>
+            <Logo size="sm" />
             <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-sm">
               Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Equipment resources and research references for independent replication.
             </p>
