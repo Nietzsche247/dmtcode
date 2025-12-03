@@ -75,8 +75,8 @@ const Home = () => {
           {/* Key Features Section */}
           <section className="container mx-auto px-4 py-32 max-w-6xl">
             <AnimatedSection className="text-center mb-20">
-              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Why It Matters</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight">
+              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Why It Matters</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-white" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Open Science, Real Data
               </h2>
             </AnimatedSection>
@@ -91,8 +91,8 @@ const Home = () => {
                 <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
                   <div className="p-8 rounded-3xl bg-card/50 border border-border/40 hover:border-primary/40 transition-all duration-300 h-full group hover:bg-card/80">
                     <item.icon className="w-10 h-10 text-primary mb-6 transition-transform group-hover:scale-110" />
-                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground font-light leading-relaxed">{item.desc}</p>
+                    <h3 className="text-xl font-semibold mb-3 text-white" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>{item.title}</h3>
+                    <p className="text-sm text-[#6B7280] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{item.desc}</p>
                   </div>
                 </AnimatedSection>
               ))}
@@ -102,11 +102,11 @@ const Home = () => {
           {/* Stats Section */}
           <section className="container mx-auto px-4 py-32 max-w-5xl border-t border-border/20">
             <AnimatedSection className="text-center mb-16">
-              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Current Status</p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
+              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Current Status</p>
+              <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-[0.02em] text-white mb-6" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Dataset Overview
               </h2>
-              <p className="text-muted-foreground font-light max-w-2xl mx-auto text-lg">
+              <p className="text-[#6B7280] font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Real-time data updated with each new submission
               </p>
             </AnimatedSection>
@@ -119,8 +119,8 @@ const Home = () => {
               ].map((stat, i) => (
                 <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
                   <div className="text-center p-10 rounded-3xl bg-card/50 border border-border/30 hover:border-primary/30 transition-colors">
-                    <div className="text-6xl md:text-7xl font-black text-primary mb-4">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground font-light tracking-wide uppercase">{stat.label}</div>
+                    <div className="text-6xl md:text-7xl font-bold text-primary mb-4 uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>{stat.value}</div>
+                    <div className="text-sm text-[#6B7280] font-normal tracking-wide uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{stat.label}</div>
                   </div>
                 </AnimatedSection>
               ))}
@@ -130,11 +130,11 @@ const Home = () => {
           {/* Mission Section */}
           <section className="container mx-auto px-4 py-24 max-w-4xl border-t border-border/30">
             <AnimatedSection>
-              <p className="text-primary text-sm font-medium tracking-wide uppercase mb-4">Our Mission</p>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-8">
+              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-4">Our Mission</p>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Systematic Documentation for Science
               </h2>
-              <div className="space-y-6 text-lg text-muted-foreground font-light leading-relaxed">
+              <div className="space-y-6 text-lg text-[#6B7280] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 <p>
                   DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration.
                 </p>
@@ -154,11 +154,11 @@ const Home = () => {
           {/* CTA Section */}
           <section className="container mx-auto px-4 py-32 text-center">
             <AnimatedSection className="max-w-3xl mx-auto">
-              <p className="text-primary text-sm font-medium tracking-widest uppercase mb-6">Get Involved</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-8">
+              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Get Involved</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Contribute to Open Research
               </h2>
-              <p className="text-muted-foreground font-light mb-12 text-lg max-w-xl mx-auto">
+              <p className="text-[#6B7280] font-normal mb-12 text-lg max-w-xl mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Submit your observations or explore the evidence. Null reports are equally valuable.
               </p>
               <div className="flex flex-col sm:flex-row gap-5 justify-center">
