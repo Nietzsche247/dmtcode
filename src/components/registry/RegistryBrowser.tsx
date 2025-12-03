@@ -204,6 +204,16 @@ export const RegistryBrowser = () => {
     <section id="browse" className="container mx-auto px-4 py-16">
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">Browse Registry</h2>
       
+      {/* Credibility Legend */}
+      <div className="max-w-4xl mx-auto mb-6 px-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '14px' }}>
+          <span className="flex items-center gap-1.5">👍 <span className="text-xs">Seen this glyph</span></span>
+          <span className="flex items-center gap-1.5">👎 <span className="text-xs">Did not see</span></span>
+          <span className="flex items-center gap-1.5">✅ <span className="text-xs">Multiple confirmations</span></span>
+          <span className="flex items-center gap-1.5">⭐ <span className="text-xs">High consistency</span></span>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="max-w-4xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
