@@ -1,4 +1,4 @@
-import { MessageCircle, Copy, Check } from "lucide-react";
+import { MessageCircle, Copy, Check, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
@@ -34,6 +34,22 @@ export const ShareButtons = ({ title, description, url, className = "" }: ShareB
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: description || title,
+          url: currentUrl,
+        });
+      } catch (err) {
+        // User cancelled or share failed silently
+      }
+    }
+  };
+
+  const supportsNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
+
   const handleSmsShare = () => {
     const body = encodeURIComponent(`${shareText}\n${currentUrl}`);
     window.location.href = `sms:?body=${body}`;
@@ -53,6 +69,38 @@ export const ShareButtons = ({ title, description, url, className = "" }: ShareB
   if (isMobile) {
     return (
       <div className={`flex items-center gap-1 ${className}`}>
+        {supportsNativeShare ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNativeShare}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            aria-label="Share"
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
+        ) : (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSmsShare}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              aria-label="Share via SMS"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleXShare}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              aria-label="Share on X"
+            >
+              <XIcon />
+            </Button>
+          </>
+        )}
         <Button
           variant="ghost"
           size="icon"
@@ -61,24 +109,6 @@ export const ShareButtons = ({ title, description, url, className = "" }: ShareB
           aria-label="Copy link"
         >
           {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSmsShare}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          aria-label="Share via SMS"
-        >
-          <MessageCircle className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleXShare}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          aria-label="Share on X"
-        >
-          <XIcon />
         </Button>
       </div>
     );
