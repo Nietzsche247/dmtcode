@@ -66,13 +66,13 @@ export const BundleComparisonTable = () => {
   const categories = [...new Set(features.map(f => f.category))];
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto max-h-[70vh] overflow-y-auto">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow className="border-border/50 hover:bg-transparent">
-            <TableHead className="w-[200px] text-foreground font-bold">Features</TableHead>
+            <TableHead className="w-[200px] text-foreground font-bold bg-card">Features</TableHead>
             {bundles.map((bundle) => (
-              <TableHead key={bundle.id} className="text-center min-w-[120px]">
+              <TableHead key={bundle.id} className="text-center min-w-[120px] bg-card">
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-foreground font-bold text-sm">{bundle.name}</span>
                   {bundle.popular && (
