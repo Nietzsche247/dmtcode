@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Star, ExternalLink, ShoppingCart, Loader2, ArrowLeft } from "lucide-react";
+import { Star, ExternalLink, ShoppingCart, Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButtons } from "@/components/ShareButtons";
 import { storefrontApiRequest } from "@/lib/shopify";
@@ -19,6 +19,7 @@ import { getPlaceholderImage } from "@/utils/placeholderImage";
 import { getBundleItem } from "@/data/bundleItems";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { RelatedBundleProducts, CompleteBundleUpsell } from "@/components/RelatedBundleProducts";
+import { useSingleInventoryStatus } from "@/hooks/useInventoryStatus";
 
 declare global {
   interface Window {
@@ -34,6 +35,9 @@ const ProductDetail = () => {
   
   // Check if coming from a bundle
   const fromBundle = searchParams.get('from');
+  
+  // Inventory status for bundle items
+  const { inventoryStatus, isLoading: inventoryLoading } = useSingleInventoryStatus(id || '');
   
   const [product, setProduct] = useState<any>(null);
   const [ratings, setRatings] = useState<any[]>([]);
@@ -543,10 +547,33 @@ const ProductDetail = () => {
               <Separator />
 
               <div className="space-y-4">
-                <p className="text-3xl font-bold text-primary">${product.price?.toFixed(2)}</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-bold text-primary">${product.price?.toFixed(2)}</p>
+                  {inventoryStatus && !inventoryStatus.inStock && (
+                    <Badge variant="destructive" className="flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Out of Stock
+                    </Badge>
+                  )}
+                  {inventoryStatus && inventoryStatus.inStock && inventoryStatus.quantity <= 5 && (
+                    <Badge variant="secondary" className="bg-amber-500/20 text-amber-400">
+                      Only {inventoryStatus.quantity} left
+                    </Badge>
+                  )}
+                </div>
                 
-                <Button size="lg" className="w-full" onClick={handleAddToCart}>
-                  {product.affiliate_only || product.affiliate_url ? (
+                <Button 
+                  size="lg" 
+                  className="w-full" 
+                  onClick={handleAddToCart}
+                  disabled={inventoryStatus && !inventoryStatus.inStock}
+                >
+                  {inventoryStatus && !inventoryStatus.inStock ? (
+                    <>
+                      <AlertCircle className="w-5 h-5 mr-2" />
+                      Out of Stock
+                    </>
+                  ) : product.affiliate_only || product.affiliate_url ? (
                     <>
                       <ExternalLink className="w-5 h-5 mr-2" />
                       Visit Retailer →

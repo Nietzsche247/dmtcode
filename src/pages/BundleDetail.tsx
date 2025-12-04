@@ -6,12 +6,13 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ShoppingCart, Package, BookOpen, Sparkles, ArrowLeft, Microscope, Loader2 } from 'lucide-react';
+import { Check, ShoppingCart, Package, BookOpen, Sparkles, ArrowLeft, Microscope, Loader2, AlertCircle } from 'lucide-react';
 import { useCartStore, CartItem } from '@/stores/cartStore';
 import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { storefrontApiRequest, ShopifyProduct } from '@/lib/shopify';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
+import { useInventoryStatus } from '@/hooks/useInventoryStatus';
 
 // Import generated bundle images
 import bundleStarterImg from '@/assets/bundle-starter.jpg';
@@ -258,6 +259,116 @@ const RELATED_PRODUCTS_QUERY = `
     }
   }
 `;
+
+// Bundle Contents Section with inventory tracking
+const BundleContentsSection = ({ 
+  bundle, 
+  productSlugMap 
+}: { 
+  bundle: typeof bundleData.starter; 
+  productSlugMap: Record<string, { slug: string; isWoo: boolean }>;
+}) => {
+  // Get all item SKUs for inventory lookup
+  const itemSlugs = useMemo(() => 
+    bundle.items.map(item => productSlugMap[item.sku]?.slug || item.sku), 
+    [bundle.items, productSlugMap]
+  );
+  
+  const { data: inventoryData, isLoading: inventoryLoading } = useInventoryStatus(itemSlugs);
+
+  return (
+    <section className="container mx-auto px-4 max-w-6xl py-16">
+      <h2 className="text-2xl md:text-3xl font-black mb-8 uppercase tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}>
+        Bundle Contents
+      </h2>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {bundle.items.map((item, i) => {
+          const productInfo = productSlugMap[item.sku];
+          const slug = productInfo?.slug || item.sku;
+          const basePath = productInfo 
+            ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/products/${productInfo.slug}`)
+            : `/tools`;
+          const linkUrl = `${basePath}?from=${bundle.id}`;
+          
+          // Get inventory status for this item
+          const inventory = inventoryData?.[slug];
+          const isOutOfStock = inventory && !inventory.inStock;
+          
+          return (
+            <Link 
+              key={i} 
+              to={linkUrl}
+              className="group block"
+              onClick={() => {
+                if (window.posthog) {
+                  window.posthog.capture('bundle_item_clicked', {
+                    bundle_id: bundle.id,
+                    bundle_name: bundle.name,
+                    item_name: item.name,
+                    item_sku: item.sku,
+                    item_value: item.value,
+                    in_stock: !isOutOfStock,
+                  });
+                }
+              }}
+            >
+              <Card className={`relative p-4 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer group-hover:scale-[1.05] min-h-[60px] flex items-center overflow-hidden ${isOutOfStock ? 'opacity-75' : ''}`}>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Package className={`w-5 h-5 flex-shrink-0 ${isOutOfStock ? 'text-muted-foreground' : 'text-primary'}`} />
+                    <span 
+                      className={`text-sm uppercase tracking-tight group-hover:text-primary transition-colors truncate ${isOutOfStock ? 'text-muted-foreground' : ''}`}
+                      style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}
+                    >
+                      {item.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                    {isOutOfStock && (
+                      <Badge variant="destructive" className="text-xs px-2 py-0.5 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        Out of Stock
+                      </Badge>
+                    )}
+                    {inventory && inventory.inStock && inventory.quantity <= 5 && (
+                      <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400">
+                        Low Stock
+                      </Badge>
+                    )}
+                    <span 
+                      className="text-muted-foreground text-sm"
+                      style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
+                    >
+                      ${item.value}
+                    </span>
+                  </div>
+                </div>
+                {/* 1px #C41E3A glowing beam underline on hover */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-[1px] bg-transparent group-hover:bg-[#C41E3A] transition-all duration-300"
+                  style={{ boxShadow: 'none' }}
+                />
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ 
+                    backgroundColor: '#C41E3A',
+                    boxShadow: '0 0 8px #C41E3A, 0 0 12px #C41E3A'
+                  }}
+                />
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+      <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
+        <p className="text-sm text-muted-foreground">
+          <span className="text-primary font-semibold">Total value: ${bundle.items.reduce((sum, item) => sum + item.value, 0)}</span>
+          {' '}— Bundle price: <span className="text-foreground font-bold">${bundle.price}</span>
+        </p>
+      </div>
+    </section>
+  );
+};
 
 const BundleDetail = () => {
   const { bundleId } = useParams<{ bundleId: string }>();
@@ -533,81 +644,7 @@ const BundleDetail = () => {
           </section>
 
           {/* Bundle Contents */}
-          <section className="container mx-auto px-4 max-w-6xl py-16">
-            <h2 className="text-2xl md:text-3xl font-black mb-8 uppercase tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}>
-              Bundle Contents
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bundle.items.map((item, i) => {
-                const productInfo = productSlugMap[item.sku];
-                const basePath = productInfo 
-                  ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/products/${productInfo.slug}`)
-                  : `/tools`;
-                const linkUrl = `${basePath}?from=${bundle.id}`;
-                
-                return (
-                  <Link 
-                    key={i} 
-                    to={linkUrl}
-                    className="group block"
-                    onClick={() => {
-                      if (window.posthog) {
-                        window.posthog.capture('bundle_item_clicked', {
-                          bundle_id: bundle.id,
-                          bundle_name: bundle.name,
-                          item_name: item.name,
-                          item_sku: item.sku,
-                          item_value: item.value,
-                        });
-                      }
-                    }}
-                  >
-                    <Card className="relative p-4 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer group-hover:scale-[1.05] min-h-[60px] flex items-center overflow-hidden">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <Package className="w-5 h-5 text-primary flex-shrink-0" />
-                          <span 
-                            className="text-sm uppercase tracking-tight group-hover:text-primary transition-colors truncate"
-                            style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}
-                          >
-                            {item.name}
-                          </span>
-                        </div>
-                        <span 
-                          className="text-muted-foreground text-sm ml-2 flex-shrink-0"
-                          style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
-                        >
-                          ${item.value}
-                        </span>
-                      </div>
-                      {/* 1px #C41E3A glowing beam underline on hover */}
-                      <div 
-                        className="absolute bottom-0 left-0 right-0 h-[1px] bg-transparent group-hover:bg-[#C41E3A] transition-all duration-300"
-                        style={{ boxShadow: 'none' }}
-                      />
-                      <div 
-                        className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{ 
-                          backgroundColor: '#C41E3A',
-                          boxShadow: '0 0 8px #C41E3A, 0 0 12px #C41E3A'
-                        }}
-                      />
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Total Value:</span>
-                <span className="text-xl font-bold">${bundle.items.reduce((sum, i) => sum + i.value, 0)}</span>
-              </div>
-              <div className="flex items-center justify-between text-primary mt-2">
-                <span className="font-semibold">You Pay:</span>
-                <span className="text-2xl font-black">${bundle.price}</span>
-              </div>
-            </div>
-          </section>
+          <BundleContentsSection bundle={bundle} productSlugMap={productSlugMap} />
 
           {/* Related Research */}
           <section className="container mx-auto px-4 max-w-6xl py-8">
