@@ -33,28 +33,40 @@ const bundleShopifyHandles: Record<string, string> = {
   ceremony: 'extended-ceremony-package',
 };
 
+// Product slug mapping for clickable bundle contents
+const productSlugMap: Record<string, { slug: string; isWoo: boolean }> = {
+  '650nm-laser-pointer': { slug: '650nm-laser-pointer', isWoo: false },
+  'diffraction-grating': { slug: 'diffraction-grating', isWoo: false },
+  'protocol-journal': { slug: 'protocol-journal', isWoo: false },
+  'lab-timer': { slug: 'lab-timer', isWoo: false },
+  'mitomat': { slug: 'mitomat-yoga-mat', isWoo: false },
+  'quarton-module': { slug: 'quarton-laser-module', isWoo: false },
+  'znse-lens': { slug: 'znse-lens', isWoo: false },
+  'huepar-level': { slug: 'huepar-laser-level', isWoo: false },
+  'refraction-tank': { slug: 'refraction-tank', isWoo: false },
+};
+
 const bundleData = {
   starter: {
     id: 'starter',
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
-    description: 'Entry-level research kit containing essential documentation tools, intention-setting materials, and a grounding stone for integration work. Ideal for researchers beginning their exploration of the 650nm protocol.',
+    description: 'Entry-level research kit containing calibrated 650nm laser pointer, diffraction grating for beam analysis, and protocol documentation journal. Ideal for researchers beginning systematic 650nm protocol study.',
     price: 85,
     originalPrice: 106,
     discount: '20% OFF',
     tier: 'entry',
     items: [
-      { name: 'Psychedelic Fractal Sticker Pack', value: 12, sku: 'sticker-pack' },
-      { name: 'Sacred Geometry Incense Sticks', value: 18, sku: 'incense' },
-      { name: 'Custom Psychedelic Journal', value: 22, sku: 'journal' },
-      { name: 'Research Intention Card Deck', value: 15, sku: 'cards' },
-      { name: 'Amethyst Worry Stone', value: 39, sku: 'amethyst' },
+      { name: '650nm 5mW Laser Pointer', value: 28, sku: '650nm-laser-pointer' },
+      { name: '500 lines/mm Diffraction Grating', value: 22, sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
+      { name: 'Lab Session Timer', value: 21, sku: 'lab-timer' },
     ],
     features: [
-      'Essential documentation tools',
-      'Intention-setting materials',
-      'Grounding stone for integration',
-      'Perfect starting point for new researchers',
+      'Calibrated 650nm laser pointer',
+      '500 lines/mm diffraction grating',
+      'Protocol documentation journal',
+      'Lab-grade session timer',
     ],
     image: bundleStarterImg,
     color: 'from-emerald-500/20 to-emerald-600/10',
@@ -66,23 +78,24 @@ const bundleData = {
     id: 'gateway',
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
-    description: 'Comprehensive research package featuring 650nm red light therapy device, protective ceremonial wear, and full documentation setup. Includes free protocol guide access. Recommended for researchers committed to systematic study.',
+    description: 'Comprehensive research package featuring precision 650nm laser module, high-index ZnSe lens for beam shaping, diffraction analysis equipment, and full documentation setup. Recommended for researchers committed to systematic optical study.',
     price: 1200,
     originalPrice: 1412,
     discount: '15% OFF',
     tier: 'mid',
     popular: true,
     items: [
-      { name: 'iEDM Galaxy Hoodie', value: 625, sku: 'hoodie' },
-      { name: 'Bon Charge Max Red Light Device', value: 799, sku: 'bon-charge' },
-      { name: 'Rose Quartz Intention Roller', value: 55, sku: 'roller' },
-      { name: 'Custom Psychedelic Journal', value: 22, sku: 'journal' },
+      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens (RI 2.4)', value: 285, sku: 'znse-lens' },
+      { name: '1000 lines/mm Diffraction Grating', value: 145, sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
+      { name: 'Precision Lab Timer', value: 42, sku: 'lab-timer' },
     ],
     features: [
-      '650nm red light therapy device',
-      'Protective ceremonial wear',
+      'Precision 650nm laser module',
+      'High-index ZnSe lens (RI 2.4)',
+      'Research-grade diffraction grating',
       'Full documentation setup',
-      'Free protocol guide access',
       'Priority community support',
     ],
     image: bundleGatewayImg,
@@ -95,24 +108,24 @@ const bundleData = {
     id: 'complete',
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
-    description: 'Full-spectrum research package with professional-grade 660nm light therapy equipment, recovery tools, and sacred ceremonial attire. Designed for dedicated researchers conducting extended studies.',
+    description: 'Full-spectrum optical research package with professional 660nm MitoMAT light therapy equipment, precision laser modules, multiple lens types for refractive experiments, and comprehensive documentation tools.',
     price: 2300,
     originalPrice: 2875,
     discount: '20% OFF',
     tier: 'high',
     items: [
-      { name: 'MitoMAT 660nm Yoga Mat', value: 1299, sku: 'mitomat' },
-      { name: 'HigherDOSE Recovery Bundle', value: 899, sku: 'higherdose' },
-      { name: 'SOL Seed of Life Tunic Dress', value: 450, sku: 'tunic' },
-      { name: 'Custom Psychedelic Journal', value: 22, sku: 'journal' },
-      { name: 'Research Intention Card Deck', value: 15, sku: 'cards' },
+      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
+      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens Set', value: 425, sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
+      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
     ],
     features: [
-      'Full-body 660nm light therapy',
-      'Professional recovery equipment',
-      'Sacred ceremonial attire',
+      'Full-body 660nm light therapy mat',
+      'Precision laser module',
+      'High-index lens set for beam shaping',
+      'Refraction analysis equipment',
       'Complete documentation tools',
-      'Priority community access',
       'Direct researcher support',
     ],
     image: bundleCompleteImg,
@@ -123,27 +136,28 @@ const bundleData = {
   },
   ceremony: {
     id: 'ceremony',
-    name: 'Extended Ceremony Package',
-    tagline: 'For immersive ceremonial research',
-    description: 'Premium research experience including legal ceremonial participation, full equipment setup, sacred attire, and comprehensive post-ceremony integration support. For researchers seeking profound, documented experiences.',
+    name: 'Extended Research Package',
+    tagline: 'For comprehensive optical research',
+    description: 'Premium research package including professional-grade optical equipment, full MitoMAT system, self-leveling laser apparatus, multiple wavelength modules, and comprehensive integration documentation for extended research protocols.',
     price: 3500,
     originalPrice: 4375,
     discount: '20% OFF',
     tier: 'premium',
     items: [
-      { name: 'Peyote Way Spirit Walk (3-Day)', value: 2000, sku: 'peyote-walk' },
-      { name: 'MitoMAT 660nm Yoga Mat', value: 1299, sku: 'mitomat' },
-      { name: 'Paradisiac Ritual Robe', value: 550, sku: 'robe' },
-      { name: 'Custom Psychedelic Journal', value: 22, sku: 'journal' },
-      { name: 'Integration Support Materials', value: 200, sku: 'integration' },
+      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
+      { name: 'Huepar Self-Leveling Laser System', value: 895, sku: 'huepar-level' },
+      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
+      { name: 'Complete ZnSe Lens Kit', value: 580, sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
+      { name: 'Extended Protocol Journal Set', value: 95, sku: 'protocol-journal' },
     ],
     features: [
-      'Legal ceremonial experience',
-      'Full equipment setup',
-      'Sacred ceremonial attire',
-      'Post-ceremony integration',
-      'Direct researcher support',
-      '1-on-1 integration coaching',
+      'Professional optical equipment',
+      'Self-leveling laser system',
+      'Complete lens kit',
+      'Refraction analysis tools',
+      'Extended documentation set',
+      '1-on-1 researcher support',
     ],
     image: bundleCeremonyImg,
     color: 'from-purple-500/20 to-purple-600/10',
@@ -520,19 +534,36 @@ const BundleDetail = () => {
 
           {/* Bundle Contents */}
           <section className="container mx-auto px-4 max-w-6xl py-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Bundle Contents</h2>
+            <h2 className="text-2xl md:text-3xl font-black mb-8 uppercase tracking-tight">Bundle Contents</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bundle.items.map((item, i) => (
-                <Card key={i} className="p-4 bg-card/50 border-border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Package className="w-5 h-5 text-primary" />
-                      <span className="font-medium">{item.name}</span>
-                    </div>
-                    <span className="text-muted-foreground">${item.value}</span>
-                  </div>
-                </Card>
-              ))}
+              {bundle.items.map((item, i) => {
+                const productInfo = productSlugMap[item.sku];
+                const linkUrl = productInfo 
+                  ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/tools#${productInfo.slug}`)
+                  : `/tools`;
+                
+                return (
+                  <Link 
+                    key={i} 
+                    to={linkUrl}
+                    className="group"
+                  >
+                    <Card className="p-4 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer group-hover:scale-[1.02] min-h-[60px] flex items-center">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Package className="w-5 h-5 text-primary flex-shrink-0" />
+                          <span className="font-black text-sm uppercase tracking-tight group-hover:text-primary transition-colors truncate">
+                            {item.name}
+                          </span>
+                        </div>
+                        <span className="text-muted-foreground font-light text-sm ml-2 flex-shrink-0">${item.value}</span>
+                      </div>
+                      {/* Glowing beam underline on hover */}
+                      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/0 group-hover:bg-primary transition-all duration-300 group-hover:shadow-[0_0_8px_hsl(var(--primary))]" />
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
             <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
               <div className="flex items-center justify-between">
