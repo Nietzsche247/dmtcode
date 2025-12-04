@@ -76,15 +76,15 @@ const Home = () => {
           {/* Key Takeaways Section */}
           <section className="container mx-auto px-4 py-32 max-w-4xl">
             <AnimatedSection className="text-center mb-16">
-              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">The Research</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-white" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">The Research</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-foreground" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Key Takeaways
               </h2>
             </AnimatedSection>
 
             <AnimatedSection className="animation-delay-200">
               <div className="p-8 md:p-12 rounded-3xl bg-card/50 border border-border/40">
-                <ul className="space-y-6 text-lg text-[#9CA3AF] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                <ul className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                   <li className="flex gap-4">
                     <Target className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                     <span>The 650 nm protocol uses coherent red light through a diffraction grating during N,N-DMT administration to produce discrete visual symbols on any surface.</span>
@@ -113,11 +113,11 @@ const Home = () => {
           {/* Stats Section */}
           <section className="container mx-auto px-4 py-32 max-w-5xl border-t border-border/20">
             <AnimatedSection className="text-center mb-16">
-              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Current Status</p>
-              <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-[0.02em] text-white mb-6" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Current Status</p>
+              <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-[0.02em] text-foreground mb-6" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Dataset Overview
               </h2>
-              <p className="text-[#6B7280] font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <p className="text-muted-foreground font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Numbers update as new submissions arrive
               </p>
             </AnimatedSection>
@@ -131,7 +131,7 @@ const Home = () => {
                 <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
                   <div className="text-center p-10 rounded-3xl bg-card/50 border border-border/30 hover:border-primary/30 transition-colors">
                     <div className="text-6xl md:text-7xl font-bold text-primary mb-4 uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>{stat.value}</div>
-                    <div className="text-sm text-[#6B7280] font-normal tracking-wide uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{stat.label}</div>
+                    <div className="text-sm text-muted-foreground font-normal tracking-wide uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{stat.label}</div>
                   </div>
                 </AnimatedSection>
               ))}
@@ -141,11 +141,11 @@ const Home = () => {
           {/* Mission Section */}
           <section className="container mx-auto px-4 py-32 max-w-4xl border-t border-border/30">
             <AnimatedSection>
-              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-4">Our Mission</p>
-              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-4">Our Mission</p>
+              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-foreground mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Structured Documentation for Science
               </h2>
-              <div className="space-y-6 text-lg text-[#6B7280] font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <div className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 <p>
                   DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone can contribute. All submissions are reviewed by moderators before publication.
                 </p>
@@ -166,11 +166,11 @@ const Home = () => {
           {/* CTA Section */}
           <section className="container mx-auto px-4 py-32 text-center">
             <AnimatedSection className="max-w-3xl mx-auto">
-              <p className="font-montserrat font-light italic text-[#9CA3AF] text-lg tracking-wide mb-6">Get Involved</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-white mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Get Involved</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-foreground mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
                 Contribute to Open Research
               </h2>
-              <p className="text-[#6B7280] font-normal mb-12 text-lg max-w-xl mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <p className="text-muted-foreground font-normal mb-12 text-lg max-w-xl mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Submit your observations or explore the evidence. Null reports are equally valuable.
               </p>
               <div className="flex flex-col sm:flex-row gap-5 justify-center">

@@ -9,7 +9,7 @@ export const Logo = ({ className, size = "md" }: LogoProps) => {
   return (
     <div className={cn("flex flex-col hover:opacity-80 transition-opacity", className)}>
       <span 
-        className="font-bold text-white tracking-tight leading-none"
+        className="font-bold text-foreground tracking-tight leading-none"
         style={{ 
           fontFamily: "'Founders Grotesk', 'Inter', system-ui, sans-serif",
           fontSize: size === "sm" ? "18px" : "22px"
@@ -18,7 +18,7 @@ export const Logo = ({ className, size = "md" }: LogoProps) => {
         DMT Code
       </span>
       <span 
-        className="text-slate-400 leading-none mt-0.5"
+        className="text-muted-foreground leading-none mt-0.5"
         style={{ 
           fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 300,
