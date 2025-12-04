@@ -522,6 +522,7 @@ export type Database = {
           lighting_conditions: string | null
           motif_tags: string[] | null
           motion: string | null
+          orcid: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
           route_of_administration: string | null
@@ -551,6 +552,7 @@ export type Database = {
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          orcid?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           route_of_administration?: string | null
@@ -580,6 +582,7 @@ export type Database = {
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          orcid?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           route_of_administration?: string | null

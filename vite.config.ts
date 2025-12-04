@@ -105,8 +105,29 @@ export default defineConfig(({ mode }) => ({
                 }
               ]
             }
+          },
+          {
+            urlPattern: /\/api\/symbols/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'api-symbols-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 30
+              }
+            }
+          },
+          {
+            urlPattern: /\/analysis/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'analysis-cache',
+              networkTimeoutSeconds: 10
+            }
           }
-        ]
+        ],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//, /^\/data\.json$/]
       },
       devOptions: {
         enabled: true,
