@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   TrendingUp, 
   ShoppingCart, 
@@ -8,73 +11,165 @@ import {
   Package, 
   ArrowUpRight, 
   DollarSign,
-  Users,
-  Target
+  Target,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock data - in production this would come from PostHog API
-const bundleMetrics = {
-  starter: {
-    name: 'Fractal Starter Kit',
-    price: 85,
-    views: 1247,
-    addToCart: 312,
-    purchases: 89,
-    revenue: 7565,
-    conversionRate: 7.14,
-  },
-  gateway: {
-    name: 'Gateway Research Kit',
-    price: 1200,
-    views: 892,
-    addToCart: 156,
-    purchases: 34,
-    revenue: 40800,
-    conversionRate: 3.81,
-  },
-  complete: {
-    name: 'Complete Symbol Kit',
-    price: 2300,
-    views: 534,
-    addToCart: 78,
-    purchases: 12,
-    revenue: 27600,
-    conversionRate: 2.25,
-  },
-  ceremony: {
-    name: 'Extended Ceremony Package',
-    price: 3500,
-    views: 321,
-    addToCart: 45,
-    purchases: 6,
-    revenue: 21000,
-    conversionRate: 1.87,
-  },
-};
+interface BundleMetric {
+  name: string;
+  price: number;
+  views: number;
+  addToCart: number;
+  purchases: number;
+  revenue: number;
+  conversionRate: number;
+}
 
-const upsellMetrics = {
-  shown: 2847,
-  clicked: 423,
-  converted: 67,
-  clickRate: 14.86,
-  conversionRate: 15.84,
-  revenueGenerated: 5695,
-};
+interface UpsellMetrics {
+  shown: number;
+  clicked: number;
+  converted: number;
+  dismissed: number;
+  clickRate: number;
+  conversionRate: number;
+  revenueGenerated: number;
+}
 
-const funnelSteps = [
-  { name: 'Product Views', count: 2994, percentage: 100 },
-  { name: 'Add to Cart', count: 591, percentage: 19.74 },
-  { name: 'Checkout Started', count: 267, percentage: 8.92 },
-  { name: 'Purchase Complete', count: 141, percentage: 4.71 },
-];
+interface FunnelStep {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
+interface RecentEvent {
+  event: string;
+  bundle: string;
+  time: string;
+}
+
+interface AnalyticsData {
+  bundleMetrics: Record<string, BundleMetric>;
+  upsellMetrics: UpsellMetrics;
+  funnelSteps: FunnelStep[];
+  recentEvents: RecentEvent[];
+  dateRange: { start: string; end: string };
+  totalEvents: number;
+}
 
 export const BundleAnalytics = () => {
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const { data: response, error: fetchError } = await supabase.functions.invoke('posthog-analytics');
+      
+      if (fetchError) throw fetchError;
+      if (response?.error) throw new Error(response.error);
+      
+      setData(response);
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error('Failed to fetch analytics:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch analytics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  if (loading && !data) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-32 mb-2" />
+                <Skeleton className="h-3 w-24" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="border-destructive/50">
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center justify-center gap-4 py-8">
+            <AlertCircle className="h-12 w-12 text-destructive" />
+            <div className="text-center">
+              <h3 className="font-semibold text-lg">Analytics Unavailable</h3>
+              <p className="text-muted-foreground text-sm mt-1">{error}</p>
+            </div>
+            <Button onClick={fetchAnalytics} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const bundleMetrics = data?.bundleMetrics || {};
+  const upsellMetrics = data?.upsellMetrics || { shown: 0, clicked: 0, converted: 0, clickRate: 0, conversionRate: 0, revenueGenerated: 0 };
+  const funnelSteps = data?.funnelSteps || [];
+  const recentEvents = data?.recentEvents || [];
+
   const totalRevenue = Object.values(bundleMetrics).reduce((sum, b) => sum + b.revenue, 0);
   const totalPurchases = Object.values(bundleMetrics).reduce((sum, b) => sum + b.purchases, 0);
   const avgOrderValue = totalPurchases > 0 ? totalRevenue / totalPurchases : 0;
 
   return (
     <div className="space-y-6">
+      {/* Header with refresh */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">PostHog Analytics</h2>
+          {lastUpdated && (
+            <p className="text-xs text-muted-foreground">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </p>
+          )}
+          {data?.dateRange && (
+            <p className="text-xs text-muted-foreground">
+              Data range: {data.dateRange.start} to {data.dateRange.end}
+            </p>
+          )}
+        </div>
+        <Button onClick={fetchAnalytics} variant="outline" size="sm" disabled={loading}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -85,8 +180,7 @@ export const BundleAnalytics = () => {
           <CardContent>
             <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3 text-green-500" />
-              +23.5% from last month
+              {data?.totalEvents || 0} events tracked
             </p>
           </CardContent>
         </Card>
@@ -98,9 +192,8 @@ export const BundleAnalytics = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalPurchases}</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3 text-green-500" />
-              +12.3% from last month
+            <p className="text-xs text-muted-foreground">
+              From checkout starts
             </p>
           </CardContent>
         </Card>
@@ -112,9 +205,8 @@ export const BundleAnalytics = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${avgOrderValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3 text-green-500" />
-              +8.2% from last month
+            <p className="text-xs text-muted-foreground">
+              Per completed checkout
             </p>
           </CardContent>
         </Card>
@@ -126,9 +218,8 @@ export const BundleAnalytics = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{upsellMetrics.conversionRate}%</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3 text-green-500" />
-              +5.1% from last month
+            <p className="text-xs text-muted-foreground">
+              {upsellMetrics.shown} upsells shown
             </p>
           </CardContent>
         </Card>
@@ -138,7 +229,7 @@ export const BundleAnalytics = () => {
       <Card>
         <CardHeader>
           <CardTitle>Bundle Performance</CardTitle>
-          <CardDescription>Conversion metrics for each research bundle</CardDescription>
+          <CardDescription>Conversion metrics for each research bundle (last 30 days)</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -237,48 +328,50 @@ export const BundleAnalytics = () => {
             </div>
           </div>
           
-          <div className="mt-6 p-4 border border-primary/20 bg-primary/5 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-primary" />
-              <span className="font-medium">Key Insight</span>
+          {upsellMetrics.shown > 0 && (
+            <div className="mt-6 p-4 border border-primary/20 bg-primary/5 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <span className="font-medium">Key Insight</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Upsell click-through rate is <span className="text-primary font-semibold">{upsellMetrics.clickRate}%</span>. 
+                {upsellMetrics.clickRate > 10 
+                  ? ' Performance is strong—consider expanding upsell placement.'
+                  : ' Consider testing different upsell messaging or timing.'}
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Users who view the Protocol Starter Kit upsell are <span className="text-primary font-semibold">2.3x more likely</span> to complete purchase. 
-              Consider showing upsell earlier in the cart flow.
-            </p>
-          </div>
+          )}
         </CardContent>
       </Card>
 
       {/* PostHog Events */}
       <Card>
         <CardHeader>
-          <CardTitle>PostHog Event Stream</CardTitle>
-          <CardDescription>Recent tracking events from store</CardDescription>
+          <CardTitle>Live Event Stream</CardTitle>
+          <CardDescription>Recent tracking events from PostHog</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {[
-              { event: 'bundle_viewed', bundle: 'starter', time: '2 min ago' },
-              { event: 'bundle_added_to_cart', bundle: 'gateway', time: '5 min ago' },
-              { event: 'bundle_upsell_shown', bundle: 'starter', time: '8 min ago' },
-              { event: 'checkout_started', bundle: 'complete', time: '12 min ago' },
-              { event: 'bundle_viewed', bundle: 'ceremony', time: '15 min ago' },
-              { event: 'bundle_upsell_clicked', bundle: 'starter', time: '18 min ago' },
-              { event: 'bundle_viewed', bundle: 'gateway', time: '22 min ago' },
-              { event: 'bundle_added_to_cart', bundle: 'starter', time: '25 min ago' },
-            ].map((event, i) => (
-              <div key={i} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="font-mono text-xs">
-                    {event.event}
-                  </Badge>
-                  <span className="text-muted-foreground">{event.bundle}</span>
+          {recentEvents.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>No events recorded in the last 30 days</p>
+              <p className="text-xs mt-1">Events will appear here once users interact with the store</p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {recentEvents.map((event, i) => (
+                <div key={i} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {event.event}
+                    </Badge>
+                    <span className="text-muted-foreground">{event.bundle}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{event.time}</span>
                 </div>
-                <span className="text-xs text-muted-foreground">{event.time}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
