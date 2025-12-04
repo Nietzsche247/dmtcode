@@ -82,6 +82,12 @@ export const CartDrawer = () => {
   };
 
   const handleCheckout = async () => {
+    const bundleTier = bundleInCart ? getBundleType(bundleInCart.product.node?.handle || '') : null;
+    const discountApplied = items.some(item => {
+      const title = item.product.node?.title?.toLowerCase() || '';
+      return title.includes('journal') && bundleInCart;
+    });
+
     // Track checkout start with full PostHog events
     if (window.posthog) {
       window.posthog.capture('bundle_checkout_started', {
@@ -93,9 +99,10 @@ export const CartDrawer = () => {
           quantity: i.quantity,
         })),
         has_bundle: !!bundleInCart,
-        bundle_tier: bundleInCart ? getBundleType(bundleInCart.product.node?.handle || '') : null,
+        bundle_tier: bundleTier,
+        price: totalPrice,
         email_captured: emailCaptured,
-        discount_applied: false,
+        discount_applied: discountApplied,
       });
     }
 
@@ -104,6 +111,18 @@ export const CartDrawer = () => {
       const checkoutUrl = useCartStore.getState().checkoutUrl;
       
       if (checkoutUrl) {
+        // Track bundle purchased event (fired before redirect)
+        if (window.posthog && bundleInCart) {
+          window.posthog.capture('bundle_purchased', {
+            bundle_tier: bundleTier,
+            bundle_name: bundleInCart.product.node?.title,
+            price: totalPrice,
+            discount_applied: discountApplied,
+            item_count: totalItems,
+            email_captured: emailCaptured,
+          });
+        }
+
         // If bundle in cart and email captured, trigger email sequence
         if (bundleInCart && email) {
           const bundleHandle = bundleInCart.product.node?.handle || '';

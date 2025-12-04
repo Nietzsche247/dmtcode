@@ -43,12 +43,25 @@ const Tools = lazy(() => import("./pages/Tools"));
 
 const queryClient = new QueryClient();
 
-// Loading fallback for Tools page
-const ToolsLoading = () => (
+// "Calibrating lasers..." loading fallback
+const CalibratingLasersLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="text-center space-y-4">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-      <p className="text-muted-foreground">Loading products...</p>
+    <div className="text-center space-y-6 max-w-md px-4">
+      {/* Laser calibration animation */}
+      <div className="relative w-20 h-20 mx-auto">
+        <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-pulse" />
+        <div className="absolute inset-2 rounded-full border border-primary/50 animate-ping" style={{ animationDuration: '2s' }} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_12px_hsl(var(--primary))]" />
+        </div>
+        {/* Laser beams */}
+        <div className="absolute top-1/2 left-full w-6 h-[2px] bg-gradient-to-r from-primary to-transparent -translate-y-1/2 animate-pulse" />
+        <div className="absolute top-1/2 right-full w-6 h-[2px] bg-gradient-to-l from-primary to-transparent -translate-y-1/2 animate-pulse" />
+      </div>
+      <div className="space-y-2">
+        <p className="text-lg font-black tracking-tight">Calibrating lasers…</p>
+        <p className="text-sm text-muted-foreground font-light">Loading research equipment</p>
+      </div>
     </div>
   </div>
 );
@@ -66,7 +79,7 @@ const App = () => (
           <Route path="/research" element={<Research />} />
           <Route path="/tools" element={
             <ErrorBoundary>
-              <Suspense fallback={<ToolsLoading />}>
+              <Suspense fallback={<CalibratingLasersLoader />}>
                 <Tools />
               </Suspense>
             </ErrorBoundary>
@@ -96,7 +109,7 @@ const App = () => (
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
             <ErrorBoundary>
-              <Suspense fallback={<ToolsLoading />}>
+              <Suspense fallback={<CalibratingLasersLoader />}>
                 <BundleDetail />
               </Suspense>
             </ErrorBoundary>
