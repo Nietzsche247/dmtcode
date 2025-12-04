@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet';
 import { ArrowRight, Database, Users, Target, FileText, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
+import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -40,17 +41,15 @@ const AnimatedSection = ({ children, className = '' }: { children: React.ReactNo
 const Home = () => {
   const navigate = useNavigate();
   const { mode } = useModeStore();
+  const meta = useDynamicMeta('home');
 
   return (
     <>
       <Helmet>
-        <title>DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research</title>
-        <meta 
-          name="description" 
-          content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." 
-        />
-        <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650 nm Laser & N,N-DMT Research" />
-        <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences." />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+        <meta property="og:title" content={meta.title} />
+        <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
         <link rel="canonical" href="https://dmtcode.com/" />

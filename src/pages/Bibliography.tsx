@@ -2,17 +2,19 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
-import { ExternalLink, FileText } from 'lucide-react';
+import { ExternalLink, FileText, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useDynamicMeta } from '@/hooks/useDynamicMeta';
+import { Button } from '@/components/ui/button';
 
 const Bibliography = () => {
+  const meta = useDynamicMeta('bibliography');
+  
   return (
     <>
       <Helmet>
-        <title>Research Bibliography - Peer-Reviewed Citations | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Complete bibliography of peer-reviewed research on discrete visual symbols during N,N-DMT administration, 650 nm laser protocol, and photobiomodulation studies." 
-        />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/bibliography" />
         <link rel="alternate" hrefLang="es" href="https://dmtcode.com/bibliography" />
@@ -232,6 +234,12 @@ const Bibliography = () => {
                       DOI: 10.59973/ipil.158
                       <ExternalLink className="w-4 h-4" />
                     </a>
+                    <Link 
+                      to="/registry?tag=650nm"
+                      className="inline-flex items-center gap-2 text-primary hover:underline text-sm ml-4"
+                    >
+                      View related symbols →
+                    </Link>
                   </div>
                 </div>
               </Card>
@@ -264,7 +272,36 @@ const Bibliography = () => {
               </Card>
             </div>
 
-            <div className="mt-16 p-8 bg-muted/30 border border-border rounded-lg">
+            {/* Internal Links Section */}
+            <div className="mt-16 grid md:grid-cols-2 gap-6">
+              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
+                <h3 className="text-lg font-semibold mb-3">Explore Related Symbols</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Browse visual symbols documented using the protocols described in these papers.
+                </p>
+                <Link to="/registry">
+                  <Button variant="outline" className="w-full">
+                    View Symbol Registry
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </Card>
+              
+              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
+                <h3 className="text-lg font-semibold mb-3">Protocol Documentation</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Learn about the 650nm laser protocol methodology referenced in these studies.
+                </p>
+                <Link to="/protocol-guide">
+                  <Button variant="outline" className="w-full">
+                    Read Protocol Guide
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </Card>
+            </div>
+
+            <div className="mt-8 p-8 bg-muted/30 border border-border rounded-lg">
               <h2 className="text-2xl font-semibold mb-4">Data Access</h2>
               <p className="text-muted-foreground mb-6">
                 All glyph registry data is released under CC-BY-4.0 for academic research. Download the complete dataset in JSON or CSV format.
