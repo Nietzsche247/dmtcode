@@ -123,8 +123,8 @@ const Bundles = () => {
   const meta = useDynamicMeta('bundles');
   const { mode } = useModeStore();
 
-  const handleBundleClick = (bundleId: string, bundleName: string) => {
-    navigate(`/waitlist?utm_source=bundles&utm_bundle=${encodeURIComponent(bundleName)}&utm_tier=${bundleId}`);
+  const handleBundleClick = (bundleId: string) => {
+    navigate(`/bundles/${bundleId}`);
   };
 
   return (
@@ -267,8 +267,8 @@ const Bundles = () => {
                     </div>
 
                     <Button 
-                      className="w-full h-12 rounded-full btn-lickable border-beam group"
-                      onClick={() => handleBundleClick(bundle.id, bundle.name)}
+                      className="w-full h-12 rounded-full btn-lickable border-beam group touch-manipulation"
+                      onClick={() => handleBundleClick(bundle.id)}
                     >
                       {bundle.cta}
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
