@@ -7,17 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
-import { ShoppingCart, Search, Plus, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Search, Plus, AlertTriangle, BookOpen, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
 import { getPlaceholderImage } from '@/utils/placeholderImage';
 import { supabase } from '@/integrations/supabase/client';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 
 declare global {
   interface Window {
@@ -72,6 +73,7 @@ const Tools = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
   const addItem = useCartStore(state => state.addItem);
+  const meta = useDynamicMeta('tools');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -199,13 +201,13 @@ const Tools = () => {
   return (
     <>
       <Helmet>
-        <title>Research Equipment | DMT Code Visual Symbol Catalogue</title>
-        <meta 
-          name="description" 
-          content="Curated 650 nm protocol equipment and research tools. $12 entry items to $2,000 research experiences. Verified equipment for symbol documentation." 
-        />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
+        <meta property="og:title" content={meta.title} />
+        <meta property="og:description" content={meta.description} />
+        <meta name="robots" content="index, follow" />
         <meta name="robots" content="index, follow" />
         {products.length > 0 && (
           <script type="application/ld+json">
@@ -256,10 +258,11 @@ const Tools = () => {
                 <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
                   <Button 
                     size="lg" 
-                    onClick={() => handleWaitlistClick('Hero CTA', 'mixed')}
+                    onClick={() => navigate('/bundles')}
                     className="px-8 py-6 h-auto rounded-full btn-lickable border-beam"
                   >
-                    Join Waitlist
+                    <Package className="h-5 w-5 mr-2" />
+                    View Bundles
                   </Button>
                   <Button 
                     size="lg"
@@ -270,6 +273,20 @@ const Tools = () => {
                     <Plus className="h-5 w-5 mr-2" />
                     Submit Product
                   </Button>
+                </div>
+
+                {/* Internal Links */}
+                <div className="pt-4 flex flex-wrap gap-4 justify-center text-sm text-muted-foreground">
+                  <Link to="/protocol-guide" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
+                    <BookOpen className="w-4 h-4" />
+                    Protocol Guide
+                  </Link>
+                  <Link to="/registry" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
+                    Symbol Registry
+                  </Link>
+                  <Link to="/evidence-map" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
+                    Research Evidence
+                  </Link>
                 </div>
               </div>
             </section>

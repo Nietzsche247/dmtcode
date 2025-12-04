@@ -32,6 +32,7 @@ import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
+import Bundles from "./pages/Bundles";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
@@ -89,6 +90,7 @@ const App = () => (
           <Route path="/null-reports" element={<NullReports />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/submit-product" element={<SubmitProduct />} />
+          <Route path="/bundles" element={<Bundles />} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
