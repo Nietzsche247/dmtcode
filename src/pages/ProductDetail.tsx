@@ -582,6 +582,25 @@ const ProductDetail = () => {
             <CompleteBundleUpsell currentProductSlug={id} />
           )}
 
+          {/* Related Research for bundle items */}
+          {product.isBundleItem && product.relatedResearch && product.relatedResearch.length > 0 && (
+            <Card className="p-6 bg-card/50">
+              <h3 className="text-lg font-semibold mb-4">Related Research</h3>
+              <div className="flex flex-wrap gap-3">
+                {product.relatedResearch.map((paper: string, i: number) => (
+                  <Link 
+                    key={i} 
+                    to="/bibliography"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/30 rounded-full border border-border hover:border-primary/50 transition-colors text-sm"
+                  >
+                    <Star className="w-3 h-3 text-primary" />
+                    {paper}
+                  </Link>
+                ))}
+              </div>
+            </Card>
+          )}
+
           <Tabs defaultValue="description" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="description">Description</TabsTrigger>
