@@ -1,14 +1,24 @@
 import { useModeStore } from "@/stores/modeStore";
+import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
 import { FlaskConical, Sparkles } from "lucide-react";
 
 export const ModeToggle = () => {
   const { mode, setMode } = useModeStore();
+  const { setTheme, theme } = useThemeStore();
+
+  const handleModeChange = (newMode: 'research' | 'explorer') => {
+    setMode(newMode);
+    // Research mode forces light theme
+    if (newMode === 'research') {
+      // Light mode is forced via ThemeProvider, no need to change store
+    }
+  };
 
   return (
     <div className="flex items-center gap-1 p-1 rounded-full bg-secondary/50 border border-border/50">
       <button
-        onClick={() => setMode('research')}
+        onClick={() => handleModeChange('research')}
         className={cn(
           "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
           mode === 'research'
@@ -21,7 +31,7 @@ export const ModeToggle = () => {
         <span className="hidden sm:inline">Research</span>
       </button>
       <button
-        onClick={() => setMode('explorer')}
+        onClick={() => handleModeChange('explorer')}
         className={cn(
           "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
           mode === 'explorer'

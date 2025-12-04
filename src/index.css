@@ -5,8 +5,50 @@
 /* Meng To 2025 Aesthetic - Design System */
 
 @layer base {
-  :root {
-    /* Meng To 2025 - Deep black foundation */
+  /* Light Mode - Research-friendly, academic aesthetic */
+  :root,
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 7%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+
+    /* 650nm Red Laser Primary - #C41E3A */
+    --primary: 350 75% 44%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 15%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 350 75% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 88%;
+    --input: 0 0% 94%;
+    --ring: 350 75% 44%;
+
+    --radius: 0.75rem;
+
+    /* Glow effects - subtle in light mode */
+    --glow-primary: 350 75% 50%;
+    --glow-intensity: 0.2;
+    
+    /* Gold accent */
+    --gold: 45 100% 45%;
+  }
+
+  /* Dark Mode - Original Meng To deep black foundation */
+  .dark {
     --background: 0 0% 2%;
     --foreground: 0 0% 98%;
 
@@ -57,7 +99,6 @@
     @apply bg-background text-foreground overflow-x-hidden antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
-    color: #6B7280; /* Medium grey for body text */
   }
   
   /* Headings: Montserrat Bold (Founders Grotesk fallback) */
@@ -67,7 +108,7 @@
     letter-spacing: 0.02em;
     line-height: 1;
     text-transform: uppercase;
-    color: #FFFFFF;
+    @apply text-foreground;
   }
   
   h3, h4, h5, h6 {
@@ -75,7 +116,7 @@
     font-weight: 600;
     letter-spacing: 0.01em;
     line-height: 1.1;
-    color: #FFFFFF;
+    @apply text-foreground;
   }
 
   /* Subtext/eyebrows: Montserrat Light Italic */
@@ -83,14 +124,14 @@
     font-family: 'Montserrat', system-ui, sans-serif;
     font-weight: 300;
     font-style: italic;
-    color: #9CA3AF;
+    @apply text-muted-foreground;
   }
 
   /* Labels/small text: Inter Regular */
   .label, .small-text {
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
-    color: #6B7280;
+    @apply text-muted-foreground;
   }
 
   html {
