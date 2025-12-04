@@ -2,9 +2,12 @@ import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
+// Zenodo DOI
+const ZENODO_DOI = "10.5281/zenodo.14584521";
+
 export const Footer = () => {
   return (
-    <footer className="relative py-16 px-4 bg-background border-t border-border/50">
+    <footer className="relative py-16 px-4 bg-background border-t border-border/50 transition-theme">
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="space-y-4 md:col-span-2">
@@ -12,6 +15,22 @@ export const Footer = () => {
             <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-sm">
               Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Equipment resources and research references for independent replication.
             </p>
+            {/* Zenodo DOI Badge */}
+            <div className="pt-2">
+              <a 
+                href={`https://doi.org/${ZENODO_DOI}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+                aria-label="View dataset on Zenodo"
+              >
+                <img 
+                  src={`https://zenodo.org/badge/DOI/${ZENODO_DOI}.svg`} 
+                  alt="Zenodo DOI Badge"
+                  className="h-5"
+                />
+              </a>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -20,6 +39,11 @@ export const Footer = () => {
               <li>
                 <a href="/registry" className="text-muted-foreground hover:text-primary transition-colors">
                   Glyph Registry
+                </a>
+              </li>
+              <li>
+                <a href="/dataset" className="text-muted-foreground hover:text-primary transition-colors">
+                  Dataset & DOI
                 </a>
               </li>
               <li>
@@ -69,7 +93,15 @@ export const Footer = () => {
 
         <Separator className="bg-border/30" />
 
-        <div className="bg-card/30 border border-border/30 rounded-2xl p-6 space-y-4">
+        {/* Citation Block */}
+        <div className="bg-card/30 border border-border/30 rounded-2xl p-6 space-y-3 transition-theme">
+          <p className="text-sm font-semibold text-foreground">Cite This Dataset</p>
+          <p className="text-xs text-muted-foreground font-mono leading-relaxed">
+            DMT Code Project. (2025). DMT Code Visual Symbol Catalogue v1.0 [Data set]. Zenodo. https://doi.org/{ZENODO_DOI}
+          </p>
+        </div>
+
+        <div className="bg-card/30 border border-border/30 rounded-2xl p-6 space-y-4 transition-theme">
           <p className="text-sm font-semibold text-primary">Important Legal Disclaimer</p>
           <div className="text-xs text-muted-foreground font-light space-y-2 leading-relaxed">
             <p>
@@ -101,6 +133,14 @@ export const Footer = () => {
               className="hover:text-primary transition-colors"
             >
               data.json
+            </a>
+            <a 
+              href={`https://doi.org/${ZENODO_DOI}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              DOI
             </a>
           </div>
         </div>

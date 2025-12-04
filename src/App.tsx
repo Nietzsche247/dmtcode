@@ -33,7 +33,7 @@ import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
 import Bundles from "./pages/Bundles";
-
+import Dataset from "./pages/Dataset";
 // Lazy load BundleDetail
 const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -106,6 +106,7 @@ const App = () => (
           <Route path="/null-reports" element={<NullReports />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/submit-product" element={<SubmitProduct />} />
+          <Route path="/dataset" element={<Dataset />} />
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
             <ErrorBoundary>

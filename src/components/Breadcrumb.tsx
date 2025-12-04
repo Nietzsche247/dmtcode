@@ -22,7 +22,11 @@ export const Breadcrumb = () => {
     'events': 'Events & Trials',
     'open-questions': 'Open Questions',
     'admin': 'Admin',
-    'auth': 'Login'
+    'auth': 'Login',
+    'dataset': 'Dataset',
+    'bundles': 'Bundles',
+    'null-reports': 'Null Reports',
+    'leaderboard': 'Community'
   };
 
   return (
