@@ -9,13 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Star, ExternalLink, ShoppingCart, Loader2 } from "lucide-react";
+import { Star, ExternalLink, ShoppingCart, Loader2, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButtons } from "@/components/ShareButtons";
 import { storefrontApiRequest } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
+import { getBundleItem } from "@/data/bundleItems";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 declare global {
@@ -41,8 +42,10 @@ const ProductDetail = () => {
     review_text: ""
   });
 
-  // Check if this is a Shopify product ID (starts with gid://)
-  const isShopifyProduct = id?.startsWith('gid://');
+  // Check if this is a Shopify product ID (starts with gid://) or a handle
+  const isShopifyGlobalId = id?.startsWith('gid://');
+  // If not a global ID and not a UUID, treat as handle
+  const isHandle = !isShopifyGlobalId && id && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
   useEffect(() => {
     if (id) {
@@ -52,8 +55,30 @@ const ProductDetail = () => {
 
   const fetchProduct = async () => {
     try {
-      if (isShopifyProduct) {
-        // Fetch from Shopify
+      // First check if this is a bundle item
+      if (isHandle && id) {
+        const bundleItem = getBundleItem(id);
+        if (bundleItem) {
+          setProduct({
+            id: bundleItem.slug,
+            title: bundleItem.title,
+            description: bundleItem.description,
+            price: bundleItem.price,
+            image_url: bundleItem.image,
+            category: bundleItem.category,
+            wavelength: bundleItem.wavelength,
+            specs: bundleItem.specs,
+            relatedResearch: bundleItem.relatedResearch,
+            isShopify: false,
+            isBundleItem: true,
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
+      if (isShopifyGlobalId) {
+        // Fetch from Shopify by global ID
         const query = `
           query GetProduct($id: ID!) {
             product(id: $id) {
@@ -123,7 +148,6 @@ const ProductDetail = () => {
             .maybeSingle();
           
           if (dbData) {
-            // Fetch ratings for this product
             const { data: ratingsData } = await supabase
               .from('product_ratings')
               .select('*')
@@ -132,14 +156,97 @@ const ProductDetail = () => {
             
             setRatings(ratingsData || []);
             
-            // Check if user has rated
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
               const existing = ratingsData?.find(r => r.user_id === user.id);
               if (existing) setUserRating(existing);
             }
             
-            // Merge category from DB
+            setProduct((prev: any) => ({ ...prev, category: dbData.category, dbId: dbData.id }));
+          }
+        }
+      } else if (isHandle) {
+        // Fetch from Shopify by handle
+        const query = `
+          query GetProductByHandle($handle: String!) {
+            productByHandle(handle: $handle) {
+              id
+              title
+              description
+              handle
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              images(first: 5) {
+                edges {
+                  node {
+                    url
+                    altText
+                  }
+                }
+              }
+              variants(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    availableForSale
+                    selectedOptions {
+                      name
+                      value
+                    }
+                  }
+                }
+              }
+              options {
+                name
+                values
+              }
+            }
+          }
+        `;
+        
+        const data = await storefrontApiRequest(query, { handle: id });
+        const shopifyProduct = data?.data?.productByHandle;
+        
+        if (shopifyProduct) {
+          setProduct({
+            ...shopifyProduct,
+            price: parseFloat(shopifyProduct.priceRange.minVariantPrice.amount),
+            image_url: shopifyProduct.images.edges[0]?.node.url,
+            category: 'product',
+            isShopify: true
+          });
+
+          // Try to fetch database enhancements (ratings)
+          const { data: dbData } = await supabase
+            .from('products')
+            .select('id, category')
+            .or(`id.eq.${id},specs->>shopify_handle.eq.${id}`)
+            .maybeSingle();
+          
+          if (dbData) {
+            const { data: ratingsData } = await supabase
+              .from('product_ratings')
+              .select('*')
+              .eq('product_id', dbData.id)
+              .order('created_at', { ascending: false });
+            
+            setRatings(ratingsData || []);
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              const existing = ratingsData?.find(r => r.user_id === user.id);
+              if (existing) setUserRating(existing);
+            }
+            
             setProduct((prev: any) => ({ ...prev, category: dbData.category, dbId: dbData.id }));
           }
         }
