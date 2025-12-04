@@ -10,6 +10,7 @@ import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { useModeStore } from '@/stores/modeStore';
 import { BundleCard } from '@/components/BundleCard';
 import { LaserDivider } from '@/components/LaserDivider';
+import { BundleComparisonTable } from '@/components/BundleComparisonTable';
 
 // Import bundle images
 import bundleStarterImg from '@/assets/bundle-starter.jpg';
@@ -256,6 +257,18 @@ const Bundles = () => {
                   />
                 </div>
               ))}
+            </div>
+          </section>
+
+          <LaserDivider />
+
+          {/* Comparison Table */}
+          <section className="container mx-auto px-4 py-12 max-w-6xl">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-center mb-8">
+              Compare All Bundles
+            </h2>
+            <div className="bg-card/50 border border-border/50 rounded-2xl p-4 md:p-6">
+              <BundleComparisonTable />
             </div>
           </section>
 
