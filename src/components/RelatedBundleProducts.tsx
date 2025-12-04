@@ -1,9 +1,16 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package, Sparkles, ArrowRight } from 'lucide-react';
 import { bundleItems } from '@/data/bundleItems';
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 // Bundle definitions matching BundleDetail.tsx
 const bundleData: Record<string, {
@@ -97,17 +104,49 @@ interface RelatedBundleProductsProps {
 }
 
 export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedBundleProductsProps) => {
+  const navigate = useNavigate();
   const bundle = bundleData[bundleId];
   
-  if (!bundle) return null;
-  
   // Filter out current product and get related items
-  const relatedItems = bundle.items.filter(item => {
+  const relatedItems = bundle?.items.filter(item => {
     const slug = skuToSlug[item.sku];
     return slug !== currentProductSlug;
-  });
+  }) || [];
   
-  if (relatedItems.length === 0) return null;
+  // Track impression on mount
+  useEffect(() => {
+    if (bundle && relatedItems.length > 0) {
+      window.posthog?.capture('bundle_related_products_shown', {
+        bundle_id: bundleId,
+        bundle_name: bundle.name,
+        current_product: currentProductSlug,
+        related_items_count: relatedItems.length,
+        type: 'in_bundle_context',
+      });
+    }
+  }, [bundleId, currentProductSlug, bundle, relatedItems.length]);
+  
+  if (!bundle || relatedItems.length === 0) return null;
+  
+  const handleItemClick = (itemSku: string, itemName: string) => {
+    window.posthog?.capture('bundle_related_item_clicked', {
+      bundle_id: bundleId,
+      bundle_name: bundle.name,
+      clicked_item_sku: itemSku,
+      clicked_item_name: itemName,
+      current_product: currentProductSlug,
+      type: 'in_bundle_context',
+    });
+  };
+  
+  const handleViewBundleClick = () => {
+    window.posthog?.capture('view_full_bundle_clicked', {
+      bundle_id: bundleId,
+      bundle_name: bundle.name,
+      current_product: currentProductSlug,
+      type: 'in_bundle_context',
+    });
+  };
   
   return (
     <Card className="p-6 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
@@ -126,6 +165,7 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
               key={item.sku}
               to={`/products/${slug}?from=${bundleId}`}
               className="group relative block"
+              onClick={() => handleItemClick(item.sku, item.name)}
             >
               <div className="aspect-square rounded-lg overflow-hidden bg-secondary/30 mb-2">
                 {bundleItem?.image ? (
@@ -159,6 +199,7 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
         <Link
           to={`/bundles/${bundleId}`}
           className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+          onClick={handleViewBundleClick}
         >
           View full {bundle.name} →
         </Link>
@@ -180,20 +221,55 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
     bundle.items.some(item => item.sku === currentSku || skuToSlug[item.sku] === currentProductSlug)
   );
   
-  if (matchingBundles.length === 0) return null;
-  
   // Pick the most relevant bundle (starter for entry items, or first match)
   const suggestedBundle = matchingBundles[0];
   
   // Get other items in the bundle
-  const otherItems = suggestedBundle.items.filter(item => {
+  const otherItems = suggestedBundle?.items.filter(item => {
     const slug = skuToSlug[item.sku];
     return slug !== currentProductSlug && item.sku !== currentSku;
-  });
+  }) || [];
   
-  if (otherItems.length === 0) return null;
+  const savings = suggestedBundle ? suggestedBundle.originalPrice - suggestedBundle.price : 0;
   
-  const savings = suggestedBundle.originalPrice - suggestedBundle.price;
+  // Track impression on mount
+  useEffect(() => {
+    if (suggestedBundle && otherItems.length > 0) {
+      window.posthog?.capture('bundle_upsell_shown', {
+        bundle_id: suggestedBundle.id,
+        bundle_name: suggestedBundle.name,
+        bundle_price: suggestedBundle.price,
+        bundle_savings: savings,
+        current_product: currentProductSlug,
+        upsell_items_count: otherItems.length,
+        type: 'complete_the_bundle',
+      });
+    }
+  }, [currentProductSlug, suggestedBundle, otherItems.length, savings]);
+  
+  if (!suggestedBundle || matchingBundles.length === 0 || otherItems.length === 0) return null;
+  
+  const handleItemClick = (itemSku: string, itemName: string) => {
+    window.posthog?.capture('bundle_upsell_item_clicked', {
+      bundle_id: suggestedBundle.id,
+      bundle_name: suggestedBundle.name,
+      clicked_item_sku: itemSku,
+      clicked_item_name: itemName,
+      current_product: currentProductSlug,
+      type: 'complete_the_bundle',
+    });
+  };
+  
+  const handleViewBundleClick = () => {
+    window.posthog?.capture('bundle_upsell_view_bundle_clicked', {
+      bundle_id: suggestedBundle.id,
+      bundle_name: suggestedBundle.name,
+      bundle_price: suggestedBundle.price,
+      bundle_savings: savings,
+      current_product: currentProductSlug,
+      type: 'complete_the_bundle',
+    });
+  };
   
   return (
     <Card className="p-6 border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-transparent">
@@ -220,6 +296,7 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
               key={item.sku}
               to={`/products/${slug}?from=${suggestedBundle.id}`}
               className="group relative block"
+              onClick={() => handleItemClick(item.sku, item.name)}
             >
               <div className="aspect-square rounded-lg overflow-hidden bg-secondary/30 mb-2">
                 {bundleItem?.image ? (
@@ -255,7 +332,7 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
           <p className="text-sm text-muted-foreground line-through">${suggestedBundle.originalPrice}</p>
         </div>
         
-        <Button asChild className="group">
+        <Button asChild className="group" onClick={handleViewBundleClick}>
           <Link to={`/bundles/${suggestedBundle.id}`}>
             View Bundle
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
