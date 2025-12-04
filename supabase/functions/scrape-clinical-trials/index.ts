@@ -42,6 +42,25 @@ function mapStatus(overallStatus: string): string {
   return 'planned';
 }
 
+// Normalize date from YYYY-MM to YYYY-MM-01 format
+function normalizeDate(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  // If date is YYYY-MM format, append -01
+  if (/^\d{4}-\d{2}$/.test(dateStr)) {
+    return `${dateStr}-01`;
+  }
+  // If date is already YYYY-MM-DD, return as-is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+  // Try to extract YYYY-MM from formats like "2025-06" or "June 2025"
+  const match = dateStr.match(/(\d{4})-(\d{2})/);
+  if (match) {
+    return `${match[1]}-${match[2]}-01`;
+  }
+  return null;
+}
+
 // Detect compound from study data
 function detectCompound(title: string, conditions: string[]): string {
   const text = `${title} ${conditions.join(' ')}`.toLowerCase();
@@ -214,8 +233,8 @@ Deno.serve(async (req) => {
               phase: designModule?.phases?.join(', ') || 'Not specified',
               sponsor: sponsorModule?.leadSponsor?.name || 'Unknown',
               locations,
-              startDate: startDateStr || new Date().toISOString().split('T')[0],
-              completionDate: statusModule?.completionDateStruct?.date || null,
+              startDate: normalizeDate(startDateStr) || new Date().toISOString().split('T')[0],
+              completionDate: normalizeDate(statusModule?.completionDateStruct?.date),
               compound,
               url: `https://clinicaltrials.gov/study/${nctId}`,
             };
