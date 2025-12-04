@@ -99,6 +99,12 @@
     @apply bg-background text-foreground overflow-x-hidden antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
+    transition: background-color 200ms ease-out, color 200ms ease-out;
+  }
+  
+  /* Smooth theme transitions for cards and surfaces */
+  .transition-theme {
+    transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
   }
   
   /* Headings: Montserrat Bold (Founders Grotesk fallback) */
