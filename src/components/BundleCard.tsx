@@ -52,13 +52,16 @@ export const BundleCard = ({
   onClick,
 }: BundleCardProps) => {
   const handleClick = () => {
-    // Track bundle view
+    // Track bundle view with enhanced PostHog event
     if (window.posthog) {
       window.posthog.capture('bundle_viewed', {
         bundle_id: id,
         bundle_name: name,
         bundle_price: price,
         bundle_tier: tier,
+        discount_applied: true,
+        original_price: originalPrice,
+        savings: originalPrice - price,
       });
     }
     onClick(id);
@@ -66,38 +69,48 @@ export const BundleCard = ({
 
   return (
     <Card 
-      className={`relative p-8 bg-gradient-to-br ${color} ${borderColor} border-2 hover:scale-[1.02] transition-all duration-300 animate-fade-slide-up group`}
+      className={`relative p-8 bg-gradient-to-br ${color} ${borderColor} border-2 hover:scale-[1.02] transition-all duration-300 animate-fade-slide-up group cursor-pointer`}
+      onClick={handleClick}
+      role="article"
+      aria-label={`${name} bundle - $${price}, ${discount}`}
     >
       {popular && (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-semibold shadow-lg">
+        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-black shadow-lg z-10">
           Most Popular
         </Badge>
       )}
       
       <div className="space-y-6">
         {/* Bundle Image */}
-        <div className="aspect-video rounded-lg overflow-hidden bg-background/50">
+        <div className="aspect-video rounded-lg overflow-hidden bg-background/50 relative">
           <img 
             src={image} 
             alt={`${name} - Research equipment bundle containing ${items.map(i => i.name).join(', ')}`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            width={1200}
+            height={675}
           />
+          {/* Gradient overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
         
         <div>
-          <Badge className={`${badgeColor} font-semibold`}>{discount}</Badge>
-          <h2 className="text-2xl font-black mt-3 tracking-tight">{name}</h2>
-          <p className="text-muted-foreground font-light">{tagline}</p>
+          <Badge className={`${badgeColor} font-black text-xs`}>{discount}</Badge>
+          {/* Inter Black title */}
+          <h2 className="text-2xl font-black mt-3 tracking-tight leading-tight">{name}</h2>
+          {/* Inter Light 300 description */}
+          <p className="text-muted-foreground font-light text-sm mt-1">{tagline}</p>
         </div>
 
+        {/* Price with Inter Black + Inter Light 300 */}
         <div className="flex items-baseline gap-3">
           <span className="text-4xl font-black text-primary tracking-tight">${price}</span>
           <span className="text-lg text-muted-foreground line-through font-light">${originalPrice}</span>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Includes:</p>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-wider">Includes:</p>
           <ul className="space-y-2">
             {items.map((item, i) => (
               <li key={i} className="flex items-center gap-2 text-sm">
@@ -110,7 +123,7 @@ export const BundleCard = ({
         </div>
 
         <div className="space-y-2 pt-4 border-t border-border/50">
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Features:</p>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-wider">Features:</p>
           <ul className="space-y-1">
             {features.map((feature, i) => (
               <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground font-light">
@@ -121,16 +134,26 @@ export const BundleCard = ({
           </ul>
         </div>
 
+        {/* CTA with 44px touch target and beam underline */}
         <div className="relative">
           <Button 
-            className="w-full h-12 rounded-full btn-lickable border-beam group/btn touch-manipulation font-semibold"
-            onClick={handleClick}
+            className="w-full h-12 min-h-[44px] rounded-full btn-lickable border-beam group/btn touch-manipulation font-black text-sm uppercase tracking-wide"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
           >
             {cta}
             <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
           </Button>
-          {/* Beam underline */}
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
+          {/* 1px #C41E3A glowing beam underline */}
+          <div 
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-[1px]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, hsl(var(--primary)), transparent)',
+              boxShadow: '0 0 8px hsl(var(--primary) / 0.5), 0 0 16px hsl(var(--primary) / 0.3)',
+            }}
+          />
         </div>
       </div>
     </Card>

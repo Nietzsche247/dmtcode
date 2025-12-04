@@ -683,6 +683,48 @@ export type Database = {
         }
         Relationships: []
       }
+      store_products: {
+        Row: {
+          compare_at_price: number | null
+          created_at: string
+          handle: string | null
+          id: string
+          inventory_quantity: number | null
+          last_synced_at: string | null
+          price: number | null
+          shopify_id: string
+          sold_out: boolean | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          compare_at_price?: number | null
+          created_at?: string
+          handle?: string | null
+          id?: string
+          inventory_quantity?: number | null
+          last_synced_at?: string | null
+          price?: number | null
+          shopify_id: string
+          sold_out?: boolean | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          compare_at_price?: number | null
+          created_at?: string
+          handle?: string | null
+          id?: string
+          inventory_quantity?: number | null
+          last_synced_at?: string | null
+          price?: number | null
+          shopify_id?: string
+          sold_out?: boolean | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       surface_tags: {
         Row: {
           created_at: string

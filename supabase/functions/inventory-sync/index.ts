@@ -20,6 +20,7 @@ interface ShopifyProduct {
     id: number;
     inventory_quantity: number;
     price: string;
+    compare_at_price: string | null;
     sku: string;
   }>;
   images: Array<{ src: string }>;
@@ -60,6 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
       synced: 0,
       errors: 0,
       soldOutUpdated: 0,
+      newProducts: 0,
     };
 
     for (const product of shopifyProducts) {
@@ -73,7 +75,34 @@ const handler = async (req: Request): Promise<Response> => {
         const isSoldOut = totalInventory <= 0;
         const primaryVariant = product.variants[0];
 
-        // Check if product exists in our database
+        // Upsert into store_products table
+        const { error: upsertError } = await supabase
+          .from("store_products")
+          .upsert({
+            shopify_id: String(product.id),
+            title: product.title,
+            handle: product.handle,
+            price: parseFloat(primaryVariant?.price || "0"),
+            compare_at_price: primaryVariant?.compare_at_price 
+              ? parseFloat(primaryVariant.compare_at_price) 
+              : null,
+            inventory_quantity: totalInventory,
+            sold_out: isSoldOut,
+            last_synced_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }, {
+            onConflict: 'shopify_id',
+          });
+
+        if (upsertError) {
+          console.error(`Error syncing ${product.title}:`, upsertError);
+          syncResults.errors++;
+        } else {
+          syncResults.synced++;
+          if (isSoldOut) syncResults.soldOutUpdated++;
+        }
+
+        // Also update legacy products table if product exists there
         const { data: existingProduct } = await supabase
           .from("products")
           .select("id")
@@ -81,8 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
           .single();
 
         if (existingProduct) {
-          // Update existing product
-          const { error: updateError } = await supabase
+          await supabase
             .from("products")
             .update({
               price: parseFloat(primaryVariant?.price || "0"),
@@ -95,17 +123,8 @@ const handler = async (req: Request): Promise<Response> => {
               updated_at: new Date().toISOString(),
             })
             .eq("id", existingProduct.id);
-
-          if (updateError) {
-            console.error(`Error updating ${product.title}:`, updateError);
-            syncResults.errors++;
-          } else {
-            syncResults.synced++;
-            if (isSoldOut) syncResults.soldOutUpdated++;
-          }
         }
 
-        // Log sync for monitoring
         console.log(`Synced: ${product.title} - Inventory: ${totalInventory} - Sold Out: ${isSoldOut}`);
       } catch (productError) {
         console.error(`Error processing ${product.title}:`, productError);
