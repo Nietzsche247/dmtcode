@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { BundleUpsell } from "./BundleUpsell";
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +33,19 @@ export const CartDrawer = () => {
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
   const handleCheckout = async () => {
+    // Track checkout start
+    if (window.posthog) {
+      window.posthog.capture('checkout_started', {
+        cart_value: totalPrice,
+        item_count: totalItems,
+        items: items.map(i => ({
+          title: i.product.node?.title,
+          price: i.price.amount,
+          quantity: i.quantity,
+        })),
+      });
+    }
+
     try {
       await createCheckout();
       const checkoutUrl = useCartStore.getState().checkoutUrl;
@@ -38,10 +58,25 @@ export const CartDrawer = () => {
     }
   };
 
+  const handleRemoveItem = (variantId: string, title: string) => {
+    if (window.posthog) {
+      window.posthog.capture('removed_from_cart', {
+        variant_id: variantId,
+        product_title: title,
+      });
+    }
+    removeItem(variantId);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="relative touch-manipulation"
+          aria-label={`Shopping cart with ${totalItems} items`}
+        >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
             <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-primary">
@@ -72,24 +107,27 @@ export const CartDrawer = () => {
               <div className="flex-1 overflow-y-auto pr-2 min-h-0">
                 <div className="space-y-4">
                   {items.map((item) => (
-                    <div key={item.variantId} className="flex gap-4 p-2">
+                    <div key={item.variantId} className="flex gap-3 p-2">
                       <div className="w-16 h-16 bg-secondary/20 rounded-md overflow-hidden flex-shrink-0">
-                        {item.product.node.images?.edges?.[0]?.node && (
+                        {item.product.node?.images?.edges?.[0]?.node && (
                           <img
                             src={item.product.node.images.edges[0].node.url}
-                            alt={item.product.node.title}
+                            alt={`${item.product.node.title} - Research equipment`}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         )}
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate">{item.product.node.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {item.selectedOptions.map(option => option.value).join(' • ')}
-                        </p>
-                        <p className="font-semibold">
-                          {item.price.currencyCode} ${parseFloat(item.price.amount).toFixed(2)}
+                        <h4 className="font-medium truncate text-sm">{item.product.node?.title}</h4>
+                        {item.selectedOptions.length > 0 && (
+                          <p className="text-xs text-muted-foreground">
+                            {item.selectedOptions.map(option => option.value).join(' • ')}
+                          </p>
+                        )}
+                        <p className="font-semibold text-sm mt-1">
+                          ${parseFloat(item.price.amount).toFixed(2)}
                         </p>
                       </div>
                       
@@ -97,18 +135,20 @@ export const CartDrawer = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6"
-                          onClick={() => removeItem(item.variantId)}
+                          className="h-8 w-8 touch-manipulation"
+                          onClick={() => handleRemoveItem(item.variantId, item.product.node?.title || '')}
+                          aria-label={`Remove ${item.product.node?.title} from cart`}
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                         
                         <div className="flex items-center gap-1">
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-8 w-8 touch-manipulation"
                             onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                            aria-label="Decrease quantity"
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -116,8 +156,9 @@ export const CartDrawer = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-8 w-8 touch-manipulation"
                             onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                            aria-label="Increase quantity"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -125,6 +166,11 @@ export const CartDrawer = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+                
+                {/* Bundle Upsell */}
+                <div className="mt-4">
+                  <BundleUpsell onClose={() => setIsOpen(false)} />
                 </div>
               </div>
               
@@ -138,7 +184,7 @@ export const CartDrawer = () => {
                 
                 <Button 
                   onClick={handleCheckout}
-                  className="w-full" 
+                  className="w-full h-12 rounded-full btn-lickable touch-manipulation" 
                   size="lg"
                   disabled={items.length === 0 || isLoading}
                 >

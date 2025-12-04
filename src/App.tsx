@@ -33,6 +33,9 @@ import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
 import Bundles from "./pages/Bundles";
+
+// Lazy load BundleDetail
+const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
@@ -91,6 +94,13 @@ const App = () => (
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/submit-product" element={<SubmitProduct />} />
           <Route path="/bundles" element={<Bundles />} />
+          <Route path="/bundles/:bundleId" element={
+            <ErrorBoundary>
+              <Suspense fallback={<ToolsLoading />}>
+                <BundleDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
