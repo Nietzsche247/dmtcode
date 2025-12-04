@@ -55,7 +55,7 @@ const About = () => {
         </script>
       </Helmet>
 
-      <div className="relative min-h-screen bg-background">
+      <div className="relative min-h-screen bg-background transition-theme">
         <Navigation />
         
         <main className="relative z-10 pt-20">
@@ -85,8 +85,34 @@ const About = () => {
 
           <section className="container mx-auto px-4 py-16 max-w-4xl">
 
+            {/* Zenodo DOI Section */}
+            <Card className="p-8 bg-primary/5 border-primary/20 mb-8 transition-theme">
+              <h2 className="text-2xl font-semibold mb-4">Dataset & Citation</h2>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                <a 
+                  href="https://doi.org/10.5281/zenodo.14584521"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  <img 
+                    src="https://zenodo.org/badge/DOI/10.5281/zenodo.14584521.svg" 
+                    alt="Zenodo DOI Badge"
+                    className="h-5"
+                  />
+                </a>
+                <span className="text-sm text-muted-foreground">CC-BY-4.0 Licensed</span>
+              </div>
+              <p className="text-sm font-mono text-muted-foreground bg-muted/50 p-3 rounded-lg mb-4">
+                DMT Code Project. (2025). DMT Code Visual Symbol Catalogue v1.0 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.14584521
+              </p>
+              <a href="/dataset" className="text-primary hover:underline text-sm font-medium">
+                View full dataset downloads and citation formats →
+              </a>
+            </Card>
+
             {/* Mission Statement */}
-            <Card className="p-8 bg-card border-border mb-8">
+            <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Mission Statement</h2>
               <p className="text-base leading-relaxed">
                 DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Our mission is to create a comprehensive, scientifically rigorous database of these reported phenomena for academic research, pattern analysis, and independent replication studies. We prioritize neutral terminology, harm-reduction ethics, and transparency in all operations.
@@ -94,28 +120,28 @@ const About = () => {
             </Card>
 
             {/* Core Values */}
-            <Card className="p-8 bg-card border-border mb-8">
+            <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Core Values</h2>
               <div className="space-y-4">
-                <div className="p-4 bg-muted/30 rounded-lg">
+                <div className="p-4 bg-muted/30 rounded-lg transition-theme">
                   <h3 className="font-semibold mb-2">Neutral Science</h3>
                   <p className="text-sm text-muted-foreground">
                     We use strictly academic terminology ("discrete visual symbols," "N,N-DMT administration," "650 nm laser exposure") and avoid mystical framing. Data speaks for itself without interpretive overlay.
                   </p>
                 </div>
-                <div className="p-4 bg-muted/30 rounded-lg">
+                <div className="p-4 bg-muted/30 rounded-lg transition-theme">
                   <h3 className="font-semibold mb-2">No Medical Claims</h3>
                   <p className="text-sm text-muted-foreground">
                     This project does not provide medical advice, therapeutic recommendations, or endorsements of N,N-DMT administration. All content for educational and research purposes only.
                   </p>
                 </div>
-                <div className="p-4 bg-muted/30 rounded-lg">
+                <div className="p-4 bg-muted/30 rounded-lg transition-theme">
                   <h3 className="font-semibold mb-2">Harm-Reduction Focus</h3>
                   <p className="text-sm text-muted-foreground">
                     We emphasize safety considerations (ocular safety, psychological screening, legal compliance) and provide balanced analysis of risks. Vulnerable populations (personal/family history of psychosis) should avoid psychedelic substances.
                   </p>
                 </div>
-                <div className="p-4 bg-muted/30 rounded-lg">
+                <div className="p-4 bg-muted/30 rounded-lg transition-theme">
                   <h3 className="font-semibold mb-2">Open Data Commitment</h3>
                   <p className="text-sm text-muted-foreground">
                     All registry submissions released under CC-BY-4.0 license. Full dataset accessible at /data.json for academic research, computational analysis, and independent verification. Transparency enables reproducibility.
@@ -125,7 +151,7 @@ const About = () => {
             </Card>
 
             {/* Team Credentials */}
-            <Card className="p-8 bg-card border-border mb-8">
+            <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Team Credentials</h2>
               <div className="space-y-6">
                 <div>
@@ -158,7 +184,7 @@ const About = () => {
             </Card>
 
             {/* Funding & Transparency */}
-            <Card className="p-8 bg-card border-border mb-8">
+            <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Funding & Transparency</h2>
               <div className="space-y-4 text-base leading-relaxed">
                 <p>
@@ -174,7 +200,7 @@ const About = () => {
             </Card>
 
             {/* Contact & Collaboration */}
-            <Card className="p-8 bg-primary/5 border-primary/20">
+            <Card className="p-8 bg-primary/5 border-primary/20 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Contact & Collaboration</h2>
               <p className="text-base leading-relaxed mb-4">
                 We welcome collaboration with academic institutions, skeptical researchers, and harm-reduction organizations. If you're conducting controlled experiments on 650 nm laser protocol or analyzing registry data, we can provide technical support and dataset access.
@@ -189,21 +215,24 @@ const About = () => {
               </p>
             </Card>
 
-            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
+            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <a href="/critiques" className="text-gold hover:underline font-medium">
+              <div className="grid md:grid-cols-4 gap-4">
+                <a href="/dataset" className="text-primary hover:underline font-medium">
+                  Dataset & DOI →
+                </a>
+                <a href="/critiques" className="text-primary hover:underline font-medium">
                   Scientific Critiques →
                 </a>
-                <a href="/methods" className="text-gold hover:underline font-medium">
+                <a href="/methods" className="text-primary hover:underline font-medium">
                   Research Methods →
                 </a>
-                <a href="/bibliography" className="text-gold hover:underline font-medium">
+                <a href="/bibliography" className="text-primary hover:underline font-medium">
                   Bibliography →
                 </a>
               </div>
               <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-29
+                Last updated: 2025-12-04
               </p>
             </div>
           </section>
