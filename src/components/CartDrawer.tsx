@@ -82,9 +82,9 @@ export const CartDrawer = () => {
   };
 
   const handleCheckout = async () => {
-    // Track checkout start
+    // Track checkout start with full PostHog events
     if (window.posthog) {
-      window.posthog.capture('checkout_started', {
+      window.posthog.capture('bundle_checkout_started', {
         cart_value: totalPrice,
         item_count: totalItems,
         items: items.map(i => ({
@@ -93,7 +93,9 @@ export const CartDrawer = () => {
           quantity: i.quantity,
         })),
         has_bundle: !!bundleInCart,
+        bundle_tier: bundleInCart ? getBundleType(bundleInCart.product.node?.handle || '') : null,
         email_captured: emailCaptured,
+        discount_applied: false,
       });
     }
 

@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.posthog-analytics]
 verify_jwt = false
+
+[functions.upload-shopify-images]
+verify_jwt = false
+
+[functions.bundle-onboarding-email]
+verify_jwt = false
+
+[functions.inventory-sync]
+verify_jwt = false
