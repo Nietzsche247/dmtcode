@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,8 +7,32 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#ff0000" />
+    <meta name="theme-color" content="#050505" />
     <link rel="apple-touch-icon" href="/favicon.png" />
+    
+    <!-- Prevent flash of wrong theme -->
+    <script>
+      (function() {
+        try {
+          const stored = JSON.parse(localStorage.getItem('dmt-theme') || '{}');
+          const modeStored = JSON.parse(localStorage.getItem('dmt-view-mode') || '{}');
+          const mode = modeStored.state?.mode || 'research';
+          
+          // Research mode forces light
+          if (mode === 'research') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#fafafa');
+          } else {
+            const theme = stored.state?.theme || 'system';
+            const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(isDark ? 'dark' : 'light');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#050505' : '#fafafa');
+          }
+        } catch (e) {}
+      })();
+    </script>
     
     <!-- Preload critical resources for performance -->
     <link rel="preload" href="/data.json" as="fetch" type="application/json" crossorigin="anonymous" />

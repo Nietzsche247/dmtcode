@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
 import { ModeToggle } from "./ModeToggle";
+import { ThemeToggle } from "./ThemeToggle";
 import { MegaMenu } from "./MegaMenu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -118,6 +119,7 @@ export const Navigation = () => {
 
             <div className="hidden lg:flex items-center gap-3">
               <ModeToggle />
+              <ThemeToggle />
               <CartDrawer />
               {isAuthenticated ? (
                 <>
@@ -140,6 +142,7 @@ export const Navigation = () => {
             {/* Mobile Menu Button */}
             <div className="flex items-center gap-2 lg:hidden">
               <ModeToggle />
+              <ThemeToggle />
               <CartDrawer />
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
