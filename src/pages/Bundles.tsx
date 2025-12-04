@@ -10,6 +10,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { useModeStore } from '@/stores/modeStore';
 
+// Import bundle images
+import bundleStarterImg from '@/assets/bundle-starter.jpg';
+import bundleGatewayImg from '@/assets/bundle-gateway.jpg';
+import bundleCompleteImg from '@/assets/bundle-complete.jpg';
+import bundleCeremonyImg from '@/assets/bundle-ceremony.jpg';
+
 const bundles = [
   {
     id: 'starter',
@@ -19,6 +25,7 @@ const bundles = [
     originalPrice: 106,
     discount: '20% OFF',
     tier: 'entry',
+    image: bundleStarterImg,
     items: [
       { name: 'Psychedelic Fractal Sticker Pack', value: 12 },
       { name: 'Sacred Geometry Incense Sticks', value: 18 },
@@ -45,6 +52,7 @@ const bundles = [
     discount: '15% OFF',
     tier: 'mid',
     popular: true,
+    image: bundleGatewayImg,
     items: [
       { name: 'iEDM Galaxy Hoodie', value: 625 },
       { name: 'Bon Charge Max Red Light Device', value: 799 },
@@ -70,6 +78,7 @@ const bundles = [
     originalPrice: 2875,
     discount: '20% OFF',
     tier: 'high',
+    image: bundleCompleteImg,
     items: [
       { name: 'MitoMAT 660nm Yoga Mat', value: 1299 },
       { name: 'HigherDOSE Recovery Bundle', value: 899 },
@@ -97,6 +106,7 @@ const bundles = [
     originalPrice: 4375,
     discount: '20% OFF',
     tier: 'premium',
+    image: bundleCeremonyImg,
     items: [
       { name: 'Peyote Way Spirit Walk (3-Day)', value: 2000 },
       { name: 'MitoMAT 660nm Yoga Mat', value: 1299 },
@@ -230,6 +240,16 @@ const Bundles = () => {
                   )}
                   
                   <div className="space-y-6">
+                    {/* Bundle Image */}
+                    <div className="aspect-video rounded-lg overflow-hidden bg-background/50">
+                      <img 
+                        src={bundle.image} 
+                        alt={`${bundle.name} - Research equipment bundle`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    
                     <div>
                       <Badge className={bundle.badgeColor}>{bundle.discount}</Badge>
                       <h2 className="text-2xl font-bold mt-3">{bundle.name}</h2>

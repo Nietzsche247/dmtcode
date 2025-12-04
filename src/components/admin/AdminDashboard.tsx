@@ -10,6 +10,7 @@ import { NullDashboard } from './NullDashboard';
 import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
 import { ProductModeration } from './ProductModeration';
+import { BundleAnalytics } from './BundleAnalytics';
 
 export const AdminDashboard = () => {
   return (
@@ -25,10 +26,11 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="symbols" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-10">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-11">
             <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="bundles">📊 Bundles</TabsTrigger>
             <TabsTrigger value="nulls">Null Reports</TabsTrigger>
             <TabsTrigger value="scraper">Scraper</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
@@ -48,6 +50,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="products" className="space-y-4">
             <ProductModeration />
+          </TabsContent>
+
+          <TabsContent value="bundles" className="space-y-4">
+            <BundleAnalytics />
           </TabsContent>
 
           <TabsContent value="nulls" className="space-y-4">
