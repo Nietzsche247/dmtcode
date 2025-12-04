@@ -6,18 +6,32 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ShoppingCart, Package, BookOpen, Sparkles, ArrowLeft, Microscope } from 'lucide-react';
-import { useCartStore } from '@/stores/cartStore';
+import { Check, ShoppingCart, Package, BookOpen, Sparkles, ArrowLeft, Microscope, Loader2 } from 'lucide-react';
+import { useCartStore, CartItem } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
-import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
+import { storefrontApiRequest, ShopifyProduct } from '@/lib/shopify';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
+
+// Import generated bundle images
+import bundleStarterImg from '@/assets/bundle-starter.jpg';
+import bundleGatewayImg from '@/assets/bundle-gateway.jpg';
+import bundleCompleteImg from '@/assets/bundle-complete.jpg';
+import bundleCeremonyImg from '@/assets/bundle-ceremony.jpg';
 
 declare global {
   interface Window {
     posthog?: any;
   }
 }
+
+// Shopify handle to bundle mapping
+const bundleShopifyHandles: Record<string, string> = {
+  starter: 'fractal-starter-kit',
+  gateway: 'gateway-research-kit',
+  complete: 'complete-symbol-kit',
+  ceremony: 'extended-ceremony-package',
+};
 
 const bundleData = {
   starter: {
@@ -42,7 +56,7 @@ const bundleData = {
       'Grounding stone for integration',
       'Perfect starting point for new researchers',
     ],
-    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1200',
+    image: bundleStarterImg,
     color: 'from-emerald-500/20 to-emerald-600/10',
     borderColor: 'border-emerald-500/30',
     badgeColor: 'bg-emerald-500/20 text-emerald-400',
@@ -71,7 +85,7 @@ const bundleData = {
       'Free protocol guide access',
       'Priority community support',
     ],
-    image: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=1200',
+    image: bundleGatewayImg,
     color: 'from-primary/30 to-primary/10',
     borderColor: 'border-primary/50',
     badgeColor: 'bg-primary/20 text-primary',
@@ -101,7 +115,7 @@ const bundleData = {
       'Priority community access',
       'Direct researcher support',
     ],
-    image: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=1200',
+    image: bundleCompleteImg,
     color: 'from-amber-500/20 to-amber-600/10',
     borderColor: 'border-amber-500/30',
     badgeColor: 'bg-amber-500/20 text-amber-400',
@@ -131,7 +145,7 @@ const bundleData = {
       'Direct researcher support',
       '1-on-1 integration coaching',
     ],
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200',
+    image: bundleCeremonyImg,
     color: 'from-purple-500/20 to-purple-600/10',
     borderColor: 'border-purple-500/30',
     badgeColor: 'bg-purple-500/20 text-purple-400',
@@ -139,15 +153,109 @@ const bundleData = {
   },
 };
 
+const BUNDLE_PRODUCT_QUERY = `
+  query GetProductByHandle($handle: String!) {
+    productByHandle(handle: $handle) {
+      id
+      title
+      description
+      handle
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 5) {
+        edges {
+          node {
+            url
+            altText
+          }
+        }
+      }
+      variants(first: 10) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
+      options {
+        name
+        values
+      }
+    }
+  }
+`;
+
+const RELATED_PRODUCTS_QUERY = `
+  query GetProducts($first: Int!) {
+    products(first: $first) {
+      edges {
+        node {
+          id
+          title
+          description
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 const BundleDetail = () => {
   const { bundleId } = useParams<{ bundleId: string }>();
   const navigate = useNavigate();
   const meta = useDynamicMeta('bundles');
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [shopifyProduct, setShopifyProduct] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<ShopifyProduct[]>([]);
   const addItem = useCartStore(state => state.addItem);
 
   const bundle = bundleId ? bundleData[bundleId as keyof typeof bundleData] : null;
+  const shopifyHandle = bundleId ? bundleShopifyHandles[bundleId] : null;
 
   useEffect(() => {
     // Track bundle view
@@ -160,10 +268,23 @@ const BundleDetail = () => {
       });
     }
 
-    // Fetch related products from Shopify
+    // Fetch Shopify bundle product
+    const fetchBundleProduct = async () => {
+      if (!shopifyHandle) return;
+      try {
+        const data = await storefrontApiRequest(BUNDLE_PRODUCT_QUERY, { handle: shopifyHandle });
+        if (data?.data?.productByHandle) {
+          setShopifyProduct(data.data.productByHandle);
+        }
+      } catch (err) {
+        console.error('Error fetching bundle product:', err);
+      }
+    };
+
+    // Fetch related products
     const fetchRelatedProducts = async () => {
       try {
-        const data = await storefrontApiRequest(STOREFRONT_PRODUCTS_QUERY, { first: 4 });
+        const data = await storefrontApiRequest(RELATED_PRODUCTS_QUERY, { first: 4 });
         if (data?.data?.products?.edges) {
           setRelatedProducts(data.data.products.edges.slice(0, 4));
         }
@@ -172,8 +293,9 @@ const BundleDetail = () => {
       }
     };
 
+    fetchBundleProduct();
     fetchRelatedProducts();
-  }, [bundle]);
+  }, [bundle, shopifyHandle]);
 
   if (!bundle) {
     return (
@@ -187,6 +309,8 @@ const BundleDetail = () => {
   }
 
   const handleAddToCart = () => {
+    setIsLoading(true);
+    
     // Track add to cart
     if (window.posthog) {
       window.posthog.capture('bundle_added_to_cart', {
@@ -194,15 +318,35 @@ const BundleDetail = () => {
         bundle_name: bundle.name,
         bundle_price: bundle.price,
         bundle_tier: bundle.tier,
+        shopify_product_id: shopifyProduct?.id || null,
       });
     }
 
-    // Navigate to waitlist with bundle info (since bundles aren't in Shopify yet)
-    navigate(`/waitlist?utm_source=bundle_detail&utm_bundle=${encodeURIComponent(bundle.name)}&utm_tier=${bundle.id}`);
+    // If we have the Shopify product, add to cart
+    if (shopifyProduct?.variants?.edges?.[0]?.node) {
+      const variant = shopifyProduct.variants.edges[0].node;
+      const cartItem: CartItem = {
+        product: { node: shopifyProduct },
+        variantId: variant.id,
+        variantTitle: variant.title,
+        price: variant.price,
+        quantity: 1,
+        selectedOptions: variant.selectedOptions || [],
+      };
+      
+      addItem(cartItem);
+      toast.success('Bundle added to cart!', {
+        description: 'Proceed to checkout to complete your purchase.',
+      });
+    } else {
+      // Fallback to waitlist if product not found
+      navigate(`/waitlist?utm_source=bundle_detail&utm_bundle=${encodeURIComponent(bundle.name)}&utm_tier=${bundle.id}`);
+      toast.success('Bundle reserved!', {
+        description: 'Join the waitlist to secure your bundle.',
+      });
+    }
     
-    toast.success('Bundle reserved!', {
-      description: 'Join the waitlist to secure your bundle.',
-    });
+    setIsLoading(false);
   };
 
   return (
@@ -326,9 +470,19 @@ const BundleDetail = () => {
                     size="lg" 
                     className="flex-1 h-14 rounded-full btn-lickable border-beam text-lg"
                     onClick={handleAddToCart}
+                    disabled={isLoading}
                   >
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Reserve Bundle
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-5 h-5 mr-2" />
+                        {shopifyProduct ? 'Add to Cart' : 'Reserve Bundle'}
+                      </>
+                    )}
                   </Button>
                   <Button 
                     size="lg" 
