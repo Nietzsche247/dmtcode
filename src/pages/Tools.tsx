@@ -15,6 +15,7 @@ import { ShoppingCart, Search, Plus, AlertTriangle, BookOpen, Package } from 'lu
 import { toast } from 'sonner';
 import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
 import { getPlaceholderImage } from '@/utils/placeholderImage';
+import { getProductImageWithFallback } from '@/utils/productImages';
 import { supabase } from '@/integrations/supabase/client';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -345,7 +346,7 @@ const Tools = () => {
                         const description = product.node.description || '';
                         const handle = product.node.handle || product.node.id;
                         
-                        const imageUrl = image?.url || getPlaceholderImage(title, 'product');
+                        const imageUrl = getProductImageWithFallback(title, image?.url, getPlaceholderImage);
 
                         return (
                           <Card 
@@ -416,7 +417,7 @@ const Tools = () => {
                       
                       {/* Affiliate-only products */}
                       {filteredAffiliateProducts.map((product) => {
-                        const imageUrl = product.image_url || getPlaceholderImage(product.title, product.category);
+                        const imageUrl = getProductImageWithFallback(product.title, product.image_url, getPlaceholderImage);
                         
                         return (
                           <Card 
