@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.bundle-purchase-emails]
 verify_jwt = false
+
+[functions.posthog-analytics]
+verify_jwt = false
