@@ -349,6 +349,9 @@ const BundleDetail = () => {
     setIsLoading(false);
   };
 
+  // Dynamic OG image URL
+  const ogImageUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/og-image?bundle=${bundle.id}`;
+
   return (
     <>
       <Helmet>
@@ -357,13 +360,15 @@ const BundleDetail = () => {
         <link rel="canonical" href={`https://dmtcode.com/bundles/${bundle.id}`} />
         <meta property="og:title" content={`${bundle.name} - $${bundle.price}`} />
         <meta property="og:description" content={bundle.description} />
-        <meta property="og:image" content={bundle.image} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={`https://dmtcode.com/bundles/${bundle.id}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={bundle.name} />
         <meta name="twitter:description" content={bundle.description} />
-        <meta name="twitter:image" content={bundle.image} />
+        <meta name="twitter:image" content={ogImageUrl} />
         
         <script type="application/ld+json">
           {JSON.stringify({
@@ -371,7 +376,7 @@ const BundleDetail = () => {
             "@type": "Product",
             "name": bundle.name,
             "description": bundle.description,
-            "image": bundle.image,
+            "image": ogImageUrl,
             "offers": {
               "@type": "Offer",
               "price": bundle.price,

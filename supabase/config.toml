@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.inventory-sync]
 verify_jwt = false
+
+[functions.og-image]
+verify_jwt = false
