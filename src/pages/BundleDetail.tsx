@@ -538,9 +538,10 @@ const BundleDetail = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {bundle.items.map((item, i) => {
                 const productInfo = productSlugMap[item.sku];
-                const linkUrl = productInfo 
+                const basePath = productInfo 
                   ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/products/${productInfo.slug}`)
                   : `/tools`;
+                const linkUrl = `${basePath}?from=${bundle.id}`;
                 
                 return (
                   <Link 

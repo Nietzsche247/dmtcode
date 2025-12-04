@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { Navigation } from "@/components/Navigation";
@@ -27,8 +27,12 @@ declare global {
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const addItem = useCartStore(state => state.addItem);
+  
+  // Check if coming from a bundle
+  const fromBundle = searchParams.get('from');
   
   const [product, setProduct] = useState<any>(null);
   const [ratings, setRatings] = useState<any[]>([]);
@@ -457,15 +461,46 @@ const ProductDetail = () => {
 
       <main className="min-h-screen pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Back to Bundle link when coming from bundle context */}
+          {fromBundle && (
+            <Link 
+              to={`/bundles/${fromBundle}`}
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Back to {fromBundle === 'starter' ? 'Fractal Starter Kit' : 
+                       fromBundle === 'gateway' ? 'Gateway Research Kit' :
+                       fromBundle === 'complete' ? 'Complete Symbol Kit' :
+                       fromBundle === 'ceremony' ? 'Extended Research Package' : 'Bundle'}
+            </Link>
+          )}
+
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="/">Home</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/tools">Tools</BreadcrumbLink>
-              </BreadcrumbItem>
+              {fromBundle ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/bundles">Bundles</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/bundles/${fromBundle}`}>
+                      {fromBundle === 'starter' ? 'Starter Kit' : 
+                       fromBundle === 'gateway' ? 'Gateway Kit' :
+                       fromBundle === 'complete' ? 'Complete Kit' :
+                       fromBundle === 'ceremony' ? 'Extended Package' : 'Bundle'}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/tools">Tools</BreadcrumbLink>
+                </BreadcrumbItem>
+              )}
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbPage>{product.title}</BreadcrumbPage>
