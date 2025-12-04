@@ -548,10 +548,42 @@ const ProductDetail = () => {
             </TabsContent>
 
             <TabsContent value="notes" className="space-y-4">
-              <Card className="p-6">
-                <p className="text-muted-foreground">
-                  Community notes coming soon. Check back later!
+              <Card className="p-6 space-y-4">
+                <h3 className="text-lg font-semibold">Related Resources</h3>
+                <div className="grid gap-4">
+                  <button 
+                    onClick={() => navigate('/protocol-guide')}
+                    className="text-left p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  >
+                    <p className="font-medium text-primary">650nm Protocol Guide →</p>
+                    <p className="text-sm text-muted-foreground">Learn how to use this equipment with the standard protocol</p>
+                  </button>
+                  <button 
+                    onClick={() => navigate('/registry')}
+                    className="text-left p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  >
+                    <p className="font-medium text-primary">Symbol Registry →</p>
+                    <p className="text-sm text-muted-foreground">Document your observations and compare with 3,000+ sessions</p>
+                  </button>
+                  <button 
+                    onClick={() => navigate('/evidence-map')}
+                    className="text-left p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  >
+                    <p className="font-medium text-primary">Evidence Map →</p>
+                    <p className="text-sm text-muted-foreground">Review research papers and counter-arguments</p>
+                  </button>
+                </div>
+              </Card>
+              
+              {/* Complete Kit Bundle CTA */}
+              <Card className="p-6 border-primary/30 bg-primary/5">
+                <h3 className="text-lg font-semibold mb-2">Complete Research Kit</h3>
+                <p className="text-muted-foreground mb-4">
+                  Get everything you need for the 650nm protocol in one bundle. Includes laser, diffraction grating, and documentation tools.
                 </p>
+                <Button onClick={() => navigate('/tools')} variant="outline" className="border-primary/50">
+                  View Bundles →
+                </Button>
               </Card>
             </TabsContent>
           </Tabs>
