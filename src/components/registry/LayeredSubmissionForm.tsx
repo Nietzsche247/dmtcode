@@ -58,6 +58,7 @@ interface FormData {
   sizeImpression: string;
   customTags: string;
   description: string;
+  orcid: string;
 }
 
 export const LayeredSubmissionForm = () => {
@@ -99,7 +100,8 @@ export const LayeredSubmissionForm = () => {
     movements: [],
     sizeImpression: '',
     customTags: '',
-    description: ''
+    description: '',
+    orcid: ''
   });
 
   // Primacy contamination check (after formData is defined)
@@ -230,7 +232,8 @@ export const LayeredSubmissionForm = () => {
           symmetry: formData.symmetry || null,
           motif_tags: tags,
           free_text_notes: formData.description || null,
-          drawing_duration_seconds: drawingDuration
+          drawing_duration_seconds: drawingDuration,
+          orcid: formData.orcid || null
         })
         .select()
         .single();
@@ -412,7 +415,8 @@ export const LayeredSubmissionForm = () => {
       movements: [],
       sizeImpression: '',
       customTags: '',
-      description: ''
+      description: '',
+      orcid: ''
     });
     setStep(0);
     setDrawingStartTime(null);
@@ -1095,6 +1099,29 @@ export const LayeredSubmissionForm = () => {
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
+            </div>
+
+            <div>
+              <Label htmlFor="orcid" className="text-base mb-3 block flex items-center gap-2">
+                ORCID (optional)
+                <a href="https://orcid.org" target="_blank" rel="noopener noreferrer" className="inline-flex">
+                  <img 
+                    src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" 
+                    alt="ORCID" 
+                    className="w-4 h-4"
+                  />
+                </a>
+              </Label>
+              <Input 
+                id="orcid"
+                placeholder="e.g., 0000-0002-1825-0097"
+                value={formData.orcid}
+                onChange={(e) => setFormData(prev => ({ ...prev, orcid: e.target.value }))}
+                pattern="\d{4}-\d{4}-\d{4}-\d{3}[\dX]"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Link your academic identity for attribution in published datasets
+              </p>
               
               {/* Primacy contamination warning */}
               {formData.primingExposure === 'priming_none' && primacyCheck.isContaminated && (

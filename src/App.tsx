@@ -36,6 +36,10 @@ import Bundles from "./pages/Bundles";
 import Dataset from "./pages/Dataset";
 // Lazy load BundleDetail
 const BundleDetail = lazy(() => import("./pages/BundleDetail"));
+// Lazy load Analysis page
+const Analysis = lazy(() => import("./pages/Analysis"));
+// Lazy load API symbols page
+const ApiSymbols = lazy(() => import("./pages/ApiSymbols"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
@@ -114,6 +118,18 @@ const App = () => (
                 <BundleDetail />
               </Suspense>
             </ErrorBoundary>
+          } />
+          <Route path="/analysis" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Analysis />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/api/symbols" element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <ApiSymbols />
+            </Suspense>
           } />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />

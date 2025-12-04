@@ -31,6 +31,7 @@ interface UserSymbol {
   confirmation_count: number;
   motif_tags: string[];
   created_at: string;
+  orcid?: string;
 }
 
 const MySymbols = () => {
@@ -101,7 +102,7 @@ const MySymbols = () => {
   const loadUserSymbols = async (uid: string) => {
     const { data } = await supabase
       .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags, created_at')
+      .select('id, image_data, confirmation_count, motif_tags, created_at, orcid')
       .eq('user_id', uid)
       .order('created_at', { ascending: false });
     
@@ -269,6 +270,21 @@ const MySymbols = () => {
                       <p className="text-xs text-muted-foreground">
                         {new Date(symbol.created_at).toLocaleDateString()}
                       </p>
+                      {symbol.orcid && (
+                        <a 
+                          href={`https://orcid.org/${symbol.orcid}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
+                        >
+                          <img 
+                            src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" 
+                            alt="ORCID" 
+                            className="w-3 h-3"
+                          />
+                          {symbol.orcid}
+                        </a>
+                      )}
                     </div>
                     {symbol.motif_tags && symbol.motif_tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-center">
