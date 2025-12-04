@@ -290,4 +290,47 @@
   .animate-laser-reveal {
     animation: laser-reveal 8s ease-in-out forwards;
   }
+
+  /* Fade slide up animation - Meng To cards */
+  @keyframes fade-slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-slide-up {
+    animation: fade-slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* Fade in animation */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
+  /* Inter Black for product titles - Meng To 2025 */
+  .font-black {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  /* Touch target minimum size */
+  .touch-manipulation {
+    touch-action: manipulation;
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

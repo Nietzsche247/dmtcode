@@ -3,18 +3,25 @@ import { Footer } from '@/components/Footer';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Package, ArrowRight, BookOpen, Microscope, Sparkles } from 'lucide-react';
+import { Package, BookOpen, Microscope, Sparkles } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { useModeStore } from '@/stores/modeStore';
+import { BundleCard } from '@/components/BundleCard';
+import { LaserDivider } from '@/components/LaserDivider';
 
 // Import bundle images
 import bundleStarterImg from '@/assets/bundle-starter.jpg';
 import bundleGatewayImg from '@/assets/bundle-gateway.jpg';
 import bundleCompleteImg from '@/assets/bundle-complete.jpg';
 import bundleCeremonyImg from '@/assets/bundle-ceremony.jpg';
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 const bundles = [
   {
@@ -134,6 +141,16 @@ const Bundles = () => {
   const { mode } = useModeStore();
 
   const handleBundleClick = (bundleId: string) => {
+    // Track bundle view on click
+    const bundle = bundles.find(b => b.id === bundleId);
+    if (window.posthog && bundle) {
+      window.posthog.capture('bundle_viewed', {
+        bundle_id: bundleId,
+        bundle_name: bundle.name,
+        bundle_price: bundle.price,
+        bundle_tier: bundle.tier,
+      });
+    }
     navigate(`/bundles/${bundleId}`);
   };
 
@@ -225,92 +242,37 @@ const Bundles = () => {
             </div>
           </section>
 
-          {/* Bundles Grid */}
           <section className="container mx-auto px-4 py-12 max-w-7xl">
             <div className="grid md:grid-cols-2 gap-8">
-              {bundles.map((bundle) => (
-                <Card 
+              {bundles.map((bundle, index) => (
+                <div 
                   key={bundle.id}
-                  className={`relative p-8 bg-gradient-to-br ${bundle.color} ${bundle.borderColor} border-2 hover:scale-[1.02] transition-transform`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="opacity-0 animate-fade-slide-up"
                 >
-                  {bundle.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                      Most Popular
-                    </Badge>
-                  )}
-                  
-                  <div className="space-y-6">
-                    {/* Bundle Image */}
-                    <div className="aspect-video rounded-lg overflow-hidden bg-background/50">
-                      <img 
-                        src={bundle.image} 
-                        alt={`${bundle.name} - Research equipment bundle`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Badge className={bundle.badgeColor}>{bundle.discount}</Badge>
-                      <h2 className="text-2xl font-bold mt-3">{bundle.name}</h2>
-                      <p className="text-muted-foreground">{bundle.tagline}</p>
-                    </div>
-
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-4xl font-black text-primary">${bundle.price}</span>
-                      <span className="text-lg text-muted-foreground line-through">${bundle.originalPrice}</span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Includes:</p>
-                      <ul className="space-y-2">
-                        {bundle.items.map((item, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm">
-                            <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                            <span>{item.name}</span>
-                            <span className="text-muted-foreground ml-auto">${item.value}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="space-y-2 pt-4 border-t border-border/50">
-                      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Features:</p>
-                      <ul className="space-y-1">
-                        {bundle.features.map((feature, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Check className="w-3 h-3 text-primary flex-shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <Button 
-                      className="w-full h-12 rounded-full btn-lickable border-beam group touch-manipulation"
-                      onClick={() => handleBundleClick(bundle.id)}
-                    >
-                      {bundle.cta}
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </div>
-                </Card>
+                  <BundleCard
+                    {...bundle}
+                    onClick={handleBundleClick}
+                  />
+                </div>
               ))}
             </div>
           </section>
 
+          <LaserDivider />
+
           {/* Protocol Link */}
           <section className="container mx-auto px-4 py-16 max-w-4xl">
-            <Card className="p-8 bg-card/50 border-border text-center">
+            <div className="p-8 bg-card/50 border border-border rounded-2xl text-center">
               <BookOpen className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-3">Need Help Choosing?</h2>
-              <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              <h2 className="text-2xl font-black mb-3 tracking-tight">Need Help Choosing?</h2>
+              <p className="text-muted-foreground font-light mb-6 max-w-xl mx-auto">
                 Read our comprehensive protocol guide to understand which equipment is essential for your research goals.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   variant="outline" 
-                  className="rounded-full"
+                  className="rounded-full touch-manipulation min-h-[44px]"
                   onClick={() => navigate('/protocol-guide')}
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
@@ -318,13 +280,13 @@ const Bundles = () => {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="rounded-full"
+                  className="rounded-full touch-manipulation min-h-[44px]"
                   onClick={() => navigate('/evidence-map')}
                 >
                   View Research Evidence
                 </Button>
               </div>
-            </Card>
+            </div>
           </section>
         </main>
 
