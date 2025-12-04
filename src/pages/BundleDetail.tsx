@@ -534,7 +534,9 @@ const BundleDetail = () => {
 
           {/* Bundle Contents */}
           <section className="container mx-auto px-4 max-w-6xl py-16">
-            <h2 className="text-2xl md:text-3xl font-black mb-8 uppercase tracking-tight">Bundle Contents</h2>
+            <h2 className="text-2xl md:text-3xl font-black mb-8 uppercase tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}>
+              Bundle Contents
+            </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {bundle.items.map((item, i) => {
                 const productInfo = productSlugMap[item.sku];
@@ -547,20 +549,49 @@ const BundleDetail = () => {
                   <Link 
                     key={i} 
                     to={linkUrl}
-                    className="group"
+                    className="group block"
+                    onClick={() => {
+                      if (window.posthog) {
+                        window.posthog.capture('bundle_item_clicked', {
+                          bundle_id: bundle.id,
+                          bundle_name: bundle.name,
+                          item_name: item.name,
+                          item_sku: item.sku,
+                          item_value: item.value,
+                        });
+                      }
+                    }}
                   >
-                    <Card className="p-4 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer group-hover:scale-[1.02] min-h-[60px] flex items-center">
+                    <Card className="relative p-4 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer group-hover:scale-[1.05] min-h-[60px] flex items-center overflow-hidden">
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <Package className="w-5 h-5 text-primary flex-shrink-0" />
-                          <span className="font-black text-sm uppercase tracking-tight group-hover:text-primary transition-colors truncate">
+                          <span 
+                            className="text-sm uppercase tracking-tight group-hover:text-primary transition-colors truncate"
+                            style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 900 }}
+                          >
                             {item.name}
                           </span>
                         </div>
-                        <span className="text-muted-foreground font-light text-sm ml-2 flex-shrink-0">${item.value}</span>
+                        <span 
+                          className="text-muted-foreground text-sm ml-2 flex-shrink-0"
+                          style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
+                        >
+                          ${item.value}
+                        </span>
                       </div>
-                      {/* Glowing beam underline on hover */}
-                      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary/0 group-hover:bg-primary transition-all duration-300 group-hover:shadow-[0_0_8px_hsl(var(--primary))]" />
+                      {/* 1px #C41E3A glowing beam underline on hover */}
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 h-[1px] bg-transparent group-hover:bg-[#C41E3A] transition-all duration-300"
+                        style={{ boxShadow: 'none' }}
+                      />
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ 
+                          backgroundColor: '#C41E3A',
+                          boxShadow: '0 0 8px #C41E3A, 0 0 12px #C41E3A'
+                        }}
+                      />
                     </Card>
                   </Link>
                 );
