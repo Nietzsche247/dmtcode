@@ -75,9 +75,27 @@ const Woo = () => {
   return (
     <>
       <Helmet>
-        <title>Mysticism & Symbolism Store | DMT Code</title>
+        <title>Mysticism & Symbolism Store | DMT Code Community</title>
         <meta name="description" content="Explore Jewish mysticism symbols and protective amulets. Collection includes Hamsa, Star of David, Chai, Pomegranate, Evil Eye, Mezuzah, and Kabbalah Tree of Life items." />
-        <link rel="canonical" href="https://dmtcode.com/woo" />
+        <link rel="canonical" href="https://dmtcode.com/community/woo" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Mysticism & Symbolism Store",
+            "description": "Jewish mysticism symbols and protective amulets collection",
+            "url": "https://dmtcode.com/community/woo",
+            "mainEntity": {
+              "@type": "ItemList",
+              "itemListElement": products.map((p, i) => ({
+                "@type": "Product",
+                "position": i + 1,
+                "name": p.node.title,
+                "url": `https://dmtcode.com/products/${encodeURIComponent(p.node.id)}`
+              }))
+            }
+          })}
+        </script>
       </Helmet>
 
       <ParticleBackground />

@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { Quote } from 'lucide-react';
+import { useModeStore } from '@/stores/modeStore';
 
 const testimonials = [
   {
@@ -27,6 +28,7 @@ const testimonials = [
 
 export const TestimonialsCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { mode } = useModeStore();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,6 +36,11 @@ export const TestimonialsCarousel = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Only show testimonials in Explorer mode
+  if (mode === 'research') {
+    return null;
+  }
 
   return (
     <section className="relative py-24 px-4 border-t border-border/30">

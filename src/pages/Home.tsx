@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
 import { ArrowRight, Database, Users, Target, FileText, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useModeStore } from '@/stores/modeStore';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -38,6 +39,7 @@ const AnimatedSection = ({ children, className = '' }: { children: React.ReactNo
 
 const Home = () => {
   const navigate = useNavigate();
+  const { mode } = useModeStore();
 
   return (
     <>
@@ -158,6 +160,7 @@ const Home = () => {
             </AnimatedSection>
           </section>
           
+          {/* Testimonials - handles its own mode visibility */}
           <TestimonialsCarousel />
           <EmailCapture />
           

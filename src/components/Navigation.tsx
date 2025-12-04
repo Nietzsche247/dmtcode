@@ -1,20 +1,29 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "./NavLink";
 import { CartDrawer } from "./CartDrawer";
 import { useCartStore } from "@/stores/cartStore";
+import { useModeStore } from "@/stores/modeStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
+import { ModeToggle } from "./ModeToggle";
+import { MegaMenu } from "./MegaMenu";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
+  const { mode } = useModeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -56,16 +65,30 @@ export const Navigation = () => {
   const handleNavigation = (path: string) => {
     navigate(path);
     setIsOpen(false);
+    setOpenSection(null);
   };
 
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/research', label: 'Research' },
-    { path: '/tools', label: 'Tools' },
-    { path: '/registry', label: 'Registry' },
-    { path: '/events', label: 'Events' },
-    { path: '/evidence-map', label: 'Evidence' },
-    { path: '/about', label: 'About' },
+  const researchItems = [
+    { path: '/registry', label: 'Symbol Registry' },
+    { path: '/evidence-map', label: 'Evidence Map' },
+    { path: '/events', label: 'Clinical Trials' },
+    { path: '/bibliography', label: 'Bibliography' },
+    { path: '/methods', label: 'Methods' },
+    { path: '/critiques', label: 'Critiques' },
+  ];
+
+  const explorerItems = [
+    { path: '/events', label: 'Events & Retreats' },
+    { path: '/tools', label: 'Tools & Equipment' },
+    { path: '/leaderboard', label: 'Community' },
+    ...(mode === 'explorer' ? [{ path: '/community/woo', label: 'Mysticism Store' }] : []),
+  ];
+
+  const resourceItems = [
+    { path: '/protocol-guide', label: 'Protocol Guide' },
+    { path: '/faq', label: 'FAQ' },
+    { path: '/glossary', label: 'Glossary' },
+    { path: '/null-reports', label: 'Null Reports' },
   ];
 
   return (
@@ -79,7 +102,7 @@ export const Navigation = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-4 lg:gap-8">
               {/* Logo */}
               <button
                 onClick={() => handleNavigation("/")}
@@ -89,25 +112,12 @@ export const Navigation = () => {
                 <Logo size={isMobile ? "sm" : "md"} />
               </button>
               
-              {/* Desktop nav links */}
-              <div className="hidden md:flex items-center gap-1">
-                {navItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigation(item.path)}
-                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      location.pathname === item.path
-                        ? 'text-primary bg-primary/10'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+              {/* Desktop Mega Menu */}
+              <MegaMenu />
             </div>
 
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-3">
+              <ModeToggle />
               <CartDrawer />
               {isAuthenticated ? (
                 <>
@@ -127,7 +137,10 @@ export const Navigation = () => {
               )}
             </div>
 
-            <div className="md:hidden">
+            {/* Mobile Menu Button */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <ModeToggle />
+              <CartDrawer />
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className="text-foreground hover:text-primary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -142,37 +155,102 @@ export const Navigation = () => {
 
         {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden bg-background/95 backdrop-blur-xl border-t border-border/50">
+          <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 max-h-[80vh] overflow-y-auto">
             <div className="px-4 pt-2 pb-4 space-y-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => handleNavigation(item.path)}
-                  className={`block w-full text-left px-4 py-3 min-h-[44px] min-w-[44px] text-base rounded-lg transition-colors ${
-                    location.pathname === item.path
-                      ? 'text-primary bg-primary/10'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-              {/* Primary CTAs at end of group */}
-              <div className="pt-4 border-t border-border/50 mt-4 space-y-2">
-                <Button 
-                  onClick={() => handleNavigation('/registry')} 
-                  className="w-full rounded-full min-h-[44px] btn-lickable border-beam"
-                >
-                  Browse Registry
-                </Button>
-                <Button 
-                  onClick={() => handleNavigation('/tools')} 
-                  variant="outline"
-                  className="w-full rounded-full min-h-[44px]"
-                >
-                  View Tools
-                </Button>
-              </div>
+              {/* Home */}
+              <button
+                onClick={() => handleNavigation('/')}
+                className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                  location.pathname === '/'
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                Home
+              </button>
+
+              {/* Research Section */}
+              <Collapsible open={openSection === 'research'} onOpenChange={() => setOpenSection(openSection === 'research' ? null : 'research')}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
+                  <span>Research</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'research' ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pl-4 space-y-1">
+                  {researchItems.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
+                        location.pathname === item.path
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Explorer Section */}
+              <Collapsible open={openSection === 'explorer'} onOpenChange={() => setOpenSection(openSection === 'explorer' ? null : 'explorer')}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
+                  <span>Explorer</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'explorer' ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pl-4 space-y-1">
+                  {explorerItems.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
+                        location.pathname === item.path
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Resources Section */}
+              <Collapsible open={openSection === 'resources'} onOpenChange={() => setOpenSection(openSection === 'resources' ? null : 'resources')}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
+                  <span>Resources</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'resources' ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pl-4 space-y-1">
+                  {resourceItems.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
+                        location.pathname === item.path
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* About */}
+              <button
+                onClick={() => handleNavigation('/about')}
+                className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                  location.pathname === '/about'
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                About
+              </button>
+
+              {/* Auth Section */}
               <div className="pt-4 border-t border-border/50 mt-4">
                 {isAuthenticated ? (
                   <>

@@ -37,10 +37,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dmtcode.com/woo</loc>
-    <lastmod>2025-11-30</lastmod>
+    <loc>https://dmtcode.com/community/woo</loc>
+    <lastmod>2025-12-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/events</loc>
+    <lastmod>2025-12-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/my-symbols</loc>

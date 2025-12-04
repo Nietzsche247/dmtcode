@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useModeStore } from '@/stores/modeStore';
 
 interface Particle {
   id: number;
@@ -13,8 +14,15 @@ interface Particle {
 
 export const ParticleBackground = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
+  const { mode } = useModeStore();
 
   useEffect(() => {
+    // Only generate particles in Explorer mode
+    if (mode === 'research') {
+      setParticles([]);
+      return;
+    }
+    
     // Generate 30 particles for performance
     const newParticles: Particle[] = Array.from({ length: 30 }, (_, i) => ({
       id: i,
@@ -27,7 +35,12 @@ export const ParticleBackground = () => {
       ty: (Math.random() - 0.5) * 200,
     }));
     setParticles(newParticles);
-  }, []);
+  }, [mode]);
+
+  // Research mode: clean, minimal background
+  if (mode === 'research') {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
