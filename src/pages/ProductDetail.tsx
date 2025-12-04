@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { getPlaceholderImage } from "@/utils/placeholderImage";
 import { getBundleItem } from "@/data/bundleItems";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { RelatedBundleProducts } from "@/components/RelatedBundleProducts";
+import { RelatedBundleProducts, CompleteBundleUpsell } from "@/components/RelatedBundleProducts";
 
 declare global {
   interface Window {
@@ -572,12 +572,14 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* Related products from same bundle */}
-          {fromBundle && (
+          {/* Related products from same bundle OR Complete the Bundle upsell */}
+          {fromBundle ? (
             <RelatedBundleProducts 
               bundleId={fromBundle} 
               currentProductSlug={id} 
             />
+          ) : id && (
+            <CompleteBundleUpsell currentProductSlug={id} />
           )}
 
           <Tabs defaultValue="description" className="w-full">
