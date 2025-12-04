@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.scrape-all]
 verify_jwt = false
+
+[functions.bundle-purchase-emails]
+verify_jwt = false
