@@ -539,7 +539,7 @@ const BundleDetail = () => {
               {bundle.items.map((item, i) => {
                 const productInfo = productSlugMap[item.sku];
                 const linkUrl = productInfo 
-                  ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/tools#${productInfo.slug}`)
+                  ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/products/${productInfo.slug}`)
                   : `/tools`;
                 
                 return (
