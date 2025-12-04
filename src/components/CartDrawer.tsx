@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -9,9 +11,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, Mail } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { BundleUpsell } from "./BundleUpsell";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 declare global {
   interface Window {
@@ -19,8 +23,20 @@ declare global {
   }
 }
 
+// Bundle SKU prefixes to detect bundle purchases
+const BUNDLE_SKU_PREFIXES = ['BUNDLE-STARTER', 'BUNDLE-GATEWAY', 'BUNDLE-COMPLETE', 'BUNDLE-CEREMONY'];
+const BUNDLE_TYPE_MAP: Record<string, 'starter' | 'gateway' | 'complete' | 'ceremony'> = {
+  'fractal-starter-kit': 'starter',
+  'gateway-research-kit': 'gateway',
+  'complete-symbol-kit': 'complete',
+  'extended-ceremony-package': 'ceremony',
+};
+
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [emailCaptured, setEmailCaptured] = useState(false);
   const { 
     items, 
     isLoading, 
@@ -31,6 +47,39 @@ export const CartDrawer = () => {
   
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
+
+  // Check if cart contains any bundles
+  const bundleInCart = items.find(item => {
+    const handle = item.product.node?.handle || '';
+    return Object.keys(BUNDLE_TYPE_MAP).includes(handle);
+  });
+
+  const getBundleType = (handle: string): 'starter' | 'gateway' | 'complete' | 'ceremony' | null => {
+    return BUNDLE_TYPE_MAP[handle] || null;
+  };
+
+  const triggerEmailSequence = async (bundleType: 'starter' | 'gateway' | 'complete' | 'ceremony', orderId: string) => {
+    if (!email) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('bundle-purchase-emails', {
+        body: {
+          email,
+          customerName: customerName || 'Researcher',
+          bundleType,
+          orderId,
+        },
+      });
+
+      if (error) {
+        console.error('Error triggering email sequence:', error);
+      } else {
+        console.log('Email sequence initiated:', data);
+      }
+    } catch (err) {
+      console.error('Failed to trigger email sequence:', err);
+    }
+  };
 
   const handleCheckout = async () => {
     // Track checkout start
@@ -43,18 +92,38 @@ export const CartDrawer = () => {
           price: i.price.amount,
           quantity: i.quantity,
         })),
+        has_bundle: !!bundleInCart,
+        email_captured: emailCaptured,
       });
     }
 
     try {
       await createCheckout();
       const checkoutUrl = useCartStore.getState().checkoutUrl;
+      
       if (checkoutUrl) {
+        // If bundle in cart and email captured, trigger email sequence
+        if (bundleInCart && email) {
+          const bundleHandle = bundleInCart.product.node?.handle || '';
+          const bundleType = getBundleType(bundleHandle);
+          
+          if (bundleType) {
+            const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            await triggerEmailSequence(bundleType, orderId);
+            toast.success('Email sequence started!', {
+              description: 'Check your inbox for onboarding instructions.',
+            });
+          }
+        }
+        
         window.open(checkoutUrl, '_blank');
         setIsOpen(false);
       }
     } catch (error) {
       console.error('Checkout failed:', error);
+      toast.error('Checkout failed', {
+        description: 'Please try again.',
+      });
     }
   };
 
@@ -66,6 +135,17 @@ export const CartDrawer = () => {
       });
     }
     removeItem(variantId);
+  };
+
+  const handleEmailCapture = () => {
+    if (!email || !email.includes('@')) {
+      toast.error('Please enter a valid email');
+      return;
+    }
+    setEmailCaptured(true);
+    toast.success('Email saved!', {
+      description: 'You\'ll receive onboarding emails after purchase.',
+    });
   };
 
   return (
@@ -172,6 +252,53 @@ export const CartDrawer = () => {
                 <div className="mt-4">
                   <BundleUpsell onClose={() => setIsOpen(false)} />
                 </div>
+
+                {/* Email Capture for Bundle Purchases */}
+                {bundleInCart && !emailCaptured && (
+                  <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Mail className="h-4 w-4" />
+                      <span className="text-sm font-medium">Get Onboarding Support</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Enter your email to receive research guides, protocol tips, and integration support after purchase.
+                    </p>
+                    <div className="space-y-2">
+                      <Input
+                        type="text"
+                        placeholder="Your name (optional)"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="h-9 text-sm"
+                      />
+                      <div className="flex gap-2">
+                        <Input
+                          type="email"
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="h-9 text-sm flex-1"
+                        />
+                        <Button 
+                          size="sm" 
+                          onClick={handleEmailCapture}
+                          className="h-9"
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {bundleInCart && emailCaptured && (
+                  <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-2">
+                      <Mail className="h-3 w-3" />
+                      Email saved! You'll receive onboarding emails after checkout.
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="flex-shrink-0 space-y-4 pt-4 border-t bg-background">
