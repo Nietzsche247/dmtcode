@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.scrape-clinical-trials]
 verify_jwt = false
+
+[functions.scrape-all]
+verify_jwt = false

@@ -74,6 +74,57 @@ export type Database = {
         }
         Relationships: []
       }
+      bibliography: {
+        Row: {
+          abstract: string | null
+          authors: string | null
+          compounds: string[] | null
+          created_at: string
+          doi: string | null
+          id: string
+          is_approved: boolean
+          journal: string | null
+          pmid: string | null
+          publication_date: string | null
+          source: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          abstract?: string | null
+          authors?: string | null
+          compounds?: string[] | null
+          created_at?: string
+          doi?: string | null
+          id?: string
+          is_approved?: boolean
+          journal?: string | null
+          pmid?: string | null
+          publication_date?: string | null
+          source?: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          abstract?: string | null
+          authors?: string | null
+          compounds?: string[] | null
+          created_at?: string
+          doi?: string | null
+          id?: string
+          is_approved?: boolean
+          journal?: string | null
+          pmid?: string | null
+          publication_date?: string | null
+          source?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       clinical_trials: {
         Row: {
           created_at: string
@@ -168,6 +219,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          erowid_flag: boolean | null
           event_date: string
           event_type: string
           id: string
@@ -182,6 +234,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          erowid_flag?: boolean | null
           event_date: string
           event_type: string
           id?: string
@@ -196,6 +249,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          erowid_flag?: boolean | null
           event_date?: string
           event_type?: string
           id?: string
@@ -596,6 +650,7 @@ export type Database = {
           last_run_at: string
           new_trials_count: number | null
           scraper_name: string
+          source: string | null
           status: string
           trials_added: number | null
           trials_found: number | null
@@ -608,6 +663,7 @@ export type Database = {
           last_run_at?: string
           new_trials_count?: number | null
           scraper_name: string
+          source?: string | null
           status: string
           trials_added?: number | null
           trials_found?: number | null
@@ -620,6 +676,7 @@ export type Database = {
           last_run_at?: string
           new_trials_count?: number | null
           scraper_name?: string
+          source?: string | null
           status?: string
           trials_added?: number | null
           trials_found?: number | null
