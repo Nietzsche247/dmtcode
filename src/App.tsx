@@ -52,6 +52,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 const Tools = lazy(() => import("./pages/Tools"));
 // Lazy load BundleItemDetail page
 const BundleItemDetail = lazy(() => import("./pages/BundleItemDetail"));
+// Lazy load WooProductDetail page
+const WooProductDetail = lazy(() => import("./pages/WooProductDetail"));
 
 const queryClient = new QueryClient();
 
@@ -107,6 +109,13 @@ const App = () => (
           {/* /woo redirects to /community/woo */}
           <Route path="/woo" element={<Navigate to="/community/woo" replace />} />
           <Route path="/community/woo" element={<Woo />} />
+          <Route path="/community/woo/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <WooProductDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/registry" element={<Registry />} />
           <Route path="/correlations" element={<Correlations />} />
           <Route path="/waitlist" element={<Waitlist />} />
