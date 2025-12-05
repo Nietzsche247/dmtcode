@@ -50,6 +50,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
 const Tools = lazy(() => import("./pages/Tools"));
+// Lazy load BundleItemDetail page
+const BundleItemDetail = lazy(() => import("./pages/BundleItemDetail"));
 
 const queryClient = new QueryClient();
 
@@ -92,6 +94,13 @@ const App = () => (
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
                 <Tools />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/tools/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <BundleItemDetail />
               </Suspense>
             </ErrorBoundary>
           } />
