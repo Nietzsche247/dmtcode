@@ -3,6 +3,7 @@ import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { ZENODO_DOI, ZENODO_URL, CITATION_APA } from '@/lib/constants';
 
 const About = () => {
   return (
@@ -90,13 +91,13 @@ const About = () => {
               <h2 className="text-2xl font-semibold mb-4">Dataset & Citation</h2>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                 <a 
-                  href="https://doi.org/10.5281/zenodo.14584521"
+                  href={ZENODO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:opacity-80 transition-opacity"
                 >
                   <img 
-                    src="https://zenodo.org/badge/DOI/10.5281/zenodo.14584521.svg" 
+                    src={`https://zenodo.org/badge/DOI/${ZENODO_DOI}.svg`}
                     alt="Zenodo DOI Badge"
                     className="h-5"
                   />
@@ -104,7 +105,7 @@ const About = () => {
                 <span className="text-sm text-muted-foreground">CC-BY-4.0 Licensed</span>
               </div>
               <p className="text-sm font-mono text-muted-foreground bg-muted/50 p-3 rounded-lg mb-4">
-                DMT Code Project. (2025). DMT Code Visual Symbol Catalogue v1.0 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.14584521
+                {CITATION_APA}
               </p>
               <a href="/dataset" className="text-primary hover:underline text-sm font-medium">
                 View full dataset downloads and citation formats →

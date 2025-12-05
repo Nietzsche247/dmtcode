@@ -1,9 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/Logo';
-
-// Zenodo DOI
-const ZENODO_DOI = "10.5281/zenodo.14584521";
+import { ZENODO_DOI, CITATION_APA } from '@/lib/constants';
 
 export const Footer = () => {
   return (
@@ -97,7 +95,7 @@ export const Footer = () => {
         <div className="bg-card/30 border border-border/30 rounded-2xl p-6 space-y-3 transition-theme">
           <p className="text-sm font-semibold text-foreground">Cite This Dataset</p>
           <p className="text-xs text-muted-foreground font-mono leading-relaxed">
-            DMT Code Project. (2025). DMT Code Visual Symbol Catalogue v1.0 [Data set]. Zenodo. https://doi.org/{ZENODO_DOI}
+            {CITATION_APA}
           </p>
         </div>
 

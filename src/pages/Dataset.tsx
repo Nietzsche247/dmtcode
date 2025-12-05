@@ -7,25 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, FileJson, FileSpreadsheet, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ZENODO_DOI, ZENODO_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
 
 const Dataset = () => {
   const [copied, setCopied] = useState(false);
   
-  // Zenodo DOI - replace XXXXXXX with actual DOI after Zenodo deposition
-  const zenodoDOI = "10.5281/zenodo.14584521";
-  const zenodoURL = `https://doi.org/${zenodoDOI}`;
-  
-  const citationText = `DMT Code Project. (2025). DMT Code Visual Symbol Catalogue v1.0 [Data set]. Zenodo. https://doi.org/${zenodoDOI}`;
-  
-  const bibtexCitation = `@dataset{dmtcode2025,
-  author       = {{DMT Code Project}},
-  title        = {{DMT Code Visual Symbol Catalogue v1.0}},
-  month        = dec,
-  year         = 2025,
-  publisher    = {Zenodo},
-  doi          = {${zenodoDOI}},
-  url          = {${zenodoURL}}
-}`;
+  const zenodoDOI = ZENODO_DOI;
+  const zenodoURL = ZENODO_URL;
+  const citationText = CITATION_APA;
+  const bibtexCitation = CITATION_BIBTEX;
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

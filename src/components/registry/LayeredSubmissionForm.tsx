@@ -6,13 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { FabricDrawingCanvas } from './FabricCanvas';
-import { ChevronRight, ChevronLeft, Award } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Award, WifiOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CanvasExport } from './CanvasExport';
 import { usePrimacyCheck } from '@/hooks/usePrimacyCheck';
+import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { AlertTriangle } from 'lucide-react';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -59,6 +61,7 @@ interface FormData {
   customTags: string;
   description: string;
   orcid: string;
+  confidenceRating: number;
 }
 
 export const LayeredSubmissionForm = () => {
@@ -101,11 +104,15 @@ export const LayeredSubmissionForm = () => {
     sizeImpression: '',
     customTags: '',
     description: '',
-    orcid: ''
+    orcid: '',
+    confidenceRating: 3
   });
 
   // Primacy contamination check (after formData is defined)
   const primacyCheck = usePrimacyCheck(formData.description, formData.primingExposure);
+  
+  // Offline sync
+  const { isOnline, pendingCount, savePendingSubmission, syncPendingSubmissions } = useOfflineSync();
 
   useEffect(() => {
     checkUser();
@@ -222,19 +229,31 @@ export const LayeredSubmissionForm = () => {
         ...formData.customTags.split(',').map(t => t.trim())
       ].filter(Boolean);
 
+      const submissionData = {
+        user_id: userId,
+        image_data: formData.imageData,
+        source: formData.observationMethod,
+        perceived_surface: formData.surface || null,
+        symmetry: formData.symmetry || null,
+        motif_tags: tags,
+        free_text_notes: formData.description || null,
+        drawing_duration_seconds: drawingDuration,
+        confidence_rating: formData.confidenceRating,
+        orcid: formData.orcid || null
+      };
+
+      // If offline, save locally and show success
+      if (!isOnline) {
+        savePendingSubmission(submissionData);
+        toast.success('Symbol saved offline! Will sync when connected.');
+        setStep(6);
+        setIsSubmitting(false);
+        return;
+      }
+
       const { data: insertedGlyph, error } = await supabase
         .from('registry_glyphs')
-        .insert({
-          user_id: userId,
-          image_data: formData.imageData,
-          source: formData.observationMethod,
-          perceived_surface: formData.surface || null,
-          symmetry: formData.symmetry || null,
-          motif_tags: tags,
-          free_text_notes: formData.description || null,
-          drawing_duration_seconds: drawingDuration,
-          orcid: formData.orcid || null
-        })
+        .insert(submissionData)
         .select()
         .single();
 
@@ -414,10 +433,11 @@ export const LayeredSubmissionForm = () => {
       colors: [],
       movements: [],
       sizeImpression: '',
-      customTags: '',
-      description: '',
-      orcid: ''
-    });
+    customTags: '',
+    description: '',
+    orcid: '',
+    confidenceRating: 3
+  });
     setStep(0);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
@@ -432,7 +452,7 @@ export const LayeredSubmissionForm = () => {
     return arr.includes(item) ? arr.filter(i => i !== item) : [...arr, item];
   };
 
-  return (
+    return (
     <section id="submit" className="container mx-auto px-4 py-16">
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
         {isNullReport ? 'Report Null Experience' : 'Submit a New Symbol'}
@@ -441,6 +461,24 @@ export const LayeredSubmissionForm = () => {
         <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
           Your null report is valuable for baseline comparison. Complete the same metadata form to document what you didn't see.
         </p>
+      )}
+      
+      {/* Offline indicator */}
+      {!isOnline && (
+        <div className="max-w-4xl mx-auto mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center gap-2 text-amber-500">
+          <WifiOff className="w-4 h-4" />
+          <span className="text-sm">You're offline. Drawings will be saved locally and synced when reconnected.</span>
+        </div>
+      )}
+      
+      {/* Pending submissions indicator */}
+      {pendingCount > 0 && isOnline && (
+        <div className="max-w-4xl mx-auto mb-4 p-3 bg-primary/10 border border-primary/30 rounded-lg flex items-center justify-between">
+          <span className="text-sm">{pendingCount} offline submission(s) pending sync</span>
+          <Button variant="outline" size="sm" onClick={syncPendingSubmissions}>
+            Sync Now
+          </Button>
+        </div>
       )}
       
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
@@ -1099,6 +1137,36 @@ export const LayeredSubmissionForm = () => {
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
               />
+            </div>
+
+            {/* Confidence Rating Slider */}
+            <div>
+              <Label className="text-base mb-3 block">
+                Confidence Rating: {formData.confidenceRating}/5
+              </Label>
+              <p className="text-sm text-muted-foreground mb-4">
+                How confident are you that this drawing accurately represents what you observed?
+              </p>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted-foreground">Low</span>
+                <Slider
+                  value={[formData.confidenceRating]}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, confidenceRating: value[0] }))}
+                  min={1}
+                  max={5}
+                  step={1}
+                  className="flex-1"
+                  aria-label="Confidence rating from 1 to 5"
+                />
+                <span className="text-sm text-muted-foreground">High</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground mt-2 px-1">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+              </div>
             </div>
 
             <div>
