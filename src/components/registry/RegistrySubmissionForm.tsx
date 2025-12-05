@@ -479,7 +479,7 @@ export const RegistrySubmissionForm = () => {
                 'spiral', 'grid', 'lattice', 'honeycomb', 'crystalline', 'flowing',
                 'angular', 'curved', 'symmetrical', 'asymmetrical', 'repeating', 'unique',
                 'pareidolia', 'speckle', 'gematria', 'hieroglyphic', 'runic', 'sanskrit-like',
-                'aramaic-like', 'cuneiform-like', 'alien', 'entity-like', 'instructional', 'decorative'
+                'aramaic-like', 'cuneiform-like', 'archetypal', 'abstract', 'instructional', 'decorative'
               ].map((tag) => {
                 const isSelected = formData.tags.split(',').map(t => t.trim()).includes(tag);
                 return (

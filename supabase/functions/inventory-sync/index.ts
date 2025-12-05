@@ -7,8 +7,8 @@ const corsHeaders = {
 };
 
 const SHOPIFY_ACCESS_TOKEN = Deno.env.get("SHOPIFY_ACCESS_TOKEN");
-const SHOPIFY_STORE_DOMAIN = "5biatp-m0.myshopify.com";
-const SHOPIFY_API_VERSION = "2025-01";
+const SHOPIFY_STORE_DOMAIN = "dmtcode-p4szt.myshopify.com";
+const SHOPIFY_API_VERSION = "2025-07";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
