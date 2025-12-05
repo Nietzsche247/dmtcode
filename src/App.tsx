@@ -40,6 +40,11 @@ const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 const Analysis = lazy(() => import("./pages/Analysis"));
 // Lazy load API symbols page
 const ApiSymbols = lazy(() => import("./pages/ApiSymbols"));
+// Lazy load new Consciousness Data Layer pages
+const Protocols = lazy(() => import("./pages/Protocols"));
+const ProtocolDetail = lazy(() => import("./pages/ProtocolDetail"));
+const VoiceLogger = lazy(() => import("./pages/VoiceLogger"));
+const VoiceLogAnalysis = lazy(() => import("./pages/VoiceLogAnalysis"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
@@ -131,6 +136,37 @@ const App = () => (
               <ApiSymbols />
             </Suspense>
           } />
+          {/* Consciousness Data Layer Routes */}
+          <Route path="/protocols" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Protocols />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/protocols/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <ProtocolDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/log" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <VoiceLogger />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/log/analysis/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <VoiceLogAnalysis />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          {/* Redirect /contribute to /log */}
+          <Route path="/contribute" element={<Navigate to="/log" replace />} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />

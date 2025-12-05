@@ -101,10 +101,34 @@ const explorerItems: NavItem[] = [
 
 const resourceItems: NavItem[] = [
   {
+    title: "Protocols",
+    href: "/protocols",
+    description: "Therapeutic protocol frameworks",
+    icon: FlaskConical,
+  },
+  {
+    title: "Voice Logger",
+    href: "/log",
+    description: "Record and analyze experiences",
+    icon: FileText,
+  },
+  {
+    title: "Analysis",
+    href: "/analysis",
+    description: "t-SNE clustering and research tools",
+    icon: BarChart3,
+  },
+  {
+    title: "Dataset",
+    href: "/dataset",
+    description: "Download open research data",
+    icon: Database,
+  },
+  {
     title: "Protocol Guide",
     href: "/protocol-guide",
     description: "650nm laser protocol documentation",
-    icon: FileText,
+    icon: Microscope,
   },
   {
     title: "FAQ",
@@ -122,7 +146,7 @@ const resourceItems: NavItem[] = [
     title: "Null Reports",
     href: "/null-reports",
     description: "Negative results and baseline data",
-    icon: BarChart3,
+    icon: ScrollText,
   },
 ];
 
