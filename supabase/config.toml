@@ -26,3 +26,12 @@ verify_jwt = false
 
 [functions.og-image]
 verify_jwt = false
+
+[functions.transcribe-voice]
+verify_jwt = false
+
+[functions.ping-sitemap]
+verify_jwt = false
+
+[functions.rate-limit-check]
+verify_jwt = false
