@@ -163,8 +163,8 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
           return (
             <Link
               key={item.sku}
-              to={`/products/${slug}?from=${bundleId}`}
-              className="group relative block"
+              to={`/tools/${slug}?from=${bundleId}`}
+              className="group relative block min-h-[44px]"
               onClick={() => handleItemClick(item.sku, item.name)}
             >
               <div className="aspect-square rounded-lg overflow-hidden bg-secondary/30 mb-2">
@@ -188,8 +188,14 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
                 ${item.value}
               </p>
               
-              {/* Hover underline effect */}
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+              {/* 1px #C41E3A glowing beam underline on hover */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ 
+                  backgroundColor: '#C41E3A',
+                  boxShadow: '0 0 8px #C41E3A, 0 0 12px #C41E3A'
+                }}
+              />
             </Link>
           );
         })}
@@ -294,8 +300,8 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
           return (
             <Link
               key={item.sku}
-              to={`/products/${slug}?from=${suggestedBundle.id}`}
-              className="group relative block"
+              to={`/tools/${slug}?from=${suggestedBundle.id}`}
+              className="group relative block min-h-[44px]"
               onClick={() => handleItemClick(item.sku, item.name)}
             >
               <div className="aspect-square rounded-lg overflow-hidden bg-secondary/30 mb-2">
