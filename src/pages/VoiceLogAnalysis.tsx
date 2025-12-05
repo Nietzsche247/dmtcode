@@ -35,7 +35,12 @@ const VoiceLogAnalysis = () => {
       if (error) throw error;
       if (!data) throw new Error('Voice log not found');
       return data;
-    }
+    },
+    // Poll every 5 seconds while not yet analyzed
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      return data && !data.is_analyzed ? 5000 : false;
+    },
   });
 
   const formatTime = (seconds: number) => {
