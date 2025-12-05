@@ -5,9 +5,10 @@
   "start_url": "/?source=pwa",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#ff0000",
+  "theme_color": "#C41E3A",
   "orientation": "portrait-primary",
   "scope": "/",
+  "id": "/",
   "icons": [
     {
       "src": "/favicon.png",
@@ -59,7 +60,17 @@
       "description": "Report seeing nothing",
       "url": "/null-reports",
       "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Voice Logger",
+      "short_name": "Log",
+      "description": "Record voice experience log",
+      "url": "/log",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

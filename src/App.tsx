@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
 import Home from "./pages/Home";
@@ -77,13 +78,14 @@ const CalibratingLasersLoader = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <GrainOverlay />
-      <BrowserRouter>
-        <PWAInstallPrompt />
-        <Routes>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <GrainOverlay />
+        <BrowserRouter>
+          <PWAInstallPrompt />
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
           <Route path="/tools" element={
@@ -173,7 +175,8 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
+  </ThemeProvider>
+</QueryClientProvider>
 );
 
 export default App;

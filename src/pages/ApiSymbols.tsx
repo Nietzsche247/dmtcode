@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 interface Symbol {
   id: string;
   description: string;
   tags: string[];
   source: string;
-  surface: string;
+  surface?: string;
   symmetry: string;
-  doi: string;
+  doi?: string;
   consistency?: number;
+  confidence_rating?: number;
+  drawing_duration_seconds?: number;
+  orcid?: string;
 }
 
 interface ApiResponse {
@@ -44,21 +48,22 @@ const ApiSymbols = () => {
       const source = searchParams.get('source');
       const consistency = searchParams.get('consistency');
       const symmetry = searchParams.get('symmetry');
-      const limit = parseInt(searchParams.get('limit') || '100', 10);
+      const orcid = searchParams.get('orcid');
+      const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 500);
       const offset = parseInt(searchParams.get('offset') || '0', 10);
 
       // Filter by tag (comma-separated)
       if (tag) {
         const tags = tag.split(',').map(t => t.trim().toLowerCase());
         symbols = symbols.filter(s => 
-          s.tags.some(t => tags.includes(t.toLowerCase()))
+          s.tags?.some(t => tags.some(rt => t.toLowerCase().includes(rt)))
         );
       }
 
       // Filter by source
       if (source) {
         symbols = symbols.filter(s => 
-          s.source.toLowerCase() === source.toLowerCase()
+          s.source?.toLowerCase().includes(source.toLowerCase())
         );
       }
 
@@ -67,6 +72,11 @@ const ApiSymbols = () => {
         symbols = symbols.filter(s => 
           s.symmetry?.toLowerCase() === symmetry.toLowerCase()
         );
+      }
+
+      // Filter by ORCID
+      if (orcid) {
+        symbols = symbols.filter(s => s.orcid === orcid);
       }
 
       // Filter by consistency (e.g., gte:80, lte:50, eq:90)
@@ -78,7 +88,7 @@ const ApiSymbols = () => {
           // Mock consistency based on index for demo (real would come from DB)
           symbols = symbols.map((s, i) => ({
             ...s,
-            consistency: 60 + (i % 40) // Mock: 60-99%
+            consistency: s.consistency ?? (60 + (i % 40)) // Mock: 60-99%
           }));
           
           symbols = symbols.filter(s => {
@@ -124,38 +134,40 @@ const ApiSymbols = () => {
     setLoading(false);
   };
 
-  // Set CORS headers via response (client-side simulation)
-  useEffect(() => {
-    // For actual CORS, this would need server-side handling
-    // This page returns JSON content type
-  }, []);
-
-  if (loading) {
-    return (
-      <pre style={{ 
-        fontFamily: 'monospace', 
-        padding: '20px',
-        backgroundColor: '#0a0a0a',
-        color: '#00ff00',
-        minHeight: '100vh'
-      }}>
-        {JSON.stringify({ loading: true }, null, 2)}
-      </pre>
-    );
-  }
-
   return (
-    <pre style={{ 
-      fontFamily: 'monospace', 
-      padding: '20px',
-      backgroundColor: '#0a0a0a',
-      color: '#00ff00',
-      minHeight: '100vh',
-      whiteSpace: 'pre-wrap',
-      wordBreak: 'break-word'
-    }}>
-      {JSON.stringify(response, null, 2)}
-    </pre>
+    <>
+      <Helmet>
+        <title>Symbol API | DMT Code</title>
+        <meta name="description" content="Public API for querying DMT Code Visual Symbol Catalogue with filtering by tag, source, symmetry, consistency, and ORCID." />
+        <meta name="robots" content="noindex, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen bg-background p-4 font-mono text-sm">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-xl font-bold mb-4 text-foreground">Symbol API Response</h1>
+          
+          <div className="mb-6 p-4 bg-muted/30 rounded-lg border border-border">
+            <h2 className="font-semibold mb-2 text-foreground">Query Parameters:</h2>
+            <ul className="text-muted-foreground space-y-1 text-xs">
+              <li><code className="bg-muted px-1 rounded">?tag=helix,spiral</code> — Filter by tags (comma-separated)</li>
+              <li><code className="bg-muted px-1 rounded">?source=650nm_laser</code> — Filter by observation source</li>
+              <li><code className="bg-muted px-1 rounded">?symmetry=radial</code> — Filter by symmetry type</li>
+              <li><code className="bg-muted px-1 rounded">?consistency=gte:80</code> — Filter by consistency (gte, gt, lte, lt, eq)</li>
+              <li><code className="bg-muted px-1 rounded">?orcid=0000-0002-1825-0097</code> — Filter by ORCID</li>
+              <li><code className="bg-muted px-1 rounded">?limit=50&offset=0</code> — Pagination (max 500)</li>
+            </ul>
+          </div>
+
+          {loading ? (
+            <div className="text-muted-foreground">Loading...</div>
+          ) : (
+            <pre className="bg-card border border-border rounded-lg p-4 overflow-x-auto text-foreground whitespace-pre-wrap break-words">
+              {JSON.stringify(response, null, 2)}
+            </pre>
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
