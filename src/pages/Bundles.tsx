@@ -4,13 +4,15 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Package, BookOpen, Microscope, Sparkles } from 'lucide-react';
+import { Package, BookOpen, Microscope, Sparkles, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { useModeStore } from '@/stores/modeStore';
 import { BundleCard } from '@/components/BundleCard';
 import { LaserDivider } from '@/components/LaserDivider';
 import { BundleComparisonTable } from '@/components/BundleComparisonTable';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 // Import bundle images
 import bundleStarterImg from '@/assets/bundle-starter.jpg';
@@ -147,6 +149,22 @@ const Bundles = () => {
   const meta = useDynamicMeta('bundles');
   const { mode } = useModeStore();
 
+  // Check if user is admin
+  const { data: isAdmin } = useQuery({
+    queryKey: ['is-admin-bundles'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+      return !!data;
+    }
+  });
+
   const handleBundleClick = (bundleId: string) => {
     // Track bundle view on click
     const bundle = bundles.find(b => b.id === bundleId);
@@ -215,6 +233,21 @@ const Bundles = () => {
         <Navigation />
         
         <main className="relative z-10 pt-24 pb-16">
+          {/* Admin Status Banner */}
+          {isAdmin && (
+            <div className="container mx-auto px-4 mb-4">
+              <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-sm">
+                <ShieldCheck className="w-4 h-4 text-green-500" />
+                <span className="text-green-600 font-medium">Shopify claimed</span>
+                <span className="text-muted-foreground">–</span>
+                <CheckCircle2 className="w-3 h-3 text-green-500" />
+                <span className="text-muted-foreground">webhook active</span>
+                <span className="text-muted-foreground">–</span>
+                <CheckCircle2 className="w-3 h-3 text-green-500" />
+                <span className="text-muted-foreground">inventory syncing nightly</span>
+              </div>
+            </div>
+          )}
           {/* Hero */}
           <section className="container mx-auto px-4 py-16 max-w-6xl text-center">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30">

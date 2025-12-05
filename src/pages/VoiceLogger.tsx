@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -15,8 +16,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Mic, MicOff, Pause, Play, Square, Upload, 
-  Pencil, Clock, CheckCircle2, Loader2, Volume2
+  Pencil, Clock, CheckCircle2, Loader2, Volume2, Stethoscope, Download
 } from 'lucide-react';
+
+// Clinical theme labels for Ketamine/Spravato protocol
+const CLINICAL_THEMES = [
+  'grief', 'self-criticism', 'hope', 'acceptance', 
+  'relationship patterns', 'self-worth', 'meaning', 
+  'connection', 'release', 'insight'
+];
+
+// Clinical prompts for KAP
+const CLINICAL_PROMPTS = [
+  "What emotions are present right now?",
+  "Any shifts in perspective on your depression?",
+  "What body sensations are you noticing?",
+  "Any new insights about relationships or self-worth?",
+  "What would you like to remember from this experience?",
+  "Is there anything you feel ready to let go of?",
+  "What feels different about how you see yourself?",
+];
 
 const VoiceLogger = () => {
   const [searchParams] = useSearchParams();
@@ -31,6 +50,11 @@ const VoiceLogger = () => {
   const [selectedProtocol, setSelectedProtocol] = useState<string>(protocolSlug || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  
+  // Clinical mode state
+  const [preMood, setPreMood] = useState<number>(5);
+  const [postMood, setPostMood] = useState<number>(5);
+  const [showPostMood, setShowPostMood] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -54,7 +78,7 @@ const VoiceLogger = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('protocols')
-        .select('id, slug, title, compound')
+        .select('id, slug, title, compound, content_jsonb')
         .eq('is_published', true)
         .order('title');
       
@@ -62,6 +86,13 @@ const VoiceLogger = () => {
       return data || [];
     }
   });
+
+  // Check if selected protocol is clinical mode
+  const selectedProtocolData = protocols?.find(p => p.slug === selectedProtocol);
+  const isClinicalMode = (selectedProtocolData?.content_jsonb as any)?.clinical_mode === true;
+  const clinicalVoiceConfig = isClinicalMode 
+    ? (selectedProtocolData?.content_jsonb as any)?.voice_logger_integration 
+    : null;
 
   const startRecording = async () => {
     try {
@@ -79,9 +110,10 @@ const VoiceLogger = () => {
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach(track => track.stop());
+        setShowPostMood(true);
       };
 
-      mediaRecorder.start(1000); // Collect data every second
+      mediaRecorder.start(1000);
       setIsRecording(true);
       setIsPaused(false);
       setDuration(0);
@@ -136,16 +168,12 @@ const VoiceLogger = () => {
     setIsSubmitting(true);
 
     try {
-      // Generate session ID for anonymous users
       const sessionId = userId || `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      // Find protocol ID if selected
       const protocolId = protocols?.find(p => p.slug === selectedProtocol)?.id || null;
 
-      // Upload audio to storage
       const fileName = `${sessionId}/${Date.now()}.webm`;
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('glyphs') // Reusing glyphs bucket for voice logs
+        .from('glyphs')
         .upload(`voice-logs/${fileName}`, audioBlob, {
           contentType: 'audio/webm'
         });
@@ -156,7 +184,16 @@ const VoiceLogger = () => {
         .from('glyphs')
         .getPublicUrl(`voice-logs/${fileName}`);
 
-      // Create voice log entry
+      // Include clinical mode data in analysis_jsonb
+      const analysisData = isClinicalMode ? {
+        clinical_mode: true,
+        pre_session_mood: preMood,
+        post_session_mood: postMood,
+        mood_change: postMood - preMood,
+        theme_detection_enabled: true,
+        archetype_matching_disabled: true
+      } : null;
+
       const { data: voiceLog, error: insertError } = await supabase
         .from('voice_logs')
         .insert({
@@ -166,30 +203,32 @@ const VoiceLogger = () => {
           audio_url: publicUrl,
           duration_seconds: duration,
           tags: selectedProtocol ? [selectedProtocol] : [],
-          is_analyzed: false
+          is_analyzed: false,
+          analysis_jsonb: analysisData
         })
         .select()
         .single();
 
       if (insertError) throw insertError;
 
-      toast.success('Voice log submitted! Transcription starting...');
+      toast.success(isClinicalMode 
+        ? 'Clinical session log submitted! Generating report...' 
+        : 'Voice log submitted! Transcription starting...'
+      );
       
-      // Trigger transcription in background
+      // Trigger transcription
       supabase.functions.invoke('transcribe-voice', {
         body: { 
           voice_log_id: voiceLog.id, 
-          audio_url: publicUrl 
+          audio_url: publicUrl,
+          clinical_mode: isClinicalMode
         }
       }).then(({ error }) => {
         if (error) {
           console.error('Transcription error:', error);
-        } else {
-          console.log('Transcription started for:', voiceLog.id);
         }
       });
       
-      // Navigate to analysis page
       navigate(`/log/analysis/${voiceLog.id}`);
     } catch (err) {
       console.error('Submit error:', err);
@@ -204,15 +243,20 @@ const VoiceLogger = () => {
     setAudioBlob(null);
     setAudioUrl(null);
     setDuration(0);
+    setShowPostMood(false);
+    setPostMood(5);
   };
 
   return (
     <>
       <Helmet>
-        <title>Voice Logger | Experience Documentation | DMT Code</title>
+        <title>Voice Logger | {isClinicalMode ? 'Clinical Session Documentation' : 'Experience Documentation'} | DMT Code</title>
         <meta 
           name="description" 
-          content="Document your consciousness experiences with voice logging. Record, analyze, and integrate insights from therapeutic protocols." 
+          content={isClinicalMode 
+            ? "Clinical voice logging for ketamine-assisted psychotherapy sessions. Record, analyze therapeutic themes, and export PDF reports for patient charts."
+            : "Document your consciousness experiences with voice logging. Record, analyze, and integrate insights from therapeutic protocols."
+          }
         />
         <link rel="canonical" href="https://dmtcode.com/log" />
         <meta name="robots" content="index, follow" />
@@ -225,18 +269,29 @@ const VoiceLogger = () => {
         <main className="relative z-10 pt-4">
           {/* Hero Section */}
           <section className="container mx-auto px-4 py-8 text-center">
-            <Badge variant="outline" className="mb-4 text-primary border-primary/30">
-              <Mic className="w-3 h-3 mr-1" />
-              EXPERIENCE DOCUMENTATION
+            <Badge variant="outline" className={`mb-4 ${isClinicalMode ? 'text-green-500 border-green-500/30' : 'text-primary border-primary/30'}`}>
+              {isClinicalMode ? (
+                <>
+                  <Stethoscope className="w-3 h-3 mr-1" />
+                  CLINICAL SESSION DOCUMENTATION
+                </>
+              ) : (
+                <>
+                  <Mic className="w-3 h-3 mr-1" />
+                  EXPERIENCE DOCUMENTATION
+                </>
+              )}
             </Badge>
             
             <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-              CONTRIBUTE
+              {isClinicalMode ? 'CLINICAL SESSION LOG' : 'CONTRIBUTE'}
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              Document your experiences through voice logging or visual symbol drawing. 
-              Your contributions help build the open research dataset.
+              {isClinicalMode 
+                ? 'Record therapeutic sessions with mood tracking and theme detection. Exportable PDF reports for patient documentation.'
+                : 'Document your experiences through voice logging or visual symbol drawing. Your contributions help build the open research dataset.'
+              }
             </p>
           </section>
 
@@ -245,10 +300,10 @@ const VoiceLogger = () => {
             <Tabs defaultValue="voice" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="voice" className="gap-2">
-                  <Mic className="w-4 h-4" />
-                  Voice Logger
+                  {isClinicalMode ? <Stethoscope className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  {isClinicalMode ? 'Clinical Voice Log' : 'Voice Logger'}
                 </TabsTrigger>
-                <TabsTrigger value="draw" className="gap-2">
+                <TabsTrigger value="draw" className="gap-2" disabled={isClinicalMode}>
                   <Pencil className="w-4 h-4" />
                   Draw Glyphs
                 </TabsTrigger>
@@ -260,7 +315,7 @@ const VoiceLogger = () => {
                   {/* Protocol Selection */}
                   <div className="mb-8">
                     <Label htmlFor="protocol" className="text-base mb-3 block">
-                      Select Protocol (Optional)
+                      Select Protocol {isClinicalMode && <span className="text-green-500">(Clinical Mode Active)</span>}
                     </Label>
                     <Select value={selectedProtocol} onValueChange={setSelectedProtocol}>
                       <SelectTrigger className="w-full">
@@ -271,25 +326,64 @@ const VoiceLogger = () => {
                         {protocols?.map(p => (
                           <SelectItem key={p.id} value={p.slug}>
                             {p.title} ({p.compound})
+                            {(p.content_jsonb as any)?.clinical_mode && ' • Clinical'}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {selectedProtocol && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Your log will be tagged with the {selectedProtocol} protocol for analysis.
+                    {isClinicalMode && (
+                      <p className="text-sm text-green-600 mt-2">
+                        Clinical mode enabled: Therapeutic theme detection instead of visual pattern matching. 
+                        Mood scales and PDF export available.
                       </p>
                     )}
                   </div>
 
+                  {/* Pre-Session Mood Scale (Clinical Mode) */}
+                  {isClinicalMode && !isRecording && !audioBlob && (
+                    <div className="mb-8 p-4 bg-muted/50 rounded-lg">
+                      <Label className="text-base mb-3 block">Pre-Session Mood (0-10)</Label>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-muted-foreground w-8">Low</span>
+                        <Slider
+                          value={[preMood]}
+                          onValueChange={(v) => setPreMood(v[0])}
+                          max={10}
+                          step={1}
+                          className="flex-1"
+                        />
+                        <span className="text-sm text-muted-foreground w-8">High</span>
+                        <Badge variant="outline" className="ml-2 min-w-[3rem] justify-center">
+                          {preMood}
+                        </Badge>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Clinical Prompts Display */}
+                  {isClinicalMode && !audioBlob && (
+                    <div className="mb-8 p-4 border border-green-500/20 bg-green-500/5 rounded-lg">
+                      <h3 className="font-medium mb-3 flex items-center gap-2 text-green-600">
+                        <Stethoscope className="w-4 h-4" />
+                        Therapeutic Session Prompts
+                      </h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        {(clinicalVoiceConfig?.prompts || CLINICAL_PROMPTS).slice(0, 5).map((prompt: string, i: number) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="text-green-500">•</span>
+                            "{prompt}"
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {/* Recording Interface */}
                   <div className="text-center space-y-6">
-                    {/* Timer Display */}
                     <div className="text-6xl font-mono font-bold text-primary">
                       {formatTime(duration)}
                     </div>
 
-                    {/* Recording Status */}
                     <div className="flex items-center justify-center gap-2">
                       {isRecording && !isPaused && (
                         <>
@@ -314,7 +408,6 @@ const VoiceLogger = () => {
                       )}
                     </div>
 
-                    {/* Control Buttons */}
                     <div className="flex items-center justify-center gap-4">
                       {!isRecording && !audioBlob && (
                         <Button 
@@ -323,7 +416,7 @@ const VoiceLogger = () => {
                           className="gap-2 px-8"
                         >
                           <Mic className="w-5 h-5" />
-                          Start Recording
+                          {isClinicalMode ? 'Start Clinical Session' : 'Start Recording'}
                         </Button>
                       )}
 
@@ -369,14 +462,49 @@ const VoiceLogger = () => {
                           >
                             {isSubmitting ? (
                               <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : isClinicalMode ? (
+                              <Download className="w-5 h-5" />
                             ) : (
                               <Upload className="w-5 h-5" />
                             )}
-                            {isSubmitting ? 'Submitting...' : 'Submit for Analysis'}
+                            {isSubmitting 
+                              ? 'Processing...' 
+                              : isClinicalMode 
+                                ? 'Generate Report' 
+                                : 'Submit for Analysis'
+                            }
                           </Button>
                         </>
                       )}
                     </div>
+
+                    {/* Post-Session Mood Scale (Clinical Mode) */}
+                    {isClinicalMode && showPostMood && (
+                      <div className="pt-6 border-t">
+                        <div className="p-4 bg-muted/50 rounded-lg max-w-md mx-auto">
+                          <Label className="text-base mb-3 block">Post-Session Mood (0-10)</Label>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm text-muted-foreground w-8">Low</span>
+                            <Slider
+                              value={[postMood]}
+                              onValueChange={(v) => setPostMood(v[0])}
+                              max={10}
+                              step={1}
+                              className="flex-1"
+                            />
+                            <span className="text-sm text-muted-foreground w-8">High</span>
+                            <Badge variant="outline" className="ml-2 min-w-[3rem] justify-center">
+                              {postMood}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Mood change: <span className={postMood - preMood >= 0 ? 'text-green-500' : 'text-red-500'}>
+                              {postMood - preMood >= 0 ? '+' : ''}{postMood - preMood}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Audio Playback */}
                     {audioUrl && (
@@ -395,20 +523,41 @@ const VoiceLogger = () => {
 
                   {/* Tips */}
                   <div className="mt-8 pt-6 border-t">
-                    <h3 className="font-medium mb-3">Recording Tips</h3>
+                    <h3 className="font-medium mb-3">
+                      {isClinicalMode ? 'Clinical Documentation Tips' : 'Recording Tips'}
+                    </h3>
                     <ul className="text-sm text-muted-foreground space-y-2">
-                      <li className="flex items-start gap-2">
-                        <Clock className="w-4 h-4 mt-0.5 shrink-0" />
-                        Record as soon as possible after your experience for best recall
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Volume2 className="w-4 h-4 mt-0.5 shrink-0" />
-                        Speak clearly and describe visual elements, emotions, and insights
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-                        Selecting a protocol helps match your experience to research archetypes
-                      </li>
+                      {isClinicalMode ? (
+                        <>
+                          <li className="flex items-start gap-2">
+                            <Clock className="w-4 h-4 mt-0.5 shrink-0" />
+                            Document during the integration window (peak + 15-30 minutes)
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Stethoscope className="w-4 h-4 mt-0.5 shrink-0" />
+                            Focus on emotional content, perspective shifts, and insights
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                            Reports are exportable as PDF for patient charts
+                          </li>
+                        </>
+                      ) : (
+                        <>
+                          <li className="flex items-start gap-2">
+                            <Clock className="w-4 h-4 mt-0.5 shrink-0" />
+                            Record as soon as possible after your experience for best recall
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <Volume2 className="w-4 h-4 mt-0.5 shrink-0" />
+                            Speak clearly and describe visual elements, emotions, and insights
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                            Selecting a protocol helps match your experience to research patterns
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </div>
                 </Card>
