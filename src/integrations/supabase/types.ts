@@ -468,6 +468,48 @@ export type Database = {
         }
         Relationships: []
       }
+      protocols: {
+        Row: {
+          compound: string
+          content_jsonb: Json | null
+          created_at: string
+          hero_image: string | null
+          id: string
+          is_published: boolean | null
+          slug: string
+          status: string
+          tagline: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          compound: string
+          content_jsonb?: Json | null
+          created_at?: string
+          hero_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug: string
+          status?: string
+          tagline?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          compound?: string
+          content_jsonb?: Json | null
+          created_at?: string
+          hero_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug?: string
+          status?: string
+          tagline?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       registry_confirmations: {
         Row: {
           confirmation_type: string
@@ -525,6 +567,7 @@ export type Database = {
           orcid: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
+          protocol_id: string | null
           route_of_administration: string | null
           source: string
           symbol_recurrence: string | null
@@ -555,6 +598,7 @@ export type Database = {
           orcid?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
+          protocol_id?: string | null
           route_of_administration?: string | null
           source: string
           symbol_recurrence?: string | null
@@ -585,6 +629,7 @@ export type Database = {
           orcid?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
+          protocol_id?: string | null
           route_of_administration?: string | null
           source?: string
           symbol_recurrence?: string | null
@@ -594,7 +639,15 @@ export type Database = {
           user_id?: string | null
           voice_note_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "registry_glyphs_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "protocols"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       retreats: {
         Row: {
@@ -1105,6 +1158,68 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      voice_logs: {
+        Row: {
+          analysis_jsonb: Json | null
+          archetype_matches: Json | null
+          audio_url: string | null
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          integration_prompts: Json | null
+          is_analyzed: boolean | null
+          protocol_id: string | null
+          protocol_match_score: number | null
+          session_id: string
+          tags: string[] | null
+          transcript: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          analysis_jsonb?: Json | null
+          archetype_matches?: Json | null
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          integration_prompts?: Json | null
+          is_analyzed?: boolean | null
+          protocol_id?: string | null
+          protocol_match_score?: number | null
+          session_id: string
+          tags?: string[] | null
+          transcript?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          analysis_jsonb?: Json | null
+          archetype_matches?: Json | null
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          integration_prompts?: Json | null
+          is_analyzed?: boolean | null
+          protocol_id?: string | null
+          protocol_match_score?: number | null
+          session_id?: string
+          tags?: string[] | null
+          transcript?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_logs_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "protocols"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
