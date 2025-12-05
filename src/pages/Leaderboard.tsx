@@ -20,7 +20,25 @@ const Leaderboard = () => {
         .limit(50);
       
       if (error) throw error;
-      return data || [];
+      
+      // Fetch ORCID for each contributor from their submissions
+      const contributorsWithOrcid = await Promise.all(
+        (data || []).map(async (contributor) => {
+          if (contributor.user_id) {
+            const { data: submission } = await supabase
+              .from('registry_glyphs')
+              .select('orcid')
+              .eq('user_id', contributor.user_id)
+              .not('orcid', 'is', null)
+              .limit(1)
+              .maybeSingle();
+            return { ...contributor, orcid: submission?.orcid || null };
+          }
+          return { ...contributor, orcid: null };
+        })
+      );
+      
+      return contributorsWithOrcid;
     }
   });
 
@@ -157,6 +175,21 @@ const Leaderboard = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-semibold">Contributor #{contributor.session_id.slice(0, 8)}</span>
+                            {contributor.orcid && (
+                              <a 
+                                href={`https://orcid.org/${contributor.orcid}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                title={`ORCID: ${contributor.orcid}`}
+                              >
+                                <img 
+                                  src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" 
+                                  alt="ORCID" 
+                                  className="w-4 h-4"
+                                />
+                              </a>
+                            )}
                             {contributor.badges_earned && contributor.badges_earned.length > 0 && (
                               <Badge variant="secondary" className="text-xs">
                                 <Star className="w-3 h-3 mr-1" />
