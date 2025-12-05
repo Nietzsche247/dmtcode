@@ -148,7 +148,26 @@ const handler = async (req: Request): Promise<Response> => {
     const shopifyTopic = req.headers.get("x-shopify-topic");
     console.log("Received webhook topic:", shopifyTopic);
 
-    const order = await req.json();
+    // Handle empty body (test pings from Shopify)
+    const bodyText = await req.text();
+    if (!bodyText || bodyText.trim() === '') {
+      console.log("Empty body received - likely a test ping");
+      return new Response(
+        JSON.stringify({ success: true, message: "Webhook endpoint active" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    let order;
+    try {
+      order = JSON.parse(bodyText);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON payload" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     console.log("Order received:", order.id, order.email);
 
     const customerEmail = order.email;
