@@ -35,6 +35,7 @@ const bundleShopifyHandles: Record<string, string> = {
 };
 
 // Product slug mapping for clickable bundle contents
+// Only research-focused items allowed in bundles (no woo/mystical products)
 const productSlugMap: Record<string, { slug: string; isWoo: boolean }> = {
   '650nm-laser-pointer': { slug: '650nm-laser-pointer', isWoo: false },
   'diffraction-grating': { slug: 'diffraction-grating', isWoo: false },
@@ -45,6 +46,20 @@ const productSlugMap: Record<string, { slug: string; isWoo: boolean }> = {
   'znse-lens': { slug: 'znse-lens', isWoo: false },
   'huepar-level': { slug: 'huepar-laser-level', isWoo: false },
   'refraction-tank': { slug: 'refraction-tank', isWoo: false },
+};
+
+// Excluded keywords for woo/mystical products - never show in bundles
+const WOO_KEYWORDS = [
+  'psychedelic', 'intention', 'galaxy', 'quartz', 'rose', 'amethyst',
+  'oracle', 'sacred', 'ceremony', 'ritual', 'robe', 'hoodie', 'tunic',
+  'incense', 'sticker', 'fractal', 'bon charge', 'higherdose', 'peyote',
+  'mystical', 'spiritual', 'chakra', 'crystal', 'meditation'
+];
+
+// Filter function to exclude woo products from bundle-related displays
+const isWooProduct = (title: string): boolean => {
+  const lowerTitle = title.toLowerCase();
+  return WOO_KEYWORDS.some(keyword => lowerTitle.includes(keyword));
 };
 
 const bundleData = {
@@ -285,8 +300,9 @@ const BundleContentsSection = ({
         {bundle.items.map((item, i) => {
           const productInfo = productSlugMap[item.sku];
           const slug = productInfo?.slug || item.sku;
+          // Research items go to /tools/, woo items go to /community/woo/
           const basePath = productInfo 
-            ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/products/${productInfo.slug}`)
+            ? (productInfo.isWoo ? `/community/woo/${productInfo.slug}` : `/tools/${productInfo.slug}`)
             : `/tools`;
           const linkUrl = `${basePath}?from=${bundle.id}`;
           
@@ -406,12 +422,17 @@ const BundleDetail = () => {
       }
     };
 
-    // Fetch related products
+    // Fetch related products (filtered to exclude woo/mystical items)
     const fetchRelatedProducts = async () => {
       try {
-        const data = await storefrontApiRequest(RELATED_PRODUCTS_QUERY, { first: 4 });
+        const data = await storefrontApiRequest(RELATED_PRODUCTS_QUERY, { first: 20 });
         if (data?.data?.products?.edges) {
-          setRelatedProducts(data.data.products.edges.slice(0, 4));
+          // Filter out woo/mystical products - only show research equipment
+          const filteredProducts = data.data.products.edges.filter((product: ShopifyProduct) => {
+            if (!product?.node?.title) return false;
+            return !isWooProduct(product.node.title);
+          });
+          setRelatedProducts(filteredProducts.slice(0, 4));
         }
       } catch (err) {
         console.error('Error fetching related products:', err);
@@ -705,8 +726,8 @@ const BundleDetail = () => {
                   return (
                     <Card 
                       key={product.node.id}
-                      className="p-4 bg-card/50 border-border hover:border-primary/50 transition-all cursor-pointer"
-                      onClick={() => navigate(`/products/${product.node.handle}`)}
+                      className="p-4 bg-card/50 border-border hover:border-primary/50 transition-all cursor-pointer group hover:scale-[1.05]"
+                      onClick={() => navigate(`/tools/${product.node.handle}`)}
                     >
                       <div className="aspect-square rounded-lg overflow-hidden bg-secondary/20 mb-3">
                         {image && (
