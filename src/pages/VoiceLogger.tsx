@@ -173,7 +173,21 @@ const VoiceLogger = () => {
 
       if (insertError) throw insertError;
 
-      toast.success('Voice log submitted successfully!');
+      toast.success('Voice log submitted! Transcription starting...');
+      
+      // Trigger transcription in background
+      supabase.functions.invoke('transcribe-voice', {
+        body: { 
+          voice_log_id: voiceLog.id, 
+          audio_url: publicUrl 
+        }
+      }).then(({ error }) => {
+        if (error) {
+          console.error('Transcription error:', error);
+        } else {
+          console.log('Transcription started for:', voiceLog.id);
+        }
+      });
       
       // Navigate to analysis page
       navigate(`/log/analysis/${voiceLog.id}`);
