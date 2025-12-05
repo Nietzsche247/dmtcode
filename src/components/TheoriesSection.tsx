@@ -16,13 +16,13 @@ const seedTheories = [
   },
   {
     id: 2,
-    title: "Hyperdimensional Entity Language",
+    title: "Cross-Dimensional Communication Patterns",
     author: "Community Aggregate",
-    summary: "Theory proposing glyphs are a form of communication or written language from entities existing in dimensions beyond our three spatial dimensions. Supported by reports of entities 'showing' or 'teaching' the symbols, and apparent intelligent responses to observer attention.",
+    summary: "Theory proposing glyphs are a form of communication or written language from intelligences existing in dimensions beyond our three spatial dimensions. Supported by reports of post-session integration tools 'showing' or 'teaching' the symbols, and apparent intelligent responses to observer attention.",
     supportPercent: 52,
     upvotes: 1923,
     comments: 289,
-    tags: ["entities", "communication", "hyperdimensional"],
+    tags: ["communication", "hyperdimensional", "patterns"],
   },
   {
     id: 3,

@@ -28,7 +28,7 @@ const DEFAULT_THEORIES = [
   },
   {
     id: "default-2",
-    title: "Hyperdimensional Entity Language",
+    title: "Cross-Dimensional Communication Patterns",
     summary: "Patterns constitute a communication system used by non-human intelligences existing in dimensions beyond our normal perception.",
     probability_percentage: 52,
     upvotes: 0,
