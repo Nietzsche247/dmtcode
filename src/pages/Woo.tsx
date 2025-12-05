@@ -69,7 +69,7 @@ const Woo = () => {
   };
 
   const handleProductClick = (product: ShopifyProduct) => {
-    navigate(`/products/${product.node.id}`);
+    navigate(`/community/woo/${product.node.handle}`);
   };
 
   return (
