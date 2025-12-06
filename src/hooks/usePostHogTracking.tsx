@@ -63,12 +63,58 @@ export const usePostHogTracking = () => {
     }
   }, []);
 
+  // Assessment tracking
+  const trackAssessmentSubmitted = useCallback((data: { 
+    assessment_id: string; 
+    has_log_id: boolean;
+    phq9_score?: number;
+    gad7_score?: number;
+    mood_pre?: number;
+    mood_post?: number;
+  }) => {
+    if (window.posthog) {
+      window.posthog.capture('assessment_submitted', {
+        ...data,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, []);
+
+  const trackReportGenerated = useCallback((data: { 
+    assessment_id: string;
+    phq9_score?: number;
+    gad7_score?: number;
+    mood_delta?: number;
+  }) => {
+    if (window.posthog) {
+      window.posthog.capture('report_generated', {
+        ...data,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, []);
+
+  const trackTherapistShareClicked = useCallback((data: { 
+    assessment_id: string;
+    action: 'generate_link' | 'copy_link' | 'revoke_link';
+  }) => {
+    if (window.posthog) {
+      window.posthog.capture('therapist_share_clicked', {
+        ...data,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, []);
+
   return {
     trackProductView,
     trackAddToCart,
     trackBundleUpsellShown,
     trackCheckoutStart,
     trackPageView,
+    trackAssessmentSubmitted,
+    trackReportGenerated,
+    trackTherapistShareClicked,
   };
 };
 

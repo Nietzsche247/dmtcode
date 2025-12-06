@@ -7,6 +7,7 @@ import { Download, Share2, FileText, TrendingUp, TrendingDown, Minus } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { TherapistShareModal } from './TherapistShareModal';
+import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 
 interface ReportViewerProps {
   assessmentId: string;
@@ -50,6 +51,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
   const [report, setReport] = useState<ReportData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const { trackReportGenerated, trackTherapistShareClicked } = usePostHogTracking();
 
   useEffect(() => {
     loadReport();
@@ -84,6 +86,14 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
 
       if (reportError) throw reportError;
       setReport(reportData.report);
+
+      // Track report generation
+      trackReportGenerated({
+        assessment_id: assessmentId,
+        phq9_score: reportData.report?.scores?.phq9?.score,
+        gad7_score: reportData.report?.scores?.gad7?.score,
+        mood_delta: reportData.report?.mood?.delta
+      });
 
     } catch (error) {
       console.error('Failed to load report:', error);
