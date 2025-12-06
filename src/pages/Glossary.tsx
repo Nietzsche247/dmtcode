@@ -147,15 +147,13 @@ const Glossary = () => {
   return (
     <>
       <Helmet>
-        <title>Glossary - Visual Symbol & 650 nm Protocol Terminology | DMT Code</title>
+        <title>Terminology & Definitions | DMT Code</title>
         <meta 
           name="description" 
-          content="Comprehensive glossary defining technical terminology for discrete visual symbols, 650 nm laser protocol, and registry classification systems." 
+          content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." 
         />
         <link rel="canonical" href="https://dmtcode.com/glossary" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/glossary" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/glossary" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/glossary" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

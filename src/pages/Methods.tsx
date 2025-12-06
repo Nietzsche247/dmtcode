@@ -10,15 +10,13 @@ const Methods = () => {
   return (
     <>
       <Helmet>
-        <title>Research Methods - Replication Design | DMT Code</title>
+        <title>Experimental Methods | DMT Code</title>
         <meta 
           name="description" 
-          content="FAQ on experimental design for replicating 650 nm laser protocol. Blinding procedures, control conditions, and methodological considerations with peer-reviewed citations." 
+          content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." 
         />
         <link rel="canonical" href="https://dmtcode.com/methods" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/methods" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/methods" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/methods" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

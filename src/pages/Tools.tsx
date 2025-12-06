@@ -19,7 +19,7 @@ import { getProductImageWithFallback } from '@/utils/productImages';
 import { supabase } from '@/integrations/supabase/client';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { useDynamicMeta } from '@/hooks/useDynamicMeta';
+
 
 declare global {
   interface Window {
@@ -74,7 +74,6 @@ const Tools = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [submissionModalOpen, setSubmissionModalOpen] = useState(false);
   const addItem = useCartStore(state => state.addItem);
-  const meta = useDynamicMeta('tools');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -202,24 +201,31 @@ const Tools = () => {
   return (
     <>
       <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
+        <title>650nm Laser Equipment & DMT Research Tools | DMT Code</title>
+        <meta name="description" content="Scientific-grade laser pointers, diffraction gratings, and safety equipment for Code of Reality research protocols." />
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
-        <meta property="og:title" content="DMT Laser Protocol Tools | Replicator Kits | DMT Code" />
-        <meta property="og:description" content="650nm laser equipment, diffraction gratings, and protocol journals for DMT research replication. $12-$2,000 price range." />
+        <meta property="og:title" content="650nm Laser Equipment & DMT Research Tools | DMT Code" />
+        <meta property="og:description" content="Scientific-grade laser pointers, diffraction gratings, and safety equipment for Code of Reality research protocols." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com/tools" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
-        
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/tools" />
-        <meta name="twitter:title" content="DMT Laser Protocol Tools | Replicator Kits" />
-        <meta name="twitter:description" content="650nm laser equipment, diffraction gratings, and protocol journals for DMT research replication. $12-$2,000 price range." />
+        <meta name="twitter:title" content="650nm Laser Equipment & DMT Research Tools | DMT Code" />
+        <meta name="twitter:description" content="Scientific-grade laser pointers, diffraction gratings, and safety equipment for Code of Reality research protocols." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
-        
         <meta name="robots" content="index, follow" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dmtcode.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://dmtcode.com/tools" }
+            ]
+          })}
+        </script>
         {products.length > 0 && (
           <script type="application/ld+json">
             {JSON.stringify(

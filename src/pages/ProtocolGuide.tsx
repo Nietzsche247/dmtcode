@@ -10,15 +10,13 @@ const ProtocolGuide = () => {
   return (
     <>
       <Helmet>
-        <title>Complete 650 nm Laser Protocol Guide | DMT Code</title>
+        <title>Replication Protocol Guide | DMT Code</title>
         <meta 
           name="description" 
-          content="Complete guide to the 650 nm laser protocol for discrete visual symbol documentation during N,N-DMT administration. Safety requirements and equipment specifications." 
+          content="Step-by-step methodology for safely observing the Code of Reality phenomenon with proper documentation." 
         />
         <link rel="canonical" href="https://dmtcode.com/protocol-guide" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/protocol-guide" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/protocol-guide" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/protocol-guide" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

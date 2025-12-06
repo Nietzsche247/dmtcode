@@ -9,15 +9,13 @@ const Critiques = () => {
   return (
     <>
       <Helmet>
-        <title>Critical Perspectives - Skepticism & Ethics | DMT Code</title>
+        <title>Critiques & Alternative Hypotheses | DMT Code</title>
         <meta 
           name="description" 
-          content="Essays on methodological critiques, optical artifact explanations, and ethical concerns regarding 650 nm laser protocol and N,N-DMT research with peer-reviewed citations." 
+          content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." 
         />
         <link rel="canonical" href="https://dmtcode.com/critiques" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/critiques" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/critiques" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/critiques" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
