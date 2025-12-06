@@ -8,6 +8,7 @@ import { Star, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 import { TagsManager } from './TagsManager';
 import { ShareButtons } from '@/components/ShareButtons';
+import { VotingButtons } from './VotingButtons';
 
 interface RegistryGlyph {
   id: string;
@@ -17,6 +18,7 @@ interface RegistryGlyph {
   created_at: string;
   symmetry: string | null;
   emotional_valence: string | null;
+  user_id: string | null;
 }
 
 export const RegistryBrowser = () => {
@@ -80,7 +82,7 @@ export const RegistryBrowser = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags, created_at, symmetry, emotional_valence')
+      .select('id, image_data, confirmation_count, motif_tags, created_at, symmetry, emotional_valence, user_id')
       .order('confirmation_count', { ascending: false })
       .order('created_at', { ascending: false });
 
@@ -316,6 +318,24 @@ export const RegistryBrowser = () => {
                 )}
               </div>
 
+              {/* Voting Buttons */}
+              <div className="flex items-center justify-between mb-3">
+                <VotingButtons 
+                  symbolId={glyph.id} 
+                  submitterId={glyph.user_id || undefined}
+                  variant="compact"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleFlag(glyph.id)}
+                  aria-label="Flag symbol for review"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Flag className="w-4 h-4" />
+                </Button>
+              </div>
+
               <div className="flex flex-col gap-2">
                 <Button 
                   variant="default" 
@@ -324,7 +344,7 @@ export const RegistryBrowser = () => {
                   onClick={() => handleVote(glyph.id, 'exact')}
                   aria-label={`Vote I've seen this too - exact match for glyph with ${glyph.confirmation_count} confirmations`}
                 >
-                  ★ I've Seen This Too
+                  ★ Confirm Match
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
                   <Button 
@@ -333,7 +353,7 @@ export const RegistryBrowser = () => {
                     onClick={() => handleVote(glyph.id, 'similar')}
                     aria-label={`Vote similar for glyph with ${glyph.confirmation_count} confirmations`}
                   >
-                    👍 Similar
+                    Similar
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -344,16 +364,6 @@ export const RegistryBrowser = () => {
                     Different
                   </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleFlag(glyph.id)}
-                  aria-label="Flag symbol for review"
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Flag className="w-4 h-4 mr-1" />
-                  Flag
-                </Button>
               </div>
             </Card>
           ))}
