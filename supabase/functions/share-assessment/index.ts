@@ -51,13 +51,8 @@ serve(async (req) => {
           context_jsonb,
           mood_pre,
           mood_post,
-          created_at,
-          voice_logs (
-            transcript,
-            duration_seconds,
-            archetype_matches,
-            protocol_match_score
-          )
+          log_id,
+          created_at
         `)
         .eq('share_token', share_token)
         .eq('is_shared', true)
@@ -70,10 +65,24 @@ serve(async (req) => {
         });
       }
 
+      // Fetch voice log transcript separately if exists
+      let voiceLogData = null;
+      if (data.log_id) {
+        const { data: voiceLog } = await supabase
+          .from('voice_logs')
+          .select('transcript, duration_seconds, archetype_matches, protocol_match_score')
+          .eq('id', data.log_id)
+          .single();
+        voiceLogData = voiceLog;
+      }
+
       // Return de-identified data (no user_id exposed)
       return new Response(JSON.stringify({
         success: true,
-        assessment: data
+        assessment: {
+          ...data,
+          voice_log: voiceLogData
+        }
       }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
