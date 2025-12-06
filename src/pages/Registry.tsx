@@ -92,7 +92,7 @@ const Registry = () => {
       <div className="relative min-h-screen bg-background">
         <Navigation />
         
-        <main className="relative z-10 pt-20">
+        <main id="main-content" className="relative z-10 pt-20" role="main">
           <div className="block md:hidden">
             <Breadcrumb />
           </div>

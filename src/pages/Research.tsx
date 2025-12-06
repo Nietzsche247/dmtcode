@@ -52,7 +52,7 @@ const Research = () => {
       <div className="relative min-h-screen">
         <ParticleBackground />
         
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10" role="main">
           <Navigation />
           <Breadcrumb />
           <div className="pt-4">

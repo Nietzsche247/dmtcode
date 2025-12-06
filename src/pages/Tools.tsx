@@ -251,7 +251,7 @@ const Tools = () => {
       <div className="relative min-h-screen bg-background">
         <ParticleBackground />
         
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10" role="main">
           <Navigation />
           
           <div className="pt-24 pb-12">

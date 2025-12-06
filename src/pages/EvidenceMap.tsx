@@ -130,7 +130,7 @@ const EvidenceMap = () => {
         <Navigation />
         <Breadcrumb />
         
-        <main className="relative z-10 pt-4">
+        <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-12 max-w-7xl">
             <div className="text-center mb-8">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">

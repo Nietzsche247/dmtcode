@@ -112,7 +112,7 @@ const Bibliography = () => {
       <div className="relative min-h-screen bg-background">
         <Navigation />
         
-        <main className="relative z-10 pt-20">
+        <main id="main-content" className="relative z-10 pt-20" role="main">
           <section className="container mx-auto px-4 py-16 max-w-5xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Research Bibliography</h1>
             <p className="text-lg text-muted-foreground mb-12">

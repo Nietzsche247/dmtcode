@@ -101,7 +101,7 @@ const Woo = () => {
       <ParticleBackground />
       <Navigation />
 
-      <main className="min-h-screen pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+      <main id="main-content" className="min-h-screen pt-20 pb-16 px-4 sm:px-6 lg:px-8" role="main">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
           <section className="text-center mb-16 pt-12">
