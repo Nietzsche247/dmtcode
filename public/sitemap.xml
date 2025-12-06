@@ -1,297 +1,440 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <!-- Core Pages -->
+  
+  <!-- ========== CORE NICHE PAGES (HIGHEST PRIORITY) ========== -->
+  
+  <!-- Homepage: 1K-core domination target -->
   <url>
     <loc>https://dmtcode.com/</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- Symbol Registry: UGC moat (200-800 logs feasible) -->
   <url>
     <loc>https://dmtcode.com/registry</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
+  
+  <!-- Voice Logger: Primary UGC contribution point -->
+  <url>
+    <loc>https://dmtcode.com/log</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
-  <url>
-    <loc>https://dmtcode.com/dataset</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/data.json</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/api/symbols</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-  <!-- Research & Evidence Pages -->
-  <url>
-    <loc>https://dmtcode.com/research</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/evidence-map</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/bibliography</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/methods</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/critiques</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/analysis</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/correlations</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/null-reports</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Protocols Hub -->
+  
+  <!-- Protocols Hub: Clinical credibility anchor -->
   <url>
     <loc>https://dmtcode.com/protocols</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+  </url>
+  
+  <!-- Tools: Commerce conversion hub -->
+  <url>
+    <loc>https://dmtcode.com/tools</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
+
+  <!-- ========== PROTOCOL DETAIL PAGES ========== -->
+  
+  <url>
+    <loc>https://dmtcode.com/protocols/dmt-laser</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/protocols/ketamine-spravato</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.88</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/protocols/ketamine</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/protocols/dmt-laser</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.88</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/protocols/psilocybin</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://dmtcode.com/protocol-guide</loc>
-    <lastmod>2025-12-05</lastmod>
+    <loc>https://dmtcode.com/protocols/mdma</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
-
-  <!-- Voice Logger / Contribution -->
   <url>
-    <loc>https://dmtcode.com/log</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://dmtcode.com/protocols/ayahuasca</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/protocols/5-meo-dmt</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/protocols/ibogaine</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- Commerce: Tools -->
+  <!-- ========== RESEARCH & EVIDENCE PAGES ========== -->
+  
   <url>
-    <loc>https://dmtcode.com/tools</loc>
-    <lastmod>2025-12-05</lastmod>
+    <loc>https://dmtcode.com/research</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/evidence-map</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/bibliography</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/methods</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/critiques</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/analysis</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+  <url>
+    <loc>https://dmtcode.com/correlations</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/null-reports</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ========== DATA API ENDPOINTS ========== -->
+  
+  <url>
+    <loc>https://dmtcode.com/dataset</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/data.json</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/api/symbols</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <!-- ========== TOOLS / PRODUCT DETAIL PAGES ========== -->
+  
   <url>
     <loc>https://dmtcode.com/tools/650nm-laser-pointer</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.78</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/diffraction-grating</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.78</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/protocol-journal</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/lab-timer</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.72</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/mitomat-yoga-mat</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/quarton-laser-module</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/znse-lens</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.72</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/huepar-laser-level</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.72</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/tools/refraction-tank</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/tools/red-light-panel</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/tools/laser-tree-module</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/tools/aenbuslm-module</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/tools/mr-lenses</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
   </url>
 
-  <!-- Commerce: Bundles -->
+  <!-- ========== BUNDLES ========== -->
+  
   <url>
     <loc>https://dmtcode.com/bundles</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.88</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/bundles/starter</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/bundles/gateway</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/bundles/complete</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/bundles/ceremony</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.80</priority>
   </url>
 
-  <!-- Community / Woo -->
+  <!-- ========== COMMUNITY / WOO PAGES ========== -->
+  
   <url>
     <loc>https://dmtcode.com/community/woo</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/hamsa-amulet</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/star-of-david-pendant</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/chai-necklace</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/pomegranate-symbol</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/evil-eye-bracelet</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/mezuzah-case</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/kabbalah-tree-pendant</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.62</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/sefer-raziel-hamalakh</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/sefer-harazim</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/community/woo/treatise-left-emanation</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
   </url>
 
-  <!-- Events & Trials -->
+  <!-- ========== EVENTS & TRIALS ========== -->
+  
   <url>
     <loc>https://dmtcode.com/events</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.82</priority>
   </url>
 
-  <!-- Community Features -->
+  <!-- ========== COMMUNITY FEATURES ========== -->
+  
   <url>
     <loc>https://dmtcode.com/leaderboard</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.7</priority>
+    <priority>0.72</priority>
   </url>
 
-  <!-- Resource Pages -->
+  <!-- ========== RESOURCE PAGES ========== -->
+  
   <url>
     <loc>https://dmtcode.com/faq</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/glossary</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/open-questions</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/protocol-guide</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
   </url>
 
-  <!-- About & Legal -->
+  <!-- ========== ABOUT & LEGAL ========== -->
+  
   <url>
     <loc>https://dmtcode.com/about</loc>
-    <lastmod>2025-12-05</lastmod>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/waitlist</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+
+  <!-- ========== AUTH & USER ========== -->
+  
+  <url>
+    <loc>https://dmtcode.com/auth</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/submit-product</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
-    <loc>https://dmtcode.com/waitlist</loc>
-    <lastmod>2025-12-05</lastmod>
+    <loc>https://dmtcode.com/profile</loc>
+    <lastmod>2025-12-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.55</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/my-symbols</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.60</priority>
   </url>
 
-  <!-- Auth & User -->
-  <url>
-    <loc>https://dmtcode.com/auth</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/submit-product</loc>
-    <lastmod>2025-12-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
 </urlset>

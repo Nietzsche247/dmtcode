@@ -250,16 +250,42 @@ const VoiceLogger = () => {
   return (
     <>
       <Helmet>
-        <title>Voice Logger | {isClinicalMode ? 'Clinical Session Documentation' : 'Experience Documentation'} | DMT Code</title>
+        <title>Voice Logger | {isClinicalMode ? 'Clinical Session Documentation' : 'Log Your Experience'} | DMT Code</title>
         <meta 
           name="description" 
           content={isClinicalMode 
             ? "Clinical voice logging for ketamine-assisted psychotherapy sessions. Record, analyze therapeutic themes, and export PDF reports for patient charts."
-            : "Document your consciousness experiences with voice logging. Record, analyze, and integrate insights from therapeutic protocols."
+            : "Document your consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol and therapeutic sessions."
           }
         />
         <link rel="canonical" href="https://dmtcode.com/log" />
         <meta name="robots" content="index, follow" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dmtcode.com/log" />
+        <meta property="og:title" content="Voice Logger | Document Your Experience | DMT Code" />
+        <meta property="og:description" content="Document consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol sessions. UGC-powered research." />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/log" />
+        <meta name="twitter:title" content="Voice Logger | Document Your Experience | DMT Code" />
+        <meta name="twitter:description" content="Document consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol sessions." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "DMT Code Voice Logger",
+            "url": "https://dmtcode.com/log",
+            "description": "Voice logging tool for documenting consciousness experiences",
+            "applicationCategory": "ResearchApplication",
+            "operatingSystem": "Web Browser"
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
