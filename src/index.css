@@ -143,6 +143,45 @@
   html {
     scroll-behavior: smooth;
   }
+
+  /* Accessibility: Focus-visible outlines for keyboard navigation */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Accessibility: Minimum touch target size (44x44px) */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Accessibility: Skip link styling */
+  .skip-to-content:focus {
+    clip: auto;
+    clip-path: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Accessibility: High contrast gold for dark backgrounds - meets 4.5:1 ratio */
+  .text-gold-accessible {
+    color: hsl(45 100% 50%);
+  }
+
+  .dark .text-gold-accessible {
+    color: hsl(45 100% 65%);
+  }
+
+  /* Accessibility: Ensure buttons and interactive elements have proper focus */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
 }
 
 /* Meng To Style Animations */

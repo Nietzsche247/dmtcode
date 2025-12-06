@@ -79,7 +79,7 @@ const ProtocolGuide = () => {
         <Navigation />
         <Breadcrumb />
         
-        <main className="relative z-10 pt-4">
+        <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-5xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Complete 650 nm Laser Protocol</h1>
             <p className="text-lg text-muted-foreground mb-12">

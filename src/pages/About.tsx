@@ -57,7 +57,7 @@ const About = () => {
       <div className="relative min-h-screen bg-background transition-theme">
         <Navigation />
         
-        <main className="relative z-10 pt-20">
+        <main id="main-content" className="relative z-10 pt-20" role="main">
           {/* Hero Section */}
           <section className="relative px-4 py-20 md:py-28 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden" aria-hidden="true">

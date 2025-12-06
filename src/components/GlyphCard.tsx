@@ -152,8 +152,9 @@ export const GlyphCard = ({ glyph, tags = [], onVoteChange }: GlyphCardProps) =>
         <div className="flex-shrink-0 w-[30px] h-[30px] border border-border rounded overflow-hidden">
           <img 
             src={glyph.image_url} 
-            alt={glyph.title}
+            alt={`DMT glyph archetype: ${glyph.title}${glyph.description ? ` - ${glyph.description.substring(0, 50)}` : ''}`}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         </div>
       </div>
@@ -163,9 +164,11 @@ export const GlyphCard = ({ glyph, tags = [], onVoteChange }: GlyphCardProps) =>
           variant={hasVoted ? "default" : "outline"}
           size="sm"
           onClick={handleGlyphVote}
-          className="h-7 px-2"
+          className="h-7 px-2 min-h-[44px] min-w-[44px]"
+          aria-label={hasVoted ? `Remove upvote from ${glyph.title}, current votes: ${localUpvotes}` : `Upvote ${glyph.title}, current votes: ${localUpvotes}`}
+          aria-pressed={hasVoted}
         >
-          <ChevronUp className="h-3 w-3 mr-1" />
+          <ChevronUp className="h-3 w-3 mr-1" aria-hidden="true" />
           {localUpvotes}
         </Button>
 

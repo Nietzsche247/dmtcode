@@ -55,7 +55,7 @@ const Events = () => {
 
       <Navigation />
 
-      <main className="container mx-auto px-4 max-w-7xl">
+      <main id="main-content" className="container mx-auto px-4 max-w-7xl" role="main">
         {/* Hero Section - Meng To Style */}
         <section className="relative py-20 md:py-28 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden" aria-hidden="true">

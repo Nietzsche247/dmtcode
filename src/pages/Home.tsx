@@ -83,7 +83,7 @@ const Home = () => {
       </Helmet>
 
       <div className="relative min-h-screen">
-        <main className="relative z-10">
+        <main id="main-content" className="relative z-10" role="main">
           <Navigation />
           <HeroSection />
           <ExplainerSection />

@@ -176,33 +176,36 @@ export const FabricDrawingCanvas = ({ onImageChange, onFirstStroke, onSvgExport 
       </div>
 
       <div className="space-y-3">
-        <div className="flex gap-2 justify-center flex-wrap">
+        <div className="flex gap-2 justify-center flex-wrap" role="group" aria-label="Color selection">
           {colors.map((color) => (
             <button
               key={color.value}
               type="button"
               onClick={() => setCurrentColor(color.value)}
-              className={`w-10 h-10 rounded border-2 transition-all ${
+              className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded border-2 transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 currentColor === color.value ? 'border-primary scale-110' : 'border-border'
               }`}
               style={{ backgroundColor: color.value }}
               title={color.name}
-              aria-label={`Select ${color.name} color`}
+              aria-label={`Select ${color.name} color${currentColor === color.value ? ' (currently selected)' : ''}`}
+              aria-pressed={currentColor === color.value}
             />
           ))}
         </div>
 
-        <div className="flex gap-2 justify-center items-center flex-wrap">
-          <span className="text-sm text-muted-foreground">Brush:</span>
+        <div className="flex gap-2 justify-center items-center flex-wrap" role="group" aria-label="Brush size selection">
+          <span className="text-sm text-muted-foreground" id="brush-size-label">Brush:</span>
           {brushSizes.map((size) => (
             <button
               key={size}
               type="button"
               onClick={() => setBrushSize(size)}
-              className={`w-10 h-10 rounded border-2 transition-all flex items-center justify-center text-xs ${
+              className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded border-2 transition-all flex items-center justify-center text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 brushSize === size ? 'border-primary bg-primary/10' : 'border-border'
               }`}
-              aria-label={`Select ${size}px brush size`}
+              aria-label={`Select ${size}px brush size${brushSize === size ? ' (currently selected)' : ''}`}
+              aria-pressed={brushSize === size}
+              aria-describedby="brush-size-label"
             >
               {size}px
             </button>
