@@ -24,6 +24,7 @@ import {
   Microscope,
   ScrollText,
   HelpCircle,
+  ClipboardCheck,
 } from "lucide-react";
 
 interface NavItem {
@@ -111,6 +112,12 @@ const resourceItems: NavItem[] = [
     href: "/log",
     description: "Record and analyze experiences",
     icon: FileText,
+  },
+  {
+    title: "Assessment",
+    href: "/assess",
+    description: "PHQ-9, GAD-7, and clinical evaluations",
+    icon: ClipboardCheck,
   },
   {
     title: "Analysis",
