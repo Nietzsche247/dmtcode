@@ -46,6 +46,8 @@ const Protocols = lazy(() => import("./pages/Protocols"));
 const ProtocolDetail = lazy(() => import("./pages/ProtocolDetail"));
 const VoiceLogger = lazy(() => import("./pages/VoiceLogger"));
 const VoiceLogAnalysis = lazy(() => import("./pages/VoiceLogAnalysis"));
+const Assess = lazy(() => import("./pages/Assess"));
+const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load Tools page to isolate potential crashes
@@ -182,6 +184,21 @@ const App = () => (
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
                 <VoiceLogAnalysis />
+          </Suspense>
+            </ErrorBoundary>
+          } />
+          {/* Assessment Routes */}
+          <Route path="/assess" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Assess />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/assess/shared/:token" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <SharedAssessment />
               </Suspense>
             </ErrorBoundary>
           } />
