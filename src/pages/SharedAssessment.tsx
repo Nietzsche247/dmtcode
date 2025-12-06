@@ -19,9 +19,11 @@ interface SharedAssessmentData {
   mood_post: number | null;
   context_jsonb: any;
   created_at: string;
-  voice_logs?: {
+  voice_log?: {
     transcript: string | null;
     duration_seconds: number | null;
+    archetype_matches?: any[];
+    protocol_match_score?: number;
   };
 }
 
@@ -260,14 +262,14 @@ export default function SharedAssessment() {
         </div>
 
         {/* Transcript */}
-        {assessment.voice_logs?.transcript && (
+        {assessment.voice_log?.transcript && (
           <Card className="mb-6 border-border/50">
             <CardHeader>
               <CardTitle className="text-lg">Session Notes</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground whitespace-pre-wrap">
-                {assessment.voice_logs.transcript}
+                {assessment.voice_log.transcript}
               </p>
             </CardContent>
           </Card>

@@ -149,16 +149,38 @@ serve(async (req) => {
     }
 
     if (action === 'generate_report') {
-      // Fetch assessment data
+      // Fetch assessment data (avoid ambiguous FK by not embedding voice_logs)
       const { data: assessment, error } = await supabase
         .from('assessments')
-        .select('*, voice_logs(*)')
+        .select(`
+          id,
+          phq9_score,
+          gad7_score,
+          meq4_score,
+          ceq7_score,
+          context_jsonb,
+          mood_pre,
+          mood_post,
+          log_id,
+          created_at
+        `)
         .eq('id', assessment_id)
         .single();
 
       if (error) throw error;
 
-      // Generate report data (PDF generation would require additional libraries)
+      // Fetch voice log separately if log_id exists
+      let transcript = null;
+      if (assessment.log_id) {
+        const { data: voiceLog } = await supabase
+          .from('voice_logs')
+          .select('transcript')
+          .eq('id', assessment.log_id)
+          .single();
+        transcript = voiceLog?.transcript || null;
+      }
+
+      // Generate report data
       const report = {
         generated_at: new Date().toISOString(),
         assessment_id: assessment.id,
@@ -175,7 +197,7 @@ serve(async (req) => {
             ? assessment.mood_post - assessment.mood_pre 
             : null
         },
-        transcript: assessment.voice_logs?.transcript || null,
+        transcript: transcript,
         context: assessment.context_jsonb
       };
 
