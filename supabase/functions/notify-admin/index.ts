@@ -7,11 +7,19 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type: 'first_non_red' | 'null_report';
-  symbolId: string;
+  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission';
+  symbolId?: string;
   wavelength?: string;
   surface?: string;
   metadata?: Record<string, any>;
+  submission?: {
+    id: string;
+    user_id: string;
+    image_url: string;
+    description?: string;
+    tags?: string[];
+    source_method?: string;
+  };
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,9 +33,86 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { type, symbolId, wavelength, surface, metadata }: NotificationRequest = await req.json();
+    const body: NotificationRequest = await req.json();
+    const { type, symbolId, wavelength, surface, metadata, submission } = body;
 
-    console.log(`[Admin Alert] ${type.toUpperCase()} - Symbol: ${symbolId}`);
+    // Handle new symbol submission notification
+    if (submission) {
+      console.log(`[Admin Alert] NEW_SYMBOL_SUBMISSION - Symbol: ${submission.id}`);
+
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', submission.user_id)
+        .single();
+
+      const userName = profile?.display_name || 'Anonymous User';
+      const message = `📝 NEW SYMBOL SUBMISSION\n\nUser: ${userName}\nSource: ${submission.source_method || 'Not specified'}\nTags: ${submission.tags?.join(', ') || 'None'}\nDescription: ${submission.description?.substring(0, 100) || 'None'}\n\nView: https://dmtcode.com/admin`;
+
+      // Store notification
+      const { error: notifError } = await supabase
+        .from('admin_notifications')
+        .insert({
+          type: 'new_symbol_submission',
+          symbol_id: submission.id,
+          message,
+          metadata: {
+            user_id: submission.user_id,
+            source_method: submission.source_method,
+            tags: submission.tags,
+            description: submission.description?.substring(0, 100),
+          },
+        });
+
+      if (notifError) {
+        console.error('Failed to store notification:', notifError);
+      }
+
+      // Send email if Resend is configured
+      const resendKey = Deno.env.get('RESEND_API_KEY');
+      if (resendKey) {
+        try {
+          const emailResponse = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'DMT Code <notifications@dmtcode.com>',
+              to: ['admin@dmtcode.com'],
+              subject: `New Symbol Submission from ${userName}`,
+              html: `
+                <h2>New Symbol Submission</h2>
+                <p><strong>User:</strong> ${userName}</p>
+                <p><strong>Source Method:</strong> ${submission.source_method || 'Not specified'}</p>
+                <p><strong>Tags:</strong> ${submission.tags?.join(', ') || 'None'}</p>
+                <p><strong>Description:</strong> ${submission.description || 'None provided'}</p>
+                <p><a href="${submission.image_url}">View Symbol Image</a></p>
+                <p><a href="https://dmtcode.com/admin">Review in Admin Dashboard</a></p>
+              `,
+            }),
+          });
+
+          if (!emailResponse.ok) {
+            console.error('Email send failed:', await emailResponse.text());
+          } else {
+            console.log('Admin notification email sent successfully');
+          }
+        } catch (emailError) {
+          console.error('Email sending error:', emailError);
+        }
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'New submission notification sent' }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Handle legacy notification types
+    console.log(`[Admin Alert] ${type?.toUpperCase()} - Symbol: ${symbolId}`);
 
     let message = '';
     
@@ -37,10 +122,8 @@ const handler = async (req: Request): Promise<Response> => {
       message = `⚪ NULL REPORT SUBMITTED\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nSurface: ${surface}\nTimestamp: ${new Date().toISOString()}\n\nView null dashboard: https://dmtcode.com/admin`;
     }
 
-    // Log to console (viewable in edge function logs)
     console.log(message);
 
-    // Store in a notifications table (optional - could create this table)
     const { error: notifError } = await supabase
       .from('admin_notifications')
       .insert({
@@ -48,15 +131,12 @@ const handler = async (req: Request): Promise<Response> => {
         symbol_id: symbolId,
         message,
         metadata: { wavelength, surface, ...metadata },
-        created_at: new Date().toISOString()
       });
 
     if (notifError) {
       console.error('Failed to store notification:', notifError);
-      // Don't fail the request if notification storage fails
     }
 
-    // TODO: Add email/Slack integration here if RESEND_API_KEY or SLACK_WEBHOOK_URL is configured
     const resendKey = Deno.env.get('RESEND_API_KEY');
     if (resendKey && type === 'first_non_red') {
       try {
@@ -84,19 +164,13 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({ success: true, message: 'Notification sent' }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      }
+      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: any) {
     console.error('Error in notify-admin function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      }
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
 };
