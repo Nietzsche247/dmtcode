@@ -44,6 +44,68 @@ export type Database = {
         }
         Relationships: []
       }
+      assessments: {
+        Row: {
+          brain_scan_url: string | null
+          ceq7_score: number | null
+          context_jsonb: Json | null
+          created_at: string | null
+          gad7_score: number | null
+          id: string
+          is_shared: boolean | null
+          log_id: string | null
+          meq4_score: number | null
+          mood_post: number | null
+          mood_pre: number | null
+          phq9_score: number | null
+          share_token: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          brain_scan_url?: string | null
+          ceq7_score?: number | null
+          context_jsonb?: Json | null
+          created_at?: string | null
+          gad7_score?: number | null
+          id?: string
+          is_shared?: boolean | null
+          log_id?: string | null
+          meq4_score?: number | null
+          mood_post?: number | null
+          mood_pre?: number | null
+          phq9_score?: number | null
+          share_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          brain_scan_url?: string | null
+          ceq7_score?: number | null
+          context_jsonb?: Json | null
+          created_at?: string | null
+          gad7_score?: number | null
+          id?: string
+          is_shared?: boolean | null
+          log_id?: string | null
+          meq4_score?: number | null
+          mood_post?: number | null
+          mood_pre?: number | null
+          phq9_score?: number | null
+          share_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_log_id_fkey"
+            columns: ["log_id"]
+            isOneToOne: false
+            referencedRelation: "voice_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       badges: {
         Row: {
           category: string
@@ -1163,6 +1225,7 @@ export type Database = {
         Row: {
           analysis_jsonb: Json | null
           archetype_matches: Json | null
+          assessment_id: string | null
           audio_url: string | null
           created_at: string
           duration_seconds: number | null
@@ -1180,6 +1243,7 @@ export type Database = {
         Insert: {
           analysis_jsonb?: Json | null
           archetype_matches?: Json | null
+          assessment_id?: string | null
           audio_url?: string | null
           created_at?: string
           duration_seconds?: number | null
@@ -1197,6 +1261,7 @@ export type Database = {
         Update: {
           analysis_jsonb?: Json | null
           archetype_matches?: Json | null
+          assessment_id?: string | null
           audio_url?: string | null
           created_at?: string
           duration_seconds?: number | null
@@ -1212,6 +1277,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "voice_logs_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "voice_logs_protocol_id_fkey"
             columns: ["protocol_id"]
