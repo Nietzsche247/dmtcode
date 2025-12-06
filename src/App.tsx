@@ -33,6 +33,7 @@ import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
+import SubmitSymbol from "./pages/SubmitSymbol";
 import Bundles from "./pages/Bundles";
 import Dataset from "./pages/Dataset";
 // Lazy load BundleDetail
@@ -137,6 +138,7 @@ const App = () => (
           <Route path="/null-reports" element={<NullReports />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/submit-product" element={<SubmitProduct />} />
+          <Route path="/submit-symbol" element={<SubmitSymbol />} />
           <Route path="/dataset" element={<Dataset />} />
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
