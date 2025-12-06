@@ -206,9 +206,19 @@ const Tools = () => {
         <meta name="description" content={meta.description} />
         <link rel="canonical" href="https://dmtcode.com/tools" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/tools" />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:description" content={meta.description} />
-        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="DMT Laser Protocol Tools | Replicator Kits | DMT Code" />
+        <meta property="og:description" content="650nm laser equipment, diffraction gratings, and protocol journals for DMT research replication. $12-$2,000 price range." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dmtcode.com/tools" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/tools" />
+        <meta name="twitter:title" content="DMT Laser Protocol Tools | Replicator Kits" />
+        <meta name="twitter:description" content="650nm laser equipment, diffraction gratings, and protocol journals for DMT research replication. $12-$2,000 price range." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        
         <meta name="robots" content="index, follow" />
         {products.length > 0 && (
           <script type="application/ld+json">

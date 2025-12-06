@@ -52,6 +52,16 @@ const Home = () => {
         <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:site_name" content="DMT Code" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com" />
+        <meta name="twitter:title" content={meta.title} />
+        <meta name="twitter:description" content={meta.description} />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        
         <link rel="canonical" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
         
@@ -62,7 +72,12 @@ const Home = () => {
             "name": "DMT Code Visual Symbol Catalogue",
             "url": "https://dmtcode.com",
             "description": "Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences",
-            "license": "https://creativecommons.org/licenses/by/4.0/"
+            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://dmtcode.com/api/symbols?tag={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
           })}
         </script>
       </Helmet>

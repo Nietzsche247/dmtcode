@@ -34,27 +34,43 @@ const Protocols = () => {
   return (
     <>
       <Helmet>
-        <title>Therapy Protocols | Consciousness Research Hub | DMT Code</title>
+        <title>DMT Laser & Therapy Protocols | Evidence-Based Guides | DMT Code</title>
         <meta 
           name="description" 
-          content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, and psychedelic-assisted therapy. Preparation, dosing, integration frameworks." 
+          content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser, and psychedelic-assisted therapy. Preparation, dosing, integration frameworks with DOI citations." 
         />
         <link rel="canonical" href="https://dmtcode.com/protocols" />
         <meta name="robots" content="index, follow" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dmtcode.com/protocols" />
+        <meta property="og:title" content="DMT Laser & Therapy Protocols | Evidence-Based Guides" />
+        <meta property="og:description" content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser. Preparation, dosing, integration frameworks with DOI citations." />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/protocols" />
+        <meta name="twitter:title" content="DMT Laser & Therapy Protocols | Evidence-Based Guides" />
+        <meta name="twitter:description" content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser. Preparation, dosing, integration frameworks with DOI citations." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "Therapeutic Protocols",
-            "description": "Evidence-based protocols for psychedelic-assisted therapy",
+            "name": "Therapeutic Protocols | DMT Code",
+            "description": "Evidence-based protocols for psychedelic-assisted therapy with DOI citations",
+            "url": "https://dmtcode.com/protocols",
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": protocols?.length || 0,
               "itemListElement": protocols?.map((p, i) => ({
                 "@type": "ListItem",
                 "position": i + 1,
-                "url": `https://dmtcode.com/protocols/${p.slug}`
+                "url": `https://dmtcode.com/protocols/${p.slug}`,
+                "name": p.title
               }))
             }
           })}
