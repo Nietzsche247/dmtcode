@@ -10,7 +10,9 @@ import { Logo } from "./Logo";
 import { ModeToggle } from "./ModeToggle";
 import { ThemeToggle } from "./ThemeToggle";
 import { MegaMenu } from "./MegaMenu";
+import { UserDropdown } from "./UserDropdown";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuthTracking } from "@/hooks/useAuthTracking";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,12 +24,14 @@ export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
   const { mode } = useModeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { trackLogout } = useAuthTracking();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,15 +55,23 @@ export const Navigation = () => {
     if (session?.user) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('display_name')
+        .select('display_name, avatar_url')
         .eq('id', session.user.id)
         .single();
       setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'User');
+      setAvatarUrl(profile?.avatar_url || session.user.user_metadata?.avatar_url || null);
+    } else {
+      setUserName(null);
+      setAvatarUrl(null);
     }
   };
 
   const handleSignOut = async () => {
+    trackLogout();
     await supabase.auth.signOut();
+    setIsAuthenticated(false);
+    setUserName(null);
+    setAvatarUrl(null);
     navigate('/');
   };
 
@@ -122,17 +134,20 @@ export const Navigation = () => {
               <ThemeToggle />
               <CartDrawer />
               {isAuthenticated ? (
-                <>
-                  <span className="text-sm text-muted-foreground">Hi, {userName}</span>
-                  <Button onClick={() => navigate('/profile')} variant="ghost" size="sm">Profile</Button>
-                  <Button onClick={() => navigate('/admin')} variant="ghost" size="sm">Admin</Button>
-                  <Button onClick={handleSignOut} variant="outline" size="sm">Sign Out</Button>
-                </>
+                <UserDropdown 
+                  userName={userName} 
+                  avatarUrl={avatarUrl}
+                  onSignOut={() => {
+                    setIsAuthenticated(false);
+                    setUserName(null);
+                    setAvatarUrl(null);
+                  }}
+                />
               ) : (
                 <Button 
                   onClick={() => navigate('/auth')} 
                   size="sm"
-                  className="rounded-full px-4"
+                  className="rounded-full px-4 hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all min-h-[44px]"
                 >
                   Sign In
                 </Button>
@@ -258,11 +273,11 @@ export const Navigation = () => {
                 {isAuthenticated ? (
                   <>
                     <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Profile</Button>
-                    <Button onClick={() => handleNavigation('/admin')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Admin</Button>
+                    <Button onClick={() => handleNavigation('/my-symbols')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">My Symbols</Button>
                     <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">Sign Out</Button>
                   </>
                 ) : (
-                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full min-h-[44px]">Sign In</Button>
+                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full min-h-[44px] hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all">Sign In</Button>
                 )}
               </div>
             </div>
