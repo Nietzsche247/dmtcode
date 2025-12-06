@@ -887,33 +887,60 @@ export type Database = {
       symbol_submissions: {
         Row: {
           created_at: string
+          description: string | null
+          dose_level: string | null
           downvotes: number
+          duration_seconds: number | null
+          emotional_valence: string | null
           id: string
           image_url: string
+          recurrence: string | null
+          source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
+          surface_type: string | null
+          tags: string[] | null
           updated_at: string
           upvotes: number
           user_id: string
+          wavelength: string | null
         }
         Insert: {
           created_at?: string
+          description?: string | null
+          dose_level?: string | null
           downvotes?: number
+          duration_seconds?: number | null
+          emotional_valence?: string | null
           id?: string
           image_url: string
+          recurrence?: string | null
+          source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
+          surface_type?: string | null
+          tags?: string[] | null
           updated_at?: string
           upvotes?: number
           user_id: string
+          wavelength?: string | null
         }
         Update: {
           created_at?: string
+          description?: string | null
+          dose_level?: string | null
           downvotes?: number
+          duration_seconds?: number | null
+          emotional_valence?: string | null
           id?: string
           image_url?: string
+          recurrence?: string | null
+          source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
+          surface_type?: string | null
+          tags?: string[] | null
           updated_at?: string
           upvotes?: number
           user_id?: string
+          wavelength?: string | null
         }
         Relationships: []
       }

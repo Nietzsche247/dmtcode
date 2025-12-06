@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { SymbolSubmissionFlow } from '@/components/registry/SymbolSubmissionFlow';
+import { SubmissionWizard } from '@/components/submission/SubmissionWizard';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
@@ -33,7 +33,7 @@ const SubmitSymbol = () => {
     <>
       <Helmet>
         <title>Submit Symbol | DMT Code</title>
-        <meta name="description" content="Draw and submit visual symbols to the DMT Code registry using our in-browser canvas tool." />
+        <meta name="description" content="Draw and submit visual symbols to the DMT Code registry using our multi-step submission wizard." />
         <link rel="canonical" href="https://dmtcode.com/submit-symbol" />
       </Helmet>
 
@@ -46,11 +46,11 @@ const SubmitSymbol = () => {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : isAuthenticated ? (
-            <SymbolSubmissionFlow />
+            <SubmissionWizard />
           ) : (
             <div className="text-center py-20 space-y-6">
-              <h1 className="text-3xl font-bold">Sign In Required</h1>
-              <p className="text-muted-foreground max-w-md mx-auto">
+              <h1 className="text-3xl font-black tracking-tight">Sign In Required</h1>
+              <p className="text-muted-foreground font-light max-w-md mx-auto">
                 You need to be signed in to submit symbols to the registry. 
                 Create an account to start contributing.
               </p>
