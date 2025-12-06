@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Copy, Check, AlertCircle, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 
 interface TherapistShareModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function TherapistShareModal({ isOpen, onClose, assessmentId }: Therapist
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const { trackTherapistShareClicked } = usePostHogTracking();
 
   const generateShareLink = async () => {
     setIsGenerating(true);
@@ -30,6 +32,7 @@ export function TherapistShareModal({ isOpen, onClose, assessmentId }: Therapist
 
       if (error) throw error;
       setShareUrl(data.share_url);
+      trackTherapistShareClicked({ assessment_id: assessmentId, action: 'generate_link' });
       toast.success('Share link generated');
     } catch (error) {
       console.error('Failed to generate share link:', error);
@@ -43,6 +46,7 @@ export function TherapistShareModal({ isOpen, onClose, assessmentId }: Therapist
     if (shareUrl) {
       await navigator.clipboard.writeText(shareUrl);
       setIsCopied(true);
+      trackTherapistShareClicked({ assessment_id: assessmentId, action: 'copy_link' });
       toast.success('Link copied to clipboard');
       setTimeout(() => setIsCopied(false), 2000);
     }
@@ -59,6 +63,7 @@ export function TherapistShareModal({ isOpen, onClose, assessmentId }: Therapist
 
       if (error) throw error;
       setShareUrl(null);
+      trackTherapistShareClicked({ assessment_id: assessmentId, action: 'revoke_link' });
       toast.success('Share link revoked');
     } catch (error) {
       console.error('Failed to revoke share link:', error);

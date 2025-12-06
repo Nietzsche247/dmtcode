@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 
 interface AssessmentFormProps {
   logId?: string;
@@ -71,6 +72,7 @@ const INTENSITY_OPTIONS = [
 export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
   const [activeTab, setActiveTab] = useState('pre');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trackAssessmentSubmitted } = usePostHogTracking();
   
   // Pre-session state
   const [moodPre, setMoodPre] = useState([5]);
@@ -164,6 +166,16 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
           .update({ assessment_id: assessment.id })
           .eq('id', logId);
       }
+
+      // Track assessment submission
+      trackAssessmentSubmitted({
+        assessment_id: assessment.id,
+        has_log_id: !!logId,
+        phq9_score: scoreResult?.phq9_score,
+        gad7_score: scoreResult?.gad7_score,
+        mood_pre: moodPre[0],
+        mood_post: moodPost[0]
+      });
 
       toast.success('Assessment completed successfully');
       onComplete(assessment.id);
