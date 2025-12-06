@@ -16,7 +16,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Mic, MicOff, Pause, Play, Square, Upload, 
-  Pencil, Clock, CheckCircle2, Loader2, Volume2, Stethoscope, Download
+  Pencil, Clock, CheckCircle2, Loader2, Volume2, Stethoscope, Download,
+  ClipboardCheck
 } from 'lucide-react';
 
 // Clinical theme labels for Ketamine/Spravato protocol
@@ -50,6 +51,7 @@ const VoiceLogger = () => {
   const [selectedProtocol, setSelectedProtocol] = useState<string>(protocolSlug || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [submittedLogId, setSubmittedLogId] = useState<string | null>(null);
   
   // Clinical mode state
   const [preMood, setPreMood] = useState<number>(5);
@@ -216,6 +218,9 @@ const VoiceLogger = () => {
         : 'Voice log submitted! Transcription starting...'
       );
       
+      // Store submitted log ID for Assessment CTA
+      setSubmittedLogId(voiceLog.id);
+      
       // Trigger transcription
       supabase.functions.invoke('transcribe-voice', {
         body: { 
@@ -229,7 +234,7 @@ const VoiceLogger = () => {
         }
       });
       
-      navigate(`/log/analysis/${voiceLog.id}`);
+      // Don't auto-navigate, show success with CTA options
     } catch (err) {
       console.error('Submit error:', err);
       toast.error('Failed to submit voice log');
@@ -245,6 +250,7 @@ const VoiceLogger = () => {
     setDuration(0);
     setShowPostMood(false);
     setPostMood(5);
+    setSubmittedLogId(null);
   };
 
   return (
@@ -469,7 +475,7 @@ const VoiceLogger = () => {
                         </>
                       )}
 
-                      {!isRecording && audioBlob && (
+                      {!isRecording && audioBlob && !submittedLogId && (
                         <>
                           <Button 
                             variant="outline" 
@@ -501,6 +507,43 @@ const VoiceLogger = () => {
                             }
                           </Button>
                         </>
+                      )}
+
+                      {/* Success State with CTAs */}
+                      {submittedLogId && (
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-center gap-2 text-green-500 mb-4">
+                            <CheckCircle2 className="w-5 h-5" />
+                            <span className="font-medium">Submission Successful!</span>
+                          </div>
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <Button 
+                              size="lg"
+                              onClick={() => navigate(`/log/analysis/${submittedLogId}`)}
+                              className="gap-2"
+                            >
+                              <Volume2 className="w-5 h-5" />
+                              View Analysis
+                            </Button>
+                            <Button 
+                              size="lg"
+                              variant="outline"
+                              onClick={() => navigate(`/assess?log_id=${submittedLogId}`)}
+                              className="gap-2 border-primary/50 hover:bg-primary/10"
+                            >
+                              <ClipboardCheck className="w-5 h-5" />
+                              Start Assessment
+                            </Button>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={resetRecording}
+                            className="mt-2"
+                          >
+                            Record Another
+                          </Button>
+                        </div>
                       )}
                     </div>
 
