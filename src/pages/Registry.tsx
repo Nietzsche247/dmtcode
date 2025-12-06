@@ -14,19 +14,17 @@ const Registry = () => {
   return (
     <>
       <Helmet>
-        <title>Glyph Registry | DMT Code Visual Symbol Catalogue</title>
+        <title>Visual Symbol Database - Documented DMT Patterns | DMT Code</title>
         <meta 
           name="description" 
-          content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." 
+          content="Browse and contribute to the open-source catalogue of visual symbols observed during 650nm laser and N,N-DMT experiences." 
         />
         <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0, null reports, baseline data" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/registry" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/registry" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/registry" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Glyph Registry | DMT Code Visual Symbol Catalogue" />
-        <meta property="og:description" content="Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences. Anonymous contribution, CSV/JSON downloads." />
+        <meta property="og:title" content="Visual Symbol Database - Documented DMT Patterns | DMT Code" />
+        <meta property="og:description" content="Browse and contribute to the open-source catalogue of visual symbols observed during 650nm laser and N,N-DMT experiences." />
         <meta property="og:url" content="https://dmtcode.com/registry" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">
@@ -81,32 +79,10 @@ const Registry = () => {
             },
             {
               "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
-                {
-                  "@type": "Question",
-                  "name": "What visual symbols are documented in the registry?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "The registry catalogues discrete 100×100px visual symbols reported during 650nm laser exposure and N,N-DMT experiences. Symbols include alphabetic-like characters, geometric patterns, and structured glyphs with 87% inter-subject consistency. Davis et al. (2021) DOI:10.1002/hup.2806"
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How do I contribute symbols to the registry?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Use the canvas drawing tool to recreate symbols on 100×100px white background. Add structured metadata including source (650nm laser or DMT), route of administration, perceived surface, depth, motion, and emotional valence. Submissions can be anonymous or authenticated. All data released under CC-BY-4.0."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "How can I download the complete dataset?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Full dataset available at /data.json (machine-readable JSON format) and /registry/export.csv (CSV format). Updated in real-time with each submission. Released under CC-BY-4.0 license for academic research and independent analysis."
-                  }
-                }
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dmtcode.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Registry", "item": "https://dmtcode.com/registry" }
               ]
             }
           ])}

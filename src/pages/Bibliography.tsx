@@ -4,21 +4,16 @@ import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
 import { ExternalLink, FileText, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { Button } from '@/components/ui/button';
 
 const Bibliography = () => {
-  const meta = useDynamicMeta('bibliography');
-  
   return (
     <>
       <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
+        <title>Bibliography & Citations | DMT Code</title>
+        <meta name="description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/bibliography" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/bibliography" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/bibliography" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

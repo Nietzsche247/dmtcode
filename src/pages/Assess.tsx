@@ -48,10 +48,22 @@ export default function Assess() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Psychedelic Experience Assessment | DMT Code Project</title>
-        <meta name="description" content="Clinical-grade assessment tools for psychedelic experiences. PHQ-9, GAD-7, MEQ-4, and CEQ-7 validated instruments with secure therapist sharing." />
-        <meta property="og:title" content="Psychedelic Experience Assessment | DMT Code Project" />
-        <meta property="og:description" content="Validated clinical assessment tools for psychedelic-assisted therapy sessions." />
+        <title>Psychedelic Experience Assessment Tool | DMT Code</title>
+        <meta name="description" content="Clinician-ready validated assessment using PHQ-9, GAD-7, MEQ-4 instruments with AI-powered integration guidance." />
+        <link rel="canonical" href="https://dmtcode.com/assess" />
+        <meta property="og:title" content="Psychedelic Experience Assessment Tool | DMT Code" />
+        <meta property="og:description" content="Clinician-ready validated assessment using PHQ-9, GAD-7, MEQ-4 instruments with AI-powered integration guidance." />
+        <meta name="robots" content="index, follow" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dmtcode.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Assessment", "item": "https://dmtcode.com/assess" }
+            ]
+          })}
+        </script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

@@ -9,15 +9,13 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>About - Team & Ethics | DMT Code</title>
+        <title>About DMT Code - Mission & Team | DMT Code</title>
         <meta 
           name="description" 
-          content="Team credentials and ethical framework for DMT Code Visual Symbol Catalogue. Neutral science, harm-reduction focus, and open data commitment." 
+          content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." 
         />
         <link rel="canonical" href="https://dmtcode.com/about" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/about" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/about" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/about" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
