@@ -28,6 +28,14 @@
     <priority>0.95</priority>
   </url>
   
+  <!-- Assessment: Clinical evaluation hub -->
+  <url>
+    <loc>https://dmtcode.com/assess</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  
   <!-- Protocols Hub: Clinical credibility anchor -->
   <url>
     <loc>https://dmtcode.com/protocols</loc>
