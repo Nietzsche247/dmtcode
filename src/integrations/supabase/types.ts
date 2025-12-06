@@ -1008,6 +1008,38 @@ export type Database = {
           },
         ]
       }
+      symbol_votes: {
+        Row: {
+          created_at: string
+          id: string
+          symbol_id: string
+          user_id: string
+          vote_type: Database["public"]["Enums"]["symbol_vote_type"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          symbol_id: string
+          user_id: string
+          vote_type: Database["public"]["Enums"]["symbol_vote_type"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          symbol_id?: string
+          user_id?: string
+          vote_type?: Database["public"]["Enums"]["symbol_vote_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symbol_votes_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tag_votes: {
         Row: {
           created_at: string
@@ -1375,6 +1407,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       submission_status: "pending" | "approved" | "rejected"
+      symbol_vote_type: "upvote" | "downvote" | "seen_it"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1504,6 +1537,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       submission_status: ["pending", "approved", "rejected"],
+      symbol_vote_type: ["upvote", "downvote", "seen_it"],
     },
   },
 } as const
