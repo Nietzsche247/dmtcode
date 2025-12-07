@@ -58,7 +58,7 @@ const SubmitSymbol = () => {
                 <Button variant="outline" onClick={() => navigate('/registry')}>
                   Browse Registry
                 </Button>
-                <Button onClick={() => navigate('/auth')}>
+                <Button onClick={() => navigate('/auth?returnTo=/submit-symbol')}>
                   Sign In
                 </Button>
               </div>

@@ -20,6 +20,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signup' ? 'signup' : 'login';
+  const returnTo = searchParams.get('returnTo') || '/';
   
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,7 @@ const Auth = () => {
       (event, session) => {
         setSession(session);
         if (session) {
-          navigate("/");
+          navigate(returnTo);
         }
       }
     );
@@ -42,12 +43,12 @@ const Auth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        navigate("/");
+        navigate(returnTo);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, returnTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +77,7 @@ const Auth = () => {
         trackLogin('email');
         toast.success("Logged in successfully!");
       } else {
-        const redirectUrl = `${window.location.origin}/`;
+        const redirectUrl = `${window.location.origin}${returnTo}`;
         
         const { error } = await supabase.auth.signUp({
           email: validated.email,
@@ -115,7 +116,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}${returnTo}`,
         },
       });
 
