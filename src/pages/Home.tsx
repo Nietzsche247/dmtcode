@@ -11,6 +11,8 @@ import { ArrowRight, Database, Users, Target, FileText, AlertTriangle } from 'lu
 import { useNavigate } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
+import { RecentContributions } from '@/components/registry/RecentContributions';
+import { CommunityStats } from '@/components/registry/CommunityStats';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -125,7 +127,7 @@ const Home = () => {
             </AnimatedSection>
           </section>
 
-          {/* Stats Section */}
+          {/* Stats Section - Now uses live CommunityStats */}
           <section className="container mx-auto px-4 py-32 max-w-5xl border-t border-border/20">
             <AnimatedSection className="text-center mb-16">
               <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Current Status</p>
@@ -133,25 +135,17 @@ const Home = () => {
                 Dataset Overview
               </h2>
               <p className="text-muted-foreground font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                Numbers update as new submissions arrive
+                Live statistics from our growing dataset
               </p>
             </AnimatedSection>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { value: '52+', label: 'Symbol Archetypes' },
-                { value: '3,000+', label: 'Independent Replicators' },
-                { value: '87%', label: 'Consistency Rate' },
-              ].map((stat, i) => (
-                <AnimatedSection key={i} className={`animation-delay-${(i + 1) * 100}`}>
-                  <div className="text-center p-10 rounded-3xl bg-card/50 border border-border/30 hover:border-primary/30 transition-colors">
-                    <div className="text-6xl md:text-7xl font-bold text-primary mb-4 uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>{stat.value}</div>
-                    <div className="text-sm text-muted-foreground font-normal tracking-wide uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{stat.label}</div>
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
+            <AnimatedSection>
+              <CommunityStats />
+            </AnimatedSection>
           </section>
+          
+          {/* Recent Contributions Section */}
+          <RecentContributions />
 
           {/* Mission Section */}
           <section className="container mx-auto px-4 py-32 max-w-4xl border-t border-border/30">
