@@ -10,7 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Check, X, Eye, Loader2, Search, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, X, Eye, Loader2, Search, CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -33,6 +37,7 @@ export const SymbolSubmissionModeration = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
   const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +84,7 @@ export const SymbolSubmissionModeration = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter, searchQuery, currentPage]);
+  }, [statusFilter, searchQuery, currentPage, dateRange]);
 
   const loadStats = async () => {
     const today = new Date();
@@ -119,6 +124,15 @@ export const SymbolSubmissionModeration = () => {
 
     if (searchQuery.trim()) {
       query = query.ilike('description', `%${searchQuery.trim()}%`);
+    }
+
+    if (dateRange.from) {
+      query = query.gte('created_at', dateRange.from.toISOString());
+    }
+    if (dateRange.to) {
+      const endOfDay = new Date(dateRange.to);
+      endOfDay.setHours(23, 59, 59, 999);
+      query = query.lte('created_at', endOfDay.toISOString());
     }
 
     const { data, error, count } = await query;
@@ -371,6 +385,60 @@ export const SymbolSubmissionModeration = () => {
               className="pl-9"
             />
           </div>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full md:w-[280px] justify-start text-left font-normal",
+                  !dateRange.from && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "MMM d, yyyy")} - {format(dateRange.to, "MMM d, yyyy")}
+                    </>
+                  ) : (
+                    format(dateRange.from, "MMM d, yyyy")
+                  )
+                ) : (
+                  <span>Filter by date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={dateRange.from}
+                selected={{ from: dateRange.from, to: dateRange.to }}
+                onSelect={(range) => {
+                  setDateRange({ from: range?.from, to: range?.to });
+                  setCurrentPage(1);
+                }}
+                numberOfMonths={2}
+                className="pointer-events-auto"
+              />
+              {(dateRange.from || dateRange.to) && (
+                <div className="p-3 border-t">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      setDateRange({ from: undefined, to: undefined });
+                      setCurrentPage(1);
+                    }}
+                  >
+                    Clear dates
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
         </div>
       </Card>
 
