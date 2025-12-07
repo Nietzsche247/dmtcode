@@ -49,7 +49,7 @@ const Protocols = lazy(() => import("./pages/Protocols"));
 const ProtocolDetail = lazy(() => import("./pages/ProtocolDetail"));
 const VoiceLogger = lazy(() => import("./pages/VoiceLogger"));
 const VoiceLogAnalysis = lazy(() => import("./pages/VoiceLogAnalysis"));
-const Assess = lazy(() => import("./pages/Assess"));
+const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -210,7 +210,7 @@ const App = () => (
           <Route path="/assess" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
-                <Assess />
+                <AssessmentPage />
               </Suspense>
             </ErrorBoundary>
           } />
