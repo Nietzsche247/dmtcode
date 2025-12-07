@@ -48,11 +48,11 @@ export default function Assess() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Psychedelic Experience Assessment Tool | DMT Code</title>
-        <meta name="description" content="Clinician-ready validated assessment using PHQ-9, GAD-7, MEQ-4 instruments with AI-powered integration guidance." />
+        <title>Psychedelic Experience Assessment | DMT Code</title>
+        <meta name="description" content="Clinician-ready assessment tool using PHQ-9, GAD-7, MEQ-4 validated instruments with AI analysis." />
         <link rel="canonical" href="https://dmtcode.com/assess" />
-        <meta property="og:title" content="Psychedelic Experience Assessment Tool | DMT Code" />
-        <meta property="og:description" content="Clinician-ready validated assessment using PHQ-9, GAD-7, MEQ-4 instruments with AI-powered integration guidance." />
+        <meta property="og:title" content="Psychedelic Experience Assessment | DMT Code" />
+        <meta property="og:description" content="Clinician-ready assessment tool using PHQ-9, GAD-7, MEQ-4 validated instruments with AI analysis." />
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">
           {JSON.stringify({
