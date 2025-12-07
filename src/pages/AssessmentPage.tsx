@@ -108,8 +108,9 @@ export default function Assess() {
             aria-label="Voice Logger recommendation"
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex-shrink-0 p-3 rounded-full bg-primary/20">
-                <Mic className="h-6 w-6 text-primary" aria-hidden="true" />
+              <div className="relative flex-shrink-0 p-3 rounded-full bg-primary/20">
+                <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+                <Mic className="relative h-6 w-6 text-primary" aria-hidden="true" />
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-foreground mb-1">
