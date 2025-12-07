@@ -7,7 +7,7 @@ import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
-import { ArrowRight, Database, Users, Target, FileText, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Database, Users, Target, FileText, AlertTriangle, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
@@ -122,6 +122,42 @@ const Home = () => {
         <main id="main-content" className="relative z-10" role="main">
           <Navigation />
           <HeroSection />
+          
+          {/* Voice Logger Callout */}
+          <section className="container mx-auto px-4 py-8 max-w-4xl">
+            <AnimatedSection>
+              <div 
+                className="p-4 md:p-6 rounded-lg border border-primary bg-primary/10"
+                role="complementary"
+                aria-label="Voice Logger recommendation"
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="relative flex-shrink-0 p-3 rounded-full bg-primary/20">
+                    <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+                    <Mic className="relative h-6 w-6 text-primary" aria-hidden="true" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      Record Your Experience First
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Use our Voice Logger to capture your thoughts immediately after your session while memories are fresh. 
+                      Your recording will be transcribed and analyzed.
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => navigate('/log')} 
+                    className="whitespace-nowrap flex-shrink-0 gap-2 btn-lickable"
+                    size="lg"
+                  >
+                    <Mic className="h-4 w-4" />
+                    Start Voice Recording
+                  </Button>
+                </div>
+              </div>
+            </AnimatedSection>
+          </section>
+
           <ExplainerSection />
           
           {/* Key Takeaways Section */}
