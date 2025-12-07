@@ -155,6 +155,7 @@ const App = () => (
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/submit-product" element={<SubmitProduct />} />
           <Route path="/submit-symbol" element={<SubmitSymbol />} />
+          <Route path="/submit" element={<Navigate to="/submit-symbol" replace />} />
           <Route path="/dataset" element={<Dataset />} />
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
