@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect width="100" height="100" fill="#1a1a1a"/>
+  <g stroke="#C41E3A" stroke-width="0.5" opacity="0.8">
+    <!-- Grid of katakana-like characters -->
+    <path d="M15 20 L25 20 L20 35" />
+    <path d="M35 18 L35 32 M30 25 L40 25" />
+    <path d="M50 20 L55 35 L60 20" />
+    <path d="M75 18 L70 28 L80 28 L75 35" />
+    <path d="M15 45 L25 45 L25 60" />
+    <path d="M35 42 L40 55 M35 55 L45 42" />
+    <path d="M55 45 L55 58 L65 58" />
+    <path d="M75 42 L75 58 M70 50 L80 50" />
+    <path d="M20 70 L20 85 L30 85" />
+    <path d="M40 68 L50 78 L40 88" />
+    <path d="M60 70 L60 85 M55 77 L65 77" />
+    <path d="M75 68 L80 78 L75 88 L70 78 Z" />
+  </g>
+  <rect x="5" y="5" width="90" height="90" stroke="#C41E3A" stroke-width="1" fill="none" opacity="0.3"/>
+</svg>
