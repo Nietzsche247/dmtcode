@@ -4,13 +4,18 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ProfileHeader } from '@/components/dashboard/ProfileHeader';
 import { StatsSection } from '@/components/dashboard/StatsSection';
 import { SymbolGrid } from '@/components/dashboard/SymbolGrid';
 import { useDashboardTracking } from '@/hooks/useDashboardTracking';
 import { useUgcTracking } from '@/hooks/useUgcTracking';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { FileText, Download, TrendingUp, TrendingDown, Minus, ClipboardCheck } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface UserProfile {
   id: string;
@@ -46,6 +51,17 @@ interface SavedSymbol {
   upvotes: number;
 }
 
+interface AssessmentHistory {
+  id: string;
+  phq9_score: number | null;
+  gad7_score: number | null;
+  meq4_score: number | null;
+  ceq7_score: number | null;
+  mood_pre: number | null;
+  mood_post: number | null;
+  created_at: string;
+}
+
 interface Stats {
   totalSubmissions: number;
   validationsGiven: number;
@@ -62,6 +78,7 @@ const Dashboard = () => {
   const [mySubmissions, setMySubmissions] = useState<SymbolSubmission[]>([]);
   const [validatedSymbols, setValidatedSymbols] = useState<ValidatedSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<SavedSymbol[]>([]);
+  const [assessments, setAssessments] = useState<AssessmentHistory[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalSubmissions: 0,
     validationsGiven: 0,
@@ -89,6 +106,7 @@ const Dashboard = () => {
       loadMySubmissions(user.id),
       loadValidatedSymbols(user.id),
       loadSavedSymbols(user.id),
+      loadAssessments(user.id),
       loadStats(user.id),
     ]);
     
@@ -162,6 +180,18 @@ const Dashboard = () => {
 
     if (symbols) {
       setSavedSymbols(symbols);
+    }
+  };
+
+  const loadAssessments = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('assessments')
+      .select('id, phq9_score, gad7_score, meq4_score, ceq7_score, mood_pre, mood_post, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setAssessments(data);
     }
   };
 
@@ -241,8 +271,8 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        <title>My Dashboard | DMT Code</title>
-        <meta name="description" content="View your submitted symbols, validations, and saved symbols in your personal DMT Code dashboard." />
+        <title>User Dashboard | DMT Code</title>
+        <meta name="description" content="View your submitted symbols, validations, saved symbols, and assessment history in your personal DMT Code dashboard." />
         <link rel="canonical" href="https://dmtcode.com/dashboard" />
         <meta name="robots" content="noindex, nofollow" />
         <script type="application/ld+json">
@@ -278,15 +308,18 @@ const Dashboard = () => {
             />
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 max-w-lg mb-8">
+              <TabsList className="grid w-full grid-cols-4 max-w-2xl mb-8">
                 <TabsTrigger value="submissions">
-                  My Submissions ({mySubmissions.length})
+                  Submissions ({mySubmissions.length})
                 </TabsTrigger>
                 <TabsTrigger value="validated">
                   Validated ({validatedSymbols.length})
                 </TabsTrigger>
                 <TabsTrigger value="saved">
                   Saved ({savedSymbols.length})
+                </TabsTrigger>
+                <TabsTrigger value="assessments">
+                  Assessments ({assessments.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -324,6 +357,73 @@ const Dashboard = () => {
                     href: '/registry',
                   }}
                 />
+              </TabsContent>
+
+              <TabsContent value="assessments">
+                {assessments.length === 0 ? (
+                  <Card className="border-dashed border-2 border-muted">
+                    <CardContent className="p-8 text-center">
+                      <ClipboardCheck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground mb-4">You haven't completed any assessments yet.</p>
+                      <Button asChild>
+                        <Link to="/assess">Take Your First Assessment</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {assessments.map((assessment) => {
+                      const moodDelta = assessment.mood_post !== null && assessment.mood_pre !== null 
+                        ? assessment.mood_post - assessment.mood_pre 
+                        : null;
+                      const MoodIcon = moodDelta !== null && moodDelta > 0 ? TrendingUp : moodDelta !== null && moodDelta < 0 ? TrendingDown : Minus;
+                      const moodColor = moodDelta !== null && moodDelta > 0 ? 'text-green-500' : moodDelta !== null && moodDelta < 0 ? 'text-red-500' : 'text-muted-foreground';
+                      
+                      return (
+                        <Card key={assessment.id} className="hover:border-primary/50 transition-colors">
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-primary" />
+                                <span className="text-sm text-muted-foreground">
+                                  {format(new Date(assessment.created_at), 'MMM d, yyyy')}
+                                </span>
+                              </div>
+                              <div className={`flex items-center gap-1 text-sm ${moodColor}`}>
+                                <MoodIcon className="h-4 w-4" />
+                                {moodDelta !== null ? (moodDelta > 0 ? `+${moodDelta}` : moodDelta) : '—'}
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2 mb-3">
+                              <div className="text-center p-2 rounded bg-muted/50">
+                                <div className="text-lg font-bold">{assessment.phq9_score ?? '—'}</div>
+                                <div className="text-[10px] text-muted-foreground uppercase">PHQ-9</div>
+                              </div>
+                              <div className="text-center p-2 rounded bg-muted/50">
+                                <div className="text-lg font-bold">{assessment.gad7_score ?? '—'}</div>
+                                <div className="text-[10px] text-muted-foreground uppercase">GAD-7</div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex gap-1">
+                                {assessment.meq4_score !== null && <Badge variant="outline" className="text-[10px]">MEQ-4: {assessment.meq4_score}</Badge>}
+                                {assessment.ceq7_score !== null && <Badge variant="outline" className="text-[10px]">CEQ-7: {assessment.ceq7_score}</Badge>}
+                              </div>
+                              <Button variant="ghost" size="sm" asChild>
+                                <Link to={`/assess?view=${assessment.id}`}>
+                                  <Download className="h-3 w-3 mr-1" />
+                                  PDF
+                                </Link>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
