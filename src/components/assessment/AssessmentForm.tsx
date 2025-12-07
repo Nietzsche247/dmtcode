@@ -554,54 +554,114 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* PHQ-9 */}
-                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide">PHQ-9</div>
-                    <div className="text-3xl font-bold">{phq9Answered === 9 ? phq9Score : '—'}</div>
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">PHQ-9</div>
+                    <div className="text-3xl font-bold text-center">{phq9Answered === 9 ? phq9Score : '—'}</div>
                     {phq9Answered === 9 ? (
-                      <div className={`text-xs font-medium ${getPhq9Severity(phq9Score).color}`}>
-                        {getPhq9Severity(phq9Score).label}
-                      </div>
+                      <>
+                        <div className={`text-xs font-medium text-center ${getPhq9Severity(phq9Score).color}`}>
+                          {getPhq9Severity(phq9Score).label}
+                        </div>
+                        <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                          <div 
+                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${(phq9Score / 27) * 100}%`,
+                              backgroundColor: phq9Score <= 4 ? '#22c55e' : phq9Score <= 9 ? '#eab308' : phq9Score <= 14 ? '#f97316' : phq9Score <= 19 ? '#ea580c' : '#ef4444'
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>0</span>
+                          <span>27</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-xs text-muted-foreground">{phq9Answered}/9</div>
+                      <div className="text-xs text-muted-foreground text-center">{phq9Answered}/9</div>
                     )}
                   </div>
 
                   {/* GAD-7 */}
-                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide">GAD-7</div>
-                    <div className="text-3xl font-bold">{gad7Answered === 7 ? gad7Score : '—'}</div>
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">GAD-7</div>
+                    <div className="text-3xl font-bold text-center">{gad7Answered === 7 ? gad7Score : '—'}</div>
                     {gad7Answered === 7 ? (
-                      <div className={`text-xs font-medium ${getGad7Severity(gad7Score).color}`}>
-                        {getGad7Severity(gad7Score).label}
-                      </div>
+                      <>
+                        <div className={`text-xs font-medium text-center ${getGad7Severity(gad7Score).color}`}>
+                          {getGad7Severity(gad7Score).label}
+                        </div>
+                        <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                          <div 
+                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${(gad7Score / 21) * 100}%`,
+                              backgroundColor: gad7Score <= 4 ? '#22c55e' : gad7Score <= 9 ? '#eab308' : gad7Score <= 14 ? '#f97316' : '#ef4444'
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>0</span>
+                          <span>21</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-xs text-muted-foreground">{gad7Answered}/7</div>
+                      <div className="text-xs text-muted-foreground text-center">{gad7Answered}/7</div>
                     )}
                   </div>
 
                   {/* MEQ-4 */}
-                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide">MEQ-4</div>
-                    <div className="text-3xl font-bold">{meq4Answered === 4 ? meq4Score : '—'}</div>
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">MEQ-4</div>
+                    <div className="text-3xl font-bold text-center">{meq4Answered === 4 ? meq4Score : '—'}</div>
                     {meq4Answered === 4 ? (
-                      <div className={`text-xs font-medium ${getMeq4Severity(meq4Score).color}`}>
-                        {getMeq4Severity(meq4Score).label}
-                      </div>
+                      <>
+                        <div className={`text-xs font-medium text-center ${getMeq4Severity(meq4Score).color}`}>
+                          {getMeq4Severity(meq4Score).label}
+                        </div>
+                        <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                          <div 
+                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${(meq4Score / 16) * 100}%`,
+                              backgroundColor: meq4Score <= 4 ? '#6b7280' : meq4Score <= 8 ? '#3b82f6' : meq4Score <= 12 ? '#a855f7' : '#C41E3A'
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>0</span>
+                          <span>16</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-xs text-muted-foreground">{meq4Answered}/4</div>
+                      <div className="text-xs text-muted-foreground text-center">{meq4Answered}/4</div>
                     )}
                   </div>
 
                   {/* CEQ-7 */}
-                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wide">CEQ-7</div>
-                    <div className="text-3xl font-bold">{ceq7Answered === 7 ? ceq7Score : '—'}</div>
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">CEQ-7</div>
+                    <div className="text-3xl font-bold text-center">{ceq7Answered === 7 ? ceq7Score : '—'}</div>
                     {ceq7Answered === 7 ? (
-                      <div className={`text-xs font-medium ${getCeq7Severity(ceq7Score).color}`}>
-                        {getCeq7Severity(ceq7Score).label}
-                      </div>
+                      <>
+                        <div className={`text-xs font-medium text-center ${getCeq7Severity(ceq7Score).color}`}>
+                          {getCeq7Severity(ceq7Score).label}
+                        </div>
+                        <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                          <div 
+                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${(ceq7Score / 28) * 100}%`,
+                              backgroundColor: ceq7Score <= 7 ? '#22c55e' : ceq7Score <= 14 ? '#eab308' : ceq7Score <= 21 ? '#f97316' : '#ef4444'
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>0</span>
+                          <span>28</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="text-xs text-muted-foreground">{ceq7Answered}/7</div>
+                      <div className="text-xs text-muted-foreground text-center">{ceq7Answered}/7</div>
                     )}
                   </div>
                 </div>
