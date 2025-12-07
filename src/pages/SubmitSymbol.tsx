@@ -5,8 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { SubmissionWizard } from '@/components/submission/SubmissionWizard';
-import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const SubmitSymbol = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +21,9 @@ const SubmitSymbol = () => {
         
         // Auto-redirect unauthenticated users to login
         if (!session) {
+          toast.info('Sign in required', {
+            description: 'Please sign in to submit symbols to the registry.'
+          });
           navigate('/auth?returnTo=/submit-symbol');
         }
       }
@@ -32,6 +35,9 @@ const SubmitSymbol = () => {
       setIsLoading(false);
       
       if (!session) {
+        toast.info('Sign in required', {
+          description: 'Please sign in to submit symbols to the registry.'
+        });
         navigate('/auth?returnTo=/submit-symbol');
       }
     });
