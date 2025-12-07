@@ -35,7 +35,9 @@ const Auth = () => {
       (event, session) => {
         setSession(session);
         if (session) {
-          navigate(returnTo);
+          // Add param to indicate successful login for toast on destination page
+          const separator = returnTo.includes('?') ? '&' : '?';
+          navigate(`${returnTo}${separator}authenticated=1`);
         }
       }
     );
@@ -43,7 +45,8 @@ const Auth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        navigate(returnTo);
+        const separator = returnTo.includes('?') ? '&' : '?';
+        navigate(`${returnTo}${separator}authenticated=1`);
       }
     });
 

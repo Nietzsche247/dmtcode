@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
@@ -12,6 +12,7 @@ const SubmitSymbol = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -39,11 +40,19 @@ const SubmitSymbol = () => {
           description: 'Please sign in to submit symbols to the registry.'
         });
         navigate('/auth?returnTo=/submit-symbol');
+      } else if (searchParams.get('authenticated') === '1') {
+        // Show success toast when returning from login
+        toast.success('Welcome back!', {
+          description: 'You can now submit symbols to the registry.'
+        });
+        // Clear the param from URL
+        searchParams.delete('authenticated');
+        setSearchParams(searchParams, { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, searchParams, setSearchParams]);
 
   // Show loading spinner while checking auth
   if (isLoading) {
