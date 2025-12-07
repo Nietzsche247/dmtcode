@@ -274,6 +274,7 @@ export const Navigation = () => {
               <div className="pt-4 border-t border-border/50 mt-4">
                 {isAuthenticated ? (
                   <>
+                    <Button onClick={() => handleNavigation('/dashboard')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Dashboard</Button>
                     <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Profile</Button>
                     <Button onClick={() => handleNavigation('/my-symbols')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">My Symbols</Button>
                     <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">Sign Out</Button>
