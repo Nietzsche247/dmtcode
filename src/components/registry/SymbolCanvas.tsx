@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Canvas as FabricCanvas, PencilBrush, Path, Line } from 'fabric';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Undo2, Redo2, Trash2, Pencil, Eraser, Grid3X3, Sparkles } from 'lucide-react';
 import { useCanvasTracking } from '@/hooks/useCanvasTracking';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -217,6 +218,24 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasPr
     onImageChange('');
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          redo();
+        } else {
+          e.preventDefault();
+          undo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyStep, history]);
+
   const handleToolChange = (tool: 'pen' | 'eraser') => {
     setActiveTool(tool);
     trackToolSelected(tool, brushSize);
@@ -246,130 +265,186 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasPr
   ];
 
   return (
-    <div className="space-y-4">
-      <div className={cn(
-        "flex gap-4",
-        isMobile ? "flex-col" : "flex-row"
-      )}>
-        {/* Tool Palette */}
+    <TooltipProvider delayDuration={300}>
+      <div className="space-y-4">
         <div className={cn(
-          "flex gap-2 p-3 bg-secondary/30 rounded-lg border border-border",
-          isMobile ? "flex-row justify-center flex-wrap order-2" : "flex-col items-center"
+          "flex gap-4",
+          isMobile ? "flex-col" : "flex-row"
         )}>
-          {/* Drawing Tools */}
-          <div className="flex gap-1" role="group" aria-label="Drawing tools">
-            <Toggle
-              pressed={activeTool === 'pen'}
-              onPressedChange={() => handleToolChange('pen')}
-              aria-label="Pen tool"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Pencil className="w-4 h-4" />
-            </Toggle>
-            <Toggle
-              pressed={activeTool === 'eraser'}
-              onPressedChange={() => handleToolChange('eraser')}
-              aria-label="Eraser tool"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Eraser className="w-4 h-4" />
-            </Toggle>
-          </div>
-
-          {/* Separator */}
+          {/* Tool Palette */}
           <div className={cn(
-            "bg-border",
-            isMobile ? "w-px h-8" : "h-px w-full"
-          )} />
+            "flex gap-2 p-3 bg-secondary/30 rounded-lg border border-border",
+            isMobile ? "flex-row justify-center flex-wrap order-2" : "flex-col items-center"
+          )}>
+            {/* Drawing Tools */}
+            <div className="flex gap-1" role="group" aria-label="Drawing tools">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Toggle
+                    pressed={activeTool === 'pen'}
+                    onPressedChange={() => handleToolChange('pen')}
+                    aria-label="Pen tool"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Draw freehand (click again to change size)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Toggle
+                    pressed={activeTool === 'eraser'}
+                    onPressedChange={() => handleToolChange('eraser')}
+                    aria-label="Eraser tool"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Eraser className="w-4 h-4" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Erase strokes</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
 
-          {/* Pen Sizes */}
-          <div className="flex gap-1" role="group" aria-label="Pen sizes">
-            {penSizes.map(({ size, label }) => (
-              <button
-                key={size}
-                onClick={() => handleBrushSizeChange(size)}
-                className={cn(
-                  "min-w-[44px] min-h-[44px] rounded-md border-2 flex items-center justify-center transition-all",
-                  brushSize === size 
-                    ? "border-primary bg-primary/10" 
-                    : "border-border hover:border-primary/50"
-                )}
-                aria-label={`${label} brush (${size}px)`}
-                aria-pressed={brushSize === size}
-              >
-                <div 
-                  className="rounded-full bg-foreground"
-                  style={{ width: size + 4, height: size + 4 }}
-                />
-              </button>
-            ))}
+            {/* Separator */}
+            <div className={cn(
+              "bg-border",
+              isMobile ? "w-px h-8" : "h-px w-full"
+            )} />
+
+            {/* Pen Sizes */}
+            <div className="flex gap-1" role="group" aria-label="Pen sizes">
+              {penSizes.map(({ size, label }) => (
+                <Tooltip key={size}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => handleBrushSizeChange(size)}
+                      className={cn(
+                        "min-w-[44px] min-h-[44px] rounded-md border-2 flex items-center justify-center transition-all",
+                        brushSize === size 
+                          ? "border-primary bg-primary/10" 
+                          : "border-border hover:border-primary/50"
+                      )}
+                      aria-label={`${label} brush (${size}px)`}
+                      aria-pressed={brushSize === size}
+                    >
+                      <div 
+                        className="rounded-full bg-foreground"
+                        style={{ width: size + 4, height: size + 4 }}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>{label} brush ({size}px)</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+
+            {/* Separator */}
+            <div className={cn(
+              "bg-border",
+              isMobile ? "w-px h-8" : "h-px w-full"
+            )} />
+
+            {/* Toggles */}
+            <div className="flex gap-1" role="group" aria-label="Canvas options">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Toggle
+                    pressed={showGrid}
+                    onPressedChange={handleGridToggle}
+                    aria-label="Toggle grid overlay"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Grid3X3 className="w-4 h-4" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Toggle 8×8 alignment grid</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Toggle
+                    pressed={symmetryMode}
+                    onPressedChange={handleSymmetryToggle}
+                    aria-label="Toggle 4-way symmetry mode"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Toggle 4-way radial symmetry for mandala patterns</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+
+            {/* Separator */}
+            <div className={cn(
+              "bg-border",
+              isMobile ? "w-px h-8" : "h-px w-full"
+            )} />
+
+            {/* Actions */}
+            <div className="flex gap-1" role="group" aria-label="Canvas actions">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={undo}
+                    disabled={historyStep <= 0}
+                    aria-label="Undo"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Undo2 className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Undo last stroke (Ctrl+Z)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={redo}
+                    disabled={historyStep >= history.length - 1}
+                    aria-label="Redo"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Redo2 className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Redo stroke (Ctrl+Shift+Z)</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={clearCanvas}
+                    aria-label="Clear canvas"
+                    className="min-w-[44px] min-h-[44px]"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Clear entire canvas</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
-
-          {/* Separator */}
-          <div className={cn(
-            "bg-border",
-            isMobile ? "w-px h-8" : "h-px w-full"
-          )} />
-
-          {/* Toggles */}
-          <div className="flex gap-1" role="group" aria-label="Canvas options">
-            <Toggle
-              pressed={showGrid}
-              onPressedChange={handleGridToggle}
-              aria-label="Toggle grid overlay"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </Toggle>
-            <Toggle
-              pressed={symmetryMode}
-              onPressedChange={handleSymmetryToggle}
-              aria-label="Toggle 4-way symmetry mode"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Sparkles className="w-4 h-4" />
-            </Toggle>
-          </div>
-
-          {/* Separator */}
-          <div className={cn(
-            "bg-border",
-            isMobile ? "w-px h-8" : "h-px w-full"
-          )} />
-
-          {/* Actions */}
-          <div className="flex gap-1" role="group" aria-label="Canvas actions">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={undo}
-              disabled={historyStep <= 0}
-              aria-label="Undo"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Undo2 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={redo}
-              disabled={historyStep >= history.length - 1}
-              aria-label="Redo"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Redo2 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={clearCanvas}
-              aria-label="Clear canvas"
-              className="min-w-[44px] min-h-[44px]"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
 
         {/* Canvas Area */}
         <div 
@@ -421,11 +496,13 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasPr
         </div>
       </div>
 
-      {/* Instructions */}
-      <p className="text-center text-sm text-muted-foreground">
-        Draw your symbol using the pen tool. Use symmetry mode for mandala patterns.
-        {isMobile && " Touch and drag to draw."}
-      </p>
-    </div>
+        {/* Instructions */}
+        <p className="text-center text-sm text-muted-foreground">
+          Draw your symbol using the pen tool. Use symmetry mode for mandala patterns.
+          {isMobile && " Touch and drag to draw."}
+          {!isMobile && " Keyboard: Ctrl+Z to undo, Ctrl+Shift+Z to redo."}
+        </p>
+      </div>
+    </TooltipProvider>
   );
 };
