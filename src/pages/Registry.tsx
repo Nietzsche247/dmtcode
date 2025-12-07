@@ -27,6 +27,12 @@ const Registry = () => {
         <meta property="og:description" content="Browse and contribute to the open-source catalogue of visual symbols observed during 650nm laser and N,N-DMT experiences." />
         <meta property="og:url" content="https://dmtcode.com/registry" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/registry" />
+        <meta name="twitter:title" content="Visual Symbol Database - Documented DMT Patterns | DMT Code" />
+        <meta name="twitter:description" content="Browse and contribute to the open-source catalogue of visual symbols observed during 650nm laser and N,N-DMT experiences." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         <script type="application/ld+json">
           {JSON.stringify([
             {

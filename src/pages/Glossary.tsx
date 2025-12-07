@@ -155,6 +155,16 @@ const Glossary = () => {
         <link rel="canonical" href="https://dmtcode.com/glossary" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/glossary" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Terminology & Definitions | DMT Code" />
+        <meta property="og:description" content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." />
+        <meta property="og:url" content="https://dmtcode.com/glossary" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/glossary" />
+        <meta name="twitter:title" content="Terminology & Definitions | DMT Code" />
+        <meta name="twitter:description" content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({

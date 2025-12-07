@@ -18,6 +18,16 @@ const ProtocolGuide = () => {
         <link rel="canonical" href="https://dmtcode.com/protocol-guide" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/protocol-guide" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Replication Protocol Guide | DMT Code" />
+        <meta property="og:description" content="Step-by-step methodology for safely observing the Code of Reality phenomenon with proper documentation." />
+        <meta property="og:url" content="https://dmtcode.com/protocol-guide" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/protocol-guide" />
+        <meta name="twitter:title" content="Replication Protocol Guide | DMT Code" />
+        <meta name="twitter:description" content="Step-by-step methodology for safely observing the Code of Reality phenomenon with proper documentation." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({

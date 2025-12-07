@@ -18,6 +18,16 @@ const Methods = () => {
         <link rel="canonical" href="https://dmtcode.com/methods" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/methods" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Experimental Methods | DMT Code" />
+        <meta property="og:description" content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." />
+        <meta property="og:url" content="https://dmtcode.com/methods" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/methods" />
+        <meta name="twitter:title" content="Experimental Methods | DMT Code" />
+        <meta name="twitter:description" content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({

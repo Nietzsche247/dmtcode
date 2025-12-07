@@ -15,6 +15,16 @@ const Bibliography = () => {
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/bibliography" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Bibliography & Citations | DMT Code" />
+        <meta property="og:description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
+        <meta property="og:url" content="https://dmtcode.com/bibliography" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/bibliography" />
+        <meta name="twitter:title" content="Bibliography & Citations | DMT Code" />
+        <meta name="twitter:description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
