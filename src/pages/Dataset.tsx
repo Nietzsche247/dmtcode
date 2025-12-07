@@ -30,6 +30,17 @@ const Dataset = () => {
         <title>Dataset | DMT Code Visual Symbol Catalogue</title>
         <meta name="description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
         <link rel="canonical" href="https://dmtcode.com/dataset" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Dataset | DMT Code Visual Symbol Catalogue" />
+        <meta property="og:description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
+        <meta property="og:url" content="https://dmtcode.com/dataset" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/dataset" />
+        <meta name="twitter:title" content="Dataset | DMT Code Visual Symbol Catalogue" />
+        <meta name="twitter:description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

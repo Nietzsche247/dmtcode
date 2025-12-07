@@ -51,6 +51,18 @@ const Events = () => {
           name="description" 
           content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." 
         />
+        <link rel="canonical" href="https://dmtcode.com/events" />
+        <meta property="og:title" content="Research Events & Clinical Trials | DMT Code" />
+        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta property="og:url" content="https://dmtcode.com/events" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/events" />
+        <meta name="twitter:title" content="Research Events & Clinical Trials | DMT Code" />
+        <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <Navigation />

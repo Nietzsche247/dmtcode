@@ -17,6 +17,16 @@ const Critiques = () => {
         <link rel="canonical" href="https://dmtcode.com/critiques" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/critiques" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Critiques & Alternative Hypotheses | DMT Code" />
+        <meta property="og:description" content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." />
+        <meta property="og:url" content="https://dmtcode.com/critiques" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/critiques" />
+        <meta name="twitter:title" content="Critiques & Alternative Hypotheses | DMT Code" />
+        <meta name="twitter:description" content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({

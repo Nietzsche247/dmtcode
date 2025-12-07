@@ -17,6 +17,16 @@ const About = () => {
         <link rel="canonical" href="https://dmtcode.com/about" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/about" />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="About DMT Code - Mission & Team | DMT Code" />
+        <meta property="og:description" content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." />
+        <meta property="og:url" content="https://dmtcode.com/about" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://dmtcode.com/about" />
+        <meta name="twitter:title" content="About DMT Code - Mission & Team | DMT Code" />
+        <meta name="twitter:description" content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." />
+        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
