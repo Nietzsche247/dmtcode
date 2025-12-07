@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { Footer } from '@/components/Footer';
 import { AssessmentForm } from '@/components/assessment/AssessmentForm';
 import { ReportViewer } from '@/components/assessment/ReportViewer';
@@ -81,6 +82,7 @@ export default function Assess() {
       </Helmet>
 
       <Navigation />
+      <Breadcrumb />
 
       <main id="main-content" className="container mx-auto px-4 py-8 max-w-4xl" role="main">
         {/* Header */}

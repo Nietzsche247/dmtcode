@@ -26,7 +26,15 @@ export const Breadcrumb = () => {
     'dataset': 'Dataset',
     'bundles': 'Bundles',
     'null-reports': 'Null Reports',
-    'leaderboard': 'Community'
+    'leaderboard': 'Community',
+    'assess': 'Assessment',
+    'submit-symbol': 'Submit Symbol',
+    'submit': 'Submit Symbol',
+    'protocols': 'Protocols',
+    'log': 'Voice Logger',
+    'dashboard': 'Dashboard',
+    'profile': 'Profile',
+    'my-symbols': 'My Symbols'
   };
 
   return (
