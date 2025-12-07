@@ -10,10 +10,10 @@ const FAQ = () => {
   return (
     <>
       <Helmet>
-        <title>Frequently Asked Questions - DMT Code Research | DMT Code</title>
+        <title>Frequently Asked Questions | DMT Code</title>
         <meta 
           name="description" 
-          content="Common questions about the 650nm laser phenomenon, safety protocols, and contributing to open research." 
+          content="Common questions about 650nm laser protocols, DMT research methods, and contributing to open science." 
         />
         <link rel="canonical" href="https://dmtcode.com/faq" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/faq" />
