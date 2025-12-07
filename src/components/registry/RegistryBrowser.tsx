@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { TagsManager } from './TagsManager';
 import { ShareButtons } from '@/components/ShareButtons';
 import { VotingButtons } from './VotingButtons';
+import { SaveButton } from '@/components/dashboard/SaveButton';
 
 interface RegistryGlyph {
   id: string;

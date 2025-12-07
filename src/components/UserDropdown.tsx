@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthTracking } from '@/hooks/useAuthTracking';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Bookmark } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +54,13 @@ export const UserDropdown = ({ userName, avatarUrl, onSignOut }: UserDropdownPro
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem 
+          onClick={() => navigate('/dashboard')}
+          className="cursor-pointer min-h-[44px]"
+        >
+          <LayoutDashboard className="mr-2 h-4 w-4" />
+          Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuItem 
           onClick={() => navigate('/profile')}
           className="cursor-pointer min-h-[44px]"
         >
@@ -64,7 +71,7 @@ export const UserDropdown = ({ userName, avatarUrl, onSignOut }: UserDropdownPro
           onClick={() => navigate('/my-symbols')}
           className="cursor-pointer min-h-[44px]"
         >
-          <Settings className="mr-2 h-4 w-4" />
+          <Bookmark className="mr-2 h-4 w-4" />
           My Symbols
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -765,6 +765,35 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_symbols: {
+        Row: {
+          created_at: string
+          id: string
+          symbol_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          symbol_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          symbol_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_symbols_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scraper_runs: {
         Row: {
           created_at: string
