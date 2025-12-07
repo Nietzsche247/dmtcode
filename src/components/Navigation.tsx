@@ -99,6 +99,8 @@ export const Navigation = () => {
 
   const resourceItems = [
     { path: '/protocol-guide', label: 'Protocol Guide' },
+    { path: '/protocols', label: 'Protocols' },
+    { path: '/assess', label: 'Assessment' },
     { path: '/faq', label: 'FAQ' },
     { path: '/glossary', label: 'Glossary' },
     { path: '/null-reports', label: 'Null Reports' },
