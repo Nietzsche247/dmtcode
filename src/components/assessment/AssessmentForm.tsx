@@ -541,6 +541,102 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
             </CardContent>
           </Card>
 
+          {/* Assessment Summary Card */}
+          {(isPreComplete || isPostComplete) && (
+            <Card className="border-primary/30 bg-gradient-to-br from-card/80 to-primary/5 backdrop-blur animate-fade-in">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  Assessment Summary
+                </CardTitle>
+                <CardDescription>Your scores across all assessment scales</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {/* PHQ-9 */}
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">PHQ-9</div>
+                    <div className="text-3xl font-bold">{phq9Answered === 9 ? phq9Score : '—'}</div>
+                    {phq9Answered === 9 ? (
+                      <div className={`text-xs font-medium ${getPhq9Severity(phq9Score).color}`}>
+                        {getPhq9Severity(phq9Score).label}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground">{phq9Answered}/9</div>
+                    )}
+                  </div>
+
+                  {/* GAD-7 */}
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">GAD-7</div>
+                    <div className="text-3xl font-bold">{gad7Answered === 7 ? gad7Score : '—'}</div>
+                    {gad7Answered === 7 ? (
+                      <div className={`text-xs font-medium ${getGad7Severity(gad7Score).color}`}>
+                        {getGad7Severity(gad7Score).label}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground">{gad7Answered}/7</div>
+                    )}
+                  </div>
+
+                  {/* MEQ-4 */}
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">MEQ-4</div>
+                    <div className="text-3xl font-bold">{meq4Answered === 4 ? meq4Score : '—'}</div>
+                    {meq4Answered === 4 ? (
+                      <div className={`text-xs font-medium ${getMeq4Severity(meq4Score).color}`}>
+                        {getMeq4Severity(meq4Score).label}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground">{meq4Answered}/4</div>
+                    )}
+                  </div>
+
+                  {/* CEQ-7 */}
+                  <div className="p-4 rounded-lg bg-background/50 border border-border/50 text-center space-y-1">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wide">CEQ-7</div>
+                    <div className="text-3xl font-bold">{ceq7Answered === 7 ? ceq7Score : '—'}</div>
+                    {ceq7Answered === 7 ? (
+                      <div className={`text-xs font-medium ${getCeq7Severity(ceq7Score).color}`}>
+                        {getCeq7Severity(ceq7Score).label}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground">{ceq7Answered}/7</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mood Comparison */}
+                <div className="mt-4 pt-4 border-t border-border/50">
+                  <div className="flex items-center justify-center gap-8 text-sm">
+                    <div className="text-center">
+                      <div className="text-muted-foreground">Pre-Session Mood</div>
+                      <div className="text-2xl font-bold">{moodPre[0]}/10</div>
+                    </div>
+                    <div className="text-muted-foreground">→</div>
+                    <div className="text-center">
+                      <div className="text-muted-foreground">Post-Session Mood</div>
+                      <div className="text-2xl font-bold">{moodPost[0]}/10</div>
+                    </div>
+                    <div className={`text-center px-3 py-1 rounded-full text-sm font-medium ${
+                      moodPost[0] > moodPre[0] 
+                        ? 'bg-green-500/20 text-green-500' 
+                        : moodPost[0] < moodPre[0] 
+                          ? 'bg-red-500/20 text-red-500' 
+                          : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {moodPost[0] > moodPre[0] 
+                        ? `+${moodPost[0] - moodPre[0]}` 
+                        : moodPost[0] < moodPre[0] 
+                          ? `${moodPost[0] - moodPre[0]}` 
+                          : 'No change'}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="flex justify-between">
             <Button
               variant="outline"
