@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
@@ -562,20 +563,42 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                         <div className={`text-xs font-medium text-center ${getPhq9Severity(phq9Score).color}`}>
                           {getPhq9Severity(phq9Score).label}
                         </div>
-                        <div className="relative h-3 rounded-full bg-muted overflow-hidden">
-                          {/* Threshold markers for PHQ-9: 5, 10, 15, 20 */}
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(5/27)*100}%` }} title="Mild" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(10/27)*100}%` }} title="Moderate" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(15/27)*100}%` }} title="Mod. Severe" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(20/27)*100}%` }} title="Severe" />
-                          <div 
-                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
-                            style={{ 
-                              width: `${(phq9Score / 27) * 100}%`,
-                              backgroundColor: phq9Score <= 4 ? '#22c55e' : phq9Score <= 9 ? '#eab308' : phq9Score <= 14 ? '#f97316' : phq9Score <= 19 ? '#ea580c' : '#ef4444'
-                            }}
-                          />
-                        </div>
+                        <TooltipProvider delayDuration={0}>
+                          <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+                            {/* Threshold markers for PHQ-9: 5, 10, 15, 20 */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(5/27)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Mild (5-9)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(10/27)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Moderate (10-14)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(15/27)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Mod. Severe (15-19)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(20/27)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Severe (20-27)</p></TooltipContent>
+                            </Tooltip>
+                            <div 
+                              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
+                              style={{ 
+                                width: `${(phq9Score / 27) * 100}%`,
+                                backgroundColor: phq9Score <= 4 ? '#22c55e' : phq9Score <= 9 ? '#eab308' : phq9Score <= 14 ? '#f97316' : phq9Score <= 19 ? '#ea580c' : '#ef4444'
+                              }}
+                            />
+                          </div>
+                        </TooltipProvider>
                         <div className="flex justify-between text-[10px] text-muted-foreground">
                           <span>0</span>
                           <div className="flex-1 flex justify-around text-[8px] opacity-60">
@@ -601,19 +624,36 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                         <div className={`text-xs font-medium text-center ${getGad7Severity(gad7Score).color}`}>
                           {getGad7Severity(gad7Score).label}
                         </div>
-                        <div className="relative h-3 rounded-full bg-muted overflow-hidden">
-                          {/* Threshold markers for GAD-7: 5, 10, 15 */}
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(5/21)*100}%` }} title="Mild" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(10/21)*100}%` }} title="Moderate" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(15/21)*100}%` }} title="Severe" />
-                          <div 
-                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
-                            style={{ 
-                              width: `${(gad7Score / 21) * 100}%`,
-                              backgroundColor: gad7Score <= 4 ? '#22c55e' : gad7Score <= 9 ? '#eab308' : gad7Score <= 14 ? '#f97316' : '#ef4444'
-                            }}
-                          />
-                        </div>
+                        <TooltipProvider delayDuration={0}>
+                          <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+                            {/* Threshold markers for GAD-7: 5, 10, 15 */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(5/21)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Mild (5-9)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(10/21)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Moderate (10-14)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(15/21)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Severe (15-21)</p></TooltipContent>
+                            </Tooltip>
+                            <div 
+                              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
+                              style={{ 
+                                width: `${(gad7Score / 21) * 100}%`,
+                                backgroundColor: gad7Score <= 4 ? '#22c55e' : gad7Score <= 9 ? '#eab308' : gad7Score <= 14 ? '#f97316' : '#ef4444'
+                              }}
+                            />
+                          </div>
+                        </TooltipProvider>
                         <div className="flex justify-between text-[10px] text-muted-foreground">
                           <span>0</span>
                           <div className="flex-1 flex justify-around text-[8px] opacity-60">
@@ -638,19 +678,36 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                         <div className={`text-xs font-medium text-center ${getMeq4Severity(meq4Score).color}`}>
                           {getMeq4Severity(meq4Score).label}
                         </div>
-                        <div className="relative h-3 rounded-full bg-muted overflow-hidden">
-                          {/* Threshold markers for MEQ-4: 5, 9, 13 */}
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(5/16)*100}%` }} title="Moderate" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(9/16)*100}%` }} title="Strong" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(13/16)*100}%` }} title="Complete" />
-                          <div 
-                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
-                            style={{ 
-                              width: `${(meq4Score / 16) * 100}%`,
-                              backgroundColor: meq4Score <= 4 ? '#6b7280' : meq4Score <= 8 ? '#3b82f6' : meq4Score <= 12 ? '#a855f7' : '#C41E3A'
-                            }}
-                          />
-                        </div>
+                        <TooltipProvider delayDuration={0}>
+                          <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+                            {/* Threshold markers for MEQ-4: 5, 9, 13 */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(5/16)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Moderate (5-8)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(9/16)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Strong (9-12)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(13/16)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Complete (13-16)</p></TooltipContent>
+                            </Tooltip>
+                            <div 
+                              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
+                              style={{ 
+                                width: `${(meq4Score / 16) * 100}%`,
+                                backgroundColor: meq4Score <= 4 ? '#6b7280' : meq4Score <= 8 ? '#3b82f6' : meq4Score <= 12 ? '#a855f7' : '#C41E3A'
+                              }}
+                            />
+                          </div>
+                        </TooltipProvider>
                         <div className="flex justify-between text-[10px] text-muted-foreground">
                           <span>0</span>
                           <div className="flex-1 flex justify-around text-[8px] opacity-60">
@@ -675,19 +732,36 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                         <div className={`text-xs font-medium text-center ${getCeq7Severity(ceq7Score).color}`}>
                           {getCeq7Severity(ceq7Score).label}
                         </div>
-                        <div className="relative h-3 rounded-full bg-muted overflow-hidden">
-                          {/* Threshold markers for CEQ-7: 8, 15, 22 */}
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(8/28)*100}%` }} title="Moderate" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(15/28)*100}%` }} title="Significant" />
-                          <div className="absolute top-0 bottom-0 w-px bg-foreground/30" style={{ left: `${(22/28)*100}%` }} title="Severe" />
-                          <div 
-                            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
-                            style={{ 
-                              width: `${(ceq7Score / 28) * 100}%`,
-                              backgroundColor: ceq7Score <= 7 ? '#22c55e' : ceq7Score <= 14 ? '#eab308' : ceq7Score <= 21 ? '#f97316' : '#ef4444'
-                            }}
-                          />
-                        </div>
+                        <TooltipProvider delayDuration={0}>
+                          <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+                            {/* Threshold markers for CEQ-7: 8, 15, 22 */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(8/28)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Moderate (8-14)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(15/28)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Significant (15-21)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="absolute top-0 bottom-0 w-1 bg-foreground/30 hover:bg-foreground/60 cursor-help z-20 -ml-0.5" style={{ left: `${(22/28)*100}%` }} />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="text-xs"><p>Severe (22-28)</p></TooltipContent>
+                            </Tooltip>
+                            <div 
+                              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out z-10"
+                              style={{ 
+                                width: `${(ceq7Score / 28) * 100}%`,
+                                backgroundColor: ceq7Score <= 7 ? '#22c55e' : ceq7Score <= 14 ? '#eab308' : ceq7Score <= 21 ? '#f97316' : '#ef4444'
+                              }}
+                            />
+                          </div>
+                        </TooltipProvider>
                         <div className="flex justify-between text-[10px] text-muted-foreground">
                           <span>0</span>
                           <div className="flex-1 flex justify-around text-[8px] opacity-60">
