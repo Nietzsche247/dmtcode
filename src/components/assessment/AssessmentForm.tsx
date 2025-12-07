@@ -117,17 +117,59 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
   const isPreComplete = phq9Responses.every(r => r >= 0) && gad7Responses.every(r => r >= 0);
   const isPostComplete = meq4Responses.every(r => r >= 0) && ceq7Responses.every(r => r >= 0);
 
+  // Calculate real-time PHQ-9 score (0-27)
+  const phq9Score = phq9Responses.filter(r => r >= 0).reduce((sum, r) => sum + r, 0);
+  const phq9Answered = phq9Responses.filter(r => r >= 0).length;
+  
+  // Calculate real-time GAD-7 score (0-21)
+  const gad7Score = gad7Responses.filter(r => r >= 0).reduce((sum, r) => sum + r, 0);
+  const gad7Answered = gad7Responses.filter(r => r >= 0).length;
+
+  // Calculate real-time MEQ-4 score (0-16)
+  const meq4Score = meq4Responses.filter(r => r >= 0).reduce((sum, r) => sum + r, 0);
+  const meq4Answered = meq4Responses.filter(r => r >= 0).length;
+
+  // Calculate real-time CEQ-7 score (0-28)
+  const ceq7Score = ceq7Responses.filter(r => r >= 0).reduce((sum, r) => sum + r, 0);
+  const ceq7Answered = ceq7Responses.filter(r => r >= 0).length;
+
+  // Severity interpretation functions
+  const getPhq9Severity = (score: number): { label: string; color: string } => {
+    if (score <= 4) return { label: 'Minimal', color: 'text-green-500' };
+    if (score <= 9) return { label: 'Mild', color: 'text-yellow-500' };
+    if (score <= 14) return { label: 'Moderate', color: 'text-orange-500' };
+    if (score <= 19) return { label: 'Moderately Severe', color: 'text-orange-600' };
+    return { label: 'Severe', color: 'text-red-500' };
+  };
+
+  const getGad7Severity = (score: number): { label: string; color: string } => {
+    if (score <= 4) return { label: 'Minimal', color: 'text-green-500' };
+    if (score <= 9) return { label: 'Mild', color: 'text-yellow-500' };
+    if (score <= 14) return { label: 'Moderate', color: 'text-orange-500' };
+    return { label: 'Severe', color: 'text-red-500' };
+  };
+
+  const getMeq4Severity = (score: number): { label: string; color: string } => {
+    if (score <= 4) return { label: 'Minimal', color: 'text-muted-foreground' };
+    if (score <= 8) return { label: 'Moderate', color: 'text-blue-500' };
+    if (score <= 12) return { label: 'Strong', color: 'text-purple-500' };
+    return { label: 'Complete', color: 'text-primary' };
+  };
+
+  const getCeq7Severity = (score: number): { label: string; color: string } => {
+    if (score <= 7) return { label: 'Minimal', color: 'text-green-500' };
+    if (score <= 14) return { label: 'Moderate', color: 'text-yellow-500' };
+    if (score <= 21) return { label: 'Significant', color: 'text-orange-500' };
+    return { label: 'Severe', color: 'text-red-500' };
+  };
+
   // Calculate progress percentage
   const calculateProgress = () => {
     if (activeTab === 'pre') {
       // Pre-session: PHQ-9 (9 questions) + GAD-7 (7 questions) = 16 total
-      const phq9Answered = phq9Responses.filter(r => r >= 0).length;
-      const gad7Answered = gad7Responses.filter(r => r >= 0).length;
       return Math.round(((phq9Answered + gad7Answered) / 16) * 100);
     } else {
       // Post-session: MEQ-4 (4 questions) + CEQ-7 (7 questions) = 11 total
-      const meq4Answered = meq4Responses.filter(r => r >= 0).length;
-      const ceq7Answered = ceq7Responses.filter(r => r >= 0).length;
       return Math.round(((meq4Answered + ceq7Answered) / 11) * 100);
     }
   };
@@ -261,15 +303,28 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
           {/* PHQ-9 */}
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">PHQ-9 Depression Screen</CardTitle>
-              <CardDescription>Over the last 2 weeks, how often have you been bothered by:</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg font-semibold">PHQ-9 Depression Screen</CardTitle>
+                  <CardDescription>Over the last 2 weeks, how often have you been bothered by:</CardDescription>
+                </div>
+                {phq9Answered > 0 && (
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">{phq9Score}</div>
+                    <div className={`text-sm font-medium ${getPhq9Severity(phq9Score).color}`}>
+                      {getPhq9Severity(phq9Score).label}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{phq9Answered}/9 answered</div>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {PHQ9_QUESTIONS.map((question, index) => (
                 <div key={`phq9-${index}`} className="space-y-3">
                   <Label className="text-sm font-medium">{index + 1}. {question}</Label>
                   <RadioGroup
-                    value={phq9Responses[index]?.toString()}
+                    value={phq9Responses[index] >= 0 ? phq9Responses[index].toString() : undefined}
                     onValueChange={(val) => handlePhq9Change(index, parseInt(val))}
                     className="grid grid-cols-2 md:grid-cols-4 gap-2"
                   >
@@ -290,15 +345,28 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
           {/* GAD-7 */}
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">GAD-7 Anxiety Screen</CardTitle>
-              <CardDescription>Over the last 2 weeks, how often have you been bothered by:</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg font-semibold">GAD-7 Anxiety Screen</CardTitle>
+                  <CardDescription>Over the last 2 weeks, how often have you been bothered by:</CardDescription>
+                </div>
+                {gad7Answered > 0 && (
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">{gad7Score}</div>
+                    <div className={`text-sm font-medium ${getGad7Severity(gad7Score).color}`}>
+                      {getGad7Severity(gad7Score).label}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{gad7Answered}/7 answered</div>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {GAD7_QUESTIONS.map((question, index) => (
                 <div key={`gad7-${index}`} className="space-y-3">
                   <Label className="text-sm font-medium">{index + 1}. {question}</Label>
                   <RadioGroup
-                    value={gad7Responses[index]?.toString()}
+                    value={gad7Responses[index] >= 0 ? gad7Responses[index].toString() : undefined}
                     onValueChange={(val) => handleGad7Change(index, parseInt(val))}
                     className="grid grid-cols-2 md:grid-cols-4 gap-2"
                   >
@@ -355,15 +423,28 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
           {/* MEQ-4 */}
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">MEQ-4 Experience Quality</CardTitle>
-              <CardDescription>Rate the intensity of each experience dimension:</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg font-semibold">MEQ-4 Experience Quality</CardTitle>
+                  <CardDescription>Rate the intensity of each experience dimension:</CardDescription>
+                </div>
+                {meq4Answered > 0 && (
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">{meq4Score}</div>
+                    <div className={`text-sm font-medium ${getMeq4Severity(meq4Score).color}`}>
+                      {getMeq4Severity(meq4Score).label}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{meq4Answered}/4 answered</div>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {MEQ4_QUESTIONS.map((question, index) => (
                 <div key={`meq4-${index}`} className="space-y-3">
                   <Label className="text-sm font-medium">{index + 1}. {question}</Label>
                   <RadioGroup
-                    value={meq4Responses[index]?.toString()}
+                    value={meq4Responses[index] >= 0 ? meq4Responses[index].toString() : undefined}
                     onValueChange={(val) => handleMeq4Change(index, parseInt(val))}
                     className="grid grid-cols-3 md:grid-cols-5 gap-2"
                   >
@@ -384,15 +465,28 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
           {/* CEQ-7 */}
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">CEQ-7 Challenging Experiences</CardTitle>
-              <CardDescription>Rate the intensity of any challenging experiences:</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg font-semibold">CEQ-7 Challenging Experiences</CardTitle>
+                  <CardDescription>Rate the intensity of any challenging experiences:</CardDescription>
+                </div>
+                {ceq7Answered > 0 && (
+                  <div className="text-right">
+                    <div className="text-2xl font-bold">{ceq7Score}</div>
+                    <div className={`text-sm font-medium ${getCeq7Severity(ceq7Score).color}`}>
+                      {getCeq7Severity(ceq7Score).label}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{ceq7Answered}/7 answered</div>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {CEQ7_QUESTIONS.map((question, index) => (
                 <div key={`ceq7-${index}`} className="space-y-3">
                   <Label className="text-sm font-medium">{index + 1}. {question}</Label>
                   <RadioGroup
-                    value={ceq7Responses[index]?.toString()}
+                    value={ceq7Responses[index] >= 0 ? ceq7Responses[index].toString() : undefined}
                     onValueChange={(val) => handleCeq7Change(index, parseInt(val))}
                     className="grid grid-cols-3 md:grid-cols-5 gap-2"
                   >
