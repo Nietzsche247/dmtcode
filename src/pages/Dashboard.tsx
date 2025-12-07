@@ -10,6 +10,7 @@ import { ProfileHeader } from '@/components/dashboard/ProfileHeader';
 import { StatsSection } from '@/components/dashboard/StatsSection';
 import { SymbolGrid } from '@/components/dashboard/SymbolGrid';
 import { useDashboardTracking } from '@/hooks/useDashboardTracking';
+import { useUgcTracking } from '@/hooks/useUgcTracking';
 
 interface UserProfile {
   id: string;
@@ -55,6 +56,7 @@ interface Stats {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { trackDashboardViewed, trackTabSwitched } = useDashboardTracking();
+  const { trackDashboardTabViewed } = useUgcTracking();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [mySubmissions, setMySubmissions] = useState<SymbolSubmission[]>([]);
@@ -198,6 +200,7 @@ const Dashboard = () => {
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     trackTabSwitched(tab);
+    trackDashboardTabViewed(tab);
   };
 
   const handleNameUpdate = (newName: string) => {

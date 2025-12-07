@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ClipboardCheck, FileText, Image, ArrowRight, Brain, Mic } from 'lucide-react';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
+import { useUgcTracking } from '@/hooks/useUgcTracking';
 
 export default function Assess() {
   const [searchParams] = useSearchParams();
@@ -20,9 +21,11 @@ export default function Assess() {
   const [activeTab, setActiveTab] = useState<'form' | 'report' | 'scan'>('form');
   const [completedAssessmentId, setCompletedAssessmentId] = useState<string | null>(null);
   const { trackPageView } = usePostHogTracking();
+  const { trackAssessViewed } = useUgcTracking();
 
   useEffect(() => {
     trackPageView('assess', { log_id: logId });
+    trackAssessViewed();
   }, []);
 
   const handleAssessmentComplete = (assessmentId: string) => {
