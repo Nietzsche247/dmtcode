@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -11,6 +12,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
+import { AssessmentPdfExport } from './AssessmentPdfExport';
+import { Mic, FileDown } from 'lucide-react';
 
 interface AssessmentFormProps {
   logId?: string;
@@ -72,8 +75,10 @@ const INTENSITY_OPTIONS = [
 ];
 
 export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pre');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [completedAssessmentId, setCompletedAssessmentId] = useState<string | null>(null);
   const { trackAssessmentSubmitted } = usePostHogTracking();
   
   // Pre-session state
@@ -809,21 +814,52 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
             </Card>
           )}
 
-          <div className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={() => setActiveTab('pre')}
-            >
-              ← Back to Pre-Session
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={!isPostComplete || isSubmitting}
-              className="bg-primary hover:bg-primary/90 relative overflow-hidden group"
-            >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              {isSubmitting ? 'Submitting...' : 'Complete Assessment'}
-            </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab('pre')}
+              >
+                ← Back to Pre-Session
+              </Button>
+              <div className="flex gap-2">
+                {isPreComplete && isPostComplete && (
+                  <AssessmentPdfExport 
+                    scores={{
+                      phq9_score: phq9Score,
+                      gad7_score: gad7Score,
+                      meq4_score: meq4Score,
+                      ceq7_score: ceq7Score,
+                      mood_pre: moodPre[0],
+                      mood_post: moodPost[0],
+                      created_at: new Date().toISOString(),
+                    }}
+                  />
+                )}
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!isPostComplete || isSubmitting}
+                  className="bg-primary hover:bg-primary/90 relative overflow-hidden group"
+                >
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  {isSubmitting ? 'Submitting...' : 'Submit & Export'}
+                </Button>
+              </div>
+            </div>
+            
+            {/* Voice Logger CTA */}
+            <div className="p-4 rounded-lg border border-primary/30 bg-primary/5 flex items-center gap-4">
+              <div className="p-2 rounded-full bg-primary/10">
+                <Mic className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium">Capture your experience in audio</p>
+                <p className="text-xs text-muted-foreground">Record voice notes for richer analysis</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => navigate('/log')}>
+                Open Voice Logger
+              </Button>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
