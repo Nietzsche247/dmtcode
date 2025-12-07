@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { SubmissionWizard } from '@/components/submission/SubmissionWizard';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -83,8 +84,9 @@ const SubmitSymbol = () => {
       </Helmet>
 
       <Navigation />
+      <Breadcrumb />
       
-      <main id="main-content" role="main" className="min-h-screen pt-24 pb-16">
+      <main id="main-content" role="main" className="min-h-screen pt-8 pb-16">
         <div className="max-w-4xl mx-auto px-4">
           <SubmissionWizard />
         </div>
