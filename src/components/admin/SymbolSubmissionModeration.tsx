@@ -1,13 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Check, X, Eye, CheckSquare, Square, Loader2 } from 'lucide-react';
+import { Check, X, Eye, Loader2, Search, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { formatDistanceToNow } from 'date-fns';
+
+declare global {
+  interface Window {
+    posthog?: any;
+  }
+}
 
 type SymbolSubmission = Tables<'symbol_submissions'> & {
   profile?: { display_name: string; avatar_url: string | null } | null;
@@ -15,15 +26,43 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
 
+const PAGE_SIZE = 20;
+
 export const SymbolSubmissionModeration = () => {
   const [submissions, setSubmissions] = useState<SymbolSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+  // Modal states
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectingBulk, setRejectingBulk] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
+
+  // Stats
+  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, today: 0 });
+
+  useEffect(() => {
+    // Track admin page view
+    window.posthog?.capture('admin_page_viewed');
+    
+    // Get current user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id ?? null);
+    });
+  }, []);
 
   useEffect(() => {
     loadSubmissions();
+    loadStats();
 
     const channel = supabase
       .channel('symbol-submission-moderation')
@@ -33,29 +72,56 @@ export const SymbolSubmissionModeration = () => {
         table: 'symbol_submissions'
       }, () => {
         loadSubmissions();
+        loadStats();
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter]);
+  }, [statusFilter, searchQuery, currentPage]);
+
+  const loadStats = async () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [pending, approved, rejected, todayCount] = await Promise.all([
+      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
+      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
+      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString()),
+    ]);
+
+    setStats({
+      pending: pending.count || 0,
+      approved: approved.count || 0,
+      rejected: rejected.count || 0,
+      today: todayCount.count || 0,
+    });
+  };
 
   const loadSubmissions = async () => {
     setLoading(true);
     setSelectedIds(new Set());
 
+    const from = (currentPage - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
     let query = supabase
       .from('symbol_submissions')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
-      .limit(50);
+      .range(from, to);
 
     if (statusFilter !== 'all') {
       query = query.eq('status', statusFilter);
     }
 
-    const { data, error } = await query;
+    if (searchQuery.trim()) {
+      query = query.ilike('description', `%${searchQuery.trim()}%`);
+    }
+
+    const { data, error, count } = await query;
 
     if (error) {
       toast.error('Failed to load submissions');
@@ -64,7 +130,9 @@ export const SymbolSubmissionModeration = () => {
       return;
     }
 
-    // Fetch profiles separately for display names
+    setTotalCount(count || 0);
+
+    // Fetch profiles separately
     const userIds = [...new Set((data || []).map(s => s.user_id))];
     const { data: profiles } = await supabase
       .from('profiles')
@@ -82,21 +150,113 @@ export const SymbolSubmissionModeration = () => {
     setLoading(false);
   };
 
-  const handleStatusChange = async (id: string, newStatus: 'approved' | 'rejected') => {
+  const handleApprove = async (id: string) => {
     const { error } = await supabase
       .from('symbol_submissions')
-      .update({ status: newStatus })
+      .update({ 
+        status: 'approved',
+        moderated_by: currentUserId,
+        moderated_at: new Date().toISOString()
+      })
       .eq('id', id);
 
     if (error) {
-      toast.error(`Failed to ${newStatus === 'approved' ? 'approve' : 'reject'} submission`);
+      toast.error('Failed to approve submission');
     } else {
-      toast.success(`Submission ${newStatus}`);
+      window.posthog?.capture('admin_submission_approved', { symbol_id: id });
+      toast.success('Symbol approved');
+      
+      // Trigger notification (fire and forget)
+      supabase.functions.invoke('notify-admin', {
+        body: { submissionId: id, action: 'approved' }
+      }).catch(console.error);
+      
       loadSubmissions();
+      loadStats();
     }
   };
 
-  const handleBulkAction = async (action: 'approved' | 'rejected') => {
+  const openRejectModal = (id: string) => {
+    setRejectingId(id);
+    setRejectingBulk(false);
+    setRejectionReason('');
+    setRejectModalOpen(true);
+  };
+
+  const openBulkRejectModal = () => {
+    if (selectedIds.size === 0) {
+      toast.error('No submissions selected');
+      return;
+    }
+    setRejectingBulk(true);
+    setRejectionReason('');
+    setRejectModalOpen(true);
+  };
+
+  const handleRejectConfirm = async () => {
+    if (rejectionReason.trim().length < 10) {
+      toast.error('Rejection reason must be at least 10 characters');
+      return;
+    }
+
+    setBulkLoading(true);
+
+    if (rejectingBulk) {
+      const { error } = await supabase
+        .from('symbol_submissions')
+        .update({ 
+          status: 'rejected',
+          rejection_reason: rejectionReason.trim(),
+          moderated_by: currentUserId,
+          moderated_at: new Date().toISOString()
+        })
+        .in('id', Array.from(selectedIds));
+
+      if (error) {
+        toast.error('Failed to reject submissions');
+      } else {
+        window.posthog?.capture('admin_bulk_action', { 
+          action_type: 'reject', 
+          count: selectedIds.size 
+        });
+        toast.success(`${selectedIds.size} submissions rejected`);
+        setSelectedIds(new Set());
+      }
+    } else if (rejectingId) {
+      const { error } = await supabase
+        .from('symbol_submissions')
+        .update({ 
+          status: 'rejected',
+          rejection_reason: rejectionReason.trim(),
+          moderated_by: currentUserId,
+          moderated_at: new Date().toISOString()
+        })
+        .eq('id', rejectingId);
+
+      if (error) {
+        toast.error('Failed to reject submission');
+      } else {
+        window.posthog?.capture('admin_submission_rejected', { 
+          symbol_id: rejectingId,
+          reason_length: rejectionReason.trim().length
+        });
+        toast.success('Symbol rejected');
+        
+        // Trigger notification
+        supabase.functions.invoke('notify-admin', {
+          body: { submissionId: rejectingId, action: 'rejected', reason: rejectionReason.trim() }
+        }).catch(console.error);
+      }
+    }
+
+    setBulkLoading(false);
+    setRejectModalOpen(false);
+    setRejectingId(null);
+    loadSubmissions();
+    loadStats();
+  };
+
+  const handleBulkApprove = async () => {
     if (selectedIds.size === 0) {
       toast.error('No submissions selected');
       return;
@@ -106,17 +266,26 @@ export const SymbolSubmissionModeration = () => {
 
     const { error } = await supabase
       .from('symbol_submissions')
-      .update({ status: action })
+      .update({ 
+        status: 'approved',
+        moderated_by: currentUserId,
+        moderated_at: new Date().toISOString()
+      })
       .in('id', Array.from(selectedIds));
 
     setBulkLoading(false);
 
     if (error) {
-      toast.error(`Failed to bulk ${action === 'approved' ? 'approve' : 'reject'}`);
+      toast.error('Failed to approve submissions');
     } else {
-      toast.success(`${selectedIds.size} submissions ${action}`);
+      window.posthog?.capture('admin_bulk_action', { 
+        action_type: 'approve', 
+        count: selectedIds.size 
+      });
+      toast.success(`${selectedIds.size} submissions approved`);
       setSelectedIds(new Set());
       loadSubmissions();
+      loadStats();
     }
   };
 
@@ -146,57 +315,27 @@ export const SymbolSubmissionModeration = () => {
     }
   };
 
-  const stats = {
-    total: submissions.length,
-    pending: submissions.filter(s => s.status === 'pending').length,
-    approved: submissions.filter(s => s.status === 'approved').length,
-    rejected: submissions.filter(s => s.status === 'rejected').length,
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-        <span className="ml-2 text-muted-foreground">Loading submissions...</span>
-      </div>
-    );
-  }
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
-      {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Symbol Submissions</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage user-submitted symbols for the registry
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Filter status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold">Symbol Submissions</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Review and moderate user-submitted symbols
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-primary">{stats.total}</div>
-          <div className="text-sm text-muted-foreground">Total Shown</div>
-        </Card>
-        <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-yellow-500">{stats.pending}</div>
           <div className="text-sm text-muted-foreground">Pending</div>
+        </Card>
+        <Card className="p-4 text-center">
+          <div className="text-3xl font-bold text-blue-500">{stats.today}</div>
+          <div className="text-sm text-muted-foreground">Today</div>
         </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-green-500">{stats.approved}</div>
@@ -208,7 +347,34 @@ export const SymbolSubmissionModeration = () => {
         </Card>
       </div>
 
-      {/* Bulk Actions Bar */}
+      {/* Filters */}
+      <Card className="p-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilter); setCurrentPage(1); }} className="flex-1">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="pending">
+                Pending
+                {stats.pending > 0 && <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>}
+              </TabsTrigger>
+              <TabsTrigger value="approved">Approved</TabsTrigger>
+              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="all">All</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search descriptions..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              className="pl-9"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Bulk Actions */}
       {submissions.length > 0 && (
         <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/30">
           <div className="flex items-center gap-3">
@@ -226,7 +392,7 @@ export const SymbolSubmissionModeration = () => {
             <Button
               size="sm"
               variant="default"
-              onClick={() => handleBulkAction('approved')}
+              onClick={handleBulkApprove}
               disabled={selectedIds.size === 0 || bulkLoading}
             >
               {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Check className="w-4 h-4 mr-1" />}
@@ -235,144 +401,283 @@ export const SymbolSubmissionModeration = () => {
             <Button
               size="sm"
               variant="destructive"
-              onClick={() => handleBulkAction('rejected')}
+              onClick={openBulkRejectModal}
               disabled={selectedIds.size === 0 || bulkLoading}
             >
-              {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <X className="w-4 h-4 mr-1" />}
+              <X className="w-4 h-4 mr-1" />
               Reject Selected
             </Button>
           </div>
         </Card>
       )}
 
-      {/* Submissions Grid */}
-      {submissions.length === 0 ? (
+      {/* Loading */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+          <span className="ml-2 text-muted-foreground">Loading submissions...</span>
+        </div>
+      ) : submissions.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-muted-foreground">No submissions found with current filter</p>
+          <p className="text-muted-foreground">No submissions found</p>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {submissions.map((submission) => (
-            <Card 
-              key={submission.id} 
-              className={`p-4 space-y-3 transition-all ${
-                selectedIds.has(submission.id) ? 'ring-2 ring-primary' : ''
-              }`}
+        <>
+          {/* Submissions Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="p-3 text-left w-12">
+                    <Checkbox
+                      checked={selectedIds.size === submissions.length}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </th>
+                  <th className="p-3 text-left w-20">Image</th>
+                  <th className="p-3 text-left">Description</th>
+                  <th className="p-3 text-left">Submitter</th>
+                  <th className="p-3 text-left w-24">Status</th>
+                  <th className="p-3 text-left w-32">Date</th>
+                  <th className="p-3 text-left w-20">Votes</th>
+                  <th className="p-3 text-left w-32">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submissions.map((submission) => (
+                  <tr 
+                    key={submission.id} 
+                    className={`border-b border-border hover:bg-muted/30 transition-colors ${
+                      selectedIds.has(submission.id) ? 'bg-primary/5' : ''
+                    }`}
+                  >
+                    <td className="p-3">
+                      <Checkbox
+                        checked={selectedIds.has(submission.id)}
+                        onCheckedChange={() => toggleSelect(submission.id)}
+                      />
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => { setViewingSubmission(submission); setViewModalOpen(true); }}
+                        className="block w-16 h-16 bg-white rounded border overflow-hidden hover:ring-2 ring-primary transition-all"
+                      >
+                        <img
+                          src={submission.image_url}
+                          alt="Symbol"
+                          className="w-full h-full object-contain"
+                        />
+                      </button>
+                    </td>
+                    <td className="p-3">
+                      <p className="text-sm line-clamp-2 max-w-xs" title={submission.description || ''}>
+                        {submission.description || <span className="text-muted-foreground italic">No description</span>}
+                      </p>
+                    </td>
+                    <td className="p-3">
+                      <span className="text-sm">{submission.profile?.display_name || 'Anonymous'}</span>
+                    </td>
+                    <td className="p-3">
+                      <Badge variant={getStatusBadgeVariant(submission.status)}>
+                        {submission.status}
+                      </Badge>
+                    </td>
+                    <td className="p-3">
+                      <span className="text-sm text-muted-foreground">
+                        {formatDistanceToNow(new Date(submission.created_at), { addSuffix: true })}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <span className="text-sm">
+                        👍 {submission.upvotes} 👎 {submission.downvotes}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => { setViewingSubmission(submission); setViewModalOpen(true); }}
+                          title="View details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleApprove(submission.id)}
+                          disabled={submission.status === 'approved'}
+                          className="text-green-500 hover:text-green-600"
+                          title="Approve"
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => openRejectModal(submission.id)}
+                          disabled={submission.status === 'rejected'}
+                          className="text-destructive hover:text-destructive"
+                          title="Reject"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                Showing {(currentPage - 1) * PAGE_SIZE + 1}-{Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="flex items-center px-3 text-sm">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Reject Modal */}
+      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Submission{rejectingBulk ? 's' : ''}</DialogTitle>
+            <DialogDescription>
+              {rejectingBulk 
+                ? `Provide a reason for rejecting ${selectedIds.size} submissions.`
+                : 'Provide a reason for rejecting this submission.'}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Enter rejection reason (minimum 10 characters)..."
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            rows={4}
+          />
+          <p className="text-xs text-muted-foreground">
+            {rejectionReason.length}/10 characters minimum
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleRejectConfirm}
+              disabled={rejectionReason.trim().length < 10 || bulkLoading}
             >
-              {/* Selection & Status Header */}
-              <div className="flex items-center justify-between">
-                <Checkbox
-                  checked={selectedIds.has(submission.id)}
-                  onCheckedChange={() => toggleSelect(submission.id)}
-                  aria-label={`Select submission ${submission.id}`}
-                />
-                <Badge variant={getStatusBadgeVariant(submission.status)}>
-                  {submission.status}
-                </Badge>
-              </div>
+              {bulkLoading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              Reject
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-              {/* Symbol Image */}
-              <div className="aspect-square w-full bg-white rounded-lg overflow-hidden border">
+      {/* View Modal */}
+      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Submission Details</DialogTitle>
+          </DialogHeader>
+          {viewingSubmission && (
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg p-4">
                 <img
-                  src={submission.image_url}
-                  alt={`Symbol submission`}
-                  className="w-full h-full object-contain"
+                  src={viewingSubmission.image_url}
+                  alt="Symbol"
+                  className="w-full aspect-square object-contain"
                 />
               </div>
-
-              {/* Meta Info */}
-              <div className="space-y-2">
-                {submission.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {submission.description}
-                  </p>
-                )}
-                
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>👍 {submission.upvotes}</span>
-                  <span>👎 {submission.downvotes}</span>
-                  {submission.source_method && (
-                    <Badge variant="outline" className="text-xs">
-                      {submission.source_method}
-                    </Badge>
-                  )}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted-foreground">Status</label>
+                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.status)}>{viewingSubmission.status}</Badge></div>
                 </div>
-
-                {submission.tags && submission.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {submission.tags.slice(0, 3).map((tag, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {submission.tags.length > 3 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{submission.tags.length - 3}
-                      </Badge>
-                    )}
+                <div>
+                  <label className="text-sm text-muted-foreground">Submitter</label>
+                  <p>{viewingSubmission.profile?.display_name || 'Anonymous'}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground">Description</label>
+                  <p className="text-sm">{viewingSubmission.description || 'No description'}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground">Votes</label>
+                  <p>👍 {viewingSubmission.upvotes} / 👎 {viewingSubmission.downvotes}</p>
+                </div>
+                {viewingSubmission.tags && viewingSubmission.tags.length > 0 && (
+                  <div>
+                    <label className="text-sm text-muted-foreground">Tags</label>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {viewingSubmission.tags.map((tag, i) => (
+                        <Badge key={i} variant="secondary">{tag}</Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
-
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    by {submission.profile?.display_name || 'Anonymous'}
-                  </span>
-                  <span>
-                    {new Date(submission.created_at).toLocaleDateString()}
-                  </span>
+                {viewingSubmission.source_method && (
+                  <div>
+                    <label className="text-sm text-muted-foreground">Source Method</label>
+                    <p>{viewingSubmission.source_method}</p>
+                  </div>
+                )}
+                <div>
+                  <label className="text-sm text-muted-foreground">Submitted</label>
+                  <p>{new Date(viewingSubmission.created_at).toLocaleString()}</p>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              {submission.status === 'pending' && (
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    size="sm"
-                    variant="default"
-                    onClick={() => handleStatusChange(submission.id, 'approved')}
-                    className="flex-1"
-                  >
-                    <Check className="w-4 h-4 mr-1" />
-                    Approve
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleStatusChange(submission.id, 'rejected')}
-                    className="flex-1"
-                  >
-                    <X className="w-4 h-4 mr-1" />
-                    Reject
-                  </Button>
-                </div>
-              )}
-
-              {submission.status !== 'pending' && (
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleStatusChange(submission.id, 'approved')}
-                    disabled={submission.status === 'approved'}
-                    className="flex-1"
-                  >
-                    <Check className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleStatusChange(submission.id, 'rejected')}
-                    disabled={submission.status === 'rejected'}
-                    className="flex-1"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              )}
-            </Card>
-          ))}
-        </div>
-      )}
+            </div>
+          )}
+          <DialogFooter>
+            {viewingSubmission?.status === 'pending' && (
+              <>
+                <Button 
+                  variant="default" 
+                  onClick={() => { handleApprove(viewingSubmission.id); setViewModalOpen(false); }}
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  Approve
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={() => { openRejectModal(viewingSubmission.id); setViewModalOpen(false); }}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Reject
+                </Button>
+              </>
+            )}
+            <Button variant="outline" onClick={() => setViewModalOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
