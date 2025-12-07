@@ -1,12 +1,22 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Plus } from 'lucide-react';
+import { ArrowRight, Plus, FileEdit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
+
+interface SeededSymbol {
+  id: string;
+  description: string;
+  tags: string[];
+  source: string;
+  surface: string;
+  symmetry: string;
+  doi: string;
+}
 
 interface SymbolSubmission {
   id: string;
@@ -30,8 +40,10 @@ interface ProfileData {
 export const RegistryBrowser = () => {
   const navigate = useNavigate();
   const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
+  const seededSectionRef = useRef<HTMLDivElement>(null);
   
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
+  const [seededSymbols, setSeededSymbols] = useState<SeededSymbol[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
@@ -44,7 +56,24 @@ export const RegistryBrowser = () => {
 
   useEffect(() => {
     loadSymbols();
+    loadSeededSymbols();
   }, []);
+
+  const loadSeededSymbols = async () => {
+    try {
+      const response = await fetch('/data.json');
+      const data = await response.json();
+      if (data.symbols) {
+        setSeededSymbols(data.symbols);
+      }
+    } catch (error) {
+      console.error('Failed to load seeded symbols:', error);
+    }
+  };
+
+  const scrollToSeededSymbols = () => {
+    seededSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
     // Track filter changes
@@ -235,28 +264,52 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
-      {/* Empty state */}
-      {!loading && filteredSymbols.length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground mb-4">
-            {hasActiveFilters 
-              ? 'No symbols match your filters. Try adjusting your selection.'
-              : 'No approved symbols yet. Be the first to contribute!'}
-          </p>
-          {hasActiveFilters ? (
-            <Button variant="outline" onClick={clearFilters}>
-              Clear Filters
+      {/* Empty state - inviting pioneer message */}
+      {!loading && filteredSymbols.length === 0 && !hasActiveFilters && (
+        <div className="text-center py-20 px-4">
+          <div className="max-w-md mx-auto">
+            <FileEdit className="w-16 h-16 mx-auto mb-6 text-muted-foreground/50" strokeWidth={1.5} />
+            <h3 className="text-2xl md:text-3xl font-bold mb-3">Be a Pioneer</h3>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              No symbols have been submitted yet. You could be the first to document what you've seen.
+            </p>
+            <Button 
+              size="lg"
+              className="rounded-full px-8 btn-lickable border-beam group mb-4"
+              onClick={() => navigate('/submit-symbol')}
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Submit Your Symbol
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-          ) : (
-            <Button onClick={() => navigate('/submit-symbol')}>
-              <Plus className="w-4 h-4 mr-2" />
-              Submit a Symbol
-            </Button>
-          )}
+            {seededSymbols.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                Or{' '}
+                <button 
+                  onClick={scrollToSeededSymbols}
+                  className="text-primary hover:underline font-medium"
+                >
+                  browse our seeded reference library
+                </button>
+              </p>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Symbol Grid */}
+      {/* Filter empty state */}
+      {!loading && filteredSymbols.length === 0 && hasActiveFilters && (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground mb-4">
+            No symbols match your filters. Try adjusting your selection.
+          </p>
+          <Button variant="outline" onClick={clearFilters}>
+            Clear Filters
+          </Button>
+        </div>
+      )}
+
+      {/* Symbol Grid - User submissions */}
       {!loading && filteredSymbols.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSymbols.map((symbol) => (
@@ -279,6 +332,43 @@ export const RegistryBrowser = () => {
               highlightTerms={highlightTerms}
             />
           ))}
+        </div>
+      )}
+
+      {/* Seeded Reference Library */}
+      {!loading && seededSymbols.length > 0 && (
+        <div ref={seededSectionRef} className="mt-20 pt-12 border-t border-border/50">
+          <div className="text-center mb-10">
+            <h3 className="text-2xl md:text-3xl font-bold mb-2">Reference Library</h3>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {seededSymbols.length} documented symbols from peer-reviewed research (Davis et al., Timmermann et al.)
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            {seededSymbols.map((symbol) => (
+              <div 
+                key={symbol.id}
+                className="group relative bg-card/50 border border-border/50 rounded-lg p-4 hover:border-primary/30 transition-colors"
+              >
+                <div className="aspect-square bg-muted/30 rounded-md mb-3 flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground font-mono">{symbol.id}</span>
+                </div>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                  {symbol.description}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {symbol.tags.slice(0, 2).map((tag) => (
+                    <span 
+                      key={tag}
+                      className="text-[10px] px-1.5 py-0.5 bg-muted/50 rounded text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </section>
