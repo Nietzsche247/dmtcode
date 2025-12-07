@@ -5,40 +5,39 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Star, Upload, Tag, CheckCircle2 } from 'lucide-react';
+import { Trophy, Star, Upload, CheckCircle2, Award } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Leaderboard = () => {
-  const { data: topContributors, isLoading } = useQuery({
-    queryKey: ['leaderboard-contributors'],
+  // Fetch profiles for reputation and symbol count leaderboard
+  const { data: topProfiles, isLoading: profilesLoading } = useQuery({
+    queryKey: ['leaderboard-profiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, display_name, avatar_url, reputation_score, symbol_count')
+        .order('reputation_score', { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  // Fetch user_stats for validation count leaderboard
+  const { data: topValidators, isLoading: validatorsLoading } = useQuery({
+    queryKey: ['leaderboard-validators'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('user_stats')
         .select('*, user_id')
-        .order('total_submissions', { ascending: false })
+        .order('total_validations', { ascending: false })
         .limit(50);
       
       if (error) throw error;
-      
-      // Fetch ORCID for each contributor from their submissions
-      const contributorsWithOrcid = await Promise.all(
-        (data || []).map(async (contributor) => {
-          if (contributor.user_id) {
-            const { data: submission } = await supabase
-              .from('registry_glyphs')
-              .select('orcid')
-              .eq('user_id', contributor.user_id)
-              .not('orcid', 'is', null)
-              .limit(1)
-              .maybeSingle();
-            return { ...contributor, orcid: submission?.orcid || null };
-          }
-          return { ...contributor, orcid: null };
-        })
-      );
-      
-      return contributorsWithOrcid;
+      return data || [];
     }
   });
 
@@ -53,10 +52,20 @@ const Leaderboard = () => {
         .from('registry_glyphs')
         .select('*', { count: 'exact', head: true })
         .eq('is_unique', true);
+
+      const { count: totalContributors } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
       
-      return { totalSymbols: totalSymbols || 0, uniqueSymbols: uniqueSymbols || 0 };
+      return { 
+        totalSymbols: totalSymbols || 0, 
+        uniqueSymbols: uniqueSymbols || 0,
+        totalContributors: totalContributors || 0
+      };
     }
   });
+
+  const isLoading = profilesLoading || validatorsLoading;
 
   return (
     <>
@@ -128,43 +137,44 @@ const Leaderboard = () => {
               </Card>
               <Card className="p-6 text-center border-primary/20">
                 <div className="text-4xl font-bold text-gold mb-2">
+                  {registryStats?.totalContributors || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">Contributors</div>
+              </Card>
+              <Card className="p-6 text-center border-primary/20">
+                <div className="text-4xl font-bold text-gold mb-2">
                   {registryStats?.uniqueSymbols || 0}
                 </div>
                 <div className="text-sm text-muted-foreground">Unique Symbols</div>
               </Card>
-              <Card className="p-6 text-center border-primary/20">
-                <div className="text-4xl font-bold text-gold mb-2">
-                  {topContributors?.length || 0}
-                </div>
-                <div className="text-sm text-muted-foreground">Active Contributors</div>
-              </Card>
             </div>
 
             {/* Leaderboard Tabs */}
-            <Tabs defaultValue="submissions" className="w-full">
+            <Tabs defaultValue="reputation" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="submissions">
+                <TabsTrigger value="reputation">
+                  <Award className="w-4 h-4 mr-2" />
+                  Reputation
+                </TabsTrigger>
+                <TabsTrigger value="symbols">
                   <Upload className="w-4 h-4 mr-2" />
-                  Submissions
+                  Symbol Count
                 </TabsTrigger>
                 <TabsTrigger value="validations">
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                   Validations
                 </TabsTrigger>
-                <TabsTrigger value="tags">
-                  <Tag className="w-4 h-4 mr-2" />
-                  Tags Added
-                </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="submissions" className="space-y-4">
+              {/* Reputation Tab */}
+              <TabsContent value="reputation" className="space-y-4">
                 {isLoading ? (
                   <Card className="p-8 text-center">
                     <p className="text-muted-foreground">Loading leaderboard...</p>
                   </Card>
-                ) : topContributors && topContributors.length > 0 ? (
-                  topContributors.map((contributor, index) => (
-                    <Card key={contributor.id} className="p-6 border-border hover:border-primary/30 transition-colors">
+                ) : topProfiles && topProfiles.length > 0 ? (
+                  topProfiles.map((profile, index) => (
+                    <Card key={profile.id} className="p-6 border-border hover:border-primary/30 transition-colors">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-xl">
                           {index === 0 && <Trophy className="w-6 h-6 text-gold" />}
@@ -172,42 +182,27 @@ const Leaderboard = () => {
                           {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
                           {index > 2 && `#${index + 1}`}
                         </div>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={profile.avatar_url || undefined} alt={profile.display_name} />
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {profile.display_name?.slice(0, 2).toUpperCase() || '??'}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold">Contributor #{contributor.session_id.slice(0, 8)}</span>
-                            {contributor.orcid && (
-                              <a 
-                                href={`https://orcid.org/${contributor.orcid}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                                title={`ORCID: ${contributor.orcid}`}
-                              >
-                                <img 
-                                  src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" 
-                                  alt="ORCID" 
-                                  className="w-4 h-4"
-                                />
-                              </a>
-                            )}
-                            {contributor.badges_earned && contributor.badges_earned.length > 0 && (
-                              <Badge variant="secondary" className="text-xs">
-                                <Star className="w-3 h-3 mr-1" />
-                                {contributor.badges_earned.length} badges
-                              </Badge>
-                            )}
+                            <span className="font-semibold">{profile.display_name}</span>
                           </div>
                           <div className="flex gap-4 text-sm text-muted-foreground">
-                            <span>{contributor.total_submissions || 0} submissions</span>
-                            <span>{contributor.total_validations || 0} validations</span>
-                            <span>{contributor.total_tags_added || 0} tags</span>
+                            <span>{profile.symbol_count || 0} symbols</span>
+                            <span>{profile.reputation_score || 0} reputation</span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-gold">
-                            {contributor.rank || index + 1}
+                          <div className="text-2xl font-bold text-gold flex items-center gap-1">
+                            <Star className="w-5 h-5" />
+                            {profile.reputation_score || 0}
                           </div>
-                          <div className="text-xs text-muted-foreground">Rank</div>
+                          <div className="text-xs text-muted-foreground">Reputation</div>
                         </div>
                       </div>
                     </Card>
@@ -219,30 +214,93 @@ const Leaderboard = () => {
                 )}
               </TabsContent>
 
+              {/* Symbol Count Tab */}
+              <TabsContent value="symbols" className="space-y-4">
+                {isLoading ? (
+                  <Card className="p-8 text-center">
+                    <p className="text-muted-foreground">Loading leaderboard...</p>
+                  </Card>
+                ) : topProfiles && topProfiles.length > 0 ? (
+                  [...topProfiles]
+                    .sort((a, b) => (b.symbol_count || 0) - (a.symbol_count || 0))
+                    .map((profile, index) => (
+                      <Card key={profile.id} className="p-6 border-border hover:border-primary/30 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-xl">
+                            {index === 0 && <Trophy className="w-6 h-6 text-gold" />}
+                            {index === 1 && <Trophy className="w-6 h-6 text-muted-foreground" />}
+                            {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
+                            {index > 2 && `#${index + 1}`}
+                          </div>
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={profile.avatar_url || undefined} alt={profile.display_name} />
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {profile.display_name?.slice(0, 2).toUpperCase() || '??'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold">{profile.display_name}</span>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {profile.reputation_score || 0} reputation
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-gold flex items-center gap-1">
+                              <Upload className="w-5 h-5" />
+                              {profile.symbol_count || 0}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Symbols</div>
+                          </div>
+                        </div>
+                      </Card>
+                    ))
+                ) : (
+                  <Card className="p-8 text-center">
+                    <p className="text-muted-foreground">No symbols submitted yet.</p>
+                  </Card>
+                )}
+              </TabsContent>
+
+              {/* Validations Tab */}
               <TabsContent value="validations" className="space-y-4">
                 {isLoading ? (
                   <Card className="p-8 text-center">
                     <p className="text-muted-foreground">Loading leaderboard...</p>
                   </Card>
-                ) : topContributors && topContributors.length > 0 ? (
-                  [...topContributors]
-                    .sort((a, b) => (b.total_validations || 0) - (a.total_validations || 0))
-                    .map((contributor, index) => (
-                      <Card key={contributor.id} className="p-6 border-border hover:border-primary/30 transition-colors">
+                ) : topValidators && topValidators.length > 0 ? (
+                  topValidators
+                    .filter(v => (v.total_validations || 0) > 0)
+                    .map((validator, index) => (
+                      <Card key={validator.id} className="p-6 border-border hover:border-primary/30 transition-colors">
                         <div className="flex items-center gap-4">
                           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-xl">
-                            #{index + 1}
+                            {index === 0 && <Trophy className="w-6 h-6 text-gold" />}
+                            {index === 1 && <Trophy className="w-6 h-6 text-muted-foreground" />}
+                            {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
+                            {index > 2 && `#${index + 1}`}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold">Contributor #{contributor.session_id.slice(0, 8)}</span>
+                              <span className="font-semibold">Contributor #{validator.session_id?.slice(0, 8) || 'Anonymous'}</span>
+                              {validator.badges_earned && validator.badges_earned.length > 0 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <Star className="w-3 h-3 mr-1" />
+                                  {validator.badges_earned.length} badges
+                                </Badge>
+                              )}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {contributor.total_validations || 0} validations · {contributor.total_submissions || 0} submissions
+                              {validator.total_submissions || 0} submissions · {validator.total_tags_added || 0} tags
                             </div>
                           </div>
-                          <div className="text-2xl font-bold text-gold">
-                            {contributor.total_validations || 0}
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-gold flex items-center gap-1">
+                              <CheckCircle2 className="w-5 h-5" />
+                              {validator.total_validations || 0}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Validations</div>
                           </div>
                         </div>
                       </Card>
@@ -250,41 +308,6 @@ const Leaderboard = () => {
                 ) : (
                   <Card className="p-8 text-center">
                     <p className="text-muted-foreground">No validations yet.</p>
-                  </Card>
-                )}
-              </TabsContent>
-
-              <TabsContent value="tags" className="space-y-4">
-                {isLoading ? (
-                  <Card className="p-8 text-center">
-                    <p className="text-muted-foreground">Loading leaderboard...</p>
-                  </Card>
-                ) : topContributors && topContributors.length > 0 ? (
-                  [...topContributors]
-                    .sort((a, b) => (b.total_tags_added || 0) - (a.total_tags_added || 0))
-                    .map((contributor, index) => (
-                      <Card key={contributor.id} className="p-6 border-border hover:border-primary/30 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-xl">
-                            #{index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold">Contributor #{contributor.session_id.slice(0, 8)}</span>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {contributor.total_tags_added || 0} tags · {contributor.total_submissions || 0} submissions
-                            </div>
-                          </div>
-                          <div className="text-2xl font-bold text-gold">
-                            {contributor.total_tags_added || 0}
-                          </div>
-                        </div>
-                      </Card>
-                    ))
-                ) : (
-                  <Card className="p-8 text-center">
-                    <p className="text-muted-foreground">No tags added yet.</p>
                   </Card>
                 )}
               </TabsContent>
