@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useSubmissionTracking } from '@/hooks/useSubmissionTracking';
 import { useCanvasTracking } from '@/hooks/useCanvasTracking';
+import { useUgcTracking } from '@/hooks/useUgcTracking';
+import { CanvasErrorBoundary } from '@/components/registry/CanvasErrorBoundary';
 import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const STEPS = [
@@ -31,6 +33,7 @@ export const SubmissionWizard = () => {
   const navigate = useNavigate();
   const { trackStepCompleted, trackSubmissionSubmitted, trackSubmissionAbandoned } = useSubmissionTracking();
   const { trackDrawingSaved } = useCanvasTracking();
+  const { trackSymbolDrawn, trackSymbolSubmitted } = useUgcTracking();
 
   // Track abandonment on unmount
   useEffect(() => {
@@ -47,6 +50,7 @@ export const SubmissionWizard = () => {
       return;
     }
     trackDrawingSaved(symmetryMode, showGrid);
+    trackSymbolDrawn({ has_symmetry: symmetryMode, has_grid: showGrid });
     trackStepCompleted(1, 'Draw');
     setCurrentStep(2);
   };
@@ -124,12 +128,19 @@ export const SubmissionWizard = () => {
         body: { submission },
       }).catch(err => console.error('Notification error:', err));
 
-      // Track success
+      // Track success with both hooks
       trackSubmissionSubmitted({
         source_method: metadata.sourceMethod,
         tags: metadata.tags,
         has_description: !!metadata.description,
         dose_level: metadata.doseLevel,
+      });
+      
+      trackSymbolSubmitted({
+        submission_id: submission.id,
+        source_method: metadata.sourceMethod,
+        tags: metadata.tags,
+        has_description: !!metadata.description,
       });
 
       setSubmissionId(submission.id);
@@ -171,11 +182,13 @@ export const SubmissionWizard = () => {
               </p>
             </div>
             
-            <SymbolCanvas 
-              onImageChange={setImageData}
-              onSave={handleCanvasSave}
-              disabled={isSubmitting}
-            />
+            <CanvasErrorBoundary fallbackMessage="Canvas loading failed—please retry">
+              <SymbolCanvas 
+                onImageChange={setImageData}
+                onSave={handleCanvasSave}
+                disabled={isSubmitting}
+              />
+            </CanvasErrorBoundary>
           </div>
         )}
 
