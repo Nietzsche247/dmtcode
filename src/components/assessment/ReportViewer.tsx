@@ -7,6 +7,7 @@ import { Download, Share2, FileText, TrendingUp, TrendingDown, Minus } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { TherapistShareModal } from './TherapistShareModal';
+import { AssessmentTrends } from './AssessmentTrends';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 
 interface ReportViewerProps {
@@ -391,6 +392,9 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Historical Trends */}
+      <AssessmentTrends currentAssessmentId={assessmentId} />
 
       {/* Disclaimer */}
       <p className="text-xs text-muted-foreground text-center">
