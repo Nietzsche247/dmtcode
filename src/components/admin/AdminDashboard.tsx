@@ -6,6 +6,7 @@ import { SeoInsights } from './SeoInsights';
 import { OnPageAuditor } from './OnPageAuditor';
 import { ConversionFunnel } from './ConversionFunnel';
 import { SymbolModeration } from './SymbolModeration';
+import { SymbolSubmissionModeration } from './SymbolSubmissionModeration';
 import { NullDashboard } from './NullDashboard';
 import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
@@ -51,7 +52,18 @@ export const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="symbols" className="space-y-4">
-            <SymbolModeration />
+            <Tabs defaultValue="submissions" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="submissions">User Submissions</TabsTrigger>
+                <TabsTrigger value="registry">Registry Glyphs</TabsTrigger>
+              </TabsList>
+              <TabsContent value="submissions">
+                <SymbolSubmissionModeration />
+              </TabsContent>
+              <TabsContent value="registry">
+                <SymbolModeration />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           <TabsContent value="products" className="space-y-4">
