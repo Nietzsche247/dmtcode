@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
@@ -116,6 +117,23 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
   const isPreComplete = phq9Responses.every(r => r >= 0) && gad7Responses.every(r => r >= 0);
   const isPostComplete = meq4Responses.every(r => r >= 0) && ceq7Responses.every(r => r >= 0);
 
+  // Calculate progress percentage
+  const calculateProgress = () => {
+    if (activeTab === 'pre') {
+      // Pre-session: PHQ-9 (9 questions) + GAD-7 (7 questions) = 16 total
+      const phq9Answered = phq9Responses.filter(r => r >= 0).length;
+      const gad7Answered = gad7Responses.filter(r => r >= 0).length;
+      return Math.round(((phq9Answered + gad7Answered) / 16) * 100);
+    } else {
+      // Post-session: MEQ-4 (4 questions) + CEQ-7 (7 questions) = 11 total
+      const meq4Answered = meq4Responses.filter(r => r >= 0).length;
+      const ceq7Answered = ceq7Responses.filter(r => r >= 0).length;
+      return Math.round(((meq4Answered + ceq7Answered) / 11) * 100);
+    }
+  };
+
+  const progress = calculateProgress();
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
@@ -190,13 +208,28 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
 
   return (
     <div className="space-y-6">
+      {/* Progress Indicator */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-muted-foreground">
+            {activeTab === 'pre' ? 'Pre-Session' : 'Post-Session'} Progress
+          </span>
+          <span className={progress === 100 ? 'text-primary font-semibold' : 'text-muted-foreground'}>
+            {progress}% Complete
+          </span>
+        </div>
+        <Progress value={progress} className="h-2" />
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-muted/50">
           <TabsTrigger value="pre" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Pre-Session Baseline
+            {isPreComplete && <span className="ml-2 text-xs">✓</span>}
           </TabsTrigger>
           <TabsTrigger value="post" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Post-Session Assessment
+            {isPostComplete && <span className="ml-2 text-xs">✓</span>}
           </TabsTrigger>
         </TabsList>
 
