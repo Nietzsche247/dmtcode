@@ -10,7 +10,7 @@ import { BrainScanUpload } from '@/components/assessment/BrainScanUpload';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ClipboardCheck, FileText, Image, ArrowRight, Brain } from 'lucide-react';
+import { ClipboardCheck, FileText, Image, ArrowRight, Brain, Mic } from 'lucide-react';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 
 export default function Assess() {
@@ -100,29 +100,36 @@ export default function Assess() {
           </p>
         </div>
 
-        {/* Quick Start Card */}
-        {!completedAssessmentId && !logId && (
-          <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-full bg-primary/10">
-                    <ClipboardCheck className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Start with Voice Logger</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Record your experience first, then complete the assessment
-                    </p>
-                  </div>
-                </div>
-                <Button onClick={() => navigate('/log')} className="whitespace-nowrap">
-                  Go to Voice Logger
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+        {/* Voice Logger Callout Box */}
+        {!completedAssessmentId && (
+          <div 
+            className="mb-8 p-4 rounded-lg border border-primary bg-primary/10"
+            role="complementary"
+            aria-label="Voice Logger recommendation"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex-shrink-0 p-3 rounded-full bg-primary/20">
+                <Mic className="h-6 w-6 text-primary" aria-hidden="true" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-foreground mb-1">
+                  Record Your Experience First
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Use our Voice Logger to capture your thoughts immediately after your session while memories are fresh. 
+                  Your recording will be transcribed and analyzed.
+                </p>
+              </div>
+              <Button 
+                onClick={() => navigate('/log')} 
+                className="whitespace-nowrap flex-shrink-0 gap-2"
+                size="lg"
+              >
+                <Mic className="h-4 w-4" />
+                Start Voice Recording
+              </Button>
+            </div>
+          </div>
         )}
 
         {/* Main Content */}
