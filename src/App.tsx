@@ -28,6 +28,8 @@ import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
+// Lazy load Dashboard
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 import Leaderboard from "./pages/Leaderboard";
 import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
@@ -134,6 +136,13 @@ const App = () => (
           <Route path="/open-questions" element={<OpenQuestions />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/my-symbols" element={<MySymbols />} />
+          <Route path="/dashboard" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Dashboard />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/null-reports" element={<NullReports />} />
           <Route path="/products/:id" element={<ProductDetail />} />
