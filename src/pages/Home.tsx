@@ -70,14 +70,48 @@ const Home = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "DMT Code Project",
+            "alternateName": "DMT Code",
+            "url": "https://dmtcode.com",
+            "logo": "https://dmtcode.com/favicon.png",
+            "description": "Open-science research initiative documenting visual symbols from 650 nm laser exposure and N,N-DMT experiences",
+            "foundingDate": "2025",
+            "sameAs": [
+              "https://github.com/dmtcode"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "research inquiries",
+              "url": "https://dmtcode.com/about"
+            },
+            "knowsAbout": [
+              "DMT research",
+              "650nm laser protocols",
+              "Visual symbol documentation",
+              "Psychedelic science",
+              "Open data research"
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "DMT Code Visual Symbol Catalogue",
             "url": "https://dmtcode.com",
             "description": "Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences",
+            "publisher": {
+              "@type": "Organization",
+              "name": "DMT Code Project"
+            },
             "license": "https://creativecommons.org/licenses/by/4.0/",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://dmtcode.com/api/symbols?tag={search_term_string}",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://dmtcode.com/api/symbols?tag={search_term_string}"
+              },
               "query-input": "required name=search_term_string"
             }
           })}
