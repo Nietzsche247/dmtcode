@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,9 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
+        toast.error('Admin access required', {
+          description: 'Please sign in with an admin account.'
+        });
         setLoading(false);
         return;
       }
@@ -26,9 +30,16 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         .eq('user_id', session.user.id)
         .in('role', ['admin', 'moderator']);
 
+      if (!roles || roles.length === 0) {
+        toast.error('Admin access required', {
+          description: 'Your account does not have admin privileges.'
+        });
+      }
+      
       setIsAdmin(roles && roles.length > 0);
     } catch (error) {
       console.error('Error checking admin status:', error);
+      toast.error('Failed to verify admin status');
     } finally {
       setLoading(false);
     }
@@ -43,7 +54,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

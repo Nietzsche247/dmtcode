@@ -20,6 +20,10 @@ interface NotificationRequest {
     tags?: string[];
     source_method?: string;
   };
+  // Moderation notification fields
+  submissionId?: string;
+  action?: 'approved' | 'rejected';
+  reason?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -34,7 +38,93 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     const body: NotificationRequest = await req.json();
-    const { type, symbolId, wavelength, surface, metadata, submission } = body;
+    const { type, symbolId, wavelength, surface, metadata, submission, submissionId, action, reason } = body;
+
+    // Handle moderation status change notification to submitter
+    if (submissionId && action) {
+      console.log(`[Moderation] Symbol ${submissionId} was ${action}`);
+
+      // Get submission and user details
+      const { data: submissionData } = await supabase
+        .from('symbol_submissions')
+        .select('user_id, description')
+        .eq('id', submissionId)
+        .single();
+
+      if (!submissionData) {
+        console.log('Submission not found, skipping notification');
+        return new Response(
+          JSON.stringify({ success: true, message: 'Submission not found' }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      // Get user email from auth.users (requires service role)
+      const { data: userData } = await supabase.auth.admin.getUserById(submissionData.user_id);
+      const userEmail = userData?.user?.email;
+
+      if (!userEmail) {
+        console.log('User email not found, skipping email notification');
+        return new Response(
+          JSON.stringify({ success: true, message: 'User email not found' }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      const resendKey = Deno.env.get('RESEND_API_KEY');
+      if (resendKey) {
+        try {
+          const isApproved = action === 'approved';
+          const subject = isApproved 
+            ? '✅ Your symbol submission was approved!' 
+            : '❌ Your symbol submission was not approved';
+          
+          const html = isApproved 
+            ? `
+              <h2>Great news!</h2>
+              <p>Your symbol submission to the DMT Code registry has been approved and is now visible to the community.</p>
+              <p><strong>Description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p><a href="https://dmtcode.com/registry">View the Registry</a></p>
+              <p>Thank you for contributing to psychedelic research!</p>
+            `
+            : `
+              <h2>Submission Update</h2>
+              <p>Unfortunately, your symbol submission to the DMT Code registry was not approved.</p>
+              <p><strong>Reason:</strong> ${reason || 'No reason provided'}</p>
+              <p><strong>Your description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p>You can submit a new symbol that meets our guidelines.</p>
+              <p><a href="https://dmtcode.com/submit-symbol">Submit Another Symbol</a></p>
+            `;
+
+          const emailResponse = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'DMT Code <notifications@dmtcode.com>',
+              to: [userEmail],
+              subject,
+              html,
+            }),
+          });
+
+          if (!emailResponse.ok) {
+            console.error('Moderation email send failed:', await emailResponse.text());
+          } else {
+            console.log(`Moderation notification email sent to ${userEmail}`);
+          }
+        } catch (emailError) {
+          console.error('Email sending error:', emailError);
+        }
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Moderation notification processed' }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
 
     // Handle new symbol submission notification
     if (submission) {

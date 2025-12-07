@@ -923,7 +923,10 @@ export type Database = {
           emotional_valence: string | null
           id: string
           image_url: string
+          moderated_at: string | null
+          moderated_by: string | null
           recurrence: string | null
+          rejection_reason: string | null
           source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
           surface_type: string | null
@@ -942,7 +945,10 @@ export type Database = {
           emotional_valence?: string | null
           id?: string
           image_url: string
+          moderated_at?: string | null
+          moderated_by?: string | null
           recurrence?: string | null
+          rejection_reason?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
@@ -961,7 +967,10 @@ export type Database = {
           emotional_valence?: string | null
           id?: string
           image_url?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
           recurrence?: string | null
+          rejection_reason?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
