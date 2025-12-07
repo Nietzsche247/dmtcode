@@ -1,216 +1,206 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star, Flag } from 'lucide-react';
-import { toast } from 'sonner';
-import { TagsManager } from './TagsManager';
-import { ShareButtons } from '@/components/ShareButtons';
-import { VotingButtons } from './VotingButtons';
-import { SaveButton } from '@/components/dashboard/SaveButton';
+import { ArrowRight, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { RegistryFilters } from './RegistryFilters';
+import { SymbolCard } from './SymbolCard';
+import { useRegistryTracking } from '@/hooks/useRegistryTracking';
+import { Skeleton } from '@/components/ui/skeleton';
 
-interface RegistryGlyph {
+interface SymbolSubmission {
   id: string;
-  image_data: string;
-  confirmation_count: number;
-  motif_tags: string[];
+  image_url: string;
+  description: string | null;
+  tags: string[] | null;
+  upvotes: number;
+  downvotes: number;
+  status: 'pending' | 'approved' | 'rejected';
+  source_method: string | null;
   created_at: string;
-  symmetry: string | null;
-  emotional_valence: string | null;
-  user_id: string | null;
+  user_id: string;
+}
+
+interface ProfileData {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
 }
 
 export const RegistryBrowser = () => {
-  const [glyphs, setGlyphs] = useState<RegistryGlyph[]>([]);
-  const [filteredGlyphs, setFilteredGlyphs] = useState<RegistryGlyph[]>([]);
+  const navigate = useNavigate();
+  const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
+  
+  const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
+  const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [starredIds, setStarredIds] = useState<Set<string>>(new Set());
+  const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
   
   // Filters
-  const [tagFilter, setTagFilter] = useState<string>('all');
-  const [symmetryFilter, setSymmetryFilter] = useState<string>('all');
-  const [emotionFilter, setEmotionFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
-    checkUser();
-    loadGlyphs();
-
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('registry-browser')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'registry_glyphs' 
-      }, () => {
-        loadGlyphs();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    loadSymbols();
   }, []);
 
   useEffect(() => {
-    applyFilters();
-  }, [glyphs, tagFilter, symmetryFilter, emotionFilter]);
-
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-      loadStarredGlyphs(user.id);
+    // Track filter changes
+    if (sourceFilter !== 'all' || selectedTags.length > 0) {
+      trackRegistryFiltered({ source: sourceFilter, tags: selectedTags });
     }
-  };
+  }, [sourceFilter, selectedTags]);
 
-  const loadStarredGlyphs = async (uid: string) => {
-    const { data } = await supabase
-      .from('glyph_votes')
-      .select('glyph_id')
-      .eq('user_id', uid);
-    
-    if (data) {
-      setStarredIds(new Set(data.map(v => v.glyph_id)));
+  useEffect(() => {
+    // Track search
+    if (searchQuery.length >= 3) {
+      const timer = setTimeout(() => {
+        trackRegistrySearched(searchQuery, filteredSymbols.length);
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [searchQuery]);
 
-  const loadGlyphs = async () => {
+  const loadSymbols = async () => {
     setLoading(true);
+    
+    // Load approved submissions
     const { data, error } = await supabase
-      .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags, created_at, symmetry, emotional_valence, user_id')
-      .order('confirmation_count', { ascending: false })
+      .from('symbol_submissions')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, created_at, user_id')
+      .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setGlyphs(data);
+      setSymbols(data as SymbolSubmission[]);
+      
+      // Load profiles for contributors
+      const userIds = [...new Set(data.map(s => s.user_id))];
+      if (userIds.length > 0) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id, display_name, avatar_url')
+          .in('id', userIds);
+        
+        if (profileData) {
+          const profileMap: Record<string, ProfileData> = {};
+          profileData.forEach(p => { profileMap[p.id] = p; });
+          setProfiles(profileMap);
+        }
+      }
+      
+      // Load validation counts
+      const symbolIds = data.map(s => s.id);
+      if (symbolIds.length > 0) {
+        const { data: votes } = await supabase
+          .from('symbol_votes')
+          .select('symbol_id')
+          .in('symbol_id', symbolIds)
+          .eq('vote_type', 'seen_it');
+        
+        if (votes) {
+          const counts: Record<string, number> = {};
+          votes.forEach(v => {
+            counts[v.symbol_id] = (counts[v.symbol_id] || 0) + 1;
+          });
+          setValidationCounts(counts);
+        }
+      }
     }
+    
     setLoading(false);
   };
 
-  const applyFilters = () => {
-    let filtered = [...glyphs];
+  const filteredSymbols = useMemo(() => {
+    let filtered = [...symbols];
 
-    if (tagFilter !== 'all') {
-      filtered = filtered.filter(g => 
-        g.motif_tags?.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase()))
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(s => 
+        s.description?.toLowerCase().includes(query) ||
+        s.tags?.some(tag => tag.toLowerCase().includes(query))
       );
     }
 
-    if (symmetryFilter !== 'all') {
-      filtered = filtered.filter(g => g.symmetry === symmetryFilter);
+    // Source filter
+    if (sourceFilter !== 'all') {
+      filtered = filtered.filter(s => s.source_method === sourceFilter);
     }
 
-    if (emotionFilter !== 'all') {
-      filtered = filtered.filter(g => g.emotional_valence === emotionFilter);
+    // Tags filter
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(s => 
+        s.tags?.some(tag => 
+          selectedTags.some(selectedTag => 
+            tag.toLowerCase().includes(selectedTag.toLowerCase())
+          )
+        )
+      );
     }
 
-    setFilteredGlyphs(filtered);
+    // Sorting
+    switch (sortBy) {
+      case 'oldest':
+        filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        break;
+      case 'most_upvoted':
+        filtered.sort((a, b) => b.upvotes - a.upvotes);
+        break;
+      case 'most_validated':
+        filtered.sort((a, b) => 
+          (validationCounts[b.id] || 0) - (validationCounts[a.id] || 0)
+        );
+        break;
+      case 'newest':
+      default:
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+    }
+
+    return filtered;
+  }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
+
+  const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSourceFilter('all');
+    setSelectedTags([]);
+    setSortBy('newest');
   };
 
-  const handleVote = async (glyphId: string, type: 'exact' | 'similar' | 'not_match') => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      const { error } = await supabase.from('registry_confirmations').insert({
-        glyph_id: glyphId,
-        user_id: userData.user?.id || null,
-        session_id: sessionId,
-        confirmation_type: type
-      });
-
-      if (error) throw error;
-
-      // Update confirmation count if exact or similar
-      if (type === 'exact' || type === 'similar') {
-        const glyph = glyphs.find(g => g.id === glyphId);
-        if (glyph) {
-          await supabase
-            .from('registry_glyphs')
-            .update({ confirmation_count: glyph.confirmation_count + 1 })
-            .eq('id', glyphId);
-        }
-      }
-
-      toast.success('Recorded');
-      loadGlyphs();
-    } catch (error) {
-      console.error('Vote error:', error);
-      toast.error('Failed to record vote');
-    }
-  };
-
-  const handleStar = async (glyphId: string) => {
-    if (!userId) {
-      toast.error('Please log in to star symbols');
-      return;
-    }
-
-    try {
-      if (starredIds.has(glyphId)) {
-        // Unstar
-        await supabase
-          .from('glyph_votes')
-          .delete()
-          .eq('glyph_id', glyphId)
-          .eq('user_id', userId);
-        
-        const newStarred = new Set(starredIds);
-        newStarred.delete(glyphId);
-        setStarredIds(newStarred);
-        toast.success('Removed from stars');
-      } else {
-        // Star
-        await supabase
-          .from('glyph_votes')
-          .insert({
-            glyph_id: glyphId,
-            user_id: userId
-          });
-        
-        setStarredIds(new Set([...starredIds, glyphId]));
-        toast.success('Added to stars');
-      }
-    } catch (error) {
-      console.error('Star error:', error);
-      toast.error('Failed to star symbol');
-    }
-  };
-
-  const handleFlag = async (glyphId: string) => {
-    if (!userId) {
-      toast.error('Please log in to flag symbols');
-      return;
-    }
-
-    try {
-      await supabase.from('registry_confirmations').insert({
-        glyph_id: glyphId,
-        user_id: userId,
-        session_id: sessionId,
-        confirmation_type: 'flag'
-      });
-
-      toast.success('Symbol flagged for review');
-    } catch (error) {
-      console.error('Flag error:', error);
-      toast.error('Failed to flag symbol');
-    }
-  };
+  const highlightTerms = searchQuery.trim() ? searchQuery.toLowerCase().split(/\s+/) : [];
 
   return (
     <section id="browse" className="container mx-auto px-4 py-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">Browse Registry</h2>
-      
+      {/* Header with CTA */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+        <div>
+          <h2 className="text-3xl md:text-4xl font-bold text-center md:text-left mb-2">
+            Browse Registry
+          </h2>
+          <p className="text-muted-foreground text-center md:text-left">
+            Community-submitted symbols with voting and validation
+          </p>
+        </div>
+        <Button 
+          size="lg"
+          className="rounded-full px-8 btn-lickable border-beam group"
+          onClick={() => navigate('/submit-symbol')}
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Contribute Your Symbol
+          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+        </Button>
+      </div>
+
       {/* Credibility Legend */}
       <div className="max-w-4xl mx-auto mb-6 px-4">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground" style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '14px' }}>
-          <span className="flex items-center gap-1.5">👍 <span className="text-xs">Seen this glyph</span></span>
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5">👍 <span className="text-xs">Seen this</span></span>
           <span className="flex items-center gap-1.5">👎 <span className="text-xs">Did not see</span></span>
           <span className="flex items-center gap-1.5">✅ <span className="text-xs">Multiple confirmations</span></span>
           <span className="flex items-center gap-1.5">⭐ <span className="text-xs">High consistency</span></span>
@@ -218,155 +208,76 @@ export const RegistryBrowser = () => {
       </div>
 
       {/* Filters */}
-      <div className="max-w-4xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Select value={tagFilter} onValueChange={setTagFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by tag" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
-              <SelectItem value="geometric">Geometric</SelectItem>
-              <SelectItem value="alphabetic">Alphabetic</SelectItem>
-              <SelectItem value="spiral">Spiral</SelectItem>
-              <SelectItem value="organic">Organic</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <RegistryFilters
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sourceFilter={sourceFilter}
+        onSourceChange={setSourceFilter}
+        selectedTags={selectedTags}
+        onTagsChange={setSelectedTags}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        onClearFilters={clearFilters}
+        hasActiveFilters={hasActiveFilters}
+      />
 
-        <div>
-          <Select value={symmetryFilter} onValueChange={setSymmetryFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by symmetry" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Symmetry</SelectItem>
-              <SelectItem value="bilateral">Bilateral</SelectItem>
-              <SelectItem value="radial">Radial</SelectItem>
-              <SelectItem value="none">None</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Select value={emotionFilter} onValueChange={setEmotionFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by emotion" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Emotions</SelectItem>
-              <SelectItem value="instructional">Instructional</SelectItem>
-              <SelectItem value="benevolent">Benevolent</SelectItem>
-              <SelectItem value="neutral">Neutral</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
+      {/* Results count */}
       <div className="text-center text-sm text-muted-foreground mb-6">
-        Showing {filteredGlyphs.length} of {glyphs.length} symbols
+        Showing {filteredSymbols.length} of {symbols.length} symbols
       </div>
-      
-      {filteredGlyphs.length === 0 ? (
-        <div className="text-center text-muted-foreground">
-          No symbols match your filters. Try adjusting your selection.
-        </div>
-      ) : (
+
+      {/* Loading state */}
+      {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGlyphs.map((glyph) => (
-            <Card key={glyph.id} className="p-6 bg-card border-border">
-              <div className="flex justify-center mb-4 relative">
-                <img 
-                  src={glyph.image_data} 
-                  alt={`Registry glyph symbol - ${glyph.motif_tags?.slice(0, 3).join(', ') || 'visual symbol'} - reported ${glyph.confirmation_count} times`}
-                  className="w-[200px] h-[200px] border border-border"
-                  style={{ imageRendering: 'auto' }}
-                  loading="lazy"
-                />
-                <div className="absolute top-0 right-0 flex items-center gap-1">
-                  <ShareButtons 
-                    title={`DMT Glyph #${glyph.id.slice(0, 8)}`} 
-                    description={glyph.motif_tags?.slice(0, 3).join(', ') || 'Visual symbol'} 
-                    url={`https://dmtcode.com/registry#${glyph.id}`}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleStar(glyph.id)}
-                    aria-label={starredIds.has(glyph.id) ? "Unstar symbol" : "Star symbol"}
-                  >
-                    <Star className={`w-5 h-5 ${starredIds.has(glyph.id) ? 'fill-primary text-primary' : ''}`} />
-                  </Button>
-                </div>
-              </div>
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[360px] rounded-lg" />
+          ))}
+        </div>
+      )}
 
-              <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-3 text-center">
-                  Independently reported by <span className="font-semibold text-foreground">{glyph.confirmation_count}</span> participant{glyph.confirmation_count !== 1 ? 's' : ''}
-                </p>
-                
-                <TagsManager glyphId={glyph.id} />
-                
-                {glyph.motif_tags && glyph.motif_tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 justify-center mt-3">
-                    <span className="text-xs text-muted-foreground">Original tags:</span>
-                    {glyph.motif_tags.slice(0, 3).map((tag, idx) => (
-                      <Badge key={idx} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
+      {/* Empty state */}
+      {!loading && filteredSymbols.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground mb-4">
+            {hasActiveFilters 
+              ? 'No symbols match your filters. Try adjusting your selection.'
+              : 'No approved symbols yet. Be the first to contribute!'}
+          </p>
+          {hasActiveFilters ? (
+            <Button variant="outline" onClick={clearFilters}>
+              Clear Filters
+            </Button>
+          ) : (
+            <Button onClick={() => navigate('/submit-symbol')}>
+              <Plus className="w-4 h-4 mr-2" />
+              Submit a Symbol
+            </Button>
+          )}
+        </div>
+      )}
 
-              {/* Voting Buttons */}
-              <div className="flex items-center justify-between mb-3">
-                <VotingButtons 
-                  symbolId={glyph.id} 
-                  submitterId={glyph.user_id || undefined}
-                  variant="compact"
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleFlag(glyph.id)}
-                  aria-label="Flag symbol for review"
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Flag className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={() => handleVote(glyph.id, 'exact')}
-                  aria-label={`Vote I've seen this too - exact match for glyph with ${glyph.confirmation_count} confirmations`}
-                >
-                  ★ Confirm Match
-                </Button>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleVote(glyph.id, 'similar')}
-                    aria-label={`Vote similar for glyph with ${glyph.confirmation_count} confirmations`}
-                  >
-                    Similar
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => handleVote(glyph.id, 'not_match')}
-                    aria-label={`Vote not matching for glyph with ${glyph.confirmation_count} confirmations`}
-                  >
-                    Different
-                  </Button>
-                </div>
-              </div>
-            </Card>
+      {/* Symbol Grid */}
+      {!loading && filteredSymbols.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredSymbols.map((symbol) => (
+            <SymbolCard
+              key={symbol.id}
+              id={symbol.id}
+              imageUrl={symbol.image_url}
+              description={symbol.description}
+              tags={symbol.tags}
+              upvotes={symbol.upvotes}
+              validationCount={validationCounts[symbol.id] || 0}
+              status={symbol.status}
+              contributor={profiles[symbol.user_id] ? {
+                id: profiles[symbol.user_id].id,
+                displayName: profiles[symbol.user_id].display_name,
+                avatarUrl: profiles[symbol.user_id].avatar_url,
+              } : null}
+              createdAt={symbol.created_at}
+              submitterId={symbol.user_id}
+              highlightTerms={highlightTerms}
+            />
           ))}
         </div>
       )}

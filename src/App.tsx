@@ -122,6 +122,13 @@ const App = () => (
             </ErrorBoundary>
           } />
           <Route path="/registry" element={<Registry />} />
+          <Route path="/registry/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                {(() => { const SymbolDetail = lazy(() => import("./pages/SymbolDetail")); return <SymbolDetail />; })()}
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/correlations" element={<Correlations />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/events" element={<Events />} />
