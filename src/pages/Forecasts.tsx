@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { InteractiveTimeline } from "@/components/forecasts/InteractiveTimeline";
+import { DependencyGraphD3 } from "@/components/forecasts/DependencyGraphD3";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ScenarioToggles, type AlignmentBranch } from "@/components/forecasts/ScenarioToggles";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
@@ -184,6 +185,25 @@ export default function Forecasts() {
                     adjustedEvents={adjustedEvents}
                     affectedEvents={affectedEvents}
                     cascadeState={cascadeState}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Dependency Graph */}
+            <section className="container mx-auto px-4 py-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-black text-foreground mb-2">Dependency Network</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    Force-directed graph showing event dependencies and critical AI development chain
+                  </p>
+                </div>
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4">
+                  <DependencyGraphD3
+                    events={events}
+                    dependencyRules={dependencyRules}
+                    onEventClick={handleEventClick}
                   />
                 </div>
               </div>
