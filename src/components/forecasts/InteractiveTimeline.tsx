@@ -921,6 +921,52 @@ export function InteractiveTimeline({
               </feMerge>
             </filter>
             
+            {/* Pulsing background gradient */}
+            <radialGradient id="bg-pulse-gradient" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.08">
+                <animate 
+                  attributeName="stop-opacity" 
+                  values="0.08;0.15;0.08" 
+                  dur="4s" 
+                  repeatCount="indefinite" 
+                />
+              </stop>
+              <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity="0.04">
+                <animate 
+                  attributeName="stop-opacity" 
+                  values="0.04;0.08;0.04" 
+                  dur="4s" 
+                  repeatCount="indefinite" 
+                />
+              </stop>
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
+            
+            {/* Secondary ambient glow */}
+            <radialGradient id="bg-ambient-glow" cx="30%" cy="40%" r="50%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.05">
+                <animate 
+                  attributeName="stop-opacity" 
+                  values="0.05;0.1;0.05" 
+                  dur="3s" 
+                  repeatCount="indefinite" 
+                />
+              </stop>
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
+            
+            <radialGradient id="bg-ambient-glow-2" cx="70%" cy="60%" r="45%">
+              <stop offset="0%" stopColor="#EC4899" stopOpacity="0.04">
+                <animate 
+                  attributeName="stop-opacity" 
+                  values="0.04;0.08;0.04" 
+                  dur="5s" 
+                  repeatCount="indefinite" 
+                />
+              </stop>
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
+            
             <style>{`
               @keyframes pulse-expand {
                 0% {
@@ -967,6 +1013,30 @@ export function InteractiveTimeline({
               }
             `}</style>
           </defs>
+          
+          {/* Pulsing background layers */}
+          <rect 
+            x="0" 
+            y="0" 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            fill="url(#bg-pulse-gradient)" 
+          />
+          <rect 
+            x="0" 
+            y="0" 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            fill="url(#bg-ambient-glow)" 
+          />
+          <rect 
+            x="0" 
+            y="0" 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            fill="url(#bg-ambient-glow-2)" 
+          />
+          
           <g
             transform={`translate(${transform.x}, ${transform.y + 48}) scale(${transform.k})`}
           >
