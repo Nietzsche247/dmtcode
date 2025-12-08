@@ -99,10 +99,10 @@ export default function Forecasts() {
   return (
     <>
       <Helmet>
-        <title>AI Timeline Forecasts 2026-2030 | DMT Code Project</title>
+        <title>Major Event Forecasting Model 2026-2033 | DMT Code Project</title>
         <meta 
           name="description" 
-          content="Interactive probabilistic model of 59 transformative AI events from 2026-2030. Drag events to simulate cascade effects." 
+          content="Interactive probabilistic model of transformative events from 2026-2033. Drag events to simulate cascade effects." 
         />
       </Helmet>
 
@@ -141,8 +141,8 @@ export default function Forecasts() {
         <section className="container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4">
-              AI Timeline
-              <span className="text-primary"> 2026-2030</span>
+              Major Event Forecasting Model for
+              <span className="text-primary"> 2026-2033</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto mb-4">
               Interactive Probability Model with Cascade Dependencies
