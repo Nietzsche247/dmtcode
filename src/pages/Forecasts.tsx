@@ -108,6 +108,34 @@ export default function Forecasts() {
       <Navigation />
 
       <main className="min-h-screen bg-background pt-20">
+        {/* Introduction Section */}
+        <section 
+          className="w-full py-12 md:py-20 border-b border-white/10"
+          style={{ 
+            background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' 
+          }}
+        >
+          <div className="container mx-auto px-4">
+            <div 
+              className="max-w-[720px] mx-auto text-center space-y-6 animate-fade-in"
+              style={{ animationDuration: '0.6s' }}
+            >
+              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
+                <span className="font-normal text-foreground/90">Consider how hard it has been to forecast the past.</span>{' '}
+                In 1985, almost no one predicted the Soviet Union would collapse within six years. In 2006, the world's best economists missed the approaching financial crisis. These weren't failures of intelligence, the variables that mattered were hidden, distributed across too many domains, or simply unknowable until they happened.
+              </p>
+              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
+                <span className="font-normal text-foreground/90">Now consider what we can see in 2025.</span>{' '}
+                The capability curve of artificial intelligence is published quarterly in benchmark scores, demonstrated in products millions use daily, and powered by trillion-dollar infrastructure investments visible in satellite imagery. The scaling laws predicting performance gains were written up years ago and have held steady. For perhaps the first time in modern history, the single variable most likely to reshape human civilization is measurable, trackable, and moving on a curve we can observe in real-time.
+              </p>
+              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
+                <span className="font-normal text-foreground/90">This creates a strange situation: the decade containing the most transformative event in history may also be the most forecastable.</span>{' '}
+                Not because we have certainty, but because the causal chain is short and visible. AI capability leads to AGI, AGI enables recursive improvement, recursive improvement leads to ASI. Each step depends on the prior in obvious ways. The pieces are on the board. The trajectory is measurable. If you have ever wished you could see a major shift coming before it arrived, this may be your chance.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Header */}
         <section className="container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto text-center">
