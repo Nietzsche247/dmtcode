@@ -21,12 +21,12 @@ const METACULUS_QUESTIONS: Record<string, { id: number; title: string }> = {
     title: 'When will humanoid robots be mass-produced?' 
   },
   'Quantum Computing (Quantum Advantage)': { 
-    id: 3726, 
-    title: 'When will quantum computers outperform classical computers?' 
+    id: 3684, 
+    title: 'When will quantum computer factor RSA numbers using Shors algorithm?' 
   },
   'Anti-Aging Breakthrough': { 
-    id: 3469, 
-    title: 'When will we achieve significant life extension?' 
+    id: 6592, 
+    title: 'When will a country reach longevity escape velocity?' 
   },
 };
 
