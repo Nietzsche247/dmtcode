@@ -66,6 +66,13 @@ export function HorizontalBarTimeline({
   const [mobileQuarterIndex, setMobileQuarterIndex] = useState<number>(0);
   const MOBILE_DRAG_THRESHOLD = 30;
 
+  // Desktop drag state
+  const [desktopDragEvent, setDesktopDragEvent] = useState<string | null>(null);
+  const [desktopDragStartX, setDesktopDragStartX] = useState<number>(0);
+  const [desktopDragCurrentX, setDesktopDragCurrentX] = useState<number>(0);
+  const [desktopQuarterIndex, setDesktopQuarterIndex] = useState<number>(0);
+  const barContainerRef = useRef<HTMLDivElement>(null);
+
   // Filter events
   const filteredEvents = useMemo(() => {
     if (showSecondaryEvents) return events;
@@ -148,6 +155,75 @@ export function HorizontalBarTimeline({
     };
   }, [mobileDragEvent, mobileDragStartY, mobileDragCurrentY, mobileQuarterIndex]);
 
+  // Desktop mouse handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent, eventName: string, quarter: string, year: number) => {
+    if (!onEventDrag || isMobile) return;
+    e.preventDefault();
+    setDesktopDragEvent(eventName);
+    setDesktopDragStartX(e.clientX);
+    setDesktopDragCurrentX(e.clientX);
+    setDesktopQuarterIndex(getQuarterIndex(quarter, year));
+  }, [onEventDrag, isMobile, getQuarterIndex]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!desktopDragEvent) return;
+    setDesktopDragCurrentX(e.clientX);
+  }, [desktopDragEvent]);
+
+  const handleMouseUp = useCallback(() => {
+    if (!desktopDragEvent || !onEventDrag || !barContainerRef.current) {
+      setDesktopDragEvent(null);
+      return;
+    }
+
+    const containerWidth = barContainerRef.current.getBoundingClientRect().width;
+    const pixelsPerQuarter = containerWidth / TOTAL_QUARTERS;
+    const deltaX = desktopDragCurrentX - desktopDragStartX;
+    const quarterChange = Math.round(deltaX / pixelsPerQuarter);
+    
+    if (quarterChange !== 0) {
+      const newIndex = Math.max(0, Math.min(desktopQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
+      const newOption = QUARTER_OPTIONS[newIndex];
+      onEventDrag(desktopDragEvent, newOption.quarter, newOption.year);
+    }
+
+    setDesktopDragEvent(null);
+  }, [desktopDragEvent, desktopDragStartX, desktopDragCurrentX, desktopQuarterIndex, onEventDrag]);
+
+  // Get desktop drag preview
+  const getDesktopDragPreview = useCallback(() => {
+    if (!desktopDragEvent || !barContainerRef.current) return null;
+    
+    const containerWidth = barContainerRef.current.getBoundingClientRect().width;
+    const pixelsPerQuarter = containerWidth / TOTAL_QUARTERS;
+    const deltaX = desktopDragCurrentX - desktopDragStartX;
+    const quarterChange = Math.round(deltaX / pixelsPerQuarter);
+    const newIndex = Math.max(0, Math.min(desktopQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
+    
+    return {
+      ...QUARTER_OPTIONS[newIndex],
+      quarterChange,
+      isDragging: Math.abs(deltaX) > 10
+    };
+  }, [desktopDragEvent, desktopDragStartX, desktopDragCurrentX, desktopQuarterIndex]);
+
+  // Add global mouse event listeners for desktop drag
+  useEffect(() => {
+    if (desktopDragEvent) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'grabbing';
+      document.body.style.userSelect = 'none';
+    }
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [desktopDragEvent, handleMouseMove, handleMouseUp]);
+
   // Generate year markers
   const yearMarkers = useMemo(() => {
     const markers = [];
@@ -161,6 +237,7 @@ export function HorizontalBarTimeline({
 
   const affectedCount = affectedEvents?.size || 0;
   const dragPreview = getMobileDragPreview();
+  const desktopPreview = getDesktopDragPreview();
 
   return (
     <div ref={containerRef} className="w-full">
@@ -194,7 +271,7 @@ export function HorizontalBarTimeline({
           const isCalculating = cascadeState?.isCalculating && isAffected;
           const isPrimary = event.isPrimary;
           const color = getCategoryColor(event.category, event.type);
-          const isDragging = mobileDragEvent === event.name;
+          const isDragging = mobileDragEvent === event.name || desktopDragEvent === event.name;
 
           // Find peak probability quarter
           const peakDist = event.distributions.reduce(
@@ -293,11 +370,14 @@ export function HorizontalBarTimeline({
 
               {/* Probability distribution bar */}
               <div 
+                ref={event === sortedEvents[0] ? barContainerRef : undefined}
                 className={cn(
                   "relative rounded-full overflow-hidden bg-muted/30",
-                  isMobile ? "w-full" : "flex-1"
+                  isMobile ? "w-full" : "flex-1",
+                  isPrimary && onEventDrag && !isMobile && "cursor-grab active:cursor-grabbing"
                 )}
                 style={{ height: BAR_HEIGHT }}
+                onMouseDown={(e) => isPrimary && handleMouseDown(e, event.name, currentQuarter, currentYear)}
               >
                 {/* Background grid lines for years */}
                 {yearMarkers.map(({ year, position }) => (
@@ -451,6 +531,32 @@ export function HorizontalBarTimeline({
               {dragPreview.quarterChange !== 0 && (
                 <span className="opacity-70">
                   ({dragPreview.quarterChange > 0 ? '+' : ''}{dragPreview.quarterChange}Q)
+                </span>
+              )}
+            </div>
+          </Badge>
+        </div>
+      )}
+
+      {/* Desktop drag indicator */}
+      {desktopDragEvent && desktopPreview && desktopPreview.isDragging && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
+          <Badge 
+            className={cn(
+              "px-4 py-2 text-sm font-semibold shadow-xl",
+              desktopPreview.quarterChange > 0 ? "bg-green-600" : desktopPreview.quarterChange < 0 ? "bg-amber-600" : "bg-muted"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              {desktopPreview.quarterChange > 0 ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : desktopPreview.quarterChange < 0 ? (
+                <ChevronRight className="h-4 w-4 rotate-180" />
+              ) : null}
+              <span>{desktopPreview.label}</span>
+              {desktopPreview.quarterChange !== 0 && (
+                <span className="opacity-70">
+                  ({desktopPreview.quarterChange > 0 ? '+' : ''}{desktopPreview.quarterChange}Q)
                 </span>
               )}
             </div>
