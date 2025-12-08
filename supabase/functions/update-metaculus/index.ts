@@ -13,8 +13,8 @@ const METACULUS_QUESTIONS: Record<string, { id: number; title: string }> = {
     title: 'When will the first general AI system be devised?' 
   },
   'RSI (Recursive Self-Improvement)': { 
-    id: 4123, 
-    title: 'How many months after weak AGI until superintelligent oracle?' 
+    id: 19356, 
+    title: 'When will we have transformative AI?' 
   },
   'Humanoid Robots (Mass Production)': { 
     id: 16625, 
