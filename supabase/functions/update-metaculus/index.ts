@@ -13,12 +13,12 @@ const METACULUS_QUESTIONS: Record<string, { id: number; title: string }> = {
     title: 'When will the first general AI system be devised?' 
   },
   'RSI (Recursive Self-Improvement)': { 
-    id: 3479, 
-    title: 'When will AI be able to make a substantial improvement to its own code?' 
+    id: 4123, 
+    title: 'How many months after weak AGI until superintelligent oracle?' 
   },
   'Humanoid Robots (Mass Production)': { 
-    id: 5795, 
-    title: 'When will humanoid robots be mass-produced?' 
+    id: 16625, 
+    title: 'When will a reliable and general household robot be developed?' 
   },
   'Quantum Computing (Quantum Advantage)': { 
     id: 3684, 
