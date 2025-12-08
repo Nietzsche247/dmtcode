@@ -190,16 +190,21 @@ export default function Forecasts() {
             </section>
 
             {/* Export */}
-            <section className="container mx-auto px-4 py-8">
+            <section className="container mx-auto px-4 py-6">
               <div className="max-w-6xl mx-auto">
-                <ExportButtons events={events} methodology={methodology} />
+                <ExportButtons events={events} methodology={methodology} dependencyRules={dependencyRules} />
               </div>
             </section>
 
             {/* Methodology */}
-            <section className="container mx-auto px-4 py-12">
+            <section className="container mx-auto px-4 py-12 border-t border-border/30">
               <div className="max-w-4xl mx-auto">
-                <h2 className="text-2xl font-bold text-foreground mb-6">Methodology</h2>
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-black text-foreground mb-2">Methodology</h2>
+                  <p className="text-muted-foreground font-light">
+                    How we model radical uncertainty in technological forecasting
+                  </p>
+                </div>
                 <MethodologyAccordion methodology={methodology} />
               </div>
             </section>
