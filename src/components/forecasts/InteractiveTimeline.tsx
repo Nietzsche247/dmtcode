@@ -1046,6 +1046,8 @@ export function InteractiveTimeline({
               const duration = 15 + (i % 10) * 3;
               const delay = i * 0.7;
               const opacity = 0.15 + (i % 5) * 0.05;
+              const hasSparkle = i % 4 === 0; // Every 4th particle sparkles
+              const sparkleDelay = 3 + (i % 7) * 2;
               
               return (
                 <circle
@@ -1075,7 +1077,70 @@ export function InteractiveTimeline({
                     begin={`${delay}s`}
                     repeatCount="indefinite"
                   />
+                  {hasSparkle && (
+                    <>
+                      <animate
+                        attributeName="r"
+                        values={`${size};${size};${size * 3};${size};${size}`}
+                        dur="0.6s"
+                        begin={`${sparkleDelay}s`}
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        values={`${opacity};${opacity};1;${opacity};${opacity}`}
+                        dur="0.6s"
+                        begin={`${sparkleDelay}s`}
+                        repeatCount="indefinite"
+                      />
+                    </>
+                  )}
                 </circle>
+              );
+            })}
+          </g>
+          
+          {/* Sparkle stars */}
+          <g className="sparkle-stars">
+            {Array.from({ length: 8 }).map((_, i) => {
+              const x = 80 + (i * 127) % (dimensions.width - 160);
+              const y = 60 + (i * 89) % (dimensions.height - 120);
+              const sparkleDelay = 2 + i * 1.5;
+              
+              return (
+                <g key={`sparkle-${i}`} transform={`translate(${x}, ${y})`}>
+                  {/* Four-point star */}
+                  <path
+                    d="M0,-6 L1,-1 L6,0 L1,1 L0,6 L-1,1 L-6,0 L-1,-1 Z"
+                    fill="#FF6B6B"
+                    opacity={0}
+                  >
+                    <animate
+                      attributeName="opacity"
+                      values="0;0;0.8;0;0"
+                      dur="4s"
+                      begin={`${sparkleDelay}s`}
+                      repeatCount="indefinite"
+                    />
+                    <animateTransform
+                      attributeName="transform"
+                      type="scale"
+                      values="0.3;0.3;1;0.3;0.3"
+                      dur="4s"
+                      begin={`${sparkleDelay}s`}
+                      repeatCount="indefinite"
+                    />
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      values="0;0;45;0;0"
+                      dur="4s"
+                      begin={`${sparkleDelay}s`}
+                      repeatCount="indefinite"
+                      additive="sum"
+                    />
+                  </path>
+                </g>
               );
             })}
           </g>
