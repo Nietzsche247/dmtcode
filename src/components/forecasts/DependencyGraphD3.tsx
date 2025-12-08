@@ -34,9 +34,11 @@ const CRITICAL_CHAIN = [
 
 export function DependencyGraphD3({ events, dependencyRules, onEventClick }: DependencyGraphD3Props) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const miniMapRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [viewportRect, setViewportRect] = useState({ x: 0, y: 0, width: 100, height: 100, scale: 1 });
 
   // Resize observer
   useEffect(() => {
@@ -101,14 +103,27 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add zoom behavior
+    // Add zoom behavior with mini-map sync
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 3])
       .on("zoom", (event) => {
         g.attr("transform", event.transform);
+        
+        // Update viewport rect for mini-map
+        const transform = event.transform;
+        setViewportRect({
+          x: -transform.x / transform.k,
+          y: -transform.y / transform.k,
+          width: width / transform.k,
+          height: height / transform.k,
+          scale: transform.k
+        });
       });
 
     svg.call(zoom);
+    
+    // Store zoom for mini-map interaction
+    (svgRef.current as any).__zoom = zoom;
 
     // Gradient definitions for critical chain
     const defs = svg.append("defs");
@@ -443,6 +458,70 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
         className="relative w-full bg-card/20 border border-border/50 rounded-xl overflow-hidden"
       >
         <svg ref={svgRef} className="w-full" />
+        
+        {/* Mini-map overlay */}
+        <div className="absolute bottom-4 right-4 w-40 h-28 bg-card/90 backdrop-blur-sm border border-border/70 rounded-lg overflow-hidden shadow-xl z-20">
+          <div className="absolute top-1 left-2 text-[9px] text-muted-foreground font-medium uppercase tracking-wider">
+            Overview
+          </div>
+          <svg 
+            ref={miniMapRef}
+            className="w-full h-full cursor-move"
+            viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+            preserveAspectRatio="xMidYMid meet"
+            onClick={(e) => {
+              if (!svgRef.current) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const scaleX = dimensions.width / rect.width;
+              const scaleY = dimensions.height / rect.height;
+              const clickX = (e.clientX - rect.left) * scaleX;
+              const clickY = (e.clientY - rect.top) * scaleY;
+              
+              const svg = d3.select(svgRef.current);
+              const zoom = (svgRef.current as any).__zoom;
+              if (zoom) {
+                const currentTransform = d3.zoomTransform(svgRef.current);
+                const newX = dimensions.width / 2 - clickX * currentTransform.k;
+                const newY = dimensions.height / 2 - clickY * currentTransform.k;
+                svg.transition().duration(300).call(
+                  zoom.transform,
+                  d3.zoomIdentity.translate(newX, newY).scale(currentTransform.k)
+                );
+              }
+            }}
+          >
+            {/* Render simplified nodes */}
+            {events.map((event, i) => {
+              const angle = (i / events.length) * 2 * Math.PI;
+              const radius = Math.min(dimensions.width, dimensions.height) * 0.35;
+              const cx = dimensions.width / 2 + Math.cos(angle) * radius;
+              const cy = dimensions.height / 2 + Math.sin(angle) * radius;
+              const isCritical = CRITICAL_CHAIN.includes(event.name);
+              return (
+                <circle
+                  key={event.name}
+                  cx={cx}
+                  cy={cy}
+                  r={isCritical ? 8 : 5}
+                  fill={CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default}
+                  opacity={0.8}
+                />
+              );
+            })}
+            
+            {/* Viewport rectangle */}
+            <rect
+              x={viewportRect.x}
+              y={viewportRect.y}
+              width={viewportRect.width}
+              height={viewportRect.height}
+              fill="hsl(var(--primary) / 0.1)"
+              stroke="hsl(var(--primary))"
+              strokeWidth={3 / viewportRect.scale}
+              rx={4}
+            />
+          </svg>
+        </div>
         
         {/* Hover tooltip */}
         {hoveredNode && (
