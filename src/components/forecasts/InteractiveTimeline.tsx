@@ -606,6 +606,34 @@ export function InteractiveTimeline({
           </text>
         ))}
 
+        {/* SVG Defs for animated gradients */}
+        <defs>
+          {/* Animated flow gradient for cascade */}
+          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#C41E3A" stopOpacity="0.2">
+              <animate attributeName="offset" values="-1;1" dur="1.5s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="30%" stopColor="#C41E3A" stopOpacity="1">
+              <animate attributeName="offset" values="-0.7;1.3" dur="1.5s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="60%" stopColor="#C41E3A" stopOpacity="0.2">
+              <animate attributeName="offset" values="-0.4;1.6" dur="1.5s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#C41E3A" stopOpacity="0">
+              <animate attributeName="offset" values="0;2" dur="1.5s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+
+          {/* Pulse glow filter */}
+          <filter id="cascadeGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
         {/* Dependency lines */}
         {visibleRules.map((rule, i) => {
           const fromNode = getNodeByName(rule.source_event);
@@ -623,28 +651,114 @@ export function InteractiveTimeline({
 
           const isHard = rule.dependency_type === 'hard';
           const isHighlighted = hoveredNode === rule.source_event || hoveredNode === rule.target_event;
+          
+          // Check if this dependency is part of the active cascade
+          const sourceAffected = affectedEvents?.has(rule.source_event) || cascadeState?.lastDraggedEvent === rule.source_event;
+          const targetAffected = affectedEvents?.has(rule.target_event);
+          const isCascadeActive = cascadeState?.isCalculating && (sourceAffected || targetAffected);
+          const isCascadePath = sourceAffected && targetAffected;
+
+          // Calculate path length for animation
+          const pathLength = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2)) * 1.2;
 
           return (
-            <g key={i} className={cn("transition-opacity duration-200", !isHighlighted && hoveredNode && "opacity-20")}>
+            <g key={i} className={cn("transition-opacity duration-200", !isHighlighted && !isCascadeActive && hoveredNode && "opacity-20")}>
+              {/* Background path (static) */}
               <path
                 d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
                 fill="none"
                 className={cn(
                   "transition-all duration-200",
-                  isHighlighted ? "stroke-primary" : "stroke-muted-foreground/40"
+                  isCascadeActive ? "stroke-primary/30" : isHighlighted ? "stroke-primary" : "stroke-muted-foreground/40"
                 )}
                 strokeWidth={isHard ? 2 : 1}
                 strokeDasharray={isHard ? undefined : "6,4"}
               />
+              
+              {/* Animated flow path (only during cascade) */}
+              {isCascadeActive && (
+                <>
+                  {/* Glowing base path */}
+                  <path
+                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
+                    fill="none"
+                    stroke="#C41E3A"
+                    strokeWidth={isHard ? 4 : 2}
+                    strokeOpacity={0.3}
+                    filter="url(#cascadeGlow)"
+                  />
+                  
+                  {/* Animated flowing dash */}
+                  <path
+                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
+                    fill="none"
+                    stroke="#C41E3A"
+                    strokeWidth={isHard ? 3 : 2}
+                    strokeDasharray={`${pathLength * 0.15} ${pathLength * 0.85}`}
+                    strokeLinecap="round"
+                    style={{
+                      animation: `dashFlow 1s linear infinite`
+                    }}
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values={`${pathLength};0`}
+                      dur="1s"
+                      repeatCount="indefinite"
+                    />
+                  </path>
+
+                  {/* Secondary flowing particle */}
+                  <path
+                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth={isHard ? 2 : 1}
+                    strokeDasharray={`${pathLength * 0.05} ${pathLength * 0.95}`}
+                    strokeLinecap="round"
+                    strokeOpacity={0.8}
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values={`${pathLength};0`}
+                      dur="1s"
+                      repeatCount="indefinite"
+                    />
+                  </path>
+                </>
+              )}
+
+              {/* Cascade direction indicator (pulsing circle traveling along path) */}
+              {isCascadePath && (
+                <circle r={4} fill="#C41E3A" filter="url(#cascadeGlow)">
+                  <animateMotion
+                    dur="0.8s"
+                    repeatCount="indefinite"
+                    path={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
+                  />
+                </circle>
+              )}
+              
               {/* Arrow at end */}
               <circle
                 cx={toX}
                 cy={toY - toNode.radius - 4}
-                r={3}
+                r={isCascadeActive ? 5 : 3}
                 className={cn(
-                  isHighlighted ? "fill-primary" : "fill-muted-foreground/40"
+                  "transition-all duration-200",
+                  isCascadeActive ? "fill-primary" : isHighlighted ? "fill-primary" : "fill-muted-foreground/40"
                 )}
-              />
+                filter={isCascadeActive ? "url(#cascadeGlow)" : undefined}
+              >
+                {isCascadeActive && (
+                  <animate
+                    attributeName="r"
+                    values="4;6;4"
+                    dur="0.6s"
+                    repeatCount="indefinite"
+                  />
+                )}
+              </circle>
             </g>
           );
         })}
