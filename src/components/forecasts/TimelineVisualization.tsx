@@ -13,6 +13,8 @@ interface CursorTooltip {
   y: number;
   year: string;
   probability: number;
+  eventName: string;
+  isLocked: boolean;
 }
 
 // Years to display on timeline
@@ -98,6 +100,7 @@ const calculateSpread = (distributions: { quarter: string; year: number; probabi
 export function TimelineVisualization({ events, onEventClick }: TimelineVisualizationProps) {
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [cursorTooltip, setCursorTooltip] = useState<CursorTooltip | null>(null);
+  const [lockedTooltip, setLockedTooltip] = useState<CursorTooltip | null>(null);
   const barRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // Calculate cumulative probability at a given position within an event's distribution
@@ -119,8 +122,11 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
   // Handle mouse move on bar to show probability tooltip
   const handleBarMouseMove = useCallback((
     e: React.MouseEvent<HTMLDivElement>,
-    event: typeof processedEvents[0]
+    event: { name: string; spread: { start: number; end: number; distributionData: { position: number; probability: number }[] } }
   ) => {
+    // Don't update cursor tooltip if we have a locked tooltip
+    if (lockedTooltip) return;
+
     const bar = e.currentTarget;
     const rect = bar.getBoundingClientRect();
     const relativeX = e.clientX - rect.left;
@@ -146,13 +152,66 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
       x: e.clientX,
       y: rect.top,
       year: quarterStr,
-      probability: cumProb
+      probability: cumProb,
+      eventName: event.name,
+      isLocked: false
     });
-  }, [getCumulativeProbabilityAtPosition]);
+  }, [getCumulativeProbabilityAtPosition, lockedTooltip]);
+
+  // Handle click on bar to lock/unlock tooltip
+  const handleBarClick = useCallback((
+    e: React.MouseEvent<HTMLDivElement>,
+    event: { name: string; spread: { start: number; end: number; distributionData: { position: number; probability: number }[] } }
+  ) => {
+    e.stopPropagation();
+    
+    // If already locked, unlock
+    if (lockedTooltip) {
+      setLockedTooltip(null);
+      return;
+    }
+
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const relativeX = e.clientX - rect.left;
+    const percentInBar = relativeX / rect.width;
+    
+    const barStart = event.spread.start;
+    const barEnd = event.spread.end;
+    const yearPosition = barStart + percentInBar * (barEnd - barStart);
+    
+    const cumProb = getCumulativeProbabilityAtPosition(
+      event.spread.distributionData,
+      yearPosition
+    );
+    
+    const year = Math.floor(yearPosition);
+    const quarterNum = Math.ceil((yearPosition % 1) * 4) || 1;
+    const quarterStr = `Q${quarterNum} ${year}`;
+    
+    setLockedTooltip({
+      x: e.clientX,
+      y: rect.top,
+      year: quarterStr,
+      probability: cumProb,
+      eventName: event.name,
+      isLocked: true
+    });
+    setCursorTooltip(null);
+  }, [getCumulativeProbabilityAtPosition, lockedTooltip]);
 
   const handleBarMouseLeave = useCallback(() => {
-    setCursorTooltip(null);
-  }, []);
+    if (!lockedTooltip) {
+      setCursorTooltip(null);
+    }
+  }, [lockedTooltip]);
+
+  // Click outside to unlock
+  const handleContainerClick = useCallback(() => {
+    if (lockedTooltip) {
+      setLockedTooltip(null);
+    }
+  }, [lockedTooltip]);
 
   // Process events for timeline positioning
   const processedEvents = useMemo(() => {
@@ -263,9 +322,9 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative" onClick={handleContainerClick}>
       {/* Cursor Probability Tooltip */}
-      {cursorTooltip && (
+      {cursorTooltip && !lockedTooltip && (
         <div
           className="fixed z-50 pointer-events-none bg-popover/95 border border-border rounded-md px-2 py-1 shadow-lg backdrop-blur-sm animate-fade-in"
           style={{
@@ -278,6 +337,29 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
             <span className="text-muted-foreground">{cursorTooltip.year}:</span>
             <span className="ml-1.5 text-primary font-semibold">{cursorTooltip.probability.toFixed(1)}%</span>
           </div>
+        </div>
+      )}
+
+      {/* Locked Probability Tooltip */}
+      {lockedTooltip && (
+        <div
+          className="fixed z-50 bg-popover border-2 border-primary rounded-md px-3 py-2 shadow-xl backdrop-blur-sm animate-fade-in cursor-pointer"
+          style={{
+            left: lockedTooltip.x,
+            top: lockedTooltip.y - 56,
+            transform: 'translateX(-50%)'
+          }}
+          onClick={(e) => { e.stopPropagation(); setLockedTooltip(null); }}
+        >
+          <div className="text-xs font-medium text-foreground whitespace-nowrap">
+            <div className="text-muted-foreground text-[10px] mb-0.5">{lockedTooltip.eventName}</div>
+            <div>
+              <span className="text-muted-foreground">{lockedTooltip.year}:</span>
+              <span className="ml-1.5 text-primary font-bold">{lockedTooltip.probability.toFixed(1)}%</span>
+            </div>
+          </div>
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-popover border-b-2 border-r-2 border-primary rotate-45" />
+          <div className="text-[9px] text-muted-foreground mt-1 text-center">click to dismiss</div>
         </div>
       )}
 
@@ -349,7 +431,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                       transform: 'translateY(-50%)',
                       ...gradientStyle
                     }}
-                    onClick={() => onEventClick?.(event)}
+                    onClick={(e) => handleBarClick(e, event)}
                     onMouseMove={(e) => handleBarMouseMove(e, event)}
                     onMouseLeave={handleBarMouseLeave}
                   >
