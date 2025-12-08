@@ -1,20 +1,17 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from "react";
-import { 
-  type ForecastEvent, 
-  type DependencyRule,
-  CATEGORY_COLORS, 
-  quarterToNumber 
-} from "@/lib/forecasts-api";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import type { ForecastEvent, DependencyRule } from "@/lib/forecasts-api";
+import { CATEGORY_COLORS, quarterToNumber, type EventCategory } from "@/lib/forecasts-api";
 import { type CascadeState, formatDelta } from "@/hooks/useCascadeEngine";
+import { type ConfidenceTier } from "./ConfidenceTierFilters";
 import { cn } from "@/lib/utils";
-import { Zap, AlertTriangle, GripVertical, ChevronRight, ChevronUp, ChevronDown, GripHorizontal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChevronDown, ChevronUp, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface InteractiveTimelineProps {
   events: ForecastEvent[];
   dependencyRules: DependencyRule[];
-  showSecondaryEvents: boolean;
+  confidenceTier: ConfidenceTier;
   onEventClick: (event: ForecastEvent) => void;
   onEventDrag?: (eventName: string, newQuarter: string, newYear: number) => void;
   adjustedEvents?: Map<string, { quarter: string; year: number; deltaQuarters?: number }>;
@@ -22,34 +19,23 @@ interface InteractiveTimelineProps {
   cascadeState?: CascadeState;
 }
 
-interface TimelineNode {
-  event: ForecastEvent;
-  x: number;
-  y: number;
-  radius: number;
-  color: string;
-  originalX: number;
-  deltaQuarters: number;
-}
+// Critical path spine events (always visible)
+const SPINE_EVENT_NAMES = [
+  "AI Achieves Human-Level Novel Reasoning",
+  "AGI / Human-Level General Intelligence",
+  "Recursive Learning Algorithms Discovered",
+  "Artificial Superintelligence Emerges",
+  "First 1M Humanoid Robots Delivered",
+  "ASI Controls Global Infrastructure"
+];
 
 // Timeline configuration
 const TIMELINE_START_YEAR = 2026;
-const TIMELINE_END_YEAR = 2030;
-const TIMELINE_PADDING = 60;
-const NODE_MIN_RADIUS = 18;
-const NODE_MAX_RADIUS = 32;
-const ROW_HEIGHT = 80;
-const QUARTER_WIDTH = 80;
-
-// Calculate total width
+const TIMELINE_END_YEAR = 2033;
 const TOTAL_QUARTERS = (TIMELINE_END_YEAR - TIMELINE_START_YEAR + 1) * 4;
-const TIMELINE_WIDTH = TOTAL_QUARTERS * QUARTER_WIDTH + TIMELINE_PADDING * 2;
+const SPINE_NODE_RADIUS = 24;
+const CHILD_NODE_RADIUS = 16;
 
-// Snap threshold in pixels
-const SNAP_THRESHOLD = QUARTER_WIDTH / 3;
-
-// Mobile drag configuration
-const MOBILE_DRAG_THRESHOLD = 30; // Pixels to trigger quarter change
 const QUARTER_OPTIONS = (() => {
   const options: { quarter: string; year: number; label: string }[] = [];
   for (let year = TIMELINE_START_YEAR; year <= TIMELINE_END_YEAR; year++) {
@@ -60,10 +46,21 @@ const QUARTER_OPTIONS = (() => {
   return options;
 })();
 
+interface TimelineNode {
+  id: string;
+  event: ForecastEvent;
+  isSpine: boolean;
+  parentId?: string;
+  x: number;
+  y: number;
+  baseX: number;
+  baseY: number;
+}
+
 export function InteractiveTimeline({
   events,
   dependencyRules,
-  showSecondaryEvents,
+  confidenceTier,
   onEventClick,
   onEventDrag,
   adjustedEvents,
@@ -71,1052 +68,702 @@ export function InteractiveTimeline({
   cascadeState
 }: InteractiveTimelineProps) {
   const isMobile = useIsMobile();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 450 });
+  
+  // Interaction state
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [draggingNode, setDraggingNode] = useState<string | null>(null);
-  const [dragX, setDragX] = useState<number | null>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-
-  // Mobile touch drag state
-  const [mobileDragEvent, setMobileDragEvent] = useState<string | null>(null);
-  const [mobileDragStartY, setMobileDragStartY] = useState<number>(0);
-  const [mobileDragCurrentY, setMobileDragCurrentY] = useState<number>(0);
-  const [mobileQuarterIndex, setMobileQuarterIndex] = useState<number>(0);
-  const touchStartRef = useRef<{ y: number; time: number } | null>(null);
-
-  // Filter events based on showSecondaryEvents toggle
-  const filteredEvents = useMemo(() => {
-    if (showSecondaryEvents) return events;
-    return events.filter(e => e.isPrimary);
-  }, [events, showSecondaryEvents]);
-
-  // Get position for a quarter/year on the timeline
-  const getXPosition = useCallback((year: number, quarter: string) => {
-    const q = quarterToNumber(quarter);
-    const quartersFromStart = (year - TIMELINE_START_YEAR) * 4 + (q - 1);
-    return TIMELINE_PADDING + quartersFromStart * QUARTER_WIDTH + QUARTER_WIDTH / 2;
-  }, []);
-
-  // Get quarter/year from X position
-  const getQuarterFromX = useCallback((x: number): { quarter: string; year: number } => {
-    const quartersFromStart = Math.round((x - TIMELINE_PADDING - QUARTER_WIDTH / 2) / QUARTER_WIDTH);
-    const clampedQuarters = Math.max(0, Math.min(quartersFromStart, TOTAL_QUARTERS - 1));
-    const year = TIMELINE_START_YEAR + Math.floor(clampedQuarters / 4);
-    const q = (clampedQuarters % 4) + 1;
-    return { quarter: `Q${q}`, year };
-  }, []);
-
-  // Get quarter index from quarter/year
-  const getQuarterIndex = useCallback((quarter: string, year: number): number => {
-    const q = quarterToNumber(quarter);
-    return (year - TIMELINE_START_YEAR) * 4 + (q - 1);
-  }, []);
-
-  // Calculate node positions with vertical stacking for overlapping events
-  const nodes = useMemo((): TimelineNode[] => {
-    const positionMap = new Map<number, { event: ForecastEvent; originalX: number; deltaQuarters: number }[]>();
+  const [dragNode, setDragNode] = useState<string | null>(null);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragCurrentX, setDragCurrentX] = useState(0);
+  const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
+  
+  // Resize observer
+  useEffect(() => {
+    if (!containerRef.current) return;
     
-    filteredEvents.forEach(event => {
-      const adjusted = adjustedEvents?.get(event.name);
-      const year = adjusted?.year || event.medianYear;
-      const quarter = adjusted?.quarter || event.medianQuarter;
-      const x = getXPosition(year, quarter);
-      const originalX = getXPosition(event.medianYear, event.medianQuarter);
-      const deltaQuarters = adjusted?.deltaQuarters || 0;
-      
-      const existing = positionMap.get(x) || [];
-      existing.push({ event, originalX, deltaQuarters });
-      positionMap.set(x, existing);
-    });
-
-    const result: TimelineNode[] = [];
-    positionMap.forEach((eventsAtPos, x) => {
-      eventsAtPos.forEach((item, index) => {
-        const prob = item.event.probability || 0.5;
-        const radius = NODE_MIN_RADIUS + (NODE_MAX_RADIUS - NODE_MIN_RADIUS) * Math.min(prob, 1);
-        
-        result.push({
-          event: item.event,
-          x,
-          y: 120 + index * ROW_HEIGHT,
-          radius: Math.max(radius, NODE_MIN_RADIUS),
-          color: CATEGORY_COLORS[item.event.category] || CATEGORY_COLORS.default,
-          originalX: item.originalX,
-          deltaQuarters: item.deltaQuarters
-        });
-      });
-    });
-
-    return result;
-  }, [filteredEvents, getXPosition, adjustedEvents]);
-
-  // Get node by event name
-  const getNodeByName = useCallback((name: string) => {
-    return nodes.find(n => n.event.name === name);
-  }, [nodes]);
-
-  // Filter dependency rules to only show connections between visible events
-  const visibleRules = useMemo(() => {
-    const eventNames = new Set(filteredEvents.map(e => e.name));
-    return dependencyRules.filter(
-      rule => eventNames.has(rule.source_event) && eventNames.has(rule.target_event)
-    );
-  }, [dependencyRules, filteredEvents]);
-
-  // Generate year/quarter markers
-  const timeMarkers = useMemo(() => {
-    const markers: { x: number; label: string; isYear: boolean }[] = [];
-    for (let year = TIMELINE_START_YEAR; year <= TIMELINE_END_YEAR; year++) {
-      for (let q = 1; q <= 4; q++) {
-        const x = getXPosition(year, `Q${q}`);
-        markers.push({
-          x,
-          label: q === 1 ? `${year}` : `Q${q}`,
-          isYear: q === 1
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: isMobile ? 550 : Math.max(450, Math.min(600, entry.contentRect.width * 0.45))
         });
       }
-    }
-    return markers;
-  }, [getXPosition]);
-
-  // Calculate max height based on stacking
-  const maxY = useMemo(() => {
-    return Math.max(...nodes.map(n => n.y)) + 100;
-  }, [nodes]);
-
-  // Mouse handlers for dragging (desktop)
-  const handleMouseDown = useCallback((e: React.MouseEvent, eventName: string, isPrimary: boolean) => {
-    if (!isPrimary || !onEventDrag) return;
-    e.preventDefault();
-    setDraggingNode(eventName);
-  }, [onEventDrag]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!draggingNode || !svgRef.current) return;
+    });
     
-    const rect = svgRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    setDragX(x);
-  }, [draggingNode]);
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [isMobile]);
 
-  const handleMouseUp = useCallback(() => {
-    if (draggingNode && dragX !== null && onEventDrag) {
-      const { quarter, year } = getQuarterFromX(dragX);
-      onEventDrag(draggingNode, quarter, year);
-    }
-    setDraggingNode(null);
-    setDragX(null);
-  }, [draggingNode, dragX, getQuarterFromX, onEventDrag]);
-
-  useEffect(() => {
-    if (draggingNode) {
-      const handleGlobalMouseUp = () => {
-        setDraggingNode(null);
-        setDragX(null);
-      };
-      window.addEventListener('mouseup', handleGlobalMouseUp);
-      return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
-    }
-  }, [draggingNode]);
-
-  // Mobile touch handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent, eventName: string, quarter: string, year: number) => {
-    if (!onEventDrag) return;
+  // Filter and categorize events
+  const { spineEvents, childEventsByParent } = useMemo(() => {
+    const spine = events.filter(e => SPINE_EVENT_NAMES.includes(e.name));
     
-    const touch = e.touches[0];
-    touchStartRef.current = { y: touch.clientY, time: Date.now() };
-    setMobileDragEvent(eventName);
-    setMobileDragStartY(touch.clientY);
-    setMobileDragCurrentY(touch.clientY);
-    setMobileQuarterIndex(getQuarterIndex(quarter, year));
-  }, [onEventDrag, getQuarterIndex]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!mobileDragEvent) return;
+    // Group child events by their parent (based on dependencies)
+    const childMap = new Map<string, ForecastEvent[]>();
     
-    const touch = e.touches[0];
-    setMobileDragCurrentY(touch.clientY);
-  }, [mobileDragEvent]);
-
-  const handleTouchEnd = useCallback(() => {
-    if (!mobileDragEvent || !onEventDrag) {
-      setMobileDragEvent(null);
-      return;
-    }
-
-    const deltaY = mobileDragStartY - mobileDragCurrentY;
-    const quarterChange = Math.round(deltaY / MOBILE_DRAG_THRESHOLD);
+    events.forEach(event => {
+      if (SPINE_EVENT_NAMES.includes(event.name)) return;
+      
+      // Check confidence tier filter
+      if (confidenceTier === 'high') return;
+      if (confidenceTier === 'medium' && !event.distributions.some(d => d.probability >= 0.6)) return;
+      if (confidenceTier === 'speculative' && !event.distributions.some(d => d.probability < 0.6)) return;
+      
+      // Find parent from dependency rules
+      const parentRule = dependencyRules.find(r => r.target_event === event.name);
+      const parentName = parentRule?.source_event || event.dependencies.depends_on[0];
+      
+      if (parentName && SPINE_EVENT_NAMES.includes(parentName)) {
+        const existing = childMap.get(parentName) || [];
+        existing.push(event);
+        childMap.set(parentName, existing);
+      }
+    });
     
-    if (quarterChange !== 0) {
-      const newIndex = Math.max(0, Math.min(mobileQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
-      const newOption = QUARTER_OPTIONS[newIndex];
-      onEventDrag(mobileDragEvent, newOption.quarter, newOption.year);
-    }
+    return { spineEvents: spine, childEventsByParent: childMap };
+  }, [events, dependencyRules, confidenceTier]);
 
-    setMobileDragEvent(null);
-    touchStartRef.current = null;
-  }, [mobileDragEvent, mobileDragStartY, mobileDragCurrentY, mobileQuarterIndex, onEventDrag]);
-
-  // Calculate preview quarter during drag
-  const getMobileDragPreview = useCallback(() => {
-    if (!mobileDragEvent) return null;
-    
-    const deltaY = mobileDragStartY - mobileDragCurrentY;
-    const quarterChange = Math.round(deltaY / MOBILE_DRAG_THRESHOLD);
-    const newIndex = Math.max(0, Math.min(mobileQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
-    
-    return {
-      ...QUARTER_OPTIONS[newIndex],
-      quarterChange,
-      isDragging: Math.abs(deltaY) > 10
-    };
-  }, [mobileDragEvent, mobileDragStartY, mobileDragCurrentY, mobileQuarterIndex]);
-
-  // Get the display position for a node (accounting for drag with snapping)
-  const getDisplayX = useCallback((node: TimelineNode) => {
-    if (draggingNode === node.event.name && dragX !== null) {
-      return dragX;
-    }
-    return node.x;
-  }, [draggingNode, dragX]);
-
-  // Get snapped position for display during drag
-  const getSnappedPosition = useCallback((x: number) => {
-    const { quarter, year } = getQuarterFromX(x);
-    const snappedX = getXPosition(year, quarter);
-    const distance = Math.abs(x - snappedX);
-    return { snappedX, quarter, year, isNearSnap: distance < SNAP_THRESHOLD };
-  }, [getQuarterFromX, getXPosition]);
-
-  // Truncate long event names
-  const truncateName = (name: string, maxLength: number = 20) => {
-    if (name.length <= maxLength) return name;
-    return name.substring(0, maxLength - 2) + '…';
-  };
-
-  // Calculate affected count for display
-  const affectedCount = affectedEvents?.size || 0;
-
-  // Group events by quarter/year for mobile view
-  const eventsByPeriod = useMemo(() => {
-    const grouped = new Map<string, ForecastEvent[]>();
-    
-    const sorted = [...filteredEvents].sort((a, b) => {
+  // Sort spine events chronologically
+  const sortedSpineEvents = useMemo(() => {
+    return [...spineEvents].sort((a, b) => {
       const adjustedA = adjustedEvents?.get(a.name);
       const adjustedB = adjustedEvents?.get(b.name);
       const yearA = adjustedA?.year || a.medianYear;
       const yearB = adjustedB?.year || b.medianYear;
       const qA = quarterToNumber(adjustedA?.quarter || a.medianQuarter);
       const qB = quarterToNumber(adjustedB?.quarter || b.medianQuarter);
-      
       if (yearA !== yearB) return yearA - yearB;
       return qA - qB;
     });
+  }, [spineEvents, adjustedEvents]);
+
+  // Calculate node positions
+  const getXPosition = useCallback((year: number, quarter: string) => {
+    const margin = 100;
+    const usableWidth = dimensions.width - margin * 2;
+    const quarterIndex = (year - TIMELINE_START_YEAR) * 4 + quarterToNumber(quarter) - 1;
+    return margin + (quarterIndex / Math.max(TOTAL_QUARTERS - 1, 1)) * usableWidth;
+  }, [dimensions.width]);
+
+  // Build nodes array
+  const nodes = useMemo((): TimelineNode[] => {
+    const result: TimelineNode[] = [];
+    const centerY = dimensions.height / 2;
     
-    sorted.forEach(event => {
+    sortedSpineEvents.forEach((event) => {
       const adjusted = adjustedEvents?.get(event.name);
       const year = adjusted?.year || event.medianYear;
       const quarter = adjusted?.quarter || event.medianQuarter;
-      const key = `${quarter} ${year}`;
+      const x = getXPosition(year, quarter);
       
-      if (!grouped.has(key)) {
-        grouped.set(key, []);
+      result.push({
+        id: event.name,
+        event,
+        isSpine: true,
+        x,
+        y: centerY,
+        baseX: getXPosition(event.medianYear, event.medianQuarter),
+        baseY: centerY
+      });
+      
+      // Add children if expanded
+      if (expandedNodes.has(event.name)) {
+        const children = childEventsByParent.get(event.name) || [];
+        children.forEach((child, i) => {
+          const childAdjusted = adjustedEvents?.get(child.name);
+          const childYear = childAdjusted?.year || child.medianYear;
+          const childQuarter = childAdjusted?.quarter || child.medianQuarter;
+          const childX = getXPosition(childYear, childQuarter);
+          // Alternate above/below with increasing offset
+          const yOffset = (i % 2 === 0 ? -1 : 1) * (70 + Math.floor(i / 2) * 50);
+          
+          result.push({
+            id: child.name,
+            event: child,
+            isSpine: false,
+            parentId: event.name,
+            x: childX,
+            y: centerY + yOffset,
+            baseX: getXPosition(child.medianYear, child.medianQuarter),
+            baseY: centerY + yOffset
+          });
+        });
       }
-      grouped.get(key)!.push(event);
     });
     
-    return grouped;
-  }, [filteredEvents, adjustedEvents]);
+    return result;
+  }, [sortedSpineEvents, childEventsByParent, expandedNodes, adjustedEvents, getXPosition, dimensions.height]);
 
-  // Mobile vertical timeline component with touch drag support
-  const MobileTimeline = () => {
-    const dragPreview = getMobileDragPreview();
+  // Get quarter index for dragging
+  const getQuarterIndex = useCallback((x: number): number => {
+    const margin = 100;
+    const usableWidth = dimensions.width - margin * 2;
+    const ratio = Math.max(0, Math.min(1, (x - margin) / usableWidth));
+    return Math.round(ratio * (TOTAL_QUARTERS - 1));
+  }, [dimensions.width]);
+
+  // Handle node click to toggle expansion
+  const handleNodeClick = useCallback((nodeId: string, isSpine: boolean) => {
+    if (isSpine) {
+      setExpandedNodes(prev => {
+        const next = new Set(prev);
+        if (next.has(nodeId)) {
+          next.delete(nodeId);
+        } else {
+          next.add(nodeId);
+        }
+        return next;
+      });
+    }
+  }, []);
+
+  // Handle text click for detail panel
+  const handleTextClick = useCallback((event: ForecastEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEventClick(event);
+  }, [onEventClick]);
+
+  // Drag handlers
+  const handleDragStart = useCallback((nodeId: string, clientX: number) => {
+    if (!onEventDrag) return;
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node?.isSpine) return;
+    
+    setDragNode(nodeId);
+    setDragStartX(clientX);
+    setDragCurrentX(clientX);
+  }, [nodes, onEventDrag]);
+
+  const handleDragMove = useCallback((clientX: number) => {
+    if (!dragNode) return;
+    setDragCurrentX(clientX);
+  }, [dragNode]);
+
+  const handleDragEnd = useCallback(() => {
+    if (!dragNode || !onEventDrag) {
+      setDragNode(null);
+      return;
+    }
+
+    const node = nodes.find(n => n.id === dragNode);
+    if (!node) {
+      setDragNode(null);
+      return;
+    }
+
+    const deltaX = (dragCurrentX - dragStartX) / transform.k;
+    const newX = node.x + deltaX;
+    const quarterIndex = getQuarterIndex(newX);
+    const option = QUARTER_OPTIONS[Math.min(quarterIndex, QUARTER_OPTIONS.length - 1)];
+    
+    onEventDrag(dragNode, option.quarter, option.year);
+    setDragNode(null);
+  }, [dragNode, dragStartX, dragCurrentX, nodes, onEventDrag, getQuarterIndex, transform.k]);
+
+  // Global mouse/touch listeners
+  useEffect(() => {
+    if (!dragNode) return;
+
+    const handleMouseMove = (e: MouseEvent) => handleDragMove(e.clientX);
+    const handleMouseUp = () => handleDragEnd();
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) handleDragMove(e.touches[0].clientX);
+    };
+    const handleTouchEnd = () => handleDragEnd();
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+    document.body.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [dragNode, handleDragMove, handleDragEnd]);
+
+  // Calculate drag delta for preview
+  const getDragDelta = useCallback(() => {
+    if (!dragNode) return null;
+    const node = nodes.find(n => n.id === dragNode);
+    if (!node) return null;
+    
+    const deltaX = (dragCurrentX - dragStartX) / transform.k;
+    const currentQuarterIndex = getQuarterIndex(node.x);
+    const newQuarterIndex = getQuarterIndex(node.x + deltaX);
+    const quarterChange = newQuarterIndex - currentQuarterIndex;
+    
+    return { deltaX, quarterChange };
+  }, [dragNode, dragStartX, dragCurrentX, nodes, getQuarterIndex, transform.k]);
+
+  const dragDelta = getDragDelta();
+
+  // Zoom controls
+  const handleZoom = useCallback((direction: 'in' | 'out' | 'reset') => {
+    setTransform(prev => {
+      if (direction === 'reset') return { x: 0, y: 0, k: 1 };
+      const factor = direction === 'in' ? 1.3 : 0.7;
+      const newK = Math.max(0.5, Math.min(3, prev.k * factor));
+      return { ...prev, k: newK };
+    });
+  }, []);
+
+  // Year markers
+  const yearMarkers = useMemo(() => {
+    const markers = [];
+    for (let year = TIMELINE_START_YEAR; year <= TIMELINE_END_YEAR; year++) {
+      const x = getXPosition(year, 'Q1');
+      markers.push({ year, x });
+    }
+    return markers;
+  }, [getXPosition]);
+
+  // Get color for category
+  const getCategoryColor = (category: EventCategory): string => {
+    return CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
+  };
+
+  // Render spine connections
+  const renderConnections = () => {
+    const spineNodes = nodes.filter(n => n.isSpine);
+    const connections: React.ReactNode[] = [];
+    
+    // Spine-to-spine connections (critical chain)
+    for (let i = 0; i < spineNodes.length - 1; i++) {
+      const source = spineNodes[i];
+      const target = spineNodes[i + 1];
+      
+      // Calculate positions with drag offset
+      let sourceX = source.x;
+      let targetX = target.x;
+      if (dragNode === source.id && dragDelta) {
+        sourceX += dragDelta.deltaX;
+      }
+      if (dragNode === target.id && dragDelta) {
+        targetX += dragDelta.deltaX;
+      }
+      
+      // Curved path
+      const midX = (sourceX + targetX) / 2;
+      const path = `M ${sourceX + SPINE_NODE_RADIUS} ${source.y} 
+                    Q ${midX} ${source.y - 30} ${targetX - SPINE_NODE_RADIUS} ${target.y}`;
+      
+      connections.push(
+        <path
+          key={`spine-${i}`}
+          d={path}
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth={3}
+          strokeOpacity={0.7}
+          className="transition-all duration-300"
+          style={{
+            filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))'
+          }}
+        />
+      );
+    }
+    
+    // Parent-to-child connections
+    nodes.filter(n => !n.isSpine && n.parentId).forEach(child => {
+      const parent = nodes.find(n => n.id === child.parentId);
+      if (!parent) return;
+      
+      let parentX = parent.x;
+      if (dragNode === parent.id && dragDelta) {
+        parentX += dragDelta.deltaX;
+      }
+      
+      const startY = parent.y + (child.y > parent.y ? SPINE_NODE_RADIUS : -SPINE_NODE_RADIUS);
+      const endY = child.y + (child.y > parent.y ? -CHILD_NODE_RADIUS : CHILD_NODE_RADIUS);
+      
+      connections.push(
+        <line
+          key={`child-${child.id}`}
+          x1={parentX}
+          y1={startY}
+          x2={child.x}
+          y2={endY}
+          stroke="hsl(var(--muted-foreground))"
+          strokeWidth={1.5}
+          strokeOpacity={0.4}
+          strokeDasharray="4,4"
+          className="transition-all duration-300"
+        />
+      );
+    });
+    
+    return connections;
+  };
+
+  // Render node
+  const renderNode = (node: TimelineNode) => {
+    const { event, isSpine, id } = node;
+    const adjusted = adjustedEvents?.get(id);
+    const deltaQuarters = adjusted?.deltaQuarters || 0;
+    const hasShifted = deltaQuarters !== 0;
+    const isAffected = affectedEvents?.has(id);
+    const isExpanded = expandedNodes.has(id);
+    const isHovered = hoveredNode === id;
+    const isDragging = dragNode === id;
+    const hasChildren = (childEventsByParent.get(id)?.length || 0) > 0;
+    
+    const radius = isSpine ? SPINE_NODE_RADIUS : CHILD_NODE_RADIUS;
+    const color = getCategoryColor(event.category);
+    
+    // Calculate position with drag offset
+    let displayX = node.x;
+    if (isDragging && dragDelta) {
+      displayX = node.x + dragDelta.deltaX;
+    }
+    
+    // Truncate name for display
+    const displayName = event.name.length > 28 ? event.name.slice(0, 26) + '...' : event.name;
     
     return (
-      <div className="space-y-4">
-        {/* Mobile Legend */}
-        <div className="flex flex-wrap gap-2 pb-4 border-b border-border/30">
-          {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').map(([category, color]) => (
-            <div key={category} className="flex items-center gap-1.5 text-[10px]">
-              <div 
-                className="w-2.5 h-2.5 rounded-full" 
-                style={{ backgroundColor: color }}
-              />
-              <span className="text-muted-foreground capitalize">{category}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Touch drag instructions */}
-        {onEventDrag && (
-          <div className="flex items-center justify-center gap-2 py-2 px-3 bg-muted/30 rounded-lg text-xs text-muted-foreground">
-            <GripHorizontal className="h-4 w-4" />
-            <span>Swipe up/down on primary events to adjust timeline</span>
-          </div>
+      <g
+        key={id}
+        className={cn(
+          "transition-opacity duration-300",
+          isAffected && !isDragging && "animate-pulse"
         )}
-
-        {/* Vertical Timeline */}
-        <div className="relative pl-6">
-          {/* Vertical line */}
-          <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border/50" />
-
-          {Array.from(eventsByPeriod.entries()).map(([period, periodEvents]) => (
-            <div key={period} className="relative mb-6">
-              {/* Period marker */}
-              <div className="absolute left-[-14px] w-4 h-4 rounded-full bg-muted border-2 border-border" />
-              
-              {/* Period label */}
-              <div className="mb-3">
-                <span className="text-sm font-bold text-foreground">{period}</span>
-              </div>
-
-              {/* Events for this period */}
-              <div className="space-y-2">
-                {periodEvents.map((event) => {
-                  const isAffected = affectedEvents?.has(event.name);
-                  const adjusted = adjustedEvents?.get(event.name);
-                  const deltaQuarters = adjusted?.deltaQuarters || 0;
-                  const hasShifted = deltaQuarters !== 0;
-                  const isPrimary = event.isPrimary;
-                  const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
-                  const currentQuarter = adjusted?.quarter || event.medianQuarter;
-                  const currentYear = adjusted?.year || event.medianYear;
-                  const isDragging = mobileDragEvent === event.name;
-                  const isCalculating = cascadeState?.isCalculating && isAffected;
-
-                  return (
-                    <div
-                      key={event.name}
-                      onClick={() => !isDragging && onEventClick(event)}
-                      onTouchStart={(e) => isPrimary && onEventDrag && handleTouchStart(e, event.name, currentQuarter, currentYear)}
-                      onTouchMove={handleTouchMove}
-                      onTouchEnd={handleTouchEnd}
-                      className={cn(
-                        "relative p-3 rounded-lg border cursor-pointer transition-all duration-200 select-none",
-                        "bg-card hover:bg-accent/50",
-                        isAffected && "border-primary/50 bg-primary/5",
-                        hasShifted && "border-primary",
-                        isDragging && "border-primary border-2 bg-primary/10 shadow-lg scale-[1.02]",
-                        isCalculating && "animate-pulse",
-                        !isAffected && !hasShifted && !isDragging && "border-border/50"
-                      )}
-                      style={{
-                        transform: isDragging ? `translateY(${mobileDragCurrentY - mobileDragStartY}px) scale(1.02)` : undefined,
-                        touchAction: isPrimary && onEventDrag ? 'none' : 'auto'
-                      }}
-                    >
-                      {/* Category indicator */}
-                      <div 
-                        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
-                        style={{ backgroundColor: color }}
-                      />
-
-                      {/* Drag handle for primary events */}
-                      {isPrimary && onEventDrag && (
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5 opacity-40">
-                          <ChevronUp className="h-3 w-3" />
-                          <GripHorizontal className="h-4 w-4" />
-                          <ChevronDown className="h-3 w-3" />
-                        </div>
-                      )}
-
-                      <div className="flex items-start justify-between gap-2 pl-2 pr-8">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className={cn(
-                              "font-semibold text-sm truncate",
-                              isPrimary ? "text-foreground" : "text-muted-foreground"
-                            )}>
-                              {event.name}
-                            </h4>
-                            
-                            {!isPrimary && (
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
-                                <AlertTriangle className="h-2.5 w-2.5 mr-1" />
-                                COND
-                              </Badge>
-                            )}
-                            
-                            {isAffected && (
-                              <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
-                                <Zap className="h-2.5 w-2.5 mr-1" />
-                                Affected
-                              </Badge>
-                            )}
-                            
-                            {hasShifted && (
-                              <Badge className="text-[10px] px-1.5 py-0 h-4 bg-primary shrink-0">
-                                {formatDelta(deltaQuarters)}
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                            <span 
-                              className="w-2 h-2 rounded-full shrink-0" 
-                              style={{ backgroundColor: color }}
-                            />
-                            <span className="capitalize truncate">{event.category}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <div className={cn(
-                            "text-right",
-                            hasShifted && "text-primary"
-                          )}>
-                            <div className="text-lg font-bold">
-                              {Math.round(event.probability * 100)}%
-                            </div>
-                          </div>
-                          {!isPrimary && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-                        </div>
-                      </div>
-
-                      {/* Drag preview overlay */}
-                      {isDragging && dragPreview && dragPreview.isDragging && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
-                          <div className="flex flex-col items-center gap-1">
-                            <div className="flex items-center gap-2">
-                              {dragPreview.quarterChange !== 0 && (
-                                <Badge className={cn(
-                                  "text-xs",
-                                  dragPreview.quarterChange > 0 ? "bg-green-600" : "bg-amber-600"
-                                )}>
-                                  {dragPreview.quarterChange > 0 ? `+${dragPreview.quarterChange}Q` : `${dragPreview.quarterChange}Q`}
-                                </Badge>
-                              )}
-                            </div>
-                            <span className="text-lg font-bold text-foreground">
-                              → {dragPreview.label}
-                            </span>
-                            <span className="text-xs text-muted-foreground">Release to confirm</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Floating affected count badge */}
-        {affectedCount > 0 && (
-          <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
-            <Badge 
-              variant="destructive" 
-              className="px-3 py-1.5 text-xs font-semibold shadow-lg bg-primary/90 backdrop-blur-sm"
+        style={{
+          opacity: expandedNodes.size > 0 && !isExpanded && isSpine && !expandedNodes.has(id) ? 0.5 : 1
+        }}
+        transform={`translate(${displayX}, ${node.y})`}
+      >
+        {/* Pulse ring for spine nodes */}
+        {isSpine && (
+          <circle
+            r={radius + 8}
+            fill="none"
+            stroke={color}
+            strokeWidth={2}
+            strokeOpacity={isHovered || isDragging ? 0.8 : 0.3}
+            className="transition-all duration-300"
+            style={{
+              filter: isHovered ? `drop-shadow(0 0 10px ${color})` : undefined
+            }}
+          />
+        )}
+        
+        {/* Original position ghost */}
+        {hasShifted && (
+          <circle
+            cx={node.baseX - displayX}
+            cy={0}
+            r={radius * 0.5}
+            fill="none"
+            stroke="hsl(var(--muted-foreground))"
+            strokeWidth={1}
+            strokeDasharray="2,2"
+            strokeOpacity={0.4}
+          />
+        )}
+        
+        {/* Main node circle */}
+        <circle
+          r={radius}
+          fill={color}
+          stroke={hasShifted ? "hsl(var(--primary))" : "hsl(var(--background))"}
+          strokeWidth={hasShifted ? 3 : 2}
+          className={cn(
+            "transition-all duration-200",
+            isSpine && onEventDrag && "cursor-grab active:cursor-grabbing"
+          )}
+          style={{
+            filter: hasShifted ? 'drop-shadow(0 0 10px hsl(var(--primary) / 0.6))' : undefined
+          }}
+          onMouseEnter={() => setHoveredNode(id)}
+          onMouseLeave={() => setHoveredNode(null)}
+          onClick={() => handleNodeClick(id, isSpine)}
+          onMouseDown={(e) => isSpine && handleDragStart(id, e.clientX)}
+          onTouchStart={(e) => isSpine && e.touches[0] && handleDragStart(id, e.touches[0].clientX)}
+        />
+        
+        {/* Expand/collapse indicator for spine nodes with children */}
+        {isSpine && hasChildren && confidenceTier !== 'high' && (
+          <g
+            className="cursor-pointer"
+            transform={`translate(0, ${radius + 12})`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNodeClick(id, true);
+            }}
+          >
+            <circle
+              r={10}
+              fill="hsl(var(--background))"
+              stroke="hsl(var(--border))"
+              strokeWidth={1}
+            />
+            {isExpanded ? (
+              <ChevronUp className="h-3 w-3" style={{ transform: 'translate(-6px, -6px)' }} />
+            ) : (
+              <ChevronDown className="h-3 w-3" style={{ transform: 'translate(-6px, -6px)' }} />
+            )}
+            <text
+              y={0}
+              textAnchor="middle"
+              className="text-[8px] fill-muted-foreground font-medium"
+              style={{ dominantBaseline: 'middle' }}
             >
-              <Zap className="h-3 w-3 mr-1.5" />
-              {affectedCount} affected
-            </Badge>
-          </div>
+              {isExpanded ? '−' : '+'}
+            </text>
+          </g>
         )}
-
-        {/* Mobile drag indicator overlay */}
-        {mobileDragEvent && dragPreview && dragPreview.isDragging && (
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
-            <Badge 
-              className={cn(
-                "px-4 py-2 text-sm font-semibold shadow-xl",
-                dragPreview.quarterChange > 0 ? "bg-green-600" : dragPreview.quarterChange < 0 ? "bg-amber-600" : "bg-muted"
-              )}
+        
+        {/* Node label */}
+        <text
+          y={radius + (isSpine && hasChildren && confidenceTier !== 'high' ? 30 : 18)}
+          textAnchor="middle"
+          className={cn(
+            "fill-foreground cursor-pointer hover:fill-primary transition-colors select-none",
+            isSpine ? "text-[11px] font-medium" : "text-[9px]"
+          )}
+          onClick={(e) => handleTextClick(event, e as unknown as React.MouseEvent)}
+        >
+          {displayName}
+        </text>
+        
+        {/* Date badge */}
+        <text
+          y={radius + (isSpine && hasChildren && confidenceTier !== 'high' ? 44 : 30)}
+          textAnchor="middle"
+          className="text-[9px] fill-muted-foreground select-none"
+        >
+          {adjusted?.quarter || event.medianQuarter} {adjusted?.year || event.medianYear}
+        </text>
+        
+        {/* Delta badge */}
+        {hasShifted && (
+          <g transform={`translate(${radius + 6}, ${-radius - 6})`}>
+            <rect
+              x={-14}
+              y={-9}
+              width={28}
+              height={18}
+              rx={4}
+              fill="hsl(var(--primary))"
+            />
+            <text
+              textAnchor="middle"
+              dy={4}
+              className="text-[9px] fill-primary-foreground font-medium"
             >
-              <div className="flex items-center gap-2">
-                {dragPreview.quarterChange > 0 ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : dragPreview.quarterChange < 0 ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : null}
-                <span>{dragPreview.label}</span>
-                {dragPreview.quarterChange !== 0 && (
-                  <span className="opacity-70">
-                    ({dragPreview.quarterChange > 0 ? '+' : ''}{dragPreview.quarterChange}Q)
-                  </span>
-                )}
-              </div>
-            </Badge>
-          </div>
+              {formatDelta(deltaQuarters)}
+            </text>
+          </g>
         )}
+        
+        {/* Drag preview badge */}
+        {isDragging && dragDelta && dragDelta.quarterChange !== 0 && (
+          <g transform={`translate(0, ${-radius - 24})`}>
+            <rect
+              x={-24}
+              y={-12}
+              width={48}
+              height={24}
+              rx={6}
+              fill="hsl(var(--primary))"
+              fillOpacity={0.95}
+            />
+            <text
+              textAnchor="middle"
+              dy={5}
+              className="text-[11px] fill-primary-foreground font-bold"
+            >
+              {dragDelta.quarterChange > 0 ? '+' : ''}{dragDelta.quarterChange}Q
+            </text>
+          </g>
+        )}
+      </g>
+    );
+  };
+
+  // Tooltip for hovered node
+  const renderTooltip = () => {
+    if (!hoveredNode || dragNode) return null;
+    
+    const node = nodes.find(n => n.id === hoveredNode);
+    if (!node) return null;
+    
+    const { event, x, y, isSpine } = node;
+    const adjusted = adjustedEvents?.get(event.name);
+    const hasChildren = (childEventsByParent.get(event.name)?.length || 0) > 0;
+    
+    // Calculate position relative to container
+    const tooltipX = (x * transform.k + transform.x);
+    const tooltipY = (y * transform.k + transform.y - (isSpine ? SPINE_NODE_RADIUS : CHILD_NODE_RADIUS) - 110);
+    
+    return (
+      <div
+        className="absolute z-50 pointer-events-none"
+        style={{
+          left: tooltipX,
+          top: Math.max(10, tooltipY),
+          transform: 'translateX(-50%)'
+        }}
+      >
+        <div className="bg-popover border border-border rounded-lg p-3 shadow-xl max-w-[260px]">
+          <h4 className="font-medium text-sm text-foreground mb-1">{event.name}</h4>
+          <p className="text-xs text-muted-foreground mb-2">
+            Target: {adjusted?.quarter || event.medianQuarter} {adjusted?.year || event.medianYear}
+          </p>
+          {event.description && (
+            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{event.description}</p>
+          )}
+          <p className="text-[10px] text-primary font-medium">
+            {isSpine && hasChildren && confidenceTier !== 'high' 
+              ? 'Click node to expand dependencies' 
+              : 'Click label for full details'}
+          </p>
+        </div>
       </div>
     );
   };
 
-  // Return mobile layout for small screens
-  if (isMobile) {
-    return <MobileTimeline />;
-  }
-
   return (
-    <div className="w-full overflow-x-auto">
-      <svg
-        ref={svgRef}
-        width={TIMELINE_WIDTH}
-        height={maxY}
-        className="min-w-full"
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        {/* Background */}
-        <rect width="100%" height="100%" className="fill-background" />
-
-        {/* Grid lines */}
-        {timeMarkers.map((marker, i) => (
-          <line
-            key={i}
-            x1={marker.x}
-            y1={60}
-            x2={marker.x}
-            y2={maxY - 20}
-            className={cn(
-              "stroke-border/30",
-              marker.isYear && "stroke-border/50"
-            )}
-            strokeWidth={marker.isYear ? 1.5 : 0.5}
-            strokeDasharray={marker.isYear ? undefined : "4,4"}
-          />
-        ))}
-
-        {/* Horizontal axis */}
-        <line
-          x1={TIMELINE_PADDING}
-          y1={70}
-          x2={TIMELINE_WIDTH - TIMELINE_PADDING}
-          y2={70}
-          className="stroke-border"
-          strokeWidth={2}
-        />
-
-        {/* Time labels */}
-        {timeMarkers.map((marker, i) => (
-          <text
-            key={i}
-            x={marker.x}
-            y={50}
-            textAnchor="middle"
-            className={cn(
-              "fill-muted-foreground",
-              marker.isYear ? "text-sm font-bold" : "text-xs font-light"
-            )}
+    <div className="space-y-4">
+      {/* Controls */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleZoom('out')}
+            className="h-8 w-8 p-0"
+            aria-label="Zoom out"
           >
-            {marker.label}
-          </text>
-        ))}
-
-        {/* SVG Defs for animated gradients */}
-        <defs>
-          {/* Animated flow gradient for cascade */}
-          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#C41E3A" stopOpacity="0.2">
-              <animate attributeName="offset" values="-1;1" dur="1.5s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="30%" stopColor="#C41E3A" stopOpacity="1">
-              <animate attributeName="offset" values="-0.7;1.3" dur="1.5s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="60%" stopColor="#C41E3A" stopOpacity="0.2">
-              <animate attributeName="offset" values="-0.4;1.6" dur="1.5s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="100%" stopColor="#C41E3A" stopOpacity="0">
-              <animate attributeName="offset" values="0;2" dur="1.5s" repeatCount="indefinite" />
-            </stop>
-          </linearGradient>
-
-          {/* Pulse glow filter */}
-          <filter id="cascadeGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Dependency lines */}
-        {visibleRules.map((rule, i) => {
-          const fromNode = getNodeByName(rule.source_event);
-          const toNode = getNodeByName(rule.target_event);
-          if (!fromNode || !toNode) return null;
-
-          const fromX = getDisplayX(fromNode);
-          const toX = getDisplayX(toNode);
-          const fromY = fromNode.y;
-          const toY = toNode.y;
-
-          // Calculate control points for curved lines
-          const midX = (fromX + toX) / 2;
-          const midY = Math.min(fromY, toY) - 30;
-
-          const isHard = rule.dependency_type === 'hard';
-          const isHighlighted = hoveredNode === rule.source_event || hoveredNode === rule.target_event;
-          
-          // Check if this dependency is part of the active cascade
-          const sourceAffected = affectedEvents?.has(rule.source_event) || cascadeState?.lastDraggedEvent === rule.source_event;
-          const targetAffected = affectedEvents?.has(rule.target_event);
-          const isCascadeActive = cascadeState?.isCalculating && (sourceAffected || targetAffected);
-          const isCascadePath = sourceAffected && targetAffected;
-
-          // Calculate path length for animation
-          const pathLength = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2)) * 1.2;
-
-          return (
-            <g key={i} className={cn("transition-opacity duration-200", !isHighlighted && !isCascadeActive && hoveredNode && "opacity-20")}>
-              {/* Background path (static) */}
-              <path
-                d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
-                fill="none"
-                className={cn(
-                  "transition-all duration-200",
-                  isCascadeActive ? "stroke-primary/30" : isHighlighted ? "stroke-primary" : "stroke-muted-foreground/40"
-                )}
-                strokeWidth={isHard ? 2 : 1}
-                strokeDasharray={isHard ? undefined : "6,4"}
-              />
-              
-              {/* Animated flow path (only during cascade) */}
-              {isCascadeActive && (
-                <>
-                  {/* Glowing base path */}
-                  <path
-                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
-                    fill="none"
-                    stroke="#C41E3A"
-                    strokeWidth={isHard ? 4 : 2}
-                    strokeOpacity={0.3}
-                    filter="url(#cascadeGlow)"
-                  />
-                  
-                  {/* Animated flowing dash */}
-                  <path
-                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
-                    fill="none"
-                    stroke="#C41E3A"
-                    strokeWidth={isHard ? 3 : 2}
-                    strokeDasharray={`${pathLength * 0.15} ${pathLength * 0.85}`}
-                    strokeLinecap="round"
-                    style={{
-                      animation: `dashFlow 1s linear infinite`
-                    }}
-                  >
-                    <animate
-                      attributeName="stroke-dashoffset"
-                      values={`${pathLength};0`}
-                      dur="1s"
-                      repeatCount="indefinite"
-                    />
-                  </path>
-
-                  {/* Secondary flowing particle */}
-                  <path
-                    d={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
-                    fill="none"
-                    stroke="#ffffff"
-                    strokeWidth={isHard ? 2 : 1}
-                    strokeDasharray={`${pathLength * 0.05} ${pathLength * 0.95}`}
-                    strokeLinecap="round"
-                    strokeOpacity={0.8}
-                  >
-                    <animate
-                      attributeName="stroke-dashoffset"
-                      values={`${pathLength};0`}
-                      dur="1s"
-                      repeatCount="indefinite"
-                    />
-                  </path>
-                </>
-              )}
-
-              {/* Cascade direction indicator (pulsing circle traveling along path) */}
-              {isCascadePath && (
-                <circle r={4} fill="#C41E3A" filter="url(#cascadeGlow)">
-                  <animateMotion
-                    dur="0.8s"
-                    repeatCount="indefinite"
-                    path={`M ${fromX} ${fromY} Q ${midX} ${midY} ${toX} ${toY}`}
-                  />
-                </circle>
-              )}
-              
-              {/* Arrow at end */}
-              <circle
-                cx={toX}
-                cy={toY - toNode.radius - 4}
-                r={isCascadeActive ? 5 : 3}
-                className={cn(
-                  "transition-all duration-200",
-                  isCascadeActive ? "fill-primary" : isHighlighted ? "fill-primary" : "fill-muted-foreground/40"
-                )}
-                filter={isCascadeActive ? "url(#cascadeGlow)" : undefined}
-              >
-                {isCascadeActive && (
-                  <animate
-                    attributeName="r"
-                    values="4;6;4"
-                    dur="0.6s"
-                    repeatCount="indefinite"
-                  />
-                )}
-              </circle>
-            </g>
-          );
-        })}
-
-        {/* Event nodes */}
-        {nodes.map((node) => {
-          const isHovered = hoveredNode === node.event.name;
-          const isDragging = draggingNode === node.event.name;
-          const isAffected = affectedEvents?.has(node.event.name);
-          const isCalculating = cascadeState?.isCalculating && isAffected;
-          const isPrimary = node.event.isPrimary;
-          const isConditional = !isPrimary;
-          const displayX = getDisplayX(node);
-          const hasShifted = node.deltaQuarters !== 0;
-
-          return (
-            <g
-              key={node.event.name}
-              className={cn(
-                "cursor-pointer",
-                isDragging && "cursor-grabbing",
-                isPrimary && onEventDrag && "cursor-grab"
-              )}
-              style={{
-                transform: `translate(${displayX}px, ${node.y}px)`,
-                transition: isDragging ? 'none' : 'transform 0.3s ease-out'
-              }}
-              onMouseEnter={(e) => {
-                setHoveredNode(node.event.name);
-                setTooltipPos({ x: e.clientX, y: e.clientY });
-              }}
-              onMouseLeave={() => setHoveredNode(null)}
-              onMouseDown={(e) => handleMouseDown(e, node.event.name, isPrimary)}
-              onClick={() => !isDragging && onEventClick(node.event)}
-            >
-              {/* Ghost of original position when shifted */}
-              {hasShifted && !isDragging && (
-                <circle
-                  cx={node.originalX - displayX}
-                  r={node.radius * 0.6}
-                  fill="none"
-                  stroke={node.color}
-                  strokeWidth={1}
-                  strokeDasharray="4,4"
-                  opacity={0.3}
-                />
-              )}
-
-              {/* Outer glow effect */}
-              {(isHovered || isDragging || isAffected) && (
-                <circle
-                  r={node.radius + 12}
-                  fill={isAffected ? "rgba(196, 30, 58, 0.25)" : `${node.color}22`}
-                />
-              )}
-
-              {/* Pulse animation for calculating events */}
-              {isCalculating && (
-                <>
-                  <circle
-                    r={node.radius + 15}
-                    className="animate-ping"
-                    fill="none"
-                    stroke="#C41E3A"
-                    strokeWidth={2}
-                    opacity={0.6}
-                  />
-                  <circle
-                    r={node.radius + 8}
-                    fill="none"
-                    stroke="#C41E3A"
-                    strokeWidth={3}
-                    opacity={0.8}
-                  />
-                </>
-              )}
-
-              {/* Affected ring */}
-              {isAffected && !isCalculating && (
-                <circle
-                  r={node.radius + 5}
-                  fill="none"
-                  stroke="#C41E3A"
-                  strokeWidth={2}
-                  opacity={0.7}
-                />
-              )}
-
-              {/* Drag handle indicator for primary events */}
-              {isPrimary && onEventDrag && isHovered && !isDragging && (
-                <g transform={`translate(0, ${-node.radius - 18})`}>
-                  <rect
-                    x={-20}
-                    y={-8}
-                    width={40}
-                    height={16}
-                    rx={4}
-                    fill="rgba(255,255,255,0.15)"
-                    stroke="rgba(255,255,255,0.3)"
-                    strokeWidth={1}
-                  />
-                  <GripVertical 
-                    className="text-white/70" 
-                    style={{ transform: 'translate(-8px, -8px)', width: 16, height: 16 }}
-                  />
-                </g>
-              )}
-
-              {/* Node circle */}
-              <circle
-                r={node.radius}
-                fill={node.color}
-                className={cn(isConditional && "opacity-70")}
-                stroke={isDragging ? "#FFFFFF" : isHovered ? "#FFFFFF" : hasShifted ? "#C41E3A" : "transparent"}
-                strokeWidth={isDragging ? 3 : 2}
-              />
-
-              {/* Conditional indicator */}
-              {isConditional && (
-                <text
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-white text-[10px] font-bold pointer-events-none"
-                >
-                  C
-                </text>
-              )}
-
-              {/* Probability text inside node for primary events */}
-              {isPrimary && (
-                <text
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="fill-white text-xs font-bold pointer-events-none"
-                >
-                  {Math.round(node.event.probability * 100)}%
-                </text>
-              )}
-
-              {/* Event name label */}
-              <text
-                y={node.radius + 16}
-                textAnchor="middle"
-                className={cn(
-                  "text-xs font-semibold pointer-events-none",
-                  isConditional ? "fill-muted-foreground" : "fill-foreground"
-                )}
-              >
-                {truncateName(node.event.name)}
-              </text>
-
-              {/* Current date label (showing adjusted if shifted) */}
-              <text
-                y={node.radius + 30}
-                textAnchor="middle"
-                className={cn(
-                  "text-[10px] pointer-events-none",
-                  hasShifted ? "fill-primary font-medium" : "fill-muted-foreground"
-                )}
-              >
-                {(() => {
-                  const adjusted = adjustedEvents?.get(node.event.name);
-                  if (adjusted) {
-                    return `${adjusted.quarter} ${adjusted.year}`;
-                  }
-                  return `${node.event.medianQuarter} ${node.event.medianYear}`;
-                })()}
-              </text>
-
-              {/* Delta badge for shifted events */}
-              {hasShifted && (
-                <g transform={`translate(${node.radius + 2}, ${-node.radius + 2})`}>
-                  <rect
-                    x={-4}
-                    y={-10}
-                    width={32}
-                    height={18}
-                    rx={4}
-                    fill="#C41E3A"
-                  />
-                  <text
-                    x={12}
-                    y={2}
-                    textAnchor="middle"
-                    className="fill-white text-[10px] font-bold"
-                  >
-                    {formatDelta(node.deltaQuarters)}
-                  </text>
-                </g>
-              )}
-
-              {/* Cascade indicator icon */}
-              {isAffected && (
-                <g transform={`translate(${-node.radius - 8}, ${-node.radius + 2})`}>
-                  <circle r={8} fill="#C41E3A" />
-                  <Zap className="h-3 w-3 text-white" style={{ transform: 'translate(-6px, -6px)' }} />
-                </g>
-              )}
-            </g>
-          );
-        })}
-
-        {/* Drag ghost indicator with snap preview */}
-        {draggingNode && dragX !== null && (() => {
-          const { snappedX, quarter, year, isNearSnap } = getSnappedPosition(dragX);
-          
-          return (
-            <g>
-              {/* Snap position indicator */}
-              <line
-                x1={snappedX}
-                y1={60}
-                x2={snappedX}
-                y2={maxY - 20}
-                stroke={isNearSnap ? "#22c55e" : "#C41E3A"}
-                strokeWidth={isNearSnap ? 3 : 2}
-                strokeDasharray={isNearSnap ? undefined : "4,4"}
-                opacity={isNearSnap ? 0.9 : 0.5}
-              />
-
-              {/* Current drag position line */}
-              {!isNearSnap && (
-                <line
-                  x1={dragX}
-                  y1={60}
-                  x2={dragX}
-                  y2={maxY - 20}
-                  stroke="#C41E3A"
-                  strokeWidth={1}
-                  opacity={0.4}
-                />
-              )}
-
-              {/* Snap target box */}
-              <rect
-                x={snappedX - 30}
-                y={maxY - 30}
-                width={60}
-                height={24}
-                rx={6}
-                fill={isNearSnap ? "#22c55e" : "#C41E3A"}
-                opacity={0.9}
-              />
-              <text
-                x={snappedX}
-                y={maxY - 14}
-                textAnchor="middle"
-                className="fill-white text-xs font-bold"
-              >
-                {quarter} {year}
-              </text>
-
-              {/* Snap indicator badge */}
-              {isNearSnap && (
-                <g transform={`translate(${snappedX}, 45)`}>
-                  <rect
-                    x={-25}
-                    y={-8}
-                    width={50}
-                    height={16}
-                    rx={4}
-                    fill="#22c55e"
-                  />
-                  <text
-                    textAnchor="middle"
-                    y={4}
-                    className="fill-white text-[10px] font-bold"
-                  >
-                    SNAP
-                  </text>
-                </g>
-              )}
-            </g>
-          );
-        })()}
-      </svg>
-
-      {/* Tooltip */}
-      {hoveredNode && !draggingNode && (
-        <div
-          className="fixed z-50 bg-card border border-border rounded-lg shadow-xl p-3 max-w-xs pointer-events-none"
-          style={{
-            left: tooltipPos.x + 15,
-            top: tooltipPos.y + 15
-          }}
-        >
-          {(() => {
-            const event = filteredEvents.find(e => e.name === hoveredNode);
-            if (!event) return null;
-            
-            return (
-              <>
-                <div className="font-semibold text-foreground mb-1">{event.name}</div>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: CATEGORY_COLORS[event.category] }}
-                    />
-                    <span className="capitalize">{event.category}</span>
-                  </div>
-                  <div>{event.medianQuarter} {event.medianYear}</div>
-                  <div className="font-medium">{Math.round(event.probability * 100)}% probability</div>
-                  {!event.isPrimary && (
-                    <div className="flex items-center gap-1 text-amber-500">
-                      <AlertTriangle className="h-3 w-3" />
-                      <span>CONDITIONAL</span>
-                    </div>
-                  )}
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* Floating affected count badge */}
-      {affectedCount > 0 && (
-        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
-          <Badge 
-            variant="destructive" 
-            className="px-4 py-2 text-sm font-semibold shadow-lg bg-primary/90 backdrop-blur-sm"
+            <ZoomOut className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleZoom('in')}
+            className="h-8 w-8 p-0"
+            aria-label="Zoom in"
           >
-            <Zap className="h-4 w-4 mr-2" />
-            {affectedCount} events affected by cascade
-          </Badge>
+            <ZoomIn className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleZoom('reset')}
+            className="h-8 px-3"
+          >
+            <RotateCcw className="h-4 w-4 mr-1" />
+            Reset View
+          </Button>
         </div>
-      )}
-
-      {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mt-6 pt-4 border-t border-border/30">
-        {Object.entries(CATEGORY_COLORS).map(([category, color]) => (
-          <div key={category} className="flex items-center gap-2 text-xs">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: color }}
-            />
-            <span className="text-muted-foreground capitalize">{category}</span>
+        
+        {/* Legend */}
+        <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs text-muted-foreground flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#3B82F6]" />
+            <span>AI</span>
           </div>
-        ))}
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#F59E0B]" />
+            <span>Foundation</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#EC4899]" />
+            <span>Robotics</span>
+          </div>
+          <div className="hidden md:flex items-center gap-2 border-l border-border pl-3">
+            <div className="w-6 h-0.5 bg-primary rounded" />
+            <span>Critical Chain</span>
+          </div>
+        </div>
       </div>
 
-      <div className="flex items-center justify-center gap-6 mt-3 text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-0.5 bg-muted-foreground" />
-          <span>Hard dependency</span>
+      {/* Timeline container */}
+      <div 
+        ref={containerRef}
+        className="relative w-full bg-card/20 border border-border/50 rounded-xl overflow-hidden"
+        style={{ height: dimensions.height }}
+      >
+        {/* Year axis */}
+        <div className="absolute top-0 left-0 right-0 h-12 border-b border-border/30 bg-background/70 backdrop-blur-sm z-10">
+          <div 
+            className="relative h-full"
+            style={{
+              transform: `translateX(${transform.x}px) scaleX(${transform.k})`,
+              transformOrigin: 'left center'
+            }}
+          >
+            {yearMarkers.map(({ year, x }) => (
+              <div
+                key={year}
+                className="absolute top-0 h-full flex flex-col items-center justify-center"
+                style={{ left: x, transform: `scaleX(${1 / transform.k})` }}
+              >
+                <span className="text-sm font-bold text-foreground">{year}</span>
+                <div className="absolute bottom-0 w-px h-3 bg-border" />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-0.5 bg-muted-foreground/40 border-dashed border-t border-muted-foreground/40" style={{ borderStyle: 'dashed' }} />
-          <span>Soft dependency</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full bg-muted-foreground/50 flex items-center justify-center text-[8px] text-white font-bold">C</div>
-          <span>Conditional event</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <GripVertical className="h-4 w-4 text-muted-foreground" />
-          <span>Drag to adjust (primary only)</span>
+
+        {/* SVG timeline */}
+        <svg
+          width={dimensions.width}
+          height={dimensions.height}
+          className="absolute inset-0"
+        >
+          <g
+            transform={`translate(${transform.x}, ${transform.y + 48}) scale(${transform.k})`}
+          >
+            {/* Grid lines */}
+            {yearMarkers.map(({ year, x }) => (
+              <line
+                key={`grid-${year}`}
+                x1={x}
+                y1={0}
+                x2={x}
+                y2={dimensions.height - 48}
+                stroke="hsl(var(--border))"
+                strokeOpacity={0.15}
+                strokeDasharray="6,10"
+              />
+            ))}
+            
+            {/* Center guideline */}
+            <line
+              x1={100}
+              y1={dimensions.height / 2 - 48}
+              x2={dimensions.width - 100}
+              y2={dimensions.height / 2 - 48}
+              stroke="hsl(var(--border))"
+              strokeOpacity={0.1}
+            />
+            
+            {/* Connections */}
+            {renderConnections()}
+            
+            {/* Nodes */}
+            {nodes.map(renderNode)}
+          </g>
+        </svg>
+
+        {/* Tooltip */}
+        {renderTooltip()}
+        
+        {/* Instructions */}
+        <div className="absolute bottom-3 left-3 text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded border border-border/50">
+          {isMobile 
+            ? 'Tap nodes to expand. Tap labels for details.' 
+            : 'Click nodes to expand. Drag spine nodes to simulate cascades. Click labels for details.'}
         </div>
       </div>
     </div>

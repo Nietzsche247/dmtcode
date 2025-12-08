@@ -4,7 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { IntroductionAccordion } from "@/components/forecasts/IntroductionAccordion";
 import { ConfidenceTierFilters, type ConfidenceTier } from "@/components/forecasts/ConfidenceTierFilters";
-import { CriticalPathTimeline } from "@/components/forecasts/CriticalPathTimeline";
+import { InteractiveTimeline } from "@/components/forecasts/InteractiveTimeline";
 import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { DependencyGraphD3 } from "@/components/forecasts/DependencyGraphD3";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
@@ -175,7 +175,7 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* Critical Path Timeline */}
+            {/* Interactive Node Timeline */}
             <section className="container mx-auto px-4 py-6">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
@@ -184,8 +184,8 @@ export default function Forecasts() {
                     The causal chain from AI capability to superintelligence
                   </p>
                 </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6 overflow-x-auto">
-                  <CriticalPathTimeline
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                  <InteractiveTimeline
                     events={events}
                     dependencyRules={dependencyRules}
                     confidenceTier={confidenceTier}
