@@ -1,6 +1,6 @@
-import { useMemo, useState, useRef, useCallback } from "react";
-import { type ForecastEvent } from "@/lib/forecasts-api";
-import { AlertTriangle, TrendingUp, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
+import { type ForecastEvent, type MetaculusComparison, getMetaculusComparisons } from "@/lib/forecasts-api";
+import { AlertTriangle, TrendingUp, Zap, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TimelineVisualizationProps {
@@ -38,6 +38,24 @@ const parseMedianToDecimal = (median: string): number => {
   const quarter = match[1];
   const year = parseInt(match[2]);
   return year + quarterToPosition(quarter);
+};
+
+// Parse ISO date like "2033-08-14" to a decimal year value
+const parseDateToDecimal = (dateStr: string | null): number | null => {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return null;
+  const year = date.getFullYear();
+  const dayOfYear = Math.floor((date.getTime() - new Date(year, 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+  const daysInYear = new Date(year, 11, 31).getTime() - new Date(year, 0, 0).getTime();
+  return year + (dayOfYear / 365);
+};
+
+// Format ISO date to readable format
+const formatMetaculusDate = (dateStr: string | null): string => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 };
 
 // Calculate the spread of distributions using cumulative probability thresholds
@@ -101,7 +119,13 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [cursorTooltip, setCursorTooltip] = useState<CursorTooltip | null>(null);
   const [lockedTooltip, setLockedTooltip] = useState<CursorTooltip | null>(null);
+  const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
   const barRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Fetch Metaculus comparison data
+  useEffect(() => {
+    getMetaculusComparisons().then(setMetaculusData);
+  }, []);
 
   // Calculate cumulative probability at a given position within an event's distribution
   const getCumulativeProbabilityAtPosition = useCallback((
@@ -402,6 +426,13 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
               const isHovered = hoveredEvent === event.name;
               const negative = isNegativeEvent(event.name);
 
+              // Find Metaculus comparison for this event
+              const metaculus = metaculusData.find(m => m.forecast_event_name === event.name);
+              const metaculusDecimal = metaculus ? parseDateToDecimal(metaculus.metaculus_median_date) : null;
+              const metaculusInBar = metaculusDecimal && widthPercent > 0 
+                ? ((yearToPercent(metaculusDecimal) - leftPercent) / widthPercent) * 100 
+                : null;
+
               // Get gradient style based on actual distribution data
               const gradientStyle = getBarGradientStyle(
                 event.type,
@@ -435,10 +466,10 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                     onMouseMove={(e) => handleBarMouseMove(e, event)}
                     onMouseLeave={handleBarMouseLeave}
                   >
-                    {/* Median Marker */}
+                    {/* Median Marker (Our prediction) */}
                     <div
                       className={cn(
-                        "absolute w-1 h-full rounded-full",
+                        "absolute w-1 h-full rounded-full z-10",
                         event.type === 'negative' ? 'bg-destructive' : 
                         event.type === 'foundation' ? 'bg-yellow-500' : 'bg-primary'
                       )}
@@ -447,6 +478,29 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                         transform: 'translateX(-50%)'
                       }}
                     />
+
+                    {/* Metaculus Community Marker */}
+                    {metaculus && metaculusInBar !== null && metaculusInBar >= 0 && metaculusInBar <= 100 && (
+                      <a
+                        href={metaculus.metaculus_url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute h-full flex flex-col items-center z-20 group/metaculus"
+                        style={{
+                          left: `${metaculusInBar}%`,
+                          transform: 'translateX(-50%)'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        title={`Metaculus: ${formatMetaculusDate(metaculus.metaculus_median_date)} (${metaculus.metaculus_forecasters?.toLocaleString()} forecasters)`}
+                      >
+                        {/* "M" Label */}
+                        <span className="absolute -top-5 text-[10px] font-bold text-blue-500 group-hover/metaculus:text-blue-400 transition-colors">
+                          M
+                        </span>
+                        {/* Vertical line */}
+                        <div className="w-0.5 h-full bg-blue-500 opacity-70 group-hover/metaculus:opacity-100 transition-opacity" />
+                      </a>
+                    )}
                   </div>
 
                   {/* Event Label */}
@@ -473,7 +527,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                   {/* Hover Tooltip */}
                   {isHovered && (
                     <div 
-                      className="absolute z-20 bg-popover border border-border rounded-lg p-3 shadow-xl min-w-[220px] animate-fade-in"
+                      className="absolute z-20 bg-popover border border-border rounded-lg p-3 shadow-xl min-w-[240px] animate-fade-in"
                       style={{
                         left: `${medianPercent}%`,
                         transform: 'translateX(-50%)',
@@ -484,7 +538,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                       <div className="text-sm font-semibold text-foreground mb-2">{event.name}</div>
                       <div className="space-y-1 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Median:</span>
+                          <span className="text-muted-foreground">Our Median:</span>
                           <span className="font-medium text-primary">{event.median}</span>
                         </div>
                         <div className="flex justify-between">
@@ -499,6 +553,31 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                           <span className="text-muted-foreground">Probability Mass:</span>
                           <span className="font-medium">{event.totalProbability.toFixed(0)}%</span>
                         </div>
+                        
+                        {/* Metaculus Comparison */}
+                        {metaculus && (
+                          <>
+                            <div className="border-t border-border/50 my-2" />
+                            <div className="flex justify-between items-center">
+                              <span className="text-blue-500 font-medium">Metaculus:</span>
+                              <span className="font-medium text-blue-500">{formatMetaculusDate(metaculus.metaculus_median_date)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Forecasters:</span>
+                              <span className="font-medium">{metaculus.metaculus_forecasters?.toLocaleString()}</span>
+                            </div>
+                            <a 
+                              href={metaculus.metaculus_url || '#'}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-blue-500 hover:text-blue-400 mt-1 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span>View on Metaculus</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </>
+                        )}
                       </div>
                     </div>
                   )}
@@ -508,7 +587,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 pt-6 border-t border-border/30">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-8 pt-6 border-t border-border/30">
             <div className="flex items-center gap-2 text-sm">
               <div className="w-4 h-4 rounded bg-primary/60" />
               <span className="text-muted-foreground">Positive Event</span>
@@ -523,7 +602,14 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-0.5 h-4 bg-foreground" />
-              <span className="text-muted-foreground">Median Date</span>
+              <span className="text-muted-foreground">Our Median</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <div className="flex flex-col items-center">
+                <span className="text-[8px] font-bold text-blue-500 leading-none">M</span>
+                <div className="w-0.5 h-3 bg-blue-500" />
+              </div>
+              <span className="text-muted-foreground">Metaculus Community</span>
             </div>
           </div>
         </div>

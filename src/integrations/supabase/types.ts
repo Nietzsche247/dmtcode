@@ -402,6 +402,45 @@ export type Database = {
           },
         ]
       }
+      metaculus_comparisons: {
+        Row: {
+          forecast_event_name: string
+          id: number
+          last_updated: string | null
+          metaculus_25th_date: string | null
+          metaculus_75th_date: string | null
+          metaculus_forecasters: number | null
+          metaculus_median_date: string | null
+          metaculus_question_id: number
+          metaculus_title: string | null
+          metaculus_url: string | null
+        }
+        Insert: {
+          forecast_event_name: string
+          id?: number
+          last_updated?: string | null
+          metaculus_25th_date?: string | null
+          metaculus_75th_date?: string | null
+          metaculus_forecasters?: number | null
+          metaculus_median_date?: string | null
+          metaculus_question_id: number
+          metaculus_title?: string | null
+          metaculus_url?: string | null
+        }
+        Update: {
+          forecast_event_name?: string
+          id?: number
+          last_updated?: string | null
+          metaculus_25th_date?: string | null
+          metaculus_75th_date?: string | null
+          metaculus_forecasters?: number | null
+          metaculus_median_date?: string | null
+          metaculus_question_id?: number
+          metaculus_title?: string | null
+          metaculus_url?: string | null
+        }
+        Relationships: []
+      }
       product_ratings: {
         Row: {
           accuracy_rating: number

@@ -2,6 +2,8 @@
 // Uses edge function proxy to avoid CORS issues with external Supabase
 
 const PROXY_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/forecasts-proxy`;
+const LOCAL_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const LOCAL_SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 // Types for the forecasts data (matches actual external Supabase schema)
 export interface Forecast {
@@ -43,6 +45,19 @@ export interface Methodology {
   content: string;
   version: string;
   updated_at: string;
+}
+
+export interface MetaculusComparison {
+  id: number;
+  forecast_event_name: string;
+  metaculus_question_id: number;
+  metaculus_title: string | null;
+  metaculus_url: string | null;
+  metaculus_median_date: string | null;
+  metaculus_25th_date: string | null;
+  metaculus_75th_date: string | null;
+  metaculus_forecasters: number | null;
+  last_updated: string;
 }
 
 export interface ForecastEvent {
@@ -109,6 +124,32 @@ export async function getCascadeEffects(): Promise<Methodology[]> {
 
 export async function getConditionalRules(): Promise<Methodology[]> {
   return getMethodology('conditional_probability_rules');
+}
+
+// Fetch Metaculus comparison data from local Supabase
+export async function getMetaculusComparisons(): Promise<MetaculusComparison[]> {
+  try {
+    const response = await fetch(
+      `${LOCAL_SUPABASE_URL}/rest/v1/metaculus_comparisons?select=*`,
+      {
+        headers: {
+          'apikey': LOCAL_SUPABASE_KEY,
+          'Authorization': `Bearer ${LOCAL_SUPABASE_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      console.error('Metaculus fetch error:', response.status, response.statusText);
+      return [];
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching Metaculus comparisons:', error);
+    return [];
+  }
 }
 
 // Infer event type based on event name keywords
