@@ -13,15 +13,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
   getMethodology, 
+  getMetaculusComparisons,
   processForecasts,
   type ForecastEvent,
-  type Methodology 
+  type Methodology,
+  type MetaculusComparison
 } from "@/lib/forecasts-api";
 import { format } from "date-fns";
 
 export default function Forecasts() {
   const [events, setEvents] = useState<ForecastEvent[]>([]);
   const [methodology, setMethodology] = useState<Methodology[]>([]);
+  const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
@@ -39,9 +42,10 @@ export default function Forecasts() {
         setLoading(true);
         setError(null);
         
-        const [forecastsData, methodologyData] = await Promise.all([
+        const [forecastsData, methodologyData, metaculus] = await Promise.all([
           getForecasts(),
-          getMethodology()
+          getMethodology(),
+          getMetaculusComparisons()
         ]);
         
         if (forecastsData.length > 0) {
@@ -57,6 +61,7 @@ export default function Forecasts() {
         }
         
         setMethodology(methodologyData);
+        setMetaculusData(metaculus);
       } catch (err) {
         console.error('Error loading forecasts:', err);
         setError('Failed to load forecast data. Please try again later.');
@@ -189,6 +194,7 @@ export default function Forecasts() {
                   <ForecastEventCard 
                     key={event.name} 
                     event={event}
+                    metaculus={metaculusData.find(m => m.forecast_event_name === event.name)}
                     onClick={() => handleEventClick(event)}
                   />
                 ))}
