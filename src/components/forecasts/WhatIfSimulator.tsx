@@ -1,10 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { type ForecastEvent } from "@/lib/forecasts-api";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { RotateCcw, ArrowRight, AlertTriangle, Zap, TrendingUp } from "lucide-react";
+import { RotateCcw, ArrowRight, AlertTriangle, Zap, TrendingUp, Share2, Check, Link2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface WhatIfSimulatorProps {
   events: ForecastEvent[];
@@ -92,7 +94,38 @@ const DEPENDENCY_RULES: Record<string, { targets: { name: string; ratio: number 
   },
 };
 
+// Encode adjustments to URL-safe string
+const encodeAdjustments = (values: Record<string, number>, initial: Record<string, number>): string => {
+  const changes: string[] = [];
+  Object.entries(values).forEach(([key, value]) => {
+    if (value !== initial[key]) {
+      // Encode as key:value pairs, using short keys
+      const shortKey = key.replace(/\s+/g, '_');
+      changes.push(`${shortKey}:${value.toFixed(2)}`);
+    }
+  });
+  return changes.join(',');
+};
+
+// Decode adjustments from URL string
+const decodeAdjustments = (encoded: string): Record<string, number> => {
+  const result: Record<string, number> = {};
+  if (!encoded) return result;
+  
+  encoded.split(',').forEach(pair => {
+    const [key, value] = pair.split(':');
+    if (key && value) {
+      const normalKey = key.replace(/_/g, ' ');
+      result[normalKey] = parseFloat(value);
+    }
+  });
+  return result;
+};
+
 export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [copied, setCopied] = useState(false);
+  
   // Initialize adjusted values from original events
   const initialValues = useMemo(() => {
     const values: Record<string, number> = {};
@@ -105,6 +138,19 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
 
   const [adjustedValues, setAdjustedValues] = useState<Record<string, number>>(initialValues);
   const [manuallyAdjusted, setManuallyAdjusted] = useState<Set<string>>(new Set());
+
+  // Load state from URL on mount
+  useEffect(() => {
+    const scenario = searchParams.get('scenario');
+    if (scenario && Object.keys(initialValues).length > 0) {
+      const decoded = decodeAdjustments(scenario);
+      if (Object.keys(decoded).length > 0) {
+        const merged = { ...initialValues, ...decoded };
+        setAdjustedValues(merged);
+        setManuallyAdjusted(new Set(Object.keys(decoded)));
+      }
+    }
+  }, [searchParams, initialValues]);
 
   // Calculate cascading effects
   const calculateCascade = useCallback((
@@ -158,6 +204,45 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
   const handleReset = () => {
     setAdjustedValues(initialValues);
     setManuallyAdjusted(new Set());
+    // Clear URL params
+    searchParams.delete('scenario');
+    setSearchParams(searchParams);
+  };
+
+  // Generate and copy share URL
+  const handleShare = async () => {
+    const encoded = encodeAdjustments(adjustedValues, initialValues);
+    
+    if (!encoded) {
+      toast({
+        title: "Nothing to share",
+        description: "Make some adjustments first to create a scenario.",
+      });
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('scenario', encoded);
+    
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      
+      // Also update the URL without reload
+      setSearchParams({ scenario: encoded });
+      
+      toast({
+        title: "Link copied!",
+        description: "Share this URL to let others see your scenario.",
+      });
+    } catch (err) {
+      // Fallback for browsers without clipboard API
+      toast({
+        title: "Share URL",
+        description: url.toString(),
+      });
+    }
   };
 
   // Calculate adjusted events for display
@@ -212,23 +297,51 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">
             Drag the sliders to shift event timelines and see how changes cascade through dependencies.
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleReset}
-          disabled={!hasChanges}
-          className="gap-2"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Reset
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleShare}
+            disabled={!hasChanges}
+            className="gap-2"
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+            {copied ? 'Copied!' : 'Share Scenario'}
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleReset}
+            disabled={!hasChanges}
+            className="gap-2"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </Button>
+        </div>
       </div>
+
+      {/* Shared Scenario Indicator */}
+      {searchParams.get('scenario') && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg text-sm">
+          <Link2 className="h-4 w-4 text-primary" />
+          <span className="text-foreground">
+            Viewing a shared scenario. 
+            <button 
+              onClick={handleReset} 
+              className="ml-1 text-primary hover:underline"
+            >
+              Reset to defaults
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Event Sliders */}
       <div className="space-y-4">
