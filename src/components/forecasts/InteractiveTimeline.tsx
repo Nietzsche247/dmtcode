@@ -1154,6 +1154,75 @@ export function InteractiveTimeline({
         {/* Tooltip */}
         {renderTooltip()}
         
+        {/* Mini-map Navigator */}
+        <div 
+          className="absolute bottom-3 right-3 bg-background/95 backdrop-blur-sm border border-border/60 rounded-lg p-2 shadow-lg"
+          style={{ width: 160, height: 80 }}
+        >
+          <div className="text-[9px] text-muted-foreground mb-1 font-medium uppercase tracking-wide">Mini-map</div>
+          <div 
+            className="relative w-full bg-muted/30 rounded overflow-hidden cursor-pointer"
+            style={{ height: 52 }}
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const ratio = clickX / rect.width;
+              const maxPan = Math.max(0, contentWidth - containerWidth);
+              setPanX(-ratio * maxPan + containerWidth / 2);
+            }}
+          >
+            {/* Full timeline representation */}
+            <svg 
+              width="100%" 
+              height="100%" 
+              viewBox={`0 0 ${BASE_WIDTH} ${BASE_HEIGHT}`}
+              preserveAspectRatio="none"
+            >
+              {/* Background */}
+              <rect width={BASE_WIDTH} height={BASE_HEIGHT} fill="hsl(var(--muted))" opacity={0.3} />
+              
+              {/* Simplified spine nodes */}
+              {nodes.filter(n => n.isSpine).map((node, i) => (
+                <circle
+                  key={`mini-${i}`}
+                  cx={node.x}
+                  cy={node.y}
+                  r={20}
+                  fill={getCategoryColor(node.event.category)}
+                  opacity={0.8}
+                />
+              ))}
+              
+              {/* Spine connections */}
+              {nodes.filter(n => n.isSpine).slice(0, -1).map((node, i) => {
+                const next = nodes.filter(n => n.isSpine)[i + 1];
+                if (!next) return null;
+                return (
+                  <line
+                    key={`mini-line-${i}`}
+                    x1={node.x}
+                    y1={node.y}
+                    x2={next.x}
+                    y2={next.y}
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={4}
+                    opacity={0.6}
+                  />
+                );
+              })}
+            </svg>
+            
+            {/* Viewport indicator */}
+            <div 
+              className="absolute top-0 bottom-0 border-2 border-primary bg-primary/20 rounded-sm pointer-events-none transition-all duration-150"
+              style={{
+                left: `${Math.max(0, (-panX / contentWidth) * 100)}%`,
+                width: `${Math.min(100, (containerWidth / contentWidth) * 100)}%`,
+              }}
+            />
+          </div>
+        </div>
+        
         {/* Instructions */}
         <div className="absolute bottom-3 left-3 text-[11px] text-muted-foreground bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
           {isMobile 
