@@ -3,25 +3,37 @@
 
 const EXTERNAL_SUPABASE_URL = 'https://nhpesihbzrxiherrqhfh.supabase.co/rest/v1';
 
-// Types for the forecasts data
+// Types for the forecasts data (matches actual external Supabase schema)
 export interface Forecast {
-  id: string;
+  id: number;
   event_name: string;
-  event_type: 'positive' | 'negative' | 'foundation';
   year: number;
   quarter: string;
   probability: number;
-  median_date: string;
-  description?: string;
+  is_median: boolean;
+  event_description?: string | null;
+  dependencies?: {
+    depends_on?: string[];
+    enables?: string[];
+  } | null;
   cascade_effects?: {
     tier_1?: string[];
     tier_2?: string[];
     tier_3?: string[];
-  };
-  dependencies?: {
-    depends_on?: string[];
-    enables?: string[];
-  };
+  } | null;
+  conditional_modifier?: number;
+  base_probability?: number | null;
+  cumulative_probability?: number | null;
+  confidence_interval_low?: number | null;
+  confidence_interval_high?: number | null;
+  bayesian_prior?: number | null;
+  bayesian_posterior?: number | null;
+  monte_carlo_mean?: number | null;
+  monte_carlo_std?: number | null;
+  time_decay_factor?: number | null;
+  dependency_weight?: number | null;
+  analysis_notes?: string | null;
+  created_at: string;
   updated_at: string;
 }
 
@@ -37,6 +49,7 @@ export interface ForecastEvent {
   name: string;
   type: 'positive' | 'negative' | 'foundation';
   median: string;
+  description?: string;
   distributions: { quarter: string; year: number; probability: number }[];
   cascadeEffects: {
     tier_1: string[];
@@ -104,6 +117,18 @@ export async function getConditionalRules(): Promise<Methodology[]> {
   return getMethodology('conditional_probability_rules');
 }
 
+// Infer event type based on event name keywords
+function inferEventType(eventName: string): 'positive' | 'negative' | 'foundation' {
+  const lowerName = eventName.toLowerCase();
+  if (lowerName.includes('attack') || lowerName.includes('break') || lowerName.includes('risk')) {
+    return 'negative';
+  }
+  if (lowerName.includes('agi') || lowerName.includes('rsi') || lowerName.includes('quantum')) {
+    return 'foundation';
+  }
+  return 'positive';
+}
+
 // Process raw forecasts into grouped events
 export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
   const eventMap = new Map<string, ForecastEvent>();
@@ -117,11 +142,20 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
         year: forecast.year,
         probability: forecast.probability
       });
+      // Update median if this is the median entry
+      if (forecast.is_median) {
+        existing.median = `${forecast.year} ${forecast.quarter}`;
+      }
+      // Update description if available
+      if (forecast.event_description && !existing.description) {
+        existing.description = forecast.event_description;
+      }
     } else {
       eventMap.set(forecast.event_name, {
         name: forecast.event_name,
-        type: forecast.event_type,
-        median: forecast.median_date,
+        type: inferEventType(forecast.event_name),
+        median: forecast.is_median ? `${forecast.year} ${forecast.quarter}` : '',
+        description: forecast.event_description || undefined,
         distributions: [{
           quarter: forecast.quarter,
           year: forecast.year,
@@ -140,7 +174,24 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
     }
   });
   
-  return Array.from(eventMap.values());
+  // Sort distributions and find median if not explicitly marked
+  const events = Array.from(eventMap.values());
+  events.forEach(event => {
+    event.distributions.sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return a.quarter.localeCompare(b.quarter);
+    });
+    
+    // If no median was marked, estimate from highest probability distribution
+    if (!event.median && event.distributions.length > 0) {
+      const maxDist = event.distributions.reduce((max, d) => 
+        d.probability > max.probability ? d : max
+      );
+      event.median = `${maxDist.year} ${maxDist.quarter}`;
+    }
+  });
+  
+  return events;
 }
 
 // Export data as JSON
