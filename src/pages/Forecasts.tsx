@@ -8,6 +8,7 @@ import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordio
 import { TimelineVisualization } from "@/components/forecasts/TimelineVisualization";
 import { DependencyGraph } from "@/components/forecasts/DependencyGraph";
 import { WhatIfSimulator } from "@/components/forecasts/WhatIfSimulator";
+import { ForecastEventModal } from "@/components/forecasts/ForecastEventModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -24,6 +25,13 @@ export default function Forecasts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<ForecastEvent | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleEventClick = (event: ForecastEvent) => {
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -144,9 +152,7 @@ export default function Forecasts() {
               <div className="bg-card/30 border border-border/50 rounded-xl p-6">
                 <TimelineVisualization 
                   events={events}
-                  onEventClick={(event) => {
-                    console.log('Timeline event clicked:', event.name);
-                  }}
+                  onEventClick={handleEventClick}
                 />
               </div>
             </div>
@@ -163,9 +169,7 @@ export default function Forecasts() {
               <div className="bg-card/30 border border-border/50 rounded-xl p-6">
                 <DependencyGraph 
                   events={events}
-                  onEventClick={(event) => {
-                    console.log('Graph node clicked:', event.name);
-                  }}
+                  onEventClick={handleEventClick}
                 />
               </div>
             </div>
@@ -181,13 +185,11 @@ export default function Forecasts() {
               </h2>
               
               <div className="grid md:grid-cols-2 gap-6">
-                {events.map((event, index) => (
+                {events.map((event) => (
                   <ForecastEventCard 
                     key={event.name} 
                     event={event}
-                    onClick={() => {
-                      console.log('Event clicked:', event.name);
-                    }}
+                    onClick={() => handleEventClick(event)}
                   />
                 ))}
               </div>
@@ -259,6 +261,13 @@ export default function Forecasts() {
       </main>
 
       <Footer />
+
+      <ForecastEventModal
+        event={selectedEvent}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        allEvents={events}
+      />
     </>
   );
 }
