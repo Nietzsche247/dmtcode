@@ -643,9 +643,7 @@ export function InteractiveTimeline({
             "transition-all duration-200",
             isSpine && onEventDrag && "cursor-grab active:cursor-grabbing"
           )}
-          style={{
-            filter: hasShifted ? 'drop-shadow(0 0 10px hsl(var(--primary) / 0.6))' : undefined
-          }}
+          filter={isSpine ? (isHovered || isDragging ? "url(#spine-glow-intense)" : "url(#spine-glow)") : undefined}
           onMouseEnter={() => setHoveredNode(id)}
           onMouseLeave={() => setHoveredNode(null)}
           onClick={() => handleNodeClick(id, isSpine)}
@@ -893,8 +891,36 @@ export function InteractiveTimeline({
           height={dimensions.height}
           className="absolute inset-0"
         >
-          {/* Pulse animation styles */}
+          {/* Filters and animation styles */}
           <defs>
+            {/* Glow filter for spine nodes */}
+            <filter id="spine-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            
+            {/* Intense glow for hovered/dragging state */}
+            <filter id="spine-glow-intense" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            
+            {/* Pulse ring glow */}
+            <filter id="pulse-glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            
             <style>{`
               @keyframes pulse-expand {
                 0% {
@@ -932,10 +958,12 @@ export function InteractiveTimeline({
               }
               .spine-pulse-ring {
                 animation: pulse-expand 2s ease-in-out infinite;
+                filter: url(#pulse-glow);
               }
               .spine-pulse-ring-2 {
                 animation: pulse-expand-2 2s ease-in-out infinite;
                 animation-delay: 1s;
+                filter: url(#pulse-glow);
               }
             `}</style>
           </defs>
