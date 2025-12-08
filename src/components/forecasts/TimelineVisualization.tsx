@@ -31,9 +31,14 @@ const parseMedianToDecimal = (median: string): number => {
   return year + quarterToPosition(quarter);
 };
 
-// Calculate the spread of distributions (uncertainty range)
-const calculateSpread = (distributions: { quarter: string; year: number; probability: number }[]): { start: number; end: number } => {
-  if (distributions.length === 0) return { start: 0, end: 0 };
+// Calculate the spread of distributions using cumulative probability thresholds
+const calculateSpread = (distributions: { quarter: string; year: number; probability: number }[]): { 
+  start: number; 
+  end: number;
+  peakPosition: number;
+  distributionData: { position: number; probability: number }[];
+} => {
+  if (distributions.length === 0) return { start: 2025, end: 2035, peakPosition: 2030, distributionData: [] };
   
   // Sort by year and quarter
   const sorted = [...distributions].sort((a, b) => {
@@ -42,35 +47,45 @@ const calculateSpread = (distributions: { quarter: string; year: number; probabi
     return aVal - bVal;
   });
   
-  // Find the range that contains most of the probability mass (e.g., 80%)
-  let totalProb = sorted.reduce((sum, d) => sum + d.probability, 0);
+  const totalProb = sorted.reduce((sum, d) => sum + d.probability, 0);
+  
+  // Create distribution data for gradient calculation
+  const distributionData = sorted.map(d => ({
+    position: d.year + quarterToPosition(d.quarter),
+    probability: d.probability / totalProb // Normalize
+  }));
+  
+  // Find peak probability position (for darkest gradient point)
+  let maxProb = 0;
+  let peakPosition = distributionData[0]?.position || 2030;
+  for (const d of distributionData) {
+    if (d.probability > maxProb) {
+      maxProb = d.probability;
+      peakPosition = d.position;
+    }
+  }
+  
+  // Calculate cumulative probability to find 5% and 95% thresholds
   let cumProb = 0;
-  let startIdx = 0;
-  let endIdx = sorted.length - 1;
+  let startPosition = distributionData[0]?.position || 2025;
+  let endPosition = distributionData[distributionData.length - 1]?.position || 2035;
+  let foundStart = false;
   
-  // Find 10th percentile
-  for (let i = 0; i < sorted.length; i++) {
-    cumProb += sorted[i].probability;
-    if (cumProb >= totalProb * 0.1) {
-      startIdx = i;
+  for (const d of distributionData) {
+    cumProb += d.probability;
+    // Find first position where cumulative prob > 5%
+    if (!foundStart && cumProb > 0.05) {
+      startPosition = d.position;
+      foundStart = true;
+    }
+    // Find first position where cumulative prob > 95%
+    if (cumProb > 0.95) {
+      endPosition = d.position;
       break;
     }
   }
   
-  // Find 90th percentile
-  cumProb = 0;
-  for (let i = sorted.length - 1; i >= 0; i--) {
-    cumProb += sorted[i].probability;
-    if (cumProb >= totalProb * 0.1) {
-      endIdx = i;
-      break;
-    }
-  }
-  
-  const startVal = sorted[startIdx].year + quarterToPosition(sorted[startIdx].quarter);
-  const endVal = sorted[endIdx].year + quarterToPosition(sorted[endIdx].quarter);
-  
-  return { start: startVal, end: endVal };
+  return { start: startPosition, end: endPosition, peakPosition, distributionData };
 };
 
 export function TimelineVisualization({ events, onEventClick }: TimelineVisualizationProps) {
@@ -128,10 +143,54 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
     return 'bg-primary/80 border-primary';
   };
 
-  const getBarGradient = (type: ForecastEvent['type']) => {
-    if (type === 'negative') return 'from-destructive/30 via-destructive/60 to-destructive/30';
-    if (type === 'foundation') return 'from-yellow-500/30 via-yellow-500/60 to-yellow-500/30';
-    return 'from-primary/30 via-primary/60 to-primary/30';
+  // Generate inline gradient style based on probability distribution
+  const getBarGradientStyle = (
+    type: ForecastEvent['type'],
+    medianPercent: number, // Position of median within bar (0-100)
+    distributionData: { position: number; probability: number }[],
+    barStart: number,
+    barEnd: number
+  ): React.CSSProperties => {
+    const baseColor = type === 'negative' 
+      ? 'hsl(var(--destructive))' 
+      : type === 'foundation' 
+        ? 'hsl(48, 96%, 53%)' // yellow-500
+        : 'hsl(var(--primary))';
+    
+    const barWidth = barEnd - barStart;
+    if (barWidth <= 0 || distributionData.length === 0) {
+      return { background: `${baseColor}40` };
+    }
+    
+    // Build gradient stops based on actual probability distribution
+    const stops: string[] = [];
+    
+    for (const d of distributionData) {
+      // Calculate position within the bar (0-100%)
+      const posInBar = ((d.position - barStart) / barWidth) * 100;
+      if (posInBar >= 0 && posInBar <= 100) {
+        // Opacity based on probability (derivative of cumulative = PDF)
+        // Scale probability to opacity (min 15%, max 85%)
+        const maxProb = Math.max(...distributionData.map(x => x.probability));
+        const normalizedProb = d.probability / maxProb;
+        const opacity = 0.15 + normalizedProb * 0.70;
+        const alpha = Math.round(opacity * 255).toString(16).padStart(2, '0');
+        stops.push(`${baseColor.replace(')', `, ${opacity})`).replace('hsl', 'hsla')} ${posInBar.toFixed(1)}%`);
+      }
+    }
+    
+    // Add edge fades if needed
+    if (stops.length === 0) {
+      return { background: `${baseColor}40` };
+    }
+    
+    // Ensure smooth edges
+    const firstStop = stops[0];
+    const lastStop = stops[stops.length - 1];
+    
+    return {
+      background: `linear-gradient(to right, ${baseColor}10 0%, ${stops.join(', ')}, ${baseColor}10 100%)`
+    };
   };
 
   const isNegativeEvent = (name: string) => {
@@ -177,8 +236,18 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
               const rightPercent = yearToPercent(event.spread.end);
               const widthPercent = Math.max(rightPercent - leftPercent, 3); // Minimum width
               const medianPercent = yearToPercent(event.medianDecimal);
+              const medianInBar = widthPercent > 0 ? ((medianPercent - leftPercent) / widthPercent) * 100 : 50;
               const isHovered = hoveredEvent === event.name;
               const negative = isNegativeEvent(event.name);
+
+              // Get gradient style based on actual distribution data
+              const gradientStyle = getBarGradientStyle(
+                event.type,
+                medianInBar,
+                event.spread.distributionData,
+                event.spread.start,
+                event.spread.end
+              );
 
               return (
                 <div 
@@ -191,15 +260,14 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                   <div
                     className={cn(
                       "absolute h-8 rounded-lg cursor-pointer transition-all duration-200",
-                      "bg-gradient-to-r",
-                      getBarGradient(event.type),
                       isHovered && "scale-y-110 shadow-lg"
                     )}
                     style={{
                       left: `${leftPercent}%`,
                       width: `${widthPercent}%`,
                       top: '50%',
-                      transform: 'translateY(-50%)'
+                      transform: 'translateY(-50%)',
+                      ...gradientStyle
                     }}
                     onClick={() => onEventClick?.(event)}
                   >
@@ -211,7 +279,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                         event.type === 'foundation' ? 'bg-yellow-500' : 'bg-primary'
                       )}
                       style={{
-                        left: `${((medianPercent - leftPercent) / widthPercent) * 100}%`,
+                        left: `${medianInBar}%`,
                         transform: 'translateX(-50%)'
                       }}
                     />
