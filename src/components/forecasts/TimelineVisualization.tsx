@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 import { type ForecastEvent } from "@/lib/forecasts-api";
 import { AlertTriangle, TrendingUp, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,13 @@ import { cn } from "@/lib/utils";
 interface TimelineVisualizationProps {
   events: ForecastEvent[];
   onEventClick?: (event: ForecastEvent) => void;
+}
+
+interface CursorTooltip {
+  x: number;
+  y: number;
+  year: string;
+  probability: number;
 }
 
 // Years to display on timeline
@@ -90,7 +97,63 @@ const calculateSpread = (distributions: { quarter: string; year: number; probabi
 
 export function TimelineVisualization({ events, onEventClick }: TimelineVisualizationProps) {
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
-  
+  const [cursorTooltip, setCursorTooltip] = useState<CursorTooltip | null>(null);
+  const barRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Calculate cumulative probability at a given position within an event's distribution
+  const getCumulativeProbabilityAtPosition = useCallback((
+    distributionData: { position: number; probability: number }[],
+    targetPosition: number
+  ): number => {
+    if (distributionData.length === 0) return 0;
+    
+    let cumulative = 0;
+    for (const d of distributionData) {
+      if (d.position <= targetPosition) {
+        cumulative += d.probability;
+      }
+    }
+    return Math.min(cumulative * 100, 100);
+  }, []);
+
+  // Handle mouse move on bar to show probability tooltip
+  const handleBarMouseMove = useCallback((
+    e: React.MouseEvent<HTMLDivElement>,
+    event: typeof processedEvents[0]
+  ) => {
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const relativeX = e.clientX - rect.left;
+    const percentInBar = relativeX / rect.width;
+    
+    // Calculate the year position from percentage in bar
+    const barStart = event.spread.start;
+    const barEnd = event.spread.end;
+    const yearPosition = barStart + percentInBar * (barEnd - barStart);
+    
+    // Get cumulative probability at this position
+    const cumProb = getCumulativeProbabilityAtPosition(
+      event.spread.distributionData,
+      yearPosition
+    );
+    
+    // Format year as quarter
+    const year = Math.floor(yearPosition);
+    const quarterNum = Math.ceil((yearPosition % 1) * 4) || 1;
+    const quarterStr = `Q${quarterNum} ${year}`;
+    
+    setCursorTooltip({
+      x: e.clientX,
+      y: rect.top,
+      year: quarterStr,
+      probability: cumProb
+    });
+  }, [getCumulativeProbabilityAtPosition]);
+
+  const handleBarMouseLeave = useCallback(() => {
+    setCursorTooltip(null);
+  }, []);
+
   // Process events for timeline positioning
   const processedEvents = useMemo(() => {
     return events.map(event => {
@@ -200,7 +263,24 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {/* Cursor Probability Tooltip */}
+      {cursorTooltip && (
+        <div
+          className="fixed z-50 pointer-events-none bg-popover/95 border border-border rounded-md px-2 py-1 shadow-lg backdrop-blur-sm animate-fade-in"
+          style={{
+            left: cursorTooltip.x,
+            top: cursorTooltip.y - 40,
+            transform: 'translateX(-50%)'
+          }}
+        >
+          <div className="text-xs font-medium text-foreground whitespace-nowrap">
+            <span className="text-muted-foreground">{cursorTooltip.year}:</span>
+            <span className="ml-1.5 text-primary font-semibold">{cursorTooltip.probability.toFixed(1)}%</span>
+          </div>
+        </div>
+      )}
+
       {/* Timeline Container */}
       <div className="relative overflow-x-auto pb-4">
         <div className="min-w-[900px] px-4">
@@ -270,6 +350,8 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                       ...gradientStyle
                     }}
                     onClick={() => onEventClick?.(event)}
+                    onMouseMove={(e) => handleBarMouseMove(e, event)}
+                    onMouseLeave={handleBarMouseLeave}
                   >
                     {/* Median Marker */}
                     <div
