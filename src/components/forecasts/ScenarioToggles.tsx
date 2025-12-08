@@ -37,7 +37,7 @@ export function ScenarioToggles({
   onReset,
   affectedCount
 }: ScenarioTogglesProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="bg-card/50 border border-border/50 rounded-xl overflow-hidden">
