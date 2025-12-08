@@ -825,8 +825,17 @@ export function InteractiveTimeline({
             <div className="w-6 h-0.5 bg-primary rounded" />
             <span>Critical Chain</span>
           </div>
+          <div className="hidden lg:flex items-center gap-2 border-l border-border pl-3">
+            <span className="text-primary font-medium">80%</span>
+            <span>Cascade Strength</span>
+          </div>
         </div>
       </div>
+      
+      {/* Cascade strength tooltip */}
+      <p className="text-[10px] md:text-xs text-muted-foreground/70 text-center max-w-2xl mx-auto">
+        Percentages indicate cascade strength: when an upstream event shifts, downstream events shift proportionally. An 80% cascade means a 4-quarter delay upstream causes a 3.2-quarter delay downstream.
+      </p>
 
       {/* Timeline container */}
       <div 
