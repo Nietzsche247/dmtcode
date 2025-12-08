@@ -47,6 +47,17 @@ export interface Methodology {
   updated_at: string;
 }
 
+export interface DependencyRule {
+  id: number;
+  source_event: string;
+  target_event: string;
+  dependency_type: 'hard' | 'soft';
+  shift_ratio: number;
+  min_gap_quarters?: number | null;
+  constraint_floor?: string | null;
+  description?: string | null;
+}
+
 export interface MetaculusComparison {
   id: number;
   forecast_event_name: string;
@@ -63,8 +74,14 @@ export interface MetaculusComparison {
 export interface ForecastEvent {
   name: string;
   type: 'positive' | 'negative' | 'foundation';
+  category: EventCategory;
   median: string;
+  medianYear: number;
+  medianQuarter: string;
+  probability: number;
+  isPrimary: boolean;
   description?: string;
+  analysisNotes?: string;
   distributions: { quarter: string; year: number; probability: number }[];
   cascadeEffects: {
     tier_1: string[];
@@ -75,6 +92,66 @@ export interface ForecastEvent {
     depends_on: string[];
     enables: string[];
   };
+}
+
+export type EventCategory = 
+  | 'ai' 
+  | 'geopolitical' 
+  | 'economic' 
+  | 'quantum' 
+  | 'biological' 
+  | 'robotics' 
+  | 'governance' 
+  | 'default';
+
+// Category colors for timeline nodes
+export const CATEGORY_COLORS: Record<EventCategory, string> = {
+  ai: '#3B82F6',        // blue
+  geopolitical: '#EF4444', // red
+  economic: '#F59E0B',  // amber
+  quantum: '#8B5CF6',   // purple
+  biological: '#10B981', // green
+  robotics: '#EC4899',  // pink
+  governance: '#6366F1', // indigo
+  default: '#94A3B8',   // gray
+};
+
+// Derive category from event name patterns
+export function inferCategory(eventName: string): EventCategory {
+  const lowerName = eventName.toLowerCase();
+  
+  if (lowerName.includes('ai') || lowerName.includes('agi') || lowerName.includes('asi') || 
+      lowerName.includes('reasoning') || lowerName.includes('rsi') || 
+      lowerName.includes('cognitive') || lowerName.includes('r&d') || lowerName.includes('agent')) {
+    return 'ai';
+  }
+  if (lowerName.includes('taiwan') || lowerName.includes('china') || 
+      lowerName.includes('military') || lowerName.includes('conflict')) {
+    return 'geopolitical';
+  }
+  if (lowerName.includes('unemployment') || lowerName.includes('market') || 
+      lowerName.includes('financial') || lowerName.includes('recession') || 
+      lowerName.includes('ubi') || lowerName.includes('hiring') || lowerName.includes('economic')) {
+    return 'economic';
+  }
+  if (lowerName.includes('quantum') || lowerName.includes('encryption') || 
+      lowerName.includes('crypto') || lowerName.includes('rsa')) {
+    return 'quantum';
+  }
+  if (lowerName.includes('bio') || lowerName.includes('anti-aging') || 
+      lowerName.includes('health') || lowerName.includes('dna') || lowerName.includes('aging')) {
+    return 'biological';
+  }
+  if (lowerName.includes('robot') || lowerName.includes('labor') || 
+      lowerName.includes('warehouse') || lowerName.includes('automation') || lowerName.includes('humanoid')) {
+    return 'robotics';
+  }
+  if (lowerName.includes('government') || lowerName.includes('regulation') || 
+      lowerName.includes('un') || lowerName.includes('task force') || lowerName.includes('policy')) {
+    return 'governance';
+  }
+  
+  return 'default';
 }
 
 async function fetchViaProxy(table: string, select: string = '*', order?: string): Promise<unknown[]> {
@@ -101,6 +178,16 @@ export async function getForecasts(): Promise<Forecast[]> {
     return data as Forecast[];
   } catch (error) {
     console.error('Error fetching forecasts:', error);
+    return [];
+  }
+}
+
+export async function getDependencyRules(): Promise<DependencyRule[]> {
+  try {
+    const data = await fetchViaProxy('dependency_rules', '*');
+    return data as DependencyRule[];
+  } catch (error) {
+    console.error('Error fetching dependency rules:', error);
     return [];
   }
 }
@@ -155,13 +242,33 @@ export async function getMetaculusComparisons(): Promise<MetaculusComparison[]> 
 // Infer event type based on event name keywords
 function inferEventType(eventName: string): 'positive' | 'negative' | 'foundation' {
   const lowerName = eventName.toLowerCase();
-  if (lowerName.includes('attack') || lowerName.includes('break') || lowerName.includes('risk')) {
+  if (lowerName.includes('attack') || lowerName.includes('break') || lowerName.includes('risk') || 
+      lowerName.includes('conflict') || lowerName.includes('unemployment') || lowerName.includes('recession')) {
     return 'negative';
   }
-  if (lowerName.includes('agi') || lowerName.includes('rsi') || lowerName.includes('quantum')) {
+  if (lowerName.includes('agi') || lowerName.includes('rsi') || lowerName.includes('quantum') ||
+      lowerName.includes('asi') || lowerName.includes('superintelligence')) {
     return 'foundation';
   }
   return 'positive';
+}
+
+// Check if event is primary (not conditional)
+function isPrimaryEvent(analysisNotes?: string | null): boolean {
+  if (!analysisNotes) return true;
+  return !analysisNotes.trim().toUpperCase().startsWith('CONDITIONAL');
+}
+
+// Parse quarter string to numeric quarter
+export function quarterToNumber(quarter: string): number {
+  const match = quarter.match(/Q(\d)/);
+  return match ? parseInt(match[1]) : 1;
+}
+
+// Convert year and quarter to decimal position
+export function toDecimalDate(year: number, quarter: string): number {
+  const q = quarterToNumber(quarter);
+  return year + (q - 1) * 0.25;
 }
 
 // Process raw forecasts into grouped events
@@ -179,18 +286,32 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
       });
       // Update median if this is the median entry
       if (forecast.is_median) {
-        existing.median = `${forecast.year} ${forecast.quarter}`;
+        existing.median = `${forecast.quarter} ${forecast.year}`;
+        existing.medianYear = forecast.year;
+        existing.medianQuarter = forecast.quarter;
+        existing.probability = forecast.probability;
       }
       // Update description if available
       if (forecast.event_description && !existing.description) {
         existing.description = forecast.event_description;
       }
+      // Update analysis notes
+      if (forecast.analysis_notes && !existing.analysisNotes) {
+        existing.analysisNotes = forecast.analysis_notes;
+        existing.isPrimary = isPrimaryEvent(forecast.analysis_notes);
+      }
     } else {
       eventMap.set(forecast.event_name, {
         name: forecast.event_name,
         type: inferEventType(forecast.event_name),
-        median: forecast.is_median ? `${forecast.year} ${forecast.quarter}` : '',
+        category: inferCategory(forecast.event_name),
+        median: forecast.is_median ? `${forecast.quarter} ${forecast.year}` : '',
+        medianYear: forecast.is_median ? forecast.year : 0,
+        medianQuarter: forecast.is_median ? forecast.quarter : '',
+        probability: forecast.is_median ? forecast.probability : 0,
+        isPrimary: isPrimaryEvent(forecast.analysis_notes),
         description: forecast.event_description || undefined,
+        analysisNotes: forecast.analysis_notes || undefined,
         distributions: [{
           quarter: forecast.quarter,
           year: forecast.year,
@@ -222,21 +343,34 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
       const maxDist = event.distributions.reduce((max, d) => 
         d.probability > max.probability ? d : max
       );
-      event.median = `${maxDist.year} ${maxDist.quarter}`;
+      event.median = `${maxDist.quarter} ${maxDist.year}`;
+      event.medianYear = maxDist.year;
+      event.medianQuarter = maxDist.quarter;
+      event.probability = maxDist.probability;
     }
   });
+  
+  // Sort events chronologically by median
+  events.sort((a, b) => toDecimalDate(a.medianYear, a.medianQuarter) - toDecimalDate(b.medianYear, b.medianQuarter));
   
   return events;
 }
 
-// Export data as JSON
-export function exportAsJSON(events: ForecastEvent[], methodology: Methodology[]) {
+// Export data as JSON with scenario state
+export function exportAsJSON(
+  events: ForecastEvent[], 
+  methodology: Methodology[],
+  scenarios?: { taiwanConflict: boolean; alignment: string }
+) {
   const exportData = {
-    generated_at: new Date().toISOString(),
-    version: '1.0',
+    export_date: new Date().toISOString().split('T')[0],
+    version: '2.0',
     events: events.map(event => ({
       name: event.name,
+      category: event.category,
       median: event.median,
+      probability: event.probability,
+      isPrimary: event.isPrimary,
       type: event.type,
       distribution: event.distributions,
       cascade_effects: event.cascadeEffects,
@@ -246,32 +380,39 @@ export function exportAsJSON(events: ForecastEvent[], methodology: Methodology[]
       section: m.section_name,
       content: m.content,
       version: m.version
-    }))
+    })),
+    scenarios: scenarios || {
+      taiwan_conflict: true,
+      alignment: 'cooperative'
+    }
   };
   
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `technology-forecasts-${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `ai-timeline-forecast-${new Date().toISOString().split('T')[0]}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
 // Export data as CSV
 export function exportAsCSV(events: ForecastEvent[]) {
-  const headers = ['Event Name', 'Type', 'Median', 'Quarter', 'Year', 'Probability'];
+  const headers = ['Event Name', 'Category', 'Type', 'Primary', 'Median', 'Probability', 'Quarter', 'Year', 'Distribution Probability'];
   const rows: string[][] = [];
   
   events.forEach(event => {
     event.distributions.forEach(dist => {
       rows.push([
         event.name,
+        event.category,
         event.type,
+        event.isPrimary ? 'Yes' : 'No',
         event.median,
+        (event.probability * 100).toFixed(1) + '%',
         dist.quarter,
         dist.year.toString(),
-        dist.probability.toString()
+        (dist.probability * 100).toFixed(1) + '%'
       ]);
     });
   });
@@ -284,7 +425,7 @@ export function exportAsCSV(events: ForecastEvent[]) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `technology-forecasts-${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = `ai-timeline-forecast-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }

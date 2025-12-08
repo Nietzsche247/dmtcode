@@ -2,38 +2,59 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { ForecastEventCard } from "@/components/forecasts/ForecastEventCard";
+import { InteractiveTimeline } from "@/components/forecasts/InteractiveTimeline";
+import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
+import { ScenarioToggles, type AlignmentBranch } from "@/components/forecasts/ScenarioToggles";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
-import { TimelineVisualization } from "@/components/forecasts/TimelineVisualization";
-import { DependencyGraph } from "@/components/forecasts/DependencyGraph";
-import { WhatIfSimulator } from "@/components/forecasts/WhatIfSimulator";
-import { ForecastEventModal } from "@/components/forecasts/ForecastEventModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCascadeEngine } from "@/hooks/useCascadeEngine";
 import { 
   getForecasts, 
   getMethodology, 
-  getMetaculusComparisons,
+  getDependencyRules,
   processForecasts,
   type ForecastEvent,
   type Methodology,
-  type MetaculusComparison
+  type DependencyRule
 } from "@/lib/forecasts-api";
 import { format } from "date-fns";
 
 export default function Forecasts() {
   const [events, setEvents] = useState<ForecastEvent[]>([]);
+  const [dependencyRules, setDependencyRules] = useState<DependencyRule[]>([]);
   const [methodology, setMethodology] = useState<Methodology[]>([]);
-  const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  
+  // Panel state
   const [selectedEvent, setSelectedEvent] = useState<ForecastEvent | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+  
+  // Scenario state
+  const [taiwanConflict, setTaiwanConflict] = useState(true);
+  const [alignment, setAlignment] = useState<AlignmentBranch>('cooperative');
+  const [showSecondaryEvents, setShowSecondaryEvents] = useState(true);
+
+  // Cascade engine
+  const {
+    adjustedEvents,
+    affectedEvents,
+    handleEventDrag,
+    reset,
+    affectedCount
+  } = useCascadeEngine(events, dependencyRules);
 
   const handleEventClick = (event: ForecastEvent) => {
     setSelectedEvent(event);
-    setModalOpen(true);
+    setPanelOpen(true);
+  };
+
+  const handleReset = () => {
+    reset();
+    setTaiwanConflict(true);
+    setAlignment('cooperative');
   };
 
   useEffect(() => {
@@ -42,17 +63,16 @@ export default function Forecasts() {
         setLoading(true);
         setError(null);
         
-        const [forecastsData, methodologyData, metaculus] = await Promise.all([
+        const [forecastsData, methodologyData, rulesData] = await Promise.all([
           getForecasts(),
           getMethodology(),
-          getMetaculusComparisons()
+          getDependencyRules()
         ]);
         
         if (forecastsData.length > 0) {
           const processedEvents = processForecasts(forecastsData);
           setEvents(processedEvents);
           
-          // Get most recent update
           const latestUpdate = forecastsData.reduce((latest, f) => {
             const fDate = new Date(f.updated_at);
             return fDate > new Date(latest) ? f.updated_at : latest;
@@ -61,7 +81,7 @@ export default function Forecasts() {
         }
         
         setMethodology(methodologyData);
-        setMetaculusData(metaculus);
+        setDependencyRules(rulesData);
       } catch (err) {
         console.error('Error loading forecasts:', err);
         setError('Failed to load forecast data. Please try again later.');
@@ -76,36 +96,33 @@ export default function Forecasts() {
   return (
     <>
       <Helmet>
-        <title>Technology Forecasts 2025-2035 | DMT Code Project</title>
+        <title>AI Timeline Forecasts 2026-2030 | DMT Code Project</title>
         <meta 
           name="description" 
-          content="Probabilistic model of transformative technology events from 2025-2035. Bayesian probability distributions with conditional dependencies." 
+          content="Interactive probabilistic model of 59 transformative AI events from 2026-2030. Drag events to simulate cascade effects." 
         />
       </Helmet>
 
       <Navigation />
 
       <main className="min-h-screen bg-background pt-20">
-        {/* Header Section */}
+        {/* Header */}
         <section className="container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4">
-              Technology Forecasts
-              <span className="text-primary"> 2025-2035</span>
+              AI Timeline
+              <span className="text-primary"> 2026-2030</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto mb-4">
-              Probabilistic Model of Transformative Events
+              Interactive Probability Model with Cascade Dependencies
             </p>
-            
             {lastUpdated && (
               <p className="text-sm text-muted-foreground">
                 Last updated: {format(new Date(lastUpdated), 'MMMM d, yyyy')}
               </p>
             )}
-            
-            <p className="text-sm text-muted-foreground/70 mt-2 max-w-xl mx-auto">
-              Bayesian probability distributions with conditional dependencies. 
-              See methodology below for details.
+            <p className="text-sm text-muted-foreground/70 mt-2">
+              {events.length} events · {dependencyRules.length} dependency rules · Drag primary events to simulate cascades
             </p>
           </div>
         </section>
@@ -127,153 +144,86 @@ export default function Forecasts() {
           </section>
         )}
 
-        {/* Loading State */}
+        {/* Loading */}
         {loading && (
           <section className="container mx-auto px-4 py-8">
-            <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-card/50 border border-border/50 rounded-lg p-6">
-                  <Skeleton className="h-6 w-3/4 mb-4" />
-                  <div className="flex gap-2 mb-4">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                  <Skeleton className="h-8 w-full mb-4" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              ))}
-            </div>
+            <Skeleton className="h-96 w-full rounded-xl" />
           </section>
         )}
 
-        {/* Timeline Visualization */}
+        {/* Main Content */}
         {!loading && !error && events.length > 0 && (
-          <section className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                Probability Timeline (2025-2035)
-              </h2>
-              <div className="bg-card/30 border border-border/50 rounded-xl p-6">
-                <TimelineVisualization 
-                  events={events}
-                  onEventClick={handleEventClick}
+          <>
+            {/* Scenario Controls */}
+            <section className="container mx-auto px-4 py-4">
+              <div className="max-w-6xl mx-auto">
+                <ScenarioToggles
+                  taiwanConflict={taiwanConflict}
+                  onTaiwanConflictChange={setTaiwanConflict}
+                  alignment={alignment}
+                  onAlignmentChange={setAlignment}
+                  showSecondaryEvents={showSecondaryEvents}
+                  onShowSecondaryEventsChange={setShowSecondaryEvents}
+                  onReset={handleReset}
+                  affectedCount={affectedCount}
                 />
               </div>
-            </div>
-          </section>
-        )}
+            </section>
 
-        {/* Dependency Graph */}
-        {!loading && !error && events.length > 0 && (
-          <section className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                Event Dependencies
-              </h2>
-              <div className="bg-card/30 border border-border/50 rounded-xl p-6">
-                <DependencyGraph 
-                  events={events}
-                  onEventClick={handleEventClick}
-                />
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Event Cards Grid */}
-        {!loading && !error && events.length > 0 && (
-          <section className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                10-Event Probability Model
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                {events.map((event) => (
-                  <ForecastEventCard 
-                    key={event.name} 
-                    event={event}
-                    metaculus={metaculusData.find(m => m.forecast_event_name === event.name)}
-                    onClick={() => handleEventClick(event)}
+            {/* Timeline */}
+            <section className="container mx-auto px-4 py-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="bg-card/30 border border-border/50 rounded-xl p-6 overflow-hidden">
+                  <InteractiveTimeline
+                    events={events}
+                    dependencyRules={dependencyRules}
+                    showSecondaryEvents={showSecondaryEvents}
+                    onEventClick={handleEventClick}
+                    onEventDrag={handleEventDrag}
+                    adjustedEvents={adjustedEvents}
+                    affectedEvents={affectedEvents}
                   />
-                ))}
+                </div>
               </div>
-            </div>
-          </section>
-        )}
+            </section>
 
-        {/* What-If Simulator */}
-        {!loading && !error && events.length > 0 && (
-          <section className="container mx-auto px-4 py-8">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                What-If Simulator
-              </h2>
-              <div className="bg-card/30 border border-border/50 rounded-xl p-6">
-                <WhatIfSimulator events={events} />
+            {/* Export */}
+            <section className="container mx-auto px-4 py-8">
+              <div className="max-w-6xl mx-auto">
+                <ExportButtons events={events} methodology={methodology} />
               </div>
-            </div>
-          </section>
-        )}
+            </section>
 
-        {/* No Data State */}
-        {!loading && !error && events.length === 0 && (
-          <section className="container mx-auto px-4 py-16">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-secondary/30 border border-border/50 rounded-lg p-8">
-                <p className="text-lg text-muted-foreground mb-2">
-                  No forecast data available yet.
-                </p>
-                <p className="text-sm text-muted-foreground/70">
-                  The external database may not be configured or populated.
-                </p>
+            {/* Methodology */}
+            <section className="container mx-auto px-4 py-12">
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Methodology</h2>
+                <MethodologyAccordion methodology={methodology} />
               </div>
-            </div>
-          </section>
+            </section>
+          </>
         )}
-
-        {/* Export Section */}
-        {!loading && events.length > 0 && (
-          <section className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                Data Export
-              </h2>
-              <ExportButtons events={events} methodology={methodology} />
-            </div>
-          </section>
-        )}
-
-        {/* Methodology Section */}
-        <section className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Methodology
-            </h2>
-            <MethodologyAccordion methodology={methodology} />
-          </div>
-        </section>
-
-        {/* Footer Info */}
-        <section className="container mx-auto px-4 py-8 border-t border-border/30">
-          <div className="max-w-4xl mx-auto text-center text-sm text-muted-foreground">
-            <p>Model maintained by Aaron Baker</p>
-            <p className="mt-1">
-              Questions? <a href="/about" className="text-primary hover:underline">Contact us</a>
-            </p>
-          </div>
-        </section>
       </main>
 
       <Footer />
 
-      <ForecastEventModal
+      {/* Detail Panel */}
+      <EventDetailPanel
         event={selectedEvent}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
+        dependencyRules={dependencyRules}
         allEvents={events}
+        isOpen={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        onEventClick={handleEventClick}
       />
+
+      {/* Backdrop for panel */}
+      {panelOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setPanelOpen(false)}
+        />
+      )}
     </>
   );
 }
