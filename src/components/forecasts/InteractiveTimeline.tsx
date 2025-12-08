@@ -8,6 +8,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ChevronDown, ChevronUp, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Particle animation state
+interface Particle {
+  id: number;
+  pathIndex: number;
+  offset: number;
+  speed: number;
+}
+
 interface InteractiveTimelineProps {
   events: ForecastEvent[];
   dependencyRules: DependencyRule[];
@@ -332,6 +340,69 @@ export function InteractiveTimeline({
     return CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
   };
 
+  // Particle animation state
+  const [particleTime, setParticleTime] = useState(0);
+  const animationRef = useRef<number>();
+  
+  // Generate particles for critical chain
+  const particles = useMemo((): Particle[] => {
+    const spineNodes = nodes.filter(n => n.isSpine);
+    const result: Particle[] = [];
+    let id = 0;
+    
+    for (let i = 0; i < spineNodes.length - 1; i++) {
+      // 3 particles per connection with different offsets
+      for (let j = 0; j < 3; j++) {
+        result.push({
+          id: id++,
+          pathIndex: i,
+          offset: j * 0.33,
+          speed: 0.008 + Math.random() * 0.004
+        });
+      }
+    }
+    return result;
+  }, [nodes]);
+  
+  // Particle animation loop
+  useEffect(() => {
+    const animate = () => {
+      setParticleTime(prev => prev + 1);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+  
+  // Calculate particle position along quadratic bezier curve
+  const getParticlePosition = useCallback((
+    sourceX: number, sourceY: number, 
+    targetX: number, targetY: number,
+    progress: number
+  ) => {
+    // Control point for quadratic bezier
+    const midX = (sourceX + targetX) / 2;
+    const controlY = sourceY - 30;
+    
+    // Quadratic bezier formula: (1-t)²P0 + 2(1-t)tP1 + t²P2
+    const t = progress;
+    const mt = 1 - t;
+    
+    const x = mt * mt * (sourceX + SPINE_NODE_RADIUS) + 
+              2 * mt * t * midX + 
+              t * t * (targetX - SPINE_NODE_RADIUS);
+    const y = mt * mt * sourceY + 
+              2 * mt * t * controlY + 
+              t * t * targetY;
+    
+    return { x, y };
+  }, []);
+
   // Render spine connections
   const renderConnections = () => {
     const spineNodes = nodes.filter(n => n.isSpine);
@@ -403,6 +474,51 @@ export function InteractiveTimeline({
     });
     
     return connections;
+  };
+  
+  // Render flowing particles
+  const renderParticles = () => {
+    const spineNodes = nodes.filter(n => n.isSpine);
+    
+    return particles.map(particle => {
+      if (particle.pathIndex >= spineNodes.length - 1) return null;
+      
+      const source = spineNodes[particle.pathIndex];
+      const target = spineNodes[particle.pathIndex + 1];
+      
+      // Calculate positions with drag offset
+      let sourceX = source.x;
+      let targetX = target.x;
+      if (dragNode === source.id && dragDelta) {
+        sourceX += dragDelta.deltaX;
+      }
+      if (dragNode === target.id && dragDelta) {
+        targetX += dragDelta.deltaX;
+      }
+      
+      // Calculate progress along path
+      const progress = ((particleTime * particle.speed + particle.offset) % 1);
+      const pos = getParticlePosition(sourceX, source.y, targetX, target.y, progress);
+      
+      // Fade in at start, fade out at end
+      let opacity = 0.9;
+      if (progress < 0.1) opacity = progress * 9;
+      if (progress > 0.9) opacity = (1 - progress) * 9;
+      
+      return (
+        <circle
+          key={`particle-${particle.id}`}
+          cx={pos.x}
+          cy={pos.y}
+          r={3}
+          fill="#FF6B6B"
+          opacity={opacity}
+          style={{
+            filter: 'drop-shadow(0 0 4px #FF6B6B)'
+          }}
+        />
+      );
+    });
   };
 
   // Render node
@@ -750,6 +866,9 @@ export function InteractiveTimeline({
             
             {/* Connections */}
             {renderConnections()}
+            
+            {/* Flowing particles on critical chain */}
+            {renderParticles()}
             
             {/* Nodes */}
             {nodes.map(renderNode)}
