@@ -1,9 +1,15 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { type ForecastEvent, type DependencyRule, quarterToNumber } from '@/lib/forecasts-api';
 
 export interface AdjustedPosition {
   quarter: string;
   year: number;
+  deltaQuarters?: number; // How many quarters shifted from original
+}
+
+export interface CascadeState {
+  isCalculating: boolean;
+  lastDraggedEvent: string | null;
 }
 
 // Calculate quarter difference between two dates
@@ -47,12 +53,24 @@ function compareDates(
   return quarterToNumber(a.quarter) - quarterToNumber(b.quarter);
 }
 
+// Format delta for display
+export function formatDelta(delta: number): string {
+  if (delta === 0) return '';
+  const sign = delta > 0 ? '+' : '';
+  return `${sign}${delta}Q`;
+}
+
 export function useCascadeEngine(
   events: ForecastEvent[],
   dependencyRules: DependencyRule[]
 ) {
   const [adjustedEvents, setAdjustedEvents] = useState<Map<string, AdjustedPosition>>(new Map());
   const [affectedEvents, setAffectedEvents] = useState<Set<string>>(new Set());
+  const [cascadeState, setCascadeState] = useState<CascadeState>({
+    isCalculating: false,
+    lastDraggedEvent: null
+  });
+  const cascadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Build event lookup map
   const eventMap = useMemo(() => {
@@ -79,10 +97,16 @@ export function useCascadeEngine(
     
     const event = eventMap.get(eventName);
     if (event) {
-      return { quarter: event.medianQuarter, year: event.medianYear };
+      return { quarter: event.medianQuarter, year: event.medianYear, deltaQuarters: 0 };
     }
     return null;
   }, [adjustedEvents, eventMap]);
+
+  // Get delta from original position
+  const getEventDelta = useCallback((eventName: string): number => {
+    const adjusted = adjustedEvents.get(eventName);
+    return adjusted?.deltaQuarters || 0;
+  }, [adjustedEvents]);
 
   // Propagate shift to dependent events
   const propagateShift = useCallback((
@@ -138,7 +162,13 @@ export function useCascadeEngine(
         }
       }
 
-      updates.set(rule.target_event, newDate);
+      // Calculate actual delta from original
+      const actualDelta = calculateQuarterDiff(
+        targetEvent.medianQuarter, targetEvent.medianYear,
+        newDate.quarter, newDate.year
+      );
+
+      updates.set(rule.target_event, { ...newDate, deltaQuarters: actualDelta });
 
       // Recurse to get cascading effects
       const cascadeUpdates = propagateShift(
@@ -153,15 +183,28 @@ export function useCascadeEngine(
     return updates;
   }, [eventMap, dependencyMap]);
 
-  // Handle event drag
+  // Handle event drag with visual feedback
   const handleEventDrag = useCallback((
     eventName: string,
     newQuarter: string,
     newYear: number
   ) => {
+    // Start calculating state
+    setCascadeState({ isCalculating: true, lastDraggedEvent: eventName });
+
+    // Clear any existing timeout
+    if (cascadeTimeoutRef.current) {
+      clearTimeout(cascadeTimeoutRef.current);
+    }
+
+    const originalEvent = eventMap.get(eventName);
+    const dragDelta = originalEvent 
+      ? calculateQuarterDiff(originalEvent.medianQuarter, originalEvent.medianYear, newQuarter, newYear)
+      : 0;
+
     // Update the dragged event
     const newAdjusted = new Map(adjustedEvents);
-    newAdjusted.set(eventName, { quarter: newQuarter, year: newYear });
+    newAdjusted.set(eventName, { quarter: newQuarter, year: newYear, deltaQuarters: dragDelta });
 
     // Calculate cascading effects
     const cascadeUpdates = propagateShift(eventName, newQuarter, newYear);
@@ -175,12 +218,18 @@ export function useCascadeEngine(
     const affected = new Set<string>();
     cascadeUpdates.forEach((_, name) => affected.add(name));
     setAffectedEvents(affected);
-  }, [adjustedEvents, propagateShift]);
+
+    // End calculating state after animation
+    cascadeTimeoutRef.current = setTimeout(() => {
+      setCascadeState({ isCalculating: false, lastDraggedEvent: eventName });
+    }, 600);
+  }, [adjustedEvents, propagateShift, eventMap]);
 
   // Reset all adjustments
   const reset = useCallback(() => {
     setAdjustedEvents(new Map());
     setAffectedEvents(new Set());
+    setCascadeState({ isCalculating: false, lastDraggedEvent: null });
   }, []);
 
   // Generate shareable URL state
@@ -202,14 +251,19 @@ export function useCascadeEngine(
       const match = value.match(/(Q\d)_(\d{4})/);
       if (match) {
         // Find matching event by partial name
-        const eventName = events.find(e => 
+        const foundEvent = events.find(e => 
           e.name.replace(/\s+/g, '_').toLowerCase().startsWith(key)
-        )?.name;
+        );
         
-        if (eventName) {
-          newAdjusted.set(eventName, {
+        if (foundEvent) {
+          const delta = calculateQuarterDiff(
+            foundEvent.medianQuarter, foundEvent.medianYear,
+            match[1], parseInt(match[2])
+          );
+          newAdjusted.set(foundEvent.name, {
             quarter: match[1],
-            year: parseInt(match[2])
+            year: parseInt(match[2]),
+            deltaQuarters: delta
           });
         }
       }
@@ -223,9 +277,11 @@ export function useCascadeEngine(
   return {
     adjustedEvents,
     affectedEvents,
+    cascadeState,
     handleEventDrag,
     reset,
     getEventPosition,
+    getEventDelta,
     getShareState,
     loadFromUrl,
     affectedCount: affectedEvents.size
