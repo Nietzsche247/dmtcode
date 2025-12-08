@@ -1,0 +1,356 @@
+import { useState, useMemo, useCallback } from "react";
+import { type ForecastEvent } from "@/lib/forecasts-api";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { RotateCcw, ArrowRight, AlertTriangle, Zap, TrendingUp } from "lucide-react";
+
+interface WhatIfSimulatorProps {
+  events: ForecastEvent[];
+}
+
+interface AdjustedEvent {
+  name: string;
+  originalMedian: string;
+  adjustedMedian: string;
+  quarterOffset: number;
+  isManuallyAdjusted: boolean;
+  cascadeSource?: string;
+}
+
+// Quarter to numeric value (Q1 2025 = 2025.0, Q2 2025 = 2025.25, etc.)
+const medianToNumeric = (median: string): number => {
+  const match = median.match(/(Q[1-4])\s*(\d{4})/);
+  if (!match) return 2028;
+  const quarter = match[1];
+  const year = parseInt(match[2]);
+  const quarterOffset = { Q1: 0, Q2: 0.25, Q3: 0.5, Q4: 0.75 }[quarter] || 0;
+  return year + quarterOffset;
+};
+
+// Numeric value back to median string
+const numericToMedian = (value: number): string => {
+  const year = Math.floor(value);
+  const fraction = value - year;
+  let quarter = 'Q1';
+  if (fraction >= 0.75) quarter = 'Q4';
+  else if (fraction >= 0.5) quarter = 'Q3';
+  else if (fraction >= 0.25) quarter = 'Q2';
+  return `${quarter} ${year}`;
+};
+
+// Short name mapping
+const getShortName = (name: string): string => {
+  if (name.includes('Agents')) return 'AI Agents';
+  if (name.includes('Reasoning')) return 'Novel Reasoning';
+  if (name.includes('Bio') || name.includes('Attack')) return 'Bio-Attack';
+  if (name.includes('AGI') || name.includes('General Intelligence')) return 'AGI';
+  if (name.includes('Recursive') || name.includes('RSI')) return 'RSI';
+  if (name.includes('Robot')) return 'Robots';
+  if (name.includes('Quantum') && name.includes('Mainstream')) return 'Quantum';
+  if (name.includes('Quantum') && name.includes('AI')) return 'Q-AI';
+  if (name.includes('Encryption') || name.includes('RSA')) return 'Encryption';
+  if (name.includes('Anti-Aging') || name.includes('Aging')) return 'Anti-Aging';
+  return name.substring(0, 15);
+};
+
+// Dependency rules: if source shifts by X quarters, target shifts by Y quarters
+const DEPENDENCY_RULES: Record<string, { targets: { name: string; ratio: number }[] }> = {
+  'AI Agents': {
+    targets: [
+      { name: 'Novel Reasoning', ratio: 0.8 },
+    ]
+  },
+  'Novel Reasoning': {
+    targets: [
+      { name: 'AGI', ratio: 0.9 },
+    ]
+  },
+  'AGI': {
+    targets: [
+      { name: 'RSI', ratio: 0.7 },
+      { name: 'Robots', ratio: 0.5 },
+      { name: 'Bio-Attack', ratio: 0.3 },
+    ]
+  },
+  'RSI': {
+    targets: [
+      { name: 'Quantum', ratio: 0.6 },
+    ]
+  },
+  'Quantum': {
+    targets: [
+      { name: 'Q-AI', ratio: 0.8 },
+      { name: 'Encryption', ratio: 0.9 },
+    ]
+  },
+  'Q-AI': {
+    targets: [
+      { name: 'Anti-Aging', ratio: 0.5 },
+    ]
+  },
+};
+
+export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
+  // Initialize adjusted values from original events
+  const initialValues = useMemo(() => {
+    const values: Record<string, number> = {};
+    events.forEach(event => {
+      const shortName = getShortName(event.name);
+      values[shortName] = medianToNumeric(event.median);
+    });
+    return values;
+  }, [events]);
+
+  const [adjustedValues, setAdjustedValues] = useState<Record<string, number>>(initialValues);
+  const [manuallyAdjusted, setManuallyAdjusted] = useState<Set<string>>(new Set());
+
+  // Calculate cascading effects
+  const calculateCascade = useCallback((
+    source: string, 
+    newValue: number, 
+    current: Record<string, number>,
+    visited: Set<string> = new Set()
+  ): Record<string, number> => {
+    if (visited.has(source)) return current;
+    visited.add(source);
+
+    const originalValue = initialValues[source];
+    const shift = newValue - originalValue;
+    
+    const rules = DEPENDENCY_RULES[source];
+    if (!rules) return current;
+
+    let updated = { ...current };
+    
+    rules.targets.forEach(target => {
+      if (manuallyAdjusted.has(target.name)) return; // Don't cascade to manually adjusted
+      
+      const targetOriginal = initialValues[target.name];
+      if (targetOriginal === undefined) return;
+      
+      const cascadeShift = shift * target.ratio;
+      const newTargetValue = Math.max(2025, targetOriginal + cascadeShift);
+      
+      updated[target.name] = newTargetValue;
+      
+      // Recursively cascade
+      updated = calculateCascade(target.name, newTargetValue, updated, visited);
+    });
+
+    return updated;
+  }, [initialValues, manuallyAdjusted]);
+
+  // Handle slider change
+  const handleSliderChange = (shortName: string, value: number[]) => {
+    const newValue = value[0];
+    
+    setManuallyAdjusted(prev => new Set(prev).add(shortName));
+    
+    setAdjustedValues(prev => {
+      const updated = { ...prev, [shortName]: newValue };
+      return calculateCascade(shortName, newValue, updated);
+    });
+  };
+
+  // Reset all adjustments
+  const handleReset = () => {
+    setAdjustedValues(initialValues);
+    setManuallyAdjusted(new Set());
+  };
+
+  // Calculate adjusted events for display
+  const adjustedEvents = useMemo((): AdjustedEvent[] => {
+    return events.map(event => {
+      const shortName = getShortName(event.name);
+      const original = medianToNumeric(event.median);
+      const adjusted = adjustedValues[shortName] || original;
+      const quarterOffset = Math.round((adjusted - original) * 4);
+      
+      // Find cascade source
+      let cascadeSource: string | undefined;
+      if (!manuallyAdjusted.has(shortName) && quarterOffset !== 0) {
+        // Find which event caused this cascade
+        for (const [source, rules] of Object.entries(DEPENDENCY_RULES)) {
+          if (rules.targets.some(t => t.name === shortName)) {
+            const sourceAdjusted = adjustedValues[source];
+            const sourceOriginal = initialValues[source];
+            if (sourceAdjusted !== sourceOriginal) {
+              cascadeSource = source;
+              break;
+            }
+          }
+        }
+      }
+
+      return {
+        name: shortName,
+        originalMedian: event.median,
+        adjustedMedian: numericToMedian(adjusted),
+        quarterOffset,
+        isManuallyAdjusted: manuallyAdjusted.has(shortName),
+        cascadeSource,
+      };
+    });
+  }, [events, adjustedValues, initialValues, manuallyAdjusted]);
+
+  const hasChanges = useMemo(() => {
+    return adjustedEvents.some(e => e.quarterOffset !== 0);
+  }, [adjustedEvents]);
+
+  const isNegativeEvent = (name: string) => {
+    return name.includes('Bio-Attack') || name.includes('Encryption');
+  };
+
+  const getEventType = (name: string): 'positive' | 'negative' | 'foundation' => {
+    if (isNegativeEvent(name)) return 'negative';
+    if (name === 'AGI') return 'foundation';
+    return 'positive';
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Drag the sliders to shift event timelines and see how changes cascade through dependencies.
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleReset}
+          disabled={!hasChanges}
+          className="gap-2"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </Button>
+      </div>
+
+      {/* Event Sliders */}
+      <div className="space-y-4">
+        {adjustedEvents.map((event) => {
+          const original = medianToNumeric(event.originalMedian);
+          const type = getEventType(event.name);
+          
+          return (
+            <div 
+              key={event.name} 
+              className={cn(
+                "p-4 rounded-lg border transition-all duration-200",
+                event.quarterOffset !== 0 
+                  ? "bg-card border-border shadow-sm" 
+                  : "bg-card/50 border-border/50"
+              )}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  {type === 'negative' && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                  {type === 'foundation' && <Zap className="h-4 w-4 text-yellow-500" />}
+                  {type === 'positive' && <TrendingUp className="h-4 w-4 text-primary" />}
+                  <span className={cn(
+                    "font-semibold",
+                    type === 'negative' ? "text-destructive" : "text-foreground"
+                  )}>
+                    {event.name}
+                  </span>
+                  {event.isManuallyAdjusted && (
+                    <Badge variant="secondary" className="text-xs">Manual</Badge>
+                  )}
+                  {event.cascadeSource && (
+                    <Badge variant="outline" className="text-xs gap-1">
+                      <span className="text-muted-foreground">via</span> {event.cascadeSource}
+                    </Badge>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">{event.originalMedian}</span>
+                  {event.quarterOffset !== 0 && (
+                    <>
+                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      <span className={cn(
+                        "font-medium",
+                        event.quarterOffset > 0 ? "text-destructive" : "text-green-500"
+                      )}>
+                        {event.adjustedMedian}
+                      </span>
+                      <span className={cn(
+                        "text-xs px-1.5 py-0.5 rounded",
+                        event.quarterOffset > 0 
+                          ? "bg-destructive/10 text-destructive" 
+                          : "bg-green-500/10 text-green-500"
+                      )}>
+                        {event.quarterOffset > 0 ? '+' : ''}{event.quarterOffset}Q
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-muted-foreground w-16">2025</span>
+                <Slider
+                  value={[adjustedValues[event.name] || original]}
+                  onValueChange={(value) => handleSliderChange(event.name, value)}
+                  min={2025}
+                  max={2035}
+                  step={0.25}
+                  className="flex-1"
+                />
+                <span className="text-xs text-muted-foreground w-16 text-right">2035</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Summary */}
+      {hasChanges && (
+        <div className="p-4 bg-secondary/30 rounded-lg border border-border/50">
+          <h4 className="font-semibold text-foreground mb-2">Impact Summary</h4>
+          <div className="grid sm:grid-cols-2 gap-2 text-sm">
+            <div>
+              <span className="text-muted-foreground">Events shifted earlier: </span>
+              <span className="font-medium text-green-500">
+                {adjustedEvents.filter(e => e.quarterOffset < 0).length}
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Events shifted later: </span>
+              <span className="font-medium text-destructive">
+                {adjustedEvents.filter(e => e.quarterOffset > 0).length}
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Cascade effects: </span>
+              <span className="font-medium text-foreground">
+                {adjustedEvents.filter(e => e.cascadeSource).length}
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Total shift: </span>
+              <span className={cn(
+                "font-medium",
+                adjustedEvents.reduce((sum, e) => sum + e.quarterOffset, 0) > 0 
+                  ? "text-destructive" 
+                  : "text-green-500"
+              )}>
+                {adjustedEvents.reduce((sum, e) => sum + e.quarterOffset, 0) > 0 ? '+' : ''}
+                {adjustedEvents.reduce((sum, e) => sum + e.quarterOffset, 0)} quarters
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Instructions */}
+      <p className="text-xs text-muted-foreground text-center">
+        Events marked "Manual" were directly adjusted. Events with "via [Source]" were automatically shifted due to dependency cascades.
+      </p>
+    </div>
+  );
+}
