@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function IntroductionAccordion() {
@@ -7,61 +6,86 @@ export function IntroductionAccordion() {
 
   return (
     <section 
-      className="w-full border-b border-border/20"
+      className="w-full relative overflow-hidden"
       style={{ 
-        background: 'linear-gradient(180deg, hsl(var(--background)) 0%, hsl(222 47% 11%) 100%)' 
+        background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' 
       }}
     >
-      <div className="container mx-auto px-4">
+      {/* Subtle animated background particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/5"
+            style={{
+              width: 2 + (i % 3),
+              height: 2 + (i % 3),
+              left: `${(i * 8.3) % 100}%`,
+              top: `${(i * 7.7) % 100}%`,
+              animation: `float-particle ${20 + i * 2}s ease-in-out infinite`,
+              animationDelay: `${i * 0.5}s`
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Bottom fade divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-white/10" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div 
           className={cn(
-            "max-w-[720px] mx-auto text-center transition-all duration-400 ease-out",
-            isExpanded ? "py-16 md:py-20" : "py-12 md:py-16"
+            "max-w-[800px] mx-auto text-center transition-all duration-400 ease-out",
+            isExpanded ? "py-16 md:py-20" : "py-14 md:py-20"
           )}
         >
-          {/* Pull Quote Card */}
-          <div className="relative bg-white/[0.03] border border-white/[0.05] rounded-xl p-8 md:p-10">
-            {/* Accent line above */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-primary" />
-            
-            {/* Main quote */}
-            <p className="text-xl md:text-[28px] font-black text-foreground leading-tight">
-              The decade containing the most transformative event in history may also be the most forecastable.
-            </p>
-            
-            {/* Toggle link */}
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
-            >
-              {isExpanded ? (
-                <>
-                  <ChevronUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
-                  <span>Collapse</span>
-                </>
-              ) : (
-                <>
-                  <span>Why this matters</span>
-                  <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
-                </>
-              )}
-            </button>
-          </div>
+          {/* Accent line above quote */}
+          <div className="w-16 h-px bg-[#C41E3A] mx-auto mb-8" />
+          
+          {/* Pull Quote */}
+          <h2 
+            className="text-2xl md:text-[32px] font-bold text-white leading-[1.3] max-w-[800px] mx-auto"
+            style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
+          >
+            The decade containing the most transformative event in history may also be the most forecastable.
+          </h2>
+          
+          {/* Accent line below quote */}
+          <div className="w-16 h-px bg-[#C41E3A] mx-auto mt-8" />
+          
+          {/* Toggle link */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={cn(
+              "mt-8 inline-flex items-center gap-2 text-base font-medium transition-all duration-300",
+              "py-3 px-6 rounded-full",
+              "text-[#C41E3A] hover:text-white",
+              "border border-[#C41E3A]/50 hover:border-[#C41E3A]",
+              "hover:bg-[#C41E3A]/10",
+              "hover:shadow-[0_0_20px_rgba(196,30,58,0.3)]"
+            )}
+          >
+            {isExpanded ? (
+              <span>← Collapse</span>
+            ) : (
+              <span>Why this matters →</span>
+            )}
+          </button>
 
           {/* Accordion Content */}
           <div 
             className={cn(
-              "overflow-hidden transition-all duration-400 ease-out",
-              isExpanded ? "max-h-[1000px] opacity-100 mt-8" : "max-h-0 opacity-0 mt-0"
+              "overflow-hidden transition-all duration-[400ms] ease-out",
+              isExpanded ? "max-h-[1000px] opacity-100 mt-10" : "max-h-0 opacity-0 mt-0"
             )}
           >
-            <div className="space-y-6 text-base md:text-[17px] text-muted-foreground font-light leading-relaxed md:leading-[1.7] max-w-[680px] mx-auto text-left">
+            <div className="space-y-6 text-[17px] text-white/85 font-light leading-[1.7] max-w-[680px] mx-auto text-left">
               <p>
-                <span className="font-normal text-foreground/90">Consider how hard it has been to forecast the past.</span>{' '}
-                In 1985, almost no one predicted the Soviet Union would collapse within six years. In 2006, the world's best economists missed the approaching financial crisis. These were not failures of intelligence. The variables that mattered were hidden, distributed across too many domains, or simply unknowable until they happened.
+                <span className="font-normal text-white">Consider how hard it has been to forecast the past.</span>{' '}
+                In 1985, almost no one predicted the Soviet Union would collapse within six years. In 2006, the world&apos;s best economists missed the approaching financial crisis. These were not failures of intelligence. The variables that mattered were hidden, distributed across too many domains, or simply unknowable until they happened.
               </p>
               <p>
-                <span className="font-normal text-foreground/90">Now consider what we can see in 2025.</span>{' '}
+                <span className="font-normal text-white">Now consider what we can see in 2025.</span>{' '}
                 The capability curve of artificial intelligence is published quarterly in benchmark scores, demonstrated in products millions use daily, and powered by trillion-dollar infrastructure investments visible in satellite imagery. The scaling laws predicting performance gains were written up years ago and have held steady. For perhaps the first time in modern history, the single variable most likely to reshape human civilization is measurable, trackable, and moving on a curve we can observe in real-time.
               </p>
               <p>
@@ -72,14 +96,23 @@ export function IntroductionAccordion() {
             {/* Collapse link at bottom */}
             <button
               onClick={() => setIsExpanded(false)}
-              className="mt-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="mt-10 inline-flex items-center gap-2 text-base font-medium text-[#C41E3A] hover:text-white transition-colors"
             >
-              <ChevronUp className="h-4 w-4" />
-              <span>Collapse</span>
+              <span>← Collapse</span>
             </button>
           </div>
         </div>
       </div>
+      
+      {/* CSS for particle animation */}
+      <style>{`
+        @keyframes float-particle {
+          0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+          25% { transform: translate(10px, -15px); opacity: 0.6; }
+          50% { transform: translate(-5px, -25px); opacity: 0.4; }
+          75% { transform: translate(15px, -10px); opacity: 0.5; }
+        }
+      `}</style>
     </section>
   );
 }
