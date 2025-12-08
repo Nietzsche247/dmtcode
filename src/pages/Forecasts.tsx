@@ -6,6 +6,7 @@ import { ForecastEventCard } from "@/components/forecasts/ForecastEventCard";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
 import { TimelineVisualization } from "@/components/forecasts/TimelineVisualization";
+import { DependencyGraph } from "@/components/forecasts/DependencyGraph";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -144,6 +145,25 @@ export default function Forecasts() {
                   events={events}
                   onEventClick={(event) => {
                     console.log('Timeline event clicked:', event.name);
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Dependency Graph */}
+        {!loading && !error && events.length > 0 && (
+          <section className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                Event Dependencies
+              </h2>
+              <div className="bg-card/30 border border-border/50 rounded-xl p-6">
+                <DependencyGraph 
+                  events={events}
+                  onEventClick={(event) => {
+                    console.log('Graph node clicked:', event.name);
                   }}
                 />
               </div>
