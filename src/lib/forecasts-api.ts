@@ -1,13 +1,7 @@
 // External Supabase API for Technology Forecasts
-// Direct client-side access to public read-only external Supabase
+// Uses edge function proxy to avoid CORS issues with external Supabase
 
-const EXTERNAL_SUPABASE_URL = 'https://nhpesihbzrxiherrqhfh.supabase.co/rest/v1';
-const EXTERNAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ocGVzaWhienJ4aWhlcnJxaGZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0MjMzMDMsImV4cCI6MjA0ODk5OTMwM30.tPBk_yBKxLGAtHMfZMQVvNjhXHqbPe_0jMVvNB5W8Ao';
-
-const getHeaders = (): HeadersInit => ({
-  'apikey': EXTERNAL_SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${EXTERNAL_SUPABASE_ANON_KEY}`,
-});
+const PROXY_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/forecasts-proxy`;
 
 // Types for the forecasts data (matches actual external Supabase schema)
 export interface Forecast {
@@ -68,23 +62,28 @@ export interface ForecastEvent {
   };
 }
 
+async function fetchViaProxy(table: string, select: string = '*', order?: string): Promise<unknown[]> {
+  const params = new URLSearchParams({ table, select });
+  if (order) params.append('order', order);
+  
+  const response = await fetch(`${PROXY_BASE_URL}?${params}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  
+  if (!response.ok) {
+    console.error('Proxy fetch error:', response.status, response.statusText);
+    return [];
+  }
+  
+  return response.json();
+}
+
 export async function getForecasts(): Promise<Forecast[]> {
   try {
-    const url = `${EXTERNAL_SUPABASE_URL}/forecasts?select=*&order=year,quarter`;
-    
-    const response = await fetch(url, { 
-      method: 'GET',
-      headers: getHeaders(),
-      mode: 'cors'
-    });
-    
-    if (!response.ok) {
-      console.error('Forecasts fetch error:', response.status, response.statusText);
-      return [];
-    }
-    
-    const data = await response.json();
-    return data;
+    const data = await fetchViaProxy('forecasts', '*', 'year,quarter');
+    return data as Forecast[];
   } catch (error) {
     console.error('Error fetching forecasts:', error);
     return [];
@@ -93,19 +92,11 @@ export async function getForecasts(): Promise<Forecast[]> {
 
 export async function getMethodology(sectionName?: string): Promise<Methodology[]> {
   try {
-    let url = `${EXTERNAL_SUPABASE_URL}/methodology?select=*`;
+    const data = await fetchViaProxy('methodology', '*');
     if (sectionName) {
-      url += `&section_name=eq.${encodeURIComponent(sectionName)}`;
+      return (data as Methodology[]).filter(m => m.section_name === sectionName);
     }
-    const response = await fetch(url, { 
-      headers: getHeaders(),
-      mode: 'cors'
-    });
-    if (!response.ok) {
-      console.error('Methodology fetch error:', response.status, response.statusText);
-      return [];
-    }
-    return response.json();
+    return data as Methodology[];
   } catch (error) {
     console.error('Error fetching methodology:', error);
     return [];
