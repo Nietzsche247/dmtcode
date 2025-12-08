@@ -3,16 +3,12 @@ import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { IntroductionAccordion } from "@/components/forecasts/IntroductionAccordion";
-import { ConfidenceTierFilters, type ConfidenceTier } from "@/components/forecasts/ConfidenceTierFilters";
-import { InteractiveTimeline } from "@/components/forecasts/InteractiveTimeline";
+import { BarTimeline } from "@/components/forecasts/BarTimeline";
 import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
-import { DependencyGraphD3 } from "@/components/forecasts/DependencyGraphD3";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
-import { ScenarioToggles, type AlignmentBranch } from "@/components/forecasts/ScenarioToggles";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCascadeEngine } from "@/hooks/useCascadeEngine";
 import { 
   getForecasts, 
   getMethodology, 
@@ -35,34 +31,11 @@ export default function Forecasts() {
   // Panel state
   const [selectedEvent, setSelectedEvent] = useState<ForecastEvent | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
-  
-  // Scenario state
-  const [taiwanConflict, setTaiwanConflict] = useState(true);
-  const [alignment, setAlignment] = useState<AlignmentBranch>('cooperative');
   const [showSecondaryEvents, setShowSecondaryEvents] = useState(true);
-  
-  // Confidence tier filter
-  const [confidenceTier, setConfidenceTier] = useState<ConfidenceTier>('high');
-
-  // Cascade engine
-  const {
-    adjustedEvents,
-    affectedEvents,
-    cascadeState,
-    handleEventDrag,
-    reset,
-    affectedCount
-  } = useCascadeEngine(events, dependencyRules);
 
   const handleEventClick = (event: ForecastEvent) => {
     setSelectedEvent(event);
     setPanelOpen(true);
-  };
-
-  const handleReset = () => {
-    reset();
-    setTaiwanConflict(true);
-    setAlignment('cooperative');
   };
 
   useEffect(() => {
@@ -165,67 +138,17 @@ export default function Forecasts() {
         {/* Main Content */}
         {!loading && !error && events.length > 0 && (
           <>
-            {/* Confidence Tier Filters */}
-            <section className="container mx-auto px-4 py-6">
-              <div className="max-w-6xl mx-auto">
-                <ConfidenceTierFilters
-                  activeTier={confidenceTier}
-                  onTierChange={setConfidenceTier}
-                />
-              </div>
-            </section>
-
-            {/* Interactive Node Timeline */}
+            {/* Bar-based Timeline */}
             <section className="container mx-auto px-4 py-6">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Critical Path</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Event Timeline</h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    The causal chain from AI capability to superintelligence
+                    Probability distributions for transformative events 2026-2033
                   </p>
                 </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
-                  <InteractiveTimeline
-                    events={events}
-                    dependencyRules={dependencyRules}
-                    confidenceTier={confidenceTier}
-                    onEventClick={handleEventClick}
-                    onEventDrag={handleEventDrag}
-                    adjustedEvents={adjustedEvents}
-                    affectedEvents={affectedEvents}
-                    cascadeState={cascadeState}
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* Scenario Controls - Moved below timeline */}
-            <section className="container mx-auto px-4 py-6">
-              <div className="max-w-6xl mx-auto">
-                <ScenarioToggles
-                  taiwanConflict={taiwanConflict}
-                  onTaiwanConflictChange={setTaiwanConflict}
-                  alignment={alignment}
-                  onAlignmentChange={setAlignment}
-                  showSecondaryEvents={showSecondaryEvents}
-                  onShowSecondaryEventsChange={setShowSecondaryEvents}
-                  onReset={handleReset}
-                  affectedCount={affectedCount}
-                />
-              </div>
-            </section>
-
-            {/* Dependency Network */}
-            <section className="container mx-auto px-4 py-8">
-              <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Dependency Network</h2>
-                  <p className="text-muted-foreground font-light text-sm">
-                    How events cascade through the system
-                  </p>
-                </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4">
-                  <DependencyGraphD3
+                  <BarTimeline
                     events={events}
                     dependencyRules={dependencyRules}
                     onEventClick={handleEventClick}
@@ -247,9 +170,6 @@ export default function Forecasts() {
                   events={events}
                   showSecondaryEvents={showSecondaryEvents}
                   onEventClick={handleEventClick}
-                  adjustedEvents={adjustedEvents}
-                  affectedEvents={affectedEvents}
-                  cascadeState={cascadeState}
                 />
               </div>
             </section>
