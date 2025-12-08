@@ -7,7 +7,7 @@ import {
 } from "@/lib/forecasts-api";
 import { type CascadeState, formatDelta } from "@/hooks/useCascadeEngine";
 import { cn } from "@/lib/utils";
-import { Zap, AlertTriangle, GripVertical, ChevronRight } from "lucide-react";
+import { Zap, AlertTriangle, GripVertical, ChevronRight, ChevronUp, ChevronDown, GripHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -28,7 +28,7 @@ interface TimelineNode {
   y: number;
   radius: number;
   color: string;
-  originalX: number; // Track original position for delta display
+  originalX: number;
   deltaQuarters: number;
 }
 
@@ -48,6 +48,18 @@ const TIMELINE_WIDTH = TOTAL_QUARTERS * QUARTER_WIDTH + TIMELINE_PADDING * 2;
 // Snap threshold in pixels
 const SNAP_THRESHOLD = QUARTER_WIDTH / 3;
 
+// Mobile drag configuration
+const MOBILE_DRAG_THRESHOLD = 30; // Pixels to trigger quarter change
+const QUARTER_OPTIONS = (() => {
+  const options: { quarter: string; year: number; label: string }[] = [];
+  for (let year = TIMELINE_START_YEAR; year <= TIMELINE_END_YEAR; year++) {
+    for (let q = 1; q <= 4; q++) {
+      options.push({ quarter: `Q${q}`, year, label: `Q${q} ${year}` });
+    }
+  }
+  return options;
+})();
+
 export function InteractiveTimeline({
   events,
   dependencyRules,
@@ -64,6 +76,13 @@ export function InteractiveTimeline({
   const [draggingNode, setDraggingNode] = useState<string | null>(null);
   const [dragX, setDragX] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+
+  // Mobile touch drag state
+  const [mobileDragEvent, setMobileDragEvent] = useState<string | null>(null);
+  const [mobileDragStartY, setMobileDragStartY] = useState<number>(0);
+  const [mobileDragCurrentY, setMobileDragCurrentY] = useState<number>(0);
+  const [mobileQuarterIndex, setMobileQuarterIndex] = useState<number>(0);
+  const touchStartRef = useRef<{ y: number; time: number } | null>(null);
 
   // Filter events based on showSecondaryEvents toggle
   const filteredEvents = useMemo(() => {
@@ -87,9 +106,14 @@ export function InteractiveTimeline({
     return { quarter: `Q${q}`, year };
   }, []);
 
+  // Get quarter index from quarter/year
+  const getQuarterIndex = useCallback((quarter: string, year: number): number => {
+    const q = quarterToNumber(quarter);
+    return (year - TIMELINE_START_YEAR) * 4 + (q - 1);
+  }, []);
+
   // Calculate node positions with vertical stacking for overlapping events
   const nodes = useMemo((): TimelineNode[] => {
-    // Group events by their x position (quarter)
     const positionMap = new Map<number, { event: ForecastEvent; originalX: number; deltaQuarters: number }[]>();
     
     filteredEvents.forEach(event => {
@@ -105,11 +129,9 @@ export function InteractiveTimeline({
       positionMap.set(x, existing);
     });
 
-    // Create nodes with stacked y positions
     const result: TimelineNode[] = [];
     positionMap.forEach((eventsAtPos, x) => {
       eventsAtPos.forEach((item, index) => {
-        // Calculate radius based on probability (18-32px)
         const prob = item.event.probability || 0.5;
         const radius = NODE_MIN_RADIUS + (NODE_MAX_RADIUS - NODE_MIN_RADIUS) * Math.min(prob, 1);
         
@@ -117,7 +139,7 @@ export function InteractiveTimeline({
           event: item.event,
           x,
           y: 120 + index * ROW_HEIGHT,
-          radius: Math.max(radius, NODE_MIN_RADIUS), // Ensure minimum visibility
+          radius: Math.max(radius, NODE_MIN_RADIUS),
           color: CATEGORY_COLORS[item.event.category] || CATEGORY_COLORS.default,
           originalX: item.originalX,
           deltaQuarters: item.deltaQuarters
@@ -162,7 +184,7 @@ export function InteractiveTimeline({
     return Math.max(...nodes.map(n => n.y)) + 100;
   }, [nodes]);
 
-  // Mouse handlers for dragging
+  // Mouse handlers for dragging (desktop)
   const handleMouseDown = useCallback((e: React.MouseEvent, eventName: string, isPrimary: boolean) => {
     if (!isPrimary || !onEventDrag) return;
     e.preventDefault();
@@ -197,6 +219,59 @@ export function InteractiveTimeline({
     }
   }, [draggingNode]);
 
+  // Mobile touch handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent, eventName: string, quarter: string, year: number) => {
+    if (!onEventDrag) return;
+    
+    const touch = e.touches[0];
+    touchStartRef.current = { y: touch.clientY, time: Date.now() };
+    setMobileDragEvent(eventName);
+    setMobileDragStartY(touch.clientY);
+    setMobileDragCurrentY(touch.clientY);
+    setMobileQuarterIndex(getQuarterIndex(quarter, year));
+  }, [onEventDrag, getQuarterIndex]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!mobileDragEvent) return;
+    
+    const touch = e.touches[0];
+    setMobileDragCurrentY(touch.clientY);
+  }, [mobileDragEvent]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!mobileDragEvent || !onEventDrag) {
+      setMobileDragEvent(null);
+      return;
+    }
+
+    const deltaY = mobileDragStartY - mobileDragCurrentY;
+    const quarterChange = Math.round(deltaY / MOBILE_DRAG_THRESHOLD);
+    
+    if (quarterChange !== 0) {
+      const newIndex = Math.max(0, Math.min(mobileQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
+      const newOption = QUARTER_OPTIONS[newIndex];
+      onEventDrag(mobileDragEvent, newOption.quarter, newOption.year);
+    }
+
+    setMobileDragEvent(null);
+    touchStartRef.current = null;
+  }, [mobileDragEvent, mobileDragStartY, mobileDragCurrentY, mobileQuarterIndex, onEventDrag]);
+
+  // Calculate preview quarter during drag
+  const getMobileDragPreview = useCallback(() => {
+    if (!mobileDragEvent) return null;
+    
+    const deltaY = mobileDragStartY - mobileDragCurrentY;
+    const quarterChange = Math.round(deltaY / MOBILE_DRAG_THRESHOLD);
+    const newIndex = Math.max(0, Math.min(mobileQuarterIndex + quarterChange, QUARTER_OPTIONS.length - 1));
+    
+    return {
+      ...QUARTER_OPTIONS[newIndex],
+      quarterChange,
+      isDragging: Math.abs(deltaY) > 10
+    };
+  }, [mobileDragEvent, mobileDragStartY, mobileDragCurrentY, mobileQuarterIndex]);
+
   // Get the display position for a node (accounting for drag with snapping)
   const getDisplayX = useCallback((node: TimelineNode) => {
     if (draggingNode === node.event.name && dragX !== null) {
@@ -226,7 +301,6 @@ export function InteractiveTimeline({
   const eventsByPeriod = useMemo(() => {
     const grouped = new Map<string, ForecastEvent[]>();
     
-    // Sort events chronologically
     const sorted = [...filteredEvents].sort((a, b) => {
       const adjustedA = adjustedEvents?.get(a.name);
       const adjustedB = adjustedEvents?.get(b.name);
@@ -254,139 +328,221 @@ export function InteractiveTimeline({
     return grouped;
   }, [filteredEvents, adjustedEvents]);
 
-  // Mobile vertical timeline component
-  const MobileTimeline = () => (
-    <div className="space-y-4">
-      {/* Mobile Legend */}
-      <div className="flex flex-wrap gap-2 pb-4 border-b border-border/30">
-        {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').map(([category, color]) => (
-          <div key={category} className="flex items-center gap-1.5 text-[10px]">
-            <div 
-              className="w-2.5 h-2.5 rounded-full" 
-              style={{ backgroundColor: color }}
-            />
-            <span className="text-muted-foreground capitalize">{category}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Vertical Timeline */}
-      <div className="relative pl-6">
-        {/* Vertical line */}
-        <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border/50" />
-
-        {Array.from(eventsByPeriod.entries()).map(([period, periodEvents]) => (
-          <div key={period} className="relative mb-6">
-            {/* Period marker */}
-            <div className="absolute left-[-14px] w-4 h-4 rounded-full bg-muted border-2 border-border" />
-            
-            {/* Period label */}
-            <div className="mb-3">
-              <span className="text-sm font-bold text-foreground">{period}</span>
+  // Mobile vertical timeline component with touch drag support
+  const MobileTimeline = () => {
+    const dragPreview = getMobileDragPreview();
+    
+    return (
+      <div className="space-y-4">
+        {/* Mobile Legend */}
+        <div className="flex flex-wrap gap-2 pb-4 border-b border-border/30">
+          {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').map(([category, color]) => (
+            <div key={category} className="flex items-center gap-1.5 text-[10px]">
+              <div 
+                className="w-2.5 h-2.5 rounded-full" 
+                style={{ backgroundColor: color }}
+              />
+              <span className="text-muted-foreground capitalize">{category}</span>
             </div>
+          ))}
+        </div>
 
-            {/* Events for this period */}
-            <div className="space-y-2">
-              {periodEvents.map((event) => {
-                const isAffected = affectedEvents?.has(event.name);
-                const adjusted = adjustedEvents?.get(event.name);
-                const deltaQuarters = adjusted?.deltaQuarters || 0;
-                const hasShifted = deltaQuarters !== 0;
-                const isPrimary = event.isPrimary;
-                const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
+        {/* Touch drag instructions */}
+        {onEventDrag && (
+          <div className="flex items-center justify-center gap-2 py-2 px-3 bg-muted/30 rounded-lg text-xs text-muted-foreground">
+            <GripHorizontal className="h-4 w-4" />
+            <span>Swipe up/down on primary events to adjust timeline</span>
+          </div>
+        )}
 
-                return (
-                  <div
-                    key={event.name}
-                    onClick={() => onEventClick(event)}
-                    className={cn(
-                      "relative p-3 rounded-lg border cursor-pointer transition-all duration-200",
-                      "bg-card hover:bg-accent/50",
-                      isAffected && "border-primary/50 bg-primary/5",
-                      hasShifted && "border-primary",
-                      !isAffected && !hasShifted && "border-border/50"
-                    )}
-                  >
-                    {/* Category indicator */}
-                    <div 
-                      className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
-                      style={{ backgroundColor: color }}
-                    />
+        {/* Vertical Timeline */}
+        <div className="relative pl-6">
+          {/* Vertical line */}
+          <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border/50" />
 
-                    <div className="flex items-start justify-between gap-2 pl-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className={cn(
-                            "font-semibold text-sm truncate",
-                            isPrimary ? "text-foreground" : "text-muted-foreground"
-                          )}>
-                            {event.name}
-                          </h4>
-                          
-                          {!isPrimary && (
-                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
-                              <AlertTriangle className="h-2.5 w-2.5 mr-1" />
-                              COND
-                            </Badge>
-                          )}
-                          
-                          {isAffected && (
-                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
-                              <Zap className="h-2.5 w-2.5 mr-1" />
-                              Affected
-                            </Badge>
-                          )}
-                          
-                          {hasShifted && (
-                            <Badge className="text-[10px] px-1.5 py-0 h-4 bg-primary shrink-0">
-                              {formatDelta(deltaQuarters)}
-                            </Badge>
-                          )}
+          {Array.from(eventsByPeriod.entries()).map(([period, periodEvents]) => (
+            <div key={period} className="relative mb-6">
+              {/* Period marker */}
+              <div className="absolute left-[-14px] w-4 h-4 rounded-full bg-muted border-2 border-border" />
+              
+              {/* Period label */}
+              <div className="mb-3">
+                <span className="text-sm font-bold text-foreground">{period}</span>
+              </div>
+
+              {/* Events for this period */}
+              <div className="space-y-2">
+                {periodEvents.map((event) => {
+                  const isAffected = affectedEvents?.has(event.name);
+                  const adjusted = adjustedEvents?.get(event.name);
+                  const deltaQuarters = adjusted?.deltaQuarters || 0;
+                  const hasShifted = deltaQuarters !== 0;
+                  const isPrimary = event.isPrimary;
+                  const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
+                  const currentQuarter = adjusted?.quarter || event.medianQuarter;
+                  const currentYear = adjusted?.year || event.medianYear;
+                  const isDragging = mobileDragEvent === event.name;
+                  const isCalculating = cascadeState?.isCalculating && isAffected;
+
+                  return (
+                    <div
+                      key={event.name}
+                      onClick={() => !isDragging && onEventClick(event)}
+                      onTouchStart={(e) => isPrimary && onEventDrag && handleTouchStart(e, event.name, currentQuarter, currentYear)}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                      className={cn(
+                        "relative p-3 rounded-lg border cursor-pointer transition-all duration-200 select-none",
+                        "bg-card hover:bg-accent/50",
+                        isAffected && "border-primary/50 bg-primary/5",
+                        hasShifted && "border-primary",
+                        isDragging && "border-primary border-2 bg-primary/10 shadow-lg scale-[1.02]",
+                        isCalculating && "animate-pulse",
+                        !isAffected && !hasShifted && !isDragging && "border-border/50"
+                      )}
+                      style={{
+                        transform: isDragging ? `translateY(${mobileDragCurrentY - mobileDragStartY}px) scale(1.02)` : undefined,
+                        touchAction: isPrimary && onEventDrag ? 'none' : 'auto'
+                      }}
+                    >
+                      {/* Category indicator */}
+                      <div 
+                        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
+                        style={{ backgroundColor: color }}
+                      />
+
+                      {/* Drag handle for primary events */}
+                      {isPrimary && onEventDrag && (
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5 opacity-40">
+                          <ChevronUp className="h-3 w-3" />
+                          <GripHorizontal className="h-4 w-4" />
+                          <ChevronDown className="h-3 w-3" />
                         </div>
-                        
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                          <span 
-                            className="w-2 h-2 rounded-full shrink-0" 
-                            style={{ backgroundColor: color }}
-                          />
-                          <span className="capitalize truncate">{event.category}</span>
-                        </div>
-                      </div>
+                      )}
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <div className={cn(
-                          "text-right",
-                          hasShifted && "text-primary"
-                        )}>
-                          <div className="text-lg font-bold">
-                            {Math.round(event.probability * 100)}%
+                      <div className="flex items-start justify-between gap-2 pl-2 pr-8">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className={cn(
+                              "font-semibold text-sm truncate",
+                              isPrimary ? "text-foreground" : "text-muted-foreground"
+                            )}>
+                              {event.name}
+                            </h4>
+                            
+                            {!isPrimary && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
+                                <AlertTriangle className="h-2.5 w-2.5 mr-1" />
+                                COND
+                              </Badge>
+                            )}
+                            
+                            {isAffected && (
+                              <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
+                                <Zap className="h-2.5 w-2.5 mr-1" />
+                                Affected
+                              </Badge>
+                            )}
+                            
+                            {hasShifted && (
+                              <Badge className="text-[10px] px-1.5 py-0 h-4 bg-primary shrink-0">
+                                {formatDelta(deltaQuarters)}
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                            <span 
+                              className="w-2 h-2 rounded-full shrink-0" 
+                              style={{ backgroundColor: color }}
+                            />
+                            <span className="capitalize truncate">{event.category}</span>
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Floating affected count badge */}
-      {affectedCount > 0 && (
-        <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
-          <Badge 
-            variant="destructive" 
-            className="px-3 py-1.5 text-xs font-semibold shadow-lg bg-primary/90 backdrop-blur-sm"
-          >
-            <Zap className="h-3 w-3 mr-1.5" />
-            {affectedCount} affected
-          </Badge>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className={cn(
+                            "text-right",
+                            hasShifted && "text-primary"
+                          )}>
+                            <div className="text-lg font-bold">
+                              {Math.round(event.probability * 100)}%
+                            </div>
+                          </div>
+                          {!isPrimary && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                        </div>
+                      </div>
+
+                      {/* Drag preview overlay */}
+                      {isDragging && dragPreview && dragPreview.isDragging && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="flex items-center gap-2">
+                              {dragPreview.quarterChange !== 0 && (
+                                <Badge className={cn(
+                                  "text-xs",
+                                  dragPreview.quarterChange > 0 ? "bg-green-600" : "bg-amber-600"
+                                )}>
+                                  {dragPreview.quarterChange > 0 ? `+${dragPreview.quarterChange}Q` : `${dragPreview.quarterChange}Q`}
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-lg font-bold text-foreground">
+                              → {dragPreview.label}
+                            </span>
+                            <span className="text-xs text-muted-foreground">Release to confirm</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-    </div>
-  );
+
+        {/* Floating affected count badge */}
+        {affectedCount > 0 && (
+          <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
+            <Badge 
+              variant="destructive" 
+              className="px-3 py-1.5 text-xs font-semibold shadow-lg bg-primary/90 backdrop-blur-sm"
+            >
+              <Zap className="h-3 w-3 mr-1.5" />
+              {affectedCount} affected
+            </Badge>
+          </div>
+        )}
+
+        {/* Mobile drag indicator overlay */}
+        {mobileDragEvent && dragPreview && dragPreview.isDragging && (
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
+            <Badge 
+              className={cn(
+                "px-4 py-2 text-sm font-semibold shadow-xl",
+                dragPreview.quarterChange > 0 ? "bg-green-600" : dragPreview.quarterChange < 0 ? "bg-amber-600" : "bg-muted"
+              )}
+            >
+              <div className="flex items-center gap-2">
+                {dragPreview.quarterChange > 0 ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : dragPreview.quarterChange < 0 ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : null}
+                <span>{dragPreview.label}</span>
+                {dragPreview.quarterChange !== 0 && (
+                  <span className="opacity-70">
+                    ({dragPreview.quarterChange > 0 ? '+' : ''}{dragPreview.quarterChange}Q)
+                  </span>
+                )}
+              </div>
+            </Badge>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // Return mobile layout for small screens
   if (isMobile) {
