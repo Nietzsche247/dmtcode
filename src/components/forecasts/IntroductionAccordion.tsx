@@ -1,8 +1,24 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 export function IntroductionAccordion() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  const handleToggle = useCallback(() => {
+    const willExpand = !isExpanded;
+    setIsExpanded(willExpand);
+    
+    if (willExpand) {
+      // Smooth scroll to show expanded content after animation starts
+      setTimeout(() => {
+        contentRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }, 100);
+    }
+  }, [isExpanded]);
 
   return (
     <section 
@@ -55,7 +71,7 @@ export function IntroductionAccordion() {
           
           {/* Toggle link */}
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleToggle}
             className={cn(
               "mt-8 inline-flex items-center gap-2 text-base font-medium transition-all duration-300",
               "py-3 px-6 rounded-full",
@@ -74,6 +90,7 @@ export function IntroductionAccordion() {
 
           {/* Accordion Content */}
           <div 
+            ref={contentRef}
             className={cn(
               "overflow-hidden transition-all duration-[400ms] ease-out",
               isExpanded ? "max-h-[1000px] opacity-100 mt-10" : "max-h-0 opacity-0 mt-0"
