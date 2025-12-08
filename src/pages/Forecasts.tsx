@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { InteractiveTimeline } from "@/components/forecasts/InteractiveTimeline";
+import { HorizontalBarTimeline } from "@/components/forecasts/HorizontalBarTimeline";
+import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { DependencyGraphD3 } from "@/components/forecasts/DependencyGraphD3";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ScenarioToggles, type AlignmentBranch } from "@/components/forecasts/ScenarioToggles";
@@ -200,11 +201,17 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* Timeline */}
+            {/* Timeline - Horizontal Bars */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-black text-foreground mb-2">Timeline</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    Horizontal probability distributions showing event timing and uncertainty
+                  </p>
+                </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-6 overflow-hidden">
-                  <InteractiveTimeline
+                  <HorizontalBarTimeline
                     events={events}
                     dependencyRules={dependencyRules}
                     showSecondaryEvents={showSecondaryEvents}
@@ -215,6 +222,26 @@ export default function Forecasts() {
                     cascadeState={cascadeState}
                   />
                 </div>
+              </div>
+            </section>
+
+            {/* Event Cards Grid */}
+            <section className="container mx-auto px-4 py-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-black text-foreground mb-2">Event Details</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    Click any card to view full cascade effects and dependencies
+                  </p>
+                </div>
+                <EventCardsGrid
+                  events={events}
+                  showSecondaryEvents={showSecondaryEvents}
+                  onEventClick={handleEventClick}
+                  adjustedEvents={adjustedEvents}
+                  affectedEvents={affectedEvents}
+                  cascadeState={cascadeState}
+                />
               </div>
             </section>
 
