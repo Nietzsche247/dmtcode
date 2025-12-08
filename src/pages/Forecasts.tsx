@@ -41,6 +41,7 @@ export default function Forecasts() {
   const {
     adjustedEvents,
     affectedEvents,
+    cascadeState,
     handleEventDrag,
     reset,
     affectedCount
@@ -182,6 +183,7 @@ export default function Forecasts() {
                     onEventDrag={handleEventDrag}
                     adjustedEvents={adjustedEvents}
                     affectedEvents={affectedEvents}
+                    cascadeState={cascadeState}
                   />
                 </div>
               </div>
