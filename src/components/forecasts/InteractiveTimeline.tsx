@@ -582,19 +582,41 @@ export function InteractiveTimeline({
         }}
         transform={`translate(${displayX}, ${node.y})`}
       >
-        {/* Pulse ring for spine nodes */}
+        {/* Animated pulse rings for spine nodes */}
         {isSpine && (
-          <circle
-            r={radius + 8}
-            fill="none"
-            stroke={color}
-            strokeWidth={2}
-            strokeOpacity={isHovered || isDragging ? 0.8 : 0.3}
-            className="transition-all duration-300"
-            style={{
-              filter: isHovered ? `drop-shadow(0 0 10px ${color})` : undefined
-            }}
-          />
+          <>
+            {/* Primary pulse ring */}
+            <circle
+              className="spine-pulse-ring"
+              r={radius + 8}
+              fill="none"
+              stroke={color}
+              strokeWidth={2}
+              style={{
+                filter: `drop-shadow(0 0 8px ${color})`
+              }}
+            />
+            {/* Secondary pulse ring (offset animation) */}
+            <circle
+              className="spine-pulse-ring-2"
+              r={radius + 8}
+              fill="none"
+              stroke="#FF6B6B"
+              strokeWidth={1.5}
+              style={{
+                filter: 'drop-shadow(0 0 6px #FF6B6B)'
+              }}
+            />
+            {/* Static outer ring */}
+            <circle
+              r={radius + 8}
+              fill="none"
+              stroke={color}
+              strokeWidth={1}
+              strokeOpacity={isHovered || isDragging ? 0.8 : 0.2}
+              className="transition-all duration-300"
+            />
+          </>
         )}
         
         {/* Original position ghost */}
@@ -871,6 +893,52 @@ export function InteractiveTimeline({
           height={dimensions.height}
           className="absolute inset-0"
         >
+          {/* Pulse animation styles */}
+          <defs>
+            <style>{`
+              @keyframes pulse-expand {
+                0% {
+                  r: ${SPINE_NODE_RADIUS + 8};
+                  opacity: 0.6;
+                  stroke-width: 2;
+                }
+                50% {
+                  r: ${SPINE_NODE_RADIUS + 16};
+                  opacity: 0.3;
+                  stroke-width: 1;
+                }
+                100% {
+                  r: ${SPINE_NODE_RADIUS + 8};
+                  opacity: 0.6;
+                  stroke-width: 2;
+                }
+              }
+              @keyframes pulse-expand-2 {
+                0% {
+                  r: ${SPINE_NODE_RADIUS + 8};
+                  opacity: 0.4;
+                  stroke-width: 1.5;
+                }
+                50% {
+                  r: ${SPINE_NODE_RADIUS + 20};
+                  opacity: 0.15;
+                  stroke-width: 0.5;
+                }
+                100% {
+                  r: ${SPINE_NODE_RADIUS + 8};
+                  opacity: 0.4;
+                  stroke-width: 1.5;
+                }
+              }
+              .spine-pulse-ring {
+                animation: pulse-expand 2s ease-in-out infinite;
+              }
+              .spine-pulse-ring-2 {
+                animation: pulse-expand-2 2s ease-in-out infinite;
+                animation-delay: 1s;
+              }
+            `}</style>
+          </defs>
           <g
             transform={`translate(${transform.x}, ${transform.y + 48}) scale(${transform.k})`}
           >
