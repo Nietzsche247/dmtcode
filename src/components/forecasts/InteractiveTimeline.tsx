@@ -1037,6 +1037,49 @@ export function InteractiveTimeline({
             fill="url(#bg-ambient-glow-2)" 
           />
           
+          {/* Floating dust particles */}
+          <g className="dust-particles">
+            {Array.from({ length: 20 }).map((_, i) => {
+              const startX = (i * 73) % dimensions.width;
+              const startY = (i * 47) % dimensions.height;
+              const size = 1 + (i % 3) * 0.5;
+              const duration = 15 + (i % 10) * 3;
+              const delay = i * 0.7;
+              const opacity = 0.15 + (i % 5) * 0.05;
+              
+              return (
+                <circle
+                  key={`dust-${i}`}
+                  r={size}
+                  fill="hsl(var(--foreground))"
+                  opacity={opacity}
+                >
+                  <animate
+                    attributeName="cx"
+                    values={`${startX};${startX + 40};${startX - 20};${startX + 30};${startX}`}
+                    dur={`${duration}s`}
+                    begin={`${delay}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="cy"
+                    values={`${startY};${startY - 30};${startY + 20};${startY - 40};${startY}`}
+                    dur={`${duration}s`}
+                    begin={`${delay}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values={`${opacity};${opacity * 1.5};${opacity * 0.5};${opacity * 1.2};${opacity}`}
+                    dur={`${duration}s`}
+                    begin={`${delay}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              );
+            })}
+          </g>
+          
           <g
             transform={`translate(${transform.x}, ${transform.y + 48}) scale(${transform.k})`}
           >
