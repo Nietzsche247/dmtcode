@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { PageHero } from "@/components/PageHero";
 import { ForecastEventCard } from "@/components/forecasts/ForecastEventCard";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
+import { TimelineVisualization } from "@/components/forecasts/TimelineVisualization";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -132,6 +132,25 @@ export default function Forecasts() {
           </section>
         )}
 
+        {/* Timeline Visualization */}
+        {!loading && !error && events.length > 0 && (
+          <section className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-2xl font-bold text-foreground mb-6">
+                Probability Timeline (2025-2035)
+              </h2>
+              <div className="bg-card/30 border border-border/50 rounded-xl p-6">
+                <TimelineVisualization 
+                  events={events}
+                  onEventClick={(event) => {
+                    console.log('Timeline event clicked:', event.name);
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Event Cards Grid */}
         {!loading && !error && events.length > 0 && (
           <section className="container mx-auto px-4 py-8">
@@ -146,7 +165,6 @@ export default function Forecasts() {
                     key={event.name} 
                     event={event}
                     onClick={() => {
-                      // TODO: Open detail modal
                       console.log('Event clicked:', event.name);
                     }}
                   />
