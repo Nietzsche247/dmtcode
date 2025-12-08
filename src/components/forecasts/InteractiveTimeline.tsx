@@ -7,8 +7,9 @@ import {
 } from "@/lib/forecasts-api";
 import { type CascadeState, formatDelta } from "@/hooks/useCascadeEngine";
 import { cn } from "@/lib/utils";
-import { Zap, AlertTriangle, GripVertical } from "lucide-react";
+import { Zap, AlertTriangle, GripVertical, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface InteractiveTimelineProps {
   events: ForecastEvent[];
@@ -57,6 +58,7 @@ export function InteractiveTimeline({
   affectedEvents,
   cascadeState
 }: InteractiveTimelineProps) {
+  const isMobile = useIsMobile();
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [draggingNode, setDraggingNode] = useState<string | null>(null);
@@ -219,6 +221,177 @@ export function InteractiveTimeline({
 
   // Calculate affected count for display
   const affectedCount = affectedEvents?.size || 0;
+
+  // Group events by quarter/year for mobile view
+  const eventsByPeriod = useMemo(() => {
+    const grouped = new Map<string, ForecastEvent[]>();
+    
+    // Sort events chronologically
+    const sorted = [...filteredEvents].sort((a, b) => {
+      const adjustedA = adjustedEvents?.get(a.name);
+      const adjustedB = adjustedEvents?.get(b.name);
+      const yearA = adjustedA?.year || a.medianYear;
+      const yearB = adjustedB?.year || b.medianYear;
+      const qA = quarterToNumber(adjustedA?.quarter || a.medianQuarter);
+      const qB = quarterToNumber(adjustedB?.quarter || b.medianQuarter);
+      
+      if (yearA !== yearB) return yearA - yearB;
+      return qA - qB;
+    });
+    
+    sorted.forEach(event => {
+      const adjusted = adjustedEvents?.get(event.name);
+      const year = adjusted?.year || event.medianYear;
+      const quarter = adjusted?.quarter || event.medianQuarter;
+      const key = `${quarter} ${year}`;
+      
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+      grouped.get(key)!.push(event);
+    });
+    
+    return grouped;
+  }, [filteredEvents, adjustedEvents]);
+
+  // Mobile vertical timeline component
+  const MobileTimeline = () => (
+    <div className="space-y-4">
+      {/* Mobile Legend */}
+      <div className="flex flex-wrap gap-2 pb-4 border-b border-border/30">
+        {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').map(([category, color]) => (
+          <div key={category} className="flex items-center gap-1.5 text-[10px]">
+            <div 
+              className="w-2.5 h-2.5 rounded-full" 
+              style={{ backgroundColor: color }}
+            />
+            <span className="text-muted-foreground capitalize">{category}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Vertical Timeline */}
+      <div className="relative pl-6">
+        {/* Vertical line */}
+        <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border/50" />
+
+        {Array.from(eventsByPeriod.entries()).map(([period, periodEvents]) => (
+          <div key={period} className="relative mb-6">
+            {/* Period marker */}
+            <div className="absolute left-[-14px] w-4 h-4 rounded-full bg-muted border-2 border-border" />
+            
+            {/* Period label */}
+            <div className="mb-3">
+              <span className="text-sm font-bold text-foreground">{period}</span>
+            </div>
+
+            {/* Events for this period */}
+            <div className="space-y-2">
+              {periodEvents.map((event) => {
+                const isAffected = affectedEvents?.has(event.name);
+                const adjusted = adjustedEvents?.get(event.name);
+                const deltaQuarters = adjusted?.deltaQuarters || 0;
+                const hasShifted = deltaQuarters !== 0;
+                const isPrimary = event.isPrimary;
+                const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
+
+                return (
+                  <div
+                    key={event.name}
+                    onClick={() => onEventClick(event)}
+                    className={cn(
+                      "relative p-3 rounded-lg border cursor-pointer transition-all duration-200",
+                      "bg-card hover:bg-accent/50",
+                      isAffected && "border-primary/50 bg-primary/5",
+                      hasShifted && "border-primary",
+                      !isAffected && !hasShifted && "border-border/50"
+                    )}
+                  >
+                    {/* Category indicator */}
+                    <div 
+                      className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
+                      style={{ backgroundColor: color }}
+                    />
+
+                    <div className="flex items-start justify-between gap-2 pl-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className={cn(
+                            "font-semibold text-sm truncate",
+                            isPrimary ? "text-foreground" : "text-muted-foreground"
+                          )}>
+                            {event.name}
+                          </h4>
+                          
+                          {!isPrimary && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
+                              <AlertTriangle className="h-2.5 w-2.5 mr-1" />
+                              COND
+                            </Badge>
+                          )}
+                          
+                          {isAffected && (
+                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4 shrink-0">
+                              <Zap className="h-2.5 w-2.5 mr-1" />
+                              Affected
+                            </Badge>
+                          )}
+                          
+                          {hasShifted && (
+                            <Badge className="text-[10px] px-1.5 py-0 h-4 bg-primary shrink-0">
+                              {formatDelta(deltaQuarters)}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                          <span 
+                            className="w-2 h-2 rounded-full shrink-0" 
+                            style={{ backgroundColor: color }}
+                          />
+                          <span className="capitalize truncate">{event.category}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className={cn(
+                          "text-right",
+                          hasShifted && "text-primary"
+                        )}>
+                          <div className="text-lg font-bold">
+                            {Math.round(event.probability * 100)}%
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Floating affected count badge */}
+      {affectedCount > 0 && (
+        <div className="fixed bottom-4 right-4 z-50 animate-fade-in">
+          <Badge 
+            variant="destructive" 
+            className="px-3 py-1.5 text-xs font-semibold shadow-lg bg-primary/90 backdrop-blur-sm"
+          >
+            <Zap className="h-3 w-3 mr-1.5" />
+            {affectedCount} affected
+          </Badge>
+        </div>
+      )}
+    </div>
+  );
+
+  // Return mobile layout for small screens
+  if (isMobile) {
+    return <MobileTimeline />;
+  }
 
   return (
     <div className="w-full overflow-x-auto">
