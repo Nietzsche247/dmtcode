@@ -129,6 +129,38 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
       .attr("offset", "100%")
       .attr("stop-color", "#C41E3A");
 
+    // Glow filter for critical chain nodes
+    const glowFilter = defs.append("filter")
+      .attr("id", "glow")
+      .attr("x", "-50%")
+      .attr("y", "-50%")
+      .attr("width", "200%")
+      .attr("height", "200%");
+    
+    glowFilter.append("feGaussianBlur")
+      .attr("stdDeviation", "3")
+      .attr("result", "coloredBlur");
+    
+    const glowMerge = glowFilter.append("feMerge");
+    glowMerge.append("feMergeNode").attr("in", "coloredBlur");
+    glowMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
+    // Pulse animation filter
+    const pulseFilter = defs.append("filter")
+      .attr("id", "pulse-glow")
+      .attr("x", "-100%")
+      .attr("y", "-100%")
+      .attr("width", "300%")
+      .attr("height", "300%");
+    
+    pulseFilter.append("feGaussianBlur")
+      .attr("stdDeviation", "4")
+      .attr("result", "coloredBlur");
+    
+    const pulseMerge = pulseFilter.append("feMerge");
+    pulseMerge.append("feMergeNode").attr("in", "coloredBlur");
+    pulseMerge.append("feMergeNode").attr("in", "SourceGraphic");
+
     // Arrow marker
     defs.append("marker")
       .attr("id", "arrow")
@@ -167,8 +199,9 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
       .force("y", d3.forceY(innerHeight / 2).strength(0.05));
 
     // Draw links
-    const link = g.append("g")
-      .attr("class", "links")
+    const linkGroup = g.append("g").attr("class", "links");
+    
+    const link = linkGroup
       .selectAll("line")
       .data(links)
       .enter()
@@ -177,6 +210,65 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
       .attr("stroke-opacity", d => d.isCriticalChain ? 0.9 : 0.3)
       .attr("stroke-width", d => d.isCriticalChain ? 3 : 1)
       .attr("marker-end", d => d.isCriticalChain ? "url(#arrow-critical)" : "url(#arrow)");
+
+    // Flowing particles on critical chain edges
+    const criticalLinks = links.filter(l => l.isCriticalChain);
+    const particleGroup = g.append("g").attr("class", "particles");
+    
+    // Create multiple particles per critical link
+    const particles: { link: GraphLink; offset: number; speed: number }[] = [];
+    criticalLinks.forEach(link => {
+      // 3 particles per link with different offsets
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          link,
+          offset: i * 0.33,
+          speed: 0.008 + Math.random() * 0.004
+        });
+      }
+    });
+
+    const particleCircles = particleGroup
+      .selectAll("circle")
+      .data(particles)
+      .enter()
+      .append("circle")
+      .attr("r", 3)
+      .attr("fill", "#FF6B6B")
+      .attr("filter", "url(#glow)")
+      .attr("opacity", 0.9);
+
+    // Particle animation loop
+    let particleTime = 0;
+    const animateParticles = () => {
+      particleTime += 1;
+      
+      particleCircles.attr("cx", d => {
+        const source = d.link.source as GraphNode;
+        const target = d.link.target as GraphNode;
+        if (!source.x || !target.x) return 0;
+        const progress = ((particleTime * d.speed + d.offset) % 1);
+        return source.x + (target.x - source.x) * progress;
+      })
+      .attr("cy", d => {
+        const source = d.link.source as GraphNode;
+        const target = d.link.target as GraphNode;
+        if (!source.y || !target.y) return 0;
+        const progress = ((particleTime * d.speed + d.offset) % 1);
+        return source.y + (target.y - source.y) * progress;
+      })
+      .attr("opacity", d => {
+        const progress = ((particleTime * d.speed + d.offset) % 1);
+        // Fade in at start, fade out at end
+        if (progress < 0.1) return progress * 9;
+        if (progress > 0.9) return (1 - progress) * 9;
+        return 0.9;
+      });
+
+      requestAnimationFrame(animateParticles);
+    };
+    
+    const particleAnimation = requestAnimationFrame(animateParticles);
 
     // Link labels (shift ratio)
     const linkLabels = g.append("g")
@@ -214,8 +306,31 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
           d.fy = null;
         }));
 
+    // Pulse ring for critical chain nodes (behind main circle)
+    node.filter(d => CRITICAL_CHAIN.includes(d.id))
+      .append("circle")
+      .attr("class", "pulse-ring")
+      .attr("r", 18)
+      .attr("fill", "none")
+      .attr("stroke", "#C41E3A")
+      .attr("stroke-width", 2)
+      .attr("opacity", 0.6)
+      .attr("filter", "url(#pulse-glow)");
+
+    // Second pulse ring with offset animation
+    node.filter(d => CRITICAL_CHAIN.includes(d.id))
+      .append("circle")
+      .attr("class", "pulse-ring-2")
+      .attr("r", 18)
+      .attr("fill", "none")
+      .attr("stroke", "#FF6B6B")
+      .attr("stroke-width", 1.5)
+      .attr("opacity", 0.4)
+      .attr("filter", "url(#pulse-glow)");
+
     // Node circles
     node.append("circle")
+      .attr("class", "node-circle")
       .attr("r", d => {
         if (CRITICAL_CHAIN.includes(d.id)) return 18;
         return d.isPrimary ? 14 : 10;
@@ -223,9 +338,29 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
       .attr("fill", d => CATEGORY_COLORS[d.category] || CATEGORY_COLORS.default)
       .attr("stroke", d => CRITICAL_CHAIN.includes(d.id) ? "#C41E3A" : "hsl(var(--background))")
       .attr("stroke-width", d => CRITICAL_CHAIN.includes(d.id) ? 3 : 2)
+      .attr("filter", d => CRITICAL_CHAIN.includes(d.id) ? "url(#glow)" : "none")
       .on("mouseenter", (_, d) => setHoveredNode(d.id))
       .on("mouseleave", () => setHoveredNode(null))
       .on("click", (_, d) => onEventClick?.(d.event));
+
+    // Animated pulse effect for critical chain nodes
+    const pulseAnimation = () => {
+      const time = Date.now() / 1000;
+      
+      svg.selectAll(".pulse-ring")
+        .attr("r", 18 + Math.sin(time * 2) * 6)
+        .attr("opacity", 0.3 + Math.sin(time * 2) * 0.3)
+        .attr("stroke-width", 1 + Math.sin(time * 2) * 1.5);
+
+      svg.selectAll(".pulse-ring-2")
+        .attr("r", 18 + Math.sin(time * 2 + Math.PI) * 8)
+        .attr("opacity", 0.2 + Math.sin(time * 2 + Math.PI) * 0.2)
+        .attr("stroke-width", 1 + Math.sin(time * 2 + Math.PI) * 1);
+
+      requestAnimationFrame(pulseAnimation);
+    };
+    
+    const pulseAnimationId = requestAnimationFrame(pulseAnimation);
 
     // Node labels
     node.append("text")
@@ -263,6 +398,8 @@ export function DependencyGraphD3({ events, dependencyRules, onEventClick }: Dep
 
     return () => {
       simulation.stop();
+      cancelAnimationFrame(particleAnimation);
+      cancelAnimationFrame(pulseAnimationId);
     };
   }, [events, dependencyRules, dimensions, onEventClick]);
 
