@@ -4,11 +4,10 @@
 const EXTERNAL_SUPABASE_URL = 'https://nhpesihbzrxiherrqhfh.supabase.co/rest/v1';
 const EXTERNAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ocGVzaWhienJ4aWhlcnJxaGZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0MjMzMDMsImV4cCI6MjA0ODk5OTMwM30.tPBk_yBKxLGAtHMfZMQVvNjhXHqbPe_0jMVvNB5W8Ao';
 
-const headers = {
+const getHeaders = (): HeadersInit => ({
   'apikey': EXTERNAL_SUPABASE_ANON_KEY,
   'Authorization': `Bearer ${EXTERNAL_SUPABASE_ANON_KEY}`,
-  'Content-Type': 'application/json'
-};
+});
 
 // Types for the forecasts data (matches actual external Supabase schema)
 export interface Forecast {
@@ -71,12 +70,21 @@ export interface ForecastEvent {
 
 export async function getForecasts(): Promise<Forecast[]> {
   try {
-    const response = await fetch(`${EXTERNAL_SUPABASE_URL}/forecasts?select=*&order=year,quarter`, { headers });
+    const url = `${EXTERNAL_SUPABASE_URL}/forecasts?select=*&order=year,quarter`;
+    
+    const response = await fetch(url, { 
+      method: 'GET',
+      headers: getHeaders(),
+      mode: 'cors'
+    });
+    
     if (!response.ok) {
       console.error('Forecasts fetch error:', response.status, response.statusText);
       return [];
     }
-    return response.json();
+    
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching forecasts:', error);
     return [];
@@ -89,7 +97,10 @@ export async function getMethodology(sectionName?: string): Promise<Methodology[
     if (sectionName) {
       url += `&section_name=eq.${encodeURIComponent(sectionName)}`;
     }
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { 
+      headers: getHeaders(),
+      mode: 'cors'
+    });
     if (!response.ok) {
       console.error('Methodology fetch error:', response.status, response.statusText);
       return [];
