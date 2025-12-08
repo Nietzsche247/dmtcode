@@ -413,6 +413,12 @@ export function InteractiveTimeline({
       const source = spineNodes[i];
       const target = spineNodes[i + 1];
       
+      // Find the dependency rule for this connection
+      const rule = dependencyRules.find(
+        r => r.source_event === source.event.name && r.target_event === target.event.name
+      );
+      const shiftRatio = rule?.shift_ratio || 0.8;
+      
       // Calculate positions with drag offset
       let sourceX = source.x;
       let targetX = target.x;
@@ -425,8 +431,9 @@ export function InteractiveTimeline({
       
       // Curved path
       const midX = (sourceX + targetX) / 2;
+      const midY = source.y - 30;
       const path = `M ${sourceX + SPINE_NODE_RADIUS} ${source.y} 
-                    Q ${midX} ${source.y - 30} ${targetX - SPINE_NODE_RADIUS} ${target.y}`;
+                    Q ${midX} ${midY} ${targetX - SPINE_NODE_RADIUS} ${target.y}`;
       
       connections.push(
         <path
@@ -441,6 +448,24 @@ export function InteractiveTimeline({
             filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))'
           }}
         />
+      );
+      
+      // Shift percentage label
+      const labelX = midX;
+      const labelY = midY - 8;
+      connections.push(
+        <text
+          key={`label-${i}`}
+          x={labelX}
+          y={labelY}
+          textAnchor="middle"
+          fontSize="10px"
+          fontWeight="500"
+          fill="hsl(var(--primary))"
+          className="select-none pointer-events-none"
+        >
+          {(shiftRatio * 100).toFixed(0)}%
+        </text>
       );
     }
     
