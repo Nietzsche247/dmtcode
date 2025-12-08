@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { HorizontalBarTimeline } from "@/components/forecasts/HorizontalBarTimeline";
+import { IntroductionAccordion } from "@/components/forecasts/IntroductionAccordion";
+import { ConfidenceTierFilters, type ConfidenceTier } from "@/components/forecasts/ConfidenceTierFilters";
+import { CriticalPathTimeline } from "@/components/forecasts/CriticalPathTimeline";
 import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { DependencyGraphD3 } from "@/components/forecasts/DependencyGraphD3";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
@@ -38,6 +40,9 @@ export default function Forecasts() {
   const [taiwanConflict, setTaiwanConflict] = useState(true);
   const [alignment, setAlignment] = useState<AlignmentBranch>('cooperative');
   const [showSecondaryEvents, setShowSecondaryEvents] = useState(true);
+  
+  // Confidence tier filter
+  const [confidenceTier, setConfidenceTier] = useState<ConfidenceTier>('high');
 
   // Cascade engine
   const {
@@ -109,42 +114,17 @@ export default function Forecasts() {
       <Navigation />
 
       <main className="min-h-screen bg-background pt-20">
-        {/* Introduction Section */}
-        <section 
-          className="w-full py-12 md:py-20 border-b border-white/10"
-          style={{ 
-            background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)' 
-          }}
-        >
-          <div className="container mx-auto px-4">
-            <div 
-              className="max-w-[720px] mx-auto text-center space-y-6 animate-fade-in"
-              style={{ animationDuration: '0.6s' }}
-            >
-              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
-                <span className="font-normal text-foreground/90">Consider how hard it has been to forecast the past.</span>{' '}
-                In 1985, almost no one predicted the Soviet Union would collapse within six years. In 2006, the world's best economists missed the approaching financial crisis. These weren't failures of intelligence, the variables that mattered were hidden, distributed across too many domains, or simply unknowable until they happened.
-              </p>
-              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
-                <span className="font-normal text-foreground/90">Now consider what we can see in 2025.</span>{' '}
-                The capability curve of artificial intelligence is published quarterly in benchmark scores, demonstrated in products millions use daily, and powered by trillion-dollar infrastructure investments visible in satellite imagery. The scaling laws predicting performance gains were written up years ago and have held steady. For perhaps the first time in modern history, the single variable most likely to reshape human civilization is measurable, trackable, and moving on a curve we can observe in real-time.
-              </p>
-              <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed md:leading-[1.7]">
-                <span className="font-normal text-foreground/90">This creates a strange situation: the decade containing the most transformative event in history may also be the most forecastable.</span>{' '}
-                Not because we have certainty, but because the causal chain is short and visible. AI capability leads to AGI, AGI enables recursive improvement, recursive improvement leads to ASI. Each step depends on the prior in obvious ways. The pieces are on the board. The trajectory is measurable. If you have ever wished you could see a major shift coming before it arrived, this may be your chance.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Introduction with Pull Quote Accordion */}
+        <IntroductionAccordion />
 
-        {/* Header */}
-        <section className="container mx-auto px-4 py-12">
+        {/* Page Header */}
+        <section className="container mx-auto px-4 py-10 md:py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-3">
               Major Event Forecasting Model for
               <span className="text-primary"> 2026-2033</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto mb-4">
+            <p className="text-base md:text-lg text-muted-foreground font-light max-w-2xl mx-auto mb-3">
               Interactive Probability Model with Cascade Dependencies
             </p>
             {lastUpdated && (
@@ -152,8 +132,8 @@ export default function Forecasts() {
                 Last updated: {format(new Date(lastUpdated), 'MMMM d, yyyy')}
               </p>
             )}
-            <p className="text-sm text-muted-foreground/70 mt-2">
-              {events.length} events · {dependencyRules.length} dependency rules · Drag primary events to simulate cascades
+            <p className="text-xs text-muted-foreground/70 mt-2">
+              {events.length} events in model. Drag spine events to simulate cascades.
             </p>
           </div>
         </section>
@@ -185,8 +165,42 @@ export default function Forecasts() {
         {/* Main Content */}
         {!loading && !error && events.length > 0 && (
           <>
-            {/* Scenario Controls */}
-            <section className="container mx-auto px-4 py-4">
+            {/* Confidence Tier Filters */}
+            <section className="container mx-auto px-4 py-6">
+              <div className="max-w-6xl mx-auto">
+                <ConfidenceTierFilters
+                  activeTier={confidenceTier}
+                  onTierChange={setConfidenceTier}
+                />
+              </div>
+            </section>
+
+            {/* Critical Path Timeline */}
+            <section className="container mx-auto px-4 py-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Critical Path</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    The causal chain from AI capability to superintelligence
+                  </p>
+                </div>
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6 overflow-x-auto">
+                  <CriticalPathTimeline
+                    events={events}
+                    dependencyRules={dependencyRules}
+                    confidenceTier={confidenceTier}
+                    onEventClick={handleEventClick}
+                    onEventDrag={handleEventDrag}
+                    adjustedEvents={adjustedEvents}
+                    affectedEvents={affectedEvents}
+                    cascadeState={cascadeState}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Scenario Controls - Moved below timeline */}
+            <section className="container mx-auto px-4 py-6">
               <div className="max-w-6xl mx-auto">
                 <ScenarioToggles
                   taiwanConflict={taiwanConflict}
@@ -201,25 +215,20 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* Timeline - Horizontal Bars */}
+            {/* Dependency Network */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-black text-foreground mb-2">Timeline</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Dependency Network</h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Horizontal probability distributions showing event timing and uncertainty
+                    How events cascade through the system
                   </p>
                 </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-6 overflow-hidden">
-                  <HorizontalBarTimeline
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4">
+                  <DependencyGraphD3
                     events={events}
                     dependencyRules={dependencyRules}
-                    showSecondaryEvents={showSecondaryEvents}
                     onEventClick={handleEventClick}
-                    onEventDrag={handleEventDrag}
-                    adjustedEvents={adjustedEvents}
-                    affectedEvents={affectedEvents}
-                    cascadeState={cascadeState}
                   />
                 </div>
               </div>
@@ -229,9 +238,9 @@ export default function Forecasts() {
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-black text-foreground mb-2">Event Details</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Event Details</h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Click any card to view full cascade effects and dependencies
+                    Click any card to view full cascade effects
                   </p>
                 </div>
                 <EventCardsGrid
@@ -242,25 +251,6 @@ export default function Forecasts() {
                   affectedEvents={affectedEvents}
                   cascadeState={cascadeState}
                 />
-              </div>
-            </section>
-
-            {/* Dependency Graph */}
-            <section className="container mx-auto px-4 py-8">
-              <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-black text-foreground mb-2">Dependency Network</h2>
-                  <p className="text-muted-foreground font-light text-sm">
-                    Force-directed graph showing event dependencies and critical AI development chain
-                  </p>
-                </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4">
-                  <DependencyGraphD3
-                    events={events}
-                    dependencyRules={dependencyRules}
-                    onEventClick={handleEventClick}
-                  />
-                </div>
               </div>
             </section>
 
@@ -275,7 +265,7 @@ export default function Forecasts() {
             <section className="container mx-auto px-4 py-12 border-t border-border/30">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl font-black text-foreground mb-2">Methodology</h2>
+                  <h2 className="text-2xl md:text-3xl font-black text-foreground mb-2">Methodology</h2>
                   <p className="text-muted-foreground font-light">
                     How we model radical uncertainty in technological forecasting
                   </p>
