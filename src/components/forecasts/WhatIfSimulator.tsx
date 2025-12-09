@@ -22,6 +22,15 @@ interface AdjustedEvent {
   cascadeSource?: string;
 }
 
+// Get current quarter as numeric value (floor for all adjustments)
+const getCurrentQuarterNumeric = (): number => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-11
+  const quarter = Math.floor(month / 3); // 0-3
+  return year + (quarter * 0.25);
+};
+
 // Quarter to numeric value (Q1 2025 = 2025.0, Q2 2025 = 2025.25, etc.)
 const medianToNumeric = (median: string): number => {
   const match = median.match(/(Q[1-4])\s*(\d{4})/);
@@ -119,6 +128,9 @@ export function WhatIfSimulator({ events, dependencyRules }: WhatIfSimulatorProp
     return buildDependencyRulesMap(dependencyRules);
   }, [dependencyRules]);
   
+  // Calculate the minimum allowed date (current quarter)
+  const minDateValue = useMemo(() => getCurrentQuarterNumeric(), []);
+  
   // Initialize adjusted values from original events
   const initialValues = useMemo(() => {
     const values: Record<string, number> = {};
@@ -170,7 +182,7 @@ export function WhatIfSimulator({ events, dependencyRules }: WhatIfSimulatorProp
       if (targetOriginal === undefined) return;
       
       const cascadeShift = shift * target.ratio;
-      const newTargetValue = Math.max(2025, targetOriginal + cascadeShift);
+      const newTargetValue = Math.max(minDateValue, targetOriginal + cascadeShift);
       
       updated[target.name] = newTargetValue;
       
@@ -179,7 +191,7 @@ export function WhatIfSimulator({ events, dependencyRules }: WhatIfSimulatorProp
     });
 
     return updated;
-  }, [initialValues, manuallyAdjusted, dynamicRulesMap]);
+  }, [initialValues, manuallyAdjusted, dynamicRulesMap, minDateValue]);
 
   // Handle slider change
   const handleSliderChange = (shortName: string, value: number[]) => {
@@ -398,11 +410,11 @@ export function WhatIfSimulator({ events, dependencyRules }: WhatIfSimulatorProp
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-xs text-muted-foreground w-16">2025</span>
+                <span className="text-xs text-muted-foreground w-16">{Math.ceil(minDateValue)}</span>
                 <Slider
                   value={[adjustedValues[event.name] || original]}
                   onValueChange={(value) => handleSliderChange(event.name, value)}
-                  min={2025}
+                  min={minDateValue}
                   max={2035}
                   step={0.25}
                   className="flex-1"
