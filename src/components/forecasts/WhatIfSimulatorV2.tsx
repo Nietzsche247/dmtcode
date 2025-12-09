@@ -37,6 +37,11 @@ export function WhatIfSimulatorV2({ events, dependencyRules }: WhatIfSimulatorV2
           <div className="flex items-center gap-2 text-muted-foreground">
             <SlidersHorizontal className="w-4 h-4" />
             <span className="text-sm font-medium">Event Sliders</span>
+            {!isPanelOpen && Object.keys(adjustments).length > 0 && (
+              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-primary/20 text-primary rounded-full">
+                {Object.keys(adjustments).length} adjusted
+              </span>
+            )}
           </div>
           {isPanelOpen ? (
             <ChevronUp className="w-4 h-4 text-muted-foreground" />
