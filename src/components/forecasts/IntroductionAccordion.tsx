@@ -63,7 +63,7 @@ export function IntroductionAccordion() {
             className="text-2xl md:text-[32px] font-bold text-white leading-[1.3] max-w-[800px] mx-auto"
             style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
           >
-            The decade containing the most transformative event in history may also be the most forecastable.
+            The decade containing the most transformative events in history may also be the most forecastable.
           </h2>
           
           {/* Accent line below quote */}
