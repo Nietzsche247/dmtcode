@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { type ForecastEvent } from "@/lib/forecasts-api";
+import { type ForecastEvent, type DependencyRule } from "@/lib/forecasts-api";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 
 interface WhatIfSimulatorProps {
   events: ForecastEvent[];
+  dependencyRules: DependencyRule[];
 }
 
 interface AdjustedEvent {
@@ -57,41 +58,29 @@ const getShortName = (name: string): string => {
   return name.substring(0, 15);
 };
 
-// Dependency rules: if source shifts by X quarters, target shifts by Y quarters
-const DEPENDENCY_RULES: Record<string, { targets: { name: string; ratio: number }[] }> = {
-  'AI Agents': {
-    targets: [
-      { name: 'Novel Reasoning', ratio: 0.8 },
-    ]
-  },
-  'Novel Reasoning': {
-    targets: [
-      { name: 'AGI', ratio: 0.9 },
-    ]
-  },
-  'AGI': {
-    targets: [
-      { name: 'RSI', ratio: 0.7 },
-      { name: 'Robots', ratio: 0.5 },
-      { name: 'Bio-Attack', ratio: 0.3 },
-    ]
-  },
-  'RSI': {
-    targets: [
-      { name: 'Quantum', ratio: 0.6 },
-    ]
-  },
-  'Quantum': {
-    targets: [
-      { name: 'Q-AI', ratio: 0.8 },
-      { name: 'Encryption', ratio: 0.9 },
-    ]
-  },
-  'Q-AI': {
-    targets: [
-      { name: 'Anti-Aging', ratio: 0.5 },
-    ]
-  },
+// Build dependency rules map from database rules
+const buildDependencyRulesMap = (rules: DependencyRule[]): Record<string, { targets: { name: string; ratio: number }[] }> => {
+  const rulesMap: Record<string, { targets: { name: string; ratio: number }[] }> = {};
+  
+  rules.forEach(rule => {
+    const sourceShort = getShortName(rule.source_event);
+    const targetShort = getShortName(rule.target_event);
+    
+    if (!rulesMap[sourceShort]) {
+      rulesMap[sourceShort] = { targets: [] };
+    }
+    
+    // Avoid duplicate targets
+    if (!rulesMap[sourceShort].targets.some(t => t.name === targetShort)) {
+      rulesMap[sourceShort].targets.push({
+        name: targetShort,
+        ratio: rule.shift_ratio
+      });
+    }
+  });
+  
+  console.log('[WhatIfSimulator] Built dependency rules from database:', rulesMap);
+  return rulesMap;
 };
 
 // Encode adjustments to URL-safe string
@@ -99,7 +88,6 @@ const encodeAdjustments = (values: Record<string, number>, initial: Record<strin
   const changes: string[] = [];
   Object.entries(values).forEach(([key, value]) => {
     if (value !== initial[key]) {
-      // Encode as key:value pairs, using short keys
       const shortKey = key.replace(/\s+/g, '_');
       changes.push(`${shortKey}:${value.toFixed(2)}`);
     }
@@ -122,9 +110,14 @@ const decodeAdjustments = (encoded: string): Record<string, number> => {
   return result;
 };
 
-export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
+export function WhatIfSimulator({ events, dependencyRules }: WhatIfSimulatorProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  
+  // Build dynamic dependency rules map from database
+  const dynamicRulesMap = useMemo(() => {
+    return buildDependencyRulesMap(dependencyRules);
+  }, [dependencyRules]);
   
   // Initialize adjusted values from original events
   const initialValues = useMemo(() => {
@@ -152,7 +145,7 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
     }
   }, [searchParams, initialValues]);
 
-  // Calculate cascading effects
+  // Calculate cascading effects using dynamic rules
   const calculateCascade = useCallback((
     source: string, 
     newValue: number, 
@@ -165,7 +158,7 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
     const originalValue = initialValues[source];
     const shift = newValue - originalValue;
     
-    const rules = DEPENDENCY_RULES[source];
+    const rules = dynamicRulesMap[source];
     if (!rules) return current;
 
     let updated = { ...current };
@@ -186,7 +179,7 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
     });
 
     return updated;
-  }, [initialValues, manuallyAdjusted]);
+  }, [initialValues, manuallyAdjusted, dynamicRulesMap]);
 
   // Handle slider change
   const handleSliderChange = (shortName: string, value: number[]) => {
@@ -253,11 +246,11 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
       const adjusted = adjustedValues[shortName] || original;
       const quarterOffset = Math.round((adjusted - original) * 4);
       
-      // Find cascade source
+      // Find cascade source using dynamic rules
       let cascadeSource: string | undefined;
       if (!manuallyAdjusted.has(shortName) && quarterOffset !== 0) {
         // Find which event caused this cascade
-        for (const [source, rules] of Object.entries(DEPENDENCY_RULES)) {
+        for (const [source, rules] of Object.entries(dynamicRulesMap)) {
           if (rules.targets.some(t => t.name === shortName)) {
             const sourceAdjusted = adjustedValues[source];
             const sourceOriginal = initialValues[source];
@@ -278,7 +271,7 @@ export function WhatIfSimulator({ events }: WhatIfSimulatorProps) {
         cascadeSource,
       };
     });
-  }, [events, adjustedValues, initialValues, manuallyAdjusted]);
+  }, [events, adjustedValues, initialValues, manuallyAdjusted, dynamicRulesMap]);
 
   const hasChanges = useMemo(() => {
     return adjustedEvents.some(e => e.quarterOffset !== 0);

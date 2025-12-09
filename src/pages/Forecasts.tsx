@@ -168,7 +168,7 @@ export default function Forecasts() {
                   </p>
                 </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
-                  <WhatIfSimulator events={events} />
+                  <WhatIfSimulator events={events} dependencyRules={dependencyRules} />
                 </div>
               </div>
             </section>
