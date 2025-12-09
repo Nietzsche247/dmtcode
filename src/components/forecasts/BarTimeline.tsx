@@ -204,12 +204,28 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
       }
 
       // Get secondary events from dynamic map, with fuzzy matching for event names
-      const matchedSecondaryEvents = secondaryEventsMap[eventName] || 
-        secondaryEventsMap[event.name] || 
-        Object.entries(secondaryEventsMap).find(([key]) => 
+      let matchedSecondaryEvents: string[] = [];
+      let matchType = 'none';
+      
+      if (secondaryEventsMap[eventName]) {
+        matchedSecondaryEvents = secondaryEventsMap[eventName];
+        matchType = 'exact-primary';
+      } else if (secondaryEventsMap[event.name]) {
+        matchedSecondaryEvents = secondaryEventsMap[event.name];
+        matchType = 'exact-event';
+      } else {
+        const fuzzyMatch = Object.entries(secondaryEventsMap).find(([key]) => 
           key.toLowerCase().includes(eventName.toLowerCase().slice(0, 15)) ||
           eventName.toLowerCase().includes(key.toLowerCase().slice(0, 15))
-        )?.[1] || [];
+        );
+        if (fuzzyMatch) {
+          matchedSecondaryEvents = fuzzyMatch[1];
+          matchType = `fuzzy:${fuzzyMatch[0]}`;
+        }
+      }
+      
+      console.log(`[BarTimeline] Event "${eventName}" → ${matchedSecondaryEvents.length} secondary events (${matchType})`, 
+        matchedSecondaryEvents.length > 0 ? matchedSecondaryEvents : '');
 
       result.push({
         event,
