@@ -9,6 +9,9 @@ import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
 import { WhatIfSimulator } from "@/components/forecasts/WhatIfSimulator";
+import { ScenarioInputPanel } from "@/components/forecasts/ScenarioInputPanel";
+import { WhatIfTimeline } from "@/components/forecasts/WhatIfTimeline";
+import { WhatIfProvider } from "@/contexts/WhatIfContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -76,12 +79,12 @@ export default function Forecasts() {
   }, []);
 
   return (
-    <>
+    <WhatIfProvider>
       <Helmet>
-        <title>Major Event Forecasting Model 2026-2033 | DMT Code Project</title>
+        <title>AI Forecasts 2025-2035 | What-If Simulator</title>
         <meta 
           name="description" 
-          content="Interactive probabilistic model of transformative events from 2026-2033. Drag events to simulate cascade effects." 
+          content="Interactive probabilistic model of transformative AI events from 2026-2033. Run what-if scenarios to simulate cascade effects." 
         />
       </Helmet>
 
@@ -139,13 +142,13 @@ export default function Forecasts() {
         {/* Main Content */}
         {!loading && !error && events.length > 0 && (
           <>
-            {/* Bar-based Timeline */}
+            {/* 1. MAIN TIMELINE (Your forecasts - baseline) */}
             <section className="container mx-auto px-4 py-6">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Event Timeline</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">MAIN TIMELINE</h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Probability distributions for transformative events 2026-2033
+                    Baseline probability distributions for transformative events 2026-2033
                   </p>
                 </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
@@ -165,13 +168,13 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* What-If Simulator */}
+            {/* 2. MARKET COMPARISON (Poly/Metaculus) - Using existing What-If Simulator for now */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">WHAT-IF SIMULATOR</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">MARKET COMPARISON</h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Drag the sliders to shift event timelines and see how changes cascade through dependencies
+                    Compare with Polymarket & Metaculus forecasts
                   </p>
                 </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
@@ -180,11 +183,27 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* Event Cards Grid */}
+            {/* 3. SCENARIO INPUT PANEL */}
+            <section className="container mx-auto px-4 py-6">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">WHAT-IF SCENARIO</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    Select an event and shift its timeline to see cascading effects
+                  </p>
+                </div>
+                <ScenarioInputPanel dependencyRules={dependencyRules} />
+              </div>
+            </section>
+
+            {/* 4. WHAT-IF TIMELINE (appears after scenario runs) */}
+            <WhatIfTimeline events={events} />
+
+            {/* 5. DEPENDENCIES - Event Cards Grid */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">Event Details</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">DEPENDENCIES</h2>
                   <p className="text-muted-foreground font-light text-sm">
                     Click any card to view full cascade effects
                   </p>
@@ -239,6 +258,6 @@ export default function Forecasts() {
           onClick={() => setPanelOpen(false)}
         />
       )}
-    </>
+    </WhatIfProvider>
   );
 }
