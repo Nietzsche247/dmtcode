@@ -8,6 +8,7 @@ import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
+import { WhatIfSimulator } from "@/components/forecasts/WhatIfSimulator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -153,6 +154,21 @@ export default function Forecasts() {
                     dependencyRules={dependencyRules}
                     onEventClick={handleEventClick}
                   />
+                </div>
+              </div>
+            </section>
+
+            {/* What-If Simulator */}
+            <section className="container mx-auto px-4 py-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-6">
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">WHAT-IF SIMULATOR</h2>
+                  <p className="text-muted-foreground font-light text-sm">
+                    Drag the sliders to shift event timelines and see how changes cascade through dependencies
+                  </p>
+                </div>
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                  <WhatIfSimulator events={events} />
                 </div>
               </div>
             </section>
