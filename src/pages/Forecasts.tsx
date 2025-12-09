@@ -4,14 +4,12 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { IntroductionAccordion } from "@/components/forecasts/IntroductionAccordion";
 import { BarTimeline } from "@/components/forecasts/BarTimeline";
+import { MarketOverlayTimeline } from "@/components/forecasts/MarketOverlayTimeline";
+import { WhatIfSimulatorV2 } from "@/components/forecasts/WhatIfSimulatorV2";
 import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
-import { WhatIfSimulator } from "@/components/forecasts/WhatIfSimulator";
-import { ScenarioInputPanel } from "@/components/forecasts/ScenarioInputPanel";
-import { WhatIfTimeline } from "@/components/forecasts/WhatIfTimeline";
-import { WhatIfProvider } from "@/contexts/WhatIfContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -79,7 +77,7 @@ export default function Forecasts() {
   }, []);
 
   return (
-    <WhatIfProvider>
+    <>
       <Helmet>
         <title>AI Forecasts 2025-2035 | What-If Simulator</title>
         <meta 
@@ -168,38 +166,45 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* 2. MARKET COMPARISON (Poly/Metaculus) - Using existing What-If Simulator for now */}
+            {/* 2. MAIN TIMELINE + MARKET OVERLAY */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">MARKET COMPARISON</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">
+                    MAIN TIMELINE + <span className="text-orange-500">METACULUS</span> OVERLAY
+                  </h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Compare with Polymarket & Metaculus forecasts
+                    Orange diamonds show Metaculus community median forecasts
                   </p>
                 </div>
                 <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
-                  <WhatIfSimulator events={events} dependencyRules={dependencyRules} />
+                  <MarketOverlayTimeline
+                    events={events}
+                    dependencyRules={dependencyRules}
+                    onEventClick={handleEventClick}
+                  />
                 </div>
               </div>
             </section>
 
-            {/* 3. SCENARIO INPUT PANEL */}
-            <section className="container mx-auto px-4 py-6">
+            {/* 3. WHAT-IF SIMULATOR TIMELINE */}
+            <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">WHAT-IF SCENARIO</h2>
+                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">
+                    WHAT-IF <span className="text-primary">SIMULATOR</span> TIMELINE
+                  </h2>
                   <p className="text-muted-foreground font-light text-sm">
-                    Select an event and shift its timeline to see cascading effects
+                    Drag sliders to shift events and see real-time cascade effects
                   </p>
                 </div>
-                <ScenarioInputPanel dependencyRules={dependencyRules} />
+                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                  <WhatIfSimulatorV2 events={events} dependencyRules={dependencyRules} />
+                </div>
               </div>
             </section>
 
-            {/* 4. WHAT-IF TIMELINE (appears after scenario runs) */}
-            <WhatIfTimeline events={events} />
-
-            {/* 5. DEPENDENCIES - Event Cards Grid */}
+            {/* 4. DEPENDENCIES - Event Cards Grid */}
             <section className="container mx-auto px-4 py-8">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
@@ -258,6 +263,6 @@ export default function Forecasts() {
           onClick={() => setPanelOpen(false)}
         />
       )}
-    </WhatIfProvider>
+    </>
   );
 }
