@@ -155,6 +155,11 @@ export default function Forecasts() {
                     onEventClick={handleEventClick}
                   />
                 </div>
+                <p className="text-center text-sm text-muted-foreground/80 mt-4 italic">
+                  Core logic: <span className="text-foreground/90 font-medium">high-probability primary events</span> → 
+                  <span className="text-foreground/90 font-medium"> high conditional probability secondary events</span> → 
+                  <span className="text-primary font-medium"> recursive compounding effects across domains</span>
+                </p>
               </div>
             </section>
 
