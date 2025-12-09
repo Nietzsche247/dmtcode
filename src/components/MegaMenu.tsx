@@ -25,6 +25,7 @@ import {
   ScrollText,
   HelpCircle,
   ClipboardCheck,
+  TrendingUp,
 } from "lucide-react";
 
 interface NavItem {
@@ -101,6 +102,12 @@ const explorerItems: NavItem[] = [
 ];
 
 const resourceItems: NavItem[] = [
+  {
+    title: "Forecasts",
+    href: "/forecasts",
+    description: "Technology timeline predictions",
+    icon: TrendingUp,
+  },
   {
     title: "Protocols",
     href: "/protocols",
