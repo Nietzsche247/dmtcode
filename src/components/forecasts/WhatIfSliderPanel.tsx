@@ -351,40 +351,38 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
         </div>
       </div>
 
-      {/* Sliders */}
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+      {/* Sliders - Two column grid, condensed 40% */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pr-1">
         {sourceEvents.map((event) => {
           const shortName = getShortName(event.name);
           const original = initialValues[shortName];
           const current = adjustedValues[shortName] || original;
           const deltaQuarters = Math.round((current - original) * 4);
-          const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
 
           return (
             <div 
               key={event.name} 
               className={cn(
-                "p-3 rounded-lg border transition-all duration-200",
+                "p-2 rounded-lg border transition-all duration-200",
                 deltaQuarters !== 0 
                   ? "bg-card border-border shadow-sm" 
                   : "bg-card/50 border-border/50"
               )}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  {/* Cascade indicator */}
-                  <Link className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs font-medium text-foreground truncate max-w-[120px]">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-1">
+                  <Link className="h-2.5 w-2.5 text-muted-foreground" />
+                  <span className="text-[10px] font-medium text-foreground truncate max-w-[80px]">
                     {shortName}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-xs">
-                  <span className="text-muted-foreground">{numericToMedian(current)}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[9px] text-muted-foreground">{numericToMedian(current)}</span>
                   {deltaQuarters !== 0 && (
                     <Badge 
                       variant="outline" 
                       className={cn(
-                        "text-[10px] px-1 py-0",
+                        "text-[8px] px-0.5 py-0 h-3",
                         deltaQuarters > 0 ? "border-destructive/50 text-destructive" : "border-green-500/50 text-green-500"
                       )}
                     >
@@ -394,8 +392,8 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-muted-foreground w-8">{TIMELINE_START}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[8px] text-muted-foreground w-6">{TIMELINE_START}</span>
                 <div className="flex-1 relative">
                   <Slider
                     value={[current]}
@@ -403,19 +401,10 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
                     min={TIMELINE_START}
                     max={TIMELINE_END}
                     step={0.25}
-                    className="flex-1"
-                  />
-                  {/* Custom track fill */}
-                  <div 
-                    className="absolute top-1/2 left-0 h-1 rounded-full -translate-y-1/2 pointer-events-none"
-                    style={{
-                      width: `${((current - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100}%`,
-                      backgroundColor: 'hsl(var(--primary))',
-                      opacity: 0.7
-                    }}
+                    className="flex-1 h-4"
                   />
                 </div>
-                <span className="text-[10px] text-muted-foreground w-8 text-right">{TIMELINE_END}</span>
+                <span className="text-[8px] text-muted-foreground w-6 text-right">{TIMELINE_END}</span>
               </div>
             </div>
           );
