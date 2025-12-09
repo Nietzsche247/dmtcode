@@ -71,6 +71,18 @@ export interface MetaculusComparison {
   last_updated: string;
 }
 
+export interface PolymarketPrediction {
+  id: number;
+  forecast_event_name: string;
+  question_title: string | null;
+  question_url: string | null;
+  probability: number | null;
+  volume_usd: number | null;
+  liquidity_usd: number | null;
+  end_date: string | null;
+  last_updated: string;
+}
+
 export interface ForecastEvent {
   name: string;
   type: 'positive' | 'negative' | 'foundation';
@@ -235,6 +247,32 @@ export async function getMetaculusComparisons(): Promise<MetaculusComparison[]> 
     return response.json();
   } catch (error) {
     console.error('Error fetching Metaculus comparisons:', error);
+    return [];
+  }
+}
+
+// Fetch Polymarket prediction data from local Supabase
+export async function getPolymarketPredictions(): Promise<PolymarketPrediction[]> {
+  try {
+    const response = await fetch(
+      `${LOCAL_SUPABASE_URL}/rest/v1/polymarket_predictions?select=*`,
+      {
+        headers: {
+          'apikey': LOCAL_SUPABASE_KEY,
+          'Authorization': `Bearer ${LOCAL_SUPABASE_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      console.error('Polymarket fetch error:', response.status, response.statusText);
+      return [];
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching Polymarket predictions:', error);
     return [];
   }
 }

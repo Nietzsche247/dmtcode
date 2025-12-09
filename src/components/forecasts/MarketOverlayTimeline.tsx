@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import type { ForecastEvent, DependencyRule, MetaculusComparison } from "@/lib/forecasts-api";
-import { CATEGORY_COLORS, quarterToNumber, getMetaculusComparisons } from "@/lib/forecasts-api";
+import type { ForecastEvent, DependencyRule, MetaculusComparison, PolymarketPrediction } from "@/lib/forecasts-api";
+import { CATEGORY_COLORS, quarterToNumber, getMetaculusComparisons, getPolymarketPredictions } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
@@ -128,6 +128,22 @@ function matchMetaculusToEvent(eventName: string, comparisons: MetaculusComparis
   });
 }
 
+// Match Polymarket data to event
+function matchPolymarketToEvent(eventName: string, predictions: PolymarketPrediction[]): PolymarketPrediction | undefined {
+  const eventLower = eventName.toLowerCase();
+  
+  // Direct match first
+  const direct = predictions.find(p => p.forecast_event_name.toLowerCase() === eventLower);
+  if (direct) return direct;
+
+  // Fuzzy match
+  return predictions.find(p => {
+    const forecastLower = p.forecast_event_name.toLowerCase();
+    return eventLower.includes(forecastLower.slice(0, 15)) || 
+           forecastLower.includes(eventLower.slice(0, 15));
+  });
+}
+
 interface ProcessedEvent {
   event: ForecastEvent;
   position: number;
@@ -136,6 +152,7 @@ interface ProcessedEvent {
   row: number;
   isAbove: boolean;
   metaculus?: MetaculusComparison;
+  polymarket?: PolymarketPrediction;
 }
 
 export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }: MarketOverlayTimelineProps) {
@@ -143,15 +160,17 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
+  const [polymarketData, setPolymarketData] = useState<PolymarketPrediction[]>([]);
   
   // Zoom and pan state
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, scrollLeft: 0 });
 
-  // Fetch Metaculus data
+  // Fetch market data
   useEffect(() => {
     getMetaculusComparisons().then(setMetaculusData);
+    getPolymarketPredictions().then(setPolymarketData);
   }, []);
 
   // Zoom handlers
@@ -217,8 +236,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         }
       }
 
-      // Match Metaculus data
+      // Match market data
       const metaculus = matchMetaculusToEvent(event.name, metaculusData);
+      const polymarket = matchPolymarketToEvent(event.name, polymarketData);
 
       result.push({
         event,
@@ -227,12 +247,13 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         barWidth: spread.widthPercent,
         row: assignedRow,
         isAbove,
-        metaculus
+        metaculus,
+        polymarket
       });
     });
 
     return result;
-  }, [events, metaculusData]);
+  }, [events, metaculusData, polymarketData]);
 
   const timelineHeight = isMobile ? 500 : 600;
   const barHeight = isMobile ? 18 : 24;
@@ -330,7 +351,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
 
             {/* Event Bars with Market Overlays */}
             {processedEvents.map((pe) => {
-              const { event, barStart, barWidth, row, isAbove, metaculus } = pe;
+              const { event, barStart, barWidth, row, isAbove, metaculus, polymarket } = pe;
               const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
               
               const yOffset = isAbove 
@@ -340,6 +361,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
               const isHovered = hoveredEvent === event.name;
               const metaculusPosition = metaculus?.metaculus_median_date 
                 ? dateToPosition(metaculus.metaculus_median_date)
+                : null;
+              const polymarketPosition = polymarket?.end_date 
+                ? dateToPosition(polymarket.end_date)
                 : null;
 
               return (
@@ -473,6 +497,59 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                       </TooltipContent>
                     </Tooltip>
                   )}
+
+                  {/* Polymarket Market Overlay */}
+                  {polymarket && polymarketPosition && polymarket.probability && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="absolute cursor-pointer z-10"
+                          style={{
+                            left: `${polymarketPosition}%`,
+                            top: isAbove ? yOffset + barHeight + 20 : yOffset - 44,
+                          }}
+                        >
+                          {/* Vertical connector line */}
+                          <div 
+                            className="absolute w-px bg-blue-500/60"
+                            style={{
+                              left: 5,
+                              top: isAbove ? -16 : 14,
+                              height: 16,
+                            }}
+                          />
+                          
+                          {/* Polymarket circle badge */}
+                          <div 
+                            className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-sm hover:scale-110 transition-transform relative z-10 border border-blue-400"
+                          >
+                            <span className="text-[8px] font-bold text-white">
+                              {Math.round(Number(polymarket.probability) * 100)}%
+                            </span>
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side={isAbove ? "bottom" : "top"} className="max-w-xs">
+                        <div className="space-y-1">
+                          <p className="font-semibold text-blue-500">Polymarket</p>
+                          <p className="text-sm">{polymarket.question_title}</p>
+                          <p className="text-sm font-medium">
+                            {Math.round(Number(polymarket.probability) * 100)}% probability
+                          </p>
+                          {polymarket.volume_usd && (
+                            <p className="text-xs text-muted-foreground">
+                              ${Number(polymarket.volume_usd).toLocaleString()} volume
+                            </p>
+                          )}
+                          {polymarket.end_date && (
+                            <p className="text-xs text-muted-foreground">
+                              Ends: {new Date(polymarket.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                            </p>
+                          )}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </div>
               );
             })}
@@ -482,7 +559,13 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         {/* Legend */}
         <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-orange-500 rotate-45" style={{ transform: 'rotate(45deg)' }} />
+            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+              <span className="text-[7px] font-bold text-white">P</span>
+            </div>
+            <span>Polymarket</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-orange-500" style={{ transform: 'rotate(45deg)' }} />
             <span>Metaculus median</span>
           </div>
         </div>
