@@ -18,13 +18,13 @@ interface MarketOverlayTimelineProps {
   onEventClick: (event: ForecastEvent) => void;
 }
 
-// Timeline configuration
-const TIMELINE_START_YEAR = 2026;
-const TIMELINE_END_YEAR = 2033;
-const YEARS = Array.from({ length: TIMELINE_END_YEAR - TIMELINE_START_YEAR + 1 }, (_, i) => TIMELINE_START_YEAR + i);
+// Timeline configuration - extended to accommodate Metaculus data
+const TIMELINE_START_YEAR = 2025;
+const TIMELINE_END_YEAR = 2055;
+const YEARS = Array.from({ length: Math.floor((TIMELINE_END_YEAR - TIMELINE_START_YEAR) / 5) + 1 }, (_, i) => TIMELINE_START_YEAR + i * 5);
 
 // Zoom configuration
-const MIN_ZOOM = 1;
+const MIN_ZOOM = 0.8;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
 
@@ -96,17 +96,35 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
   return match;
 }
 
-// Match Metaculus data to event
+// Match Metaculus data to event - improved matching
 function matchMetaculusToEvent(eventName: string, comparisons: MetaculusComparison[]): MetaculusComparison | undefined {
+  const eventLower = eventName.toLowerCase();
+  
+  // Direct mapping for known events
+  const mappings: Record<string, string> = {
+    'agi / human-level general intelligence': 'agi (human-level general intelligence)',
+    'anti-aging breakthrough': 'anti-aging breakthrough',
+    'first 1m humanoid robots delivered': 'humanoid robots (mass production)',
+    'quantum computing breaks rsa/ecc': 'quantum computing (quantum advantage)',
+    'quantum computing becomes semi-mainstream': 'quantum computing (quantum advantage)',
+    'recursive learning algorithms discovered': 'rsi (recursive self-improvement)',
+  };
+
+  // Check direct mapping first
+  const mappedName = mappings[eventLower];
+  if (mappedName) {
+    return comparisons.find(c => c.forecast_event_name.toLowerCase() === mappedName);
+  }
+
+  // Fallback to fuzzy match
   return comparisons.find(c => {
-    const eventLower = eventName.toLowerCase();
     const forecastLower = c.forecast_event_name.toLowerCase();
     return eventLower.includes(forecastLower.slice(0, 15)) || 
            forecastLower.includes(eventLower.slice(0, 15)) ||
-           eventLower.includes('agi') && forecastLower.includes('agi') ||
-           eventLower.includes('robot') && forecastLower.includes('robot') ||
-           eventLower.includes('quantum') && forecastLower.includes('quantum') ||
-           eventLower.includes('aging') && forecastLower.includes('aging');
+           (eventLower.includes('agi') && forecastLower.includes('agi')) ||
+           (eventLower.includes('robot') && forecastLower.includes('robot')) ||
+           (eventLower.includes('quantum') && forecastLower.includes('quantum')) ||
+           (eventLower.includes('aging') && forecastLower.includes('aging'));
   });
 }
 
