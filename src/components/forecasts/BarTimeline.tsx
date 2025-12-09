@@ -1,5 +1,5 @@
-import { useMemo, useState, useRef, useEffect, useCallback } from "react";
-import type { ForecastEvent, DependencyRule, EventCategory } from "@/lib/forecasts-api";
+import { useMemo, useState, useRef, useCallback } from "react";
+import type { ForecastEvent, DependencyRule } from "@/lib/forecasts-api";
 import { CATEGORY_COLORS, quarterToNumber } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,7 +15,7 @@ const TIMELINE_START_YEAR = 2026;
 const TIMELINE_END_YEAR = 2033;
 const YEARS = Array.from({ length: TIMELINE_END_YEAR - TIMELINE_START_YEAR + 1 }, (_, i) => TIMELINE_START_YEAR + i);
 
-// Primary events to show as bars - matched to real event names from data
+// Primary events to show as bars
 const PRIMARY_EVENTS_ABOVE = [
   "AI Agents Transform White-Collar Work",
   "AI Achieves Human-Level Novel Reasoning",
@@ -77,11 +77,9 @@ function getBarSpread(distributions: { quarter: string; year: number; probabilit
 
 // Fuzzy match event name
 function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent | undefined {
-  // Exact match first
   let match = events.find(e => e.name === target);
   if (match) return match;
   
-  // Partial match
   const targetLower = target.toLowerCase();
   match = events.find(e => e.name.toLowerCase().includes(targetLower.slice(0, 20)));
   if (match) return match;
@@ -262,7 +260,7 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
                 }}
                 onMouseEnter={(e) => handleBarHover(e, pe)}
                 onMouseMove={(e) => setTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }))}
-                onMouseLeave={() => handleBarHover(null as any, null)}
+                onMouseLeave={() => handleBarHover(null as unknown as React.MouseEvent, null)}
                 onClick={() => handleBarClick(pe)}
               >
                 {/* Median marker */}
@@ -352,7 +350,9 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
             <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
             <div><span className="font-medium">Probability:</span> {(tooltip.event.probability * 100).toFixed(0)}%</div>
             {tooltip.event.distributions.length > 1 && (
-              <div><span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}</div>
+              <div>
+                <span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}
+              </div>
             )}
           </div>
           <div className="mt-2 text-[10px] text-muted-foreground/70">Click for details</div>
@@ -367,136 +367,6 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
       {/* Legend */}
       <div className="absolute bottom-2 right-2 flex flex-wrap gap-2 text-[9px] bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
         {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').slice(0, 6).map(([cat, color]) => (
-          <div key={cat} className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-            <span className="capitalize text-muted-foreground">{cat}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-              }}
-              onMouseLeave={() => handleBarHover(null as any, null)}
-              onClick={() => handleBarClick(pe)}
-            >
-              {/* Median marker */}
-              <div 
-                className="absolute top-0 bottom-0 w-0.5 bg-white/60"
-                style={{ left: '50%' }}
-              />
-            </div>
-          );
-        })}
-
-        {/* Vertical connectors from bars to timeline */}
-        <svg 
-          width="100%" 
-          height="100%" 
-          className="absolute inset-0 pointer-events-none"
-          style={{ zIndex: 5 }}
-        >
-          {processedEvents.map((pe) => {
-            const { event, position, row, isAbove } = pe;
-            const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
-            const barY = isAbove 
-              ? 50 - ((row + 1) * rowHeight / timelineHeight) * 100
-              : 50 + ((row * rowHeight + 12 + barHeight) / timelineHeight) * 100;
-            
-            return (
-              <line
-                key={`conn-${event.name}`}
-                x1={`calc(5% + ${position * 0.9}%)`}
-                y1={`${barY}%`}
-                x2={`calc(5% + ${position * 0.9}%)`}
-                y2="50%"
-                stroke={color}
-                strokeWidth={1.5}
-                strokeDasharray={isAbove ? "none" : "3,2"}
-                opacity={0.6}
-              />
-            );
-          })}
-        </svg>
-
-        {/* Event Labels */}
-        {processedEvents.map((pe) => {
-          const { event, barStart, barWidth, row, isAbove } = pe;
-          const isHovered = hoveredEvent === event.name;
-          const isExpanded = expandedEvent === event.name;
-          const showLabel = !isMobile || isHovered || isExpanded;
-          
-          if (!showLabel && isMobile) return null;
-
-          const labelY = isAbove
-            ? `calc(50% - ${(row + 1) * rowHeight}px - ${barHeight}px - 4px)`
-            : `calc(50% + ${row * rowHeight + 12}px + ${barHeight}px + 12px)`;
-
-          const displayName = event.name.length > 25 && !isHovered && !isExpanded
-            ? event.name.slice(0, 22) + '…' 
-            : event.name;
-
-          return (
-            <div
-              key={`label-${event.name}`}
-              className={cn(
-                "absolute text-[10px] md:text-xs font-medium pointer-events-none transition-opacity duration-200",
-                isHovered || isExpanded ? "opacity-100" : "opacity-70"
-              )}
-              style={{
-                left: `calc(5% + ${(barStart + barWidth / 2) * 0.9}%)`,
-                top: labelY,
-                transform: 'translateX(-50%)',
-                color: 'hsl(var(--foreground))',
-                whiteSpace: 'nowrap',
-                maxWidth: '150px',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                textAlign: 'center'
-              }}
-            >
-              {displayName}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Tooltip */}
-      {tooltip.visible && tooltip.event && (
-        <div
-          className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl p-3 pointer-events-none"
-          style={{
-            left: tooltip.x + 15,
-            top: tooltip.y - 10,
-            maxWidth: 280,
-          }}
-        >
-          <div className="font-semibold text-sm text-foreground mb-1">
-            {tooltip.event.name}
-          </div>
-          <div className="text-xs text-muted-foreground space-y-0.5">
-            <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
-            <div><span className="font-medium">Probability:</span> {(tooltip.event.probability * 100).toFixed(0)}%</div>
-            <div><span className="font-medium">Range:</span> {
-              tooltip.event.distributions.length > 1
-                ? `${tooltip.event.distributions[0].quarter} ${tooltip.event.distributions[0].year} – ${tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} ${tooltip.event.distributions[tooltip.event.distributions.length - 1].year}`
-                : `${tooltip.event.distributions[0]?.quarter} ${tooltip.event.distributions[0]?.year}`
-            }</div>
-          </div>
-          <div className="mt-2 text-[10px] text-muted-foreground/70">
-            Click for details
-          </div>
-        </div>
-      )}
-
-      {/* Instructions */}
-      <div className="absolute bottom-2 left-2 text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
-        {isMobile ? "Tap bars to expand" : "Hover bars to see details • Click to expand"}
-      </div>
-
-      {/* Category Legend */}
-      <div className="absolute bottom-2 right-2 flex flex-wrap gap-2 text-[9px] bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
-        {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').map(([cat, color]) => (
           <div key={cat} className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
             <span className="capitalize text-muted-foreground">{cat}</span>
