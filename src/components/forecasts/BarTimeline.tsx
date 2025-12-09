@@ -44,19 +44,23 @@ const PRIMARY_EVENTS_BELOW = [
   "ASI Controls Global Infrastructure"
 ];
 
-// Secondary events mapped to parents
-const SECONDARY_EVENTS: Record<string, string[]> = {
-  "AI Agents Transform White-Collar Work": ["White-Collar Hiring Freeze", "Coding Bootcamp Collapse"],
-  "AI Achieves Human-Level Novel Reasoning": ["Scientific Discovery Rate 10x", "First AI-Authored Paper"],
-  "AGI / Human-Level General Intelligence": ["AI Capability Doubling Collapses", "Emergency Government Task Forces"],
-  "Artificial Superintelligence Emerges": ["Human R&D Obsolescence", "Stock Market Circuit Breakers"],
-  "China-Taiwan Military Conflict": ["US-China Direct Engagement", "Global Recession War-Induced"],
-  "ASI Achieves Omniscience": ["Human Privacy Ends", "Encryption Broken"],
-  "First 1M Humanoid Robots Delivered": ["Physical Labor Displacement", "Warehouse Automation"],
-  "Quantum Computing Becomes Semi-Mainstream": ["Post-Quantum Crypto Emergency", "Cryptocurrency Collapse"],
-  "DIY Bio-Attack with Major Impact": ["DNA Synthesis Restrictions", "Biosurveillance Expansion"],
-  "Global Unemployment Crisis": ["UBI Legislation Fast-Tracked", "Mental Health Crisis"]
-};
+// Build secondary events map dynamically from dependency rules
+function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<string, string[]> {
+  const map: Record<string, string[]> = {};
+  dependencyRules?.forEach(rule => {
+    const source = rule.source_event;
+    const target = rule.target_event;
+    if (source && target) {
+      if (!map[source]) {
+        map[source] = [];
+      }
+      if (!map[source].includes(target)) {
+        map[source].push(target);
+      }
+    }
+  });
+  return map;
+}
 
 // Get position as percentage of timeline width (5% margin on each side)
 function getTimelinePosition(year: number, quarter: string): number {
@@ -159,6 +163,11 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
     setIsPanning(false);
   }, []);
 
+  // Build secondary events map from dependency rules
+  const secondaryEventsMap = useMemo(() => {
+    return buildSecondaryEventsMap(dependencyRules);
+  }, [dependencyRules]);
+
   // Process events into positioned bars
   const processedEvents = useMemo(() => {
     const result: ProcessedEvent[] = [];
@@ -189,6 +198,14 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
         }
       }
 
+      // Get secondary events from dynamic map, with fuzzy matching for event names
+      const matchedSecondaryEvents = secondaryEventsMap[eventName] || 
+        secondaryEventsMap[event.name] || 
+        Object.entries(secondaryEventsMap).find(([key]) => 
+          key.toLowerCase().includes(eventName.toLowerCase().slice(0, 15)) ||
+          eventName.toLowerCase().includes(key.toLowerCase().slice(0, 15))
+        )?.[1] || [];
+
       result.push({
         event,
         position,
@@ -196,12 +213,12 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
         barWidth: spread.widthPercent,
         row: assignedRow,
         isAbove,
-        secondaryEvents: SECONDARY_EVENTS[eventName] || []
+        secondaryEvents: matchedSecondaryEvents
       });
     });
 
     return result;
-  }, [events]);
+  }, [events, secondaryEventsMap]);
 
   // Handle bar hover
   const handleBarHover = useCallback((e: React.MouseEvent, pe: ProcessedEvent | null) => {
