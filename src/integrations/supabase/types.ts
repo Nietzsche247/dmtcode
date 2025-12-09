@@ -441,6 +441,42 @@ export type Database = {
         }
         Relationships: []
       }
+      polymarket_predictions: {
+        Row: {
+          end_date: string | null
+          forecast_event_name: string
+          id: number
+          last_updated: string | null
+          liquidity_usd: number | null
+          probability: number | null
+          question_title: string | null
+          question_url: string | null
+          volume_usd: number | null
+        }
+        Insert: {
+          end_date?: string | null
+          forecast_event_name: string
+          id?: number
+          last_updated?: string | null
+          liquidity_usd?: number | null
+          probability?: number | null
+          question_title?: string | null
+          question_url?: string | null
+          volume_usd?: number | null
+        }
+        Update: {
+          end_date?: string | null
+          forecast_event_name?: string
+          id?: number
+          last_updated?: string | null
+          liquidity_usd?: number | null
+          probability?: number | null
+          question_title?: string | null
+          question_url?: string | null
+          volume_usd?: number | null
+        }
+        Relationships: []
+      }
       product_ratings: {
         Row: {
           accuracy_rating: number
