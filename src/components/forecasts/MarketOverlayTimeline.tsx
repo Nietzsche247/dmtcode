@@ -399,7 +399,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                     {event.name.length > 24 ? event.name.slice(0, 22) + '…' : event.name}
                   </div>
 
-                  {/* Metaculus Market Overlay */}
+                  {/* Metaculus Market Overlay with 25th-75th Range */}
                   {metaculus && metaculusPosition && (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -407,21 +407,43 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                           className="absolute cursor-pointer z-10"
                           style={{
                             left: `${metaculusPosition}%`,
-                            top: isAbove ? yOffset + barHeight + 4 : yOffset - 24,
+                            top: isAbove ? yOffset + barHeight + 4 : yOffset - 28,
                           }}
                         >
+                          {/* 25th-75th Percentile Range Bar */}
+                          {metaculus.metaculus_25th_date && metaculus.metaculus_75th_date && (() => {
+                            const pos25 = dateToPosition(metaculus.metaculus_25th_date);
+                            const pos75 = Math.min(dateToPosition(metaculus.metaculus_75th_date), 95); // Cap at timeline end
+                            const rangeWidth = pos75 - pos25;
+                            const offsetFromMedian = pos25 - metaculusPosition;
+                            
+                            return (
+                              <div
+                                className="absolute h-2 rounded-full opacity-40"
+                                style={{
+                                  left: `${offsetFromMedian}%`,
+                                  width: `${rangeWidth}%`,
+                                  top: 10,
+                                  background: 'linear-gradient(90deg, transparent 0%, hsl(25 95% 53%) 20%, hsl(25 95% 53%) 80%, transparent 100%)',
+                                  minWidth: 20,
+                                }}
+                              />
+                            );
+                          })()}
+                          
                           {/* Vertical connector line */}
                           <div 
-                            className="absolute w-px bg-orange-500/40"
+                            className="absolute w-px bg-orange-500/60"
                             style={{
-                              left: 6,
-                              top: isAbove ? -4 : 12,
-                              height: 20,
+                              left: 5,
+                              top: isAbove ? -4 : 16,
+                              height: 16,
                             }}
                           />
+                          
                           {/* Metaculus diamond badge */}
                           <div 
-                            className="w-3 h-3 bg-orange-500 rotate-45 flex items-center justify-center shadow-sm hover:scale-125 transition-transform"
+                            className="w-3 h-3 bg-orange-500 flex items-center justify-center shadow-sm hover:scale-125 transition-transform relative z-10"
                             style={{ transform: 'rotate(45deg)' }}
                           >
                             <span 
@@ -444,7 +466,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                           </p>
                           {metaculus.metaculus_25th_date && metaculus.metaculus_75th_date && (
                             <p className="text-xs text-muted-foreground">
-                              25th-75th: {new Date(metaculus.metaculus_25th_date).getFullYear()} - {new Date(metaculus.metaculus_75th_date).getFullYear()}
+                              25th-75th: {new Date(metaculus.metaculus_25th_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – {new Date(metaculus.metaculus_75th_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                             </p>
                           )}
                         </div>
