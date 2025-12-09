@@ -47,6 +47,8 @@ const PRIMARY_EVENTS_BELOW = [
 // Build secondary events map dynamically from dependency rules
 function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<string, string[]> {
   const map: Record<string, string[]> = {};
+  console.log('[BarTimeline] Building secondary events map from', dependencyRules?.length || 0, 'dependency rules');
+  
   dependencyRules?.forEach(rule => {
     const source = rule.source_event;
     const target = rule.target_event;
@@ -59,6 +61,9 @@ function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<stri
       }
     }
   });
+  
+  console.log('[BarTimeline] Secondary events map:', map);
+  console.log('[BarTimeline] Total parent events with children:', Object.keys(map).length);
   return map;
 }
 
