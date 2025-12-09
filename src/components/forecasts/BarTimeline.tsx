@@ -3,6 +3,8 @@ import type { ForecastEvent, DependencyRule } from "@/lib/forecasts-api";
 import { CATEGORY_COLORS, quarterToNumber } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface BarTimelineProps {
   events: ForecastEvent[];
@@ -14,6 +16,11 @@ interface BarTimelineProps {
 const TIMELINE_START_YEAR = 2026;
 const TIMELINE_END_YEAR = 2033;
 const YEARS = Array.from({ length: TIMELINE_END_YEAR - TIMELINE_START_YEAR + 1 }, (_, i) => TIMELINE_START_YEAR + i);
+
+// Zoom configuration
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
 
 // Primary events to show as bars
 const PRIMARY_EVENTS_ABOVE = [
@@ -111,6 +118,46 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, event: null });
+  
+  // Zoom and pan state
+  const [zoom, setZoom] = useState(1);
+  const [panX, setPanX] = useState(0);
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, scrollLeft: 0 });
+
+  // Zoom handlers
+  const handleZoomIn = useCallback(() => {
+    setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP));
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoom(1);
+    setPanX(0);
+    if (containerRef.current) {
+      containerRef.current.scrollLeft = 0;
+    }
+  }, []);
+
+  // Pan handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (zoom <= 1) return;
+    setIsPanning(true);
+    setPanStart({ x: e.clientX, scrollLeft: containerRef.current?.scrollLeft || 0 });
+  }, [zoom]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning || !containerRef.current) return;
+    const dx = e.clientX - panStart.x;
+    containerRef.current.scrollLeft = panStart.scrollLeft - dx;
+  }, [isPanning, panStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
 
   // Process events into positioned bars
   const processedEvents = useMemo(() => {
@@ -158,6 +205,7 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
 
   // Handle bar hover
   const handleBarHover = useCallback((e: React.MouseEvent, pe: ProcessedEvent | null) => {
+    if (isPanning) return;
     if (pe) {
       setHoveredEvent(pe.event.name);
       setTooltip({ visible: true, x: e.clientX, y: e.clientY, event: pe.event });
@@ -165,32 +213,82 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
       setHoveredEvent(null);
       setTooltip({ visible: false, x: 0, y: 0, event: null });
     }
-  }, []);
+  }, [isPanning]);
 
   // Handle bar click
   const handleBarClick = useCallback((pe: ProcessedEvent) => {
+    if (isPanning) return;
     setExpandedEvent(prev => prev === pe.event.name ? null : pe.event.name);
     onEventClick(pe.event);
-  }, [onEventClick]);
+  }, [onEventClick, isPanning]);
 
   const timelineHeight = isMobile ? 450 : 550;
   const barHeight = isMobile ? 18 : 24;
   const rowGap = isMobile ? 36 : 44;
   const centerY = timelineHeight / 2;
+  const baseWidth = isMobile ? 900 : 1200;
 
   return (
-    <div 
-      ref={containerRef}
-      className="relative w-full overflow-x-auto"
-      style={{ height: timelineHeight }}
-    >
+    <div className="relative">
+      {/* Zoom Controls */}
+      <div className="absolute top-2 right-2 z-30 flex items-center gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomOut}
+          disabled={zoom <= MIN_ZOOM}
+          aria-label="Zoom out"
+        >
+          <ZoomOut className="h-4 w-4" />
+        </Button>
+        <span className="text-xs font-medium text-muted-foreground w-12 text-center">
+          {Math.round(zoom * 100)}%
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomIn}
+          disabled={zoom >= MAX_ZOOM}
+          aria-label="Zoom in"
+        >
+          <ZoomIn className="h-4 w-4" />
+        </Button>
+        {zoom > 1 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={handleResetZoom}
+            aria-label="Reset zoom"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
       <div 
-        className="relative"
-        style={{ 
-          height: timelineHeight,
-          minWidth: isMobile ? 900 : '100%'
-        }}
+        ref={containerRef}
+        className={cn(
+          "relative w-full overflow-x-auto",
+          zoom > 1 && "cursor-grab",
+          isPanning && "cursor-grabbing"
+        )}
+        style={{ height: timelineHeight }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
+        <div 
+          className="relative transition-transform duration-150"
+          style={{ 
+            height: timelineHeight,
+            width: `${baseWidth * zoom}px`,
+            minWidth: '100%'
+          }}
+        >
         {/* Timeline Spine (Red Line) */}
         <div 
           className="absolute left-[5%] right-[5%] h-0.5 bg-primary"
@@ -359,20 +457,41 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
         </div>
       )}
 
-      {/* Instructions */}
-      <div className="absolute bottom-2 left-2 text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
-        {isMobile ? "Tap bars to expand" : "Hover for details • Click to expand"}
+        {/* Instructions */}
+        <div className="absolute bottom-2 left-2 text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
+          {isMobile ? "Tap bars to expand" : zoom > 1 ? "Drag to pan • Click bars to expand" : "Hover for details • Click to expand"}
+        </div>
+
+        {/* Legend */}
+        <div className="absolute bottom-2 right-2 flex flex-wrap gap-2 text-[9px] bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
+          {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').slice(0, 6).map(([cat, color]) => (
+            <div key={cat} className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+              <span className="capitalize text-muted-foreground">{cat}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Legend */}
-      <div className="absolute bottom-2 right-2 flex flex-wrap gap-2 text-[9px] bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
-        {Object.entries(CATEGORY_COLORS).filter(([cat]) => cat !== 'default').slice(0, 6).map(([cat, color]) => (
-          <div key={cat} className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-            <span className="capitalize text-muted-foreground">{cat}</span>
+      {/* Tooltip */}
+      {tooltip.visible && tooltip.event && (
+        <div
+          className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl p-3 pointer-events-none"
+          style={{ left: tooltip.x + 12, top: tooltip.y - 10, maxWidth: 280 }}
+        >
+          <div className="font-semibold text-sm text-foreground mb-1">{tooltip.event.name}</div>
+          <div className="text-xs text-muted-foreground space-y-0.5">
+            <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
+            <div><span className="font-medium">Probability:</span> {(tooltip.event.probability * 100).toFixed(0)}%</div>
+            {tooltip.event.distributions.length > 1 && (
+              <div>
+                <span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
+          <div className="mt-2 text-[10px] text-muted-foreground/70">Click for details</div>
+        </div>
+      )}
     </div>
   );
 }
