@@ -118,8 +118,19 @@ export const ForecastChangelog = () => {
 
       if (changelogError) throw changelogError;
 
-      // Note: We can't update the external forecasts table from here
-      // That would need to be done through the external Supabase instance
+      // Track PostHog event
+      if (typeof window !== 'undefined' && (window as any).posthog) {
+        (window as any).posthog.capture('forecast_updated', {
+          event_name: selectedEvent,
+          previous_quarter: currentForecast?.quarter,
+          previous_year: currentForecast?.year,
+          previous_probability: currentForecast?.probability,
+          new_quarter: newQuarter,
+          new_year: newYear,
+          new_probability: newProbability,
+          trigger_reason: triggerReason
+        });
+      }
 
       toast({ title: "Success", description: "Forecast change logged successfully." });
       
