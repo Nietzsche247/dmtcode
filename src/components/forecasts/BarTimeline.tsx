@@ -71,9 +71,14 @@ function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<stri
       // Check if target already exists
       const exists = map[source].some(s => s.target === target);
       if (!exists) {
-        // Parse conditional probability from notes or description
         const notes = (rule as any).notes || rule.description || null;
-        const conditionalProbability = parseConditionalProbability(notes);
+        
+        // Prefer conditional_probability column when available, fall back to parsing from notes
+        const ruleWithColumn = rule as any;
+        const conditionalProbability = 
+          ruleWithColumn.conditional_probability != null 
+            ? ruleWithColumn.conditional_probability 
+            : parseConditionalProbability(notes);
         
         map[source].push({
           target,
