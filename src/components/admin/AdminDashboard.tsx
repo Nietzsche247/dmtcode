@@ -13,6 +13,7 @@ import { ScraperStatus } from './ScraperStatus';
 import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
 import { NicheGeoAudit } from './NicheGeoAudit';
+import { ApiAccessLog } from './ApiAccessLog';
 
 export const AdminDashboard = () => {
   return (
@@ -28,7 +29,7 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-12">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-13">
             <TabsTrigger value="niche-geo">🎯 Niche GEO</TabsTrigger>
             <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
@@ -36,6 +37,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="bundles">📊 Bundles</TabsTrigger>
             <TabsTrigger value="nulls">Null Reports</TabsTrigger>
             <TabsTrigger value="scraper">Scraper</TabsTrigger>
+            <TabsTrigger value="api-log">📡 API Log</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="competitor">Competitors</TabsTrigger>
@@ -80,6 +82,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
+          </TabsContent>
+
+          <TabsContent value="api-log" className="space-y-4">
+            <ApiAccessLog />
           </TabsContent>
 
           <TabsContent value="geo" className="space-y-4">
