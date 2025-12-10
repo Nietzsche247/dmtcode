@@ -11,6 +11,7 @@ import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
 import { ApiDocumentation } from "@/components/forecasts/ApiDocumentation";
+import { ParadigmDefensePanel } from "@/components/forecasts/ParadigmDefensePanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -227,6 +228,13 @@ export default function Forecasts() {
               <div className="max-w-6xl mx-auto space-y-6">
                 <ExportButtons events={events} methodology={methodology} dependencyRules={dependencyRules} />
                 <ApiDocumentation />
+              </div>
+            </section>
+
+            {/* Paradigm Defense Panel */}
+            <section className="container mx-auto px-4 py-8 border-t border-border/30">
+              <div className="max-w-4xl mx-auto">
+                <ParadigmDefensePanel methodology={methodology} />
               </div>
             </section>
 

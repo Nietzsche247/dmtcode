@@ -5,7 +5,13 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { clampProbability, parseConditionalProbability } from "@/lib/probability-utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 interface BarTimelineProps {
   events: ForecastEvent[];
   dependencyRules: DependencyRule[];
@@ -44,9 +50,15 @@ const PRIMARY_EVENTS_BELOW = [
   "ASI Controls Global Infrastructure"
 ];
 
-// Build secondary events map dynamically from dependency rules
-function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<string, string[]> {
-  const map: Record<string, string[]> = {};
+// Build secondary events map dynamically from dependency rules with conditional probability
+interface SecondaryEventData {
+  target: string;
+  conditionalProbability: number | null;
+  notes: string | null;
+}
+
+function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<string, SecondaryEventData[]> {
+  const map: Record<string, SecondaryEventData[]> = {};
   console.log('[BarTimeline] Building secondary events map from', dependencyRules?.length || 0, 'dependency rules');
   
   dependencyRules?.forEach(rule => {
@@ -56,8 +68,18 @@ function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<stri
       if (!map[source]) {
         map[source] = [];
       }
-      if (!map[source].includes(target)) {
-        map[source].push(target);
+      // Check if target already exists
+      const exists = map[source].some(s => s.target === target);
+      if (!exists) {
+        // Parse conditional probability from notes or description
+        const notes = (rule as any).notes || rule.description || null;
+        const conditionalProbability = parseConditionalProbability(notes);
+        
+        map[source].push({
+          target,
+          conditionalProbability,
+          notes
+        });
       }
     }
   });
@@ -104,6 +126,12 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
   return match;
 }
 
+interface SecondaryEventInfo {
+  name: string;
+  conditionalProbability: number | null;
+  notes: string | null;
+}
+
 interface ProcessedEvent {
   event: ForecastEvent;
   position: number;
@@ -111,7 +139,7 @@ interface ProcessedEvent {
   barWidth: number;
   row: number;
   isAbove: boolean;
-  secondaryEvents: string[];
+  secondaryEvents: SecondaryEventInfo[];
 }
 
 interface TooltipState {
@@ -204,14 +232,14 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
       }
 
       // Get secondary events from dynamic map, with fuzzy matching for event names
-      let matchedSecondaryEvents: string[] = [];
+      let matchedSecondaryData: SecondaryEventData[] = [];
       let matchType = 'none';
       
       if (secondaryEventsMap[eventName]) {
-        matchedSecondaryEvents = secondaryEventsMap[eventName];
+        matchedSecondaryData = secondaryEventsMap[eventName];
         matchType = 'exact-primary';
       } else if (secondaryEventsMap[event.name]) {
-        matchedSecondaryEvents = secondaryEventsMap[event.name];
+        matchedSecondaryData = secondaryEventsMap[event.name];
         matchType = 'exact-event';
       } else {
         const fuzzyMatch = Object.entries(secondaryEventsMap).find(([key]) => 
@@ -219,13 +247,20 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
           eventName.toLowerCase().includes(key.toLowerCase().slice(0, 15))
         );
         if (fuzzyMatch) {
-          matchedSecondaryEvents = fuzzyMatch[1];
+          matchedSecondaryData = fuzzyMatch[1];
           matchType = `fuzzy:${fuzzyMatch[0]}`;
         }
       }
       
-      console.log(`[BarTimeline] Event "${eventName}" → ${matchedSecondaryEvents.length} secondary events (${matchType})`, 
-        matchedSecondaryEvents.length > 0 ? matchedSecondaryEvents : '');
+      // Convert to SecondaryEventInfo format
+      const secondaryEvents: SecondaryEventInfo[] = matchedSecondaryData.map(data => ({
+        name: data.target,
+        conditionalProbability: data.conditionalProbability,
+        notes: data.notes
+      }));
+      
+      console.log(`[BarTimeline] Event "${eventName}" → ${secondaryEvents.length} secondary events (${matchType})`, 
+        secondaryEvents.length > 0 ? secondaryEvents.map(s => s.name) : '');
 
       result.push({
         event,
@@ -234,7 +269,7 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
         barWidth: spread.widthPercent,
         row: assignedRow,
         isAbove,
-        secondaryEvents: matchedSecondaryEvents
+        secondaryEvents
       });
     });
 
@@ -423,51 +458,82 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
                 {event.name.length > 24 ? event.name.slice(0, 22) + '…' : event.name}
               </div>
 
-              {/* Secondary Circles */}
-              {(isHovered || isExpanded) && pe.secondaryEvents.map((secName, i) => {
+              {/* Secondary Circles with Conditional Probability */}
+              {(isHovered || isExpanded) && pe.secondaryEvents.map((secInfo, i) => {
                 const offset = (i - (pe.secondaryEvents.length - 1) / 2) * 18;
                 const secY = isAbove 
                   ? yOffset - 28 - i * 10
                   : yOffset + barHeight + 24 + i * 10;
                 
+                const condProbLabel = secInfo.conditionalProbability 
+                  ? `P(${secInfo.name.slice(0, 12)}… | ${event.name.slice(0, 12)}…) = ${Math.round(secInfo.conditionalProbability * 100)}%`
+                  : null;
+                
                 return (
-                  <div key={secName} className="pointer-events-none">
-                    {/* Callout line */}
-                    <svg className="absolute inset-0 overflow-visible" style={{ zIndex: 5 }}>
-                      <line
-                        x1={`${barStart + barWidth / 2}%`}
-                        y1={isAbove ? yOffset : yOffset + barHeight}
-                        x2={`calc(${barStart + barWidth / 2}% + ${offset}px)`}
-                        y2={secY + 5}
-                        stroke="hsl(var(--muted-foreground))"
-                        strokeWidth={1}
-                        strokeDasharray="2,2"
-                        opacity={0.4}
-                      />
-                    </svg>
-                    {/* Circle */}
-                    <div
-                      className="absolute w-2.5 h-2.5 rounded-full"
-                      style={{
-                        left: `calc(${barStart + barWidth / 2}% + ${offset - 5}px)`,
-                        top: secY,
-                        backgroundColor: color,
-                        opacity: 0.8
-                      }}
-                    />
-                    {/* Label */}
-                    {!isMobile && (
-                      <div
-                        className="absolute text-[8px] text-muted-foreground whitespace-nowrap"
-                        style={{
-                          left: `calc(${barStart + barWidth / 2}% + ${offset + 8}px)`,
-                          top: secY - 2
-                        }}
-                      >
-                        {secName.length > 20 ? secName.slice(0, 18) + '…' : secName}
-                      </div>
-                    )}
-                  </div>
+                  <TooltipProvider key={secInfo.name}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="pointer-events-auto cursor-help">
+                          {/* Callout line */}
+                          <svg className="absolute inset-0 overflow-visible pointer-events-none" style={{ zIndex: 5 }}>
+                            <line
+                              x1={`${barStart + barWidth / 2}%`}
+                              y1={isAbove ? yOffset : yOffset + barHeight}
+                              x2={`calc(${barStart + barWidth / 2}% + ${offset}px)`}
+                              y2={secY + 5}
+                              stroke="hsl(var(--muted-foreground))"
+                              strokeWidth={1}
+                              strokeDasharray="2,2"
+                              opacity={0.4}
+                            />
+                          </svg>
+                          {/* Circle */}
+                          <div
+                            className="absolute w-2.5 h-2.5 rounded-full hover:scale-150 transition-transform"
+                            style={{
+                              left: `calc(${barStart + barWidth / 2}% + ${offset - 5}px)`,
+                              top: secY,
+                              backgroundColor: color,
+                              opacity: 0.8
+                            }}
+                          />
+                          {/* Label */}
+                          {!isMobile && (
+                            <div
+                              className="absolute text-[8px] text-muted-foreground whitespace-nowrap"
+                              style={{
+                                left: `calc(${barStart + barWidth / 2}% + ${offset + 8}px)`,
+                                top: secY - 2
+                              }}
+                            >
+                              {secInfo.name.length > 20 ? secInfo.name.slice(0, 18) + '…' : secInfo.name}
+                              {secInfo.conditionalProbability && (
+                                <span className="ml-1 text-primary font-medium">
+                                  ({Math.round(secInfo.conditionalProbability * 100)}%)
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs">
+                        <div className="space-y-1">
+                          <div className="font-semibold text-xs">{secInfo.name}</div>
+                          {condProbLabel && (
+                            <div className="text-xs text-primary font-mono">{condProbLabel}</div>
+                          )}
+                          {secInfo.notes && (
+                            <div className="text-[10px] text-muted-foreground">{secInfo.notes}</div>
+                          )}
+                          {!condProbLabel && (
+                            <div className="text-[10px] text-muted-foreground italic">
+                              Conditional probability not specified
+                            </div>
+                          )}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 );
               })}
             </div>
@@ -475,25 +541,39 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
         })}
       </div>
 
-      {/* Tooltip */}
-      {tooltip.visible && tooltip.event && (
-        <div
-          className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl p-3 pointer-events-none"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 10, maxWidth: 280 }}
-        >
-          <div className="font-semibold text-sm text-foreground mb-1">{tooltip.event.name}</div>
-          <div className="text-xs text-muted-foreground space-y-0.5">
-            <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
-            <div><span className="font-medium">Probability:</span> {(tooltip.event.probability * 100).toFixed(0)}%</div>
-            {tooltip.event.distributions.length > 1 && (
-              <div>
-                <span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}
+      {/* Tooltip with Probability Clamping */}
+      {tooltip.visible && tooltip.event && (() => {
+        const probClamped = clampProbability(tooltip.event.probability);
+        return (
+          <div
+            className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl p-3 pointer-events-none"
+            style={{ left: tooltip.x + 12, top: tooltip.y - 10, maxWidth: 280 }}
+          >
+            <div className="font-semibold text-sm text-foreground mb-1">{tooltip.event.name}</div>
+            <div className="text-xs text-muted-foreground space-y-0.5">
+              <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
+              <div className="flex items-center gap-1">
+                <span className="font-medium">Probability:</span> 
+                <span>{probClamped.display}</span>
+                {probClamped.isClamped && (
+                  <span className="text-[10px] text-amber-500" title={probClamped.tooltip || ''}>*</span>
+                )}
               </div>
-            )}
+              {probClamped.isClamped && (
+                <div className="text-[10px] text-amber-500/80 italic">
+                  {probClamped.tooltip}
+                </div>
+              )}
+              {tooltip.event.distributions.length > 1 && (
+                <div>
+                  <span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}
+                </div>
+              )}
+            </div>
+            <div className="mt-2 text-[10px] text-muted-foreground/70">Click for details</div>
           </div>
-          <div className="mt-2 text-[10px] text-muted-foreground/70">Click for details</div>
-        </div>
-      )}
+        );
+      })()}
 
         {/* Instructions */}
         <div className="absolute bottom-2 left-2 text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded">
@@ -510,26 +590,6 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
           ))}
         </div>
       </div>
-
-      {/* Tooltip */}
-      {tooltip.visible && tooltip.event && (
-        <div
-          className="fixed z-50 bg-popover border border-border rounded-lg shadow-xl p-3 pointer-events-none"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 10, maxWidth: 280 }}
-        >
-          <div className="font-semibold text-sm text-foreground mb-1">{tooltip.event.name}</div>
-          <div className="text-xs text-muted-foreground space-y-0.5">
-            <div><span className="font-medium">Median:</span> {tooltip.event.medianQuarter} {tooltip.event.medianYear}</div>
-            <div><span className="font-medium">Probability:</span> {(tooltip.event.probability * 100).toFixed(0)}%</div>
-            {tooltip.event.distributions.length > 1 && (
-              <div>
-                <span className="font-medium">Range:</span> {tooltip.event.distributions[0].quarter} {tooltip.event.distributions[0].year} – {tooltip.event.distributions[tooltip.event.distributions.length - 1].quarter} {tooltip.event.distributions[tooltip.event.distributions.length - 1].year}
-              </div>
-            )}
-          </div>
-          <div className="mt-2 text-[10px] text-muted-foreground/70">Click for details</div>
-        </div>
-      )}
     </div>
   );
 }
