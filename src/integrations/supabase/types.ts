@@ -44,6 +44,30 @@ export type Database = {
         }
         Relationships: []
       }
+      api_access_log: {
+        Row: {
+          accessed_at: string | null
+          endpoint: string
+          filters: Json | null
+          format: string | null
+          id: number
+        }
+        Insert: {
+          accessed_at?: string | null
+          endpoint: string
+          filters?: Json | null
+          format?: string | null
+          id?: number
+        }
+        Update: {
+          accessed_at?: string | null
+          endpoint?: string
+          filters?: Json | null
+          format?: string | null
+          id?: number
+        }
+        Relationships: []
+      }
       assessments: {
         Row: {
           brain_scan_url: string | null
