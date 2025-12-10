@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import { type ForecastEvent, type MetaculusComparison, getMetaculusComparisons } from "@/lib/forecasts-api";
+import { type ForecastEvent, type MarketPrediction, getMetaculusComparisons } from "@/lib/forecasts-api";
 import { AlertTriangle, TrendingUp, Zap, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -119,7 +119,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [cursorTooltip, setCursorTooltip] = useState<CursorTooltip | null>(null);
   const [lockedTooltip, setLockedTooltip] = useState<CursorTooltip | null>(null);
-  const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
+  const [metaculusData, setMetaculusData] = useState<MarketPrediction[]>([]);
   const barRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // Fetch Metaculus comparison data
@@ -427,8 +427,8 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
               const negative = isNegativeEvent(event.name);
 
               // Find Metaculus comparison for this event
-              const metaculus = metaculusData.find(m => m.forecast_event_name === event.name);
-              const metaculusDecimal = metaculus ? parseDateToDecimal(metaculus.metaculus_median_date) : null;
+              const metaculus = metaculusData.find(m => m.mapped_event_name === event.name);
+              const metaculusDecimal = metaculus ? parseDateToDecimal(metaculus.median_date) : null;
               const metaculusInBar = metaculusDecimal && widthPercent > 0 
                 ? ((yearToPercent(metaculusDecimal) - leftPercent) / widthPercent) * 100 
                 : null;
@@ -482,7 +482,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                     {/* Metaculus Community Marker */}
                     {metaculus && metaculusInBar !== null && metaculusInBar >= 0 && metaculusInBar <= 100 && (
                       <a
-                        href={metaculus.metaculus_url || '#'}
+                        href={metaculus.source_url || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="absolute h-full flex flex-col items-center z-20 group/metaculus"
@@ -491,7 +491,7 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                           transform: 'translateX(-50%)'
                         }}
                         onClick={(e) => e.stopPropagation()}
-                        title={`Metaculus: ${formatMetaculusDate(metaculus.metaculus_median_date)} (${metaculus.metaculus_forecasters?.toLocaleString()} forecasters)`}
+                        title={`Metaculus: ${formatMetaculusDate(metaculus.median_date)} (${metaculus.forecaster_count?.toLocaleString()} forecasters)`}
                       >
                         {/* "M" Label */}
                         <span className="absolute -top-5 text-[10px] font-bold text-blue-500 group-hover/metaculus:text-blue-400 transition-colors">
@@ -560,14 +560,14 @@ export function TimelineVisualization({ events, onEventClick }: TimelineVisualiz
                             <div className="border-t border-border/50 my-2" />
                             <div className="flex justify-between items-center">
                               <span className="text-blue-500 font-medium">Metaculus:</span>
-                              <span className="font-medium text-blue-500">{formatMetaculusDate(metaculus.metaculus_median_date)}</span>
+                              <span className="font-medium text-blue-500">{formatMetaculusDate(metaculus.median_date)}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Forecasters:</span>
-                              <span className="font-medium">{metaculus.metaculus_forecasters?.toLocaleString()}</span>
+                              <span className="font-medium">{metaculus.forecaster_count?.toLocaleString()}</span>
                             </div>
                             <a 
-                              href={metaculus.metaculus_url || '#'}
+                              href={metaculus.source_url || '#'}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-blue-500 hover:text-blue-400 mt-1 transition-colors"

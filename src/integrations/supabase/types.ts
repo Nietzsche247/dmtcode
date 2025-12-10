@@ -402,6 +402,54 @@ export type Database = {
           },
         ]
       }
+      market_predictions: {
+        Row: {
+          forecaster_count: number | null
+          id: number
+          last_scraped: string | null
+          mapped_event_name: string
+          median_date: string | null
+          percentile_25: string | null
+          percentile_75: string | null
+          prediction_type: string
+          probability: number | null
+          question_title: string | null
+          source: string
+          source_url: string | null
+          volume_usd: number | null
+        }
+        Insert: {
+          forecaster_count?: number | null
+          id?: number
+          last_scraped?: string | null
+          mapped_event_name: string
+          median_date?: string | null
+          percentile_25?: string | null
+          percentile_75?: string | null
+          prediction_type: string
+          probability?: number | null
+          question_title?: string | null
+          source: string
+          source_url?: string | null
+          volume_usd?: number | null
+        }
+        Update: {
+          forecaster_count?: number | null
+          id?: number
+          last_scraped?: string | null
+          mapped_event_name?: string
+          median_date?: string | null
+          percentile_25?: string | null
+          percentile_75?: string | null
+          prediction_type?: string
+          probability?: number | null
+          question_title?: string | null
+          source?: string
+          source_url?: string | null
+          volume_usd?: number | null
+        }
+        Relationships: []
+      }
       metaculus_comparisons: {
         Row: {
           forecast_event_name: string
