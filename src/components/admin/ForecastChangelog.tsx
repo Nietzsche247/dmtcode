@@ -97,8 +97,13 @@ export const ForecastChangelog = () => {
   const currentForecast = forecasts.find(f => f.event_name === selectedEvent);
 
   const handleSubmitChange = async () => {
-    if (!selectedEvent || !triggerReason.trim()) {
-      toast({ title: "Error", description: "Please select an event and provide a trigger reason.", variant: "destructive" });
+    // Get the actual event name (handle custom entries)
+    const eventName = selectedEvent.startsWith('__custom__:') 
+      ? selectedEvent.replace('__custom__:', '') 
+      : selectedEvent;
+
+    if (!eventName || eventName === '__custom__' || !triggerReason.trim()) {
+      toast({ title: "Error", description: "Please enter an event name and provide a trigger reason.", variant: "destructive" });
       return;
     }
 
@@ -106,7 +111,7 @@ export const ForecastChangelog = () => {
     try {
       // Insert changelog entry
       const { error: changelogError } = await supabase.from('forecast_changelog').insert({
-        event_name: selectedEvent,
+        event_name: eventName,
         previous_quarter: currentForecast?.quarter || null,
         previous_year: currentForecast?.year || null,
         previous_probability: currentForecast?.probability || null,
@@ -121,7 +126,7 @@ export const ForecastChangelog = () => {
       // Track PostHog event
       if (typeof window !== 'undefined' && (window as any).posthog) {
         (window as any).posthog.capture('forecast_updated', {
-          event_name: selectedEvent,
+          event_name: eventName,
           previous_quarter: currentForecast?.quarter,
           previous_year: currentForecast?.year,
           previous_probability: currentForecast?.probability,
@@ -230,16 +235,31 @@ export const ForecastChangelog = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>Event</Label>
-                <Select value={selectedEvent} onValueChange={setSelectedEvent}>
+                <Select value={selectedEvent.startsWith('__custom__') ? '__custom__' : selectedEvent} onValueChange={(v) => {
+                  if (v === '__custom__') {
+                    setSelectedEvent('__custom__');
+                  } else {
+                    setSelectedEvent(v);
+                  }
+                }}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select event..." />
+                    <SelectValue placeholder="Select or enter event..." />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="__custom__">+ Enter new event name...</SelectItem>
                     {[...new Set(forecasts.map(f => f.event_name))].map(name => (
                       <SelectItem key={name} value={name}>{name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {selectedEvent.startsWith('__custom__') && (
+                  <Input
+                    placeholder="Enter new event name..."
+                    value={selectedEvent === '__custom__' ? '' : selectedEvent.replace('__custom__:', '')}
+                    onChange={(e) => setSelectedEvent(e.target.value ? `__custom__:${e.target.value}` : '__custom__')}
+                    className="mt-2"
+                  />
+                )}
               </div>
 
               {currentForecast && (
