@@ -21,6 +21,11 @@ export interface AdjustedEventData {
   deltaQuarters: number;
   isManuallyAdjusted: boolean;
   cascadeSource?: string;
+  // Uncertainty envelope bounds
+  floorPosition?: number;
+  ceilingPosition?: number;
+  floorDeltaQuarters?: number;
+  ceilingDeltaQuarters?: number;
 }
 
 // Timeline constants
@@ -110,9 +115,15 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
   
   const minDateValue = useMemo(() => getCurrentQuarterNumeric(), []);
 
-  // Build dependency map from rules
+  // Build dependency map from rules with uncertainty bounds
   const dependencyMap = useMemo(() => {
-    const map: Record<string, { targets: { name: string; ratio: number; floor?: string }[] }> = {};
+    const map: Record<string, { targets: { 
+      name: string; 
+      ratio: number; 
+      floor?: string;
+      confidenceFloor?: number;
+      confidenceCeiling?: number;
+    }[] }> = {};
     
     dependencyRules.forEach(rule => {
       const sourceShort = getShortName(rule.source_event);
@@ -126,7 +137,9 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
         map[sourceShort].targets.push({
           name: targetShort,
           ratio: rule.shift_ratio,
-          floor: rule.constraint_floor || undefined
+          floor: rule.constraint_floor || undefined,
+          confidenceFloor: rule.confidence_floor ?? 0.8,  // Default 80% floor
+          confidenceCeiling: rule.confidence_ceiling ?? 1.2  // Default 120% ceiling
         });
       }
     });
@@ -169,24 +182,29 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
     }
   }, [searchParams, initialValues]);
 
-  // Calculate cascade with depth limit
+  // Store uncertainty bounds per event
+  const [uncertaintyBounds, setUncertaintyBounds] = useState<Record<string, { floor: number; ceiling: number }>>({});
+
+  // Calculate cascade with depth limit and uncertainty propagation
   const calculateCascade = useCallback((
     source: string,
     newValue: number,
     current: Record<string, number>,
+    bounds: Record<string, { floor: number; ceiling: number }>,
     visited: Set<string> = new Set(),
     depth: number = 0
-  ): Record<string, number> => {
-    if (visited.has(source) || depth >= 5) return current;
+  ): { values: Record<string, number>; bounds: Record<string, { floor: number; ceiling: number }> } => {
+    if (visited.has(source) || depth >= 5) return { values: current, bounds };
     visited.add(source);
 
     const originalValue = initialValues[source];
     const shift = newValue - originalValue;
     
     const rules = dependencyMap[source];
-    if (!rules) return current;
+    if (!rules) return { values: current, bounds };
 
     let updated = { ...current };
+    let updatedBounds = { ...bounds };
     
     rules.targets.forEach(target => {
       if (manuallyAdjusted.has(target.name)) return;
@@ -194,31 +212,55 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
       const targetOriginal = initialValues[target.name];
       if (targetOriginal === undefined) return;
       
+      // Calculate main cascade shift
       let cascadeShift = shift * target.ratio;
       let newTargetValue = targetOriginal + cascadeShift;
+      
+      // Calculate uncertainty bounds using confidence floor/ceiling multipliers
+      const floorMultiplier = target.confidenceFloor ?? 0.8;
+      const ceilingMultiplier = target.confidenceCeiling ?? 1.2;
+      
+      // Propagate uncertainty: floor = smaller shift, ceiling = larger shift
+      let floorShift = cascadeShift * floorMultiplier;
+      let ceilingShift = cascadeShift * ceilingMultiplier;
+      
+      // If shift is negative (accelerating), flip the logic
+      if (cascadeShift < 0) {
+        [floorShift, ceilingShift] = [ceilingShift, floorShift];
+      }
+      
+      let floorValue = targetOriginal + floorShift;
+      let ceilingValue = targetOriginal + ceilingShift;
       
       // Apply constraint floor if set
       if (target.floor) {
         const floorMatch = target.floor.match(/(Q[1-4])\s*(\d{4})/);
         if (floorMatch) {
-          const floorValue = medianToNumeric(target.floor);
-          newTargetValue = Math.max(floorValue, newTargetValue);
+          const constraintFloor = medianToNumeric(target.floor);
+          newTargetValue = Math.max(constraintFloor, newTargetValue);
+          floorValue = Math.max(constraintFloor, floorValue);
+          ceilingValue = Math.max(constraintFloor, ceilingValue);
         }
       }
       
       // Apply minimum date floor
       newTargetValue = Math.max(minDateValue, newTargetValue);
+      floorValue = Math.max(minDateValue, floorValue);
+      ceilingValue = Math.max(minDateValue, ceilingValue);
       
       updated[target.name] = newTargetValue;
+      updatedBounds[target.name] = { floor: floorValue, ceiling: ceilingValue };
       
-      // Recursive cascade
-      updated = calculateCascade(target.name, newTargetValue, updated, visited, depth + 1);
+      // Recursive cascade with propagated uncertainty
+      const result = calculateCascade(target.name, newTargetValue, updated, updatedBounds, visited, depth + 1);
+      updated = result.values;
+      updatedBounds = result.bounds;
     });
 
-    return updated;
+    return { values: updated, bounds: updatedBounds };
   }, [initialValues, manuallyAdjusted, dependencyMap, minDateValue]);
 
-  // Handle slider change - instant cascade
+  // Handle slider change - instant cascade with uncertainty
   const handleSliderChange = useCallback((shortName: string, value: number[]) => {
     const newValue = value[0];
     
@@ -226,8 +268,9 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
     
     setAdjustedValues(prev => {
       const updated = { ...prev, [shortName]: newValue };
-      const cascaded = calculateCascade(shortName, newValue, updated);
-      return cascaded;
+      const result = calculateCascade(shortName, newValue, updated, {});
+      setUncertaintyBounds(result.bounds);
+      return result.values;
     });
 
     // Track with PostHog
@@ -240,7 +283,7 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
     }
   }, [calculateCascade, initialValues]);
 
-  // Report adjustments to parent
+  // Report adjustments to parent with uncertainty bounds
   useEffect(() => {
     const adjustments: Record<string, AdjustedEventData> = {};
     
@@ -249,6 +292,13 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
       const original = initialValues[shortName];
       const adjusted = adjustedValues[shortName] || original;
       const deltaQuarters = Math.round((adjusted - original) * 4);
+      
+      // Get uncertainty bounds for this event
+      const bounds = uncertaintyBounds[shortName];
+      const floorPosition = bounds?.floor;
+      const ceilingPosition = bounds?.ceiling;
+      const floorDeltaQuarters = floorPosition ? Math.round((floorPosition - original) * 4) : undefined;
+      const ceilingDeltaQuarters = ceilingPosition ? Math.round((ceilingPosition - original) * 4) : undefined;
       
       // Find cascade source
       let cascadeSource: string | undefined;
@@ -270,17 +320,22 @@ export function WhatIfSliderPanel({ events, dependencyRules, onAdjustmentsChange
         adjustedPosition: adjusted,
         deltaQuarters,
         isManuallyAdjusted: manuallyAdjusted.has(shortName),
-        cascadeSource
+        cascadeSource,
+        floorPosition,
+        ceilingPosition,
+        floorDeltaQuarters,
+        ceilingDeltaQuarters
       };
     });
     
     onAdjustmentsChange(adjustments);
-  }, [adjustedValues, events, initialValues, manuallyAdjusted, dependencyMap, onAdjustmentsChange]);
+  }, [adjustedValues, events, initialValues, manuallyAdjusted, dependencyMap, uncertaintyBounds, onAdjustmentsChange]);
 
   // Reset
   const handleReset = useCallback(() => {
     setAdjustedValues(initialValues);
     setManuallyAdjusted(new Set());
+    setUncertaintyBounds({});
     searchParams.delete('scenario');
     setSearchParams(searchParams);
     
