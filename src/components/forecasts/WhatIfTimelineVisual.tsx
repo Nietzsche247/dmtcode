@@ -68,6 +68,10 @@ interface ProcessedEvent {
   isAbove: boolean;
   isManuallyAdjusted: boolean;
   cascadeSource?: string;
+  // Uncertainty envelope
+  floorPosition?: number;
+  ceilingPosition?: number;
+  hasUncertainty: boolean;
 }
 
 export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisualProps) {
@@ -91,6 +95,18 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
       const originalPosition = getPositionFromNumeric(adjustment.originalPosition);
       const adjustedPosition = getPositionFromNumeric(adjustment.adjustedPosition);
       
+      // Calculate uncertainty band positions
+      const floorPosition = adjustment.floorPosition 
+        ? getPositionFromNumeric(adjustment.floorPosition)
+        : undefined;
+      const ceilingPosition = adjustment.ceilingPosition 
+        ? getPositionFromNumeric(adjustment.ceilingPosition)
+        : undefined;
+      const hasUncertainty = !adjustment.isManuallyAdjusted && 
+        floorPosition !== undefined && 
+        ceilingPosition !== undefined &&
+        Math.abs(ceilingPosition - floorPosition) > 0.5;
+      
       // Find row
       const rows = isAbove ? aboveRows : belowRows;
       let assignedRow = 0;
@@ -113,7 +129,10 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
         row: assignedRow,
         isAbove,
         isManuallyAdjusted: adjustment.isManuallyAdjusted,
-        cascadeSource: adjustment.cascadeSource
+        cascadeSource: adjustment.cascadeSource,
+        floorPosition,
+        ceilingPosition,
+        hasUncertainty
       });
     });
 
@@ -170,14 +189,29 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
           );
         })}
 
-        {/* Event Bars */}
+        {/* Event Bars with Uncertainty Envelopes */}
         {processedEvents.map((pe, index) => {
-          const { event, adjustedPosition, deltaQuarters, row, isAbove, isManuallyAdjusted } = pe;
+          const { 
+            event, 
+            adjustedPosition, 
+            deltaQuarters, 
+            row, 
+            isAbove, 
+            isManuallyAdjusted,
+            floorPosition,
+            ceilingPosition,
+            hasUncertainty
+          } = pe;
           const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
           
           const yOffset = isAbove 
             ? centerY - (row + 1) * rowGap - barHeight 
             : centerY + 16 + row * rowGap;
+
+          // Calculate uncertainty band dimensions
+          const bandLeft = hasUncertainty && floorPosition ? floorPosition : adjustedPosition;
+          const bandRight = hasUncertainty && ceilingPosition ? ceilingPosition : adjustedPosition;
+          const bandWidth = bandRight - bandLeft;
 
           return (
             <div 
@@ -189,6 +223,26 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
                 animationFillMode: 'both'
               }}
             >
+              {/* Uncertainty Envelope Band */}
+              {hasUncertainty && bandWidth > 0 && (
+                <div
+                  className="absolute rounded-sm transition-all duration-300 pointer-events-none"
+                  style={{
+                    left: `${bandLeft - 1}%`,
+                    width: `${bandWidth + 2}%`,
+                    height: barHeight + 4,
+                    top: yOffset - 2,
+                    background: `linear-gradient(90deg, 
+                      ${color}10 0%, 
+                      ${color}25 50%, 
+                      ${color}10 100%)`,
+                    border: `1px dashed ${color}40`,
+                    borderRadius: 4
+                  }}
+                  title={`Uncertainty range: ${Math.round(bandWidth * (TIMELINE_END_YEAR - TIMELINE_START_YEAR) / 90 * 4)}Q`}
+                />
+              )}
+
               {/* Vertical Connector */}
               <div
                 className="absolute w-px transition-all duration-300"
@@ -201,7 +255,7 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
                 }}
               />
               
-              {/* Bar */}
+              {/* Main Bar */}
               <div
                 className="absolute rounded-sm transition-all duration-300 ease-out"
                 style={{
@@ -211,6 +265,7 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
                   top: yOffset,
                   backgroundColor: color,
                   opacity: 0.85,
+                  zIndex: 2
                 }}
               >
                 {/* Delta Badge */}
@@ -230,6 +285,9 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
                       <ArrowLeft className="h-2 w-2" />
                     )}
                     {deltaQuarters > 0 ? '+' : ''}{deltaQuarters}Q
+                    {hasUncertainty && (
+                      <span className="opacity-60 ml-0.5">±</span>
+                    )}
                   </Badge>
                 )}
               </div>
@@ -245,7 +303,8 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  color: 'hsl(var(--foreground))'
+                  color: 'hsl(var(--foreground))',
+                  zIndex: 3
                 }}
               >
                 {event.name.length > 18 ? event.name.slice(0, 16) + '…' : event.name}
