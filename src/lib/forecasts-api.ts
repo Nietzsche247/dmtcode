@@ -55,6 +55,9 @@ export interface DependencyRule {
   shift_ratio: number;
   min_gap_quarters?: number | null;
   constraint_floor?: string | null;
+  constraint_ceiling?: string | null;
+  confidence_floor?: number | null;
+  confidence_ceiling?: number | null;
   description?: string | null;
   notes?: string | null;
   conditional_probability?: number | null;
@@ -112,8 +115,12 @@ export interface ForecastEvent {
   medianQuarter: string;
   probability: number;
   isPrimary: boolean;
+  isConditional: boolean;
+  conditionalUpstream?: string;
   description?: string;
   analysisNotes?: string;
+  confidenceFloor?: number;
+  confidenceCeiling?: number;
   distributions: { quarter: string; year: number; probability: number }[];
   cascadeEffects: {
     tier_1: string[];
@@ -303,6 +310,31 @@ function isPrimaryEvent(analysisNotes?: string | null): boolean {
   return !analysisNotes.trim().toUpperCase().startsWith('CONDITIONAL');
 }
 
+// Parse conditional flag and upstream dependency from analysis notes
+function parseConditionalFlag(analysisNotes?: string | null): { isConditional: boolean; upstream?: string } {
+  if (!analysisNotes) return { isConditional: false };
+  
+  const notes = analysisNotes.trim();
+  if (!notes.toUpperCase().startsWith('CONDITIONAL')) {
+    return { isConditional: false };
+  }
+  
+  // Try to extract upstream event: "CONDITIONAL on Taiwan Conflict" or "CONDITIONAL: Taiwan Conflict"
+  const patterns = [
+    /CONDITIONAL\s+(?:on|if|upon)\s+(.+?)(?:\.|$)/i,
+    /CONDITIONAL[:\s]+(.+?)(?:\.|$)/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = notes.match(pattern);
+    if (match) {
+      return { isConditional: true, upstream: match[1].trim() };
+    }
+  }
+  
+  return { isConditional: true };
+}
+
 // Parse quarter string to numeric quarter
 export function quarterToNumber(quarter: string): number {
   const match = quarter.match(/Q(\d)/);
@@ -345,6 +377,9 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
         existing.isPrimary = isPrimaryEvent(forecast.analysis_notes);
       }
     } else {
+      // Parse conditional info from analysis notes
+      const { isConditional, upstream } = parseConditionalFlag(forecast.analysis_notes);
+      
       eventMap.set(forecast.event_name, {
         name: forecast.event_name,
         type: inferEventType(forecast.event_name),
@@ -354,8 +389,12 @@ export function processForecasts(forecasts: Forecast[]): ForecastEvent[] {
         medianQuarter: forecast.is_median ? forecast.quarter : '',
         probability: forecast.is_median ? forecast.probability : 0,
         isPrimary: isPrimaryEvent(forecast.analysis_notes),
+        isConditional,
+        conditionalUpstream: upstream,
         description: forecast.event_description || undefined,
         analysisNotes: forecast.analysis_notes || undefined,
+        confidenceFloor: forecast.confidence_interval_low || undefined,
+        confidenceCeiling: forecast.confidence_interval_high || undefined,
         distributions: [{
           quarter: forecast.quarter,
           year: forecast.year,

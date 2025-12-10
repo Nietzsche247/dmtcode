@@ -8,7 +8,7 @@ const MAX_DISPLAY_PROBABILITY = 0.95;
 
 /**
  * Clamp probability to max 95% for display
- * Events showing 100% display as "~95%" with tooltip explanation
+ * Events showing >=95% display as "~95%+" with tooltip explanation
  */
 export function clampProbability(probability: number): {
   value: number;
@@ -21,9 +21,9 @@ export function clampProbability(probability: number): {
   if (rawValue >= MAX_DISPLAY_PROBABILITY) {
     return {
       value: MAX_DISPLAY_PROBABILITY,
-      display: '~95%',
+      display: '~95%+',
       isClamped: true,
-      tooltip: 'No unprecedented event receives 100% probability.'
+      tooltip: 'No unprecedented event receives 100% probability. All forecasts capped at 95%.'
     };
   }
   
@@ -44,6 +44,29 @@ export function formatProbability(probability: number, showTilde = true): string
     return '95%';
   }
   return display;
+}
+
+/**
+ * Format conditional probability label: "X% IF [upstream] occurs"
+ */
+export function formatConditionalLabel(
+  probability: number, 
+  upstreamEvent?: string
+): { display: string; isConditional: boolean } {
+  const { display } = clampProbability(probability);
+  
+  if (!upstreamEvent) {
+    return { display, isConditional: false };
+  }
+  
+  const truncatedUpstream = upstreamEvent.length > 25 
+    ? upstreamEvent.slice(0, 22) + '…' 
+    : upstreamEvent;
+  
+  return {
+    display: `${display} IF ${truncatedUpstream} occurs`,
+    isConditional: true
+  };
 }
 
 /**
@@ -74,18 +97,40 @@ export function parseConditionalProbability(notes: string | null | undefined): n
 }
 
 /**
- * Format conditional probability for display
+ * Format conditional probability for dependency hover display
+ * Shows P(downstream | upstream) = X% with range if available
  */
-export function formatConditionalProbability(
+export function formatDependencyHover(
   downstreamEvent: string,
   upstreamEvent: string,
-  probability: number | null
-): string {
-  if (probability === null) {
-    return `P(${truncate(downstreamEvent, 20)} | ${truncate(upstreamEvent, 20)})`;
+  conditionalProbability: number | null,
+  shiftRatio: number,
+  confidenceFloor?: number | null,
+  confidenceCeiling?: number | null
+): string[] {
+  const lines: string[] = [];
+  
+  // Conditional probability
+  if (conditionalProbability !== null) {
+    const pct = Math.round(conditionalProbability * 100);
+    lines.push(`P(${truncate(downstreamEvent, 18)} | ${truncate(upstreamEvent, 18)}) = ${pct}%`);
+  } else {
+    lines.push(`P(${truncate(downstreamEvent, 18)} | ${truncate(upstreamEvent, 18)})`);
   }
-  const pct = Math.round(probability * 100);
-  return `P(${truncate(downstreamEvent, 20)} | ${truncate(upstreamEvent, 20)}) = ${pct}%`;
+  
+  // Confidence range
+  if (confidenceFloor != null && confidenceCeiling != null) {
+    lines.push(`Range: ${Math.round(confidenceFloor * 100)}% - ${Math.round(confidenceCeiling * 100)}%`);
+  } else if (confidenceFloor != null) {
+    lines.push(`Floor: ${Math.round(confidenceFloor * 100)}%`);
+  } else if (confidenceCeiling != null) {
+    lines.push(`Ceiling: ${Math.round(confidenceCeiling * 100)}%`);
+  }
+  
+  // Shift ratio
+  lines.push(`Delay ratio: ${shiftRatio.toFixed(2)}x`);
+  
+  return lines;
 }
 
 function truncate(str: string, maxLen: number): string {
