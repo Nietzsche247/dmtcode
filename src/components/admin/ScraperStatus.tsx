@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, Calendar, CheckCircle, XCircle, Clock, Mail, ExternalLink, Database, BookOpen, Zap, Mountain, Leaf } from "lucide-react";
+import { RefreshCw, Calendar, CheckCircle, XCircle, Clock, Mail, ExternalLink, Database, BookOpen, Zap, Mountain, Leaf, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 interface ScraperRun {
@@ -17,6 +17,18 @@ interface ScraperRun {
   email_sent?: boolean;
   new_trials_count?: number;
   source?: string;
+}
+
+interface MarketScraperResult {
+  source: string;
+  event: string;
+  status: string;
+  error?: string;
+  median?: string;
+  probability?: string;
+  forecasters?: number;
+  volume?: number;
+  slug?: string;
 }
 
 const SOURCE_BADGES: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
@@ -33,10 +45,27 @@ export const ScraperStatus = () => {
   const [loading, setLoading] = useState(true);
   const [runningLegacy, setRunningLegacy] = useState(false);
   const [runningFirehose, setRunningFirehose] = useState(false);
+  const [runningMarkets, setRunningMarkets] = useState(false);
+  const [marketResults, setMarketResults] = useState<MarketScraperResult[] | null>(null);
+  const [lastMarketScrape, setLastMarketScrape] = useState<string | null>(null);
 
   useEffect(() => {
     fetchRuns();
+    fetchLastMarketScrape();
   }, []);
+
+  const fetchLastMarketScrape = async () => {
+    const { data } = await supabase
+      .from("market_predictions")
+      .select("last_scraped")
+      .order("last_scraped", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (data?.last_scraped) {
+      setLastMarketScrape(data.last_scraped);
+    }
+  };
 
   const fetchRuns = async () => {
     const { data, error } = await supabase
@@ -51,6 +80,29 @@ export const ScraperStatus = () => {
       setRuns(data);
     }
     setLoading(false);
+  };
+
+  const triggerMarketScraper = async () => {
+    setRunningMarkets(true);
+    setMarketResults(null);
+    toast.info("Fetching market predictions from Metaculus & Polymarket...");
+
+    try {
+      const { data, error } = await supabase.functions.invoke("scrape-markets");
+
+      if (error) throw error;
+      
+      setMarketResults(data.results || []);
+      setLastMarketScrape(data.timestamp);
+      
+      const successCount = data.results?.filter((r: MarketScraperResult) => r.status === "updated").length || 0;
+      toast.success(`Market scrape complete: ${successCount} predictions updated`);
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to trigger market scraper");
+    } finally {
+      setRunningMarkets(false);
+    }
   };
 
   const triggerLegacyScraper = async () => {
@@ -132,6 +184,7 @@ export const ScraperStatus = () => {
 
   const firehoseUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-all`;
   const legacyUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-clinical-trials`;
+  const marketsUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-markets`;
 
   if (loading) {
     return (
@@ -153,6 +206,102 @@ export const ScraperStatus = () => {
 
   return (
     <div className="space-y-6">
+      {/* Market Predictions Scraper */}
+      <Card className="border-blue-500/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            Market Predictions Scraper
+            <Badge variant="outline" className="ml-2">Metaculus + Polymarket</Badge>
+          </CardTitle>
+          <Button
+            onClick={triggerMarketScraper}
+            disabled={runningMarkets}
+            size="sm"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${runningMarkets ? "animate-spin" : ""}`} />
+            {runningMarkets ? "Scraping..." : "Run Now"}
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="gap-1 bg-orange-500 text-white border-0">
+              Metaculus
+            </Badge>
+            <Badge variant="outline" className="gap-1 bg-blue-500 text-white border-0">
+              Polymarket
+            </Badge>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <strong>Schedule:</strong> Daily at 06:00 UTC (via cron-job.org)
+            </div>
+            <div className="text-muted-foreground">
+              <strong>Data:</strong> AGI predictions, AI reasoning milestones
+            </div>
+            {lastMarketScrape && (
+              <div className="text-muted-foreground">
+                <strong>Last scraped:</strong> {new Date(lastMarketScrape).toLocaleString()}
+              </div>
+            )}
+          </div>
+
+          {/* Cron Setup */}
+          <div className="border border-dashed rounded-lg p-3 space-y-2">
+            <p className="text-sm font-medium">Cron Setup (cron-job.org)</p>
+            <div className="bg-background rounded p-2 text-xs font-mono break-all">
+              {marketsUrl}
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Expression: <code className="bg-muted px-1 rounded">0 6 * * *</code>
+              </p>
+              <a
+                href="https://cron-job.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                Open cron-job.org <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+
+          {/* Results Display */}
+          {marketResults && marketResults.length > 0 && (
+            <div className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="font-semibold">Latest Results</span>
+              </div>
+              <div className="space-y-2">
+                {marketResults.map((result, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-sm py-2 border-b last:border-0">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className={`${result.source === 'metaculus' ? 'bg-orange-500' : 'bg-blue-500'} text-white border-0 text-xs`}>
+                        {result.source}
+                      </Badge>
+                      <span className="text-muted-foreground truncate max-w-[200px]">{result.event}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {result.median && <span className="text-xs">Median: {result.median}</span>}
+                      {result.probability && <span className="text-xs font-medium">{result.probability}</span>}
+                      {result.status === "updated" ? (
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Firehose Scraper - Primary */}
       <Card className="border-primary/50">
         <CardHeader className="flex flex-row items-center justify-between">
