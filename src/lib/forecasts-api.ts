@@ -56,6 +56,8 @@ export interface DependencyRule {
   min_gap_quarters?: number | null;
   constraint_floor?: string | null;
   description?: string | null;
+  notes?: string | null;
+  conditional_probability?: number | null;
 }
 
 // Unified market prediction interface
