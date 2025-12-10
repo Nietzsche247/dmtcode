@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { clampProbability, parseConditionalProbability } from "@/lib/probability-utils";
+import { clampProbability, parseConditionalProbability, formatDependencyHover, formatConditionalLabel } from "@/lib/probability-utils";
 import {
   Tooltip,
   TooltipContent,
@@ -54,6 +54,9 @@ const PRIMARY_EVENTS_BELOW = [
 interface SecondaryEventData {
   target: string;
   conditionalProbability: number | null;
+  shiftRatio: number;
+  confidenceFloor: number | null;
+  confidenceCeiling: number | null;
   notes: string | null;
 }
 
@@ -71,18 +74,20 @@ function buildSecondaryEventsMap(dependencyRules: DependencyRule[]): Record<stri
       // Check if target already exists
       const exists = map[source].some(s => s.target === target);
       if (!exists) {
-        const notes = (rule as any).notes || rule.description || null;
+        const notes = rule.notes || rule.description || null;
         
         // Prefer conditional_probability column when available, fall back to parsing from notes
-        const ruleWithColumn = rule as any;
         const conditionalProbability = 
-          ruleWithColumn.conditional_probability != null 
-            ? ruleWithColumn.conditional_probability 
+          rule.conditional_probability != null 
+            ? rule.conditional_probability 
             : parseConditionalProbability(notes);
         
         map[source].push({
           target,
           conditionalProbability,
+          shiftRatio: rule.shift_ratio,
+          confidenceFloor: rule.confidence_floor ?? null,
+          confidenceCeiling: rule.confidence_ceiling ?? null,
           notes
         });
       }
@@ -134,6 +139,9 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
 interface SecondaryEventInfo {
   name: string;
   conditionalProbability: number | null;
+  shiftRatio: number;
+  confidenceFloor: number | null;
+  confidenceCeiling: number | null;
   notes: string | null;
 }
 
@@ -261,6 +269,9 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
       const secondaryEvents: SecondaryEventInfo[] = matchedSecondaryData.map(data => ({
         name: data.target,
         conditionalProbability: data.conditionalProbability,
+        shiftRatio: data.shiftRatio,
+        confidenceFloor: data.confidenceFloor,
+        confidenceCeiling: data.confidenceCeiling,
         notes: data.notes
       }));
       
@@ -522,18 +533,21 @@ export function BarTimeline({ events, dependencyRules, onEventClick }: BarTimeli
                         </div>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs">
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <div className="font-semibold text-xs">{secInfo.name}</div>
-                          {condProbLabel && (
-                            <div className="text-xs text-primary font-mono">{condProbLabel}</div>
-                          )}
+                          {/* Enhanced dependency hover with P, range, and delay ratio */}
+                          {formatDependencyHover(
+                            secInfo.name,
+                            event.name,
+                            secInfo.conditionalProbability,
+                            secInfo.shiftRatio,
+                            secInfo.confidenceFloor,
+                            secInfo.confidenceCeiling
+                          ).map((line, idx) => (
+                            <div key={idx} className="text-xs text-primary font-mono">{line}</div>
+                          ))}
                           {secInfo.notes && (
-                            <div className="text-[10px] text-muted-foreground">{secInfo.notes}</div>
-                          )}
-                          {!condProbLabel && (
-                            <div className="text-[10px] text-muted-foreground italic">
-                              Conditional probability not specified
-                            </div>
+                            <div className="text-[10px] text-muted-foreground border-t border-border/30 pt-1 mt-1">{secInfo.notes}</div>
                           )}
                         </div>
                       </TooltipContent>

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { getMethodology, type Methodology } from "@/lib/forecasts-api";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface ParadigmDefensePanelProps {
   methodology?: Methodology[];
@@ -9,6 +15,7 @@ interface ParadigmDefensePanelProps {
 export function ParadigmDefensePanel({ methodology: propMethodology }: ParadigmDefensePanelProps) {
   const [paradigmDefense, setParadigmDefense] = useState<Methodology | null>(null);
   const [loading, setLoading] = useState(!propMethodology);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // If methodology is passed as prop, find paradigm_defense section
@@ -46,24 +53,57 @@ export function ParadigmDefensePanel({ methodology: propMethodology }: ParadigmD
     return null;
   }
 
+  // Extract first paragraph for preview
+  const firstParagraph = paradigmDefense.content.split('\n\n')[0] || paradigmDefense.content.slice(0, 200);
+
   return (
-    <div className="bg-[#0f172a] border border-border/50 rounded-xl p-6 md:p-8">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
-          <ShieldAlert className="h-5 w-5" />
-        </div>
-        <h3 className="text-lg md:text-xl font-bold text-foreground">
-          What This Model Does Not Do
-        </h3>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="bg-[#0f172a] border border-border/50 rounded-xl overflow-hidden">
+        <CollapsibleTrigger asChild>
+          <button 
+            className={cn(
+              "w-full flex items-center justify-between p-6 md:p-8 hover:bg-white/5 transition-colors",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            )}
+            aria-expanded={isOpen}
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
+                <ShieldAlert className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg md:text-xl font-bold text-foreground text-left">
+                What This Model Deliberately Does Not Do
+              </h3>
+            </div>
+            {isOpen ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground shrink-0" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
+            )}
+          </button>
+        </CollapsibleTrigger>
+        
+        {/* Preview text when collapsed */}
+        {!isOpen && (
+          <div className="px-6 md:px-8 pb-6 -mt-2">
+            <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2 italic">
+              {firstParagraph.replace(/[#*]/g, '').trim()}...
+            </p>
+          </div>
+        )}
+        
+        <CollapsibleContent>
+          <div className="px-6 md:px-8 pb-6 md:pb-8 -mt-2">
+            <div className="prose prose-invert prose-sm max-w-none">
+              <div 
+                className="text-foreground/90 leading-relaxed space-y-4"
+                dangerouslySetInnerHTML={{ __html: formatParadigmContent(paradigmDefense.content) }}
+              />
+            </div>
+          </div>
+        </CollapsibleContent>
       </div>
-      
-      <div className="prose prose-invert prose-sm max-w-none">
-        <div 
-          className="text-foreground/90 leading-relaxed space-y-4"
-          dangerouslySetInnerHTML={{ __html: formatParadigmContent(paradigmDefense.content) }}
-        />
-      </div>
-    </div>
+    </Collapsible>
   );
 }
 
