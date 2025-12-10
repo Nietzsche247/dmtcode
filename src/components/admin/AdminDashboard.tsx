@@ -14,6 +14,7 @@ import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
 import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
+import { ForecastChangelog } from './ForecastChangelog';
 
 export const AdminDashboard = () => {
   return (
@@ -29,9 +30,10 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-13">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-14">
             <TabsTrigger value="niche-geo">🎯 Niche GEO</TabsTrigger>
             <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
+            <TabsTrigger value="forecasts">📈 Forecasts</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="bundles">📊 Bundles</TabsTrigger>
@@ -51,6 +53,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="alerts" className="space-y-4">
             <AdminNotifications />
+          </TabsContent>
+
+          <TabsContent value="forecasts" className="space-y-4">
+            <ForecastChangelog />
           </TabsContent>
 
           <TabsContent value="symbols" className="space-y-4">

@@ -26,8 +26,7 @@ serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-  // Fetch forecasts from the external forecasts database via the proxy
-  // Since forecasts are in an external DB, we'll fetch via the forecasts-proxy or direct query
+  // Build forecasts query
   let forecastsQuery = supabase
     .from('forecasts')
     .select('event_name, event_description, quarter, year, probability, analysis_notes, dependencies')
@@ -41,27 +40,59 @@ serve(async (req) => {
     forecastsQuery = forecastsQuery.eq('year', parseInt(year))
   }
 
-  const { data: forecasts, error: forecastError } = await forecastsQuery
+  // Fetch all data in parallel
+  const [
+    forecastsResult,
+    dependenciesResult,
+    marketsResult,
+    falsificationResult,
+    disagreementsResult,
+    changelogResult
+  ] = await Promise.all([
+    forecastsQuery,
+    supabase.from('dependency_rules').select('source_event, target_event, relationship, shift_ratio, notes'),
+    supabase.from('market_predictions').select('source, mapped_event_name, probability, median_date, percentile_25, percentile_75, forecaster_count, last_scraped'),
+    supabase.from('falsification_criteria').select('event_name, criterion, consequence, deadline, status'),
+    supabase.from('market_disagreements').select('event_name, market_source, their_position, our_position, reasoning'),
+    supabase.from('forecast_changelog').select('event_name, previous_quarter, previous_year, new_quarter, new_year, trigger_reason, updated_at').order('updated_at', { ascending: false }).limit(20)
+  ])
 
-  // Fetch dependency rules
-  const { data: dependencies } = await supabase
-    .from('dependency_rules')
-    .select('source_event, target_event, relationship, shift_ratio, notes')
-
-  // Fetch market comparisons from unified table
-  const { data: markets } = await supabase
-    .from('market_predictions')
-    .select('source, mapped_event_name, probability, median_date, percentile_25, percentile_75, forecaster_count, last_scraped')
+  const forecasts = forecastsResult.data
+  const dependencies = dependenciesResult.data
+  const markets = marketsResult.data
+  const falsification = falsificationResult.data
+  const disagreements = disagreementsResult.data
+  const changelog = changelogResult.data
 
   // Build response based on format
   const response: Record<string, unknown> = {
     meta: {
       generated_at: new Date().toISOString(),
       source: "dmtcode.com/forecasts",
-      methodology: "Mechanism-based forecasting for unprecedented events. No reference class anchoring.",
-      paradigm_note: "These forecasts model compounding technological breakthroughs 2025-2035. Traditional base rate forecasting does not apply.",
+      version: "2.0",
+      methodology_summary: "Mechanism-based forecasting for unprecedented events. No reference class anchoring. Exponential compounding assumed.",
       total_events: forecasts?.length || 0,
-      error: forecastError?.message || null
+      endpoints: {
+        full: "/api/forecasts/export",
+        summary: "/api/forecasts/export?format=summary",
+        timeline: "/api/forecasts/export?format=timeline"
+      },
+      error: forecastsResult.error?.message || null
+    },
+    paradigm: {
+      statement: "Traditional forecasting assumes stable systems. We model compounding breakthroughs that invalidate base rates.",
+      master_fork: {
+        event: "China-Taiwan Military Conflict",
+        probability_cumulative: 73,
+        window: "Q1 2026 - Q2 2027",
+        impact: "All AI timelines delay 4-10 quarters if triggered"
+      },
+      alignment_branches: {
+        cooperative: { probability: 40, human_survival: "99%+", planning_relevance: "Primary target" },
+        paternalistic: { probability: 25, human_survival: "95%+", planning_relevance: "Secondary" },
+        indifferent: { probability: 20, human_survival: "50-80%", planning_relevance: "Hedge" },
+        adversarial: { probability: 15, human_survival: "<10%", planning_relevance: "Excluded per game theory" }
+      }
     }
   }
 
@@ -71,6 +102,11 @@ serve(async (req) => {
       event: f.event_name,
       when: `${f.quarter} ${f.year}`,
       probability: `${f.probability}%`
+    })) || []
+    response.recent_updates = changelog?.slice(0, 5).map(c => ({
+      event: c.event_name,
+      change: `${c.previous_quarter} ${c.previous_year} → ${c.new_quarter} ${c.new_year}`,
+      reason: c.trigger_reason
     })) || []
   } else if (format === 'timeline') {
     // Grouped by year
@@ -86,10 +122,45 @@ serve(async (req) => {
     })
     response.timeline = timeline
   } else {
-    // Full format
-    response.forecasts = forecasts || []
+    // Full format - enrich forecasts with related data
+    response.forecasts = forecasts?.map(f => {
+      const eventFalsification = falsification?.filter(x => x.event_name === f.event_name) || []
+      const eventDisagreements = disagreements?.filter(x => x.event_name === f.event_name) || []
+      const eventChangelog = changelog?.filter(x => x.event_name === f.event_name) || []
+      const eventMarkets = markets?.filter(x => x.mapped_event_name === f.event_name) || []
+
+      return {
+        ...f,
+        falsification_criteria: eventFalsification.map(x => ({
+          test: x.criterion,
+          if_triggered: x.consequence,
+          deadline: x.deadline,
+          status: x.status
+        })),
+        market_comparison: eventMarkets.map(m => ({
+          source: m.source,
+          their_position: m.source === 'metaculus' ? m.median_date : `${m.probability}%`,
+          forecasters: m.forecaster_count
+        })),
+        our_reasoning_vs_markets: eventDisagreements.map(d => ({
+          vs: d.market_source,
+          their: d.their_position,
+          ours: d.our_position,
+          why: d.reasoning
+        })),
+        update_history: eventChangelog.map(c => ({
+          date: c.updated_at,
+          from: `${c.previous_quarter} ${c.previous_year}`,
+          to: `${c.new_quarter} ${c.new_year}`,
+          trigger: c.trigger_reason
+        }))
+      }
+    }) || []
     response.dependencies = dependencies || []
-    response.market_comparisons = markets || []
+    response.model_track_record = {
+      total_updates: changelog?.length || 0,
+      recent_changes: changelog?.slice(0, 5) || []
+    }
     response.key_assumptions = [
       "Taiwan conflict (73% by Q2 2027) is master fork - delays all AI timelines 4-10 quarters if triggered",
       "Recursive self-improvement enables exponential capability gains",
