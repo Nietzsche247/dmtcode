@@ -7,8 +7,13 @@ const corsHeaders = {
   'Cache-Control': 'public, max-age=3600',
 }
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+// External forecasts database (separate from main dmtcode.com database)
+const EXTERNAL_FORECASTS_URL = 'https://nhpesihbzrxiherrqhfh.supabase.co'
+const EXTERNAL_FORECASTS_ANON_KEY = Deno.env.get("EXTERNAL_SUPABASE_ANON_KEY")!
+
+// Primary database for access logging
+const PRIMARY_SUPABASE_URL = Deno.env.get("SUPABASE_URL")!
+const PRIMARY_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -24,7 +29,11 @@ serve(async (req) => {
   const year = searchParams.get('year')
   const format = searchParams.get('format') || 'full' // full, summary, timeline
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  // Connect to external forecasts database
+  const supabase = createClient(EXTERNAL_FORECASTS_URL, EXTERNAL_FORECASTS_ANON_KEY)
+  
+  // Primary database for logging
+  const primaryDb = createClient(PRIMARY_SUPABASE_URL, PRIMARY_SERVICE_ROLE_KEY)
 
   // Build forecasts query
   let forecastsQuery = supabase
@@ -175,9 +184,9 @@ serve(async (req) => {
                     'unknown'
   const userAgent = req.headers.get('user-agent') || 'unknown'
 
-  // Log access (silent fail if table doesn't exist)
+  // Log access to primary database (silent fail if table doesn't exist)
   try {
-    await supabase.from('api_access_log').insert({
+    await primaryDb.from('api_access_log').insert({
       endpoint: '/api/forecasts/export',
       format,
       filters: { min_probability: minProbability, year },

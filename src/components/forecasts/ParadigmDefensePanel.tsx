@@ -110,6 +110,8 @@ export function ParadigmDefensePanel({ methodology: propMethodology }: ParadigmD
 // Format paradigm defense content with scholarly paragraph styling
 function formatParadigmContent(content: string): string {
   return content
+    // Strip strikethrough markdown (~~text~~) - convert to plain text
+    .replace(/~~(.+?)~~/g, '$1')
     // Headers - styled as scholarly section headers
     .replace(/^### (.+)$/gm, '<h4 class="font-bold text-foreground mt-8 mb-4 text-base border-b border-border/30 pb-2">$1</h4>')
     .replace(/^## (.+)$/gm, '<h3 class="font-bold text-foreground text-lg mt-8 mb-4 border-b border-border/30 pb-2">$1</h3>')
