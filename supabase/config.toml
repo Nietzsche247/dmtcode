@@ -1,5 +1,8 @@
 project_id = "bbmhrgpsyiahefnxqwfg"
 
+[functions.scrape-markets]
+verify_jwt = false
+
 [functions.notify-admin]
 verify_jwt = false
 
