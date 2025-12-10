@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { RefreshCw, Database, Clock, Filter } from 'lucide-react';
+import { RefreshCw, Database, Clock, Filter, Globe, Bot } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface ApiLog {
@@ -13,6 +13,8 @@ interface ApiLog {
   format: string | null;
   filters: Record<string, unknown> | null;
   accessed_at: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
 }
 
 export const ApiAccessLog = () => {
@@ -98,7 +100,7 @@ export const ApiAccessLog = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -128,13 +130,31 @@ export const ApiAccessLog = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Filter className="w-4 h-4" />
-              Formats Used
+              <Globe className="w-4 h-4" />
+              Unique IPs
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.unique_formats}</div>
-            <p className="text-xs text-muted-foreground">Unique formats</p>
+            <div className="text-3xl font-bold">{new Set(logs.map(l => l.ip_address).filter(Boolean)).size}</div>
+            <p className="text-xs text-muted-foreground">Distinct sources</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Bot className="w-4 h-4" />
+              AI Clients
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              {logs.filter(l => l.user_agent?.toLowerCase().includes('bot') || 
+                              l.user_agent?.toLowerCase().includes('gpt') ||
+                              l.user_agent?.toLowerCase().includes('claude') ||
+                              l.user_agent?.toLowerCase().includes('anthropic')).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Bot requests</p>
           </CardContent>
         </Card>
       </div>
@@ -158,24 +178,28 @@ export const ApiAccessLog = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Timestamp</TableHead>
-                  <TableHead>Endpoint</TableHead>
                   <TableHead>Format</TableHead>
+                  <TableHead>IP Address</TableHead>
+                  <TableHead className="max-w-[300px]">User Agent</TableHead>
                   <TableHead>Filters</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {log.accessed_at 
-                        ? format(new Date(log.accessed_at), 'MMM d, yyyy HH:mm:ss')
+                        ? format(new Date(log.accessed_at), 'MMM d, HH:mm:ss')
                         : '—'}
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {log.endpoint}
                     </TableCell>
                     <TableCell>
                       {getFormatBadge(log.format)}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {log.ip_address || '—'}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate" title={log.user_agent || undefined}>
+                      {log.user_agent || '—'}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatFilters(log.filters)}
