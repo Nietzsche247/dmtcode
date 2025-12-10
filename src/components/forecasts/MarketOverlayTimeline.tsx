@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
-import type { ForecastEvent, DependencyRule, MetaculusComparison, PolymarketPrediction } from "@/lib/forecasts-api";
-import { CATEGORY_COLORS, quarterToNumber, getMetaculusComparisons, getPolymarketPredictions } from "@/lib/forecasts-api";
+import type { ForecastEvent, DependencyRule, MarketPrediction } from "@/lib/forecasts-api";
+import { CATEGORY_COLORS, quarterToNumber, getMarketPredictions } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
@@ -96,51 +96,24 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
   return match;
 }
 
-// Match Metaculus data to event - improved matching
-function matchMetaculusToEvent(eventName: string, comparisons: MetaculusComparison[]): MetaculusComparison | undefined {
+// Match market prediction to event using mapped_event_name
+function matchMarketPrediction(eventName: string, predictions: MarketPrediction[], source: 'metaculus' | 'polymarket'): MarketPrediction | undefined {
   const eventLower = eventName.toLowerCase();
+  const sourcePredictions = predictions.filter(p => p.source === source);
   
-  // Direct mapping for known events
-  const mappings: Record<string, string> = {
-    'agi / human-level general intelligence': 'agi (human-level general intelligence)',
-    'anti-aging breakthrough': 'anti-aging breakthrough',
-    'first 1m humanoid robots delivered': 'humanoid robots (mass production)',
-    'quantum computing breaks rsa/ecc': 'quantum computing (quantum advantage)',
-    'quantum computing becomes semi-mainstream': 'quantum computing (quantum advantage)',
-    'recursive learning algorithms discovered': 'rsi (recursive self-improvement)',
-  };
-
-  // Check direct mapping first
-  const mappedName = mappings[eventLower];
-  if (mappedName) {
-    return comparisons.find(c => c.forecast_event_name.toLowerCase() === mappedName);
-  }
-
-  // Fallback to fuzzy match
-  return comparisons.find(c => {
-    const forecastLower = c.forecast_event_name.toLowerCase();
-    return eventLower.includes(forecastLower.slice(0, 15)) || 
-           forecastLower.includes(eventLower.slice(0, 15)) ||
-           (eventLower.includes('agi') && forecastLower.includes('agi')) ||
-           (eventLower.includes('robot') && forecastLower.includes('robot')) ||
-           (eventLower.includes('quantum') && forecastLower.includes('quantum')) ||
-           (eventLower.includes('aging') && forecastLower.includes('aging'));
-  });
-}
-
-// Match Polymarket data to event
-function matchPolymarketToEvent(eventName: string, predictions: PolymarketPrediction[]): PolymarketPrediction | undefined {
-  const eventLower = eventName.toLowerCase();
-  
-  // Direct match first
-  const direct = predictions.find(p => p.forecast_event_name.toLowerCase() === eventLower);
+  // Direct match on mapped_event_name first
+  const direct = sourcePredictions.find(p => p.mapped_event_name.toLowerCase() === eventLower);
   if (direct) return direct;
 
   // Fuzzy match
-  return predictions.find(p => {
-    const forecastLower = p.forecast_event_name.toLowerCase();
-    return eventLower.includes(forecastLower.slice(0, 15)) || 
-           forecastLower.includes(eventLower.slice(0, 15));
+  return sourcePredictions.find(p => {
+    const mappedLower = p.mapped_event_name.toLowerCase();
+    return eventLower.includes(mappedLower.slice(0, 15)) || 
+           mappedLower.includes(eventLower.slice(0, 15)) ||
+           (eventLower.includes('agi') && mappedLower.includes('agi')) ||
+           (eventLower.includes('robot') && mappedLower.includes('robot')) ||
+           (eventLower.includes('quantum') && mappedLower.includes('quantum')) ||
+           (eventLower.includes('aging') && mappedLower.includes('aging'));
   });
 }
 
@@ -151,26 +124,24 @@ interface ProcessedEvent {
   barWidth: number;
   row: number;
   isAbove: boolean;
-  metaculus?: MetaculusComparison;
-  polymarket?: PolymarketPrediction;
+  metaculus?: MarketPrediction;
+  polymarket?: MarketPrediction;
 }
 
 export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }: MarketOverlayTimelineProps) {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
-  const [metaculusData, setMetaculusData] = useState<MetaculusComparison[]>([]);
-  const [polymarketData, setPolymarketData] = useState<PolymarketPrediction[]>([]);
+  const [marketData, setMarketData] = useState<MarketPrediction[]>([]);
   
   // Zoom and pan state
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, scrollLeft: 0 });
 
-  // Fetch market data
+  // Fetch unified market data
   useEffect(() => {
-    getMetaculusComparisons().then(setMetaculusData);
-    getPolymarketPredictions().then(setPolymarketData);
+    getMarketPredictions().then(setMarketData);
   }, []);
 
   // Zoom handlers
@@ -236,9 +207,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         }
       }
 
-      // Match market data
-      const metaculus = matchMetaculusToEvent(event.name, metaculusData);
-      const polymarket = matchPolymarketToEvent(event.name, polymarketData);
+      // Match market data from unified table
+      const metaculus = matchMarketPrediction(event.name, marketData, 'metaculus');
+      const polymarket = matchMarketPrediction(event.name, marketData, 'polymarket');
 
       result.push({
         event,
@@ -253,7 +224,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
     });
 
     return result;
-  }, [events, metaculusData, polymarketData]);
+  }, [events, marketData]);
 
   const timelineHeight = isMobile ? 500 : 600;
   const barHeight = isMobile ? 18 : 24;
@@ -359,11 +330,11 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                 : centerY + 16 + row * rowGap;
               
               const isHovered = hoveredEvent === event.name;
-              const metaculusPosition = metaculus?.metaculus_median_date 
-                ? dateToPosition(metaculus.metaculus_median_date)
+              const metaculusPosition = metaculus?.median_date 
+                ? dateToPosition(metaculus.median_date)
                 : null;
-              const polymarketPosition = polymarket?.end_date 
-                ? dateToPosition(polymarket.end_date)
+              const polymarketPosition = polymarket?.median_date 
+                ? dateToPosition(polymarket.median_date)
                 : null;
 
               return (
@@ -435,9 +406,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                           }}
                         >
                           {/* 25th-75th Percentile Range Bar */}
-                          {metaculus.metaculus_25th_date && metaculus.metaculus_75th_date && (() => {
-                            const pos25 = dateToPosition(metaculus.metaculus_25th_date);
-                            const pos75 = Math.min(dateToPosition(metaculus.metaculus_75th_date), 95); // Cap at timeline end
+                          {metaculus.percentile_25 && metaculus.percentile_75 && (() => {
+                            const pos25 = dateToPosition(metaculus.percentile_25);
+                            const pos75 = Math.min(dateToPosition(metaculus.percentile_75), 95); // Cap at timeline end
                             const rangeWidth = pos75 - pos25;
                             const offsetFromMedian = pos25 - metaculusPosition;
                             
@@ -483,14 +454,14 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                         <div className="space-y-1">
                           <p className="font-semibold text-orange-500">Metaculus</p>
                           <p className="text-sm">
-                            Median: {new Date(metaculus.metaculus_median_date!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                            Median: {new Date(metaculus.median_date!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {metaculus.metaculus_forecasters?.toLocaleString()} forecasters
+                            {metaculus.forecaster_count?.toLocaleString()} forecasters
                           </p>
-                          {metaculus.metaculus_25th_date && metaculus.metaculus_75th_date && (
+                          {metaculus.percentile_25 && metaculus.percentile_75 && (
                             <p className="text-xs text-muted-foreground">
-                              25th-75th: {new Date(metaculus.metaculus_25th_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – {new Date(metaculus.metaculus_75th_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                              25th-75th: {new Date(metaculus.percentile_25).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – {new Date(metaculus.percentile_75).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                             </p>
                           )}
                         </div>
@@ -541,9 +512,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                               ${Number(polymarket.volume_usd).toLocaleString()} volume
                             </p>
                           )}
-                          {polymarket.end_date && (
+                          {polymarket.median_date && (
                             <p className="text-xs text-muted-foreground">
-                              Ends: {new Date(polymarket.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                              Ends: {new Date(polymarket.median_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                             </p>
                           )}
                         </div>

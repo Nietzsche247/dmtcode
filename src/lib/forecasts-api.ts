@@ -58,6 +58,24 @@ export interface DependencyRule {
   description?: string | null;
 }
 
+// Unified market prediction interface
+export interface MarketPrediction {
+  id: number;
+  source: 'polymarket' | 'metaculus';
+  source_url: string | null;
+  question_title: string | null;
+  mapped_event_name: string;
+  prediction_type: 'binary' | 'date';
+  probability: number | null;
+  median_date: string | null;
+  percentile_25: string | null;
+  percentile_75: string | null;
+  forecaster_count: number | null;
+  volume_usd: number | null;
+  last_scraped: string;
+}
+
+// Legacy interfaces for backwards compatibility (deprecated)
 export interface MetaculusComparison {
   id: number;
   forecast_event_name: string;
@@ -225,11 +243,11 @@ export async function getConditionalRules(): Promise<Methodology[]> {
   return getMethodology('conditional_probability_rules');
 }
 
-// Fetch Metaculus comparison data from local Supabase
-export async function getMetaculusComparisons(): Promise<MetaculusComparison[]> {
+// Fetch all market predictions from unified table
+export async function getMarketPredictions(): Promise<MarketPrediction[]> {
   try {
     const response = await fetch(
-      `${LOCAL_SUPABASE_URL}/rest/v1/metaculus_comparisons?select=*`,
+      `${LOCAL_SUPABASE_URL}/rest/v1/market_predictions?select=*`,
       {
         headers: {
           'apikey': LOCAL_SUPABASE_KEY,
@@ -240,41 +258,27 @@ export async function getMetaculusComparisons(): Promise<MetaculusComparison[]> 
     );
     
     if (!response.ok) {
-      console.error('Metaculus fetch error:', response.status, response.statusText);
+      console.error('Market predictions fetch error:', response.status, response.statusText);
       return [];
     }
     
     return response.json();
   } catch (error) {
-    console.error('Error fetching Metaculus comparisons:', error);
+    console.error('Error fetching market predictions:', error);
     return [];
   }
 }
 
-// Fetch Polymarket prediction data from local Supabase
-export async function getPolymarketPredictions(): Promise<PolymarketPrediction[]> {
-  try {
-    const response = await fetch(
-      `${LOCAL_SUPABASE_URL}/rest/v1/polymarket_predictions?select=*`,
-      {
-        headers: {
-          'apikey': LOCAL_SUPABASE_KEY,
-          'Authorization': `Bearer ${LOCAL_SUPABASE_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    
-    if (!response.ok) {
-      console.error('Polymarket fetch error:', response.status, response.statusText);
-      return [];
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching Polymarket predictions:', error);
-    return [];
-  }
+// Get Metaculus predictions (filtered from unified table)
+export async function getMetaculusComparisons(): Promise<MarketPrediction[]> {
+  const all = await getMarketPredictions();
+  return all.filter(p => p.source === 'metaculus');
+}
+
+// Get Polymarket predictions (filtered from unified table)
+export async function getPolymarketPredictions(): Promise<MarketPrediction[]> {
+  const all = await getMarketPredictions();
+  return all.filter(p => p.source === 'polymarket');
 }
 
 // Infer event type based on event name keywords
