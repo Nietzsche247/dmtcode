@@ -51,6 +51,8 @@ export type Database = {
           filters: Json | null
           format: string | null
           id: number
+          ip_address: string | null
+          user_agent: string | null
         }
         Insert: {
           accessed_at?: string | null
@@ -58,6 +60,8 @@ export type Database = {
           filters?: Json | null
           format?: string | null
           id?: number
+          ip_address?: string | null
+          user_agent?: string | null
         }
         Update: {
           accessed_at?: string | null
@@ -65,6 +69,8 @@ export type Database = {
           filters?: Json | null
           format?: string | null
           id?: number
+          ip_address?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }

@@ -98,13 +98,21 @@ serve(async (req) => {
     ]
   }
 
+  // Get IP address and user agent from request headers
+  const ipAddress = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                    req.headers.get('x-real-ip') || 
+                    'unknown'
+  const userAgent = req.headers.get('user-agent') || 'unknown'
+
   // Log access (silent fail if table doesn't exist)
   try {
     await supabase.from('api_access_log').insert({
       endpoint: '/api/forecasts/export',
       format,
       filters: { min_probability: minProbability, year },
-      accessed_at: new Date().toISOString()
+      accessed_at: new Date().toISOString(),
+      ip_address: ipAddress,
+      user_agent: userAgent
     })
   } catch {
     // Silent fail
