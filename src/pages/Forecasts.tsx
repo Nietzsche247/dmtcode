@@ -10,6 +10,7 @@ import { EventCardsGrid } from "@/components/forecasts/EventCardsGrid";
 import { EventDetailPanel } from "@/components/forecasts/EventDetailPanel";
 import { ExportButtons } from "@/components/forecasts/ExportButtons";
 import { MethodologyAccordion } from "@/components/forecasts/MethodologyAccordion";
+import { ApiDocumentation } from "@/components/forecasts/ApiDocumentation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   getForecasts, 
@@ -221,10 +222,11 @@ export default function Forecasts() {
               </div>
             </section>
 
-            {/* Export */}
+            {/* Export & API */}
             <section className="container mx-auto px-4 py-6">
-              <div className="max-w-6xl mx-auto">
+              <div className="max-w-6xl mx-auto space-y-6">
                 <ExportButtons events={events} methodology={methodology} dependencyRules={dependencyRules} />
+                <ApiDocumentation />
               </div>
             </section>
 
