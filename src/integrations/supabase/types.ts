@@ -355,6 +355,81 @@ export type Database = {
         }
         Relationships: []
       }
+      falsification_criteria: {
+        Row: {
+          consequence: string
+          created_at: string
+          criterion: string
+          deadline: string | null
+          event_name: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          consequence: string
+          created_at?: string
+          criterion: string
+          deadline?: string | null
+          event_name: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          consequence?: string
+          created_at?: string
+          criterion?: string
+          deadline?: string | null
+          event_name?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      forecast_changelog: {
+        Row: {
+          event_name: string
+          id: string
+          new_probability: number | null
+          new_quarter: string
+          new_year: number
+          previous_probability: number | null
+          previous_quarter: string | null
+          previous_year: number | null
+          trigger_reason: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          event_name: string
+          id?: string
+          new_probability?: number | null
+          new_quarter: string
+          new_year: number
+          previous_probability?: number | null
+          previous_quarter?: string | null
+          previous_year?: number | null
+          trigger_reason: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          event_name?: string
+          id?: string
+          new_probability?: number | null
+          new_quarter?: string
+          new_year?: number
+          previous_probability?: number | null
+          previous_quarter?: string | null
+          previous_year?: number | null
+          trigger_reason?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       glyph_votes: {
         Row: {
           created_at: string
@@ -431,6 +506,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_disagreements: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          market_source: string
+          our_position: string
+          reasoning: string
+          their_position: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          market_source: string
+          our_position: string
+          reasoning: string
+          their_position: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          market_source?: string
+          our_position?: string
+          reasoning?: string
+          their_position?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       market_predictions: {
         Row: {
