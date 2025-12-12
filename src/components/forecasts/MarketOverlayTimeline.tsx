@@ -427,7 +427,10 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                 : null;
 
               return (
-                <div key={event.name}>
+                <div 
+                  key={event.name}
+                  id={`event-${event.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')}`}
+                >
                   {/* Vertical Connector */}
                   <div
                     className="absolute w-px"
