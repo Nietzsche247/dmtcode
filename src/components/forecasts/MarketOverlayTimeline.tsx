@@ -46,6 +46,7 @@ const PRIMARY_EVENTS_BELOW = [
   "DIY Bio-Attack with Major Impact",
   "Quantum Computing Breaks RSA/ECC",
   "Global Unemployment Crisis",
+  "UBI Legislation Fast-Tracked",
   "ASI Achieves Omniscience",
   "ASI Controls Global Infrastructure"
 ];
@@ -96,44 +97,111 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
   return match;
 }
 
+// Normalize event names for matching - handles variations in formatting
+function normalizeEventName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[()\/\-–—]/g, ' ')  // Remove parens, slashes, dashes
+    .replace(/\s+/g, ' ')          // Collapse whitespace
+    .trim();
+}
+
+// Explicit mapping from market_predictions.mapped_event_name to forecast event names
+const MARKET_EVENT_MAPPING: Record<string, string[]> = {
+  // AGI variations all map to AGI event
+  'agi (human-level general intelligence)': ['agi', 'human-level general intelligence'],
+  'agi / human-level general intelligence': ['agi', 'human-level general intelligence'],
+  
+  // Reasoning
+  'ai achieves human-level novel reasoning': ['reasoning', 'novel reasoning'],
+  
+  // Taiwan
+  'china-taiwan military conflict': ['taiwan', 'china', 'conflict'],
+  
+  // Robots - multiple mappings
+  'first 1m humanoid robots delivered': ['humanoid', 'robot', '1m'],
+  'humanoid robots (mass production)': ['humanoid', 'robot', 'mass production'],
+  
+  // Quantum
+  'quantum computing (quantum advantage)': ['quantum', 'advantage'],
+  'quantum computing breaks rsa/ecc': ['quantum', 'rsa', 'ecc', 'breaks'],
+  
+  // UBI
+  'ubi legislation fast-tracked': ['ubi', 'legislation'],
+  
+  // Anti-aging
+  'anti-aging breakthrough': ['anti-aging', 'aging', 'breakthrough'],
+  
+  // RSI
+  'rsi (recursive self-improvement)': ['rsi', 'recursive', 'self-improvement'],
+};
+
 // Match market predictions to event using mapped_event_name - returns ALL matches for that source
 function matchMarketPredictions(eventName: string, predictions: MarketPrediction[], source: 'metaculus' | 'polymarket'): MarketPrediction[] {
   const eventLower = eventName.toLowerCase();
+  const eventNorm = normalizeEventName(eventName);
   const sourcePredictions = predictions.filter(p => p.source === source);
   
-  // First try direct matches
-  const directMatches = sourcePredictions.filter(p => p.mapped_event_name.toLowerCase() === eventLower);
-  if (directMatches.length > 0) return directMatches;
-
-  // Fuzzy match using keyword patterns
   return sourcePredictions.filter(p => {
     const mappedLower = p.mapped_event_name.toLowerCase();
+    const mappedNorm = normalizeEventName(p.mapped_event_name);
     
-    // Normalize common variations
-    const normalizeAGI = (s: string) => s.replace(/[()\/]/g, ' ').replace(/\s+/g, ' ');
-    const eventNorm = normalizeAGI(eventLower);
-    const mappedNorm = normalizeAGI(mappedLower);
+    // 1. Exact match (case-insensitive)
+    if (mappedLower === eventLower) return true;
     
-    // Check for significant keyword overlap
-    const eventKeywords = eventNorm.split(' ').filter(w => w.length > 3);
-    const mappedKeywords = mappedNorm.split(' ').filter(w => w.length > 3);
-    const overlap = eventKeywords.filter(kw => mappedKeywords.some(mk => mk.includes(kw) || kw.includes(mk)));
+    // 2. Normalized match
+    if (mappedNorm === eventNorm) return true;
     
-    if (overlap.length >= 2) return true;
+    // 3. Check explicit mapping keywords
+    const keywords = MARKET_EVENT_MAPPING[mappedLower];
+    if (keywords) {
+      const matchCount = keywords.filter(kw => eventLower.includes(kw)).length;
+      if (matchCount >= 2 || (keywords.length <= 2 && matchCount >= 1)) return true;
+    }
     
-    // Specific keyword matches for key domains
-    return (eventLower.includes('agi') && mappedLower.includes('agi')) ||
-           (eventLower.includes('human-level') && mappedLower.includes('human-level')) ||
-           (eventLower.includes('humanoid') && mappedLower.includes('humanoid')) ||
-           (eventLower.includes('robot') && mappedLower.includes('robot')) ||
-           (eventLower.includes('quantum') && (mappedLower.includes('quantum') || mappedLower.includes('rsa'))) ||
-           (eventLower.includes('rsa') && mappedLower.includes('rsa')) ||
-           (eventLower.includes('taiwan') && mappedLower.includes('taiwan')) ||
-           (eventLower.includes('reasoning') && mappedLower.includes('reasoning')) ||
-           (eventLower.includes('aging') && mappedLower.includes('aging')) ||
-           (eventLower.includes('anti-aging') && mappedLower.includes('anti-aging')) ||
-           (eventLower.includes('rsi') && mappedLower.includes('rsi')) ||
-           (eventLower.includes('self-improvement') && mappedLower.includes('self-improvement'));
+    // 4. Domain-specific keyword matching
+    // AGI variations
+    if ((eventLower.includes('agi') || eventLower.includes('human-level general')) && 
+        (mappedLower.includes('agi') || mappedLower.includes('human-level general'))) {
+      return true;
+    }
+    
+    // Reasoning
+    if (eventLower.includes('reasoning') && mappedLower.includes('reasoning')) return true;
+    
+    // Taiwan/China conflict
+    if ((eventLower.includes('taiwan') || eventLower.includes('china')) && 
+        (mappedLower.includes('taiwan') || mappedLower.includes('china'))) {
+      return true;
+    }
+    
+    // Humanoid robots
+    if (eventLower.includes('humanoid') && mappedLower.includes('humanoid')) return true;
+    if ((eventLower.includes('robot') && eventLower.includes('1m')) && 
+        (mappedLower.includes('robot') || mappedLower.includes('humanoid'))) {
+      return true;
+    }
+    
+    // Quantum
+    if (eventLower.includes('quantum') && mappedLower.includes('quantum')) return true;
+    if (eventLower.includes('rsa') && mappedLower.includes('rsa')) return true;
+    
+    // UBI
+    if (eventLower.includes('ubi') && mappedLower.includes('ubi')) return true;
+    
+    // Anti-aging
+    if ((eventLower.includes('aging') || eventLower.includes('anti-aging')) && 
+        (mappedLower.includes('aging') || mappedLower.includes('anti-aging'))) {
+      return true;
+    }
+    
+    // RSI
+    if ((eventLower.includes('rsi') || eventLower.includes('recursive')) && 
+        (mappedLower.includes('rsi') || mappedLower.includes('recursive'))) {
+      return true;
+    }
+    
+    return false;
   });
 }
 
