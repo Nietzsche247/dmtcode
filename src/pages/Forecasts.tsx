@@ -90,26 +90,26 @@ export default function Forecasts() {
 
       <Navigation />
 
-      <main className="min-h-screen bg-background pt-20">
+      <main className="min-h-screen bg-background pt-16 md:pt-20">
         {/* Introduction with Pull Quote Accordion */}
         <IntroductionAccordion />
 
         {/* Page Header */}
-        <section className="container mx-auto px-4 py-10 md:py-12">
+        <section className="container mx-auto px-4 py-6 md:py-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-2 md:mb-3 leading-tight">
               Major Event Forecasting Model for
               <span className="text-primary"> 2026-2033</span>
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground font-light max-w-2xl mx-auto mb-3">
+            <p className="text-sm md:text-base lg:text-lg text-muted-foreground font-light max-w-2xl mx-auto mb-2 md:mb-3">
               Interactive Probability Model with Cascade Dependencies
             </p>
             {lastUpdated && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 Last updated: {format(new Date(lastUpdated), 'MMMM d, yyyy')}
               </p>
             )}
-            <p className="text-xs text-muted-foreground/70 mt-2">
+            <p className="text-[10px] md:text-xs text-muted-foreground/70 mt-2">
               {events.length} events in model. Drag spine events to simulate cascades.
             </p>
           </div>
@@ -143,22 +143,22 @@ export default function Forecasts() {
         {!loading && !error && events.length > 0 && (
           <>
             {/* 1. MAIN TIMELINE (Your forecasts - baseline) */}
-            <section className="container mx-auto px-4 py-6">
+            <section className="container mx-auto px-2 sm:px-4 py-4 md:py-6">
               <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">MAIN TIMELINE</h2>
-                  <p className="text-muted-foreground font-light text-sm">
+                <div className="text-center mb-4 md:mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-foreground mb-1">MAIN TIMELINE</h2>
+                  <p className="text-muted-foreground font-light text-xs md:text-sm">
                     Baseline probability distributions for transformative events 2026-2033
                   </p>
                 </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                <div className="bg-card/30 border border-border/50 rounded-lg md:rounded-xl p-2 sm:p-4 md:p-6 overflow-hidden">
                   <BarTimeline
                     events={events}
                     dependencyRules={dependencyRules}
                     onEventClick={handleEventClick}
                   />
                 </div>
-                <p className="text-center text-sm text-muted-foreground/80 mt-4 italic group cursor-default">
+                <p className="text-center text-xs md:text-sm text-muted-foreground/80 mt-3 md:mt-4 italic group cursor-default px-2">
                   Core logic: <span className="text-foreground/90 font-medium">high-probability primary events</span>
                   <span className="inline-block mx-1 text-primary transition-transform duration-300 group-hover:translate-x-1">→</span>
                   <span className="text-foreground/90 font-medium">high conditional probability secondary events</span>
@@ -169,17 +169,17 @@ export default function Forecasts() {
             </section>
 
             {/* 2. MAIN TIMELINE + MARKET OVERLAY */}
-            <section className="container mx-auto px-4 py-8">
+            <section className="container mx-auto px-2 sm:px-4 py-4 md:py-8">
               <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">
+                <div className="text-center mb-4 md:mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-foreground mb-1">
                     MAIN TIMELINE + <span className="text-orange-500">METACULUS</span> OVERLAY
                   </h2>
-                  <p className="text-muted-foreground font-light text-sm">
+                  <p className="text-muted-foreground font-light text-xs md:text-sm">
                     Orange diamonds show Metaculus community median forecasts
                   </p>
                 </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                <div className="bg-card/30 border border-border/50 rounded-lg md:rounded-xl p-2 sm:p-4 md:p-6 overflow-hidden">
                   <MarketOverlayTimeline
                     events={events}
                     dependencyRules={dependencyRules}
@@ -190,28 +190,28 @@ export default function Forecasts() {
             </section>
 
             {/* 3. WHAT-IF SIMULATOR TIMELINE */}
-            <section className="container mx-auto px-4 py-8">
+            <section className="container mx-auto px-2 sm:px-4 py-4 md:py-8">
               <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">
+                <div className="text-center mb-4 md:mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-foreground mb-1">
                     WHAT-IF <span className="text-primary">SIMULATOR</span> TIMELINE
                   </h2>
-                  <p className="text-muted-foreground font-light text-sm">
+                  <p className="text-muted-foreground font-light text-xs md:text-sm">
                     Drag sliders to shift events and see real-time cascade effects
                   </p>
                 </div>
-                <div className="bg-card/30 border border-border/50 rounded-xl p-4 md:p-6">
+                <div className="bg-card/30 border border-border/50 rounded-lg md:rounded-xl p-2 sm:p-4 md:p-6 overflow-hidden">
                   <WhatIfSimulatorV2 events={events} dependencyRules={dependencyRules} />
                 </div>
               </div>
             </section>
 
             {/* 4. DEPENDENCIES - Event Cards Grid */}
-            <section className="container mx-auto px-4 py-8">
+            <section className="container mx-auto px-2 sm:px-4 py-4 md:py-8">
               <div className="max-w-6xl mx-auto">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl md:text-2xl font-black text-foreground mb-1">DEPENDENCIES</h2>
-                  <p className="text-muted-foreground font-light text-sm">
+                <div className="text-center mb-4 md:mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-foreground mb-1">DEPENDENCIES</h2>
+                  <p className="text-muted-foreground font-light text-xs md:text-sm">
                     Click any card to view full cascade effects
                   </p>
                 </div>
