@@ -7,9 +7,11 @@ import {
 } from "@/lib/forecasts-api";
 import { type CascadeState, formatDelta } from "@/hooks/useCascadeEngine";
 import { cn } from "@/lib/utils";
-import { GripVertical, ChevronRight, ChevronUp, ChevronDown, GripHorizontal, Zap, AlertTriangle } from "lucide-react";
+import { GripVertical, ChevronRight, ChevronUp, ChevronDown, GripHorizontal, Zap, AlertTriangle, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePinchZoom } from "@/hooks/usePinchZoom";
 
 interface HorizontalBarTimelineProps {
   events: ForecastEvent[];
@@ -47,6 +49,11 @@ const getCategoryColor = (category: string, type: string): string => {
   return CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS] || '#22C55E'; // green for positive
 };
 
+// Zoom configuration
+const MIN_ZOOM = 0.8;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
+
 export function HorizontalBarTimeline({
   events,
   showSecondaryEvents,
@@ -58,6 +65,22 @@ export function HorizontalBarTimeline({
 }: HorizontalBarTimelineProps) {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Zoom and pan state with pinch-to-zoom support
+  const { zoom, isPinching, handlers: pinchHandlers, handleZoomIn, handleZoomOut, handleResetZoom } = usePinchZoom({
+    minZoom: MIN_ZOOM,
+    maxZoom: MAX_ZOOM,
+    zoomStep: ZOOM_STEP
+  });
+
+  // Reset scroll on zoom reset
+  const handleResetZoomWithScroll = useCallback(() => {
+    handleResetZoom();
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = 0;
+    }
+  }, [handleResetZoom]);
   
   // Mobile drag state
   const [mobileDragEvent, setMobileDragEvent] = useState<string | null>(null);
@@ -240,27 +263,82 @@ export function HorizontalBarTimeline({
   const desktopPreview = getDesktopDragPreview();
 
   return (
-    <div ref={containerRef} className="w-full">
-      {/* Year axis header */}
-      <div 
-        className="flex items-center border-b border-border/30 pb-3 mb-4"
-        style={{ paddingLeft: isMobile ? 0 : LABEL_WIDTH, paddingRight: isMobile ? 0 : DATE_WIDTH }}
-      >
-        <div className="flex-1 relative h-8">
-          {yearMarkers.map(({ year, position }) => (
-            <div
-              key={year}
-              className="absolute text-sm font-bold text-foreground"
-              style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-            >
-              {year}
-            </div>
-          ))}
-        </div>
+    <div ref={containerRef} className="w-full relative">
+      {/* Zoom Controls */}
+      <div className="absolute top-0 right-0 z-30 flex items-center gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomOut}
+          disabled={zoom <= MIN_ZOOM}
+          aria-label="Zoom out"
+        >
+          <ZoomOut className="h-4 w-4" />
+        </Button>
+        <span className="text-xs font-medium text-muted-foreground w-12 text-center">
+          {Math.round(zoom * 100)}%
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomIn}
+          disabled={zoom >= MAX_ZOOM}
+          aria-label="Zoom in"
+        >
+          <ZoomIn className="h-4 w-4" />
+        </Button>
+        {zoom > 1 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={handleResetZoomWithScroll}
+            aria-label="Reset zoom"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
-      {/* Event rows */}
-      <div className="space-y-0" style={{ gap: ROW_GAP }}>
+      <div 
+        ref={scrollContainerRef}
+        className={cn(
+          "w-full overflow-x-auto touch-pan-x",
+          isPinching && "touch-none"
+        )}
+        onTouchStart={pinchHandlers.onTouchStart}
+        onTouchMove={pinchHandlers.onTouchMove}
+        onTouchEnd={pinchHandlers.onTouchEnd}
+      >
+        <div 
+          className="transition-all duration-150"
+          style={{ 
+            width: `${100 * zoom}%`,
+            minWidth: '100%'
+          }}
+        >
+          {/* Year axis header */}
+          <div 
+            className="flex items-center border-b border-border/30 pb-3 mb-4"
+            style={{ paddingLeft: isMobile ? 0 : LABEL_WIDTH, paddingRight: isMobile ? 0 : DATE_WIDTH }}
+          >
+            <div className="flex-1 relative h-8">
+              {yearMarkers.map(({ year, position }) => (
+                <div
+                  key={year}
+                  className="absolute text-sm font-bold text-foreground"
+                  style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
+                >
+                  {year}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Event rows */}
+          <div className="space-y-0" style={{ gap: ROW_GAP }}>
         {sortedEvents.map((event) => {
           const adjusted = adjustedEvents?.get(event.name);
           const currentQuarter = adjusted?.quarter || event.medianQuarter;
@@ -471,6 +549,8 @@ export function HorizontalBarTimeline({
             </div>
           );
         })}
+          </div>
+        </div>
       </div>
 
       {/* Legend */}

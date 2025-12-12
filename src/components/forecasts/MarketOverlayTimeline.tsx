@@ -3,6 +3,7 @@ import type { ForecastEvent, DependencyRule, MarketPrediction } from "@/lib/fore
 import { CATEGORY_COLORS, quarterToNumber, getMarketPredictions } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePinchZoom } from "@/hooks/usePinchZoom";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -223,8 +224,12 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
   const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
   const [marketData, setMarketData] = useState<MarketPrediction[]>([]);
   
-  // Zoom and pan state
-  const [zoom, setZoom] = useState(1);
+  // Zoom and pan state with pinch-to-zoom support
+  const { zoom, isPinching, handlers: pinchHandlers, handleZoomIn, handleZoomOut, handleResetZoom, setZoom } = usePinchZoom({
+    minZoom: MIN_ZOOM,
+    maxZoom: MAX_ZOOM,
+    zoomStep: ZOOM_STEP
+  });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, scrollLeft: 0 });
 
@@ -233,21 +238,13 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
     getMarketPredictions().then(setMarketData);
   }, []);
 
-  // Zoom handlers
-  const handleZoomIn = useCallback(() => {
-    setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP));
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP));
-  }, []);
-
-  const handleResetZoom = useCallback(() => {
-    setZoom(1);
+  // Reset scroll on zoom reset
+  const handleResetZoomWithScroll = useCallback(() => {
+    handleResetZoom();
     if (containerRef.current) {
       containerRef.current.scrollLeft = 0;
     }
-  }, []);
+  }, [handleResetZoom]);
 
   // Pan handlers
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -354,7 +351,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
               variant="ghost"
               size="icon"
               className="h-7 w-7"
-              onClick={handleResetZoom}
+              onClick={handleResetZoomWithScroll}
               aria-label="Reset zoom"
             >
               <Maximize2 className="h-4 w-4" />
@@ -365,15 +362,19 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         <div 
           ref={containerRef}
           className={cn(
-            "relative w-full overflow-x-auto",
+            "relative w-full overflow-x-auto touch-pan-x",
             zoom > 1 && "cursor-grab",
-            isPanning && "cursor-grabbing"
+            isPanning && "cursor-grabbing",
+            isPinching && "touch-none"
           )}
           style={{ height: timelineHeight }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={pinchHandlers.onTouchStart}
+          onTouchMove={pinchHandlers.onTouchMove}
+          onTouchEnd={pinchHandlers.onTouchEnd}
         >
           <div 
             className="relative transition-transform duration-150"
