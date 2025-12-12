@@ -96,24 +96,44 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
   return match;
 }
 
-// Match market prediction to event using mapped_event_name
-function matchMarketPrediction(eventName: string, predictions: MarketPrediction[], source: 'metaculus' | 'polymarket'): MarketPrediction | undefined {
+// Match market predictions to event using mapped_event_name - returns ALL matches for that source
+function matchMarketPredictions(eventName: string, predictions: MarketPrediction[], source: 'metaculus' | 'polymarket'): MarketPrediction[] {
   const eventLower = eventName.toLowerCase();
   const sourcePredictions = predictions.filter(p => p.source === source);
   
-  // Direct match on mapped_event_name first
-  const direct = sourcePredictions.find(p => p.mapped_event_name.toLowerCase() === eventLower);
-  if (direct) return direct;
+  // First try direct matches
+  const directMatches = sourcePredictions.filter(p => p.mapped_event_name.toLowerCase() === eventLower);
+  if (directMatches.length > 0) return directMatches;
 
-  // Fuzzy match
-  return sourcePredictions.find(p => {
+  // Fuzzy match using keyword patterns
+  return sourcePredictions.filter(p => {
     const mappedLower = p.mapped_event_name.toLowerCase();
-    return eventLower.includes(mappedLower.slice(0, 15)) || 
-           mappedLower.includes(eventLower.slice(0, 15)) ||
-           (eventLower.includes('agi') && mappedLower.includes('agi')) ||
+    
+    // Normalize common variations
+    const normalizeAGI = (s: string) => s.replace(/[()\/]/g, ' ').replace(/\s+/g, ' ');
+    const eventNorm = normalizeAGI(eventLower);
+    const mappedNorm = normalizeAGI(mappedLower);
+    
+    // Check for significant keyword overlap
+    const eventKeywords = eventNorm.split(' ').filter(w => w.length > 3);
+    const mappedKeywords = mappedNorm.split(' ').filter(w => w.length > 3);
+    const overlap = eventKeywords.filter(kw => mappedKeywords.some(mk => mk.includes(kw) || kw.includes(mk)));
+    
+    if (overlap.length >= 2) return true;
+    
+    // Specific keyword matches for key domains
+    return (eventLower.includes('agi') && mappedLower.includes('agi')) ||
+           (eventLower.includes('human-level') && mappedLower.includes('human-level')) ||
+           (eventLower.includes('humanoid') && mappedLower.includes('humanoid')) ||
            (eventLower.includes('robot') && mappedLower.includes('robot')) ||
-           (eventLower.includes('quantum') && mappedLower.includes('quantum')) ||
-           (eventLower.includes('aging') && mappedLower.includes('aging'));
+           (eventLower.includes('quantum') && (mappedLower.includes('quantum') || mappedLower.includes('rsa'))) ||
+           (eventLower.includes('rsa') && mappedLower.includes('rsa')) ||
+           (eventLower.includes('taiwan') && mappedLower.includes('taiwan')) ||
+           (eventLower.includes('reasoning') && mappedLower.includes('reasoning')) ||
+           (eventLower.includes('aging') && mappedLower.includes('aging')) ||
+           (eventLower.includes('anti-aging') && mappedLower.includes('anti-aging')) ||
+           (eventLower.includes('rsi') && mappedLower.includes('rsi')) ||
+           (eventLower.includes('self-improvement') && mappedLower.includes('self-improvement'));
   });
 }
 
@@ -124,8 +144,8 @@ interface ProcessedEvent {
   barWidth: number;
   row: number;
   isAbove: boolean;
-  metaculus?: MarketPrediction;
-  polymarket?: MarketPrediction;
+  metaculusPredictions: MarketPrediction[];
+  polymarketPredictions: MarketPrediction[];
 }
 
 export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }: MarketOverlayTimelineProps) {
@@ -207,9 +227,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         }
       }
 
-      // Match market data from unified table
-      const metaculus = matchMarketPrediction(event.name, marketData, 'metaculus');
-      const polymarket = matchMarketPrediction(event.name, marketData, 'polymarket');
+      // Match market data from unified table - can return multiple predictions
+      const metaculusPredictions = matchMarketPredictions(event.name, marketData, 'metaculus');
+      const polymarketPredictions = matchMarketPredictions(event.name, marketData, 'polymarket');
 
       result.push({
         event,
@@ -218,8 +238,8 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         barWidth: spread.widthPercent,
         row: assignedRow,
         isAbove,
-        metaculus,
-        polymarket
+        metaculusPredictions,
+        polymarketPredictions
       });
     });
 
@@ -322,7 +342,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
 
             {/* Event Bars with Market Overlays */}
             {processedEvents.map((pe) => {
-              const { event, barStart, barWidth, row, isAbove, metaculus, polymarket } = pe;
+              const { event, barStart, barWidth, row, isAbove, metaculusPredictions, polymarketPredictions } = pe;
               const color = CATEGORY_COLORS[event.category] || CATEGORY_COLORS.default;
               
               const yOffset = isAbove 
@@ -330,11 +350,11 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                 : centerY + 16 + row * rowGap;
               
               const isHovered = hoveredEvent === event.name;
+              
+              // Get the primary metaculus prediction (first match)
+              const metaculus = metaculusPredictions[0];
               const metaculusPosition = metaculus?.median_date 
                 ? dateToPosition(metaculus.median_date)
-                : null;
-              const polymarketPosition = polymarket?.median_date 
-                ? dateToPosition(polymarket.median_date)
                 : null;
 
               return (
@@ -374,53 +394,122 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                     <div className="absolute top-0 bottom-0 w-0.5 bg-white/70" style={{ left: '50%' }} />
                   </div>
 
-                  {/* Label */}
+                  {/* Label with Polymarket chips inline */}
                   <div
                     className={cn(
-                      "absolute text-[9px] md:text-[11px] font-medium transition-opacity pointer-events-none text-center",
+                      "absolute text-[9px] md:text-[11px] font-medium transition-opacity pointer-events-none flex items-center gap-1",
                       isHovered ? "opacity-100" : "opacity-70"
                     )}
                     style={{
                       left: `${barStart + barWidth / 2}%`,
-                      top: isAbove ? yOffset - 14 : yOffset + barHeight + 4,
+                      top: isAbove ? yOffset - 18 : yOffset + barHeight + 4,
                       transform: 'translateX(-50%)',
-                      maxWidth: 140,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      color: 'hsl(var(--foreground))'
                     }}
                   >
-                    {event.name.length > 24 ? event.name.slice(0, 22) + '…' : event.name}
+                    <span
+                      style={{
+                        maxWidth: 120,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        color: 'hsl(var(--foreground))'
+                      }}
+                    >
+                      {event.name.length > 22 ? event.name.slice(0, 20) + '…' : event.name}
+                    </span>
+                    
+                    {/* Polymarket chips displayed next to label */}
+                    {polymarketPredictions.length > 0 && (
+                      <div className="flex items-center gap-1 pointer-events-auto">
+                        {polymarketPredictions.slice(0, 2).map((pm, idx) => {
+                          const prob = Number(pm.probability);
+                          const probPercent = Math.round(prob * 100);
+                          // Color gradient: red for low, yellow for mid, green for high
+                          const chipColor = prob < 0.2 
+                            ? 'bg-red-500' 
+                            : prob < 0.5 
+                              ? 'bg-amber-500' 
+                              : 'bg-green-500';
+                          
+                          return (
+                            <Tooltip key={pm.id || idx}>
+                              <TooltipTrigger asChild>
+                                <a
+                                  href={pm.source_url || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={cn(
+                                    "px-1.5 py-0.5 rounded text-[8px] font-bold text-white hover:scale-110 transition-transform cursor-pointer",
+                                    chipColor
+                                  )}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  PM:{probPercent}%
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent side={isAbove ? "top" : "bottom"} className="max-w-xs">
+                                <div className="space-y-1">
+                                  <p className="font-semibold text-blue-500">Polymarket</p>
+                                  <p className="text-sm">{pm.question_title}</p>
+                                  <p className="text-sm font-medium">
+                                    {probPercent}% probability
+                                  </p>
+                                  {pm.volume_usd && (
+                                    <p className="text-xs text-muted-foreground">
+                                      ${Number(pm.volume_usd).toLocaleString()} volume
+                                    </p>
+                                  )}
+                                  {pm.median_date && (
+                                    <p className="text-xs text-muted-foreground">
+                                      Target: {new Date(pm.median_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                    </p>
+                                  )}
+                                  <p className="text-xs text-blue-400">Click to view on Polymarket</p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Metaculus Market Overlay with 25th-75th Range */}
+                  {/* Metaculus Market Overlay with 25th-75th Range - positioned on timeline */}
                   {metaculus && metaculusPosition && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div
+                        <a
+                          href={metaculus.source_url || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="absolute cursor-pointer z-10"
                           style={{
                             left: `${metaculusPosition}%`,
                             top: isAbove ? yOffset + barHeight + 4 : yOffset - 28,
                           }}
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          {/* 25th-75th Percentile Range Bar */}
+                          {/* 25th-75th Percentile Range Bar - positioned absolutely relative to the diamond */}
                           {metaculus.percentile_25 && metaculus.percentile_75 && (() => {
                             const pos25 = dateToPosition(metaculus.percentile_25);
-                            const pos75 = Math.min(dateToPosition(metaculus.percentile_75), 95); // Cap at timeline end
-                            const rangeWidth = pos75 - pos25;
-                            const offsetFromMedian = pos25 - metaculusPosition;
+                            const pos75 = Math.min(dateToPosition(metaculus.percentile_75), 95);
+                            
+                            // Convert to pixel offset from current position
+                            const containerWidth = baseWidth * zoom;
+                            const medianPx = (metaculusPosition / 100) * containerWidth;
+                            const p25Px = (pos25 / 100) * containerWidth;
+                            const p75Px = (pos75 / 100) * containerWidth;
+                            const leftOffset = p25Px - medianPx;
+                            const rangeWidthPx = p75Px - p25Px;
                             
                             return (
                               <div
-                                className="absolute h-2 rounded-full opacity-40"
+                                className="absolute h-2 rounded-full"
                                 style={{
-                                  left: `${offsetFromMedian}%`,
-                                  width: `${rangeWidth}%`,
+                                  left: leftOffset,
+                                  width: Math.max(rangeWidthPx, 20),
                                   top: 10,
-                                  background: 'linear-gradient(90deg, transparent 0%, hsl(25 95% 53%) 20%, hsl(25 95% 53%) 80%, transparent 100%)',
-                                  minWidth: 20,
+                                  background: 'linear-gradient(90deg, transparent 0%, hsl(25 95% 53% / 0.5) 15%, hsl(25 95% 53% / 0.5) 85%, transparent 100%)',
                                 }}
                               />
                             );
@@ -448,11 +537,12 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                               M
                             </span>
                           </div>
-                        </div>
+                        </a>
                       </TooltipTrigger>
                       <TooltipContent side={isAbove ? "bottom" : "top"} className="max-w-xs">
                         <div className="space-y-1">
                           <p className="font-semibold text-orange-500">Metaculus</p>
+                          <p className="text-sm">{metaculus.question_title}</p>
                           <p className="text-sm">
                             Median: {new Date(metaculus.median_date!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                           </p>
@@ -464,59 +554,7 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
                               25th-75th: {new Date(metaculus.percentile_25).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – {new Date(metaculus.percentile_75).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                             </p>
                           )}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-
-                  {/* Polymarket Market Overlay */}
-                  {polymarket && polymarketPosition && polymarket.probability && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          className="absolute cursor-pointer z-10"
-                          style={{
-                            left: `${polymarketPosition}%`,
-                            top: isAbove ? yOffset + barHeight + 20 : yOffset - 44,
-                          }}
-                        >
-                          {/* Vertical connector line */}
-                          <div 
-                            className="absolute w-px bg-blue-500/60"
-                            style={{
-                              left: 5,
-                              top: isAbove ? -16 : 14,
-                              height: 16,
-                            }}
-                          />
-                          
-                          {/* Polymarket circle badge */}
-                          <div 
-                            className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-sm hover:scale-110 transition-transform relative z-10 border border-blue-400"
-                          >
-                            <span className="text-[8px] font-bold text-white">
-                              {Math.round(Number(polymarket.probability) * 100)}%
-                            </span>
-                          </div>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side={isAbove ? "bottom" : "top"} className="max-w-xs">
-                        <div className="space-y-1">
-                          <p className="font-semibold text-blue-500">Polymarket</p>
-                          <p className="text-sm">{polymarket.question_title}</p>
-                          <p className="text-sm font-medium">
-                            {Math.round(Number(polymarket.probability) * 100)}% probability
-                          </p>
-                          {polymarket.volume_usd && (
-                            <p className="text-xs text-muted-foreground">
-                              ${Number(polymarket.volume_usd).toLocaleString()} volume
-                            </p>
-                          )}
-                          {polymarket.median_date && (
-                            <p className="text-xs text-muted-foreground">
-                              Ends: {new Date(polymarket.median_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                            </p>
-                          )}
+                          <p className="text-xs text-orange-400">Click to view on Metaculus</p>
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -528,16 +566,24 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mt-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
-              <span className="text-[7px] font-bold text-white">P</span>
-            </div>
-            <span>Polymarket</span>
+            <div className="h-3 w-6 bg-gradient-to-r from-primary/30 via-primary to-primary/30 rounded-sm" />
+            <span>Our forecast range</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-orange-500" style={{ transform: 'rotate(45deg)' }} />
             <span>Metaculus median</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-6 rounded-full bg-orange-500/50" />
+            <span>Metaculus 25th-75th range</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold text-white bg-red-500">PM:5%</span>
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold text-white bg-amber-500">PM:35%</span>
+            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold text-white bg-green-500">PM:75%</span>
+            <span className="ml-1">Polymarket</span>
           </div>
         </div>
       </div>
