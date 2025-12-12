@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState, useCallback, useRef } from "react";
 import type { ForecastEvent, DependencyRule } from "@/lib/forecasts-api";
 import { CATEGORY_COLORS, quarterToNumber } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import type { AdjustedEventData } from "./WhatIfSliderPanel";
 
 interface WhatIfTimelineVisualProps {
@@ -16,6 +17,11 @@ interface WhatIfTimelineVisualProps {
 const TIMELINE_START_YEAR = 2025;
 const TIMELINE_END_YEAR = 2035;
 const YEARS = Array.from({ length: TIMELINE_END_YEAR - TIMELINE_START_YEAR + 1 }, (_, i) => TIMELINE_START_YEAR + i);
+
+// Zoom configuration
+const MIN_ZOOM = 0.8;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
 
 // Primary events
 const PRIMARY_EVENTS_ABOVE = [
@@ -76,6 +82,45 @@ interface ProcessedEvent {
 
 export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisualProps) {
   const isMobile = useIsMobile();
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Zoom and pan state
+  const [zoom, setZoom] = useState(1);
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, scrollLeft: 0 });
+
+  // Zoom handlers
+  const handleZoomIn = useCallback(() => {
+    setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP));
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoom(1);
+    if (containerRef.current) {
+      containerRef.current.scrollLeft = 0;
+    }
+  }, []);
+
+  // Pan handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (zoom <= 1) return;
+    setIsPanning(true);
+    setPanStart({ x: e.clientX, scrollLeft: containerRef.current?.scrollLeft || 0 });
+  }, [zoom]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning || !containerRef.current) return;
+    const dx = e.clientX - panStart.x;
+    containerRef.current.scrollLeft = panStart.scrollLeft - dx;
+  }, [isPanning, panStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
 
   const processedEvents = useMemo(() => {
     const result: ProcessedEvent[] = [];
@@ -154,15 +199,69 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
     );
   }
 
+  const baseWidth = isMobile ? 700 : 900;
+
   return (
-    <div className="relative w-full overflow-x-auto" style={{ height: timelineHeight }}>
+    <div className="relative">
+      {/* Zoom Controls */}
+      <div className="absolute top-2 right-2 z-30 flex items-center gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomOut}
+          disabled={zoom <= MIN_ZOOM}
+          aria-label="Zoom out"
+        >
+          <ZoomOut className="h-4 w-4" />
+        </Button>
+        <span className="text-xs font-medium text-muted-foreground w-12 text-center">
+          {Math.round(zoom * 100)}%
+        </span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleZoomIn}
+          disabled={zoom >= MAX_ZOOM}
+          aria-label="Zoom in"
+        >
+          <ZoomIn className="h-4 w-4" />
+        </Button>
+        {zoom > 1 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={handleResetZoom}
+            aria-label="Reset zoom"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
       <div 
-        className="relative"
-        style={{ 
-          height: timelineHeight,
-          minWidth: isMobile ? 700 : 900
-        }}
+        ref={containerRef}
+        className={cn(
+          "relative w-full overflow-x-auto",
+          zoom > 1 && "cursor-grab",
+          isPanning && "cursor-grabbing"
+        )}
+        style={{ height: timelineHeight }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
+        <div 
+          className="relative transition-transform duration-150"
+          style={{ 
+            height: timelineHeight,
+            width: `${baseWidth * zoom}px`,
+            minWidth: '100%'
+          }}
+        >
         {/* Timeline Spine */}
         <div 
           className="absolute left-[5%] right-[5%] h-0.5 bg-primary/50"
@@ -312,6 +411,7 @@ export function WhatIfTimelineVisual({ events, adjustments }: WhatIfTimelineVisu
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );
