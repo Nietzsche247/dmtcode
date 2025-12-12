@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import type { ForecastEvent, MarketPrediction } from "@/lib/forecasts-api";
 import { cn } from "@/lib/utils";
-import { ExternalLink, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { ExternalLink, TrendingUp, TrendingDown, Minus, MousePointerClick } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +23,11 @@ interface ComparisonItem {
   };
   metaculus: MarketPrediction[];
   polymarket: MarketPrediction[];
+}
+
+// Generate stable ID from event name for DOM targeting
+function getEventId(eventName: string): string {
+  return `event-${eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')}`;
 }
 
 // Match market predictions to an event
@@ -116,6 +121,23 @@ export function MarketComparisonSection({ events, marketData }: MarketComparison
     
     return items.sort((a, b) => a.ourForecast.year - b.ourForecast.year);
   }, [events, marketData]);
+
+  // Scroll to and highlight event on timeline
+  const scrollToEvent = useCallback((eventName: string) => {
+    const eventId = getEventId(eventName);
+    const element = document.getElementById(eventId);
+    
+    if (element) {
+      // Scroll into view with offset for header
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Add highlight animation
+      element.classList.add('timeline-highlight');
+      setTimeout(() => {
+        element.classList.remove('timeline-highlight');
+      }, 2000);
+    }
+  }, []);
 
   if (comparisons.length === 0) return null;
 
@@ -212,12 +234,19 @@ export function MarketComparisonSection({ events, marketData }: MarketComparison
                 <tr 
                   key={item.eventName} 
                   className={cn(
-                    "border-b border-border/30 hover:bg-muted/20 transition-colors",
+                    "border-b border-border/30 hover:bg-muted/20 transition-colors cursor-pointer group",
                     idx % 2 === 0 && "bg-muted/5"
                   )}
+                  onClick={() => scrollToEvent(item.eventName)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && scrollToEvent(item.eventName)}
                 >
                   <td className="p-3 md:p-4 font-medium max-w-[200px]">
-                    {item.eventName}
+                    <div className="flex items-center gap-2">
+                      <span>{item.eventName}</span>
+                      <MousePointerClick className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
                   </td>
                   <td className="p-3 md:p-4 text-center">
                     <div className="font-semibold text-primary">
