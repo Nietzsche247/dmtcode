@@ -11,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { MarketComparisonSection } from "./MarketComparisonSection";
 
 interface MarketOverlayTimelineProps {
   events: ForecastEvent[];
@@ -654,6 +655,9 @@ export function MarketOverlayTimeline({ events, dependencyRules, onEventClick }:
             <span className="ml-1">Polymarket</span>
           </div>
         </div>
+
+        {/* Market Comparison Section */}
+        <MarketComparisonSection events={events} marketData={marketData} />
       </div>
     </TooltipProvider>
   );
