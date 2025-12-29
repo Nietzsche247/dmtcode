@@ -888,17 +888,20 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
             
             <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
               <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
-                Clinical Formulation
+                Clinical Case Formulation
               </p>
               
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
-                Elizabeth
-                <span className="block text-primary mt-2">Baker</span>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] leading-tight animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
+                Executive Dysfunction Under Stress with
+                <span className="block text-primary mt-1">Avoidance-Maintained Procrastination</span>
               </h1>
               
-              <p className="text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-                Comprehensive clinical formulation with evidence-based treatment recommendations
-              </p>
+              <div className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto space-y-1 animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+                <p className="font-medium text-foreground">Patient: Elizabeth Baker</p>
+                <p>Formulation Date: December 2025</p>
+                <p>Status: Active treatment with concurrent ketamine IV and rTMS</p>
+                <p className="text-xs text-muted-foreground/80 pt-2">Document Purpose: Working formulation to guide treatment integration</p>
+              </div>
               
               <div className="animate-blur-in-up animation-delay-300" style={{ animationFillMode: 'forwards' }}>
                 <PdfExportButton />
