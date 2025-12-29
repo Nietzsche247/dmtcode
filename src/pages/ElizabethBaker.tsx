@@ -27,7 +27,8 @@ import {
   ChevronRight,
   Printer,
   Shield,
-  ChevronDown
+  ChevronDown,
+  X
 } from 'lucide-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -315,21 +316,30 @@ const tocSections = [
 ];
 
 // Table of Contents component
-const TableOfContents = ({ activeSection }: { activeSection: string }) => {
+const TableOfContents = ({ activeSection, onClose }: { activeSection: string; onClose?: () => void }) => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    // Close mobile TOC after selection
+    if (onClose) onClose();
   };
 
   return (
-    <nav className="hidden lg:block sticky top-24 w-64 shrink-0" aria-label="Table of contents">
-      <div className="p-4 bg-card/50 border border-border/50 rounded-xl backdrop-blur-sm">
-        <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <List className="h-4 w-4 text-primary" />
-          Contents
-        </h2>
+    <nav aria-label="Table of contents">
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            <List className="h-4 w-4 text-primary" />
+            Contents
+          </h2>
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 lg:hidden">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <ul className="space-y-1">
           <li>
             <button
@@ -400,6 +410,55 @@ const TableOfContents = ({ activeSection }: { activeSection: string }) => {
         </ul>
       </div>
     </nav>
+  );
+};
+
+// Desktop TOC wrapper
+const DesktopTableOfContents = ({ activeSection }: { activeSection: string }) => (
+  <div className="hidden lg:block sticky top-24 w-64 shrink-0">
+    <div className="bg-card/50 border border-border/50 rounded-xl backdrop-blur-sm">
+      <TableOfContents activeSection={activeSection} />
+    </div>
+  </div>
+);
+
+// Mobile TOC with floating button
+const MobileTableOfContents = ({ activeSection }: { activeSection: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      {/* Floating toggle button */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className={cn(
+          "lg:hidden fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95",
+          isOpen && "hidden"
+        )}
+        aria-label="Open table of contents"
+      >
+        <List className="h-5 w-5" />
+      </button>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Slide-in panel */}
+      <div
+        className={cn(
+          "lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border rounded-t-2xl shadow-2xl transition-transform duration-300 ease-out max-h-[70vh] overflow-y-auto",
+          isOpen ? "translate-y-0" : "translate-y-full"
+        )}
+      >
+        <div className="w-12 h-1 bg-muted-foreground/30 rounded-full mx-auto mt-3" />
+        <TableOfContents activeSection={activeSection} onClose={() => setIsOpen(false)} />
+      </div>
+    </>
   );
 };
 
@@ -943,8 +1002,11 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
 
           <section className="container mx-auto px-4 py-16">
             <div className="flex gap-8 max-w-6xl mx-auto">
-              {/* Table of Contents Sidebar */}
-              <TableOfContents activeSection={activeSection} />
+              {/* Desktop Table of Contents Sidebar */}
+              <DesktopTableOfContents activeSection={activeSection} />
+
+              {/* Mobile Table of Contents */}
+              <MobileTableOfContents activeSection={activeSection} />
 
               {/* Main Content */}
               <div className="flex-1 max-w-4xl">
