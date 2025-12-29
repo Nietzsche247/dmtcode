@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, voice = 'nova' } = await req.json()
+    const { text, voice = 'nova', speed = 0.95 } = await req.json()
 
     if (!text) {
       throw new Error('Text is required')
@@ -23,7 +23,10 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY is not configured')
     }
 
-    console.log(`Generating TTS for ${text.length} characters with voice: ${voice}`)
+    // Validate speed (OpenAI supports 0.25 to 4.0)
+    const validSpeed = Math.max(0.25, Math.min(4.0, speed))
+    
+    console.log(`Generating TTS for ${text.length} characters with voice: ${voice}, speed: ${validSpeed}`)
 
     // Generate speech from text using OpenAI TTS
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -35,9 +38,9 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'tts-1',
         input: text,
-        voice: voice, // 'nova' or 'shimmer' for natural female voices
+        voice: voice,
         response_format: 'mp3',
-        speed: 0.95, // Slightly slower for better comprehension
+        speed: validSpeed,
       }),
     })
 
