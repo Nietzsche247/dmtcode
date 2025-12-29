@@ -19,10 +19,16 @@ import {
   BookMarked,
   Volume2,
   VolumeX,
-  Loader2
+  Loader2,
+  List,
+  AlertTriangle,
+  ClipboardList,
+  TrendingUp,
+  ChevronRight
 } from 'lucide-react';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 // Citation type for structured references
 interface Citation {
@@ -285,6 +291,108 @@ const CitationLink = ({ id }: { id: number }) => {
   );
 };
 
+// Table of Contents sections for the 9 clinical formulation sections
+const tocSections = [
+  { id: 'section-1', label: '1. Presenting Phenomenology', icon: FileText },
+  { id: 'section-2', label: '2. Proposed Mechanism', icon: Brain },
+  { id: 'section-3', label: '3. Differential Diagnosis', icon: List },
+  { id: 'section-4', label: '4. Assessment', icon: ClipboardList },
+  { id: 'section-5', label: '5. Prognosis', icon: TrendingUp },
+  { id: 'section-6', label: '6. Ketamine Response', icon: Pill },
+  { id: 'section-7', label: '7. Treatment Targets', icon: Target },
+  { id: 'section-8', label: '8. Neuromodulation', icon: Brain },
+  { id: 'section-9', label: '9. Limitations', icon: AlertTriangle },
+];
+
+// Table of Contents component
+const TableOfContents = ({ activeSection }: { activeSection: string }) => {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <nav className="hidden lg:block sticky top-24 w-64 shrink-0" aria-label="Table of contents">
+      <div className="p-4 bg-card/50 border border-border/50 rounded-xl backdrop-blur-sm">
+        <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <List className="h-4 w-4 text-primary" />
+          Contents
+        </h2>
+        <ul className="space-y-1">
+          <li>
+            <button
+              onClick={() => scrollToSection('abstract-section')}
+              className={cn(
+                "w-full text-left text-xs py-1.5 px-2 rounded transition-colors flex items-center gap-2",
+                activeSection === 'abstract-section' 
+                  ? "bg-primary/10 text-primary font-medium" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
+              <BookOpen className="h-3 w-3" />
+              Abstract
+            </button>
+          </li>
+          <li className="pt-2">
+            <span className="text-xs font-medium text-foreground/70 px-2">Clinical Formulation</span>
+            <ul className="mt-1 space-y-0.5">
+              {tocSections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => scrollToSection(section.id)}
+                      className={cn(
+                        "w-full text-left text-xs py-1.5 px-2 rounded transition-colors flex items-center gap-2",
+                        activeSection === section.id 
+                          ? "bg-primary/10 text-primary font-medium" 
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <ChevronRight className="h-3 w-3" />
+                      <span className="truncate">{section.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+          <li className="pt-2">
+            <button
+              onClick={() => scrollToSection('protocol-section')}
+              className={cn(
+                "w-full text-left text-xs py-1.5 px-2 rounded transition-colors flex items-center gap-2",
+                activeSection === 'protocol-section' 
+                  ? "bg-primary/10 text-primary font-medium" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
+              <Calendar className="h-3 w-3" />
+              Protocol Addendum
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection('citations-section')}
+              className={cn(
+                "w-full text-left text-xs py-1.5 px-2 rounded transition-colors flex items-center gap-2",
+                activeSection === 'citations-section' 
+                  ? "bg-primary/10 text-primary font-medium" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
+              <BookMarked className="h-3 w-3" />
+              Citations
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
 // Section configuration
 const sectionConfig = {
   abstract: {
@@ -311,6 +419,35 @@ const sectionConfig = {
 };
 
 const ElizabethBaker = () => {
+  const [activeSection, setActiveSection] = useState('abstract-section');
+
+  // Track active section on scroll
+  useEffect(() => {
+    const sectionIds = [
+      'abstract-section',
+      'section-1', 'section-2', 'section-3', 'section-4', 'section-5',
+      'section-6', 'section-7', 'section-8', 'section-9',
+      'protocol-section', 'citations-section'
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+    );
+
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
   // Abstract content
   const abstractContent = `This memo presents a transdiagnostic formulation for a patient demonstrating recurrent failures of priority selection and task initiation under time pressure, accompanied by perfectionistic over-preparation and avoidance-maintained interpersonal conflict. The proposed mechanism integrates three processes supported by the literature: stress-potentiated impairment in working memory and cognitive flexibility, procrastination serving short-term emotion regulation, and maladaptive perfectionism that amplifies perceived threat of imperfect action.
 
@@ -429,38 +566,45 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
           
           <Breadcrumb />
 
-          <section className="container mx-auto px-4 py-16 max-w-4xl">
-            <Accordion 
-              type="multiple" 
-              defaultValue={["abstract"]} 
-              className="space-y-4"
-            >
-              {/* Section 1: Abstract - Open by default */}
-              <AccordionItem 
-                value="abstract" 
-                className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold hover:no-underline py-5">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                      {sectionConfig.abstract.icon}
-                    </div>
-                    <span>{sectionConfig.abstract.title}</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pb-6">
-                  <div className="border-t border-border/30 pt-4">
-                    <div className="flex justify-end mb-4">
-                      <ReadToMeButton text={abstractContent} sectionId="abstract" />
-                    </div>
-                    <div className="prose prose-invert prose-sm max-w-none">
-                      <p className="text-foreground/90 leading-relaxed">
-                        {abstractContent}
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+          <section className="container mx-auto px-4 py-16">
+            <div className="flex gap-8 max-w-6xl mx-auto">
+              {/* Table of Contents Sidebar */}
+              <TableOfContents activeSection={activeSection} />
+
+              {/* Main Content */}
+              <div className="flex-1 max-w-4xl">
+                <Accordion 
+                  type="multiple" 
+                  defaultValue={["abstract", "clinicalFormulation"]} 
+                  className="space-y-4"
+                >
+                  {/* Section 1: Abstract - Open by default */}
+                  <AccordionItem 
+                    id="abstract-section"
+                    value="abstract" 
+                    className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm scroll-mt-24"
+                  >
+                    <AccordionTrigger className="text-lg font-semibold hover:no-underline py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                          {sectionConfig.abstract.icon}
+                        </div>
+                        <span>{sectionConfig.abstract.title}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-6">
+                      <div className="border-t border-border/30 pt-4">
+                        <div className="flex justify-end mb-4">
+                          <ReadToMeButton text={abstractContent} sectionId="abstract" />
+                        </div>
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <p className="text-foreground/90 leading-relaxed">
+                            {abstractContent}
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
 
               {/* Section 2: Clinical Formulation (9 sections) */}
               <AccordionItem 
@@ -485,7 +629,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
                     
                     {/* Section 1: Presenting Phenomenology */}
-                    <div className="prose prose-invert prose-sm max-w-none">
+                    <div id="section-1" className="prose prose-invert prose-sm max-w-none scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">1. Presenting Phenomenology</h3>
                       <p className="text-foreground/90 leading-relaxed mb-4">
                         The patient exhibits a repeatable pattern when objective stakes and external deadlines are present, particularly in situations where lateness carries interpersonal meaning.
@@ -502,7 +646,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 2: Proposed Mechanism */}
-                    <div className="prose prose-invert prose-sm max-w-none">
+                    <div id="section-2" className="prose prose-invert prose-sm max-w-none scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">2. Proposed Mechanism</h3>
                       
                       <h4 className="text-base font-medium text-foreground/90 mb-2">2.1 Procrastination as Affect Regulation</h4>
@@ -530,7 +674,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 3: Differential Diagnostic Considerations */}
-                    <div className="prose prose-invert prose-sm max-w-none">
+                    <div id="section-3" className="prose prose-invert prose-sm max-w-none scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">3. Differential Diagnostic Considerations</h3>
                       <p className="text-foreground/90 leading-relaxed mb-4">
                         This presentation can arise from multiple pathways. Mechanism-level assessment should precede diagnostic conclusion.
@@ -547,7 +691,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 4: Assessment Recommendations */}
-                    <div className="prose prose-invert prose-sm max-w-none">
+                    <div id="section-4" className="prose prose-invert prose-sm max-w-none scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">4. Assessment Recommendations</h3>
                       <p className="text-foreground/90 leading-relaxed mb-4">
                         Structured diagnostic interview covering onset, course, developmental history, trauma exposure, and prior treatment response. Collateral information from family when available.
@@ -558,7 +702,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 5: Prognosis */}
-                    <div className="prose prose-invert prose-sm max-w-none">
+                    <div id="section-5" className="prose prose-invert prose-sm max-w-none scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">5. Prognosis</h3>
                       <p className="text-foreground/90 leading-relaxed mb-4">
                         Moderately favorable if treatment explicitly targets stress-reactive executive failure, perfectionism-driven avoidance, and interpersonal demand escalation. Measurement-based care with repeated behavioral practice is essential.
@@ -569,7 +713,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 6: Literature on Ketamine Response Factors - Medication Considerations */}
-                    <div className="mt-8 p-5 bg-destructive/5 border border-destructive/20 rounded-xl">
+                    <div id="section-6" className="mt-8 p-5 bg-destructive/5 border border-destructive/20 rounded-xl scroll-mt-24">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-destructive/10 text-destructive">
                           <Pill className="h-4 w-4" />
@@ -596,7 +740,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 7: Treatment Targets */}
-                    <div className="mt-6 p-5 bg-muted/30 border border-border/50 rounded-xl">
+                    <div id="section-7" className="mt-6 p-5 bg-muted/30 border border-border/50 rounded-xl scroll-mt-24">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-muted/50 text-muted-foreground">
                           <Target className="h-4 w-4" />
@@ -620,7 +764,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 8: Neuromodulation and the Treatment Window */}
-                    <div className="mt-6 p-5 bg-primary/5 border border-primary/20 rounded-xl">
+                    <div id="section-8" className="mt-6 p-5 bg-primary/5 border border-primary/20 rounded-xl scroll-mt-24">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-primary/10 text-primary">
                           <Brain className="h-4 w-4" />
@@ -676,7 +820,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                     </div>
 
                     {/* Section 9: Limitations */}
-                    <div className="prose prose-invert prose-sm max-w-none mt-6">
+                    <div id="section-9" className="prose prose-invert prose-sm max-w-none mt-6 scroll-mt-24">
                       <h3 className="text-lg font-semibold text-foreground mb-4">9. Limitations</h3>
                       <p className="text-foreground/90 leading-relaxed mb-4">
                         This formulation is provisional and based primarily on behavioral observation and self-report. It has not been validated against structured diagnostic interview, independent collateral sources, or comprehensive neuropsychological assessment.
@@ -697,8 +841,9 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
 
               {/* Section 3: Protocol Addendum */}
               <AccordionItem 
+                id="protocol-section"
                 value="protocolAddendum" 
-                className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm"
+                className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm scroll-mt-24"
               >
                 <AccordionTrigger className="text-lg font-semibold hover:no-underline py-5">
                   <div className="flex items-center gap-3">
@@ -806,8 +951,9 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
 
               {/* Section 4: Citations */}
               <AccordionItem 
+                id="citations-section"
                 value="citations" 
-                className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm"
+                className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm scroll-mt-24"
               >
                 <AccordionTrigger className="text-lg font-semibold hover:no-underline py-5">
                   <div className="flex items-center gap-3">
@@ -862,14 +1008,16 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            </Accordion>
+                </Accordion>
 
-            {/* Footer Note */}
-            <div className="mt-12 p-6 bg-muted/20 border border-border/30 rounded-xl text-center">
-              <p className="text-xs text-muted-foreground">
-                This clinical formulation is provided for informational purposes only. 
-                All treatment recommendations should be reviewed by qualified healthcare professionals.
-              </p>
+                {/* Footer Note */}
+                <div className="mt-12 p-6 bg-muted/20 border border-border/30 rounded-xl text-center">
+                  <p className="text-xs text-muted-foreground">
+                    This clinical formulation is provided for informational purposes only. 
+                    All treatment recommendations should be reviewed by qualified healthcare professionals.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         </main>
