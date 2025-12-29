@@ -316,7 +316,16 @@ const ElizabethBaker = () => {
 
 The patient is currently receiving ketamine and rTMS. Both interventions create windows of enhanced neuroplasticity that represent time-limited opportunities for accelerated learning. The literature on combined neuromodulation and cognitive training suggests that passive administration without concurrent psychological activation substantially reduces therapeutic yield. This formulation includes recommendations for leveraging the treatment window.`;
   
-  const protocolAddendumContent = `{Protocol Addendum with specific session-by-session recommendations placeholder - will be replaced with your content}`;
+  // Protocol Addendum content for Read to Me
+  const protocolAddendumContent = `Addendum: Session Protocol Recommendations. The following recommendations are offered for integration with the current neuromodulation course. They are based on the formulation above and on literature suggesting that concurrent psychological activation enhances neuromodulation outcomes.
+
+For rTMS Sessions: Before each session, approximately 5-8 minutes: The patient states the single most important goal for the day and the time by which it must be completed. The patient articulates one specific rule for what she will do when she notices optimization behavior after a designated time point. Brief acknowledgment that incomplete or imperfect outcomes are acceptable. After each session, approximately 5-8 minutes: One concrete instance of goal-hierarchy protection is rehearsed. The patient identifies one opportunity for optimization that will be deliberately skipped. The patient articulates why the primary goal matters more than perfection.
+
+For Ketamine Sessions: Before infusion, approximately 10-15 minutes: The patient sets a single intention related to the treatment target. This might be something like releasing the need to optimize, or tolerating the discomfort of incompleteness. A physical gesture or phrase is associated with this intention. During infusion: If verbal communication is possible and feels appropriate, gentle exploration of related themes. What does good enough feel like? What is the optimization protecting against? What matters more than being perfect? After infusion, within 24 hours: Structured review of any insights or experiences. Connection of insights to the behavioral formulation. Commitment to one specific practice for the following 48 hours.
+
+Daily Practice During Treatment Course: The patient should spend 10-15 minutes daily on deliberate practice. Writing the day's primary goal and checking awareness of it three times during the day. Stopping one optimization loop mid-stream and tolerating the incompleteness. Responding to a timer prompt by stepping back and asking what matters most right now.
+
+Outcome Tracking: Weekly assessment of on-time rates, number of subgoal-capture episodes, duration of pre-deadline conflict, and standardized symptom measures.`;
 
   // Full clinical formulation text for Read to Me functionality
   const clinicalFormulationFullText = `Section 1: Presenting Phenomenology. The patient exhibits a repeatable pattern when objective stakes and external deadlines are present, particularly in situations where lateness carries interpersonal meaning. The primary objective fails to maintain dominance. Subordinate goals acquire equivalent or greater salience, and attention shifts to secondary concerns. This profile is not consistent with apathy. The patient demonstrates substantial distress about consequences and genuine desire for different outcomes.
@@ -700,14 +709,96 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">
-                  <div className="border-t border-border/30 pt-4">
+                  <div className="border-t border-border/30 pt-4 space-y-6">
                     <div className="flex justify-end mb-4">
                       <ReadToMeButton text={protocolAddendumContent} sectionId="protocolAddendum" />
                     </div>
+                    
                     <div className="prose prose-invert prose-sm max-w-none">
-                      <p className="text-foreground/90 leading-relaxed">
-                        {protocolAddendumContent}
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The following recommendations are offered for integration with the current neuromodulation course. They are based on the formulation above and on literature suggesting that concurrent psychological activation enhances neuromodulation outcomes.
                       </p>
+                    </div>
+
+                    {/* rTMS Sessions */}
+                    <div className="p-5 bg-muted/30 border border-border/50 rounded-xl">
+                      <h3 className="font-semibold text-foreground mb-4">For rTMS Sessions</h3>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-medium text-primary mb-2">Before each session (5-8 minutes)</h4>
+                          <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                            <li>The patient states the single most important goal for the day and the time by which it must be completed.</li>
+                            <li>The patient articulates one specific rule for what she will do when she notices optimization behavior after a designated time point.</li>
+                            <li>Brief acknowledgment that incomplete or imperfect outcomes are acceptable.</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-sm font-medium text-primary mb-2">After each session (5-8 minutes)</h4>
+                          <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                            <li>One concrete instance of goal-hierarchy protection is rehearsed, such as walking through the next morning's sequence with explicit stopping points.</li>
+                            <li>The patient identifies one opportunity for optimization that will be deliberately skipped.</li>
+                            <li>The patient articulates why the primary goal matters more than perfection.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ketamine Sessions */}
+                    <div className="p-5 bg-primary/5 border border-primary/20 rounded-xl">
+                      <h3 className="font-semibold text-foreground mb-4">For Ketamine Sessions</h3>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-medium text-primary mb-2">Before infusion (10-15 minutes)</h4>
+                          <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                            <li>The patient sets a single intention related to the treatment target. This might be something like "releasing the need to optimize" or "tolerating the discomfort of incompleteness."</li>
+                            <li>A physical gesture or phrase is associated with this intention.</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-sm font-medium text-primary mb-2">During infusion</h4>
+                          <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                            <li>If verbal communication is possible and feels appropriate, gentle exploration of related themes: What does "good enough" feel like? What is the optimization protecting against? What matters more than being perfect?</li>
+                            <li>If deeper dissociation occurs, minimal intervention with ambient support only.</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-sm font-medium text-primary mb-2">After infusion (within 24 hours)</h4>
+                          <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                            <li>Structured review of any insights or experiences.</li>
+                            <li>Connection of insights to the behavioral formulation.</li>
+                            <li>Commitment to one specific practice for the following 48 hours.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Daily Practice */}
+                    <div className="p-5 bg-muted/30 border border-border/50 rounded-xl">
+                      <h3 className="font-semibold text-foreground mb-4">Daily Practice During Treatment Course</h3>
+                      <p className="text-foreground/80 text-sm mb-3">The patient should spend 10-15 minutes daily on deliberate practice:</p>
+                      <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                        <li>Writing the day's primary goal and checking awareness of it three times during the day.</li>
+                        <li>Stopping one optimization loop mid-stream and tolerating the incompleteness.</li>
+                        <li>Responding to a timer prompt by stepping back and asking "what matters most right now?"</li>
+                      </ul>
+                    </div>
+
+                    {/* Outcome Tracking */}
+                    <div className="p-5 bg-muted/20 border border-border/30 rounded-xl">
+                      <h3 className="font-semibold text-foreground mb-4">Outcome Tracking</h3>
+                      <p className="text-foreground/80 text-sm mb-3">Weekly assessment of:</p>
+                      <ul className="text-foreground/80 text-sm space-y-2 list-disc list-inside">
+                        <li>On-time rates</li>
+                        <li>Number of subgoal-capture episodes</li>
+                        <li>Duration of pre-deadline conflict</li>
+                        <li>Standardized symptom measures</li>
+                      </ul>
+                      <p className="text-foreground/80 text-sm mt-4">Each session should include a distress rating before and after, notation of whether behavioral rehearsal was completed, and any relevant observations.</p>
                     </div>
                   </div>
                 </AccordionContent>
