@@ -197,15 +197,26 @@ const ElizabethBaker = () => {
 
 The patient is currently receiving ketamine and rTMS. Both interventions create windows of enhanced neuroplasticity that represent time-limited opportunities for accelerated learning. The literature on combined neuromodulation and cognitive training suggests that passive administration without concurrent psychological activation substantially reduces therapeutic yield. This formulation includes recommendations for leveraging the treatment window.`;
   
-  const clinicalFormulationContent = `{8-section clinical formulation placeholder - will be replaced with your content}`;
-  
-  const medicationContent = `{Medication considerations placeholder including critical benzo-ketamine interaction warning - will be replaced with your content}`;
-  
-  const treatmentTargetsContent = `{Treatment targets placeholder - will be replaced with your content}`;
-  
-  const neuromodulationContent = `{Section 8: Neuromodulation Integration placeholder - explicitly calls out passive administration as treatment failure - will be replaced with your content}`;
-  
   const protocolAddendumContent = `{Protocol Addendum with specific session-by-session recommendations placeholder - will be replaced with your content}`;
+
+  // Full clinical formulation text for Read to Me functionality
+  const clinicalFormulationFullText = `Section 1: Presenting Phenomenology. The patient exhibits a repeatable pattern when objective stakes and external deadlines are present, particularly in situations where lateness carries interpersonal meaning. The primary objective fails to maintain dominance. Subordinate goals acquire equivalent or greater salience, and attention shifts to secondary concerns. This profile is not consistent with apathy. The patient demonstrates substantial distress about consequences and genuine desire for different outcomes.
+
+Section 2: Proposed Mechanism. Procrastination as Affect Regulation. Sirois and Pychyl have articulated the position that procrastination represents the primacy of short-term mood repair over longer-term pursuit of intended actions. Stress Impairs Executive Functions. The meta-analysis by Shields and colleagues examined acute stress effects on executive functions. Working memory showed reliable impairment under acute stress. Perfectionism Amplifies Threat. Perfectionistic concerns showed consistent positive associations with procrastination.
+
+Section 3: Differential Diagnostic Considerations. This presentation can arise from multiple pathways including anxiety disorders, major depression, ADHD, OCD-spectrum presentations, OCPD, and trauma-related freeze.
+
+Section 4: Assessment Recommendations. Structured diagnostic interview, standardized measures, and functional analysis documenting antecedents, behaviors, and consequences.
+
+Section 5: Prognosis. Moderately favorable if treatment explicitly targets stress-reactive executive failure, perfectionism-driven avoidance, and interpersonal demand escalation.
+
+Section 6: Literature on Ketamine Response Factors. Observational studies have examined factors associated with ketamine response variability. Concurrent benzodiazepine use at higher doses was associated with reduced ketamine response.
+
+Section 7: Treatment Targets. The primary target is goal-hierarchy protection under deadline conditions. Process targets include cognitive flexibility, inhibitory control, distress tolerance, and interpersonal sequencing.
+
+Section 8: Neuromodulation and the Treatment Window. The neuromodulation course represents a window of enhanced plasticity. The literature suggests this window should be actively leveraged for new learning. Passive administration without psychological activation leaves potential therapeutic benefit unrealized.
+
+Section 9: Limitations. This formulation is provisional and based primarily on behavioral observation and self-report.`;
 
   return (
     <>
@@ -323,7 +334,7 @@ The patient is currently receiving ketamine and rTMS. Both interventions create 
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Section 2: Clinical Formulation (8 sections) */}
+              {/* Section 2: Clinical Formulation (9 sections) */}
               <AccordionItem 
                 value="clinicalFormulation" 
                 className="border border-border/50 rounded-2xl px-6 bg-card/30 backdrop-blur-sm"
@@ -337,64 +348,220 @@ The patient is currently receiving ketamine and rTMS. Both interventions create 
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6">
-                  <div className="border-t border-border/30 pt-4 space-y-6">
+                  <div className="border-t border-border/30 pt-4 space-y-8">
                     <div className="flex justify-end mb-4">
                       <ReadToMeButton 
-                        text={`${clinicalFormulationContent} ${medicationContent} ${treatmentTargetsContent} ${neuromodulationContent}`} 
+                        text={clinicalFormulationFullText} 
                         sectionId="clinicalFormulation" 
                       />
                     </div>
                     
-                    {/* Main Clinical Formulation Content */}
+                    {/* Section 1: Presenting Phenomenology */}
                     <div className="prose prose-invert prose-sm max-w-none">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">1. Presenting Phenomenology</h3>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The patient exhibits a repeatable pattern when objective stakes and external deadlines are present, particularly in situations where lateness carries interpersonal meaning.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The primary objective fails to maintain dominance. Subordinate goals acquire equivalent or greater salience, and attention shifts to secondary concerns such as appearance optimization, completeness checking, or "one more task" that are processed as equivalently urgent despite time constraints.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Rather than executing the top-level plan, behavior organizes around resolving or perfecting smaller components. External attempts to impose time structure are experienced as pressure, and interaction frequently escalates into conflict or rationalization, consuming additional time.
+                      </p>
                       <p className="text-foreground/90 leading-relaxed">
-                        {clinicalFormulationContent}
+                        This profile is not consistent with apathy. The patient demonstrates substantial distress about consequences and genuine desire for different outcomes. The pattern is more consistent with threat-sensitive control strategies that sacrifice long-term outcomes for short-term relief from aversive affect.
                       </p>
                     </div>
 
-                    {/* Medication Considerations Subsection */}
+                    {/* Section 2: Proposed Mechanism */}
+                    <div className="prose prose-invert prose-sm max-w-none">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">2. Proposed Mechanism</h3>
+                      
+                      <h4 className="text-base font-medium text-foreground/90 mb-2">2.1 Procrastination as Affect Regulation</h4>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Sirois and Pychyl have articulated the position that procrastination represents the primacy of short-term mood repair over longer-term pursuit of intended actions.<CitationLink id={1} /> This reframes delay from a moral deficit to a learned coping strategy. The individual is not failing to work; they are succeeding at avoiding the negative affect associated with the task.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The treatment implication is that interventions targeting time management skills alone will be insufficient because they do not address the underlying function.
+                      </p>
+
+                      <h4 className="text-base font-medium text-foreground/90 mb-2">2.2 Stress Impairs Executive Functions Required for Deadline Behavior</h4>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The meta-analysis by Shields and colleagues examined acute stress effects on executive functions across 51 effect sizes.<CitationLink id={2} /> Working memory showed reliable impairment under acute stress. Cognitive flexibility showed variable effects depending on stress intensity. These are precisely the functions required to maintain a superordinate goal while flexibly disengaging from subgoal pursuit.
+                      </p>
+
+                      <h4 className="text-base font-medium text-foreground/90 mb-2">2.3 Perfectionism Amplifies Threat</h4>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Sirois, Molnar, and Hirsch conducted a meta-analysis examining procrastination and multidimensional perfectionism.<CitationLink id={3} /> Perfectionistic concerns, including self-criticism and doubts about actions, showed consistent positive associations with procrastination. High standards alone did not drive the association; it was the coupling of standards with evaluative threat.
+                      </p>
+
+                      <h4 className="text-base font-medium text-foreground/90 mb-2">2.4 Prefrontal Circuitry</h4>
+                      <p className="text-foreground/90 leading-relaxed">
+                        The dorsolateral prefrontal cortex supports goal maintenance, inhibitory control, and flexible task-switching.<CitationLink id={4} /> This region shows reduced activation in depression and anxiety, and its function is modulated by neuromodulatory interventions including rTMS and ketamine. The patient is receiving interventions that directly target this circuitry.
+                      </p>
+                    </div>
+
+                    {/* Section 3: Differential Diagnostic Considerations */}
+                    <div className="prose prose-invert prose-sm max-w-none">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">3. Differential Diagnostic Considerations</h3>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        This presentation can arise from multiple pathways. Mechanism-level assessment should precede diagnostic conclusion.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Anxiety disorders and performance anxiety involve threat inflation and avoidance as relief. Major depression involves reduced reward anticipation and effort sensitivity that can produce similar initiation problems. ADHD, particularly the inattentive presentation, involves executive dysfunction and time blindness as core features. The key differentiator is that ADHD-related difficulties tend to be context-independent, whereas anxiety-driven patterns often show interpersonal and evaluative specificity.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed">
+                        OCD-spectrum presentations can produce checking and over-preparation, distinguished by the presence of ego-dystonic intrusions. OCPD involves ego-syntonic rigidity and standards-driven behavior. Trauma-related freeze involves autonomic shutdown in high-demand situations that resembles procrastination but reflects physiological state.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mt-4">
+                        The formulation presented here remains applicable regardless of final diagnostic determination; it predicts treatment response at the level of process.
+                      </p>
+                    </div>
+
+                    {/* Section 4: Assessment Recommendations */}
+                    <div className="prose prose-invert prose-sm max-w-none">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">4. Assessment Recommendations</h3>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Structured diagnostic interview covering onset, course, developmental history, trauma exposure, and prior treatment response. Collateral information from family when available.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed">
+                        Standardized measures should include depression and anxiety scales, executive function assessment, OCD screening, and a multidimensional perfectionism measure. Functional analysis documenting antecedents, behaviors, and consequences of specific procrastination episodes would clarify maintaining contingencies.
+                      </p>
+                    </div>
+
+                    {/* Section 5: Prognosis */}
+                    <div className="prose prose-invert prose-sm max-w-none">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">5. Prognosis</h3>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Moderately favorable if treatment explicitly targets stress-reactive executive failure, perfectionism-driven avoidance, and interpersonal demand escalation. Measurement-based care with repeated behavioral practice is essential.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed">
+                        Risk for persistence increases if care focuses exclusively on mood symptoms without installing deadline-specific behavioral procedures and tolerance for imperfection.
+                      </p>
+                    </div>
+
+                    {/* Section 6: Literature on Ketamine Response Factors - Medication Considerations */}
                     <div className="mt-8 p-5 bg-destructive/5 border border-destructive/20 rounded-xl">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-destructive/10 text-destructive">
                           <Pill className="h-4 w-4" />
                         </div>
-                        <h3 className="font-semibold text-foreground">Medication Considerations</h3>
+                        <h3 className="font-semibold text-foreground">6. Literature on Ketamine Response Factors</h3>
                       </div>
                       <div className="prose prose-invert prose-sm max-w-none">
-                        <p className="text-foreground/80 leading-relaxed">
-                          {medicationContent}
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          The following findings from recent literature may be relevant to the treatment team's consideration. I am not in a position to know whether these apply to this patient's situation, but I include them in the interest of completeness.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Observational studies have examined factors associated with ketamine response variability. Albott and colleagues found that concurrent benzodiazepine use at higher doses was associated with reduced ketamine response in their sample.<CitationLink id={5} /> A subsequent analysis by Frye and colleagues proposed a threshold of approximately 8mg lorazepam equivalent daily dose, though this finding requires replication and the clinical significance remains under investigation.<CitationLink id={6} />
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          The proposed mechanism in the literature involves GABA-A receptor activity affecting the glutamatergic signaling that mediates ketamine's effects.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Separately, Williams and colleagues reported that opioid receptor antagonism may interact with ketamine's antidepressant mechanism, though this finding remains an area of active research and debate.<CitationLink id={7} />
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed italic">
+                          I raise these studies only to ensure the treatment team is aware of this literature, not to suggest any specific action. The prescribing clinicians are in the best position to evaluate relevance to this patient's care.
                         </p>
                       </div>
                     </div>
 
-                    {/* Treatment Targets Subsection */}
+                    {/* Section 7: Treatment Targets */}
                     <div className="mt-6 p-5 bg-muted/30 border border-border/50 rounded-xl">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-muted/50 text-muted-foreground">
                           <Target className="h-4 w-4" />
                         </div>
-                        <h3 className="font-semibold text-foreground">Treatment Targets</h3>
+                        <h3 className="font-semibold text-foreground">7. Treatment Targets</h3>
                       </div>
                       <div className="prose prose-invert prose-sm max-w-none">
+                        <h4 className="text-base font-medium text-foreground/90 mb-2">Primary Behavioral Target</h4>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          The primary target is goal-hierarchy protection under deadline conditions. This involves implementing an externalized protocol with predetermined departure times, explicit drop rules at designated time points, and pre-committed criteria for acceptable completion.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Outcome metrics should include on-time rates, number and duration of pre-deadline conflicts, and subjective distress ratings.
+                        </p>
+
+                        <h4 className="text-base font-medium text-foreground/90 mb-2">Process Targets</h4>
                         <p className="text-foreground/80 leading-relaxed">
-                          {treatmentTargetsContent}
+                          Cognitive flexibility involves practicing switching from optimization mode to execution mode on demand. Inhibitory control involves reducing checking loops and implementing single-attempt rules for specific behaviors. Distress tolerance involves replacing avoidance-based relief with acceptance-based strategies. Interpersonal sequencing involves developing autonomy-supportive prompt structures that reduce demand-threat escalation.
                         </p>
                       </div>
                     </div>
 
-                    {/* Section 8: Neuromodulation Integration */}
+                    {/* Section 8: Neuromodulation and the Treatment Window */}
                     <div className="mt-6 p-5 bg-primary/5 border border-primary/20 rounded-xl">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-primary/10 text-primary">
                           <Brain className="h-4 w-4" />
                         </div>
-                        <h3 className="font-semibold text-foreground">Section 8: Neuromodulation Integration</h3>
+                        <h3 className="font-semibold text-foreground">8. Neuromodulation and the Treatment Window</h3>
                       </div>
                       <div className="prose prose-invert prose-sm max-w-none">
-                        <p className="text-foreground/80 leading-relaxed">
-                          {neuromodulationContent}
+                        <h4 className="text-base font-medium text-foreground/90 mb-2">8.1 rTMS and Concurrent Cognitive Activation</h4>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Standard rTMS protocols for depression target the left dorsolateral prefrontal cortex, a region central to cognitive control.<CitationLink id={8} /> There is a growing literature suggesting that brain state during stimulation influences outcomes.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Segrave and colleagues conducted a pilot study comparing tDCS alone, cognitive control training alone, and the combination.<CitationLink id={9} /> All three conditions showed depression reduction immediately after treatment. However, only the combination of stimulation plus cognitive control training showed sustained effects at three-week follow-up.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          A 2024 neuroimaging study found that stimulating the DLPFC while participants performed a working memory task produced different effects than stimulating at rest. The authors concluded that an active cortex may be more receptive to stimulation-induced changes.<CitationLink id={10} />
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4 font-medium">
+                          The implication for clinical practice is that rTMS sessions may represent an opportunity for concurrent cognitive activation, not merely passive receipt of stimulation.
+                        </p>
+
+                        <h4 className="text-base font-medium text-foreground/90 mb-2 mt-6">8.2 Ketamine and the Plasticity Window</h4>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Ketamine's rapid effects involve glutamatergic mechanisms that trigger signaling cascades associated with synaptic plasticity.<CitationLink id={11} /><CitationLink id={12} /> The clinical question is how to leverage the window of enhanced plasticity that follows administration.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Wilkinson and colleagues randomized ketamine responders to either CBT or treatment as usual following their infusion series.<CitationLink id={13} /> The CBT group showed significantly longer maintenance of antidepressant gains.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          Dore and colleagues reported outcomes from three practices delivering ketamine with psychotherapy.<CitationLink id={14} /> The most significant improvements were seen in patients with developmental trauma and those who received more ketamine-assisted sessions.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          The ketamine-assisted psychotherapy literature proposes that ketamine can reduce defensive rigidity and enhance access to emotionally significant material, creating conditions favorable for therapeutic work.<CitationLink id={15} />
+                        </p>
+
+                        <h4 className="text-base font-medium text-foreground/90 mb-2 mt-6">8.3 Specific Recommendations for the Treatment Course</h4>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          The recommendations below are offered for the treatment team's consideration. They are based on the literature reviewed above and on the specific formulation for this patient.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          <strong>For rTMS sessions:</strong> Brief cognitive activation immediately before or after stimulation may enhance effects. This could involve 5-10 minutes of structured practice: stating the day's primary goal, articulating an implementation intention, or practicing a working memory task.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          <strong>For ketamine sessions:</strong> The literature supports preparation and integration. Preparation involves setting a specific intention related to the treatment target. Integration involves structured processing within 24 hours of the session.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed mb-4">
+                          <strong>For daily practice:</strong> Brief, repeated rehearsal of target skills—holding the superordinate goal in awareness, practicing stopping mid-task when a threshold is reached, and switching from detail-focus to big-picture on demand.
+                        </p>
+                        <p className="text-foreground/80 leading-relaxed font-medium border-l-2 border-primary pl-4 mt-4">
+                          The neuromodulation course represents a window of enhanced plasticity. The literature suggests this window should be actively leveraged for new learning. Passive administration without psychological activation leaves potential therapeutic benefit unrealized.
                         </p>
                       </div>
+                    </div>
+
+                    {/* Section 9: Limitations */}
+                    <div className="prose prose-invert prose-sm max-w-none mt-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">9. Limitations</h3>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        This formulation is provisional and based primarily on behavioral observation and self-report. It has not been validated against structured diagnostic interview, independent collateral sources, or comprehensive neuropsychological assessment.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        Alternative explanations have not been formally ruled out. ADHD-inattentive presentation shares substantial phenomenological overlap with the described pattern. Formal assessment including developmental history may be warranted.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed mb-4">
+                        The ketamine response literature cited in Section 6 represents observational findings that may or may not apply to this patient. I have no knowledge of the patient's current treatment regimen and am not in a position to evaluate relevance. I include those citations solely to ensure the treatment team has access to recent literature.
+                      </p>
+                      <p className="text-foreground/90 leading-relaxed">
+                        The recommendations regarding neuromodulation integration are based on emerging literature. The field has not yet established standardized protocols for combined neuromodulation and psychological intervention. The suggestions offered here represent one reasonable interpretation of current evidence.
+                      </p>
                     </div>
                   </div>
                 </AccordionContent>
