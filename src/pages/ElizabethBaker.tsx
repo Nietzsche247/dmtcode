@@ -217,28 +217,76 @@ const VoiceSettingsContext = React.createContext<{
   setSpeed: () => {},
 });
 
-// Text-to-speech hook using OpenAI TTS
+// Helper to split text into chunks at sentence boundaries (max ~3500 chars for safety)
+const splitTextIntoChunks = (text: string, maxChars = 3500): string[] => {
+  const chunks: string[] = [];
+  let remaining = text;
+  
+  while (remaining.length > 0) {
+    if (remaining.length <= maxChars) {
+      chunks.push(remaining.trim());
+      break;
+    }
+    
+    // Find the last sentence boundary within maxChars
+    const segment = remaining.slice(0, maxChars);
+    let splitIndex = -1;
+    
+    // Try to split at sentence endings (. ! ?)
+    const sentenceEndings = ['. ', '! ', '? ', '.\n', '!\n', '?\n'];
+    for (const ending of sentenceEndings) {
+      const lastIndex = segment.lastIndexOf(ending);
+      if (lastIndex > splitIndex) {
+        splitIndex = lastIndex + ending.length - 1;
+      }
+    }
+    
+    // Fallback to comma or semicolon if no sentence boundary found
+    if (splitIndex < maxChars / 2) {
+      const commaIndex = segment.lastIndexOf(', ');
+      const semicolonIndex = segment.lastIndexOf('; ');
+      splitIndex = Math.max(splitIndex, commaIndex, semicolonIndex);
+      if (splitIndex > 0) splitIndex += 1;
+    }
+    
+    // Fallback to space if still no good split point
+    if (splitIndex < maxChars / 2) {
+      splitIndex = segment.lastIndexOf(' ');
+    }
+    
+    // Last resort: just cut at maxChars
+    if (splitIndex <= 0) {
+      splitIndex = maxChars;
+    }
+    
+    chunks.push(remaining.slice(0, splitIndex + 1).trim());
+    remaining = remaining.slice(splitIndex + 1).trim();
+  }
+  
+  return chunks.filter(c => c.length > 0);
+};
+
+// Text-to-speech hook using OpenAI TTS with chunking
 const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const chunksRef = useRef<string[]>([]);
+  const currentChunkRef = useRef(0);
+  const stoppedRef = useRef(false);
   const { toast } = useToast();
   const { voice, speed } = React.useContext(VoiceSettingsContext);
 
-  const speak = useCallback(async (text: string) => {
-    // Stop any current playback
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+  const playChunk = useCallback(async (chunkIndex: number) => {
+    if (stoppedRef.current || chunkIndex >= chunksRef.current.length) {
+      setIsSpeaking(false);
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(true);
-    
-    // Clean HTML tags from text
-    const cleanText = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    const chunk = chunksRef.current[chunkIndex];
     
     try {
-      // Call OpenAI TTS edge function
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/text-to-speech`,
         {
@@ -249,7 +297,7 @@ const useTextToSpeech = () => {
             'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({ 
-            text: cleanText, 
+            text: chunk, 
             voice: voice,
             speed: speed,
           }),
@@ -260,6 +308,8 @@ const useTextToSpeech = () => {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to generate speech');
       }
+
+      if (stoppedRef.current) return;
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -273,8 +323,11 @@ const useTextToSpeech = () => {
       };
       
       audio.onended = () => {
-        setIsSpeaking(false);
         URL.revokeObjectURL(audioUrl);
+        if (!stoppedRef.current) {
+          currentChunkRef.current = chunkIndex + 1;
+          playChunk(chunkIndex + 1);
+        }
       };
       
       audio.onerror = () => {
@@ -290,6 +343,7 @@ const useTextToSpeech = () => {
 
       await audio.play();
     } catch (error) {
+      if (stoppedRef.current) return;
       setIsLoading(false);
       setIsSpeaking(false);
       console.error('TTS Error:', error);
@@ -301,11 +355,35 @@ const useTextToSpeech = () => {
     }
   }, [toast, voice, speed]);
 
-  const stop = useCallback(() => {
+  const speak = useCallback(async (text: string) => {
+    // Stop any current playback
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    
+    stoppedRef.current = false;
+    setIsLoading(true);
+    
+    // Clean HTML tags from text
+    const cleanText = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    
+    // Split into chunks
+    chunksRef.current = splitTextIntoChunks(cleanText);
+    currentChunkRef.current = 0;
+    
+    // Start playing first chunk
+    playChunk(0);
+  }, [playChunk]);
+
+  const stop = useCallback(() => {
+    stoppedRef.current = true;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    chunksRef.current = [];
+    currentChunkRef.current = 0;
     setIsSpeaking(false);
     setIsLoading(false);
   }, []);
