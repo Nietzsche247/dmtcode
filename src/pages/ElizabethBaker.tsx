@@ -266,16 +266,32 @@ const splitTextIntoChunks = (text: string, maxChars = 3500): string[] => {
   return chunks.filter(c => c.length > 0);
 };
 
-// Text-to-speech hook using OpenAI TTS with chunking
+// Text-to-speech hook using OpenAI TTS with chunking (mobile-compatible)
 const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const chunksRef = useRef<string[]>([]);
   const currentChunkRef = useRef(0);
   const stoppedRef = useRef(false);
   const { toast } = useToast();
   const { voice, speed } = React.useContext(VoiceSettingsContext);
+
+  // Initialize audio element on mount for mobile compatibility
+  useEffect(() => {
+    // Create a persistent audio element
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audioRef.current = audio;
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   const playChunk = useCallback(async (chunkIndex: number) => {
     if (stoppedRef.current || chunkIndex >= chunksRef.current.length) {
@@ -314,8 +330,19 @@ const useTextToSpeech = () => {
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
+      const audio = audioRef.current;
+      if (!audio) return;
+      
+      // Clean up previous URL
+      const prevSrc = audio.src;
+      
+      audio.src = audioUrl;
+      
+      audio.onloadeddata = () => {
+        if (prevSrc && prevSrc.startsWith('blob:')) {
+          URL.revokeObjectURL(prevSrc);
+        }
+      };
       
       audio.onplay = () => {
         setIsLoading(false);
@@ -323,17 +350,16 @@ const useTextToSpeech = () => {
       };
       
       audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
         if (!stoppedRef.current) {
           currentChunkRef.current = chunkIndex + 1;
           playChunk(chunkIndex + 1);
         }
       };
       
-      audio.onerror = () => {
+      audio.onerror = (e) => {
+        console.error('Audio playback error:', e);
         setIsLoading(false);
         setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
         toast({
           title: "Playback Error",
           description: "An error occurred while playing the audio.",
@@ -341,17 +367,33 @@ const useTextToSpeech = () => {
         });
       };
 
-      await audio.play();
+      // Use play() promise to handle autoplay restrictions
+      try {
+        await audio.play();
+      } catch (playError) {
+        console.error('Play error:', playError);
+        // If autoplay blocked, show user-friendly message
+        if ((playError as Error).name === 'NotAllowedError') {
+          toast({
+            title: "Playback Blocked",
+            description: "Please tap the Read to Me button again to start playback.",
+            variant: "default"
+          });
+        }
+        throw playError;
+      }
     } catch (error) {
       if (stoppedRef.current) return;
       setIsLoading(false);
       setIsSpeaking(false);
       console.error('TTS Error:', error);
-      toast({
-        title: "Speech Generation Error",
-        description: error instanceof Error ? error.message : "Failed to generate speech",
-        variant: "destructive"
-      });
+      if ((error as Error).name !== 'NotAllowedError') {
+        toast({
+          title: "Speech Generation Error",
+          description: error instanceof Error ? error.message : "Failed to generate speech",
+          variant: "destructive"
+        });
+      }
     }
   }, [toast, voice, speed]);
 
@@ -359,11 +401,33 @@ const useTextToSpeech = () => {
     // Stop any current playback
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current = null;
+      audioRef.current.currentTime = 0;
     }
     
     stoppedRef.current = false;
     setIsLoading(true);
+    
+    // Unlock audio context on user gesture (for iOS Safari)
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+    }
+    
+    // Play a silent sound to unlock audio on iOS
+    const audio = audioRef.current;
+    if (audio && !audio.src) {
+      // Create a tiny silent audio to unlock
+      audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAgAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAbD/48FXAAAAAAD/4xjEAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAADSAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+      try {
+        await audio.play();
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (e) {
+        // Ignore unlock errors
+      }
+    }
     
     // Clean HTML tags from text
     const cleanText = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
@@ -380,7 +444,7 @@ const useTextToSpeech = () => {
     stoppedRef.current = true;
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current = null;
+      audioRef.current.currentTime = 0;
     }
     chunksRef.current = [];
     currentChunkRef.current = 0;
