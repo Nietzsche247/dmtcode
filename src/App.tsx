@@ -23,6 +23,7 @@ import Glossary from "./pages/Glossary";
 import ProtocolGuide from "./pages/ProtocolGuide";
 import EvidenceMap from "./pages/EvidenceMap";
 import Methods from "./pages/Methods";
+import ElizabethBaker from "./pages/ElizabethBaker";
 import Critiques from "./pages/Critiques";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
@@ -139,6 +140,7 @@ const App = () => (
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/evidence-map" element={<EvidenceMap />} />
           <Route path="/methods" element={<Methods />} />
+          <Route path="/Elizabeth_Baker" element={<ElizabethBaker />} />
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
