@@ -35,9 +35,128 @@ interface Citation {
   url?: string;
 }
 
-// Placeholder citations - will be replaced with actual content
+// 15 peer-reviewed citations with DOIs
 const citations: Citation[] = [
-  // Will be populated with 15 peer-reviewed citations
+  {
+    id: 1,
+    authors: "Sirois FM, Pychyl TA",
+    title: "Procrastination and the priority of short-term mood regulation: Consequences for future self",
+    journal: "Soc Personal Psychol Compass",
+    year: 2013,
+    doi: "10.1111/spc3.12011",
+  },
+  {
+    id: 2,
+    authors: "Shields GS, Sazma MA, Yonelinas AP",
+    title: "The effects of acute stress on core executive functions: A meta-analysis and comparison with cortisol",
+    journal: "Neurosci Biobehav Rev",
+    year: 2016,
+    doi: "10.1016/j.neubiorev.2016.06.038",
+  },
+  {
+    id: 3,
+    authors: "Sirois FM, Molnar DS, Hirsch JK",
+    title: "A meta-analytic and conceptual update on the associations between procrastination and multidimensional perfectionism",
+    journal: "Eur J Pers",
+    year: 2017,
+    doi: "10.1002/per.2098",
+  },
+  {
+    id: 4,
+    authors: "Miller EK, Cohen JD",
+    title: "An integrative theory of prefrontal cortex function",
+    journal: "Annu Rev Neurosci",
+    year: 2001,
+    doi: "10.1146/annurev.neuro.24.1.167",
+  },
+  {
+    id: 5,
+    authors: "Albott CS, Shiroma PR, Cullen KR, et al",
+    title: "The antidepressant effect of repeat dose intravenous ketamine is delayed by concurrent benzodiazepine use",
+    journal: "J Clin Psychiatry",
+    year: 2017,
+    doi: "10.4088/JCP.16l11277",
+  },
+  {
+    id: 6,
+    authors: "Frye MA, Blier P, Tye SJ",
+    title: "Concomitant benzodiazepine use attenuates ketamine response: implications for large scale study design and clinical development",
+    journal: "J Clin Psychopharmacol",
+    year: 2015,
+    doi: "10.1097/JCP.0000000000000316",
+  },
+  {
+    id: 7,
+    authors: "Williams NR, Heifets BD, Blasey C, et al",
+    title: "Attenuation of antidepressant effects of ketamine by opioid receptor antagonism",
+    journal: "Am J Psychiatry",
+    year: 2018,
+    doi: "10.1176/appi.ajp.2018.18020138",
+  },
+  {
+    id: 8,
+    authors: "Fitzgerald PB, Daskalakis ZJ",
+    title: "Repetitive transcranial magnetic stimulation treatment for depressive disorders: A practical guide",
+    journal: "Springer Nature",
+    year: 2022,
+    doi: "10.1007/978-3-030-91438-5",
+  },
+  {
+    id: 9,
+    authors: "Segrave RA, Arnold S, Hoy K, Fitzgerald PB",
+    title: "Concurrent cognitive control training augments the antidepressant efficacy of tDCS: A pilot study",
+    journal: "Brain Stimul",
+    year: 2014,
+    doi: "10.1016/j.brs.2013.12.014",
+  },
+  {
+    id: 10,
+    authors: "Deluisi JA, Fani N, Phillips ND, et al",
+    title: "Lateral prefrontal stimulation of active cortex with theta burst transcranial magnetic stimulation affects subsequent engagement of the frontoparietal network",
+    journal: "Cereb Cortex",
+    year: 2024,
+    doi: "10.1093/cercor/bhad534",
+  },
+  {
+    id: 11,
+    authors: "Duman RS, Aghajanian GK, Sanacora G, Krystal JH",
+    title: "Synaptic plasticity and depression: New insights from stress and rapid-acting antidepressants",
+    journal: "Nat Med",
+    year: 2016,
+    doi: "10.1038/nm.4050",
+  },
+  {
+    id: 12,
+    authors: "Zanos P, Gould TD",
+    title: "Mechanisms of ketamine action as an antidepressant",
+    journal: "Mol Psychiatry",
+    year: 2018,
+    doi: "10.1038/mp.2017.255",
+  },
+  {
+    id: 13,
+    authors: "Wilkinson ST, Rhee TG, Joormann J, et al",
+    title: "Cognitive behavioral therapy to sustain the antidepressant effects of ketamine in treatment-resistant depression: A randomized clinical trial",
+    journal: "Psychother Psychosom",
+    year: 2021,
+    doi: "10.1159/000517074",
+  },
+  {
+    id: 14,
+    authors: "Dore J, Turnipseed B, Dwyer S, et al",
+    title: "Ketamine assisted psychotherapy (KAP): Patient demographics, clinical data and outcomes in three large practices administering ketamine with psychotherapy",
+    journal: "J Psychoactive Drugs",
+    year: 2019,
+    doi: "10.1080/02791072.2019.1587556",
+  },
+  {
+    id: 15,
+    authors: "Drozdz SJ, Goel A, McGarr MW, et al",
+    title: "Ketamine assisted psychotherapy: A systematic narrative review of the literature",
+    journal: "J Pain Res",
+    year: 2022,
+    doi: "10.2147/JPR.S360733",
+  },
 ];
 
 // Text-to-speech hook
