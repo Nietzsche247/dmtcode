@@ -192,8 +192,10 @@ const sectionConfig = {
 };
 
 const ElizabethBaker = () => {
-  // Placeholder content - will be replaced with actual content
-  const abstractContent = `{Abstract content placeholder - will be replaced with your content}`;
+  // Abstract content
+  const abstractContent = `This memo presents a transdiagnostic formulation for a patient demonstrating recurrent failures of priority selection and task initiation under time pressure, accompanied by perfectionistic over-preparation and avoidance-maintained interpersonal conflict. The proposed mechanism integrates three processes supported by the literature: stress-potentiated impairment in working memory and cognitive flexibility, procrastination serving short-term emotion regulation, and maladaptive perfectionism that amplifies perceived threat of imperfect action.
+
+The patient is currently receiving ketamine and rTMS. Both interventions create windows of enhanced neuroplasticity that represent time-limited opportunities for accelerated learning. The literature on combined neuromodulation and cognitive training suggests that passive administration without concurrent psychological activation substantially reduces therapeutic yield. This formulation includes recommendations for leveraging the treatment window.`;
   
   const clinicalFormulationContent = `{8-section clinical formulation placeholder - will be replaced with your content}`;
   
