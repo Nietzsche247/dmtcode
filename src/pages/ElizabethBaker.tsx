@@ -649,7 +649,7 @@ const generatePdfDocument = (includeWatermark: boolean = false) => {
   ${watermarkHtml}
   <div class="header">
     <div class="doc-type">CLINICAL CASE FORMULATION</div>
-    <h1>Executive Dysfunction Under Stress with Avoidance-Maintained Procrastination</h1>
+    <h1>Executive Deviation Under Stress with Avoidance-Maintained Procrastination</h1>
     <div class="patient-info">
       <div class="subtitle">Patient: Elizabeth Baker</div>
       <div class="meta">Formulation Date: December 2025</div>
@@ -981,7 +981,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
               </p>
               
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] leading-tight animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
-                Executive Dysfunction Under Stress with
+                Executive Deviation Under Stress with
                 <span className="block text-primary mt-1">Avoidance-Maintained Procrastination</span>
               </h1>
               
