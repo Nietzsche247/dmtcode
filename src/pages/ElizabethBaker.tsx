@@ -488,19 +488,43 @@ const generatePdfDocument = (includeWatermark: boolean = false) => {
       border-bottom: 1pt solid #333;
       padding-bottom: 12pt;
     }
-    .header h1 {
-      font-size: 18pt;
+    .header .doc-type {
+      font-size: 9pt;
       font-weight: bold;
-      margin-bottom: 6pt;
+      letter-spacing: 2pt;
+      color: #666;
+      margin-bottom: 8pt;
+    }
+    .header h1 {
+      font-size: 16pt;
+      font-weight: bold;
+      margin-bottom: 10pt;
+      line-height: 1.3;
+    }
+    .header .patient-info {
+      margin-bottom: 8pt;
     }
     .header .subtitle {
-      font-size: 11pt;
-      color: #555;
+      font-size: 12pt;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 4pt;
+    }
+    .header .meta {
+      font-size: 10pt;
+      color: #444;
+      margin-bottom: 2pt;
     }
     .header .date {
-      font-size: 10pt;
+      font-size: 9pt;
       color: #777;
-      margin-top: 6pt;
+      margin-top: 8pt;
+    }
+    .header .purpose {
+      font-size: 9pt;
+      font-style: italic;
+      color: #666;
+      margin-top: 4pt;
     }
     .section {
       margin-bottom: 18pt;
@@ -565,9 +589,15 @@ const generatePdfDocument = (includeWatermark: boolean = false) => {
 <body>
   ${watermarkHtml}
   <div class="header">
-    <h1>Clinical Formulation</h1>
-    <div class="subtitle">Elizabeth Baker</div>
-    <div class="date">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}${includeWatermark ? ' • CONFIDENTIAL' : ''}</div>
+    <div class="doc-type">CLINICAL CASE FORMULATION</div>
+    <h1>Executive Dysfunction Under Stress with Avoidance-Maintained Procrastination</h1>
+    <div class="patient-info">
+      <div class="subtitle">Patient: Elizabeth Baker</div>
+      <div class="meta">Formulation Date: December 2025</div>
+      <div class="meta">Status: Active treatment with concurrent ketamine IV and rTMS</div>
+    </div>
+    <div class="date">Document generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}${includeWatermark ? ' • CONFIDENTIAL' : ''}</div>
+    <div class="purpose">Working formulation to guide treatment integration</div>
   </div>
 
   <div class="section">
