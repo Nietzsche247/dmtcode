@@ -25,11 +25,20 @@ import {
   ClipboardList,
   TrendingUp,
   ChevronRight,
-  Printer
+  Printer,
+  Shield,
+  ChevronDown
 } from 'lucide-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 // Citation type for structured references
 interface Citation {
@@ -420,7 +429,34 @@ const sectionConfig = {
 };
 
 // PDF Export function for print-ready 8.5x11" document
-const generatePdfDocument = () => {
+const generatePdfDocument = (includeWatermark: boolean = false) => {
+  const watermarkStyles = includeWatermark ? `
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 72pt;
+      color: rgba(200, 0, 0, 0.08);
+      font-weight: bold;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1000;
+      letter-spacing: 8pt;
+    }
+    @media print {
+      .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
+  ` : '';
+
+  const watermarkHtml = includeWatermark ? '<div class="watermark">Confidential</div>' : '';
+
   const printContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -443,7 +479,9 @@ const generatePdfDocument = () => {
       line-height: 1.5;
       color: #000;
       background: #fff;
+      position: relative;
     }
+    ${watermarkStyles}
     .header {
       text-align: center;
       margin-bottom: 24pt;
@@ -525,10 +563,11 @@ const generatePdfDocument = () => {
   </style>
 </head>
 <body>
+  ${watermarkHtml}
   <div class="header">
     <h1>Clinical Formulation</h1>
     <div class="subtitle">Elizabeth Baker</div>
-    <div class="date">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+    <div class="date">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}${includeWatermark ? ' • CONFIDENTIAL' : ''}</div>
   </div>
 
   <div class="section">
@@ -651,17 +690,20 @@ const generatePdfDocument = () => {
   }
 };
 
-// PDF Export Button component
+// PDF Export Button component with watermark option
 const PdfExportButton = () => {
   const { toast } = useToast();
+  const [includeWatermark, setIncludeWatermark] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   
   const handleExport = () => {
     try {
-      generatePdfDocument();
+      generatePdfDocument(includeWatermark);
       toast({
         title: "Print Dialog Opened",
-        description: "Save as PDF or print to paper (8.5×11\").",
+        description: `Save as PDF or print to paper (8.5×11")${includeWatermark ? ' with confidentiality watermark' : ''}.`,
       });
+      setIsOpen(false);
     } catch (error) {
       toast({
         title: "Export Failed",
@@ -672,15 +714,45 @@ const PdfExportButton = () => {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleExport}
-      className="gap-2"
-    >
-      <Printer className="h-4 w-4" />
-      Export PDF
-    </Button>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+        >
+          <Printer className="h-4 w-4" />
+          Export PDF
+          <ChevronDown className="h-3 w-3 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="center" className="w-56 p-3">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="watermark" 
+              checked={includeWatermark}
+              onCheckedChange={(checked) => setIncludeWatermark(checked === true)}
+            />
+            <Label 
+              htmlFor="watermark" 
+              className="text-sm font-normal cursor-pointer flex items-center gap-2"
+            >
+              <Shield className="h-3.5 w-3.5 text-destructive" />
+              Add confidentiality watermark
+            </Label>
+          </div>
+          <Button 
+            size="sm" 
+            className="w-full gap-2"
+            onClick={handleExport}
+          >
+            <Printer className="h-4 w-4" />
+            Generate PDF
+          </Button>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
