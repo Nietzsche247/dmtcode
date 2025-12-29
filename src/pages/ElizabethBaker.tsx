@@ -24,7 +24,8 @@ import {
   AlertTriangle,
   ClipboardList,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  Printer
 } from 'lucide-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -418,6 +419,271 @@ const sectionConfig = {
   }
 };
 
+// PDF Export function for print-ready 8.5x11" document
+const generatePdfDocument = () => {
+  const printContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clinical Formulation - Elizabeth Baker</title>
+  <style>
+    @page {
+      size: 8.5in 11in;
+      margin: 1in 1in 1in 1in;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      line-height: 1.5;
+      color: #000;
+      background: #fff;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24pt;
+      border-bottom: 1pt solid #333;
+      padding-bottom: 12pt;
+    }
+    .header h1 {
+      font-size: 18pt;
+      font-weight: bold;
+      margin-bottom: 6pt;
+    }
+    .header .subtitle {
+      font-size: 11pt;
+      color: #555;
+    }
+    .header .date {
+      font-size: 10pt;
+      color: #777;
+      margin-top: 6pt;
+    }
+    .section {
+      margin-bottom: 18pt;
+    }
+    .section-title {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-bottom: 8pt;
+      color: #222;
+    }
+    .subsection-title {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-top: 12pt;
+      margin-bottom: 6pt;
+      color: #333;
+    }
+    p {
+      margin-bottom: 10pt;
+      text-align: justify;
+      text-indent: 0.5in;
+    }
+    p.no-indent {
+      text-indent: 0;
+    }
+    ul, ol {
+      margin-left: 0.5in;
+      margin-bottom: 10pt;
+    }
+    li {
+      margin-bottom: 4pt;
+    }
+    .citations {
+      margin-top: 24pt;
+      border-top: 1pt solid #333;
+      padding-top: 12pt;
+    }
+    .citations h2 {
+      font-size: 14pt;
+      font-weight: bold;
+      margin-bottom: 10pt;
+    }
+    .citation {
+      margin-bottom: 8pt;
+      font-size: 10pt;
+      padding-left: 0.3in;
+      text-indent: -0.3in;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .footer {
+      margin-top: 24pt;
+      padding-top: 12pt;
+      border-top: 1pt solid #ccc;
+      font-size: 9pt;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Clinical Formulation</h1>
+    <div class="subtitle">Elizabeth Baker</div>
+    <div class="date">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Abstract</div>
+    <p>This memo presents a transdiagnostic formulation for a patient demonstrating recurrent failures of priority selection and task initiation under time pressure, accompanied by perfectionistic over-preparation and avoidance-maintained interpersonal conflict. The proposed mechanism integrates three processes supported by the literature: stress-potentiated impairment in working memory and cognitive flexibility, procrastination serving short-term emotion regulation, and maladaptive perfectionism that amplifies perceived threat of imperfect action.</p>
+    <p>The patient is currently receiving ketamine and rTMS. Both interventions create windows of enhanced neuroplasticity that represent time-limited opportunities for accelerated learning. The literature on combined neuromodulation and cognitive training suggests that passive administration without concurrent psychological activation substantially reduces therapeutic yield. This formulation includes recommendations for leveraging the treatment window.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">1. Presenting Phenomenology</div>
+    <p>The patient exhibits a repeatable pattern when objective stakes and external deadlines are present, particularly in situations where lateness carries interpersonal meaning. The pattern includes the following components:</p>
+    <p class="no-indent"><strong>Primary objective fails to maintain dominance.</strong> Subordinate goals (additional preparation, peripheral tasks, optimization of less time-sensitive activities) acquire equivalent or greater salience, and attention shifts to secondary concerns. This profile is not consistent with apathy: the patient demonstrates substantial distress about consequences and genuine desire for different outcomes.</p>
+    <p class="no-indent"><strong>Progression accelerates as deadline approaches.</strong> When time pressure becomes severe, affect dysregulation becomes more prominent, further impairing attention allocation. This appears to create a positive-feedback loop in which stress degrades performance, degraded performance increases stress, and the cycle continues.</p>
+    <p class="no-indent"><strong>Anticipatory interpersonal distress triggers avoidance.</strong> When lateness becomes unavoidable, the patient experiences catastrophic anticipation of the other person's emotional response. This anticipatory distress leads to communication delays, which in turn extend the conflict.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">2. Proposed Mechanism</div>
+    <p class="no-indent"><strong>Procrastination as Affect Regulation.</strong> Sirois and Pychyl [1] have articulated the position that procrastination represents the primacy of short-term mood repair over longer-term pursuit of intended actions. Delaying an aversive task provides immediate relief from negative emotions while generating future costs. This matches the observed pattern: the patient appears to experience temporary relief when shifting from the primary goal to optimization activities.</p>
+    <p class="no-indent"><strong>Stress Impairs Executive Functions.</strong> The meta-analysis by Shields et al. [2] examined acute stress effects on executive functions. Working memory showed reliable impairment under acute stress (mean effect size g = -0.34, 95% CI [-0.45, -0.23]). The patient's pattern is consistent with stress-related impairment: as deadline pressure mounts and stress increases, the capacity to maintain goal priority in working memory appears to diminish.</p>
+    <p class="no-indent"><strong>Perfectionism Amplifies Threat.</strong> In their meta-analysis on perfectionism and procrastination [3], Sirois and colleagues distinguished perfectionistic concerns (concern over mistakes, doubts about actions) from perfectionistic strivings (high personal standards). Perfectionistic concerns showed consistent positive associations with procrastination (r = 0.23, 95% CI [0.19, 0.26]).</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">3. Differential Diagnostic Considerations</div>
+    <p>This presentation can arise from multiple pathways:</p>
+    <ul>
+      <li><strong>Anxiety disorders:</strong> Avoidance-maintained patterns with catastrophic anticipation</li>
+      <li><strong>Major depression:</strong> Psychomotor slowing and concentration impairment</li>
+      <li><strong>ADHD:</strong> Temporal discounting and executive dysfunction</li>
+      <li><strong>OCD-spectrum:</strong> Perfectionism and checking behaviors</li>
+      <li><strong>OCPD:</strong> Rigidity and difficulty with prioritization</li>
+      <li><strong>Trauma-related freeze:</strong> Dissociative immobilization under perceived threat</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">4. Assessment Recommendations</div>
+    <ul>
+      <li>Structured diagnostic interview</li>
+      <li>Standardized measures (PHQ-9, GAD-7, adult ADHD scales)</li>
+      <li>Functional analysis documenting antecedents, behaviors, and consequences</li>
+      <li>Neuropsychological screening if cognitive deficits suspected</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">5. Prognosis</div>
+    <p>Moderately favorable if treatment explicitly targets stress-reactive executive failure, perfectionism-driven avoidance, and interpersonal demand escalation. Less favorable if treatment addresses only surface symptoms without mechanism-level intervention.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">6. Literature on Ketamine Response Factors</div>
+    <p>Observational studies [5,6] have examined factors associated with ketamine response variability. Concurrent benzodiazepine use at higher doses was associated with reduced ketamine response. The opioid system may contribute to ketamine's antidepressant effects [7]. These findings underscore the importance of medication review and optimization during ketamine treatment.</p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <div class="section">
+    <div class="section-title">7. Treatment Targets</div>
+    <p>The primary target is goal-hierarchy protection under deadline conditions. Process targets include:</p>
+    <ul>
+      <li>Cognitive flexibility under stress</li>
+      <li>Inhibitory control for optimization impulses</li>
+      <li>Distress tolerance for imperfection</li>
+      <li>Interpersonal sequencing for communication during delays</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">8. Neuromodulation and the Treatment Window</div>
+    <p>The neuromodulation course represents a window of enhanced plasticity [8-10]. The literature on rTMS augmentation with cognitive training [9] and the plasticity mechanisms of ketamine [11,12] suggest this window should be actively leveraged for new learning. Passive administration without psychological activation leaves potential therapeutic benefit unrealized.</p>
+    <p>Integration with psychotherapy during ketamine treatment shows promise [13-15]. Concurrent cognitive behavioral therapy may help sustain ketamine's antidepressant effects by consolidating new learning during the plasticity window.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">9. Limitations</div>
+    <p>This formulation is provisional and based primarily on behavioral observation and self-report. Formal neuropsychological testing would strengthen the executive function hypotheses. The absence of longitudinal data limits conclusions about treatment response trajectory.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Protocol Addendum: Session Recommendations</div>
+    <div class="subsection-title">rTMS Sessions</div>
+    <p class="no-indent"><strong>Before each session (5-8 minutes):</strong> State single most important goal for the day and completion time. Articulate one rule for responding to optimization behavior. Acknowledge that incomplete outcomes are acceptable.</p>
+    <p class="no-indent"><strong>After each session (5-8 minutes):</strong> Rehearse one instance of goal-hierarchy protection. Identify one optimization opportunity to deliberately skip. Articulate why the primary goal matters more than perfection.</p>
+    
+    <div class="subsection-title">Ketamine Sessions</div>
+    <p class="no-indent"><strong>Before infusion (10-15 minutes):</strong> Set single intention related to treatment target (e.g., releasing need to optimize, tolerating incompleteness). Associate physical gesture or phrase with intention.</p>
+    <p class="no-indent"><strong>After infusion (within 24 hours):</strong> Structured review of insights. Connection of insights to behavioral formulation. Commitment to one specific practice for following 48 hours.</p>
+    
+    <div class="subsection-title">Daily Practice</div>
+    <p class="no-indent">10-15 minutes daily: Write day's primary goal and check awareness three times daily. Stop one optimization loop mid-stream. Respond to timer by asking what matters most.</p>
+  </div>
+
+  <div class="citations">
+    <h2>References</h2>
+    ${citations.map(c => `
+    <div class="citation">
+      [${c.id}] ${c.authors}. ${c.title}. <em>${c.journal}</em>. ${c.year}.${c.doi ? ` doi:${c.doi}` : ''}
+    </div>
+    `).join('')}
+  </div>
+
+  <div class="footer">
+    <p>This document is for clinical use only. Generated from DMT Code clinical formulation system.</p>
+  </div>
+</body>
+</html>
+  `;
+
+  // Open print dialog
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  }
+};
+
+// PDF Export Button component
+const PdfExportButton = () => {
+  const { toast } = useToast();
+  
+  const handleExport = () => {
+    try {
+      generatePdfDocument();
+      toast({
+        title: "Print Dialog Opened",
+        description: "Save as PDF or print to paper (8.5×11\").",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Unable to generate document. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleExport}
+      className="gap-2"
+    >
+      <Printer className="h-4 w-4" />
+      Export PDF
+    </Button>
+  );
+};
+
 const ElizabethBaker = () => {
   const [activeSection, setActiveSection] = useState('abstract-section');
 
@@ -561,6 +827,10 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
               <p className="text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
                 Comprehensive clinical formulation with evidence-based treatment recommendations
               </p>
+              
+              <div className="animate-blur-in-up animation-delay-300" style={{ animationFillMode: 'forwards' }}>
+                <PdfExportButton />
+              </div>
             </div>
           </section>
           
