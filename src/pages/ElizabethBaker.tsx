@@ -176,60 +176,93 @@ const citations: Citation[] = [
   },
 ];
 
-// Text-to-speech hook
+// Text-to-speech hook using OpenAI TTS
 const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
-  const speak = useCallback((text: string) => {
-    if (!('speechSynthesis' in window)) {
-      toast({
-        title: "Text-to-Speech Unavailable",
-        description: "Your browser does not support text-to-speech.",
-        variant: "destructive"
-      });
-      return;
+  const speak = useCallback(async (text: string) => {
+    // Stop any current playback
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
     }
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
 
     setIsLoading(true);
     
     // Clean HTML tags from text
     const cleanText = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
     
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    
-    utterance.onstart = () => {
+    try {
+      // Call OpenAI TTS edge function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/text-to-speech`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ 
+            text: cleanText, 
+            voice: 'nova' // Natural, warm female voice
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to generate speech');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onplay = () => {
+        setIsLoading(false);
+        setIsSpeaking(true);
+      };
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      
+      audio.onerror = () => {
+        setIsLoading(false);
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        toast({
+          title: "Playback Error",
+          description: "An error occurred while playing the audio.",
+          variant: "destructive"
+        });
+      };
+
+      await audio.play();
+    } catch (error) {
       setIsLoading(false);
-      setIsSpeaking(true);
-    };
-    
-    utterance.onend = () => {
       setIsSpeaking(false);
-    };
-    
-    utterance.onerror = () => {
-      setIsLoading(false);
-      setIsSpeaking(false);
+      console.error('TTS Error:', error);
       toast({
-        title: "Speech Error",
-        description: "An error occurred while reading the text.",
+        title: "Speech Generation Error",
+        description: error instanceof Error ? error.message : "Failed to generate speech",
         variant: "destructive"
       });
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    }
   }, [toast]);
 
   const stop = useCallback(() => {
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
     setIsSpeaking(false);
     setIsLoading(false);
   }, []);
