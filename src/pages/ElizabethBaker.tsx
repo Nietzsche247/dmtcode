@@ -652,7 +652,7 @@ const generatePdfDocument = (includeWatermark: boolean = false) => {
     <h1>Executive Deviation Under Stress with Avoidance-Maintained Procrastination</h1>
     <div class="patient-info">
       <div class="subtitle">Patient: Elizabeth Baker</div>
-      <div class="meta">Formulation Date: December 2025</div>
+      <div class="meta">Formulation Date: December 2025 • Version 3.2</div>
       <div class="meta">Status: Active treatment with concurrent ketamine IV and rTMS</div>
     </div>
     <div class="date">Document generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}${includeWatermark ? ' • CONFIDENTIAL' : ''}</div>
@@ -987,7 +987,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
               
               <div className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto space-y-1 animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
                 <p className="font-medium text-foreground">Patient: Elizabeth Baker</p>
-                <p>Formulation Date: December 2025</p>
+                <p>Formulation Date: December 2025 <span className="text-xs text-muted-foreground/70">• Version 3.2</span></p>
                 <p>Status: Active treatment with concurrent ketamine IV and rTMS</p>
                 <p className="text-xs text-muted-foreground/80 pt-2">Document Purpose: Working formulation to guide treatment integration</p>
               </div>
