@@ -1,3 +1,4 @@
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -28,9 +29,9 @@ import {
   Printer,
   Shield,
   ChevronDown,
-  X
+  X,
+  Settings
 } from 'lucide-react';
-import { useState, useRef, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import {
@@ -38,6 +39,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
@@ -176,12 +184,46 @@ const citations: Citation[] = [
   },
 ];
 
+// Voice options for OpenAI TTS
+const VOICE_OPTIONS = [
+  { value: 'nova', label: 'Nova', description: 'Warm & natural' },
+  { value: 'shimmer', label: 'Shimmer', description: 'Soft & gentle' },
+  { value: 'alloy', label: 'Alloy', description: 'Neutral & balanced' },
+  { value: 'echo', label: 'Echo', description: 'Clear & steady' },
+  { value: 'fable', label: 'Fable', description: 'Expressive & dynamic' },
+  { value: 'onyx', label: 'Onyx', description: 'Deep & resonant' },
+] as const;
+
+const SPEED_OPTIONS = [
+  { value: 0.75, label: '0.75x' },
+  { value: 0.9, label: '0.9x' },
+  { value: 1.0, label: '1x' },
+  { value: 1.15, label: '1.15x' },
+  { value: 1.25, label: '1.25x' },
+] as const;
+
+type VoiceOption = typeof VOICE_OPTIONS[number]['value'];
+
+// Voice settings context
+const VoiceSettingsContext = React.createContext<{
+  voice: VoiceOption;
+  setVoice: (v: VoiceOption) => void;
+  speed: number;
+  setSpeed: (s: number) => void;
+}>({
+  voice: 'nova',
+  setVoice: () => {},
+  speed: 0.95,
+  setSpeed: () => {},
+});
+
 // Text-to-speech hook using OpenAI TTS
 const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+  const { voice, speed } = React.useContext(VoiceSettingsContext);
 
   const speak = useCallback(async (text: string) => {
     // Stop any current playback
@@ -208,7 +250,8 @@ const useTextToSpeech = () => {
           },
           body: JSON.stringify({ 
             text: cleanText, 
-            voice: 'nova' // Natural, warm female voice
+            voice: voice,
+            speed: speed,
           }),
         }
       );
@@ -256,7 +299,7 @@ const useTextToSpeech = () => {
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [toast, voice, speed]);
 
   const stop = useCallback(() => {
     if (audioRef.current) {
@@ -268,6 +311,49 @@ const useTextToSpeech = () => {
   }, []);
 
   return { speak, stop, isSpeaking, isLoading };
+};
+
+// Voice Controls Component
+const VoiceControls = () => {
+  const { voice, setVoice, speed, setSpeed } = React.useContext(VoiceSettingsContext);
+  
+  return (
+    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg border">
+      <div className="flex items-center gap-2">
+        <Settings className="h-4 w-4 text-muted-foreground" />
+        <span className="text-xs font-medium text-muted-foreground">Voice:</span>
+        <Select value={voice} onValueChange={(v) => setVoice(v as VoiceOption)}>
+          <SelectTrigger className="w-[130px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {VOICE_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                <span className="font-medium">{opt.label}</span>
+                <span className="text-muted-foreground ml-1">- {opt.description}</span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground">Speed:</span>
+        <Select value={speed.toString()} onValueChange={(v) => setSpeed(parseFloat(v))}>
+          <SelectTrigger className="w-[80px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SPEED_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value.toString()} className="text-xs">
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 };
 
 // Read to Me button component
@@ -302,13 +388,16 @@ const ReadToMeButton = ({
       aria-label={isActive ? "Stop reading" : "Read this section aloud"}
     >
       {isLoading ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        <>
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          <span className="text-muted-foreground">Generating...</span>
+        </>
       ) : isActive ? (
         <VolumeX className="h-3.5 w-3.5" />
       ) : (
         <Volume2 className="h-3.5 w-3.5" />
       )}
-      {isActive ? 'Stop Reading' : 'Read to Me'}
+      {!isLoading && (isActive ? 'Stop Reading' : 'Read to Me')}
     </Button>
   );
 };
@@ -880,6 +969,8 @@ const PdfExportButton = () => {
 
 const ElizabethBaker = () => {
   const [activeSection, setActiveSection] = useState('abstract-section');
+  const [voice, setVoice] = useState<VoiceOption>('nova');
+  const [speed, setSpeed] = useState(0.95);
 
   // Track active section on scroll
   useEffect(() => {
@@ -944,7 +1035,7 @@ Section 8: Neuromodulation and the Treatment Window. The neuromodulation course 
 Section 9: Limitations. This formulation is provisional and based primarily on behavioral observation and self-report.`;
 
   return (
-    <>
+    <VoiceSettingsContext.Provider value={{ voice, setVoice, speed, setSpeed }}>
       <Helmet>
         <title>Elizabeth Baker | DMT Code</title>
         <meta 
@@ -1044,6 +1135,11 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
 
               {/* Main Content */}
               <div className="flex-1 max-w-4xl">
+                {/* Voice Controls for TTS */}
+                <div className="mb-6">
+                  <VoiceControls />
+                </div>
+
                 <Accordion 
                   type="multiple" 
                   defaultValue={["abstract", "clinicalFormulation"]} 
@@ -1495,7 +1591,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
 
         <Footer />
       </div>
-    </>
+    </VoiceSettingsContext.Provider>
   );
 };
 
