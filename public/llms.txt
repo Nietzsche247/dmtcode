@@ -1,0 +1,45 @@
+# DMT Code
+
+> An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Peer-reviewed research, open datasets (CC-BY-4.0), and equipment for replicators.
+
+## Pages
+
+- [Home](/): Mission, dataset status, contribution guide.
+- [Symbol Registry](/registry): Browse and submit visual symbols with structured metadata and community validation.
+- [Submit Symbol](/submit-symbol): 6-step layered submission flow with priming control.
+- [Voice Logger](/log): Primary user-generated contribution point for session logs.
+- [Assessment](/assess): PHQ-9, GAD-7, MEQ-4, and CEQ-7 self-report scoring.
+- [Tools](/tools): Verified 650 nm laser equipment, optical components, and protocol tools.
+- [Bundles](/bundles): Pre-configured equipment bundles (Starter, Gateway, Complete, Ceremony).
+- [Protocols](/protocols): Catalogue of psychedelic and laser protocols (DMT, ketamine, psilocybin, MDMA, ayahuasca, 5-MeO-DMT, ibogaine).
+- [Research](/research): Active research projects and findings.
+- [Bibliography](/bibliography): Peer-reviewed citations with DOIs and abstracts.
+- [Evidence Map](/evidence-map): Visual map of supporting and contradicting evidence.
+- [Methods](/methods): Research methodology and protocol design.
+- [Critiques](/critiques): Limitations and counter-arguments.
+- [Null Reports](/null-reports): Public dashboard of negative/null replication results.
+- [Correlations](/correlations): Cross-symbol and cross-protocol correlation analysis.
+- [Open Questions](/open-questions): Unresolved research questions and hypotheses.
+- [Forecasts](/forecasts): Technology and research timeline forecasts.
+- [Events](/events): Clinical trials, conferences, retreats, and ceremonies.
+- [Glossary](/glossary): 25 key academic terms and definitions.
+- [FAQ](/faq): 12 questions with neutral answers and citations.
+- [Protocol Guide](/protocol-guide): Neutral summary of the reported 650 nm laser protocol.
+- [About](/about): Project history, team, and licensing.
+- [Community / Woo](/community/woo): Cultural and esoteric symbol references.
+- [Leaderboard](/leaderboard): Top contributors by reputation and submissions.
+- [Dashboard](/dashboard): Personal dashboard for logged-in contributors.
+- [Elizabeth Baker](/Elizabeth_Baker): Profile / read-aloud essay.
+
+## Data
+
+- [Public Dataset JSON](/data.json): Machine-readable export of symbols, products, and FAQs (CC-BY-4.0).
+- [API: Symbols](/api/symbols): JSON endpoint for symbol data.
+
+## Optional
+
+- [Auth](/auth): Sign in / sign up.
+- [Profile](/profile): User profile.
+- [My Symbols](/my-symbols): Your saved and submitted symbols.
+- [Submit Product](/submit-product): Submit equipment or retreat for review.
+- [Waitlist](/waitlist): Legacy waitlist signup.

@@ -14,8 +14,8 @@ interface MetaConfig {
 const pageMetaConfig: Record<string, MetaConfig> = {
   home: {
     research: {
-      title: 'DMT Code Visual Symbol Catalogue | Peer-Reviewed 650nm Laser Research',
-      description: 'Open scientific catalogue of visual symbols from 650nm laser exposure during N,N-DMT administration. Peer-reviewed research, CSV/JSON datasets, CC-BY-4.0 licensed.',
+      title: 'DMT Code | 650nm Laser Visual Symbol Research',
+      description: 'Open peer-reviewed catalogue of visual symbols from 650nm laser and N,N-DMT research. CSV/JSON datasets, CC-BY-4.0 licensed.',
     },
     explorer: {
       title: 'DMT Code | Visual Symbol Discovery & Community Research Hub',
@@ -44,7 +44,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   },
   registry: {
     research: {
-      title: 'Visual Symbol Registry | Community Research Database | DMT Code',
+      title: 'Visual Symbol Registry | DMT Code Research Database',
       description: 'Submit and browse discrete visual symbols. Structured metadata, validation voting, CSV/JSON exports for academic analysis.',
     },
     explorer: {
@@ -64,7 +64,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   },
   bundles: {
     research: {
-      title: 'Complete Research Kits | Protocol Equipment Bundles | DMT Code',
+      title: 'Research Kits & Protocol Equipment Bundles | DMT Code',
       description: 'Pre-configured equipment bundles for 650nm protocol research. Starter to advanced kits with verified components.',
     },
     explorer: {
