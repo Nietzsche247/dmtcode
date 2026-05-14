@@ -35,12 +35,6 @@
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
-  <url>
-    <loc>https://dmtcode.com/assess/shared</loc>
-    <lastmod>2025-12-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.60</priority>
-  </url>
   
   <!-- Protocols Hub: Clinical credibility anchor -->
   <url>
@@ -167,12 +161,6 @@
     <lastmod>2025-12-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.92</priority>
-  </url>
-  <url>
-    <loc>https://dmtcode.com/data.json</loc>
-    <lastmod>2025-12-06</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://dmtcode.com/api/symbols</loc>
@@ -448,6 +436,81 @@
     <loc>https://dmtcode.com/my-symbols</loc>
     <lastmod>2025-12-06</lastmod>
     <changefreq>daily</changefreq>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/dashboard</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+
+  <!-- ========== ADDITIONAL ROUTES ========== -->
+
+  <url>
+    <loc>https://dmtcode.com/woo</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.40</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/Elizabeth_Baker</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <!-- ========== DYNAMIC: TOP REGISTRY SYMBOLS ========== -->
+
+  <url>
+    <loc>https://dmtcode.com/registry/9ed7c4e9-9577-445c-8d49-be7a80cb3bd2</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/registry/b7c17e05-fd50-4946-93ce-3f4c98567678</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/registry/82b9c679-fca0-43c6-89b0-9ade52847468</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/registry/496025a2-1735-42d0-8069-b1b86c2b10df</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/registry/8a8414f4-006e-426d-b5b5-544ba8136fcf</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+
+  <!-- ========== DYNAMIC: PRODUCTS ========== -->
+
+  <url>
+    <loc>https://dmtcode.com/products/e0af0f39-b047-4466-b330-1ee8d3b7b00a</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/products/438472ca-28bd-4140-8301-2721a953edf7</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://dmtcode.com/products/12cc3e33-765b-4d75-a7e6-fd8149fcb7ee</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.60</priority>
   </url>
 
