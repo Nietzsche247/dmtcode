@@ -215,11 +215,26 @@ const SymbolDetail = () => {
     <>
       <Helmet>
         <title>{`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`}</title>
-        <meta 
-          name="description" 
-          content={symbol.description || 'View symbol details, metadata, and community validations'} 
+        <meta
+          name="description"
+          content={symbol.description || 'View symbol details, metadata, and community validations'}
         />
         <link rel="canonical" href={`https://dmtcode.com/registry/${symbol.id}`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`} />
+        <meta
+          property="og:description"
+          content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
+        />
+        <meta property="og:url" content={`https://dmtcode.com/registry/${symbol.id}`} />
+        <meta property="og:image" content={symbol.image_url} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`} />
+        <meta
+          name="twitter:description"
+          content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
+        />
+        <meta name="twitter:image" content={symbol.image_url} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
