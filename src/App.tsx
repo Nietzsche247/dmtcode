@@ -54,6 +54,12 @@ const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useGA4PageTracking } from "./hooks/useGA4PageTracking";
+
+const GA4Tracker = () => {
+  useGA4PageTracking();
+  return null;
+};
 
 // Lazy load Tools page to isolate potential crashes
 const Tools = lazy(() => import("./pages/Tools"));
@@ -95,6 +101,7 @@ const App = () => (
         <Sonner />
         <GrainOverlay />
         <BrowserRouter>
+          <GA4Tracker />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
