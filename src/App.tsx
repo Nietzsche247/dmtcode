@@ -101,6 +101,7 @@ const App = () => (
         <Sonner />
         <GrainOverlay />
         <BrowserRouter>
+          <GA4Tracker />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
