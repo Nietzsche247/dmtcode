@@ -6,6 +6,7 @@ import { Check, ArrowRight } from 'lucide-react';
 declare global {
   interface Window {
     posthog?: any;
+    gtag?: (...args: any[]) => void;
   }
 }
 
@@ -52,6 +53,17 @@ export const BundleCard = ({
   onClick,
 }: BundleCardProps) => {
   const handleClick = () => {
+    // GA4 conversion event for bundle CTA clicks
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'bundle_cta_click', {
+        bundle_id: id,
+        bundle_name: name,
+        label: cta,
+        value: price,
+        currency: 'USD',
+        send_to: 'G-CWVKJBDG7L',
+      });
+    }
     // Track bundle view with enhanced PostHog event
     if (window.posthog) {
       window.posthog.capture('bundle_viewed', {
