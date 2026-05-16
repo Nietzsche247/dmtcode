@@ -12,6 +12,7 @@ import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
 import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
+import { GA4DebugTester } from './GA4DebugTester';
 import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
@@ -79,6 +80,7 @@ export const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="bundles" className="space-y-4">
+            <GA4DebugTester />
             <BundleAnalytics />
           </TabsContent>
 
