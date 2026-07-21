@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { HeroSection } from '@/components/HeroSection';
+import { ConvergenceHero } from '@/components/home/ConvergenceHero';
 import { ExplainerSection } from '@/components/ExplainerSection';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { EmailCapture } from '@/components/EmailCapture';
