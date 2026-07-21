@@ -362,10 +362,9 @@
     }
   }
 
-  /* Glow text (kept from original) */
+  /* Glow text — softened to precise accent, no neon halo */
   .glow-text {
-    text-shadow: 0 0 30px hsl(var(--glow-primary) / 0.4),
-                 0 0 60px hsl(var(--glow-primary) / 0.2);
+    text-shadow: 0 0 1px hsl(var(--glow-primary) / var(--glow-intensity));
   }
 
   /* Section fade in */
