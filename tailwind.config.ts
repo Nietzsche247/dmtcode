@@ -14,10 +14,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'montserrat': ['Montserrat', 'system-ui', 'sans-serif'],
-        'display': ['Montserrat', 'system-ui', 'sans-serif'],
-        'body': ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
+        body: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
+        serif: ['Fraunces', 'Georgia', 'serif'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        data: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -58,6 +60,9 @@ export default {
         },
         gold: {
           DEFAULT: "hsl(var(--gold))",
+        },
+        navy: {
+          DEFAULT: "hsl(var(--navy))",
         },
         logo: {
           icon: "#1e3a8a",

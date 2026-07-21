@@ -17,30 +17,13 @@ export const ParticleBackground = () => {
   const { mode } = useModeStore();
 
   useEffect(() => {
-    // Only generate particles in Explorer mode
-    if (mode === 'research') {
-      setParticles([]);
-      return;
-    }
-    
-    // Generate 30 particles for performance
-    const newParticles: Particle[] = Array.from({ length: 30 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      duration: Math.random() * 40 + 40,
-      delay: Math.random() * 20,
-      tx: (Math.random() - 0.5) * 200,
-      ty: (Math.random() - 0.5) * 200,
-    }));
-    setParticles(newParticles);
+    // Ambient particle field disabled globally — atlas aesthetic favors
+    // still, editorial surfaces. Keep hook wiring intact for future use.
+    setParticles([]);
   }, [mode]);
 
-  // Research mode: clean, minimal background
-  if (mode === 'research') {
-    return null;
-  }
+  // Never render ambient particles/glow — replaced by warm paper/void surfaces.
+  return null;
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
