@@ -99,8 +99,9 @@
 
   body {
     @apply bg-background text-foreground overflow-x-hidden antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
     font-weight: 400;
+    line-height: 1.6;
     transition: background-color 200ms ease-out, color 200ms ease-out;
   }
   
@@ -109,37 +110,55 @@
     transition: background-color 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
   }
   
-  /* Headings: Montserrat Bold (Founders Grotesk fallback) */
-  h1, h2 {
-    font-family: 'Montserrat', system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    line-height: 1;
-    text-transform: uppercase;
-    @apply text-foreground;
-  }
-  
-  h3, h4, h5, h6 {
-    font-family: 'Montserrat', system-ui, sans-serif;
+  /* Editorial display headings: Fraunces */
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
     font-weight: 600;
-    letter-spacing: 0.01em;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    @apply text-foreground;
+  }
+  h1 { font-weight: 500; line-height: 1.05; letter-spacing: -0.025em; }
+  h2 { line-height: 1.1; }
+  h3, h4 { line-height: 1.15; }
+
+  h5, h6 {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.2;
     @apply text-foreground;
   }
 
-  /* Subtext/eyebrows: Montserrat Light Italic */
+  /* Subtext/eyebrows */
   .eyebrow, .subtext {
-    font-family: 'Montserrat', system-ui, sans-serif;
-    font-weight: 300;
-    font-style: italic;
-    @apply text-muted-foreground;
-  }
-
-  /* Labels/small text: Inter Regular */
-  .label, .small-text {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
     font-weight: 400;
     @apply text-muted-foreground;
+  }
+
+  /* Labels/small text */
+  .label, .small-text {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-weight: 400;
+    @apply text-muted-foreground;
+  }
+
+  /* Specimen/metadata labels — atlas plate style */
+  .label-data {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   html {
