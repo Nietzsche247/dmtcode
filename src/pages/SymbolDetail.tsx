@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { VotingButtons } from '@/components/registry/VotingButtons';
+import { SeenItButton } from '@/components/registry/SeenItButton';
+import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
@@ -68,6 +70,7 @@ interface Validator {
 const SymbolDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { trackSymbolDetailViewed } = useRegistryTracking();
   
   const [symbol, setSymbol] = useState<SymbolData | null>(null);
@@ -77,6 +80,30 @@ const SymbolDetail = () => {
   const [validationCount, setValidationCount] = useState(0);
   const [viewCount, setViewCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  // Auto-fire pending "I saw this too" vote on return from /auth
+  const { userId, userVotes, seenIt } = useSymbolVoting(id || '', symbol?.user_id);
+  const autoFiredRef = useRef(false);
+  useEffect(() => {
+    const pending = searchParams.get('pendingVote');
+    if (
+      pending === 'seen_it' &&
+      userId &&
+      id &&
+      !autoFiredRef.current &&
+      !userVotes.hasSeenIt
+    ) {
+      autoFiredRef.current = true;
+      seenIt().then(() => {
+        searchParams.delete('pendingVote');
+        searchParams.delete('authenticated');
+        setSearchParams(searchParams, { replace: true });
+      });
+    } else if (pending === 'seen_it' && userVotes.hasSeenIt) {
+      searchParams.delete('pendingVote');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, userId, id, userVotes.hasSeenIt, seenIt, setSearchParams]);
 
   useEffect(() => {
     if (id) {
@@ -277,6 +304,14 @@ const SymbolDetail = () => {
                     className="w-full aspect-square object-contain"
                   />
                 </Card>
+
+                {/* Prominent one-tap confirmation */}
+                <SeenItButton
+                  symbolId={symbol.id}
+                  submitterId={symbol.user_id}
+                  size="lg"
+                  className="w-full justify-center"
+                />
 
                 {/* Actions */}
                 <div className="flex items-center justify-between">

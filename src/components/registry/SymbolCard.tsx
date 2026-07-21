@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChevronUp, Eye, User } from 'lucide-react';
 import { VotingButtons } from './VotingButtons';
+import { SeenItButton } from './SeenItButton';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
 
@@ -139,10 +140,15 @@ export const SymbolCard = ({
           </div>
         )}
 
-        {/* Voting Buttons */}
+        {/* Prominent one-tap confirmation */}
         <div className="pt-2">
-          <VotingButtons 
-            symbolId={id} 
+          <SeenItButton symbolId={id} submitterId={submitterId} size="sm" className="w-full justify-center" />
+        </div>
+
+        {/* Secondary voting */}
+        <div className="pt-1">
+          <VotingButtons
+            symbolId={id}
             submitterId={submitterId}
             variant="compact"
           />
