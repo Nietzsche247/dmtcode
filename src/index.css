@@ -50,25 +50,25 @@
 
   /* Dark Mode - Original Meng To deep black foundation */
   .dark {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 98%;
+    --background: 30 13% 6%;
+    --foreground: 41 30% 89%;
 
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 98%;
+    --card: 38 17% 9%;
+    --card-foreground: 41 30% 89%;
 
-    --popover: 0 0% 3%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 38 17% 9%;
+    --popover-foreground: 41 30% 89%;
 
     /* 650nm Red Laser Primary - #C41E3A */
     --primary: 350 75% 44%;
     --primary-foreground: 0 0% 100%;
     
     /* Soft secondary */
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 38 17% 13%;
+    --secondary-foreground: 41 30% 89%;
 
-    --muted: 0 0% 8%;
-    --muted-foreground: 0 0% 50%;
+    --muted: 38 17% 13%;
+    --muted-foreground: 39 11% 59%;
 
     --accent: 350 75% 44%;
     --accent-foreground: 0 0% 100%;
@@ -76,18 +76,19 @@
     --destructive: 0 85% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 6%;
+    --border: 34 17% 16%;
+    --input: 34 17% 16%;
     --ring: 350 75% 44%;
 
     --radius: 0.75rem;
 
     /* Glow effects */
-    --glow-primary: 350 100% 50%;
-    --glow-intensity: 0.5;
+    --glow-primary: 350 75% 44%;
+    --glow-intensity: 0.15;
     
-    /* Gold accent */
-    --gold: 45 100% 61%;
+    /* Accents */
+    --gold: 41 56% 51%;
+    --navy: 228 33% 31%;
   }
 }
 
