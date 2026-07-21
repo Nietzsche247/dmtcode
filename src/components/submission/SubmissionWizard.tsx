@@ -107,7 +107,7 @@ export const SubmissionWizard = () => {
         .insert({
           user_id: user.id,
           image_url: publicUrl,
-          status: 'pending',
+          status: 'approved',
           description: metadata.description,
           tags: metadata.tags,
           source_method: metadata.sourceMethod,
