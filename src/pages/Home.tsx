@@ -121,7 +121,7 @@ const Home = () => {
       <div className="relative min-h-screen">
         <main id="main-content" className="relative z-10" role="main">
           <Navigation />
-          <HeroSection />
+          <ConvergenceHero />
           
           {/* Voice Logger Callout */}
           <section className="container mx-auto px-4 py-8 max-w-4xl">
