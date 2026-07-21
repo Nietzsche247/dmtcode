@@ -61,6 +61,9 @@ export default {
         gold: {
           DEFAULT: "hsl(var(--gold))",
         },
+        navy: {
+          DEFAULT: "hsl(var(--navy))",
+        },
         logo: {
           icon: "#1e3a8a",
           "icon-dark": "#e2e8f0",
