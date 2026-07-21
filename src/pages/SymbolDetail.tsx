@@ -305,6 +305,14 @@ const SymbolDetail = () => {
                   />
                 </Card>
 
+                {/* Prominent one-tap confirmation */}
+                <SeenItButton
+                  symbolId={symbol.id}
+                  submitterId={symbol.user_id}
+                  size="lg"
+                  className="w-full justify-center"
+                />
+
                 {/* Actions */}
                 <div className="flex items-center justify-between">
                   <VotingButtons 
