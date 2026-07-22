@@ -216,6 +216,13 @@ const TrialDetail = () => {
               </a>
             </Button>
           )}
+          {trial.application_url && (
+            <Button asChild>
+              <a href={trial.application_url} target="_blank" rel="noopener noreferrer">
+                Apply / Register <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          )}
           {doiUrl && (
             <Button asChild variant="outline">
               <a href={doiUrl} target="_blank" rel="noopener noreferrer">
