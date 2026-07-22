@@ -32,6 +32,7 @@ import { format } from 'date-fns';
 interface SymbolData {
   id: string;
   image_url: string;
+  svg_data?: string | null;
   description: string | null;
   tags: string[] | null;
   upvotes: number;
