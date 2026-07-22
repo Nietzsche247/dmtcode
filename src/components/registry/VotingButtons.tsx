@@ -247,6 +247,20 @@ export const VotingButtons = ({
         </Tooltip>
       </TooltipProvider>
 
+      {userId && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={markReviewed}
+          disabled={loading}
+          className="w-full text-muted-foreground hover:text-foreground"
+        >
+          <Check className="w-4 h-4 mr-2" />
+          Reviewed, no opinion
+        </Button>
+      )}
+
+
       {!userId && (
         <p className="text-xs text-muted-foreground text-center">
           <a href="/auth" className="text-primary hover:underline">Log in</a> to vote
