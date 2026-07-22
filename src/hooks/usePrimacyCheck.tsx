@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { pipeline } from '@huggingface/transformers';
+
 
 interface PrimacyCheckResult {
   isContaminated: boolean;
