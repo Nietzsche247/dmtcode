@@ -219,53 +219,77 @@ export type Database = {
       }
       clinical_trials: {
         Row: {
+          application_url: string | null
+          confirmed_status: string
           created_at: string
           description: string | null
           doi: string | null
+          eligibility: string | null
           end_date: string | null
           id: string
           institution: string
           is_approved: boolean
+          location: string | null
+          notes: string | null
+          organizer_lead: string | null
           principal_investigator: string | null
+          source: string | null
           start_date: string
           status: string
           submitted_by: string | null
           title: string
           trial_registry_id: string | null
+          trial_type: string
           updated_at: string
           url: string | null
         }
         Insert: {
+          application_url?: string | null
+          confirmed_status?: string
           created_at?: string
           description?: string | null
           doi?: string | null
+          eligibility?: string | null
           end_date?: string | null
           id?: string
           institution: string
           is_approved?: boolean
+          location?: string | null
+          notes?: string | null
+          organizer_lead?: string | null
           principal_investigator?: string | null
+          source?: string | null
           start_date: string
           status: string
           submitted_by?: string | null
           title: string
           trial_registry_id?: string | null
+          trial_type?: string
           updated_at?: string
           url?: string | null
         }
         Update: {
+          application_url?: string | null
+          confirmed_status?: string
           created_at?: string
           description?: string | null
           doi?: string | null
+          eligibility?: string | null
           end_date?: string | null
           id?: string
           institution?: string
           is_approved?: boolean
+          location?: string | null
+          notes?: string | null
+          organizer_lead?: string | null
           principal_investigator?: string | null
+          source?: string | null
           start_date?: string
           status?: string
           submitted_by?: string | null
           title?: string
           trial_registry_id?: string | null
+          trial_type?: string
           updated_at?: string
           url?: string | null
         }
