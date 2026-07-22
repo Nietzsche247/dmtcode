@@ -84,7 +84,7 @@ export const Navigation = () => {
   const researchItems = [
     { path: '/registry', label: 'Symbol Registry' },
     { path: '/evidence-map', label: 'Evidence Map' },
-    { path: '/events', label: 'Clinical Trials' },
+    { path: '/trials', label: 'Clinical Trials' },
     { path: '/bibliography', label: 'Bibliography' },
     { path: '/methods', label: 'Methods' },
     { path: '/critiques', label: 'Critiques' },

@@ -34,7 +34,8 @@ export const Breadcrumb = () => {
     'log': 'Voice Logger',
     'dashboard': 'Dashboard',
     'profile': 'Profile',
-    'my-symbols': 'My Symbols'
+    'my-symbols': 'My Symbols',
+    'trials': 'Clinical Trials'
   };
 
   return (

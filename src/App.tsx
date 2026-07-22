@@ -39,6 +39,8 @@ import SubmitProduct from "./pages/SubmitProduct";
 import SubmitSymbol from "./pages/SubmitSymbol";
 import Bundles from "./pages/Bundles";
 import Dataset from "./pages/Dataset";
+import Trials from "./pages/Trials";
+import TrialDetail from "./pages/TrialDetail";
 // Lazy load BundleDetail
 const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 // Lazy load Analysis page
@@ -167,6 +169,8 @@ const App = () => (
           <Route path="/submit-symbol" element={<SubmitSymbol />} />
           <Route path="/submit" element={<Navigate to="/submit-symbol" replace />} />
           <Route path="/dataset" element={<Dataset />} />
+          <Route path="/trials" element={<Trials />} />
+          <Route path="/trials/:id" element={<TrialDetail />} />
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
             <ErrorBoundary>

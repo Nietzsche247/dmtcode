@@ -149,6 +149,14 @@ const EvidenceMap = () => {
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 From Klüver's form constants (1926) to the 650 nm laser protocol (2025): explore 30 key milestones with clickable DOIs and peer-reviewed citations
               </p>
+              <div className="mt-6">
+                <a
+                  href="/trials"
+                  className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                >
+                  → EXPLORE CLINICAL TRIALS OBSERVATORY
+                </a>
+              </div>
             </div>
 
             {/* Timeline Container */}
