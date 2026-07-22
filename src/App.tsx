@@ -169,6 +169,8 @@ const App = () => (
           <Route path="/submit-symbol" element={<SubmitSymbol />} />
           <Route path="/submit" element={<Navigate to="/submit-symbol" replace />} />
           <Route path="/dataset" element={<Dataset />} />
+          <Route path="/trials" element={<Trials />} />
+          <Route path="/trials/:id" element={<TrialDetail />} />
           <Route path="/bundles" element={<Bundles />} />
           <Route path="/bundles/:bundleId" element={
             <ErrorBoundary>
