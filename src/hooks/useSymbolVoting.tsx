@@ -195,7 +195,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, symbolId, userVotes, isOwnSubmission]);
+  }, [userId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
 
   return {
     userId,
@@ -207,5 +207,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     upvote: () => vote('upvote'),
     downvote: () => vote('downvote'),
     seenIt: () => vote('seen_it'),
+    // Records an honest "reviewed, no opinion" for the daily streak.
+    markReviewed: () => logReviewActivity('reviewed_no_opinion'),
   };
 };
