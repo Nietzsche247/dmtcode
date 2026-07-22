@@ -19,6 +19,7 @@ import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import FAQ from "./pages/FAQ";
 import Bibliography from "./pages/Bibliography";
+import BibliographyDetail from "./pages/BibliographyDetail";
 import Glossary from "./pages/Glossary";
 import ProtocolGuide from "./pages/ProtocolGuide";
 import EvidenceMap from "./pages/EvidenceMap";
@@ -145,6 +146,7 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/bibliography" element={<Bibliography />} />
+          <Route path="/bibliography/:id" element={<BibliographyDetail />} />
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/evidence-map" element={<EvidenceMap />} />

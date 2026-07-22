@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { BibliographyRow } from './types';
@@ -69,6 +70,12 @@ export const BibliographyCard = ({ row }: Props) => {
           DOI: <a href={`https://doi.org/${row.doi}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{row.doi}</a>
         </div>
       )}
+
+      <div className="pt-1">
+        <Link to={`/bibliography/${row.id}`} className="text-xs font-medium text-primary hover:underline">
+          Read more &rarr;
+        </Link>
+      </div>
     </Card>
   );
 };

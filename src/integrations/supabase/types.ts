@@ -176,6 +176,7 @@ export type Database = {
           created_at: string
           doi: string | null
           featured: boolean
+          full_text: string | null
           id: string
           is_approved: boolean
           journal: string | null
@@ -188,6 +189,7 @@ export type Database = {
           summary: string | null
           tags: string[] | null
           title: string
+          transcript: string | null
           updated_at: string
           url: string | null
         }
@@ -200,6 +202,7 @@ export type Database = {
           created_at?: string
           doi?: string | null
           featured?: boolean
+          full_text?: string | null
           id?: string
           is_approved?: boolean
           journal?: string | null
@@ -212,6 +215,7 @@ export type Database = {
           summary?: string | null
           tags?: string[] | null
           title: string
+          transcript?: string | null
           updated_at?: string
           url?: string | null
         }
@@ -224,6 +228,7 @@ export type Database = {
           created_at?: string
           doi?: string | null
           featured?: boolean
+          full_text?: string | null
           id?: string
           is_approved?: boolean
           journal?: string | null
@@ -236,6 +241,7 @@ export type Database = {
           summary?: string | null
           tags?: string[] | null
           title?: string
+          transcript?: string | null
           updated_at?: string
           url?: string | null
         }

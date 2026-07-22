@@ -75,6 +75,39 @@ const Bibliography = () => {
   const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags || []))).sort(), [rows]);
   const years = useMemo(() => Array.from(new Set(rows.map(yearOf).filter(Boolean) as string[])).sort((a, b) => b.localeCompare(a)), [rows]);
 
+  const listJsonLd = useMemo(() => {
+    if (!featured.length) return null;
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Dataset',
+      name: 'DMT Code Research Library',
+      description: 'Curated research library on the DMT Code of Reality phenomenon.',
+      url: 'https://dmtcode.com/bibliography',
+      license: 'https://creativecommons.org/licenses/by/4.0/',
+      hasPart: {
+        '@type': 'ItemList',
+        itemListElement: featured.map((r, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': r.content_type === 'Paper' || r.authority_type === 'Academic' ? 'ScholarlyArticle' : 'Article',
+            '@id': `https://dmtcode.com/bibliography/${r.id}`,
+            name: r.title,
+            headline: r.title,
+            url: r.url || (r.doi ? `https://doi.org/${r.doi}` : `https://dmtcode.com/bibliography/${r.id}`),
+            author: r.authors || undefined,
+            datePublished: r.source_date || r.publication_date || undefined,
+            identifier: r.doi || r.pmid || undefined,
+            additionalProperty: [
+              r.stance_score != null && { '@type': 'PropertyValue', name: 'stanceScore', value: r.stance_score },
+              r.authority_type && { '@type': 'PropertyValue', name: 'authority', value: r.authority_type },
+            ].filter(Boolean),
+          },
+        })),
+      },
+    };
+  }, [featured]);
+
   return (
     <>
       <Helmet>
@@ -87,6 +120,7 @@ const Bibliography = () => {
         <meta property="og:url" content="https://dmtcode.com/bibliography" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
+        {listJsonLd && <script type="application/ld+json">{JSON.stringify(listJsonLd)}</script>}
       </Helmet>
 
       <div className="relative min-h-screen">
