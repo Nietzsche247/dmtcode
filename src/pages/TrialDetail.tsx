@@ -17,6 +17,14 @@ interface Trial {
   institution: string | null;
   principal_investigator: string | null;
   status: string | null;
+  confirmed_status: string | null;
+  trial_type: string | null;
+  location: string | null;
+  source: string | null;
+  application_url: string | null;
+  eligibility: string | null;
+  organizer_lead: string | null;
+  notes: string | null;
   start_date: string | null;
   end_date: string | null;
   trial_registry_id: string | null;
