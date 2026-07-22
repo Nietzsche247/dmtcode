@@ -27,10 +27,26 @@ interface UserStats {
   totalSaved: number;
 }
 
+interface ConfirmationGiven {
+  id: string;
+  image_url: string;
+  tags: string[] | null;
+}
+
+interface VoiceLog {
+  id: string;
+  created_at: string;
+  duration_seconds: number | null;
+  transcript: string | null;
+  symbol_id: string | null;
+}
+
 const Profile = () => {
   const navigate = useNavigate();
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
+  const [confirmationsGiven, setConfirmationsGiven] = useState<ConfirmationGiven[]>([]);
+  const [voiceLogs, setVoiceLogs] = useState<VoiceLog[]>([]);
   const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalValidations: 0, totalSaved: 0 });
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -49,7 +65,38 @@ const Profile = () => {
     setUserId(user.id);
     loadMySymbols(user.id);
     loadSavedSymbols(user.id);
+    loadConfirmationsGiven(user.id);
+    loadVoiceLogs(user.id);
     loadStats(user.id);
+  };
+
+  const loadConfirmationsGiven = async (uid: string) => {
+    const { data: votes } = await supabase
+      .from('symbol_votes')
+      .select('symbol_id')
+      .eq('user_id', uid)
+      .eq('vote_type', 'seen_it');
+
+    if (!votes || votes.length === 0) {
+      setConfirmationsGiven([]);
+      return;
+    }
+    const ids = votes.map(v => v.symbol_id);
+    const { data: symbols } = await supabase
+      .from('symbol_submissions')
+      .select('id, image_url, tags')
+      .in('id', ids);
+    if (symbols) setConfirmationsGiven(symbols as ConfirmationGiven[]);
+  };
+
+  const loadVoiceLogs = async (uid: string) => {
+    const { data } = await supabase
+      .from('voice_logs')
+      .select('id, created_at, duration_seconds, transcript, symbol_id')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (data) setVoiceLogs(data as VoiceLog[]);
   };
 
   const loadMySymbols = async (uid: string) => {
