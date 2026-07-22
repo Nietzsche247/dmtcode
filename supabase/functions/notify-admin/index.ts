@@ -26,6 +26,14 @@ interface NotificationRequest {
   reason?: string;
 }
 
+const escapeHtml = (v: unknown): string =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -83,15 +91,15 @@ const handler = async (req: Request): Promise<Response> => {
             ? `
               <h2>Great news!</h2>
               <p>Your symbol submission to the DMT Code registry has been approved and is now visible to the community.</p>
-              <p><strong>Description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p><strong>Description:</strong> ${escapeHtml(submissionData.description || 'No description provided')}</p>
               <p><a href="https://dmtcode.com/registry">View the Registry</a></p>
               <p>Thank you for contributing to psychedelic research!</p>
             `
             : `
               <h2>Submission Update</h2>
               <p>Unfortunately, your symbol submission to the DMT Code registry was not approved.</p>
-              <p><strong>Reason:</strong> ${reason || 'No reason provided'}</p>
-              <p><strong>Your description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p><strong>Reason:</strong> ${escapeHtml(reason || 'No reason provided')}</p>
+              <p><strong>Your description:</strong> ${escapeHtml(submissionData.description || 'No description provided')}</p>
               <p>You can submit a new symbol that meets our guidelines.</p>
               <p><a href="https://dmtcode.com/submit-symbol">Submit Another Symbol</a></p>
             `;
@@ -175,11 +183,11 @@ const handler = async (req: Request): Promise<Response> => {
               subject: `New Symbol Submission from ${userName}`,
               html: `
                 <h2>New Symbol Submission</h2>
-                <p><strong>User:</strong> ${userName}</p>
-                <p><strong>Source Method:</strong> ${submission.source_method || 'Not specified'}</p>
-                <p><strong>Tags:</strong> ${submission.tags?.join(', ') || 'None'}</p>
-                <p><strong>Description:</strong> ${submission.description || 'None provided'}</p>
-                <p><a href="${submission.image_url}">View Symbol Image</a></p>
+                <p><strong>User:</strong> ${escapeHtml(userName)}</p>
+                <p><strong>Source Method:</strong> ${escapeHtml(submission.source_method || 'Not specified')}</p>
+                <p><strong>Tags:</strong> ${escapeHtml(submission.tags?.join(', ') || 'None')}</p>
+                <p><strong>Description:</strong> ${escapeHtml(submission.description || 'None provided')}</p>
+                <p><a href="${escapeHtml(submission.image_url)}">View Symbol Image</a></p>
                 <p><a href="https://dmtcode.com/admin">Review in Admin Dashboard</a></p>
               `,
             }),

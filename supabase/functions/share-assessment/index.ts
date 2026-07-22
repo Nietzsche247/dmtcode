@@ -13,10 +13,54 @@ serve(async (req) => {
 
   try {
     const { action, assessment_id, share_token } = await req.json();
-    
+
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validActions = ['generate_link', 'get_shared', 'revoke_link'];
+    if (!validActions.includes(action)) {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // generate_link and revoke_link require authenticated ownership
+    if (action === 'generate_link' || action === 'revoke_link') {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const authClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(authHeader.replace('Bearer ', ''));
+      if (claimsErr || !claimsData?.claims) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (!assessment_id || !uuidRe.test(String(assessment_id))) {
+        return new Response(JSON.stringify({ error: 'Invalid assessment_id' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { data: row } = await supabase
+        .from('assessments')
+        .select('user_id')
+        .eq('id', assessment_id)
+        .single();
+      if (!row || row.user_id !== claimsData.claims.sub) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     if (action === 'generate_link') {
       // Generate shareable link for therapist viewing
@@ -39,6 +83,12 @@ serve(async (req) => {
     }
 
     if (action === 'get_shared') {
+      // Validate the share token format (must be a non-trivial opaque string)
+      if (!share_token || typeof share_token !== 'string' || share_token.length < 16 || share_token.length > 128) {
+        return new Response(JSON.stringify({ error: 'Invalid share token' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       // Fetch de-identified assessment by share token
       const { data, error } = await supabase
         .from('assessments')

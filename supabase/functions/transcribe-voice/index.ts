@@ -14,10 +14,46 @@ serve(async (req) => {
   }
 
   try {
+    // Require auth
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(authHeader.replace('Bearer ', ''));
+    if (claimsErr || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { voice_log_id, audio_url } = await req.json();
-    
-    if (!voice_log_id || !audio_url) {
-      throw new Error('voice_log_id and audio_url are required');
+
+    // Validate inputs
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!voice_log_id || !uuidRe.test(String(voice_log_id))) {
+      return new Response(JSON.stringify({ error: 'Invalid voice_log_id' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    // Only allow audio URLs from Supabase storage to prevent SSRF
+    const supaUrlHost = new URL(Deno.env.get('SUPABASE_URL')!).host;
+    let parsed: URL;
+    try { parsed = new URL(audio_url); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid audio_url' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (parsed.protocol !== 'https:' || parsed.host !== supaUrlHost) {
+      return new Response(JSON.stringify({ error: 'audio_url must be a Supabase storage URL' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     console.log(`Starting transcription for voice log: ${voice_log_id}`);

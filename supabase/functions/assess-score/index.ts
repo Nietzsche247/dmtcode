@@ -55,11 +55,75 @@ serve(async (req) => {
   }
 
   try {
-    const { action, assessment_id, responses, interview_step, user_response } = await req.json();
-    
+    // Require authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(authHeader.replace('Bearer ', ''));
+    if (claimsErr || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const userId = claimsData.claims.sub as string;
+
+    const body = await req.json();
+    const { action, assessment_id, responses, interview_step, user_response } = body;
+
+    // Validate inputs
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validActions = ['get_next_question', 'score_assessment', 'generate_report'];
+    if (!validActions.includes(action)) {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (action !== 'get_next_question' && (!assessment_id || !uuidRe.test(String(assessment_id)))) {
+      return new Response(JSON.stringify({ error: 'Invalid assessment_id' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const validateArr = (a: unknown, maxLen: number) =>
+      Array.isArray(a) && a.length <= maxLen && a.every(v => typeof v === 'number' && v >= 0 && v <= 5);
+    if (action === 'score_assessment') {
+      if (!responses || typeof responses !== 'object') {
+        return new Response(JSON.stringify({ error: 'Invalid responses' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { phq9 = [], gad7 = [], meq4 = [], ceq7 = [] } = responses;
+      if (!validateArr(phq9, 9) || !validateArr(gad7, 7) || !validateArr(meq4, 4) || !validateArr(ceq7, 7)) {
+        return new Response(JSON.stringify({ error: 'Invalid response arrays' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // For actions targeting an existing assessment, ensure caller owns it
+    if (action === 'score_assessment' || action === 'generate_report') {
+      const { data: own } = await supabase
+        .from('assessments')
+        .select('user_id')
+        .eq('id', assessment_id)
+        .single();
+      if (!own || (own.user_id && own.user_id !== userId)) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     if (action === 'get_next_question') {
       // Conversational interviewer flow

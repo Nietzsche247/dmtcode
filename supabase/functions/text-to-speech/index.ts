@@ -12,11 +12,44 @@ serve(async (req) => {
   }
 
   try {
+    // Require authentication to prevent unauthenticated cost abuse
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supa = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: claimsData, error: claimsErr } = await supa.auth.getClaims(authHeader.replace('Bearer ', ''));
+    if (claimsErr || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { text, voice = 'nova', speed = 0.95 } = await req.json()
 
-    if (!text) {
-      throw new Error('Text is required')
+    if (!text || typeof text !== 'string') {
+      return new Response(JSON.stringify({ error: 'Text is required' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
+    // Cap length to prevent cost abuse
+    const MAX_LEN = 2000;
+    if (text.length > MAX_LEN) {
+      return new Response(JSON.stringify({ error: `Text exceeds max length of ${MAX_LEN} characters` }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const allowedVoices = ['alloy','echo','fable','onyx','nova','shimmer'];
+    const useVoice = allowedVoices.includes(voice) ? voice : 'nova';
 
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
     if (!OPENAI_API_KEY) {
@@ -24,7 +57,9 @@ serve(async (req) => {
     }
 
     // Validate speed (OpenAI supports 0.25 to 4.0)
-    const validSpeed = Math.max(0.25, Math.min(4.0, speed))
+    const speedNum = typeof speed === 'number' ? speed : parseFloat(String(speed)) || 1.0;
+    const validSpeed = Math.max(0.25, Math.min(4.0, speedNum))
+    
     
     console.log(`Generating TTS for ${text.length} characters with voice: ${voice}, speed: ${validSpeed}`)
 
@@ -38,7 +73,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'tts-1',
         input: text,
-        voice: voice,
+        voice: useVoice,
         response_format: 'mp3',
         speed: validSpeed,
       }),
