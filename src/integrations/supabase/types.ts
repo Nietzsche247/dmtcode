@@ -823,27 +823,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_seed: string
           avatar_url: string | null
           created_at: string
           display_name: string
+          handle: string
           id: string
           reputation_score: number
           symbol_count: number
           updated_at: string
         }
         Insert: {
+          avatar_seed: string
           avatar_url?: string | null
           created_at?: string
           display_name: string
+          handle: string
           id: string
           reputation_score?: number
           symbol_count?: number
           updated_at?: string
         }
         Update: {
+          avatar_seed?: string
           avatar_url?: string | null
           created_at?: string
           display_name?: string
+          handle?: string
           id?: string
           reputation_score?: number
           symbol_count?: number
@@ -1744,11 +1750,60 @@ export type Database = {
           },
         ]
       }
+      volunteers: {
+        Row: {
+          consent_contact: boolean
+          created_at: string
+          email: string
+          experience_level: string | null
+          handle: string | null
+          id: string
+          languages: string[] | null
+          roles: string[]
+          skills: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          why: string | null
+        }
+        Insert: {
+          consent_contact?: boolean
+          created_at?: string
+          email: string
+          experience_level?: string | null
+          handle?: string | null
+          id?: string
+          languages?: string[] | null
+          roles: string[]
+          skills?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          why?: string | null
+        }
+        Update: {
+          consent_contact?: boolean
+          created_at?: string
+          email?: string
+          experience_level?: string | null
+          handle?: string | null
+          id?: string
+          languages?: string[] | null
+          roles?: string[]
+          skills?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          why?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      generate_handle: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

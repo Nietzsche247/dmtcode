@@ -30,6 +30,7 @@ import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
+import Join from "./pages/Join";
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 import Leaderboard from "./pages/Leaderboard";
@@ -57,6 +58,7 @@ const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AvatarToastListener } from "./components/AvatarToastListener";
 import { useGA4PageTracking } from "./hooks/useGA4PageTracking";
 
 const GA4Tracker = () => {
@@ -105,6 +107,7 @@ const App = () => (
         <GrainOverlay />
         <BrowserRouter>
           <GA4Tracker />
+          <AvatarToastListener />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
@@ -249,6 +252,7 @@ const App = () => (
           } />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/join" element={<Join />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

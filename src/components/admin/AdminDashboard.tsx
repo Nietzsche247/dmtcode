@@ -18,6 +18,7 @@ import { RepoCloneButton } from './RepoCloneButton';
 import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
+import { VolunteersModeration } from './VolunteersModeration';
 
 export const AdminDashboard = () => {
   return (
@@ -33,10 +34,11 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-14">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-15">
             <TabsTrigger value="niche-geo">🎯 Niche GEO</TabsTrigger>
             <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
             <TabsTrigger value="forecasts">📈 Forecasts</TabsTrigger>
+            <TabsTrigger value="volunteers">🙋 Volunteers</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="bundles">📊 Bundles</TabsTrigger>
@@ -60,6 +62,10 @@ export const AdminDashboard = () => {
 
           <TabsContent value="forecasts" className="space-y-4">
             <ForecastChangelog />
+          </TabsContent>
+
+          <TabsContent value="volunteers" className="space-y-4">
+            <VolunteersModeration />
           </TabsContent>
 
           <TabsContent value="symbols" className="space-y-4">

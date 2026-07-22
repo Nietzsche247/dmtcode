@@ -13,6 +13,8 @@ import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { RecentContributions } from '@/components/registry/RecentContributions';
 import { CommunityStats } from '@/components/registry/CommunityStats';
+import { MissionFraming } from '@/components/home/MissionFraming';
+import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -122,7 +124,10 @@ const Home = () => {
         <main id="main-content" className="relative z-10" role="main">
           <Navigation />
           <ConvergenceHero />
-          
+
+          <MissionFraming />
+          <GetInvolvedDoors variant="top" />
+
           {/* Voice Logger Callout */}
           <section className="container mx-auto px-4 py-8 max-w-4xl">
             <AnimatedSection>
@@ -272,6 +277,8 @@ const Home = () => {
               </div>
             </AnimatedSection>
           </section>
+
+          <GetInvolvedDoors variant="bottom" />
         </main>
 
         <Footer />
