@@ -180,6 +180,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         toast.success(
           voteType === 'seen_it' ? 'Validation recorded' : 'Vote recorded'
         );
+
+        // Log engagement activity (upvote/downvote/seen_it all count as a review).
+        await logReviewActivity(voteType);
       }
 
       // Reload votes
