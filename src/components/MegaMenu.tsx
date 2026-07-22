@@ -93,12 +93,6 @@ const explorerItems: NavItem[] = [
     description: "Contributors, rankings, and discussions",
     icon: Users,
   },
-  {
-    title: "Mysticism Store",
-    href: "/community/woo",
-    description: "Symbolism items and mystical artifacts",
-    icon: Sparkles,
-  },
 ];
 
 const resourceItems: NavItem[] = [
