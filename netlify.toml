@@ -1,14 +1,18 @@
 [build]
   publish = "dist"
 
-# Edge functions run BEFORE the SPA fallback, so crawlers get real HTML.
+# Edge functions run BEFORE the SPA fallback so crawlers receive real HTML.
 [[edge_functions]]
   path = "/sitemap.xml"
   function = "sitemap"
 
 [[edge_functions]]
   path = "/registry/*"
-  function = "symbol-prerender"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/trials/*"
+  function = "content-prerender"
 
 # SPA fallback for every other route.
 [[redirects]]
