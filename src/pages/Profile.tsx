@@ -12,6 +12,8 @@ import { toast } from 'sonner';
 import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
+import { useReviewStreak } from '@/hooks/useReviewStreak';
+import { Flame, Snowflake } from 'lucide-react';
 
 interface UserSymbol {
   id: string;
