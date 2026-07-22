@@ -93,6 +93,9 @@ export default async () => {
   try {
     add("/trials", await page("clinical_trials", "is_approved=is.true"));
   } catch (_e) { /* skip */ }
+  try {
+    add("/bibliography", await page("bibliography", "is_approved=is.true"));
+  } catch (_e) { /* skip */ }
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
