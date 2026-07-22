@@ -129,6 +129,20 @@ export const VotingButtons = ({
           label={isOwnSubmission ? "Can't vote on own submission" : "I've seen this too"}
           activeClass="text-primary bg-primary/10"
         />
+        {userId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={markReviewed}
+            disabled={loading}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+            aria-label="Mark reviewed, no opinion"
+            title="Reviewed, no opinion"
+          >
+            <Check className="w-4 h-4" />
+            <span className="text-xs">Reviewed</span>
+          </Button>
+        )}
       </div>
     );
   }
