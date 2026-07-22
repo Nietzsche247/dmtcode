@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { FilterGuide } from '@/components/bibliography/FilterGuide';
 import { BibliographyCard } from '@/components/bibliography/BibliographyCard';
 import { BibliographyFilters } from '@/components/bibliography/BibliographyFilters';
-import { emptyFilters, type BibliographyRow, type FilterState } from '@/components/bibliography/types';
+import { emptyFilters, derivePeople, KNOWN_PEOPLE, type BibliographyRow, type FilterState } from '@/components/bibliography/types';
 
 const sortByDateDesc = (a: BibliographyRow, b: BibliographyRow) => {
   const av = a.source_date || a.publication_date || '';
@@ -28,6 +28,10 @@ const matchesFilters = (r: BibliographyRow, f: FilterState): boolean => {
   if (f.authorityType !== 'all' && r.authority_type !== f.authorityType) return false;
   if (f.tag !== 'all' && !(r.tags || []).includes(f.tag)) return false;
   if (f.year !== 'all' && yearOf(r) !== f.year) return false;
+  if (f.person !== 'all') {
+    const people = derivePeople(r).map((p) => p.toLowerCase());
+    if (!people.some((p) => p.includes(f.person.toLowerCase()))) return false;
+  }
   if (f.stance !== 'all') {
     if (f.stance === 'unverified' && !r.stance_unverified) return false;
     if (f.stance === 'supportive' && !(r.stance_score != null && r.stance_score >= 4)) return false;
@@ -74,6 +78,11 @@ const Bibliography = () => {
   const authorityTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.authority_type).filter(Boolean) as string[])).sort(), [rows]);
   const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags || []))).sort(), [rows]);
   const years = useMemo(() => Array.from(new Set(rows.map(yearOf).filter(Boolean) as string[])).sort((a, b) => b.localeCompare(a)), [rows]);
+  const people = useMemo(() => {
+    const set = new Set<string>(KNOWN_PEOPLE);
+    rows.forEach((r) => derivePeople(r).forEach((p) => set.add(p)));
+    return Array.from(set).sort();
+  }, [rows]);
 
   const listJsonLd = useMemo(() => {
     if (!featured.length) return null;
@@ -168,6 +177,7 @@ const Bibliography = () => {
                     authorityTypes={authorityTypes}
                     tags={tags}
                     years={years}
+                    people={people}
                   />
 
                   {filteredLibrary.length === 0 ? (

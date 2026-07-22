@@ -11,9 +11,10 @@ interface Props {
   authorityTypes: string[];
   tags: string[];
   years: string[];
+  people: string[];
 }
 
-export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTypes, tags, years }: Props) => {
+export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTypes, tags, years, people }: Props) => {
   const update = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
   return (
@@ -58,6 +59,14 @@ export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTy
           <SelectContent>
             <SelectItem value="all">All years</SelectItem>
             {years.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+          </SelectContent>
+        </Select>
+
+        <Select value={value.person} onValueChange={(v) => update({ person: v })}>
+          <SelectTrigger><SelectValue placeholder="Person" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All people</SelectItem>
+            {people.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
