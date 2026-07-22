@@ -1,10 +1,14 @@
 [build]
   publish = "dist"
 
-# Edge functions run BEFORE the SPA fallback so crawlers receive real HTML.
+# Edge functions run BEFORE the SPA fallback so crawlers and agents get real data.
 [[edge_functions]]
   path = "/sitemap.xml"
   function = "sitemap"
+
+[[edge_functions]]
+  path = "/data.json"
+  function = "data-json"
 
 [[edge_functions]]
   path = "/registry/*"

@@ -29,6 +29,7 @@ export interface FilterState {
   stance: StanceBucket;
   tag: string;
   year: string;
+  person: string;
   search: string;
 }
 
@@ -38,5 +39,34 @@ export const emptyFilters: FilterState = {
   stance: 'all',
   tag: 'all',
   year: 'all',
+  person: 'all',
   search: '',
+};
+
+export const KNOWN_PEOPLE = [
+  'Goler',
+  'Gallimore',
+  'Strassman',
+  'Davis',
+  'Timmermann',
+  'Luke',
+  'Gomez Emilsson',
+  'Hughes',
+];
+
+export const derivePeople = (row: BibliographyRow): string[] => {
+  const found = new Set<string>();
+  const hay = `${row.authors ?? ''} ${row.title ?? ''} ${row.summary ?? ''}`;
+  for (const name of KNOWN_PEOPLE) {
+    const re = new RegExp(`\\b${name.replace(/\s+/g, '\\s+')}\\b`, 'i');
+    if (re.test(hay)) found.add(name);
+  }
+  if (row.authors) {
+    row.authors
+      .split(/[,;]/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 1 && s.length < 80)
+      .forEach((s) => found.add(s));
+  }
+  return Array.from(found);
 };
