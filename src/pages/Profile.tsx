@@ -204,8 +204,10 @@ const Profile = () => {
             </div>
 
             <Tabs defaultValue="my-symbols" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsList className="grid w-full grid-cols-4 max-w-2xl">
                 <TabsTrigger value="my-symbols">My Symbols ({mySymbols.length})</TabsTrigger>
+                <TabsTrigger value="confirmations">Confirmations Given ({confirmationsGiven.length})</TabsTrigger>
+                <TabsTrigger value="voice">Voice Logs ({voiceLogs.length})</TabsTrigger>
                 <TabsTrigger value="saved">Saved ({savedSymbols.length})</TabsTrigger>
               </TabsList>
 
