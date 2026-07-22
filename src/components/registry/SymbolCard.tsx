@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChevronUp, Eye, User } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { VotingButtons } from './VotingButtons';
 import { SeenItButton } from './SeenItButton';
 import { SaveButton } from '@/components/dashboard/SaveButton';
@@ -112,16 +112,10 @@ export const SymbolCard = ({
 
         {/* Stats Row */}
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1" title="Upvotes">
-              <ChevronUp className="w-4 h-4" />
-              {upvotes}
-            </span>
-            <span className="flex items-center gap-1" title="Validations">
-              <Eye className="w-4 h-4" />
-              {validationCount}
-            </span>
-          </div>
+          <span className="flex items-center gap-1" title="Confirmations">
+            <Eye className="w-4 h-4" />
+            Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}
+          </span>
           <SaveButton symbolId={id} size="sm" />
         </div>
 

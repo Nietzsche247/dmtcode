@@ -14,10 +14,11 @@ interface Tag {
 }
 
 interface TagsManagerProps {
-  glyphId: string;
+  glyphId?: string;
+  symbolId?: string;
 }
 
-export const TagsManager = ({ glyphId }: TagsManagerProps) => {
+export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [newTag, setNewTag] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
   useEffect(() => {
     checkUser();
     loadTags();
-  }, [glyphId]);
+  }, [glyphId, symbolId]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -38,16 +39,17 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
   };
 
   const loadTags = async () => {
-    const { data } = await supabase
+    let query = supabase
       .from('symbol_tags')
       .select('*')
-      .eq('glyph_id', glyphId)
       .order('upvotes', { ascending: false })
-      .limit(5);
+      .limit(20);
+    if (symbolId) query = query.eq('symbol_id', symbolId);
+    else if (glyphId) query = query.eq('glyph_id', glyphId);
+    else return;
 
-    if (data) {
-      setTags(data);
-    }
+    const { data } = await query;
+    if (data) setTags(data as Tag[]);
   };
 
   const loadVotedTags = async (uid: string) => {
@@ -73,13 +75,19 @@ export const TagsManager = ({ glyphId }: TagsManagerProps) => {
     }
 
     setLoading(true);
-    const { error } = await supabase
-      .from('symbol_tags')
-      .insert({
-        glyph_id: glyphId,
-        tag_name: newTag.trim().toLowerCase(),
-        user_id: userId
-      });
+    const payload: {
+      tag_name: string;
+      user_id: string;
+      symbol_id?: string;
+      glyph_id?: string;
+    } = {
+      tag_name: newTag.trim().toLowerCase(),
+      user_id: userId,
+    };
+    if (symbolId) payload.symbol_id = symbolId;
+    else if (glyphId) payload.glyph_id = glyphId;
+
+    const { error } = await supabase.from('symbol_tags').insert(payload);
 
     if (error) {
       toast.error('Failed to add tag');
