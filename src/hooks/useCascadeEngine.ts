@@ -70,7 +70,7 @@ export function useCascadeEngine(
     isCalculating: false,
     lastDraggedEvent: null
   });
-  const cascadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const cascadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Build event lookup map
   const eventMap = useMemo(() => {
