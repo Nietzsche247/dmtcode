@@ -10,6 +10,7 @@ import { z } from "zod";
 import { Session } from "@supabase/supabase-js";
 import { useAuthTracking, AuthProvider } from "@/hooks/useAuthTracking";
 import { Logo } from "@/components/Logo";
+import { lovable } from "@/integrations/lovable/index";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }).max(255, { message: "Email must be less than 255 characters" }),
@@ -34,8 +35,12 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
-        if (session) {
-          // Add param to indicate successful login for toast on destination page
+        if (session && event === 'SIGNED_IN') {
+          // First-visit avatar toast (queued via sessionStorage so it survives navigate)
+          sessionStorage.setItem('showAvatarToast', '1');
+          const separator = returnTo.includes('?') ? '&' : '?';
+          navigate(`${returnTo}${separator}authenticated=1`);
+        } else if (session) {
           const separator = returnTo.includes('?') ? '&' : '?';
           navigate(`${returnTo}${separator}authenticated=1`);
         }
@@ -113,34 +118,25 @@ const Auth = () => {
     }
   };
 
-  const handleOAuthLogin = async (provider: 'google' | 'github') => {
+  const handleOAuthLogin = async (provider: 'google' | 'apple') => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}${returnTo}`,
-        },
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: `${window.location.origin}${returnTo}`,
       });
-
-      if (error) {
-        if (error.message.includes('Provider') || error.message.includes('not enabled')) {
-          toast.error(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login is not configured yet`, {
-            description: "Please contact the administrator to enable this login method."
-          });
-        } else if (error.message.includes('redirect')) {
-          toast.error("Redirect URL not configured", {
-            description: "Please check OAuth settings in the backend."
-          });
-        } else {
-          toast.error(error.message);
-        }
-      } else {
-        trackLogin(provider as AuthProvider);
+      if (result?.error) {
+        toast.error(`Could not continue with ${provider}`, {
+          description: 'Please try again or use another method.',
+        });
+        return;
       }
+      if (result?.redirected) {
+        return;
+      }
+      trackLogin(provider as AuthProvider);
     } catch (error) {
-      toast.error("An unexpected error occurred", {
-        description: "Please try again or use email login."
+      toast.error('An unexpected error occurred', {
+        description: 'Please try again.',
       });
     } finally {
       setIsLoading(false);
