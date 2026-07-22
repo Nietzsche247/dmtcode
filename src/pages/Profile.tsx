@@ -333,6 +333,37 @@ const Profile = () => {
                   <p className="text-sm text-muted-foreground/90 mt-3 max-w-xl leading-relaxed">
                     Your identity stays private. We map the truth together, one recognition at a time.
                   </p>
+
+                  {!streak.loading && streak.streak > 0 && (
+                    <div
+                      className={cn(
+                        'mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm',
+                        streak.freezeActive
+                          ? 'border-sky-500/40 bg-sky-500/5 text-sky-600 dark:text-sky-300'
+                          : 'border-primary/40 bg-primary/5 text-primary'
+                      )}
+                      aria-label={`${streak.streak} day review streak${streak.freezeActive ? ', freeze protecting a missed day' : ''}`}
+                    >
+                      {streak.freezeActive ? (
+                        <Snowflake className="w-4 h-4" aria-hidden="true" />
+                      ) : (
+                        <Flame className="w-4 h-4" aria-hidden="true" />
+                      )}
+                      <span className="tabular-nums font-medium">{streak.streak} day review streak</span>
+                      <span className="text-xs text-muted-foreground">
+                        {streak.freezeActive
+                          ? 'freeze protecting a missed day'
+                          : streak.reviewedToday
+                          ? 'today counted'
+                          : 'one review today keeps it alive'}
+                      </span>
+                    </div>
+                  )}
+                  {!streak.loading && streak.streak === 0 && (
+                    <p className="mt-4 text-xs text-muted-foreground">
+                      Review one symbol today to open a streak. Any honest signal counts.
+                    </p>
+                  )}
                 </div>
               </div>
             </section>
