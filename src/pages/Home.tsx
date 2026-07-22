@@ -183,7 +183,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers draw nearly identical symbols without prior communication.</span>
+                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers report nearly identical discrete visual symbols without prior communication.</span>
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
