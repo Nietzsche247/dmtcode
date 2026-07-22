@@ -13,7 +13,7 @@ export const RegistryDownloads = () => {
     setIsExporting(true);
     try {
       const { data, error } = await supabase
-        .from('registry_glyphs')
+        .from('symbol_submissions')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -43,14 +43,13 @@ export const RegistryDownloads = () => {
     setIsExporting(true);
     try {
       const { data, error } = await supabase
-        .from('registry_glyphs')
+        .from('symbol_submissions')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Convert to CSV
-      const headers = ['id', 'source', 'route_of_administration', 'approximate_dose', 'perceived_surface', 'depth', 'motion', 'emotional_valence', 'communicative_intent', 'prior_exposure', 'symmetry', 'motif_tags', 'confirmation_count', 'created_at'];
+      const headers = ['id', 'user_id', 'image_url', 'description', 'tags', 'upvotes', 'downvotes', 'status', 'created_at'];
       const csvRows = [headers.join(',')];
 
       data?.forEach(row => {

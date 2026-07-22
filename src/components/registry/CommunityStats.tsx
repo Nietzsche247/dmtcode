@@ -10,8 +10,8 @@ interface Stats {
 
 export const CommunityStats = () => {
   const [stats, setStats] = useState<Stats>({
-    totalSymbols: 52, // Include seeded data baseline
-    totalContributors: 3000,
+    totalSymbols: 0,
+    totalContributors: 0,
     totalValidations: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -22,29 +22,29 @@ export const CommunityStats = () => {
 
   const loadStats = async () => {
     try {
-      // Get approved submissions count
+      // Real convergence: symbol_submissions + symbol_votes only.
+      // Seeded registry_glyphs are a separate reference library and are
+      // intentionally NOT counted here.
       const { count: submissionCount } = await supabase
         .from('symbol_submissions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'approved');
+        .select('*', { count: 'exact', head: true });
 
-      // Get unique contributors
       const { data: contributors } = await supabase
         .from('symbol_submissions')
-        .select('user_id')
-        .eq('status', 'approved');
+        .select('user_id');
 
-      const uniqueContributors = new Set(contributors?.map(c => c.user_id) || []);
+      const uniqueContributors = new Set(
+        (contributors || []).map(c => c.user_id).filter(Boolean)
+      );
 
-      // Get total validations (seen_it votes)
       const { count: validationCount } = await supabase
         .from('symbol_votes')
         .select('*', { count: 'exact', head: true })
         .eq('vote_type', 'seen_it');
 
       setStats({
-        totalSymbols: 52 + (submissionCount || 0), // 52 seeded + user submissions
-        totalContributors: 3000 + uniqueContributors.size, // Base replicators + new contributors
+        totalSymbols: submissionCount || 0,
+        totalContributors: uniqueContributors.size,
         totalValidations: validationCount || 0,
       });
     } catch (error) {
@@ -54,13 +54,13 @@ export const CommunityStats = () => {
   };
 
   const statItems = [
-    { 
-      value: stats.totalSymbols.toLocaleString(), 
-      label: 'Documented Symbols',
+    {
+      value: stats.totalSymbols.toLocaleString(),
+      label: 'Community Submissions',
       icon: Image,
     },
-    { 
-      value: stats.totalContributors.toLocaleString() + '+', 
+    {
+      value: stats.totalContributors.toLocaleString(),
       label: 'Independent Contributors',
       icon: Users,
     },

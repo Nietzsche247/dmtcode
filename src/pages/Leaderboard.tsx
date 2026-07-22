@@ -44,23 +44,24 @@ const Leaderboard = () => {
   const { data: registryStats } = useQuery({
     queryKey: ['registry-stats'],
     queryFn: async () => {
+      // Real convergence counts come from symbol_submissions and symbol_votes only.
       const { count: totalSymbols } = await supabase
-        .from('registry_glyphs')
+        .from('symbol_submissions')
         .select('*', { count: 'exact', head: true });
-      
-      const { count: uniqueSymbols } = await supabase
-        .from('registry_glyphs')
+
+      const { count: totalConfirmations } = await supabase
+        .from('symbol_votes')
         .select('*', { count: 'exact', head: true })
-        .eq('is_unique', true);
+        .eq('vote_type', 'seen_it');
 
       const { count: totalContributors } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
-      
-      return { 
-        totalSymbols: totalSymbols || 0, 
-        uniqueSymbols: uniqueSymbols || 0,
-        totalContributors: totalContributors || 0
+
+      return {
+        totalSymbols: totalSymbols || 0,
+        uniqueSymbols: totalConfirmations || 0,
+        totalContributors: totalContributors || 0,
       };
     }
   });
@@ -145,7 +146,7 @@ const Leaderboard = () => {
                 <div className="text-4xl font-bold text-gold mb-2">
                   {registryStats?.uniqueSymbols || 0}
                 </div>
-                <div className="text-sm text-muted-foreground">Unique Symbols</div>
+                <div className="text-sm text-muted-foreground">Confirmations</div>
               </Card>
             </div>
 
