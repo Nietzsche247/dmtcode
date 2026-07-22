@@ -158,6 +158,36 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Verify Shopify HMAC signature
+    const hmacHeader = req.headers.get("x-shopify-hmac-sha256");
+    const webhookSecret = Deno.env.get("SHOPIFY_WEBHOOK_SECRET");
+    if (!webhookSecret) {
+      console.error("SHOPIFY_WEBHOOK_SECRET is not configured");
+      return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!hmacHeader) {
+      return new Response(JSON.stringify({ error: "Missing HMAC signature" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(webhookSecret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(bodyText));
+    const computed = btoa(String.fromCharCode(...new Uint8Array(sig)));
+    if (computed !== hmacHeader) {
+      console.warn("Invalid Shopify HMAC signature");
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     let order;
     try {
       order = JSON.parse(bodyText);
