@@ -19,6 +19,7 @@ import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import FAQ from "./pages/FAQ";
 import Bibliography from "./pages/Bibliography";
+import BibliographyDetail from "./pages/BibliographyDetail";
 import Glossary from "./pages/Glossary";
 import ProtocolGuide from "./pages/ProtocolGuide";
 import EvidenceMap from "./pages/EvidenceMap";
