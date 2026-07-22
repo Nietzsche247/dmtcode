@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public._rotate_cron_secret(text);
