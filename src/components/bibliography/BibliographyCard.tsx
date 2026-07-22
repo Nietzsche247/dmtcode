@@ -70,6 +70,12 @@ export const BibliographyCard = ({ row }: Props) => {
           DOI: <a href={`https://doi.org/${row.doi}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{row.doi}</a>
         </div>
       )}
+
+      <div className="pt-1">
+        <Link to={`/bibliography/${row.id}`} className="text-xs font-medium text-primary hover:underline">
+          Read more &rarr;
+        </Link>
+      </div>
     </Card>
   );
 };
