@@ -39,6 +39,8 @@ import SubmitProduct from "./pages/SubmitProduct";
 import SubmitSymbol from "./pages/SubmitSymbol";
 import Bundles from "./pages/Bundles";
 import Dataset from "./pages/Dataset";
+import Trials from "./pages/Trials";
+import TrialDetail from "./pages/TrialDetail";
 // Lazy load BundleDetail
 const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 // Lazy load Analysis page
