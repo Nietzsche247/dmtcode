@@ -245,7 +245,7 @@ const FAQ = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-base space-y-4 pt-4">
                   <p>
-                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>inter-subject consistency (a notable rate)</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
+                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>notable inter-subject consistency</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
                   </p>
                   <p>
                     Current evidence consists of: anecdotal reports from an independent replicator community, Goler's pilot observations published in IPI Letters (2025), and comparative analysis with Davis et al. (2021) entity encounter survey data.
