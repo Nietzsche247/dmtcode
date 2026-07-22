@@ -180,7 +180,7 @@ const FAQ = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-base space-y-4 pt-4">
                   <p>
-                    <strong>Davis et al. (2021)</strong> surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, notable convergence similar discrete visual symbols.
+                    <strong>Davis et al. (2021)</strong> surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Among those using the 650 nm laser protocol, participants reported notable convergence on similar discrete visual symbols.
                   </p>
                   <p>
                     Symbols clustered into 52 primary archetypes with recognizable geometric and alphabetic-like features. Independent replicators reported identical symbols in the same contextual settings (e.g., specific symbols appearing on ceiling vs. walls).
