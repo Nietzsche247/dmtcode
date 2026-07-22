@@ -8,27 +8,26 @@ const SUPABASE_KEY =
   Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") ??
   "";
 
+// Canonical public content URLs only. Utility/auth/user surfaces are noindexed
+// via Helmet on the page itself and intentionally excluded from the sitemap.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/registry", "0.9", "daily"],
+  ["/evidence-map", "0.9", "weekly"],
   ["/trials", "0.9", "daily"],
+  ["/bibliography", "0.9", "weekly"],
   ["/tools", "0.8", "weekly"],
+  ["/events", "0.7", "weekly"],
   ["/protocols", "0.8", "weekly"],
-  ["/evidence-map", "0.7", "weekly"],
-  ["/research", "0.7", "weekly"],
-  ["/bibliography", "0.6", "monthly"],
-  ["/events", "0.6", "weekly"],
-  ["/methods", "0.6", "monthly"],
-  ["/glossary", "0.6", "monthly"],
   ["/faq", "0.6", "monthly"],
+  ["/glossary", "0.6", "monthly"],
+  ["/about", "0.6", "monthly"],
+  ["/methods", "0.6", "monthly"],
+  ["/critiques", "0.6", "monthly"],
+  ["/open-questions", "0.6", "weekly"],
+  ["/null-reports", "0.5", "weekly"],
+  ["/research", "0.6", "weekly"],
   ["/dataset", "0.6", "monthly"],
-  ["/about", "0.5", "monthly"],
-  ["/correlations", "0.5", "weekly"],
-  ["/open-questions", "0.5", "weekly"],
-  ["/submit-symbol", "0.5", "monthly"],
-  ["/null-reports", "0.4", "weekly"],
-  ["/critiques", "0.4", "monthly"],
-  ["/leaderboard", "0.4", "weekly"],
 ];
 
 function xesc(s: string): string {
@@ -42,14 +41,15 @@ function xesc(s: string): string {
 
 async function page(
   table: string,
-  filter: string
-): Promise<Array<{ id: string; updated_at: string }>> {
-  const out: Array<{ id: string; updated_at: string }> = [];
+  filter: string,
+  select = "id,updated_at"
+): Promise<Array<Record<string, string>>> {
+  const out: Array<Record<string, string>> = [];
   if (!SUPABASE_URL || !SUPABASE_KEY) return out;
   const size = 1000;
   for (let from = 0; from < 50000; from += size) {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${table}?${filter}&select=id,updated_at&order=updated_at.desc`,
+      `${SUPABASE_URL}/rest/v1/${table}?${filter}&select=${select}&order=updated_at.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,
@@ -61,7 +61,7 @@ async function page(
       }
     );
     if (!res.ok) break;
-    const rows = (await res.json()) as Array<{ id: string; updated_at: string }>;
+    const rows = (await res.json()) as Array<Record<string, string>>;
     out.push(...rows);
     if (rows.length < size) break;
   }
@@ -76,25 +76,52 @@ export default async () => {
       `<changefreq>${cf}</changefreq><priority>${pr}</priority></url>`
   );
 
-  const add = (prefix: string, rows: Array<{ id: string; updated_at: string }>) => {
+  const addById = (
+    prefix: string,
+    rows: Array<{ id: string; updated_at: string }>,
+    priority = "0.7"
+  ) => {
     for (const r of rows) {
       const lastmod = (r.updated_at || "").slice(0, 10) || today;
       urls.push(
         `  <url><loc>${SITE}${prefix}/${xesc(r.id)}</loc>` +
           `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
-          `<priority>0.7</priority></url>`
+          `<priority>${priority}</priority></url>`
+      );
+    }
+  };
+
+  const addBySlug = (
+    prefix: string,
+    rows: Array<{ slug: string; updated_at: string }>,
+    priority = "0.7"
+  ) => {
+    for (const r of rows) {
+      if (!r.slug) continue;
+      const lastmod = (r.updated_at || "").slice(0, 10) || today;
+      urls.push(
+        `  <url><loc>${SITE}${prefix}/${xesc(r.slug)}</loc>` +
+          `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
+          `<priority>${priority}</priority></url>`
       );
     }
   };
 
   try {
-    add("/registry", await page("symbol_submissions", "status=eq.approved"));
+    addById("/registry", (await page("symbol_submissions", "status=eq.approved")) as any);
   } catch (_e) { /* skip */ }
   try {
-    add("/trials", await page("clinical_trials", "is_approved=is.true"));
+    addById("/trials", (await page("clinical_trials", "is_approved=is.true")) as any);
   } catch (_e) { /* skip */ }
   try {
-    add("/bibliography", await page("bibliography", "is_approved=is.true"));
+    addById("/bibliography", (await page("bibliography", "is_approved=is.true")) as any);
+  } catch (_e) { /* skip */ }
+  try {
+    addBySlug(
+      "/protocols",
+      (await page("protocols", "is_published=eq.true", "slug,updated_at")) as any,
+      "0.8"
+    );
   } catch (_e) { /* skip */ }
 
   const xml =
