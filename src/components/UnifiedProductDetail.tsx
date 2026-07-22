@@ -196,7 +196,7 @@ export const UnifiedProductDetail = ({
               className={`w-full lg:w-auto px-12 py-6 text-lg font-semibold mb-6 ${!isResearch ? 'group' : ''}`}
             >
               {!isResearch && <Star className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />}
-              Sold Out — Notify Me
+              Sold Out - Notify Me
             </Button>
 
 
