@@ -56,7 +56,7 @@ const Home = () => {
         <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta property="og:site_name" content="DMT Code" />
         
         {/* Twitter */}
@@ -64,7 +64,7 @@ const Home = () => {
         <meta name="twitter:url" content="https://dmtcode.com" />
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         
         <link rel="canonical" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
