@@ -176,6 +176,7 @@ export default async (request: Request, context: Context) => {
         r.record_type === "registered_trial" ||
         (typeof r.trial_registry_id === "string" &&
           /^NCT/i.test(r.trial_registry_id));
+      noindex = !isRegisteredTrial;
 
       const desc =
         (r.description && String(r.description).trim()) ||
@@ -271,13 +272,11 @@ export default async (request: Request, context: Context) => {
       ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
       `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
       `<meta name="twitter:title" content="${esc(title)}" />`,
-    const robotsTag =
-      kind === "trials" && !(/^NCT/i.test(String((await Promise.resolve(null)) ?? "")))
-        ? ""
-        : "";
-    // Internal (non-NCT) trials get noindex to keep them out of search results.
-    const noindex =
-      kind === "trials" && !/registered_trial/.test("registered_trial") ? "" : "";
+    const robotsMeta = noindex
+      ? `<meta name="robots" content="noindex,follow" />`
+      : "";
+
+
 
     const head = [
       `<title>${esc(title)}</title>`,
