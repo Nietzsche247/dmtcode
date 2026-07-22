@@ -15,21 +15,28 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url);
+    const ALLOWED_TABLES = ['forecasts', 'methodology', 'conditional_probability_rules', 'dependency_rules'];
     const table = url.searchParams.get('table') || 'forecasts';
-    const select = url.searchParams.get('select') || '*';
-    const order = url.searchParams.get('order') || '';
-    
-    // Get the external Supabase anon key from secrets
+    if (!ALLOWED_TABLES.includes(table)) {
+      return new Response(JSON.stringify({ error: 'Invalid table' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    // Restrict select/order to safe character set
+    const safe = /^[a-zA-Z0-9_,.\s()*-]+$/;
+    const rawSelect = url.searchParams.get('select') || '*';
+    const select = safe.test(rawSelect) ? rawSelect : '*';
+    const rawOrder = url.searchParams.get('order') || '';
+    const order = rawOrder && safe.test(rawOrder) ? rawOrder : '';
+
     const externalKey = Deno.env.get('EXTERNAL_SUPABASE_ANON_KEY');
-    
     if (!externalKey) {
       throw new Error('External Supabase key not configured');
     }
 
-    // Build the query URL
-    let queryUrl = `${EXTERNAL_SUPABASE_URL}/${table}?select=${select}`;
+    let queryUrl = `${EXTERNAL_SUPABASE_URL}/${table}?select=${encodeURIComponent(select)}`;
     if (order) {
-      queryUrl += `&order=${order}`;
+      queryUrl += `&order=${encodeURIComponent(order)}`;
     }
 
     // Fetch from external Supabase
