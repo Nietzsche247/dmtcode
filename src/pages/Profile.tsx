@@ -129,6 +129,8 @@ const Profile = () => {
   const [canon, setCanon] = useState<{ symbols: number; confirmations: number }>({ symbols: 0, confirmations: 0 });
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const streak = useReviewStreak(userId);
+
 
   useEffect(() => {
     checkAuth();
