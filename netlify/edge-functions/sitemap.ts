@@ -111,7 +111,7 @@ export default async () => {
     addById("/registry", (await page("symbol_submissions", "status=eq.approved")) as any);
   } catch (_e) { /* skip */ }
   try {
-    addById("/trials", (await page("clinical_trials", "is_approved=is.true")) as any);
+    addById("/trials", (await page("clinical_trials", "is_approved=is.true&record_type=eq.registered_trial")) as any);
   } catch (_e) { /* skip */ }
   try {
     addById("/bibliography", (await page("bibliography", "is_approved=is.true")) as any);

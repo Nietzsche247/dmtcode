@@ -83,6 +83,7 @@ export default async (request: Request, context: Context) => {
     let ld: Record<string, unknown> | null = null;
     let body = "";
     let ogImage = "";
+    let noindex = false;
 
     if (kind === "registry") {
       const f =
@@ -168,9 +169,14 @@ export default async (request: Request, context: Context) => {
     } else if (kind === "trials") {
       const f =
         "id,title,description,institution,principal_investigator,status," +
-        "start_date,end_date,trial_registry_id,doi,url,created_at,updated_at";
+        "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return shellRes;
+      const isRegisteredTrial =
+        r.record_type === "registered_trial" ||
+        (typeof r.trial_registry_id === "string" &&
+          /^NCT/i.test(r.trial_registry_id));
+      noindex = !isRegisteredTrial;
 
       const desc =
         (r.description && String(r.description).trim()) ||
@@ -196,32 +202,44 @@ export default async (request: Request, context: Context) => {
       if (r.url) sameAs.push(String(r.url));
       if (r.doi) sameAs.push(`https://doi.org/${String(r.doi)}`);
 
-      ld = {
-        "@context": "https://schema.org",
-        "@type": "MedicalStudy",
-        "@id": canonical,
-        name: r.title,
-        description: desc,
-        url: canonical,
-        studySubject: { "@type": "Drug", name: "N,N-Dimethyltryptamine (DMT)" },
-        status: r.status,
-        startDate: r.start_date,
-        endDate: r.end_date,
-        identifier: r.trial_registry_id,
-        sameAs,
-        sponsor: r.institution
-          ? { "@type": "Organization", name: r.institution }
-          : undefined,
-        author: r.principal_investigator
-          ? { "@type": "Person", name: r.principal_investigator }
-          : undefined,
-        isPartOf: {
-          "@type": "Dataset",
-          name: "DMT Clinical Trials Observatory",
-          url: `${SITE}/trials`,
-          license: LICENSE,
-        },
-      };
+      ld = isRegisteredTrial
+        ? {
+            "@context": "https://schema.org",
+            "@type": "MedicalStudy",
+            "@id": canonical,
+            name: r.title,
+            description: desc,
+            url: canonical,
+            studySubject: { "@type": "Drug", name: "N,N-Dimethyltryptamine (DMT)" },
+            status: r.status,
+            startDate: r.start_date,
+            endDate: r.end_date,
+            identifier: r.trial_registry_id,
+            sameAs,
+            sponsor: r.institution
+              ? { "@type": "Organization", name: r.institution }
+              : undefined,
+            author: r.principal_investigator
+              ? { "@type": "Person", name: r.principal_investigator }
+              : undefined,
+            isPartOf: {
+              "@type": "Dataset",
+              name: "DMT Clinical Trials Observatory",
+              url: `${SITE}/trials`,
+              license: LICENSE,
+            },
+          }
+        : {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "@id": canonical,
+            name: r.title,
+            description: desc,
+            url: canonical,
+            dateCreated: r.created_at,
+            dateModified: r.updated_at,
+            license: LICENSE,
+          };
 
       body = `<article data-prerender="trial">
   <h1>${esc(r.title)}</h1>
@@ -243,6 +261,14 @@ export default async (request: Request, context: Context) => {
       return shellRes;
     }
 
+    const robotsMeta = noindex
+      ? `<meta name="robots" content="noindex,follow" />`
+      : "";
+
+
+
+
+
     const head = [
       `<title>${esc(title)}</title>`,
       `<meta name="description" content="${esc(metaDesc)}" />`,
@@ -256,12 +282,23 @@ export default async (request: Request, context: Context) => {
       `<meta name="twitter:title" content="${esc(title)}" />`,
       `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
       ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
+      robotsMeta,
       ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
     ]
       .filter(Boolean)
       .join("\n");
 
     let html = await shellRes.text();
+    // Strip pre-existing per-page tags from the static shell so we do not
+    // ship duplicates. Static <head> in index.html carries generic site tags;
+    // the entity-specific versions below must replace them.
+    html = html
+      .replace(/<title>[\s\S]*?<\/title>/gi, "")
+      .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+      .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
     html = html.replace(/<\/head>/i, `${head}\n</head>`);
     if (/<div id="root">\s*<\/div>/i.test(html)) {
       html = html.replace(

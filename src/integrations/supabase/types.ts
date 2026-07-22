@@ -263,6 +263,7 @@ export type Database = {
           notes: string | null
           organizer_lead: string | null
           principal_investigator: string | null
+          record_type: string
           source: string | null
           start_date: string
           status: string
@@ -288,6 +289,7 @@ export type Database = {
           notes?: string | null
           organizer_lead?: string | null
           principal_investigator?: string | null
+          record_type?: string
           source?: string | null
           start_date: string
           status: string
@@ -313,6 +315,7 @@ export type Database = {
           notes?: string | null
           organizer_lead?: string | null
           principal_investigator?: string | null
+          record_type?: string
           source?: string | null
           start_date?: string
           status?: string
