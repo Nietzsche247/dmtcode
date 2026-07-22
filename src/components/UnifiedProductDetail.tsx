@@ -110,7 +110,7 @@ export const UnifiedProductDetail = ({
               "@type": "Offer",
               "price": item.price,
               "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
+              "availability": "https://schema.org/OutOfStock"
             }
           })}
         </script>
