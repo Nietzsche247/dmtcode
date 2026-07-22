@@ -136,7 +136,7 @@ export const SymbolCard = ({
 
         {/* Prominent one-tap confirmation */}
         <div className="pt-2">
-          <SeenItButton symbolId={id} submitterId={submitterId} size="sm" className="w-full justify-center" />
+          <SeenItButton symbolId={id} submitterId={submitterId} size="sm" className="w-full justify-center" imageUrl={imageUrl} />
         </div>
 
         {/* Secondary voting */}
