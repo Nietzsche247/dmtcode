@@ -16,20 +16,12 @@ interface Trial {
   description: string | null;
   institution: string | null;
   principal_investigator: string | null;
-  organizer_lead: string | null;
-  trial_type: string | null;
   status: string | null;
-  confirmed_status: string | null;
   start_date: string | null;
   end_date: string | null;
-  location: string | null;
-  eligibility: string | null;
   trial_registry_id: string | null;
   doi: string | null;
   url: string | null;
-  application_url: string | null;
-  source: string | null;
-  notes: string | null;
   updated_at: string;
   created_at: string;
 }
@@ -150,35 +142,22 @@ const TrialDetail = () => {
       <main className="container mx-auto max-w-3xl px-4 pb-24 pt-6">
         <header className="mb-8 border-b border-border/60 pb-6">
           <p className="label-data mb-3 text-[11px] text-muted-foreground">
-            {(trial.trial_type || 'TRIAL').toUpperCase()} · {(trial.status || 'STATUS UNKNOWN').toUpperCase()}
-            {trial.confirmed_status ? ` · ${trial.confirmed_status.toUpperCase()}` : ''}
+            CLINICAL TRIAL · {(trial.status || 'STATUS UNKNOWN').toUpperCase()}
           </p>
           <h1 className="font-display text-3xl leading-tight md:text-5xl">
             {trial.title}
           </h1>
         </header>
 
-        {trial.trial_type && trial.trial_type !== 'Formal Clinical Trial' && (
-          <div className="mb-6 rounded border border-amber-500/40 bg-amber-500/5 p-3 text-xs text-muted-foreground">
-            This entry is a <strong className="text-foreground">{trial.trial_type.toLowerCase()}</strong>,
-            not an IRB-approved clinical trial. Treat information accordingly.
-          </div>
-        )}
-
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
           {[
-            ['Type', trial.trial_type],
             ['Status', trial.status],
-            ['Confirmed', trial.confirmed_status],
-            ['Organizer / Lead', trial.organizer_lead],
             ['Institution', trial.institution],
             ['Principal investigator', trial.principal_investigator],
-            ['Location', trial.location],
             ['Start date', fmt(trial.start_date)],
             ['End date', fmt(trial.end_date)],
             ['Registry ID', trial.trial_registry_id],
             ['DOI', trial.doi],
-            ['Source', trial.source],
           ].map(([term, val]) => (
             <div key={term as string}>
               <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
@@ -188,23 +167,9 @@ const TrialDetail = () => {
         </dl>
 
         {trial.description && (
-          <section className="mb-8">
+          <section className="mb-10">
             <h2 className="label-data mb-3 text-[11px] text-muted-foreground">DESCRIPTION</h2>
             <p className="whitespace-pre-line leading-relaxed">{trial.description}</p>
-          </section>
-        )}
-
-        {trial.eligibility && (
-          <section className="mb-8">
-            <h2 className="label-data mb-3 text-[11px] text-muted-foreground">ELIGIBILITY</h2>
-            <p className="whitespace-pre-line leading-relaxed text-sm">{trial.eligibility}</p>
-          </section>
-        )}
-
-        {trial.notes && (
-          <section className="mb-10">
-            <h2 className="label-data mb-3 text-[11px] text-muted-foreground">NOTES</h2>
-            <p className="whitespace-pre-line leading-relaxed text-sm text-muted-foreground">{trial.notes}</p>
           </section>
         )}
 
@@ -213,13 +178,6 @@ const TrialDetail = () => {
             <Button asChild variant="outline">
               <a href={trial.url} target="_blank" rel="noopener noreferrer">
                 View trial record <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          )}
-          {trial.application_url && (
-            <Button asChild>
-              <a href={trial.application_url} target="_blank" rel="noopener noreferrer">
-                Apply / Register <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
           )}
