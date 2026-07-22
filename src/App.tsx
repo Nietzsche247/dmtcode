@@ -59,6 +59,7 @@ const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AvatarToastListener } from "./components/AvatarToastListener";
+import { BadgeToastListener } from "./components/BadgeToastListener";
 import { useGA4PageTracking } from "./hooks/useGA4PageTracking";
 
 const GA4Tracker = () => {
@@ -108,6 +109,7 @@ const App = () => (
         <BrowserRouter>
           <GA4Tracker />
           <AvatarToastListener />
+          <BadgeToastListener />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
