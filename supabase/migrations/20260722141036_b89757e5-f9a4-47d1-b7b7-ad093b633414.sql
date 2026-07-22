@@ -1,0 +1,1 @@
+ALTER TABLE public.symbol_submissions ADD COLUMN IF NOT EXISTS svg_data text, ADD COLUMN IF NOT EXISTS vector_json jsonb;

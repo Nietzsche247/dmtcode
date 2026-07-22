@@ -1251,10 +1251,12 @@ export type Database = {
           source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
           surface_type: string | null
+          svg_data: string | null
           tags: string[] | null
           updated_at: string
           upvotes: number
           user_id: string
+          vector_json: Json | null
           wavelength: string | null
         }
         Insert: {
@@ -1273,10 +1275,12 @@ export type Database = {
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
+          svg_data?: string | null
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
           user_id: string
+          vector_json?: Json | null
           wavelength?: string | null
         }
         Update: {
@@ -1295,10 +1299,12 @@ export type Database = {
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
+          svg_data?: string | null
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
           user_id?: string
+          vector_json?: Json | null
           wavelength?: string | null
         }
         Relationships: []
