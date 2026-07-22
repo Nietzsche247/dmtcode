@@ -104,21 +104,22 @@ export const SubmissionWizard = () => {
         .getPublicUrl(filename);
 
       // Capture vector representations from the live Fabric canvas.
-      // These are additive and only populated for NEW submissions.
+      // Additive: only populated for NEW submissions.
       let svgData: string | null = null;
       let vectorJson: any | null = null;
       try {
-        if (fabricCanvasRef.current) {
-          // Exclude grid overlay lines from vector export
-          const canvas = fabricCanvasRef.current;
-          const drawnObjects = canvas.getObjects().filter((o: any) => !o.isGridLine);
-          const jsonAll = canvas.toJSON();
-          vectorJson = { ...jsonAll, objects: (jsonAll.objects || []).filter((_: any, i: number) => !(canvas.getObjects()[i] as any)?.isGridLine) };
-          // Fallback simpler: rebuild by mapping only drawn indices
-          if (!vectorJson.objects || vectorJson.objects.length !== drawnObjects.length) {
-            vectorJson = canvas.toJSON();
-          }
+        const canvas = fabricCanvasRef.current;
+        if (canvas) {
+          // Temporarily hide grid overlay lines during export
+          const gridLines = canvas.getObjects().filter((o: any) => o.isGridLine);
+          gridLines.forEach((l: any) => { l.visible = false; });
           svgData = canvas.toSVG();
+          const json = canvas.toJSON() as any;
+          if (json?.objects) {
+            json.objects = json.objects.filter((o: any) => !o.isGridLine);
+          }
+          vectorJson = json;
+          gridLines.forEach((l: any) => { l.visible = true; });
         }
       } catch (e) {
         console.warn('Vector capture failed, continuing with PNG only', e);
