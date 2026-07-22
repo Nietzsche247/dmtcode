@@ -247,8 +247,6 @@ const Leaderboard = () => {
                   </Card>
                 )}
               </TabsContent>
-
-              </TabsContent>
             </Tabs>
 
             {/* Call to Action */}
