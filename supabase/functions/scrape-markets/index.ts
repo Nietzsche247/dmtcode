@@ -8,6 +8,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!
 
 const METACULUS_QUESTIONS = [
   { id: "5121", mapped_event: "AGI (Human-Level General Intelligence)" },
@@ -80,17 +81,40 @@ async function fetchPolymarket(slug: string) {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Require cron secret or service-role Authorization on every request
+  // Dual-path auth: (a) CRON_SECRET / service-role machine call, OR
+  // (b) authenticated user JWT with admin role.
   const authHeader = req.headers.get("Authorization") ?? ""
   const cronSecret = Deno.env.get("CRON_SECRET")
   const isCron = cronSecret ? authHeader === `Bearer ${cronSecret}` : false
-  const isServiceRole = authHeader.includes(SUPABASE_SERVICE_ROLE_KEY)
-  if (!isCron && !isServiceRole) {
+  const isServiceRole = authHeader === `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
+
+  let authorized = isCron || isServiceRole
+
+  if (!authorized && authHeader.startsWith("Bearer ")) {
+    try {
+      const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const token = authHeader.replace("Bearer ", "")
+      const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token)
+      if (!claimsErr && claimsData?.claims?.sub) {
+        const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        const { data: isAdmin } = await adminClient.rpc("has_role", {
+          _user_id: claimsData.claims.sub,
+          _role: "admin",
+        })
+        if (isAdmin) authorized = true
+      }
+    } catch (e) {
+      console.error("Admin auth check failed:", e)
+    }
+  }
+
+  if (!authorized) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -102,7 +126,6 @@ serve(async (req) => {
 
   console.log("Starting market data scrape...")
 
-  // Scrape Metaculus
   for (const q of METACULUS_QUESTIONS) {
     console.log(`Fetching Metaculus: ${q.id} -> ${q.mapped_event}`)
     const data = await fetchMetaculus(q.id)
@@ -143,7 +166,6 @@ serve(async (req) => {
     }
   }
 
-  // Scrape Polymarket
   for (const q of POLYMARKET_QUESTIONS) {
     console.log(`Fetching Polymarket: ${q.slug}`)
     const data = await fetchPolymarket(q.slug)
