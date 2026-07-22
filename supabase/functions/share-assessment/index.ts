@@ -83,6 +83,12 @@ serve(async (req) => {
     }
 
     if (action === 'get_shared') {
+      // Validate the share token format (must be a non-trivial opaque string)
+      if (!share_token || typeof share_token !== 'string' || share_token.length < 16 || share_token.length > 128) {
+        return new Response(JSON.stringify({ error: 'Invalid share token' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       // Fetch de-identified assessment by share token
       const { data, error } = await supabase
         .from('assessments')
