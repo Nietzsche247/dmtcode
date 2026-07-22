@@ -136,7 +136,7 @@ const ProtocolDetail = () => {
                   )}
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black tracking-tight">
-                  {protocol.title}
+                  {protocol.slug === 'dmt-laser' ? `${protocol.title}: 650 nm DMT Laser Protocol` : protocol.title}
                 </h1>
                 <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
                   {protocol.tagline}
