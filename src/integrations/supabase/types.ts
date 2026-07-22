@@ -1089,6 +1089,30 @@ export type Database = {
         }
         Relationships: []
       }
+      review_activity: {
+        Row: {
+          activity_date: string
+          created_at: string
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          created_at?: string
+          id?: string
+          source?: string
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          created_at?: string
+          id?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_symbols: {
         Row: {
           created_at: string
@@ -1833,6 +1857,14 @@ export type Database = {
     }
     Functions: {
       generate_handle: { Args: never; Returns: string }
+      get_review_streak: {
+        Args: { _user_id: string }
+        Returns: {
+          freeze_active: boolean
+          last_activity: string
+          streak: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
