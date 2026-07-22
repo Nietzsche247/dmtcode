@@ -69,6 +69,7 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }:
     canvas.freeDrawingBrush = brush;
 
     setFabricCanvas(canvas);
+    onCanvasReady?.(canvas);
 
     // Save initial state
     const initialState = canvas.toDataURL({ format: 'png', multiplier: 2 });
