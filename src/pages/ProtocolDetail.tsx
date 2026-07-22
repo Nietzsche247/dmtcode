@@ -82,7 +82,7 @@ const ProtocolDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{protocol.title} | DMT Code Protocols</title>
+        <title>{protocol.slug === 'dmt-laser' ? `${protocol.title} — 650 nm DMT laser protocol | DMT Code` : `${protocol.title} | DMT Code Protocols`}</title>
         <meta 
           name="description" 
           content={`${protocol.tagline || protocol.title} - Evidence-based protocol with preparation, dosing, and integration guidelines.`} 
@@ -136,7 +136,7 @@ const ProtocolDetail = () => {
                   )}
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black tracking-tight">
-                  {protocol.title}
+                  {protocol.slug === 'dmt-laser' ? `${protocol.title}: 650 nm DMT Laser Protocol` : protocol.title}
                 </h1>
                 <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
                   {protocol.tagline}

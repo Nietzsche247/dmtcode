@@ -56,7 +56,7 @@ const Home = () => {
         <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta property="og:site_name" content="DMT Code" />
         
         {/* Twitter */}
@@ -64,7 +64,7 @@ const Home = () => {
         <meta name="twitter:url" content="https://dmtcode.com" />
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         
         <link rel="canonical" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
@@ -183,7 +183,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers draw nearly identical symbols without prior communication.</span>
+                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers report nearly identical discrete visual symbols without prior communication.</span>
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
@@ -237,7 +237,7 @@ const Home = () => {
                   Danny Goler developed this protocol and Chase Hughes validated it across independent replicators. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
                 </p>
                 <p>
-                  Davis et al. (2021) documented an notable inter-subject consistency rate. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
+                  Davis et al. (2021) documented notable inter-subject consistency in reports of discrete visual symbols. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
                 </p>
               </div>
             </AnimatedSection>

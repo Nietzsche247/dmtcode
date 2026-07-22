@@ -43,10 +43,10 @@ const EvidenceMap = () => {
   return (
     <>
       <Helmet>
-        <title>Scientific Evidence Analysis: DMT Laser Phenomenon | DMT Code</title>
+        <title>Is the DMT code real? Evidence Timeline & Analysis | DMT Code</title>
         <meta 
           name="description" 
-          content="Pro and con analysis of competing hypotheses explaining the Code of Reality phenomenon with peer-reviewed citations." 
+          content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations, competing hypotheses, and stance-scored milestones from 1926 to 2025." 
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         
@@ -103,16 +103,16 @@ const EvidenceMap = () => {
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Scientific Evidence Analysis: DMT Laser Phenomenon | DMT Code" />
-        <meta property="og:description" content="Pro and con analysis of competing hypotheses explaining the Code of Reality phenomenon with peer-reviewed citations." />
+        <meta property="og:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
+        <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and stance-scored milestones from 1926 to 2025." />
         <meta property="og:url" content="https://dmtcode.com/evidence-map" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/evidence-map" />
-        <meta name="twitter:title" content="Scientific Evidence Analysis: DMT Laser Phenomenon | DMT Code" />
-        <meta name="twitter:description" content="Pro and con analysis of competing hypotheses explaining the Code of Reality phenomenon with peer-reviewed citations." />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
+        <meta name="twitter:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and stance-scored milestones from 1926 to 2025." />
+        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
@@ -144,10 +144,10 @@ const EvidenceMap = () => {
           <section className="container mx-auto px-4 py-12 max-w-7xl">
             <div className="text-center mb-8">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Evidence Timeline: 100 Years of DMT Research
+                Is the DMT code real?
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                From Klüver's form constants (1926) to the 650 nm laser protocol (2025): explore 30 key milestones with clickable DOIs and peer-reviewed citations
+                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Explore 30 stance-scored milestones with clickable DOIs and peer-reviewed citations.
               </p>
               <div className="mt-6">
                 <a

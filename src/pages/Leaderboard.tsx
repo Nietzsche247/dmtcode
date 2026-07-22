@@ -64,7 +64,7 @@ const Leaderboard = () => {
           content="Top contributors to the DMT Code Visual Symbol Registry. Rankings based on symbol submissions, validations, and community engagement." 
         />
         <link rel="canonical" href="https://dmtcode.com/leaderboard" />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="noindex, nofollow" />
         
         <script type="application/ld+json">
           {JSON.stringify({

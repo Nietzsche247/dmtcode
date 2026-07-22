@@ -11,6 +11,7 @@ import { Session } from "@supabase/supabase-js";
 import { useAuthTracking, AuthProvider } from "@/hooks/useAuthTracking";
 import { Logo } from "@/components/Logo";
 import { lovable } from "@/integrations/lovable/index";
+import { Helmet } from "react-helmet";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }).max(255, { message: "Email must be less than 255 characters" }),
@@ -144,6 +145,11 @@ const Auth = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>Sign In | DMT Code</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-[hsl(var(--background))] p-4">
       {/* Background gradient effect */}
       <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-primary/5 pointer-events-none" />
@@ -287,6 +293,7 @@ const Auth = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 

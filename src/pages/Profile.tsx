@@ -173,6 +173,7 @@ const Profile = () => {
         <title>My Profile | DMT Code Visual Symbol Catalogue</title>
         <meta name="description" content="View your submitted symbols and saved community submissions" />
         <link rel="canonical" href="https://dmtcode.com/profile" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

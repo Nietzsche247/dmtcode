@@ -28,12 +28,12 @@ const Registry = () => {
         <meta property="og:title" content="DMT Code Visual Symbol Registry — Open Catalogue (CC-BY-4.0)" />
         <meta property="og:description" content="Browse the open, community-validated catalogue of visual symbols reported during N,N-DMT experiences. Structured metadata, community confirmations, and free CC-BY-4.0 data." />
         <meta property="og:url" content="https://dmtcode.com/registry" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/registry" />
         <meta name="twitter:title" content="DMT Code Visual Symbol Registry — Open Catalogue (CC-BY-4.0)" />
         <meta name="twitter:description" content="Browse the open, community-validated catalogue of visual symbols reported during N,N-DMT experiences. Structured metadata, community confirmations, and free CC-BY-4.0 data." />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
