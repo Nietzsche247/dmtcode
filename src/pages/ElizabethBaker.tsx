@@ -1186,7 +1186,7 @@ Section 9: Limitations. This formulation is provisional and based primarily on b
         />
         <link rel="canonical" href="https://dmtcode.com/Elizabeth_Baker" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/Elizabeth_Baker" />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="noindex, nofollow" />
         <meta property="og:title" content="Elizabeth Baker | DMT Code" />
         <meta property="og:description" content="Elizabeth Baker - Clinical formulation, prognosis, and treatment protocol." />
         <meta property="og:url" content="https://dmtcode.com/Elizabeth_Baker" />

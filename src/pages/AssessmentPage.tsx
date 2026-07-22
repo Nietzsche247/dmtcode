@@ -57,7 +57,7 @@ export default function Assess() {
         <link rel="canonical" href="https://dmtcode.com/assess" />
         <meta property="og:title" content="Psychedelic Assessment Tools | PHQ-9 & GAD-7 | DMT Code" />
         <meta property="og:description" content="Clinician-ready PHQ-9 depression and GAD-7 anxiety screening with MEQ-4 mystical experience assessment." />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="noindex, nofollow" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

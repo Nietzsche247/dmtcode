@@ -265,7 +265,7 @@ const VoiceLogger = () => {
           }
         />
         <link rel="canonical" href="https://dmtcode.com/log" />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="noindex, nofollow" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />

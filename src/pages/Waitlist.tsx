@@ -18,7 +18,7 @@ const Waitlist = () => {
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/waitlist" />
         <link rel="alternate" hrefLang="es" href="https://dmtcode.com/waitlist" />
         <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/waitlist" />
-        <meta name="robots" content="index, follow" />
+        <meta name="robots" content="noindex, nofollow" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
