@@ -26,20 +26,8 @@ const Leaderboard = () => {
     }
   });
 
-  // Fetch user_stats for validation count leaderboard
-  const { data: topValidators, isLoading: validatorsLoading } = useQuery({
-    queryKey: ['leaderboard-validators'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('user_stats')
-        .select('*, user_id')
-        .order('total_validations', { ascending: false })
-        .limit(50);
-      
-      if (error) throw error;
-      return data || [];
-    }
-  });
+  // Validations tab retired: derived counts from user_stats were not aligned
+  // with real seen_it votes, so we removed the tab rather than show wrong numbers.
 
   const { data: registryStats } = useQuery({
     queryKey: ['registry-stats'],
@@ -66,7 +54,7 @@ const Leaderboard = () => {
     }
   });
 
-  const isLoading = profilesLoading || validatorsLoading;
+  const isLoading = profilesLoading;
 
   return (
     <>
@@ -152,7 +140,7 @@ const Leaderboard = () => {
 
             {/* Leaderboard Tabs */}
             <Tabs defaultValue="reputation" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="reputation">
                   <Award className="w-4 h-4 mr-2" />
                   Reputation
@@ -160,6 +148,8 @@ const Leaderboard = () => {
                 <TabsTrigger value="symbols">
                   <Upload className="w-4 h-4 mr-2" />
                   Symbol Count
+                </TabsTrigger>
+              </TabsList>
                 </TabsTrigger>
                 <TabsTrigger value="validations">
                   <CheckCircle2 className="w-4 h-4 mr-2" />
