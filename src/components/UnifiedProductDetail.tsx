@@ -99,6 +99,8 @@ export const UnifiedProductDetail = ({
       <Helmet>
         <title>{item.title} | {pageTitle}</title>
         <meta name="description" content={item.description} />
+        {!isResearch && <meta name="robots" content="noindex, nofollow" />}
+
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
