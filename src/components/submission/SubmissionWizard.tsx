@@ -212,6 +212,7 @@ export const SubmissionWizard = () => {
                 onImageChange={setImageData}
                 onSave={handleCanvasSave}
                 disabled={isSubmitting}
+                onCanvasReady={(c) => { fabricCanvasRef.current = c; }}
               />
             </CanvasErrorBoundary>
           </div>
