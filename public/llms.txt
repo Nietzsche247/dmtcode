@@ -2,10 +2,21 @@
 
 > An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Peer-reviewed research, open datasets (CC-BY-4.0), and equipment for replicators.
 
+DMT Code is an open research record covering visual phenomenology, clinical trials, published literature, protocols, and events.
+
+## Machine-readable surfaces
+
+- [/trials](/trials) — Clinical Trials Observatory (269 tracked DMT trials); per-trial pages at `/trials/{id}` are server-prerendered with MedicalStudy JSON-LD.
+- [/registry](/registry) — Visual Symbol Registry; per-symbol pages at `/registry/{id}` are server-prerendered with CreativeWork JSON-LD.
+- [/sitemap.xml](/sitemap.xml) — full URL index, regenerated from the database on each request.
+- [/data.json](/data.json) — machine-readable corpus export.
+- License: CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/)
+
 ## Pages
 
 - [Home](/): Mission, dataset status, contribution guide.
 - [Symbol Registry](/registry): Browse and submit visual symbols with structured metadata and community validation.
+- [Clinical Trials](/trials): Observatory of DMT-related clinical trials with filters, search, and sort.
 - [Submit Symbol](/submit-symbol): 6-step layered submission flow with priming control.
 - [Voice Logger](/log): Primary user-generated contribution point for session logs.
 - [Assessment](/assess): PHQ-9, GAD-7, MEQ-4, and CEQ-7 self-report scoring.
