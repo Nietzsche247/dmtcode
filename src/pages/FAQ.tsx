@@ -37,7 +37,7 @@ const FAQ = () => {
                 "name": "What is the 650 nm laser protocol?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. notable inter-subject consistency reported across independent replicators."
+                  "text": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. Notable inter-subject consistency has been reported across independent replicators."
                 }
               },
               {
