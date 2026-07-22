@@ -1335,24 +1335,27 @@ export type Database = {
       symbol_tags: {
         Row: {
           created_at: string | null
-          glyph_id: string
+          glyph_id: string | null
           id: string
+          symbol_id: string | null
           tag_name: string
           upvotes: number | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          glyph_id: string
+          glyph_id?: string | null
           id?: string
+          symbol_id?: string | null
           tag_name: string
           upvotes?: number | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
-          glyph_id?: string
+          glyph_id?: string | null
           id?: string
+          symbol_id?: string | null
           tag_name?: string
           upvotes?: number | null
           user_id?: string | null
@@ -1363,6 +1366,13 @@ export type Database = {
             columns: ["glyph_id"]
             isOneToOne: false
             referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "symbol_tags_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
             referencedColumns: ["id"]
           },
         ]
@@ -1692,6 +1702,7 @@ export type Database = {
           protocol_id: string | null
           protocol_match_score: number | null
           session_id: string
+          symbol_id: string | null
           tags: string[] | null
           transcript: string | null
           updated_at: string
@@ -1710,6 +1721,7 @@ export type Database = {
           protocol_id?: string | null
           protocol_match_score?: number | null
           session_id: string
+          symbol_id?: string | null
           tags?: string[] | null
           transcript?: string | null
           updated_at?: string
@@ -1728,6 +1740,7 @@ export type Database = {
           protocol_id?: string | null
           protocol_match_score?: number | null
           session_id?: string
+          symbol_id?: string | null
           tags?: string[] | null
           transcript?: string | null
           updated_at?: string
@@ -1746,6 +1759,13 @@ export type Database = {
             columns: ["protocol_id"]
             isOneToOne: false
             referencedRelation: "protocols"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_logs_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
             referencedColumns: ["id"]
           },
         ]

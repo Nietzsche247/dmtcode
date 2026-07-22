@@ -27,10 +27,26 @@ interface UserStats {
   totalSaved: number;
 }
 
+interface ConfirmationGiven {
+  id: string;
+  image_url: string;
+  tags: string[] | null;
+}
+
+interface VoiceLog {
+  id: string;
+  created_at: string;
+  duration_seconds: number | null;
+  transcript: string | null;
+  symbol_id: string | null;
+}
+
 const Profile = () => {
   const navigate = useNavigate();
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
+  const [confirmationsGiven, setConfirmationsGiven] = useState<ConfirmationGiven[]>([]);
+  const [voiceLogs, setVoiceLogs] = useState<VoiceLog[]>([]);
   const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalValidations: 0, totalSaved: 0 });
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -49,7 +65,38 @@ const Profile = () => {
     setUserId(user.id);
     loadMySymbols(user.id);
     loadSavedSymbols(user.id);
+    loadConfirmationsGiven(user.id);
+    loadVoiceLogs(user.id);
     loadStats(user.id);
+  };
+
+  const loadConfirmationsGiven = async (uid: string) => {
+    const { data: votes } = await supabase
+      .from('symbol_votes')
+      .select('symbol_id')
+      .eq('user_id', uid)
+      .eq('vote_type', 'seen_it');
+
+    if (!votes || votes.length === 0) {
+      setConfirmationsGiven([]);
+      return;
+    }
+    const ids = votes.map(v => v.symbol_id);
+    const { data: symbols } = await supabase
+      .from('symbol_submissions')
+      .select('id, image_url, tags')
+      .in('id', ids);
+    if (symbols) setConfirmationsGiven(symbols as ConfirmationGiven[]);
+  };
+
+  const loadVoiceLogs = async (uid: string) => {
+    const { data } = await supabase
+      .from('voice_logs')
+      .select('id, created_at, duration_seconds, transcript, symbol_id')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (data) setVoiceLogs(data as VoiceLog[]);
   };
 
   const loadMySymbols = async (uid: string) => {
@@ -157,8 +204,10 @@ const Profile = () => {
             </div>
 
             <Tabs defaultValue="my-symbols" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsList className="grid w-full grid-cols-4 max-w-2xl">
                 <TabsTrigger value="my-symbols">My Symbols ({mySymbols.length})</TabsTrigger>
+                <TabsTrigger value="confirmations">Confirmations Given ({confirmationsGiven.length})</TabsTrigger>
+                <TabsTrigger value="voice">Voice Logs ({voiceLogs.length})</TabsTrigger>
                 <TabsTrigger value="saved">Saved ({savedSymbols.length})</TabsTrigger>
               </TabsList>
 
@@ -192,6 +241,60 @@ const Profile = () => {
                                 <Badge key={idx} variant="secondary" className="text-xs">{tag}</Badge>
                               ))}
                             </div>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="confirmations" className="mt-8">
+                {confirmationsGiven.length === 0 ? (
+                  <div className="text-center text-muted-foreground">
+                    You haven't confirmed any symbols yet.{' '}
+                    <a href="/registry" className="text-primary underline">Browse the registry</a>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {confirmationsGiven.map((s) => (
+                      <a key={s.id} href={`/registry/${s.id}`} className="block">
+                        <img
+                          src={s.image_url}
+                          alt={s.tags?.slice(0, 3).join(', ') || 'confirmed symbol'}
+                          className="w-full aspect-square border border-border object-contain bg-white hover:border-primary transition-colors"
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="voice" className="mt-8">
+                {voiceLogs.length === 0 ? (
+                  <div className="text-center text-muted-foreground">
+                    You haven't recorded any voice logs yet.{' '}
+                    <a href="/voice-logger" className="text-primary underline">Start a voice log</a>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {voiceLogs.map((log) => (
+                      <Card key={log.id} className="p-4 bg-card border-border">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-muted-foreground mb-1">
+                              {new Date(log.created_at).toLocaleString()}
+                              {log.duration_seconds ? ` · ${Math.round(log.duration_seconds)}s` : ''}
+                            </div>
+                            {log.transcript && (
+                              <p className="text-sm line-clamp-3">{log.transcript}</p>
+                            )}
+                          </div>
+                          {log.symbol_id && (
+                            <a href={`/registry/${log.symbol_id}`} className="text-xs text-primary underline shrink-0">
+                              Linked symbol
+                            </a>
                           )}
                         </div>
                       </Card>

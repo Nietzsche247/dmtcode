@@ -3,9 +3,8 @@ import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Star, Upload, CheckCircle2, Award } from 'lucide-react';
+import { Trophy, Star, Upload, Award } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,20 +25,8 @@ const Leaderboard = () => {
     }
   });
 
-  // Fetch user_stats for validation count leaderboard
-  const { data: topValidators, isLoading: validatorsLoading } = useQuery({
-    queryKey: ['leaderboard-validators'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('user_stats')
-        .select('*, user_id')
-        .order('total_validations', { ascending: false })
-        .limit(50);
-      
-      if (error) throw error;
-      return data || [];
-    }
-  });
+  // Validations tab retired: derived counts from user_stats were not aligned
+  // with real seen_it votes, so we removed the tab rather than show wrong numbers.
 
   const { data: registryStats } = useQuery({
     queryKey: ['registry-stats'],
@@ -66,7 +53,7 @@ const Leaderboard = () => {
     }
   });
 
-  const isLoading = profilesLoading || validatorsLoading;
+  const isLoading = profilesLoading;
 
   return (
     <>
@@ -152,7 +139,7 @@ const Leaderboard = () => {
 
             {/* Leaderboard Tabs */}
             <Tabs defaultValue="reputation" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="reputation">
                   <Award className="w-4 h-4 mr-2" />
                   Reputation
@@ -160,10 +147,6 @@ const Leaderboard = () => {
                 <TabsTrigger value="symbols">
                   <Upload className="w-4 h-4 mr-2" />
                   Symbol Count
-                </TabsTrigger>
-                <TabsTrigger value="validations">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Validations
                 </TabsTrigger>
               </TabsList>
 
@@ -260,55 +243,6 @@ const Leaderboard = () => {
                 ) : (
                   <Card className="p-8 text-center">
                     <p className="text-muted-foreground">No symbols submitted yet.</p>
-                  </Card>
-                )}
-              </TabsContent>
-
-              {/* Validations Tab */}
-              <TabsContent value="validations" className="space-y-4">
-                {isLoading ? (
-                  <Card className="p-8 text-center">
-                    <p className="text-muted-foreground">Loading leaderboard...</p>
-                  </Card>
-                ) : topValidators && topValidators.length > 0 ? (
-                  topValidators
-                    .filter(v => (v.total_validations || 0) > 0)
-                    .map((validator, index) => (
-                      <Card key={validator.id} className="p-6 border-border hover:border-primary/30 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold text-xl">
-                            {index === 0 && <Trophy className="w-6 h-6 text-gold" />}
-                            {index === 1 && <Trophy className="w-6 h-6 text-muted-foreground" />}
-                            {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
-                            {index > 2 && `#${index + 1}`}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold">Contributor #{validator.session_id?.slice(0, 8) || 'Anonymous'}</span>
-                              {validator.badges_earned && validator.badges_earned.length > 0 && (
-                                <Badge variant="secondary" className="text-xs">
-                                  <Star className="w-3 h-3 mr-1" />
-                                  {validator.badges_earned.length} badges
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {validator.total_submissions || 0} submissions · {validator.total_tags_added || 0} tags
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-gold flex items-center gap-1">
-                              <CheckCircle2 className="w-5 h-5" />
-                              {validator.total_validations || 0}
-                            </div>
-                            <div className="text-xs text-muted-foreground">Validations</div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))
-                ) : (
-                  <Card className="p-8 text-center">
-                    <p className="text-muted-foreground">No validations yet.</p>
                   </Card>
                 )}
               </TabsContent>

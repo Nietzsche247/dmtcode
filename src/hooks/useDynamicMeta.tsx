@@ -19,7 +19,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: 'DMT Code | Visual Symbol Discovery & Community Research Hub',
-      description: 'Explore the mystery of visual symbols reported during DMT experiences. Join 3,000+ replicators documenting the 650nm laser protocol phenomenon.',
+      description: 'Explore the mystery of visual symbols reported during DMT experiences. Join an independent replicator community documenting the 650nm laser protocol phenomenon.',
     },
   },
   tools: {
@@ -49,7 +49,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: 'Symbol Registry | Discover & Contribute | DMT Code',
-      description: 'Browse symbols reported by thousands of explorers. Submit your own observations and validate others. Join the community.',
+      description: 'Browse symbols reported by a broad community of explorers. Submit your own observations and validate others. Join the community.',
     },
   },
   events: {

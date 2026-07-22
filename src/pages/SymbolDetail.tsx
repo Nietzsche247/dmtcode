@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { VotingButtons } from '@/components/registry/VotingButtons';
 import { SeenItButton } from '@/components/registry/SeenItButton';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
+import { TagsManager } from '@/components/registry/TagsManager';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
@@ -359,21 +360,16 @@ const SymbolDetail = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <Card className="p-4 bg-card/50 text-center">
-                    <ChevronUp className="w-5 h-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{symbol.upvotes}</div>
-                    <div className="text-xs text-muted-foreground">Upvotes</div>
-                  </Card>
+                <div className="grid grid-cols-2 gap-4">
                   <Card className="p-4 bg-card/50 text-center">
                     <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
                     <div className="text-2xl font-bold">{validationCount}</div>
-                    <div className="text-xs text-muted-foreground">Validations</div>
+                    <div className="text-xs text-muted-foreground">Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}</div>
                   </Card>
                   <Card className="p-4 bg-card/50 text-center">
                     <Target className="w-5 h-5 mx-auto mb-1 text-primary" />
                     <div className="text-2xl font-bold">{validationPercentage}%</div>
-                    <div className="text-xs text-muted-foreground">Validated</div>
+                    <div className="text-xs text-muted-foreground">Validation rate</div>
                   </Card>
                 </div>
 
@@ -388,6 +384,12 @@ const SymbolDetail = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Community tap-to-tag */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Community Tags</h3>
+                  <TagsManager symbolId={symbol.id} />
+                </div>
 
                 {/* Metadata */}
                 <Card className="p-4 bg-card/50">

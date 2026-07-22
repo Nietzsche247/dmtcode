@@ -142,7 +142,7 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">6. Do naive participants (no prior protocol knowledge) report similar symbols?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Critical test of expectation bias. Blinded participants unaware of protocol or expected symbols would establish baseline symbol frequency without priming. Current 87% consistency figure derived from self-selected replicators aware of protocol details.
+                  Critical test of expectation bias. Blinded participants unaware of protocol or expected symbols would establish baseline symbol frequency without priming. Current notable consistency figure derived from self-selected replicators aware of protocol details.
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Gold-standard design: Double-blind, randomized controlled trial recruiting DMT-naive participants with no exposure to protocol discussions or symbol examples.

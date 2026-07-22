@@ -21,7 +21,7 @@ export const RegistryRationale = () => {
           </div>
 
           <p>
-            <strong>Inter-subject consistency:</strong> Davis et al. (2021) surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, <strong>87% reported observing similar discrete visual symbols</strong> across independent, non-communicating sessions.
+            <strong>Inter-subject consistency:</strong> Davis et al. (2021) surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, <strong>notable convergence similar discrete visual symbols</strong> across independent, non-communicating sessions.
           </p>
 
           <p>

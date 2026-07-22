@@ -12,7 +12,7 @@ const Glossary = () => {
     },
     {
       term: "Alphabetic-like Symbol",
-      definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic). Reported with 87% inter-subject consistency during 650 nm laser exposure."
+      definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic). Reported with notable inter-subject consistency during 650 nm laser exposure."
     },
     {
       term: "Coherent Light",
@@ -36,7 +36,7 @@ const Glossary = () => {
     },
     {
       term: "Inter-subject Consistency",
-      definition: "Degree to which independent observers report identical or highly similar phenomena under controlled conditions. 650 nm protocol shows 87% consistency rate across 3,000+ replicators."
+      definition: "Degree to which independent observers report identical or highly similar phenomena under controlled conditions. 650 nm protocol shows notable consistency across independent replicators."
     },
     {
       term: "Motif Tag",
@@ -88,7 +88,7 @@ const Glossary = () => {
     },
     {
       term: "Cross-Replication",
-      definition: "Independent verification of reported phenomena by multiple observers under similar conditions. The 87% inter-subject consistency rate represents partial cross-replication of symbol observations."
+      definition: "Independent verification of reported phenomena by multiple observers under similar conditions. The notable inter-subject consistency rate represents partial cross-replication of symbol observations."
     },
     {
       term: "Dose-Response Relationship",

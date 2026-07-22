@@ -93,7 +93,7 @@ const Critiques = () => {
               <h2 className="text-2xl font-semibold mb-4">Morris Skepticism: Anecdotal Reports vs. Controlled Experiments</h2>
               <div className="space-y-4 text-base leading-relaxed">
                 <p>
-                  Dr. Morris (unpublished critique, 2024) challenges the evidentiary basis for 650 nm laser protocol claims. Core argument: anecdotal reports from 3,000+ replicators, while impressive in scale, cannot establish causal relationships without controlled experimental validation. Key methodological concerns include:
+                  Dr. Morris (unpublished critique, 2024) challenges the evidentiary basis for 650 nm laser protocol claims. Core argument: anecdotal reports from an independent replicator community, while impressive in scale, cannot establish causal relationships without controlled experimental validation. Key methodological concerns include:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li><strong>Selection bias:</strong> Participants aware of expected outcomes (discrete symbols) may unconsciously filter perceptions toward confirmation. Online communities discussing protocol create shared expectation framework.</li>
@@ -102,7 +102,7 @@ const Critiques = () => {
                   <li><strong>Pattern-seeking cognition:</strong> Human visual system evolved to detect patterns in ambiguous stimuli (pareidolia). DMT-induced visual noise combined with focused attention may generate perceived "symbols" from random patterns.</li>
                 </ul>
                 <p>
-                  Morris argues that 87% consistency figure, while striking, requires context: consistency among self-selected participants using protocol after learning about expected phenomena. Double-blind, placebo-controlled trial would resolve whether consistency persists without expectation priming. Until such data exist, skepticism remains warranted.
+                  Morris argues that notable consistency figure, while striking, requires context: consistency among self-selected participants using protocol after learning about expected phenomena. Double-blind, placebo-controlled trial would resolve whether consistency persists without expectation priming. Until such data exist, skepticism remains warranted.
                 </p>
                 <p className="text-sm text-muted-foreground italic">
                   Counter-perspective: Geographic and temporal dispersion of reports suggests independent replication rather than coordinated fabrication. Symbol complexity (alphabetic-like characters, geometric precision) exceeds typical pareidolia patterns. Nonetheless, Morris critique highlights need for rigorous experimental validation.

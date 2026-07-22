@@ -31,6 +31,10 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasPr
   
   const canvasSize = isMobile ? 300 : 400;
   const gridSize = canvasSize / 8;
+  // Standardize every exported PNG to 512x512 regardless of device size,
+  // so the same symbol yields a comparable asset for downstream analysis.
+  const EXPORT_SIZE = 512;
+  const exportMultiplier = EXPORT_SIZE / canvasSize;
 
   // Prevent page scroll on touch devices while drawing
   useEffect(() => {

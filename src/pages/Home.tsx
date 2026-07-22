@@ -183,7 +183,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Davis et al. (2021) documented 87% inter-subject consistency: independent observers draw nearly identical symbols without prior communication.</span>
+                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers draw nearly identical symbols without prior communication.</span>
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
@@ -234,10 +234,10 @@ const Home = () => {
                   DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone can contribute. All submissions are reviewed by moderators before publication.
                 </p>
                 <p>
-                  Danny Goler developed this protocol and Chase Hughes validated it across 3,000+ independent sessions. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
+                  Danny Goler developed this protocol and Chase Hughes validated it across independent replicators. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
                 </p>
                 <p>
-                  Davis et al. (2021) documented an 87% inter-subject consistency rate. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
+                  Davis et al. (2021) documented an notable inter-subject consistency rate. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
                 </p>
               </div>
             </AnimatedSection>

@@ -93,7 +93,7 @@ const ProtocolGuide = () => {
           <section className="container mx-auto px-4 py-16 max-w-5xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-8">Complete 650 nm Laser Protocol</h1>
             <p className="text-lg text-muted-foreground mb-12">
-              Step-by-step guide developed by Danny Goler, validated by Chase Hughes across 3,000+ replicators
+              Step-by-step guide developed by Danny Goler, validated by Chase Hughes across independent replicators
             </p>
 
             {/* Safety Warning */}
@@ -208,7 +208,7 @@ const ProtocolGuide = () => {
                   </div>
                   <div className="bg-muted/30 p-4 rounded-lg mb-6">
                     <p className="text-sm text-muted-foreground">
-                      <strong>Inter-Subject Consistency:</strong> Davis et al. (2021) documented 87% consistency in symbol observations across independent replicators using identical laser specifications. DOI: 10.1002/hup.2806
+                      <strong>Inter-Subject Consistency:</strong> Davis et al. (2021) documented notable consistency in symbol observations across independent replicators using identical laser specifications. DOI: 10.1002/hup.2806
                     </p>
                   </div>
                   <p className="text-base text-muted-foreground">
