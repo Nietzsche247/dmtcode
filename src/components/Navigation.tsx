@@ -94,8 +94,8 @@ export const Navigation = () => {
     { path: '/events', label: 'Events & Retreats' },
     { path: '/tools', label: 'Tools & Equipment' },
     { path: '/leaderboard', label: 'Community' },
-    ...(mode === 'explorer' ? [{ path: '/community/woo', label: 'Mysticism Store' }] : []),
   ];
+
 
   const resourceItems = [
     { path: '/protocol-guide', label: 'Protocol Guide' },
