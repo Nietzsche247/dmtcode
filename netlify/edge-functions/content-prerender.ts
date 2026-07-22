@@ -168,9 +168,13 @@ export default async (request: Request, context: Context) => {
     } else if (kind === "trials") {
       const f =
         "id,title,description,institution,principal_investigator,status," +
-        "start_date,end_date,trial_registry_id,doi,url,created_at,updated_at";
+        "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return shellRes;
+      const isRegisteredTrial =
+        r.record_type === "registered_trial" ||
+        (typeof r.trial_registry_id === "string" &&
+          /^NCT/i.test(r.trial_registry_id));
 
       const desc =
         (r.description && String(r.description).trim()) ||
