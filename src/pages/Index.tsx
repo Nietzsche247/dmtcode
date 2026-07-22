@@ -4,7 +4,7 @@ import { HeroSection } from '@/components/HeroSection';
 import { ExplainerSection } from '@/components/ExplainerSection';
 import { ResearchSection } from '@/components/ResearchSection';
 import { TheoriesSection } from '@/components/TheoriesSection';
-import { CommunityGlyphCodex } from '@/components/CommunityGlyphCodex';
+
 import { ResearchPapersSection } from '@/components/ResearchPapersSection';
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
@@ -98,7 +98,7 @@ const Index = () => {
           <ExplainerSection />
           <ResearchSection />
           <TheoriesSection />
-          <CommunityGlyphCodex />
+          
           <TestimonialsCarousel />
           <LaserGuide />
           <ShopSection />

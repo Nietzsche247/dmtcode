@@ -2,7 +2,7 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
 import { ResearchSection } from '@/components/ResearchSection';
 import { TheoriesSection } from '@/components/TheoriesSection';
-import { CommunityGlyphCodex } from '@/components/CommunityGlyphCodex';
+
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -67,7 +67,7 @@ const Research = () => {
             <ResearchSection />
             <TheoriesSection />
             <TheoriesDashboard />
-            <CommunityGlyphCodex />
+            
           </div>
         </main>
 

@@ -27,11 +27,11 @@ interface UserBadge {
 
 interface UserSymbol {
   id: string;
-  image_data: string;
-  confirmation_count: number;
-  motif_tags: string[];
+  image_url: string;
+  upvotes: number;
+  tags: string[] | null;
   created_at: string;
-  orcid?: string;
+  description?: string | null;
 }
 
 const MySymbols = () => {
@@ -101,13 +101,13 @@ const MySymbols = () => {
 
   const loadUserSymbols = async (uid: string) => {
     const { data } = await supabase
-      .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags, created_at, orcid')
+      .from('symbol_submissions')
+      .select('id, image_url, upvotes, tags, created_at, description')
       .eq('user_id', uid)
       .order('created_at', { ascending: false });
-    
+
     if (data) {
-      setUserSymbols(data);
+      setUserSymbols(data as UserSymbol[]);
     }
   };
 
@@ -257,38 +257,22 @@ const MySymbols = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {userSymbols.map(symbol => (
                   <Card key={symbol.id} className="p-4 bg-card border-border">
-                    <img 
-                      src={symbol.image_data} 
-                      alt={`Your symbol - ${symbol.motif_tags?.slice(0, 2).join(', ') || 'visual symbol'}`}
-                      className="w-full h-auto mb-3 border border-border"
-                      style={{ imageRendering: 'pixelated' }}
+                    <img
+                      src={symbol.image_url}
+                      alt={`Your symbol - ${symbol.tags?.slice(0, 2).join(', ') || 'visual symbol'}`}
+                      className="w-full h-auto mb-3 border border-border object-contain bg-white"
                     />
                     <div className="text-center mb-3">
                       <p className="text-sm font-semibold">
-                        {symbol.confirmation_count} {symbol.confirmation_count === 1 ? 'Report' : 'Reports'}
+                        {symbol.upvotes} {symbol.upvotes === 1 ? 'Confirmation' : 'Confirmations'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(symbol.created_at).toLocaleDateString()}
                       </p>
-                      {symbol.orcid && (
-                        <a 
-                          href={`https://orcid.org/${symbol.orcid}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
-                        >
-                          <img 
-                            src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" 
-                            alt="ORCID" 
-                            className="w-3 h-3"
-                          />
-                          {symbol.orcid}
-                        </a>
-                      )}
                     </div>
-                    {symbol.motif_tags && symbol.motif_tags.length > 0 && (
+                    {symbol.tags && symbol.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-center">
-                        {symbol.motif_tags.slice(0, 3).map((tag, idx) => (
+                        {symbol.tags.slice(0, 3).map((tag, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {tag}
                           </Badge>
