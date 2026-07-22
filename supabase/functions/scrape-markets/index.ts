@@ -85,19 +85,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Verify cron secret or allow manual trigger
-  const authHeader = req.headers.get("Authorization")
+  // Require cron secret or service-role Authorization on every request
+  const authHeader = req.headers.get("Authorization") ?? ""
   const cronSecret = Deno.env.get("CRON_SECRET")
-  
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    // Allow if called with service role key
-    const isServiceRole = authHeader?.includes(SUPABASE_SERVICE_ROLE_KEY)
-    if (!isServiceRole && req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { 
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      })
-    }
+  const isCron = cronSecret ? authHeader === `Bearer ${cronSecret}` : false
+  const isServiceRole = authHeader.includes(SUPABASE_SERVICE_ROLE_KEY)
+  if (!isCron && !isServiceRole) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    })
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
