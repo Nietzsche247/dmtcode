@@ -16,12 +16,20 @@ interface Trial {
   description: string | null;
   institution: string | null;
   principal_investigator: string | null;
+  organizer_lead: string | null;
+  trial_type: string | null;
   status: string | null;
+  confirmed_status: string | null;
   start_date: string | null;
   end_date: string | null;
+  location: string | null;
+  eligibility: string | null;
   trial_registry_id: string | null;
   doi: string | null;
   url: string | null;
+  application_url: string | null;
+  source: string | null;
+  notes: string | null;
   updated_at: string;
   created_at: string;
 }
