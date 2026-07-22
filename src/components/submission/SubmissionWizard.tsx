@@ -103,6 +103,27 @@ export const SubmissionWizard = () => {
         .from('symbol-drawings')
         .getPublicUrl(filename);
 
+      // Capture vector representations from the live Fabric canvas.
+      // These are additive and only populated for NEW submissions.
+      let svgData: string | null = null;
+      let vectorJson: any | null = null;
+      try {
+        if (fabricCanvasRef.current) {
+          // Exclude grid overlay lines from vector export
+          const canvas = fabricCanvasRef.current;
+          const drawnObjects = canvas.getObjects().filter((o: any) => !o.isGridLine);
+          const jsonAll = canvas.toJSON();
+          vectorJson = { ...jsonAll, objects: (jsonAll.objects || []).filter((_: any, i: number) => !(canvas.getObjects()[i] as any)?.isGridLine) };
+          // Fallback simpler: rebuild by mapping only drawn indices
+          if (!vectorJson.objects || vectorJson.objects.length !== drawnObjects.length) {
+            vectorJson = canvas.toJSON();
+          }
+          svgData = canvas.toSVG();
+        }
+      } catch (e) {
+        console.warn('Vector capture failed, continuing with PNG only', e);
+      }
+
       // Create submission record with metadata
       const { data: submission, error: insertError } = await supabase
         .from('symbol_submissions')
@@ -119,6 +140,8 @@ export const SubmissionWizard = () => {
           duration_seconds: metadata.durationSeconds || null,
           recurrence: metadata.recurrence || null,
           emotional_valence: metadata.emotionalValence || null,
+          svg_data: svgData,
+          vector_json: vectorJson,
         })
         .select()
         .single();
