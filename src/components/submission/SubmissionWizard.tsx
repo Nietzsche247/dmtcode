@@ -30,6 +30,7 @@ export const SubmissionWizard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [symmetryMode, setSymmetryMode] = useState(false);
+  const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   
   const navigate = useNavigate();
   const { trackStepCompleted, trackSubmissionSubmitted, trackSubmissionAbandoned } = useSubmissionTracking();
