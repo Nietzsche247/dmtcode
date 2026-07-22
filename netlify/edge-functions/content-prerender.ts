@@ -261,20 +261,11 @@ export default async (request: Request, context: Context) => {
       return shellRes;
     }
 
-    const head = [
-      `<title>${esc(title)}</title>`,
-      `<meta name="description" content="${esc(metaDesc)}" />`,
-      `<link rel="canonical" href="${esc(canonical)}" />`,
-      `<meta property="og:type" content="article" />`,
-      `<meta property="og:title" content="${esc(title)}" />`,
-      `<meta property="og:description" content="${esc(metaDesc)}" />`,
-      `<meta property="og:url" content="${esc(canonical)}" />`,
-      ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
-      `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
-      `<meta name="twitter:title" content="${esc(title)}" />`,
     const robotsMeta = noindex
       ? `<meta name="robots" content="noindex,follow" />`
       : "";
+
+
 
 
 
