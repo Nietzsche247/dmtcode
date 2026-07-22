@@ -531,9 +531,10 @@ const BundleDetail = () => {
               "@type": "Offer",
               "price": bundle.price,
               "priceCurrency": "USD",
-              "availability": "https://schema.org/PreOrder",
-              "priceValidUntil": "2025-12-31"
+              "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "priceValidUntil": "2026-12-31"
             },
+
             "aggregateRating": {
               "@type": "AggregateRating",
               "ratingValue": "4.8",
