@@ -81,6 +81,7 @@ const SubmitSymbol = () => {
         <title>Submit Symbol | DMT Code</title>
         <meta name="description" content="Draw and submit visual symbols to the DMT Code registry using our multi-step submission wizard." />
         <link rel="canonical" href="https://dmtcode.com/submit-symbol" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <Navigation />
