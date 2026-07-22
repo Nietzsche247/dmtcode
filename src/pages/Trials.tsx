@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
+import { ExternalLink } from 'lucide-react';
 
 interface Trial {
   id: string;
@@ -24,6 +25,11 @@ interface Trial {
   institution: string | null;
   principal_investigator: string | null;
   status: string | null;
+  confirmed_status: string | null;
+  trial_type: string | null;
+  location: string | null;
+  source: string | null;
+  application_url: string | null;
   start_date: string | null;
   end_date: string | null;
   trial_registry_id: string | null;
@@ -42,7 +48,10 @@ const Trials = () => {
 
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
   const [institutionFilter, setInstitutionFilter] = useState<string>('all');
+  const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [sort, setSort] = useState<'newest' | 'oldest' | 'title'>('newest');
   const [page, setPage] = useState(1);
 
@@ -59,22 +68,22 @@ const Trials = () => {
     })();
   }, []);
 
-  const statuses = useMemo(() => {
-    const s = new Set<string>();
-    trials.forEach((t) => t.status && s.add(t.status));
-    return Array.from(s).sort();
-  }, [trials]);
+  const uniq = (vals: (string | null)[]) =>
+    Array.from(new Set(vals.filter((v): v is string => !!v))).sort();
 
-  const institutions = useMemo(() => {
-    const s = new Set<string>();
-    trials.forEach((t) => t.institution && s.add(t.institution));
-    return Array.from(s).sort();
-  }, [trials]);
+  const statuses = useMemo(
+    () => uniq(trials.map((t) => t.confirmed_status || t.status)),
+    [trials]
+  );
+  const types = useMemo(() => uniq(trials.map((t) => t.trial_type)), [trials]);
+  const locations = useMemo(() => uniq(trials.map((t) => t.location)), [trials]);
+  const institutions = useMemo(() => uniq(trials.map((t) => t.institution)), [trials]);
+  const sources = useMemo(() => uniq(trials.map((t) => t.source)), [trials]);
 
   const recruitingCount = useMemo(
     () =>
       trials.filter((t) =>
-        (t.status || '').toLowerCase().includes('recruit')
+        (t.confirmed_status || t.status || '').toLowerCase().includes('recruit')
       ).length,
     [trials]
   );
@@ -89,15 +98,14 @@ const Trials = () => {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     let rows = trials.filter((t) => {
-      if (statusFilter !== 'all' && t.status !== statusFilter) return false;
-      if (institutionFilter !== 'all' && t.institution !== institutionFilter)
-        return false;
+      const effectiveStatus = t.confirmed_status || t.status;
+      if (statusFilter !== 'all' && effectiveStatus !== statusFilter) return false;
+      if (typeFilter !== 'all' && t.trial_type !== typeFilter) return false;
+      if (locationFilter !== 'all' && t.location !== locationFilter) return false;
+      if (institutionFilter !== 'all' && t.institution !== institutionFilter) return false;
+      if (sourceFilter !== 'all' && t.source !== sourceFilter) return false;
       if (term) {
-        const hay = [
-          t.title,
-          t.description || '',
-          t.principal_investigator || '',
-        ]
+        const hay = [t.title, t.institution || '']
           .join(' ')
           .toLowerCase();
         if (!hay.includes(term)) return false;
@@ -106,16 +114,16 @@ const Trials = () => {
     });
     rows = [...rows].sort((a, b) => {
       if (sort === 'title') return a.title.localeCompare(b.title);
-      const av = a.start_date ? new Date(a.start_date).getTime() : 0;
-      const bv = b.start_date ? new Date(b.start_date).getTime() : 0;
+      const av = new Date(a.start_date || a.created_at).getTime();
+      const bv = new Date(b.start_date || b.created_at).getTime();
       return sort === 'newest' ? bv - av : av - bv;
     });
     return rows;
-  }, [trials, q, statusFilter, institutionFilter, sort]);
+  }, [trials, q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, statusFilter, institutionFilter, sort]);
+  }, [q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = visible.length < filtered.length;
@@ -123,7 +131,10 @@ const Trials = () => {
   const clearFilters = () => {
     setQ('');
     setStatusFilter('all');
+    setTypeFilter('all');
+    setLocationFilter('all');
     setInstitutionFilter('all');
+    setSourceFilter('all');
     setSort('newest');
   };
 
@@ -186,16 +197,16 @@ const Trials = () => {
           </p>
           <p className="mt-4 max-w-2xl text-muted-foreground">
             An open atlas of active and historical DMT-related clinical trials.
-            Filter by status or institution to explore the current research frontier.
+            Filter by status, type, location or institution to explore the current research frontier.
           </p>
         </header>
 
-        <section className="mb-8 grid gap-3 md:grid-cols-4">
+        <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <Input
-            placeholder="Search title, description, PI…"
+            placeholder="Search title or institution"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="md:col-span-2"
+            className="sm:col-span-2 lg:col-span-2"
           />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
@@ -206,8 +217,35 @@ const Trials = () => {
               ))}
             </SelectContent>
           </Select>
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types</SelectItem>
+              {types.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={locationFilter} onValueChange={setLocationFilter}>
+            <SelectTrigger><SelectValue placeholder="Location" /></SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all">All locations</SelectItem>
+              {locations.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={sourceFilter} onValueChange={setSourceFilter}>
+            <SelectTrigger><SelectValue placeholder="Source" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All sources</SelectItem>
+              {sources.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select value={institutionFilter} onValueChange={setInstitutionFilter}>
-            <SelectTrigger><SelectValue placeholder="Institution" /></SelectTrigger>
+            <SelectTrigger className="sm:col-span-2 lg:col-span-2"><SelectValue placeholder="Institution" /></SelectTrigger>
             <SelectContent className="max-h-72">
               <SelectItem value="all">All institutions</SelectItem>
               {institutions.map((i) => (
@@ -217,18 +255,21 @@ const Trials = () => {
           </Select>
         </section>
 
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <p className="label-data text-xs text-muted-foreground">
             {loading ? '' : `${filtered.length} RESULTS`}
           </p>
-          <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest start date</SelectItem>
-              <SelectItem value="oldest">Oldest start date</SelectItem>
-              <SelectItem value="title">Title A–Z</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={clearFilters}>Reset</Button>
+            <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
+              <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest first</SelectItem>
+                <SelectItem value="oldest">Oldest first</SelectItem>
+                <SelectItem value="title">Title A–Z</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {loading ? (
@@ -250,32 +291,48 @@ const Trials = () => {
         ) : (
           <>
             <ul className="grid gap-4">
-              {visible.map((t) => (
-                <li key={t.id}>
-                  <Link
-                    to={`/trials/${t.id}`}
-                    className="block rounded border border-border/60 bg-card p-5 transition-colors hover:border-foreground/40"
-                  >
-                    <h2 className="font-display text-xl leading-snug">{t.title}</h2>
-                    <p className="label-data mt-2 text-[11px] text-muted-foreground">
-                      {[
-                        t.status || 'STATUS UNKNOWN',
-                        t.institution,
-                        t.start_date ? `START ${format(new Date(t.start_date), 'yyyy-MM-dd')}` : null,
-                        t.trial_registry_id,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ')
-                        .toUpperCase()}
-                    </p>
-                    {t.description && (
-                      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-                        {t.description}
-                      </p>
-                    )}
-                  </Link>
-                </li>
-              ))}
+              {visible.map((t) => {
+                const eff = t.confirmed_status || t.status;
+                return (
+                  <li key={t.id}>
+                    <div className="rounded border border-border/60 bg-card p-5 transition-colors hover:border-foreground/40">
+                      <Link to={`/trials/${t.id}`} className="block">
+                        <h2 className="font-display text-xl leading-snug">{t.title}</h2>
+                        <p className="label-data mt-2 text-[11px] text-muted-foreground">
+                          {[
+                            eff || 'STATUS UNKNOWN',
+                            t.trial_type,
+                            t.location,
+                            t.institution,
+                            t.start_date ? `START ${format(new Date(t.start_date), 'yyyy-MM-dd')}` : null,
+                            t.source,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')
+                            .toUpperCase()}
+                        </p>
+                        {t.description && (
+                          <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
+                            {t.description}
+                          </p>
+                        )}
+                      </Link>
+                      {t.application_url && (
+                        <div className="mt-3">
+                          <a
+                            href={t.application_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                          >
+                            Apply <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
             {hasMore && (
               <div className="mt-8 flex justify-center">
