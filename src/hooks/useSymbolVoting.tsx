@@ -56,6 +56,23 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     setUserId(user?.id ?? null);
   };
 
+  // Engagement-only: never touches symbol_votes or convergence counts.
+  const logReviewActivity = useCallback(async (source: string) => {
+    if (!userId) return;
+    try {
+      await (supabase as any)
+        .from('review_activity')
+        .upsert(
+          { user_id: userId, source },
+          { onConflict: 'user_id,activity_date', ignoreDuplicates: true }
+        );
+      window.dispatchEvent(new CustomEvent('review-activity-logged'));
+    } catch (e) {
+      // Non-blocking. Streak is a nice-to-have; never fail the vote.
+      console.warn('review_activity log failed', e);
+    }
+  }, [userId]);
+
   const loadVoteCounts = async () => {
     const { data, error } = await supabase
       .from('symbol_votes')
