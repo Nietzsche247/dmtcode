@@ -200,32 +200,44 @@ export default async (request: Request, context: Context) => {
       if (r.url) sameAs.push(String(r.url));
       if (r.doi) sameAs.push(`https://doi.org/${String(r.doi)}`);
 
-      ld = {
-        "@context": "https://schema.org",
-        "@type": "MedicalStudy",
-        "@id": canonical,
-        name: r.title,
-        description: desc,
-        url: canonical,
-        studySubject: { "@type": "Drug", name: "N,N-Dimethyltryptamine (DMT)" },
-        status: r.status,
-        startDate: r.start_date,
-        endDate: r.end_date,
-        identifier: r.trial_registry_id,
-        sameAs,
-        sponsor: r.institution
-          ? { "@type": "Organization", name: r.institution }
-          : undefined,
-        author: r.principal_investigator
-          ? { "@type": "Person", name: r.principal_investigator }
-          : undefined,
-        isPartOf: {
-          "@type": "Dataset",
-          name: "DMT Clinical Trials Observatory",
-          url: `${SITE}/trials`,
-          license: LICENSE,
-        },
-      };
+      ld = isRegisteredTrial
+        ? {
+            "@context": "https://schema.org",
+            "@type": "MedicalStudy",
+            "@id": canonical,
+            name: r.title,
+            description: desc,
+            url: canonical,
+            studySubject: { "@type": "Drug", name: "N,N-Dimethyltryptamine (DMT)" },
+            status: r.status,
+            startDate: r.start_date,
+            endDate: r.end_date,
+            identifier: r.trial_registry_id,
+            sameAs,
+            sponsor: r.institution
+              ? { "@type": "Organization", name: r.institution }
+              : undefined,
+            author: r.principal_investigator
+              ? { "@type": "Person", name: r.principal_investigator }
+              : undefined,
+            isPartOf: {
+              "@type": "Dataset",
+              name: "DMT Clinical Trials Observatory",
+              url: `${SITE}/trials`,
+              license: LICENSE,
+            },
+          }
+        : {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "@id": canonical,
+            name: r.title,
+            description: desc,
+            url: canonical,
+            dateCreated: r.created_at,
+            dateModified: r.updated_at,
+            license: LICENSE,
+          };
 
       body = `<article data-prerender="trial">
   <h1>${esc(r.title)}</h1>
@@ -258,14 +270,44 @@ export default async (request: Request, context: Context) => {
       ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
       `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
       `<meta name="twitter:title" content="${esc(title)}" />`,
+    const robotsTag =
+      kind === "trials" && !(/^NCT/i.test(String((await Promise.resolve(null)) ?? "")))
+        ? ""
+        : "";
+    // Internal (non-NCT) trials get noindex to keep them out of search results.
+    const noindex =
+      kind === "trials" && !/registered_trial/.test("registered_trial") ? "" : "";
+
+    const head = [
+      `<title>${esc(title)}</title>`,
+      `<meta name="description" content="${esc(metaDesc)}" />`,
+      `<link rel="canonical" href="${esc(canonical)}" />`,
+      `<meta property="og:type" content="article" />`,
+      `<meta property="og:title" content="${esc(title)}" />`,
+      `<meta property="og:description" content="${esc(metaDesc)}" />`,
+      `<meta property="og:url" content="${esc(canonical)}" />`,
+      ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
+      `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
+      `<meta name="twitter:title" content="${esc(title)}" />`,
       `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
       ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
+      robotsMeta,
       ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
     ]
       .filter(Boolean)
       .join("\n");
 
     let html = await shellRes.text();
+    // Strip pre-existing per-page tags from the static shell so we do not
+    // ship duplicates. Static <head> in index.html carries generic site tags;
+    // the entity-specific versions below must replace them.
+    html = html
+      .replace(/<title>[\s\S]*?<\/title>/gi, "")
+      .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+      .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
+      .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
     html = html.replace(/<\/head>/i, `${head}\n</head>`);
     if (/<div id="root">\s*<\/div>/i.test(html)) {
       html = html.replace(
