@@ -107,6 +107,7 @@ const App = () => (
         <GrainOverlay />
         <BrowserRouter>
           <GA4Tracker />
+          <AvatarToastListener />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
