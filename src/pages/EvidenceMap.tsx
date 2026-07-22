@@ -144,10 +144,10 @@ const EvidenceMap = () => {
           <section className="container mx-auto px-4 py-12 max-w-7xl">
             <div className="text-center mb-8">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Evidence Timeline: 100 Years of DMT Research
+                Is the DMT code real?
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                From Klüver's form constants (1926) to the 650 nm laser protocol (2025): explore 30 key milestones with clickable DOIs and peer-reviewed citations
+                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Explore 30 stance-scored milestones with clickable DOIs and peer-reviewed citations.
               </p>
               <div className="mt-6">
                 <a
