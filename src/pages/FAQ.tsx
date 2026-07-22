@@ -141,7 +141,7 @@ const FAQ = () => {
                     Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences.
                   </p>
                   <p>
-                    <strong>notable inter-subject consistency</strong> reported across independent replicators. Symbols appear on walls, ceilings, skin, and closed eyelids when 650 nm laser is applied during N,N-DMT administration.
+                    <strong>Notable inter-subject consistency</strong> has been reported across independent replicators. Symbols appear on walls, ceilings, skin, and closed eyelids when 650 nm laser is applied during N,N-DMT administration.
                   </p>
                   <a 
                     href="https://doi.org/10.1002/hup.2806" 
