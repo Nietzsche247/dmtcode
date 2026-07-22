@@ -269,7 +269,7 @@ const Auth = () => {
                 onClick={() => setActiveTab('signup')}
                 className="text-primary hover:underline font-medium"
               >
-                Sign up
+                Create an account
               </button>
             </>
           ) : (
