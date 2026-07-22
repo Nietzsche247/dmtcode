@@ -78,6 +78,8 @@ const Woo = () => {
         <title>Mysticism & Symbolism Store | DMT Code Community</title>
         <meta name="description" content="Explore Jewish mysticism symbols and protective amulets. Collection includes Hamsa, Star of David, Chai, Pomegranate, Evil Eye, Mezuzah, and Kabbalah Tree of Life items." />
         <link rel="canonical" href="https://dmtcode.com/community/woo" />
+        <meta name="robots" content="noindex, nofollow" />
+
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
