@@ -83,6 +83,7 @@ export default async (request: Request, context: Context) => {
     let ld: Record<string, unknown> | null = null;
     let body = "";
     let ogImage = "";
+    let noindex = false;
 
     if (kind === "registry") {
       const f =
