@@ -535,12 +535,8 @@ const BundleDetail = () => {
               "priceValidUntil": "2026-12-31"
             },
 
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "reviewCount": "24"
-            }
           })}
+
         </script>
         <script type="application/ld+json">
           {JSON.stringify({
