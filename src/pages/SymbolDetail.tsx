@@ -322,6 +322,7 @@ const SymbolDetail = () => {
                   submitterId={symbol.user_id}
                   size="lg"
                   className="w-full justify-center"
+                  imageUrl={symbol.image_url}
                 />
 
                 {/* Actions */}
