@@ -1,4 +1,4 @@
-import { ChevronUp, ChevronDown, Eye, Ban } from 'lucide-react';
+import { ChevronUp, ChevronDown, Eye, Ban, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -28,6 +28,7 @@ export const VotingButtons = ({
     upvote,
     downvote,
     seenIt,
+    markReviewed,
   } = useSymbolVoting(symbolId, submitterId);
   
   const { trackSelfVoteAttempted } = useUgcTracking();
@@ -128,6 +129,20 @@ export const VotingButtons = ({
           label={isOwnSubmission ? "Can't vote on own submission" : "I've seen this too"}
           activeClass="text-primary bg-primary/10"
         />
+        {userId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={markReviewed}
+            disabled={loading}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+            aria-label="Mark reviewed, no opinion"
+            title="Reviewed, no opinion"
+          >
+            <Check className="w-4 h-4" />
+            <span className="text-xs">Reviewed</span>
+          </Button>
+        )}
       </div>
     );
   }
@@ -231,6 +246,20 @@ export const VotingButtons = ({
           )}
         </Tooltip>
       </TooltipProvider>
+
+      {userId && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={markReviewed}
+          disabled={loading}
+          className="w-full text-muted-foreground hover:text-foreground"
+        >
+          <Check className="w-4 h-4 mr-2" />
+          Reviewed, no opinion
+        </Button>
+      )}
+
 
       {!userId && (
         <p className="text-xs text-muted-foreground text-center">

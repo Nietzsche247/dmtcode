@@ -56,6 +56,23 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     setUserId(user?.id ?? null);
   };
 
+  // Engagement-only: never touches symbol_votes or convergence counts.
+  const logReviewActivity = useCallback(async (source: string) => {
+    if (!userId) return;
+    try {
+      await (supabase as any)
+        .from('review_activity')
+        .upsert(
+          { user_id: userId, source },
+          { onConflict: 'user_id,activity_date', ignoreDuplicates: true }
+        );
+      window.dispatchEvent(new CustomEvent('review-activity-logged'));
+    } catch (e) {
+      // Non-blocking. Streak is a nice-to-have; never fail the vote.
+      console.warn('review_activity log failed', e);
+    }
+  }, [userId]);
+
   const loadVoteCounts = async () => {
     const { data, error } = await supabase
       .from('symbol_votes')
@@ -163,6 +180,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         toast.success(
           voteType === 'seen_it' ? 'Validation recorded' : 'Vote recorded'
         );
+
+        // Log engagement activity (upvote/downvote/seen_it all count as a review).
+        await logReviewActivity(voteType);
       }
 
       // Reload votes
@@ -175,7 +195,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, symbolId, userVotes, isOwnSubmission]);
+  }, [userId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
 
   return {
     userId,
@@ -187,5 +207,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     upvote: () => vote('upvote'),
     downvote: () => vote('downvote'),
     seenIt: () => vote('seen_it'),
+    // Records an honest "reviewed, no opinion" for the daily streak.
+    markReviewed: () => logReviewActivity('reviewed_no_opinion'),
   };
 };
