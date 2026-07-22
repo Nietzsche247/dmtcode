@@ -32,6 +32,7 @@ import { format } from 'date-fns';
 interface SymbolData {
   id: string;
   image_url: string;
+  svg_data?: string | null;
   description: string | null;
   tags: string[] | null;
   upvotes: number;
@@ -299,11 +300,20 @@ const SymbolDetail = () => {
               {/* Left Column - Image */}
               <div className="space-y-4">
                 <Card className="p-4 bg-white">
-                  <img
-                    src={symbol.image_url}
-                    alt={symbol.description || 'Symbol submission'}
-                    className="w-full aspect-square object-contain"
-                  />
+                  {symbol.svg_data ? (
+                    <div
+                      className="w-full aspect-square [&>svg]:w-full [&>svg]:h-full"
+                      role="img"
+                      aria-label={symbol.description || 'Symbol submission'}
+                      dangerouslySetInnerHTML={{ __html: symbol.svg_data }}
+                    />
+                  ) : (
+                    <img
+                      src={symbol.image_url}
+                      alt={symbol.description || 'Symbol submission'}
+                      className="w-full aspect-square object-contain"
+                    />
+                  )}
                 </Card>
 
                 {/* Prominent one-tap confirmation */}

@@ -12,9 +12,10 @@ interface SymbolCanvasProps {
   onImageChange: (imageData: string) => void;
   onSave?: () => void;
   disabled?: boolean;
+  onCanvasReady?: (canvas: FabricCanvas) => void;
 }
 
-export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasProps) => {
+export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }: SymbolCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
@@ -68,6 +69,7 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasPr
     canvas.freeDrawingBrush = brush;
 
     setFabricCanvas(canvas);
+    onCanvasReady?.(canvas);
 
     // Save initial state
     const initialState = canvas.toDataURL({ format: 'png', multiplier: 2 });

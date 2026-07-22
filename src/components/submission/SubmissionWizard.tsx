@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Canvas as FabricCanvas } from 'fabric';
 import { supabase } from '@/integrations/supabase/client';
 import { SymbolCanvas } from '@/components/registry/SymbolCanvas';
 import { MetadataForm, SymbolMetadata } from './MetadataForm';
@@ -29,6 +30,7 @@ export const SubmissionWizard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [symmetryMode, setSymmetryMode] = useState(false);
+  const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   
   const navigate = useNavigate();
   const { trackStepCompleted, trackSubmissionSubmitted, trackSubmissionAbandoned } = useSubmissionTracking();
@@ -101,6 +103,28 @@ export const SubmissionWizard = () => {
         .from('symbol-drawings')
         .getPublicUrl(filename);
 
+      // Capture vector representations from the live Fabric canvas.
+      // Additive: only populated for NEW submissions.
+      let svgData: string | null = null;
+      let vectorJson: any | null = null;
+      try {
+        const canvas = fabricCanvasRef.current;
+        if (canvas) {
+          // Temporarily hide grid overlay lines during export
+          const gridLines = canvas.getObjects().filter((o: any) => o.isGridLine);
+          gridLines.forEach((l: any) => { l.visible = false; });
+          svgData = canvas.toSVG();
+          const json = canvas.toJSON() as any;
+          if (json?.objects) {
+            json.objects = json.objects.filter((o: any) => !o.isGridLine);
+          }
+          vectorJson = json;
+          gridLines.forEach((l: any) => { l.visible = true; });
+        }
+      } catch (e) {
+        console.warn('Vector capture failed, continuing with PNG only', e);
+      }
+
       // Create submission record with metadata
       const { data: submission, error: insertError } = await supabase
         .from('symbol_submissions')
@@ -117,6 +141,8 @@ export const SubmissionWizard = () => {
           duration_seconds: metadata.durationSeconds || null,
           recurrence: metadata.recurrence || null,
           emotional_valence: metadata.emotionalValence || null,
+          svg_data: svgData,
+          vector_json: vectorJson,
         })
         .select()
         .single();
@@ -187,6 +213,7 @@ export const SubmissionWizard = () => {
                 onImageChange={setImageData}
                 onSave={handleCanvasSave}
                 disabled={isSubmitting}
+                onCanvasReady={(c) => { fabricCanvasRef.current = c; }}
               />
             </CanvasErrorBoundary>
           </div>
