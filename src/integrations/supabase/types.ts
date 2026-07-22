@@ -169,48 +169,72 @@ export type Database = {
       bibliography: {
         Row: {
           abstract: string | null
+          authority_type: string | null
           authors: string | null
           compounds: string[] | null
+          content_type: string | null
           created_at: string
           doi: string | null
+          featured: boolean
           id: string
           is_approved: boolean
           journal: string | null
           pmid: string | null
           publication_date: string | null
           source: string
+          source_date: string | null
+          stance_score: number | null
+          stance_unverified: boolean
+          summary: string | null
+          tags: string[] | null
           title: string
           updated_at: string
           url: string | null
         }
         Insert: {
           abstract?: string | null
+          authority_type?: string | null
           authors?: string | null
           compounds?: string[] | null
+          content_type?: string | null
           created_at?: string
           doi?: string | null
+          featured?: boolean
           id?: string
           is_approved?: boolean
           journal?: string | null
           pmid?: string | null
           publication_date?: string | null
           source?: string
+          source_date?: string | null
+          stance_score?: number | null
+          stance_unverified?: boolean
+          summary?: string | null
+          tags?: string[] | null
           title: string
           updated_at?: string
           url?: string | null
         }
         Update: {
           abstract?: string | null
+          authority_type?: string | null
           authors?: string | null
           compounds?: string[] | null
+          content_type?: string | null
           created_at?: string
           doi?: string | null
+          featured?: boolean
           id?: string
           is_approved?: boolean
           journal?: string | null
           pmid?: string | null
           publication_date?: string | null
           source?: string
+          source_date?: string | null
+          stance_score?: number | null
+          stance_unverified?: boolean
+          summary?: string | null
+          tags?: string[] | null
           title?: string
           updated_at?: string
           url?: string | null
