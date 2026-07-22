@@ -249,6 +249,60 @@ const Profile = () => {
                 )}
               </TabsContent>
 
+              <TabsContent value="confirmations" className="mt-8">
+                {confirmationsGiven.length === 0 ? (
+                  <div className="text-center text-muted-foreground">
+                    You haven't confirmed any symbols yet.{' '}
+                    <a href="/registry" className="text-primary underline">Browse the registry</a>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {confirmationsGiven.map((s) => (
+                      <a key={s.id} href={`/registry/${s.id}`} className="block">
+                        <img
+                          src={s.image_url}
+                          alt={s.tags?.slice(0, 3).join(', ') || 'confirmed symbol'}
+                          className="w-full aspect-square border border-border object-contain bg-white hover:border-primary transition-colors"
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="voice" className="mt-8">
+                {voiceLogs.length === 0 ? (
+                  <div className="text-center text-muted-foreground">
+                    You haven't recorded any voice logs yet.{' '}
+                    <a href="/voice-logger" className="text-primary underline">Start a voice log</a>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {voiceLogs.map((log) => (
+                      <Card key={log.id} className="p-4 bg-card border-border">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs text-muted-foreground mb-1">
+                              {new Date(log.created_at).toLocaleString()}
+                              {log.duration_seconds ? ` · ${Math.round(log.duration_seconds)}s` : ''}
+                            </div>
+                            {log.transcript && (
+                              <p className="text-sm line-clamp-3">{log.transcript}</p>
+                            )}
+                          </div>
+                          {log.symbol_id && (
+                            <a href={`/registry/${log.symbol_id}`} className="text-xs text-primary underline shrink-0">
+                              Linked symbol
+                            </a>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
               <TabsContent value="saved" className="mt-8">
                 {savedSymbols.length === 0 ? (
                   <div className="text-center text-muted-foreground">
