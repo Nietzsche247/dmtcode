@@ -237,7 +237,7 @@ const Home = () => {
                   Danny Goler developed this protocol and Chase Hughes validated it across independent replicators. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
                 </p>
                 <p>
-                  Davis et al. (2021) documented an notable inter-subject consistency rate. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
+                  Davis et al. (2021) documented notable inter-subject consistency in reports of discrete visual symbols. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
                 </p>
               </div>
             </AnimatedSection>
