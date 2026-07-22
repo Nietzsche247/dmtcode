@@ -84,33 +84,12 @@ export const UnifiedProductDetail = ({
     );
   }
 
-  const handleAddToCart = () => {
-    addItem({
-      product: {
-        node: {
-          id: `${itemPrefix}-${item.slug}`,
-          title: item.title,
-          description: item.description,
-          handle: item.slug,
-          priceRange: {
-            minVariantPrice: {
-              amount: item.price.toString(),
-              currencyCode: 'USD',
-            },
-          },
-          images: { edges: [{ node: { url: item.image, altText: item.title } }] },
-          variants: { edges: [] },
-          options: [],
-        },
-      },
-      variantId: `${itemPrefix}-variant-${item.slug}`,
-      variantTitle: 'Default',
-      price: { amount: item.price.toString(), currencyCode: 'USD' },
-      quantity: 1,
-      selectedOptions: [],
-    });
-    toast.success(`${item.title} added to cart`);
+  // These catalog items are not backed by a real Shopify variant, so we route
+  // to the waitlist instead of creating a dead-end cart line.
+  const handleNotify = () => {
+    window.location.href = `/waitlist?utm_source=product_detail&utm_item=${encodeURIComponent(item.slug)}`;
   };
+
 
   const containingBundles = bundles.filter(bundle => bundle.items.includes(item.slug));
   const relatedBasePath = isResearch ? '/tools' : '/community/woo';
