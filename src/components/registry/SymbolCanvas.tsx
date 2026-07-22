@@ -12,6 +12,7 @@ interface SymbolCanvasProps {
   onImageChange: (imageData: string) => void;
   onSave?: () => void;
   disabled?: boolean;
+  onCanvasReady?: (canvas: FabricCanvas) => void;
 }
 
 export const SymbolCanvas = ({ onImageChange, onSave, disabled }: SymbolCanvasProps) => {
