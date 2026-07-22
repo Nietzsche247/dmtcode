@@ -73,7 +73,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'tts-1',
         input: text,
-        voice: voice,
+        voice: useVoice,
         response_format: 'mp3',
         speed: validSpeed,
       }),
