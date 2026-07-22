@@ -91,15 +91,15 @@ const handler = async (req: Request): Promise<Response> => {
             ? `
               <h2>Great news!</h2>
               <p>Your symbol submission to the DMT Code registry has been approved and is now visible to the community.</p>
-              <p><strong>Description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p><strong>Description:</strong> ${escapeHtml(submissionData.description || 'No description provided')}</p>
               <p><a href="https://dmtcode.com/registry">View the Registry</a></p>
               <p>Thank you for contributing to psychedelic research!</p>
             `
             : `
               <h2>Submission Update</h2>
               <p>Unfortunately, your symbol submission to the DMT Code registry was not approved.</p>
-              <p><strong>Reason:</strong> ${reason || 'No reason provided'}</p>
-              <p><strong>Your description:</strong> ${submissionData.description || 'No description provided'}</p>
+              <p><strong>Reason:</strong> ${escapeHtml(reason || 'No reason provided')}</p>
+              <p><strong>Your description:</strong> ${escapeHtml(submissionData.description || 'No description provided')}</p>
               <p>You can submit a new symbol that meets our guidelines.</p>
               <p><a href="https://dmtcode.com/submit-symbol">Submit Another Symbol</a></p>
             `;
