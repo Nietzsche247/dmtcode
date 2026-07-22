@@ -183,11 +183,11 @@ const handler = async (req: Request): Promise<Response> => {
               subject: `New Symbol Submission from ${userName}`,
               html: `
                 <h2>New Symbol Submission</h2>
-                <p><strong>User:</strong> ${userName}</p>
-                <p><strong>Source Method:</strong> ${submission.source_method || 'Not specified'}</p>
-                <p><strong>Tags:</strong> ${submission.tags?.join(', ') || 'None'}</p>
-                <p><strong>Description:</strong> ${submission.description || 'None provided'}</p>
-                <p><a href="${submission.image_url}">View Symbol Image</a></p>
+                <p><strong>User:</strong> ${escapeHtml(userName)}</p>
+                <p><strong>Source Method:</strong> ${escapeHtml(submission.source_method || 'Not specified')}</p>
+                <p><strong>Tags:</strong> ${escapeHtml(submission.tags?.join(', ') || 'None')}</p>
+                <p><strong>Description:</strong> ${escapeHtml(submission.description || 'None provided')}</p>
+                <p><a href="${escapeHtml(submission.image_url)}">View Symbol Image</a></p>
                 <p><a href="https://dmtcode.com/admin">Review in Admin Dashboard</a></p>
               `,
             }),
