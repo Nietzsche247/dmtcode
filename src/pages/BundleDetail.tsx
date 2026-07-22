@@ -600,16 +600,23 @@ const BundleDetail = () => {
                   </h1>
                 </div>
 
-                <div className="flex items-baseline gap-4">
+                <div className="flex items-baseline gap-4 flex-wrap">
                   <span className="text-4xl md:text-5xl font-black text-primary">
                     ${bundle.price}
                   </span>
-                  <span className="text-xl text-muted-foreground line-through">
-                    ${bundle.originalPrice}
-                  </span>
-                  <Badge variant="secondary" className="text-sm">
-                    Save ${bundle.originalPrice - bundle.price}
-                  </Badge>
+                  {bundle.originalPrice > bundle.price && (
+                    <>
+                      <span className="text-xl text-muted-foreground line-through">
+                        ${bundle.originalPrice}
+                      </span>
+                      <Badge variant="secondary" className="text-sm">
+                        Save ${bundle.originalPrice - bundle.price}
+                      </Badge>
+                    </>
+                  )}
+                  {!isAvailable && (
+                    <Badge variant="destructive" className="text-sm">Sold Out</Badge>
+                  )}
                 </div>
 
                 <p className="text-muted-foreground text-lg leading-relaxed">
@@ -618,24 +625,31 @@ const BundleDetail = () => {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="flex-1 h-14 rounded-full btn-lickable border-beam text-lg"
                     onClick={handleAddToCart}
                     disabled={isLoading}
+                    variant={isAvailable ? 'default' : 'outline'}
                   >
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                         Adding...
                       </>
+                    ) : isAvailable ? (
+                      <>
+                        <ShoppingCart className="w-5 h-5 mr-2" />
+                        Add to Cart
+                      </>
                     ) : (
                       <>
                         <ShoppingCart className="w-5 h-5 mr-2" />
-                        {shopifyProduct ? 'Add to Cart' : 'Reserve Bundle'}
+                        Notify Me When Available
                       </>
                     )}
                   </Button>
+
                   <Button 
                     size="lg" 
                     variant="outline"
