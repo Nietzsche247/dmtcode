@@ -56,6 +56,14 @@ const Research = () => {
           <Navigation />
           <Breadcrumb />
           <div className="pt-4">
+            <div className="container mx-auto px-4">
+              <a
+                href="/trials"
+                className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+              >
+                → CLINICAL TRIALS OBSERVATORY
+              </a>
+            </div>
             <ResearchSection />
             <TheoriesSection />
             <TheoriesDashboard />
