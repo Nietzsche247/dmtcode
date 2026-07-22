@@ -1,7 +1,8 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight, AlertCircle, Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -32,6 +33,9 @@ interface BundleCardProps {
   borderColor: string;
   badgeColor: string;
   onClick: (bundleId: string) => void;
+  /** Real Shopify availability. When false, show Sold Out + Notify me instead of the buy CTA. */
+  available?: boolean;
+  availabilityLoading?: boolean;
 }
 
 export const BundleCard = ({
@@ -51,7 +55,11 @@ export const BundleCard = ({
   borderColor,
   badgeColor,
   onClick,
+  available = true,
+  availabilityLoading = false,
 }: BundleCardProps) => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
     // GA4 conversion event for bundle CTA clicks
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
@@ -108,7 +116,15 @@ export const BundleCard = ({
         </div>
         
         <div>
-          <Badge className={`${badgeColor} font-black text-xs`}>{discount}</Badge>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge className={`${badgeColor} font-black text-xs`}>{discount}</Badge>
+            {!availabilityLoading && !available && (
+              <Badge variant="destructive" className="font-black text-xs flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                Sold Out
+              </Badge>
+            )}
+          </div>
           {/* Inter Black title */}
           <h2 className="text-2xl font-black mt-3 tracking-tight leading-tight">{name}</h2>
           {/* Inter Light 300 description */}
@@ -118,7 +134,9 @@ export const BundleCard = ({
         {/* Price with Inter Black + Inter Light 300 */}
         <div className="flex items-baseline gap-3">
           <span className="text-4xl font-black text-primary tracking-tight">${price}</span>
-          <span className="text-lg text-muted-foreground line-through font-light">${originalPrice}</span>
+          {originalPrice > price && (
+            <span className="text-lg text-muted-foreground line-through font-light">${originalPrice}</span>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -146,20 +164,36 @@ export const BundleCard = ({
           </ul>
         </div>
 
-        {/* CTA with 44px touch target and beam underline */}
+        {/* CTA: real availability drives whether we show buy or waitlist. */}
         <div className="relative">
-          <Button 
-            className="w-full h-12 min-h-[44px] rounded-full btn-lickable border-beam group/btn touch-manipulation font-black text-sm uppercase tracking-wide"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
-          >
-            {cta}
-            <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-          </Button>
+          {available ? (
+            <Button
+              className="w-full h-12 min-h-[44px] rounded-full btn-lickable border-beam group/btn touch-manipulation font-black text-sm uppercase tracking-wide"
+              disabled={availabilityLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick();
+              }}
+            >
+              {cta}
+              <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="w-full h-12 min-h-[44px] rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-black text-sm uppercase tracking-wide"
+              onClick={(e) => {
+                e.stopPropagation();
+                const utm = `?utm_source=bundle_soldout&utm_campaign=${encodeURIComponent(name)}&utm_tier=${tier}`;
+                navigate(`/waitlist${utm}`);
+              }}
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Notify Me When Available
+            </Button>
+          )}
           {/* 1px #C41E3A glowing beam underline */}
-          <div 
+          <div
             className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-[1px]"
             style={{
               background: 'linear-gradient(90deg, transparent, hsl(var(--primary)), transparent)',

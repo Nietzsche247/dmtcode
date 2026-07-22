@@ -13,6 +13,8 @@ import { LaserDivider } from '@/components/LaserDivider';
 import { BundleComparisonTable } from '@/components/BundleComparisonTable';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useBundleAvailability } from '@/hooks/useBundleAvailability';
+
 
 // Import bundle images
 import bundleStarterImg from '@/assets/bundle-starter.jpg';
@@ -28,13 +30,13 @@ declare global {
 
 // Research-focused bundles - NO woo/mystical items allowed
 // Only: calibrated 650nm lasers, diffraction gratings, lab-grade timers, protocol journals, optical equipment
-const bundles = [
+// originalPrice is derived from summed item values so the math is always honest.
+const bundlesRaw = [
   {
     id: 'starter',
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
     price: 85,
-    originalPrice: 106,
     discount: '20% OFF',
     tier: 'entry',
     image: bundleStarterImg,
@@ -59,9 +61,8 @@ const bundles = [
     id: 'gateway',
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
-    price: 1200,
-    originalPrice: 1412,
-    discount: '15% OFF',
+    price: 1000,
+    discount: '13% OFF',
     tier: 'mid',
     popular: true,
     image: bundleGatewayImg,
@@ -88,9 +89,8 @@ const bundles = [
     id: 'complete',
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
-    price: 2300,
-    originalPrice: 2875,
-    discount: '20% OFF',
+    price: 2200,
+    discount: '15% OFF',
     tier: 'high',
     image: bundleCompleteImg,
     items: [
@@ -116,9 +116,8 @@ const bundles = [
     id: 'ceremony',
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
-    price: 3500,
-    originalPrice: 4375,
-    discount: '20% OFF',
+    price: 3200,
+    discount: '15% OFF',
     tier: 'premium',
     image: bundleCeremonyImg,
     items: [
@@ -144,10 +143,17 @@ const bundles = [
   },
 ];
 
+const bundles = bundlesRaw.map((b) => ({
+  ...b,
+  originalPrice: b.items.reduce((sum, i) => sum + i.value, 0),
+}));
+
+
 const Bundles = () => {
   const navigate = useNavigate();
   const meta = useDynamicMeta('bundles');
   const { mode } = useModeStore();
+  const { data: availability, isLoading: availabilityLoading } = useBundleAvailability();
 
   // Check if user is admin
   const { data: isAdmin } = useQuery({
@@ -164,6 +170,7 @@ const Bundles = () => {
       return !!data;
     }
   });
+
 
   const handleBundleClick = (bundleId: string) => {
     // Track bundle view on click
@@ -204,21 +211,27 @@ const Bundles = () => {
             "name": "DMT Code Research Equipment Bundles",
             "description": meta.description,
             "numberOfItems": bundles.length,
-            "itemListElement": bundles.map((bundle, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "item": {
-                "@type": "Product",
-                "name": bundle.name,
-                "description": bundle.tagline,
-                "offers": {
-                  "@type": "Offer",
-                  "price": bundle.price,
-                  "priceCurrency": "USD",
-                  "availability": "https://schema.org/PreOrder"
+            "itemListElement": bundles.map((bundle, index) => {
+              const isAvailable = availability?.[bundle.id]?.availableForSale === true;
+              return {
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                  "@type": "Product",
+                  "name": bundle.name,
+                  "description": bundle.tagline,
+                  "offers": {
+                    "@type": "Offer",
+                    "price": bundle.price,
+                    "priceCurrency": "USD",
+                    "availability": isAvailable
+                      ? "https://schema.org/InStock"
+                      : "https://schema.org/OutOfStock"
+                  }
                 }
-              }
-            }))
+              };
+            })
+
           })}
         </script>
         <script type="application/ld+json">
@@ -298,10 +311,13 @@ const Bundles = () => {
                 >
                   <BundleCard
                     {...bundle}
+                    available={availability?.[bundle.id]?.availableForSale === true}
+                    availabilityLoading={availabilityLoading}
                     onClick={handleBundleClick}
                   />
                 </div>
               ))}
+
             </div>
           </section>
 

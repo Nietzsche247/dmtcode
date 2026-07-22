@@ -84,33 +84,12 @@ export const UnifiedProductDetail = ({
     );
   }
 
-  const handleAddToCart = () => {
-    addItem({
-      product: {
-        node: {
-          id: `${itemPrefix}-${item.slug}`,
-          title: item.title,
-          description: item.description,
-          handle: item.slug,
-          priceRange: {
-            minVariantPrice: {
-              amount: item.price.toString(),
-              currencyCode: 'USD',
-            },
-          },
-          images: { edges: [{ node: { url: item.image, altText: item.title } }] },
-          variants: { edges: [] },
-          options: [],
-        },
-      },
-      variantId: `${itemPrefix}-variant-${item.slug}`,
-      variantTitle: 'Default',
-      price: { amount: item.price.toString(), currencyCode: 'USD' },
-      quantity: 1,
-      selectedOptions: [],
-    });
-    toast.success(`${item.title} added to cart`);
+  // These catalog items are not backed by a real Shopify variant, so we route
+  // to the waitlist instead of creating a dead-end cart line.
+  const handleNotify = () => {
+    window.location.href = `/waitlist?utm_source=product_detail&utm_item=${encodeURIComponent(item.slug)}`;
   };
+
 
   const containingBundles = bundles.filter(bundle => bundle.items.includes(item.slug));
   const relatedBasePath = isResearch ? '/tools' : '/community/woo';
@@ -120,6 +99,8 @@ export const UnifiedProductDetail = ({
       <Helmet>
         <title>{item.title} | {pageTitle}</title>
         <meta name="description" content={item.description} />
+        {!isResearch && <meta name="robots" content="noindex, nofollow" />}
+
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -131,7 +112,7 @@ export const UnifiedProductDetail = ({
               "@type": "Offer",
               "price": item.price,
               "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
+              "availability": "https://schema.org/OutOfStock"
             }
           })}
         </script>
@@ -210,14 +191,16 @@ export const UnifiedProductDetail = ({
               <span className="text-muted-foreground font-light">USD</span>
             </div>
 
-            <Button 
-              size="lg" 
-              onClick={handleAddToCart}
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleNotify}
               className={`w-full lg:w-auto px-12 py-6 text-lg font-semibold mb-6 ${!isResearch ? 'group' : ''}`}
             >
               {!isResearch && <Star className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />}
-              Add to Cart
+              Sold Out - Notify Me
             </Button>
+
 
             {/* Research References */}
             {item.relatedResearch && item.relatedResearch.length > 0 && (
