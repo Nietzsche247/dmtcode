@@ -145,6 +145,11 @@ const Auth = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>Sign In | DMT Code</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div className="min-h-screen flex items-center justify-center bg-[hsl(var(--background))] p-4">
       {/* Background gradient effect */}
       <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-primary/5 pointer-events-none" />
