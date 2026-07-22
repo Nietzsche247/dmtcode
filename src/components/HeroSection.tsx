@@ -96,22 +96,18 @@ export const HeroSection = () => {
           Community-curated. Peer-reviewed metadata. CC-BY-4.0 licensed.
         </p>
 
-        {/* Stats row */}
+        {/* Stats row: honest, live registry counts only. Removed unsupported specific figures. */}
         <div 
           className={`flex flex-wrap justify-center gap-10 md:gap-16 py-8 opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-300' : ''}`}
           style={{ animationFillMode: 'forwards' }}
         >
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>the replicator community</div>
-            <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Sessions</div>
+            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>Open</div>
+            <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Catalogue</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>a notable rate</div>
-            <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Consistency</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>52+</div>
-            <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Symbols</div>
+            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>CC-BY-4.0</div>
+            <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Licensed</div>
           </div>
         </div>
 
