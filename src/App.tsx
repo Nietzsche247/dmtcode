@@ -146,6 +146,7 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/bibliography" element={<Bibliography />} />
+          <Route path="/bibliography/:id" element={<BibliographyDetail />} />
           <Route path="/glossary" element={<Glossary />} />
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/evidence-map" element={<EvidenceMap />} />
