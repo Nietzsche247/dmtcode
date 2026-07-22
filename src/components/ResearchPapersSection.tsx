@@ -7,7 +7,7 @@ const RESEARCH_PAPERS = [
     authors: "Goler, D., Hughes, C.",
     year: 2025,
     journal: "Journal of Consciousness Studies",
-    summary: "Pilot study documenting 650nm red laser-induced visual patterns under DMT, showing 87% consistency across 3000+ participants.",
+    summary: "Pilot study documenting 650nm red laser-induced visual patterns under DMT, showing notable consistency across an independent replicator community.",
     doi: "https://example.com/goler2025"
   },
   {

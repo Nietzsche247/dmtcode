@@ -37,7 +37,7 @@ const FAQ = () => {
                 "name": "What is the 650 nm laser protocol?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. 87% inter-subject consistency reported across 3,000+ replicators."
+                  "text": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. notable inter-subject consistency reported across independent replicators."
                 }
               },
               {
@@ -141,7 +141,7 @@ const FAQ = () => {
                     Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences.
                   </p>
                   <p>
-                    <strong>87% inter-subject consistency</strong> reported across 3,000+ independent replicators. Symbols appear on walls, ceilings, skin, and closed eyelids when 650 nm laser is applied during N,N-DMT administration.
+                    <strong>notable inter-subject consistency</strong> reported across independent replicators. Symbols appear on walls, ceilings, skin, and closed eyelids when 650 nm laser is applied during N,N-DMT administration.
                   </p>
                   <a 
                     href="https://doi.org/10.1002/hup.2806" 
@@ -180,7 +180,7 @@ const FAQ = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-base space-y-4 pt-4">
                   <p>
-                    <strong>Davis et al. (2021)</strong> surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, 87% reported observing similar discrete visual symbols.
+                    <strong>Davis et al. (2021)</strong> surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, notable convergence similar discrete visual symbols.
                   </p>
                   <p>
                     Symbols clustered into 52 primary archetypes with recognizable geometric and alphabetic-like features. Independent replicators reported identical symbols in the same contextual settings (e.g., specific symbols appearing on ceiling vs. walls).
@@ -245,10 +245,10 @@ const FAQ = () => {
                 </AccordionTrigger>
                 <AccordionContent className="text-base space-y-4 pt-4">
                   <p>
-                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>inter-subject consistency (87%)</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
+                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>inter-subject consistency (a notable rate)</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
                   </p>
                   <p>
-                    Current evidence consists of: anecdotal reports from 3,000+ replicators, Goler's pilot observations published in IPI Letters (2025), and comparative analysis with Davis et al. (2021) entity encounter survey data.
+                    Current evidence consists of: anecdotal reports from an independent replicator community, Goler's pilot observations published in IPI Letters (2025), and comparative analysis with Davis et al. (2021) entity encounter survey data.
                   </p>
                   <div className="mt-6">
                     <Button asChild variant="outline">
@@ -322,7 +322,7 @@ const FAQ = () => {
                     Most N,N-DMT research (Strassman 2001, Timmermann 2019, Carhart-Harris et al.) focuses on phenomenology, neurobiology, and therapeutic applications. The 650 nm laser protocol specifically targets <strong>externalized visual perception</strong> rather than closed-eye imagery.
                   </p>
                   <p>
-                    This project documents discrete, consistent symbols appearing on physical surfaces with 87% inter-subject agreement: a specificity level rarely seen in psychedelic phenomenology research.
+                    This project documents discrete, consistent symbols appearing on physical surfaces with a notable rate inter-subject agreement: a specificity level rarely seen in psychedelic phenomenology research.
                   </p>
                 </AccordionContent>
               </AccordionItem>

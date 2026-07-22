@@ -762,7 +762,7 @@ const ProductDetail = () => {
                     className="text-left p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
                   >
                     <p className="font-medium text-primary">Symbol Registry →</p>
-                    <p className="text-sm text-muted-foreground">Document your observations and compare with 3,000+ sessions</p>
+                    <p className="text-sm text-muted-foreground">Document your observations and compare with an independent replicator community</p>
                   </button>
                   <button 
                     onClick={() => navigate('/evidence-map')}

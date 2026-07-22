@@ -110,7 +110,7 @@ const Correlations = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Network Graph Visualization</h3>
                     <p className="text-sm text-muted-foreground">
-                      Interactive graph with symbols as nodes, shared tags as edges, and upvote counts as edge weights. Identifies symbol clusters (e.g., "toilet bowl sand" = S001-S047 with 87% co-occurrence).
+                      Interactive graph with symbols as nodes, shared tags as edges, and upvote counts as edge weights. Identifies symbol clusters (e.g., "toilet bowl sand" = S001-S047 with notable convergence).
                     </p>
                   </div>
                 </div>
@@ -185,7 +185,7 @@ const Correlations = () => {
                   <li><strong>Hand/skin symbols (n=9):</strong> 89% asymmetric, 56% alphabetic-like characters</li>
                   <li><strong>Closed eyelid symbols (n=18):</strong> 72% organic/fractal patterns, 83% bilateral symmetry</li>
                   <li><strong>Wall symbols (n=11):</strong> Mixed morphology, no dominant cluster (awaiting ≥100 threshold for statistical significance)</li>
-                  <li><strong>"Toilet bowl sand" motif cluster:</strong> Preliminary co-occurrence analysis suggests S001-S047 share 87% tag overlap (pareidolia, speckle, organic patterns)</li>
+                  <li><strong>"Toilet bowl sand" motif cluster:</strong> Preliminary co-occurrence analysis suggests S001-S047 share notable convergence (pareidolia, speckle, organic patterns)</li>
                 </ul>
                 <p className="text-sm italic">
                   Network analysis at ≥100 symbols will test whether these preliminary patterns persist with increased sample size or represent small-sample artifacts. CLIP-based visual similarity scoring will validate whether tag-based clusters match perceptual groupings.

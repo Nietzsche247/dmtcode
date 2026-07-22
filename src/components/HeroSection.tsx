@@ -92,7 +92,7 @@ export const HeroSection = () => {
           className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed opacity-0 ${isLoaded ? 'animate-blur-in-up animation-delay-200' : ''}`}
           style={{ animationFillMode: 'forwards', fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
         >
-          Documenting visual symbols from 3,000+ sessions using the 650 nm laser protocol.
+          Documenting visual symbols from an independent replicator community using the 650 nm laser protocol.
           Community-curated. Peer-reviewed metadata. CC-BY-4.0 licensed.
         </p>
 
@@ -102,11 +102,11 @@ export const HeroSection = () => {
           style={{ animationFillMode: 'forwards' }}
         >
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>3,000+</div>
+            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>the replicator community</div>
             <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Sessions</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>87%</div>
+            <div className="text-3xl md:text-4xl font-bold text-foreground uppercase" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>a notable rate</div>
             <div className="text-xs text-muted-foreground font-normal tracking-wider uppercase mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Consistency</div>
           </div>
           <div className="text-center">
