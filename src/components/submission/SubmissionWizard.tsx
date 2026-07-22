@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Canvas as FabricCanvas } from 'fabric';
 import { supabase } from '@/integrations/supabase/client';
 import { SymbolCanvas } from '@/components/registry/SymbolCanvas';
 import { MetadataForm, SymbolMetadata } from './MetadataForm';
