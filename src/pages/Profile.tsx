@@ -6,9 +6,12 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
+import { Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { cn } from '@/lib/utils';
 
 interface UserSymbol {
   id: string;
@@ -41,18 +44,94 @@ interface VoiceLog {
   symbol_id: string | null;
 }
 
+interface ProfileRecord {
+  id: string;
+  handle: string;
+  display_name: string;
+  avatar_url: string | null;
+  avatar_seed: string;
+  created_at: string;
+  reputation_score: number;
+}
+
+interface BadgeRow {
+  name: string;
+  description: string | null;
+  icon: string | null;
+  category: string;
+  threshold: number | null;
+}
+
+interface EarnedBadge {
+  badge_name: string;
+  earned_at: string;
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const formatMonthYear = (iso: string) => {
+  const d = new Date(iso);
+  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+};
+
+const humanizeBadge = (name: string) =>
+  name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+/** A single stat cell. When value is 0, renders a neutral dash + next-move link. */
+const StatCell = ({
+  label,
+  value,
+  nextMove,
+}: {
+  label: string;
+  value: number;
+  nextMove: { to: string; text: string };
+}) => {
+  const isZero = value === 0;
+  return (
+    <Card className="p-6 bg-card/50 border-border">
+      <div className="text-center">
+        <div
+          className={cn(
+            'text-3xl mb-1 tabular-nums',
+            isZero ? 'text-muted-foreground/60 font-light' : 'text-primary font-bold'
+          )}
+          aria-label={isZero ? `${label}: none yet` : `${label}: ${value}`}
+        >
+          {isZero ? '—' : value}
+        </div>
+        <div className="text-sm text-muted-foreground mb-2">{label}</div>
+        {isZero && (
+          <Link to={nextMove.to} className="text-xs text-primary/80 underline underline-offset-2 hover:text-primary">
+            {nextMove.text}
+          </Link>
+        )}
+      </div>
+    </Card>
+  );
+};
+
 const Profile = () => {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<ProfileRecord | null>(null);
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
   const [confirmationsGiven, setConfirmationsGiven] = useState<ConfirmationGiven[]>([]);
   const [voiceLogs, setVoiceLogs] = useState<VoiceLog[]>([]);
   const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalValidations: 0, totalSaved: 0 });
+  const [allBadges, setAllBadges] = useState<BadgeRow[]>([]);
+  const [earnedBadges, setEarnedBadges] = useState<EarnedBadge[]>([]);
+  const [canon, setCanon] = useState<{ symbols: number; confirmations: number }>({ symbols: 0, confirmations: 0 });
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
+    loadBadgeCatalog();
+    loadCanon();
   }, []);
 
   const checkAuth = async () => {
@@ -63,11 +142,52 @@ const Profile = () => {
       return;
     }
     setUserId(user.id);
+    loadProfile(user.id);
     loadMySymbols(user.id);
     loadSavedSymbols(user.id);
     loadConfirmationsGiven(user.id);
     loadVoiceLogs(user.id);
     loadStats(user.id);
+    loadEarnedBadges(user.id);
+  };
+
+  const loadProfile = async (uid: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, handle, display_name, avatar_url, avatar_seed, created_at, reputation_score')
+      .eq('id', uid)
+      .maybeSingle();
+    if (data) setProfile(data as ProfileRecord);
+  };
+
+  const loadBadgeCatalog = async () => {
+    const { data } = await supabase
+      .from('badges')
+      .select('name, description, icon, category, threshold')
+      .order('threshold', { ascending: true, nullsFirst: true });
+    if (data) setAllBadges(data as BadgeRow[]);
+  };
+
+  const loadEarnedBadges = async (uid: string) => {
+    const { data } = await supabase
+      .from('user_badges')
+      .select('badge_name, earned_at')
+      .eq('user_id', uid);
+    if (data) setEarnedBadges(data as EarnedBadge[]);
+  };
+
+  const loadCanon = async () => {
+    const [{ count: symbols }, { count: confirmations }] = await Promise.all([
+      supabase
+        .from('symbol_submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'approved'),
+      supabase
+        .from('symbol_votes')
+        .select('*', { count: 'exact', head: true })
+        .eq('vote_type', 'seen_it'),
+    ]);
+    setCanon({ symbols: symbols || 0, confirmations: confirmations || 0 });
   };
 
   const loadConfirmationsGiven = async (uid: string) => {
@@ -167,6 +287,8 @@ const Profile = () => {
     }
   };
 
+  const earnedNames = new Set(earnedBadges.map(b => b.badge_name));
+
   return (
     <>
       <Helmet>
@@ -181,33 +303,122 @@ const Profile = () => {
 
         <main className="relative z-10 pt-20 pb-16">
           <div className="container mx-auto px-4">
-            <h1 className="text-4xl font-bold mb-8">My Profile</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <Card className="p-6 bg-card/50 border-border">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalSubmissions}</div>
-                  <div className="text-sm text-muted-foreground">Symbols Submitted</div>
+            {/* Identity header */}
+            <section className="mb-8 p-5 sm:p-6 bg-card/50 border border-border rounded-lg">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
+                {profile ? (
+                  <AvatarGlyph
+                    seed={profile.avatar_seed}
+                    handle={profile.handle}
+                    size={88}
+                    className="shrink-0"
+                  />
+                ) : (
+                  <div className="w-[88px] h-[88px] rounded-md border border-border bg-muted/40 animate-pulse shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl sm:text-3xl font-serif tracking-tight break-words">
+                    {profile?.handle || profile?.display_name || 'Explorer'}
+                  </h1>
+                  {profile?.created_at && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Explorer since {formatMonthYear(profile.created_at)}
+                    </p>
+                  )}
+                  <p className="text-sm text-muted-foreground/90 mt-3 max-w-xl leading-relaxed">
+                    Your identity stays private. We map the truth together, one recognition at a time.
+                  </p>
                 </div>
-              </Card>
-              <Card className="p-6 bg-card/50 border-border">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalValidations}</div>
-                  <div className="text-sm text-muted-foreground">Validations Received</div>
-                </div>
-              </Card>
-              <Card className="p-6 bg-card/50 border-border">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-1">{stats.totalSaved}</div>
-                  <div className="text-sm text-muted-foreground">Symbols Saved</div>
-                </div>
-              </Card>
+              </div>
+            </section>
+
+            {/* Canon endowment */}
+            <p className="text-sm text-muted-foreground mb-4">
+              The canon holds{' '}
+              <span className="text-foreground font-medium tabular-nums">{canon.symbols}</span>{' '}
+              symbol{canon.symbols === 1 ? '' : 's'} and{' '}
+              <span className="text-foreground font-medium tabular-nums">{canon.confirmations}</span>{' '}
+              confirmation{canon.confirmations === 1 ? '' : 's'} so far.{' '}
+              <Link to="/registry" className="text-primary underline underline-offset-2">Add yours.</Link>
+            </p>
+
+            {/* Stat cells with dashed zeros */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+              <StatCell
+                label="Symbols Submitted"
+                value={stats.totalSubmissions}
+                nextMove={{ to: '/submit-symbol', text: 'Record what you saw' }}
+              />
+              <StatCell
+                label="Validations Received"
+                value={stats.totalValidations}
+                nextMove={{ to: '/registry', text: 'Share a symbol to invite recognition' }}
+              />
+              <StatCell
+                label="Symbols Saved"
+                value={stats.totalSaved}
+                nextMove={{ to: '/registry', text: 'Browse the registry' }}
+              />
             </div>
 
+            {/* Badges section */}
+            <section className="mb-10">
+              <div className="flex items-baseline justify-between mb-4">
+                <h2 className="text-xl font-serif tracking-tight">Badges</h2>
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {earnedNames.size} of {allBadges.length} earned
+                </span>
+              </div>
+              {allBadges.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Loading badges…</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {allBadges.map((b) => {
+                    const earned = earnedNames.has(b.name);
+                    return (
+                      <div
+                        key={b.name}
+                        className={cn(
+                          'p-4 rounded-lg border transition-all duration-300',
+                          earned
+                            ? 'bg-primary/5 border-primary/40'
+                            : 'bg-card/30 border-border/60 opacity-70'
+                        )}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className={cn(
+                              'text-2xl',
+                              earned ? '' : 'grayscale opacity-60'
+                            )}
+                            aria-hidden="true"
+                          >
+                            {b.icon || (earned ? '✶' : '·')}
+                          </span>
+                          {!earned && (
+                            <Lock className="w-3 h-3 text-muted-foreground" aria-label="Locked" />
+                          )}
+                        </div>
+                        <div className="text-sm font-medium leading-tight">
+                          {humanizeBadge(b.name)}
+                        </div>
+                        {b.description && (
+                          <div className="text-xs text-muted-foreground mt-1 leading-snug">
+                            {b.description}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
             <Tabs defaultValue="my-symbols" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-2xl">
                 <TabsTrigger value="my-symbols">My Symbols ({mySymbols.length})</TabsTrigger>
-                <TabsTrigger value="confirmations">Confirmations Given ({confirmationsGiven.length})</TabsTrigger>
+                <TabsTrigger value="confirmations">Confirmations ({confirmationsGiven.length})</TabsTrigger>
                 <TabsTrigger value="voice">Voice Logs ({voiceLogs.length})</TabsTrigger>
                 <TabsTrigger value="saved">Saved ({savedSymbols.length})</TabsTrigger>
               </TabsList>
@@ -276,7 +487,7 @@ const Profile = () => {
                 {voiceLogs.length === 0 ? (
                   <div className="text-center text-muted-foreground">
                     You haven't recorded any voice logs yet.{' '}
-                    <a href="/voice-logger" className="text-primary underline">Start a voice log</a>
+                    <a href="/log" className="text-primary underline">Start a voice log</a>
                   </div>
                 ) : (
                   <div className="space-y-3">
