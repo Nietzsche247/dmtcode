@@ -1829,6 +1829,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _rotate_cron_secret: { Args: { new_val: string }; Returns: undefined }
       generate_handle: { Args: never; Returns: string }
       has_role: {
         Args: {
