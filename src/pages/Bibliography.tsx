@@ -1,327 +1,151 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
-import { Card } from '@/components/ui/card';
-import { ExternalLink, FileText, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { FilterGuide } from '@/components/bibliography/FilterGuide';
+import { BibliographyCard } from '@/components/bibliography/BibliographyCard';
+import { BibliographyFilters } from '@/components/bibliography/BibliographyFilters';
+import { emptyFilters, type BibliographyRow, type FilterState } from '@/components/bibliography/types';
+
+const sortByDateDesc = (a: BibliographyRow, b: BibliographyRow) => {
+  const av = a.source_date || a.publication_date || '';
+  const bv = b.source_date || b.publication_date || '';
+  return bv.localeCompare(av);
+};
+
+const yearOf = (r: BibliographyRow): string | null => {
+  if (r.source_date) {
+    const m = r.source_date.match(/\d{4}/);
+    if (m) return m[0];
+  }
+  if (r.publication_date) return new Date(r.publication_date).getFullYear().toString();
+  return null;
+};
+
+const matchesFilters = (r: BibliographyRow, f: FilterState): boolean => {
+  if (f.contentType !== 'all' && r.content_type !== f.contentType) return false;
+  if (f.authorityType !== 'all' && r.authority_type !== f.authorityType) return false;
+  if (f.tag !== 'all' && !(r.tags || []).includes(f.tag)) return false;
+  if (f.year !== 'all' && yearOf(r) !== f.year) return false;
+  if (f.stance !== 'all') {
+    if (f.stance === 'unverified' && !r.stance_unverified) return false;
+    if (f.stance === 'supportive' && !(r.stance_score != null && r.stance_score >= 4)) return false;
+    if (f.stance === 'skeptical' && !(r.stance_score != null && r.stance_score <= -4)) return false;
+    if (f.stance === 'balanced' && !(r.stance_score != null && r.stance_score >= -3 && r.stance_score <= 3)) return false;
+  }
+  if (f.search.trim()) {
+    const q = f.search.toLowerCase();
+    const hay = `${r.title} ${r.authors ?? ''} ${r.journal ?? ''}`.toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+};
 
 const Bibliography = () => {
+  const [rows, setRows] = useState<BibliographyRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<FilterState>(emptyFilters);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('bibliography')
+        .select('*')
+        .eq('is_approved', true)
+        .limit(2000);
+      if (cancelled) return;
+      if (error) setError(error.message);
+      else setRows((data || []) as unknown as BibliographyRow[]);
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const featured = useMemo(() => rows.filter((r) => r.featured).sort(sortByDateDesc), [rows]);
+  const library = useMemo(() => rows.filter((r) => !r.featured).sort(sortByDateDesc), [rows]);
+
+  const filteredLibrary = useMemo(() => library.filter((r) => matchesFilters(r, filters)), [library, filters]);
+
+  const contentTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.content_type).filter(Boolean) as string[])).sort(), [rows]);
+  const authorityTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.authority_type).filter(Boolean) as string[])).sort(), [rows]);
+  const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags || []))).sort(), [rows]);
+  const years = useMemo(() => Array.from(new Set(rows.map(yearOf).filter(Boolean) as string[])).sort((a, b) => b.localeCompare(a)), [rows]);
+
   return (
     <>
       <Helmet>
-        <title>Bibliography & Citations | DMT Code</title>
-        <meta name="description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
+        <title>Research Library | DMT Code</title>
+        <meta name="description" content="Unified research library covering the Code of Reality phenomenon: peer reviewed papers, curated public sources, and skeptical responses." />
         <link rel="canonical" href="https://dmtcode.com/bibliography" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/bibliography" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Bibliography & Citations | DMT Code" />
-        <meta property="og:description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
+        <meta property="og:title" content="Research Library | DMT Code" />
+        <meta property="og:description" content="Unified research library covering the Code of Reality phenomenon: peer reviewed papers, curated public sources, and skeptical responses." />
         <meta property="og:url" content="https://dmtcode.com/bibliography" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://dmtcode.com/bibliography" />
-        <meta name="twitter:title" content="Bibliography & Citations | DMT Code" />
-        <meta name="twitter:description" content="Complete reference list of academic sources cited throughout DMT Code research documentation." />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
-        
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ScholarlyArticle",
-            "headline": "Research Bibliography - Peer-Reviewed Citations on Visual Symbol Phenomena",
-            "description": "Comprehensive bibliography of peer-reviewed research documenting discrete visual symbols during 650 nm laser exposure and N,N-DMT administration",
-            "author": {
-              "@type": "Organization",
-              "name": "DMT Code Project"
-            },
-            "citation": [
-              {
-                "@type": "ScholarlyArticle",
-                "name": "First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration",
-                "author": {
-                  "@type": "Person",
-                  "name": "Danny Goler"
-                },
-                "datePublished": "2025",
-                "identifier": {
-                  "@type": "PropertyValue",
-                  "propertyID": "DOI",
-                  "value": "10.59973/ipil.158"
-                },
-                "url": "https://doi.org/10.59973/ipil.158"
-              },
-              {
-                "@type": "ScholarlyArticle",
-                "name": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine",
-                "author": {
-                  "@type": "Person",
-                  "name": "Alan K. Davis"
-                },
-                "datePublished": "2021",
-                "description": "Preprint [2021] DOI pending"
-              },
-              {
-                "@type": "ScholarlyArticle",
-                "name": "DMT models the near-death experience",
-                "author": {
-                  "@type": "Person",
-                  "name": "Christopher Timmermann"
-                },
-                "datePublished": "2019",
-                "identifier": {
-                  "@type": "PropertyValue",
-                  "propertyID": "DOI",
-                  "value": "10.1038/s41598-019-51974-4"
-                },
-                "url": "https://doi.org/10.1038/s41598-019-51974-4"
-              },
-              {
-                "@type": "ScholarlyArticle",
-                "name": "DMT: The Spirit Molecule",
-                "author": {
-                  "@type": "Person",
-                  "name": "Rick J. Strassman"
-                },
-                "datePublished": "2001",
-                "identifier": {
-                  "@type": "PropertyValue",
-                  "propertyID": "DOI",
-                  "value": "10.1007/978-1-4615-0115-9"
-                },
-                "url": "https://doi.org/10.1007/978-1-4615-0115-9"
-              }
-            ],
-            "datePublished": "2024-01-15",
-            "dateModified": "2025-11-30"
-          })}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://dmtcode.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Bibliography",
-                "item": "https://dmtcode.com/bibliography"
-              }
-            ]
-          })}
-        </script>
       </Helmet>
 
-      <div className="relative min-h-screen bg-background">
-        <Navigation />
-        
-        <main id="main-content" className="relative z-10 pt-20" role="main">
-          <section className="container mx-auto px-4 py-16 max-w-5xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8">Research Bibliography</h1>
-            <p className="text-lg text-muted-foreground mb-12">
-              Peer-reviewed citations supporting the 650 nm laser protocol and N,N-DMT visual symbol research
-            </p>
+      <div className="relative min-h-screen">
+        <main id="main-content" className="relative z-10" role="main">
+          <Navigation />
 
-            <div className="space-y-6">
-              {/* Davis et al. 2021 */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine: Phenomenology, interpretation, and enduring effects
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Davis, A. K., Clifton, J. M., Weaver, E. G., Hurwitz, E. S., Johnson, M. W., & Griffiths, R. R.</strong> (2021). <em>Human Psychopharmacology: Clinical and Experimental</em>, 36(4), e2806.
-                    </p>
-                    <p className="text-sm">
-                      Surveyed 2,561 participants reporting entity encounters during N,N-DMT administration. Documents high consistency in visual symbol observations across independent sessions. Foundational evidence for inter-subject replication rates.
-                    </p>
-                    <div className="space-y-2">
-                      <a 
-                        href="https://doi.org/10.1002/hup.2806" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                      >
-                        DOI: 10.1002/hup.2806
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                      <p className="text-xs text-muted-foreground italic">
-                        Note: Preprint [2021] DOI pending for related survey data
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Timmermann et al. 2019 */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      Neural correlates of the DMT experience assessed with multivariate EEG
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Timmermann, C., Roseman, L., Williams, L., Erritzoe, D., Martial, C., Cassol, H., ... & Carhart-Harris, R. L.</strong> (2019). <em>Scientific Reports</em>, 9(1), 16324.
-                    </p>
-                    <p className="text-sm">
-                      Multivariate EEG analysis during N,N-DMT administration showing enhanced visual cortex activation and coherence patterns corresponding to discrete visual symbol perception. Supports photobiomodulation enhancement hypothesis.
-                    </p>
-                    <a 
-                      href="https://doi.org/10.1038/s41598-019-51974-4" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.1038/s41598-019-51974-4
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Strassman 2001 */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      DMT: The Spirit Molecule - A Doctor's Revolutionary Research into the Biology of Near-Death and Mystical Experiences
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Strassman, R.</strong> (2001). <em>Park Street Press</em>. Rochester, Vermont.
-                    </p>
-                    <p className="text-sm">
-                      Foundational clinical research documenting rapid memory decay of visual details following N,N-DMT administration. Established critical importance of immediate post-experience documentation. 60% detail loss within 15 minutes, 90% within 2 hours.
-                    </p>
-                    <a 
-                      href="https://doi.org/10.1007/978-1-4615-0115-9" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.1007/978-1-4615-0115-9
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Goler 2025 Pilot */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Goler, D.</strong> (2025). <em>IPI Letters</em>.
-                    </p>
-                    <p className="text-sm">
-                      Original documentation of the 650 nm laser protocol showing reliable elicitation of alphabetic-like symbols on any surface during N,N-DMT experiences. Validated by Chase Hughes with 87% inter-subject consistency across 3,000+ replicators.
-                    </p>
-                    <a 
-                      href="https://doi.org/10.59973/ipil.158" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.59973/ipil.158
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                    <Link 
-                      to="/registry?tag=650nm"
-                      className="inline-flex items-center gap-2 text-primary hover:underline text-sm ml-4"
-                    >
-                      View related symbols →
-                    </Link>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Michael et al. 2021 */}
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start gap-4">
-                  <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold">
-                      Geometric visual hallucinations, Euclidean symmetry and the functional architecture of striate cortex
-                    </h3>
-                    <p className="text-muted-foreground">
-                      <strong>Michael, P., Ermentrout, G. B., & Cowan, J. D.</strong> (2021). <em>Philosophical Transactions of the Royal Society B</em>, 356(1407), 299-330.
-                    </p>
-                    <p className="text-sm">
-                      Mathematical model explaining how discrete geometric patterns emerge from visual cortex architecture during altered states. Theoretical framework for understanding consistent symbol morphology across observers.
-                    </p>
-                    <a 
-                      href="https://doi.org/10.1098/rstb.2000.0769" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-gold hover:underline font-medium"
-                    >
-                      DOI: 10.1098/rstb.2000.0769
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Internal Links Section */}
-            <div className="mt-16 grid md:grid-cols-2 gap-6">
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <h3 className="text-lg font-semibold mb-3">Explore Related Symbols</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Browse visual symbols documented using the protocols described in these papers.
-                </p>
-                <Link to="/registry">
-                  <Button variant="outline" className="w-full">
-                    View Symbol Registry
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </Card>
-              
-              <Card className="p-6 border-border hover:border-primary/50 transition-colors">
-                <h3 className="text-lg font-semibold mb-3">Protocol Documentation</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Learn about the 650nm laser protocol methodology referenced in these studies.
-                </p>
-                <Link to="/protocol-guide">
-                  <Button variant="outline" className="w-full">
-                    Read Protocol Guide
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </Card>
-            </div>
-
-            <div className="mt-8 p-8 bg-muted/30 border border-border rounded-lg">
-              <h2 className="text-2xl font-semibold mb-4">Data Access</h2>
-              <p className="text-muted-foreground mb-6">
-                All glyph registry data is released under CC-BY-4.0 for academic research. Download the complete dataset in JSON or CSV format.
+          <section className="max-w-6xl mx-auto px-4 py-16 space-y-10">
+            <header className="text-center space-y-3">
+              <h1 className="text-4xl md:text-5xl font-bold">Research Library</h1>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                One unified index of the sources behind the Code of Reality phenomenon. Peer reviewed
+                papers, primary data releases, podcasts, and skeptical commentary.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <a href="/data.json" className="text-gold hover:underline font-medium inline-flex items-center gap-2">
-                  Download JSON Dataset
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-                <a href="/registry" className="text-gold hover:underline font-medium inline-flex items-center gap-2">
-                  Access Registry Interface
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
+            </header>
+
+            <FilterGuide />
+
+            {loading && <div className="text-center text-muted-foreground py-12">Loading research library...</div>}
+            {error && <div className="text-center text-destructive py-12">Failed to load: {error}</div>}
+
+            {!loading && !error && (
+              <>
+                {featured.length > 0 && (
+                  <section className="space-y-4">
+                    <div className="flex items-baseline justify-between">
+                      <h2 className="text-2xl font-semibold">Research Timeline</h2>
+                      <span className="text-sm text-muted-foreground">{featured.length} featured</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {featured.map((r) => <BibliographyCard key={r.id} row={r} />)}
+                    </div>
+                  </section>
+                )}
+
+                <section className="space-y-4">
+                  <div className="flex items-baseline justify-between">
+                    <h2 className="text-2xl font-semibold">Full Library</h2>
+                    <span className="text-sm text-muted-foreground">{filteredLibrary.length} of {library.length}</span>
+                  </div>
+
+                  <BibliographyFilters
+                    value={filters}
+                    onChange={setFilters}
+                    contentTypes={contentTypes}
+                    authorityTypes={authorityTypes}
+                    tags={tags}
+                    years={years}
+                  />
+
+                  {filteredLibrary.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-12">No entries match the current filters.</div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredLibrary.map((r) => <BibliographyCard key={r.id} row={r} />)}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
           </section>
         </main>
 
