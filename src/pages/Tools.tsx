@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
-import { ShoppingCart, Search, Plus, AlertTriangle, BookOpen, Package } from 'lucide-react';
+import { ShoppingCart, Search, Plus, AlertTriangle, BookOpen, Package, Bell } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProductSubmissionModal } from '@/components/ProductSubmissionModal';
 import { getPlaceholderImage } from '@/utils/placeholderImage';
@@ -37,32 +37,8 @@ const peyoteRetreat = {
   url: "https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=dmtcode"
 };
 
-const bundles = [
-  {
-    name: "Fractal Starter",
-    price: 85,
-    originalPrice: 106,
-    items: ["Sticker Pack", "Incense Sticks", "Journal"],
-    discount: "20% off",
-    tier: "low"
-  },
-  {
-    name: "Gateway Kit",
-    price: 1200,
-    originalPrice: 1412,
-    items: ["Hoodie", "Bon Charge Device", "Intention Roller"],
-    discount: "15% off",
-    tier: "high"
-  },
-  {
-    name: "Extended Symbol Kit",
-    price: 2300,
-    originalPrice: 2875,
-    items: ["MitoMAT", "Peyote Spirit Walk", "Journal"],
-    discount: "20% off",
-    tier: "retreat"
-  }
-];
+// Bundle definitions live in /bundles (single source of truth). Tools links there.
+
 
 const Tools = () => {
   const navigate = useNavigate();
@@ -78,14 +54,18 @@ const Tools = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       setError(null);
+      let shopifyFailed = false;
       try {
         // Fetch Shopify products
         const data = await storefrontApiRequest(STOREFRONT_PRODUCTS_QUERY, { first: 50 });
         if (data?.data?.products?.edges) {
           setProducts(data.data.products.edges);
+        } else {
+          shopifyFailed = true;
         }
       } catch (err) {
         console.error('Error fetching Shopify products:', err);
+        shopifyFailed = true;
       }
 
       try {
@@ -95,7 +75,7 @@ const Tools = () => {
           .select('*')
           .eq('affiliate_only', true)
           .eq('is_approved', true);
-        
+
         if (dbError) throw dbError;
         if (affiliateData) {
           setAffiliateProducts(affiliateData);
@@ -104,11 +84,15 @@ const Tools = () => {
         console.error('Error fetching affiliate products:', err);
       }
 
+      if (shopifyFailed) {
+        setError('Store temporarily unavailable. Please try again shortly.');
+      }
       setLoading(false);
     };
 
     fetchProducts();
   }, []);
+
 
   // Filter products based on search and category
   const filteredProducts = products.filter(product => {
@@ -151,6 +135,10 @@ const Tools = () => {
       toast.error("Product variant not available");
       return;
     }
+    if (variant.availableForSale === false) {
+      toast.error("This item is sold out", { description: "Join the waitlist to be notified when it returns." });
+      return;
+    }
 
     const cartItem = {
       product,
@@ -160,12 +148,13 @@ const Tools = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || []
     };
-    
+
     addItem(cartItem);
     toast.success("Added to cart", {
       description: product.node?.title || 'Product',
     });
   };
+
 
   const handleProductClick = (product: ShopifyProduct | any) => {
     const productId = product.node?.id || product.id;
@@ -229,23 +218,28 @@ const Tools = () => {
         {products.length > 0 && (
           <script type="application/ld+json">
             {JSON.stringify(
-              products.filter(p => p?.node).map(product => ({
-                "@context": "https://schema.org",
-                "@type": "Product",
-                "name": product.node?.title || '',
-                "description": product.node?.description || '',
-                "image": product.node?.images?.edges?.[0]?.node?.url || '',
-                "offers": {
-                  "@type": "Offer",
-                  "url": `https://dmtcode.com/tools#${product.node?.handle || ''}`,
-                  "priceCurrency": product.node?.priceRange?.minVariantPrice?.currencyCode || 'USD',
-                  "price": product.node?.priceRange?.minVariantPrice?.amount || '0',
-                  "availability": "https://schema.org/InStock"
-                }
-              }))
+              products.filter(p => p?.node).map(product => {
+                const variant = product.node?.variants?.edges?.[0]?.node;
+                const isAvailable = variant?.availableForSale === true;
+                return {
+                  "@context": "https://schema.org",
+                  "@type": "Product",
+                  "name": product.node?.title || '',
+                  "description": product.node?.description || '',
+                  "image": product.node?.images?.edges?.[0]?.node?.url || '',
+                  "offers": {
+                    "@type": "Offer",
+                    "url": `https://dmtcode.com/tools#${product.node?.handle || ''}`,
+                    "priceCurrency": product.node?.priceRange?.minVariantPrice?.currencyCode || 'USD',
+                    "price": product.node?.priceRange?.minVariantPrice?.amount || '0',
+                    "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+                  }
+                };
+              })
             )}
           </script>
         )}
+
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
@@ -264,31 +258,21 @@ const Tools = () => {
                 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9]">
                   Research Equipment
-                  <span className="block text-primary mt-2">$12 → $2,000</span>
                 </h1>
-                
+
                 <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  Entry-level to premium research equipment for the 650 nm protocol. 
-                  Sold out items fund ongoing symbol cataloguing research.
+                  Entry-level to premium equipment for the 650 nm protocol.
+                  Availability and pricing update live from the store.
                 </p>
 
                 <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     onClick={() => navigate('/bundles')}
                     className="px-8 py-6 h-auto rounded-full btn-lickable border-beam"
                   >
                     <Package className="h-5 w-5 mr-2" />
                     View Bundles
-                  </Button>
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    onClick={() => setSubmissionModalOpen(true)}
-                    className="px-8 py-6 h-auto rounded-full btn-lickable"
-                  >
-                    <Plus className="h-5 w-5 mr-2" />
-                    Submit Product
                   </Button>
                 </div>
 
@@ -298,6 +282,7 @@ const Tools = () => {
                     <BookOpen className="w-4 h-4" />
                     Protocol Guide
                   </Link>
+
                   <Link to="/registry" className="inline-flex items-center gap-1 hover:text-primary transition-colors">
                     Symbol Registry
                   </Link>
@@ -346,27 +331,34 @@ const Tools = () => {
                       <p className="text-muted-foreground">Loading products...</p>
                     </div>
                   ) : allProducts.length === 0 ? (
-                    <div className="col-span-full text-center py-12">
-                      <p className="text-muted-foreground">No products found</p>
+                    <div className="col-span-full text-center py-12 space-y-3">
+                      <p className="text-muted-foreground">
+                        {error ?? 'Store temporarily unavailable. Please try again shortly.'}
+                      </p>
+                      <Button variant="outline" onClick={() => window.location.reload()}>
+                        Retry
+                      </Button>
                     </div>
+
                   ) : (
                     <>
                       {filteredProducts.map((product) => {
                         // Skip products with missing node data
                         if (!product?.node) return null;
-                        
+
                         const variant = product.node.variants?.edges?.[0]?.node;
                         const image = product.node.images?.edges?.[0]?.node;
                         const price = variant ? parseFloat(variant.price?.amount || '0') : 0;
                         const title = product.node.title || 'Untitled Product';
                         const description = product.node.description || '';
                         const handle = product.node.handle || product.node.id;
-                        
+                        const isAvailable = variant?.availableForSale === true;
+
                         const imageUrl = getProductImageWithFallback(title, image?.url, getPlaceholderImage);
 
                         return (
-                          <Card 
-                            key={product.node.id} 
+                          <Card
+                            key={product.node.id}
                             className="p-6 bg-card border-border hover:border-primary/50 transition-all space-y-4 cursor-pointer"
                             itemScope
                             itemType="https://schema.org/Product"
@@ -378,13 +370,16 @@ const Tools = () => {
                             <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
                               <meta itemProp="price" content={price.toString()} />
                               <meta itemProp="priceCurrency" content={variant?.price?.currencyCode || 'USD'} />
-                              <meta itemProp="availability" content="https://schema.org/InStock" />
+                              <meta
+                                itemProp="availability"
+                                content={isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"}
+                              />
                             </div>
 
                             <div className="flex gap-4">
                               <div className="w-32 h-32 flex-shrink-0 bg-secondary/20 rounded-lg overflow-hidden">
-                                <img 
-                                  src={imageUrl} 
+                                <img
+                                  src={imageUrl}
                                   alt={image?.altText || `${title} - 650nm laser research equipment`}
                                   className="w-full h-full object-cover"
                                   loading="lazy"
@@ -393,19 +388,24 @@ const Tools = () => {
                                   }}
                                 />
                               </div>
-                              
+
                               <div className="flex-1 space-y-2">
                                 <div className="flex items-start justify-between gap-2">
                                   <h3 className="font-semibold text-lg leading-tight line-clamp-2">{title}</h3>
-                                  <ShareButtons 
-                                    title={title} 
-                                    description={description?.slice(0, 100)} 
+                                  <ShareButtons
+                                    title={title}
+                                    description={description?.slice(0, 100)}
                                     url={`https://dmtcode.com/products/${handle}`}
                                   />
                                 </div>
-                                <p className="text-2xl font-bold text-primary">
-                                  ${price.toFixed(2)}
-                                </p>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <p className="text-2xl font-bold text-primary">
+                                    ${price.toFixed(2)}
+                                  </p>
+                                  {!isAvailable && (
+                                    <Badge variant="destructive" className="text-xs">Sold Out</Badge>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
@@ -414,22 +414,39 @@ const Tools = () => {
                             </p>
 
                             <div className="pt-2">
-                              <Button 
-                                className="w-full bg-primary hover:bg-primary/90 glow-button touch-manipulation"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAddToCart(product);
-                                }}
-                                aria-label={`Add ${title} to cart`}
-                                size="lg"
-                              >
-                                <ShoppingCart className="w-5 h-5 mr-2" />
-                                Add to Cart
-                              </Button>
+                              {isAvailable ? (
+                                <Button
+                                  className="w-full bg-primary hover:bg-primary/90 glow-button touch-manipulation"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(product);
+                                  }}
+                                  aria-label={`Add ${title} to cart`}
+                                  size="lg"
+                                >
+                                  <ShoppingCart className="w-5 h-5 mr-2" />
+                                  Add to Cart
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground touch-manipulation"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleWaitlistClick(title, 'single');
+                                  }}
+                                  aria-label={`Join waitlist for ${title}`}
+                                  size="lg"
+                                >
+                                  <Bell className="w-5 h-5 mr-2" />
+                                  Notify Me When Available
+                                </Button>
+                              )}
                             </div>
                           </Card>
                         );
                       })}
+
                       
                       {/* Affiliate-only products */}
                       {filteredAffiliateProducts.map((product) => {
@@ -538,60 +555,20 @@ const Tools = () => {
                   )}
                 </div>
 
-                {/* Tiered Bundles */}
-                <div className="pt-12 space-y-8">
-                  <div className="text-center space-y-2">
-                    <h3 className="text-2xl md:text-3xl font-bold">Pre-Curated Bundles</h3>
-                    <p className="text-muted-foreground">One-click bundles save 15-20% vs. individual items</p>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    {bundles.map((bundle) => (
-                      <Card 
-                        key={bundle.name}
-                        className="p-8 bg-card border-primary/50 hover:border-primary transition-all space-y-6"
-                      >
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-2xl font-bold">{bundle.name}</h4>
-                            <Badge className="bg-primary text-primary-foreground">
-                              {bundle.discount}
-                            </Badge>
-                          </div>
-                          
-                          <div className="flex items-baseline gap-3">
-                            <span className="text-3xl font-bold text-primary">${bundle.price}</span>
-                            <span className="text-lg text-muted-foreground line-through">${bundle.originalPrice}</span>
-                          </div>
-
-                          <ul className="space-y-2">
-                            {bundle.items.map((item) => (
-                              <li key={item} className="text-sm text-muted-foreground">
-                                • {item}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Badge variant="destructive" className="w-full justify-center py-2">
-                            SOLD OUT
-                          </Badge>
-                          <Button 
-                            variant="outline" 
-                            className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                            onClick={() => {
-                              const utm = `?utm_source=bundle&utm_campaign=${encodeURIComponent(bundle.name)}&utm_tier=${bundle.tier}`;
-                              navigate(`/waitlist${utm}`);
-                            }}
-                          >
-                            Join Waitlist
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
+                {/* Bundles link (single source of truth lives on /bundles) */}
+                <div className="pt-12 space-y-4 text-center">
+                  <h3 className="text-2xl md:text-3xl font-bold">Pre-Curated Bundles</h3>
+                  <p className="text-muted-foreground">Save vs. individual items. Availability updates live from the store.</p>
+                  <Button
+                    size="lg"
+                    onClick={() => navigate('/bundles')}
+                    className="rounded-full btn-lickable border-beam"
+                  >
+                    <Package className="w-5 h-5 mr-2" />
+                    View All Bundles
+                  </Button>
                 </div>
+
 
                 {/* Sacred Journeys Section */}
                 <div className="pt-12 space-y-6">
@@ -618,22 +595,22 @@ const Tools = () => {
                   </div>
                 </div>
 
-                {/* CTA Section */}
+                {/* Waitlist CTA */}
                 <div className="pt-8 text-center space-y-4">
-                  <div className="bg-destructive/20 border-2 border-destructive/50 rounded-lg p-8 max-w-4xl mx-auto shadow-lg shadow-destructive/20">
+                  <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-8 max-w-4xl mx-auto">
                     <p className="text-xl md:text-2xl font-bold mb-4 text-foreground">
-                      All Items Sold Out: Purchases Support Research
+                      Get Notified About Restocks
                     </p>
                     <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
-                      All waitlist members get 72-hour early access to restocks + exclusive Q1 2025 bundle drops.
-                      Affiliate commissions support symbol cataloguing research and open data infrastructure.
+                      Waitlist members get early access when items return.
+                      Affiliate commissions support the open symbol catalogue.
                     </p>
-                    <Button 
+                    <Button
                       size="lg"
                       className="bg-primary hover:bg-primary/90 glow-button"
-                      onClick={() => navigate('/waitlist?utm_source=tools_cta&utm_campaign=soldout')}
+                      onClick={() => navigate('/waitlist?utm_source=tools_cta&utm_campaign=restock')}
                     >
-                      Get First Dibs: Join Waitlist
+                      Join Waitlist
                     </Button>
                   </div>
                 </div>
@@ -645,10 +622,10 @@ const Tools = () => {
                       Test Your Equipment
                     </h3>
                     <p className="text-sm md:text-base text-muted-foreground mb-6">
-                      Upload symbols from your laser experiments to the community registry. 
+                      Upload symbols from your laser experiments to the community registry.
                       Help validate reproducibility across different wavelengths and refractive indices.
                     </p>
-                    <Button 
+                    <Button
                       size="lg"
                       variant="outline"
                       className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -659,35 +636,16 @@ const Tools = () => {
                   </div>
                 </div>
 
-                {/* Mysticism Store CTA */}
-                <div className="pt-8 text-center">
-                  <div className="bg-secondary/20 border-2 border-secondary/40 rounded-lg p-8 max-w-4xl mx-auto">
-                    <h3 className="text-xl md:text-2xl font-bold mb-4">
-                      Explore Mysticism & Symbolism
-                    </h3>
-                    <p className="text-sm md:text-base text-muted-foreground mb-6">
-                      Discover Jewish mysticism symbols and protective amulets. 
-                      Each item represents the power of characters and sacred letters in faith traditions.
-                    </p>
-                    <Button 
-                      size="lg"
-                      variant="outline"
-                      onClick={() => navigate('/woo?utm_source=tools&utm_campaign=mysticism_cta')}
-                    >
-                      View Mysticism Store →
-                    </Button>
-                  </div>
-                </div>
-
                 {/* Disclaimer */}
                 <div className="pt-8 border-t border-border">
                   <p className="text-xs text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
                     <strong>Affiliate Disclosure:</strong> Affiliate commissions support symbol cataloguing.
                     No medical claims made: equipment supports phenomenological research per academic protocols (Goler 2025, Strassman 2001).
-                    N,N-DMT remains Schedule I in most jurisdictions; consult local laws. Equipment sales fund community symbol catalogue. 
-                    All "sold out" statuses accurate as of Nov 2025; waitlist notified upon restock.
+                    N,N-DMT remains Schedule I in most jurisdictions; consult local laws.
+                    Store availability updates live from our fulfilment provider.
                   </p>
                 </div>
+
               </div>
             </section>
           </div>

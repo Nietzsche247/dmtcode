@@ -62,14 +62,13 @@ const isWooProduct = (title: string): boolean => {
   return WOO_KEYWORDS.some(keyword => lowerTitle.includes(keyword));
 };
 
-const bundleData = {
+const bundleDataRaw = {
   starter: {
     id: 'starter',
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
     description: 'Entry-level research kit containing calibrated 650nm laser pointer, diffraction grating for beam analysis, and protocol documentation journal. Ideal for researchers beginning systematic 650nm protocol study.',
     price: 85,
-    originalPrice: 106,
     discount: '20% OFF',
     tier: 'entry',
     items: [
@@ -95,9 +94,8 @@ const bundleData = {
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
     description: 'Comprehensive research package featuring precision 650nm laser module, high-index ZnSe lens for beam shaping, diffraction analysis equipment, and full documentation setup. Recommended for researchers committed to systematic optical study.',
-    price: 1200,
-    originalPrice: 1412,
-    discount: '15% OFF',
+    price: 1000,
+    discount: '13% OFF',
     tier: 'mid',
     popular: true,
     items: [
@@ -125,9 +123,8 @@ const bundleData = {
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
     description: 'Full-spectrum optical research package with professional 660nm MitoMAT light therapy equipment, precision laser modules, multiple lens types for refractive experiments, and comprehensive documentation tools.',
-    price: 2300,
-    originalPrice: 2875,
-    discount: '20% OFF',
+    price: 2200,
+    discount: '15% OFF',
     tier: 'high',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
@@ -155,9 +152,8 @@ const bundleData = {
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
     description: 'Premium research package including professional-grade optical equipment, full MitoMAT system, self-leveling laser apparatus, multiple wavelength modules, and comprehensive integration documentation for extended research protocols.',
-    price: 3500,
-    originalPrice: 4375,
-    discount: '20% OFF',
+    price: 3200,
+    discount: '15% OFF',
     tier: 'premium',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
@@ -182,6 +178,15 @@ const bundleData = {
     relatedResearch: ['Strassman 2001', 'Goler 2025', 'Michael 2021'],
   },
 };
+
+// originalPrice is computed from item values so display and savings math stay honest.
+const bundleData = Object.fromEntries(
+  Object.entries(bundleDataRaw).map(([key, b]) => [
+    key,
+    { ...b, originalPrice: b.items.reduce((sum, i) => sum + i.value, 0) },
+  ])
+) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number }>;
+
 
 const BUNDLE_PRODUCT_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -454,10 +459,11 @@ const BundleDetail = () => {
     );
   }
 
+  const shopifyVariant = shopifyProduct?.variants?.edges?.[0]?.node;
+  const isAvailable = shopifyVariant?.availableForSale === true;
+
   const handleAddToCart = () => {
-    setIsLoading(true);
-    
-    // Track add to cart
+    // Track intent regardless
     if (window.posthog) {
       window.posthog.capture('bundle_added_to_cart', {
         bundle_id: bundle.id,
@@ -465,35 +471,33 @@ const BundleDetail = () => {
         bundle_price: bundle.price,
         bundle_tier: bundle.tier,
         shopify_product_id: shopifyProduct?.id || null,
+        available: isAvailable,
       });
     }
 
-    // If we have the Shopify product, add to cart
-    if (shopifyProduct?.variants?.edges?.[0]?.node) {
-      const variant = shopifyProduct.variants.edges[0].node;
-      const cartItem: CartItem = {
-        product: { node: shopifyProduct },
-        variantId: variant.id,
-        variantTitle: variant.title,
-        price: variant.price,
-        quantity: 1,
-        selectedOptions: variant.selectedOptions || [],
-      };
-      
-      addItem(cartItem);
-      toast.success('Bundle added to cart!', {
-        description: 'Proceed to checkout to complete your purchase.',
-      });
-    } else {
-      // Fallback to waitlist if product not found
+    // If not truly available, do NOT create a dead-end cart line. Push to waitlist.
+    if (!isAvailable || !shopifyVariant) {
       navigate(`/waitlist?utm_source=bundle_detail&utm_bundle=${encodeURIComponent(bundle.name)}&utm_tier=${bundle.id}`);
-      toast.success('Bundle reserved!', {
-        description: 'Join the waitlist to secure your bundle.',
-      });
+      return;
     }
-    
+
+    setIsLoading(true);
+    const cartItem: CartItem = {
+      product: { node: shopifyProduct },
+      variantId: shopifyVariant.id,
+      variantTitle: shopifyVariant.title,
+      price: shopifyVariant.price,
+      quantity: 1,
+      selectedOptions: shopifyVariant.selectedOptions || [],
+    };
+
+    addItem(cartItem);
+    toast.success('Bundle added to cart!', {
+      description: 'Proceed to checkout to complete your purchase.',
+    });
     setIsLoading(false);
   };
+
 
   // Dynamic OG image URL
   const ogImageUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/og-image?bundle=${bundle.id}`;
