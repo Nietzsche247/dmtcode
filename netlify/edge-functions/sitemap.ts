@@ -11,26 +11,24 @@ const SUPABASE_KEY =
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/registry", "0.9", "daily"],
+  ["/trials", "0.9", "daily"],
   ["/tools", "0.8", "weekly"],
-  ["/bundles", "0.7", "weekly"],
   ["/protocols", "0.8", "weekly"],
-  ["/protocol-guide", "0.7", "monthly"],
   ["/evidence-map", "0.7", "weekly"],
+  ["/research", "0.7", "weekly"],
   ["/bibliography", "0.6", "monthly"],
+  ["/events", "0.6", "weekly"],
   ["/methods", "0.6", "monthly"],
-  ["/research", "0.6", "weekly"],
   ["/glossary", "0.6", "monthly"],
   ["/faq", "0.6", "monthly"],
+  ["/dataset", "0.6", "monthly"],
   ["/about", "0.5", "monthly"],
   ["/correlations", "0.5", "weekly"],
   ["/open-questions", "0.5", "weekly"],
-  ["/critiques", "0.4", "monthly"],
-  ["/null-reports", "0.4", "weekly"],
-  ["/events", "0.6", "weekly"],
-  ["/leaderboard", "0.4", "weekly"],
   ["/submit-symbol", "0.5", "monthly"],
-  ["/log", "0.5", "monthly"],
-  ["/assess", "0.5", "monthly"],
+  ["/null-reports", "0.4", "weekly"],
+  ["/critiques", "0.4", "monthly"],
+  ["/leaderboard", "0.4", "weekly"],
 ];
 
 function xesc(s: string): string {
@@ -42,30 +40,30 @@ function xesc(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-async function allSymbols(): Promise<Array<{ id: string; updated_at: string }>> {
+async function page(
+  table: string,
+  filter: string
+): Promise<Array<{ id: string; updated_at: string }>> {
   const out: Array<{ id: string; updated_at: string }> = [];
   if (!SUPABASE_URL || !SUPABASE_KEY) return out;
-  const page = 1000;
-  for (let from = 0; from < 50000; from += page) {
-    const to = from + page - 1;
+  const size = 1000;
+  for (let from = 0; from < 50000; from += size) {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/symbol_submissions` +
-        `?status=eq.approved&select=id,updated_at&order=updated_at.desc`,
+      `${SUPABASE_URL}/rest/v1/${table}?${filter}&select=id,updated_at&order=updated_at.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`,
           Accept: "application/json",
-          Range: `${from}-${to}`,
+          Range: `${from}-${from + size - 1}`,
           "Range-Unit": "items",
-          Prefer: "count=none",
         },
       }
     );
     if (!res.ok) break;
     const rows = (await res.json()) as Array<{ id: string; updated_at: string }>;
     out.push(...rows);
-    if (rows.length < page) break;
+    if (rows.length < size) break;
   }
   return out;
 }
@@ -78,18 +76,23 @@ export default async () => {
       `<changefreq>${cf}</changefreq><priority>${pr}</priority></url>`
   );
 
-  try {
-    for (const s of await allSymbols()) {
-      const lastmod = (s.updated_at || "").slice(0, 10) || today;
+  const add = (prefix: string, rows: Array<{ id: string; updated_at: string }>) => {
+    for (const r of rows) {
+      const lastmod = (r.updated_at || "").slice(0, 10) || today;
       urls.push(
-        `  <url><loc>${SITE}/registry/${xesc(s.id)}</loc>` +
+        `  <url><loc>${SITE}${prefix}/${xesc(r.id)}</loc>` +
           `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
-          `<priority>0.6</priority></url>`
+          `<priority>0.7</priority></url>`
       );
     }
-  } catch (_e) {
-    // fall back to static-only sitemap
-  }
+  };
+
+  try {
+    add("/registry", await page("symbol_submissions", "status=eq.approved"));
+  } catch (_e) { /* skip */ }
+  try {
+    add("/trials", await page("clinical_trials", "is_approved=is.true"));
+  } catch (_e) { /* skip */ }
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
