@@ -11,6 +11,7 @@ import { Session } from "@supabase/supabase-js";
 import { useAuthTracking, AuthProvider } from "@/hooks/useAuthTracking";
 import { Logo } from "@/components/Logo";
 import { lovable } from "@/integrations/lovable/index";
+import { Helmet } from "react-helmet";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }).max(255, { message: "Email must be less than 255 characters" }),
