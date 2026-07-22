@@ -43,10 +43,10 @@ const EvidenceMap = () => {
   return (
     <>
       <Helmet>
-        <title>Scientific Evidence Analysis: DMT Laser Phenomenon | DMT Code</title>
+        <title>Is the DMT code real? Evidence Timeline & Analysis | DMT Code</title>
         <meta 
           name="description" 
-          content="Pro and con analysis of competing hypotheses explaining the Code of Reality phenomenon with peer-reviewed citations." 
+          content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations, competing hypotheses, and stance-scored milestones from 1926 to 2025." 
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         
