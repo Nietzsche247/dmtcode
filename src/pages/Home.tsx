@@ -277,6 +277,8 @@ const Home = () => {
               </div>
             </AnimatedSection>
           </section>
+
+          <GetInvolvedDoors variant="bottom" />
         </main>
 
         <Footer />
