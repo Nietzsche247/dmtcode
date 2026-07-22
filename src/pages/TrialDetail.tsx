@@ -150,7 +150,7 @@ const TrialDetail = () => {
       <main className="container mx-auto max-w-3xl px-4 pb-24 pt-6">
         <header className="mb-8 border-b border-border/60 pb-6">
           <p className="label-data mb-3 text-[11px] text-muted-foreground">
-            CLINICAL TRIAL · {(trial.status || 'STATUS UNKNOWN').toUpperCase()}
+            CLINICAL TRIAL · {((trial.confirmed_status || trial.status) || 'STATUS UNKNOWN').toUpperCase()}
           </p>
           <h1 className="font-display text-3xl leading-tight md:text-5xl">
             {trial.title}
@@ -159,13 +159,17 @@ const TrialDetail = () => {
 
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
           {[
-            ['Status', trial.status],
+            ['Status', trial.confirmed_status || trial.status],
+            ['Type', trial.trial_type],
             ['Institution', trial.institution],
+            ['Location', trial.location],
             ['Principal investigator', trial.principal_investigator],
+            ['Organizer / lead', trial.organizer_lead],
             ['Start date', fmt(trial.start_date)],
             ['End date', fmt(trial.end_date)],
             ['Registry ID', trial.trial_registry_id],
             ['DOI', trial.doi],
+            ['Source', trial.source],
           ].map(([term, val]) => (
             <div key={term as string}>
               <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
@@ -181,7 +185,28 @@ const TrialDetail = () => {
           </section>
         )}
 
+        {trial.eligibility && (
+          <section className="mb-10">
+            <h2 className="label-data mb-3 text-[11px] text-muted-foreground">ELIGIBILITY</h2>
+            <p className="whitespace-pre-line leading-relaxed">{trial.eligibility}</p>
+          </section>
+        )}
+
+        {trial.notes && (
+          <section className="mb-10">
+            <h2 className="label-data mb-3 text-[11px] text-muted-foreground">NOTES</h2>
+            <p className="whitespace-pre-line leading-relaxed text-muted-foreground">{trial.notes}</p>
+          </section>
+        )}
+
         <div className="flex flex-wrap gap-3">
+          {trial.application_url && (
+            <Button asChild>
+              <a href={trial.application_url} target="_blank" rel="noopener noreferrer">
+                Application <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+          )}
           {trial.url && (
             <Button asChild variant="outline">
               <a href={trial.url} target="_blank" rel="noopener noreferrer">
