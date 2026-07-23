@@ -25,6 +25,38 @@ async function ensureWasm() {
   return wasmReady;
 }
 
+const FONT_URLS = {
+  fraunces:
+    "https://fonts.gstatic.com/s/fraunces/v31/6NUh8FyLNQOQZAnv9ZwNjucMHVn85Ni7emAe9lKqZTnbB-gzTKgYFmMlBWk.woff2",
+  hanken:
+    "https://fonts.gstatic.com/s/hankengrotesk/v8/ktkm0-EoXAqOA3AiuKvNvNUnkGvUwv0FZQ.woff2",
+  plexMono:
+    "https://fonts.gstatic.com/s/ibmplexmono/v19/-F63fjptAgt5VM-kVkqdyU8n5igg1l9kn-s.woff2",
+};
+
+let fontBuffersPromise: Promise<Uint8Array[]> | null = null;
+async function loadFontBuffers(): Promise<Uint8Array[]> {
+  if (!fontBuffersPromise) {
+    fontBuffersPromise = Promise.all(
+      Object.values(FONT_URLS).map((u) =>
+        fetch(u).then((r) => new Uint8Array(r.ok ? r.arrayBuffer() as unknown as ArrayBuffer : new ArrayBuffer(0))),
+      ),
+    ).then(async () => {
+      // resolve real ArrayBuffers
+      const bufs = await Promise.all(
+        Object.values(FONT_URLS).map(async (u) => {
+          const r = await fetch(u);
+          if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
+          return new Uint8Array(await r.arrayBuffer());
+        }),
+      );
+      return bufs;
+    });
+  }
+  return fontBuffersPromise;
+}
+
+
 async function sbGet(path: string): Promise<unknown> {
   if (!SUPABASE_URL || !SUPABASE_KEY) return null;
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
