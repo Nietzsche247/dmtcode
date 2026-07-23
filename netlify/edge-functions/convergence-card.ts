@@ -153,13 +153,18 @@ export default async (request: Request, _context: Context) => {
       });
     }
 
-    await ensureWasm();
-    const fontBuffers = await loadFontBuffers();
+    let fontBuffers: Uint8Array[] = [];
+    try {
+      await ensureWasm();
+      fontBuffers = await loadFontBuffers();
+    } catch {
+      fontBuffers = [];
+    }
     const resvg = new Resvg(svg, {
       background: "#F0EADA",
       fitTo: { mode: "width", value: 1200 },
       font: {
-        loadSystemFonts: false,
+        loadSystemFonts: fontBuffers.length === 0,
         fontBuffers,
         defaultFontFamily: "Hanken Grotesk",
       },
@@ -175,6 +180,7 @@ export default async (request: Request, _context: Context) => {
     return new Response(`card error: ${(e as Error).message}`, { status: 500 });
   }
 };
+
 
 export const config: Config = {
   path: "/card/*",
