@@ -18,6 +18,10 @@
   path = "/trials/*"
   function = "content-prerender"
 
+[[edge_functions]]
+  path = "/card/*"
+  function = "convergence-card"
+
 # SPA fallback for every other route.
 [[redirects]]
   from = "/*"
