@@ -1263,6 +1263,7 @@ export type Database = {
       }
       symbol_submissions: {
         Row: {
+          context_note: string | null
           created_at: string
           description: string | null
           dose_level: string | null
@@ -1287,6 +1288,7 @@ export type Database = {
           wavelength: string | null
         }
         Insert: {
+          context_note?: string | null
           created_at?: string
           description?: string | null
           dose_level?: string | null
@@ -1311,6 +1313,7 @@ export type Database = {
           wavelength?: string | null
         }
         Update: {
+          context_note?: string | null
           created_at?: string
           description?: string | null
           dose_level?: string | null
@@ -1370,6 +1373,7 @@ export type Database = {
           created_at: string | null
           glyph_id: string | null
           id: string
+          kind: Database["public"]["Enums"]["tag_kind"]
           symbol_id: string | null
           tag_name: string
           upvotes: number | null
@@ -1379,6 +1383,7 @@ export type Database = {
           created_at?: string | null
           glyph_id?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["tag_kind"]
           symbol_id?: string | null
           tag_name: string
           upvotes?: number | null
@@ -1388,6 +1393,7 @@ export type Database = {
           created_at?: string | null
           glyph_id?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["tag_kind"]
           symbol_id?: string | null
           tag_name?: string
           upvotes?: number | null
@@ -1441,6 +1447,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tag_vocabulary: {
+        Row: {
+          category: string
+          created_at: string
+          promoted_at: string | null
+          status: string
+          term: string
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          promoted_at?: string | null
+          status?: string
+          term: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          promoted_at?: string | null
+          status?: string
+          term?: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
       }
       tag_votes: {
         Row: {
@@ -1877,6 +1913,7 @@ export type Database = {
       app_role: "admin" | "moderator" | "user"
       submission_status: "pending" | "approved" | "rejected"
       symbol_vote_type: "upvote" | "downvote" | "seen_it"
+      tag_kind: "context" | "general"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2007,6 +2044,7 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       submission_status: ["pending", "approved", "rejected"],
       symbol_vote_type: ["upvote", "downvote", "seen_it"],
+      tag_kind: ["context", "general"],
     },
   },
 } as const
