@@ -459,4 +459,4 @@ export const config: Config = {
 };
 
 
-export const config: Config = { path: ["/registry/*", "/trials/*"] };
+
