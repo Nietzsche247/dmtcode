@@ -83,6 +83,12 @@ export default async (request: Request, context: Context) => {
     if (kind === "faq" && seg.length === 1) {
       return await renderFaq(context);
     }
+    if (seg.length === 0) {
+      return await renderStatic(context, "home");
+    }
+    if (seg.length === 1 && STATIC_PAGES[kind]) {
+      return await renderStatic(context, kind);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
@@ -744,6 +750,28 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     ],
   };
 
+  const body = `<article data-prerender="evidence-map">
+  <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
+  <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
+  <section>
+    <h2>What the claim is, and what it is not</h2>
+    <p>The claim is convergence: strangers who have never spoken landing on the same forms. It is not a claim that the forms carry a message, that reality is literally coded, or that the phenomenon has a known cause. Each of those is a separate question and is treated separately in the record.</p>
+  </section>
+  <section>
+    <h2>What the open data shows</h2>
+    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. The bibliography carries stance-scored entries from skeptical to supportive so the distribution can be inspected directly.</p>
+  </section>
+  <section>
+    <h2>How to judge it</h2>
+    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
+  </section>
+  <section>
+    <h2>Primary reference</h2>
+    <p>Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.</p>
+  </section>
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+</article>`;
+
   const head = [
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(metaDesc)}" />`,
@@ -773,6 +801,11 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
   html = html.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(html)) {
+    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
+  } else {
+    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
 
   return new Response(html, {
     status: 200,
@@ -984,9 +1017,364 @@ async function renderFaq(context: Context): Promise<Response> {
   });
 }
 
-export const config: Config = {
-  path: ["/registry/*", "/trials/*", "/prepare", "/evidence-map", "/faq"],
+type StaticPage = {
+  title: string;
+  description: string;
+  heading: string;
+  paragraphs: string[];
+  links?: Array<{ href: string; label: string }>;
+  breadcrumbName: string;
+  index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
 };
+
+const STATIC_PAGES: Record<string, StaticPage> = {
+  home: {
+    title: "DMT Code | 650nm Laser Visual Symbol Research",
+    description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Peer reviewed research, live clinical trials, and machine readable data under CC-BY-4.0.",
+    heading: "DMT Code",
+    paragraphs: [
+      "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
+      "The registry is public. Every symbol shows its independent confirmation count. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
+    ],
+    links: [
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/prepare", label: "Prepare to observe" },
+      { href: "/evidence-map", label: "Evidence and analysis" },
+      { href: "/faq", label: "Questions and answers" },
+    ],
+    breadcrumbName: "Home",
+  },
+  registry: {
+    title: "Visual Symbol Registry | DMT Code",
+    description: "Open, community maintained catalogue of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Every symbol shows its independent confirmation count.",
+    heading: "Visual Symbol Registry",
+    paragraphs: [
+      "The registry catalogues discrete visual forms that observers have reported. Each entry records the form, contextual metadata, and the number of independent people who have recognized it. Convergence is measured, not asserted.",
+      "Anyone can contribute. Anyone can download the full dataset. The corpus is CC-BY-4.0.",
+    ],
+    links: [
+      { href: "/submit-symbol", label: "Submit a symbol" },
+      { href: "/data.json", label: "Machine readable corpus" },
+      { href: "/dataset", label: "Dataset index" },
+    ],
+    breadcrumbName: "Registry",
+    index: { table: "symbol_submissions", filter: "status=eq.approved", select: "id,description,created_at", titleField: "description", linkPrefix: "/registry", label: "Recent symbols" },
+  },
+  trials: {
+    title: "Clinical Trials Observatory | DMT Code",
+    description: "Observatory of DMT related clinical trials with status, sponsor, phase, and application links. Updated from public trial registries.",
+    heading: "Clinical Trials Observatory",
+    paragraphs: [
+      "The observatory tracks clinical trials that involve N,N-DMT and related compounds. Each record links to the underlying trial registry entry so the primary source is one click away.",
+      "Filter by status, indication, and sponsor. Machine readable trial records are included in the unified corpus at /data.json.",
+    ],
+    links: [
+      { href: "/data.json", label: "Machine readable corpus" },
+      { href: "/bibliography", label: "Related research library" },
+    ],
+    breadcrumbName: "Trials",
+    index: { table: "clinical_trials", filter: "is_approved=is.true", select: "id,title,updated_at", titleField: "title", linkPrefix: "/trials", label: "Tracked trials" },
+  },
+  bibliography: {
+    title: "Research Bibliography | DMT Code",
+    description: "Stance scored research library covering N,N-DMT, 5-MeO-DMT, and related compounds. Filter by content type, authority, stance, tag, and year.",
+    heading: "Research Bibliography",
+    paragraphs: [
+      "The bibliography is a stance scored index of peer reviewed papers, books, essays, and media. Each entry carries an authority type and a signed stance score so the distribution can be inspected directly.",
+      "The library is designed to be balanced. Skeptical, neutral, and supportive sources are all indexed. Use the stance filter to read the case against before the case for.",
+    ],
+    links: [
+      { href: "/data.json", label: "Machine readable corpus" },
+      { href: "/evidence-map", label: "Evidence analysis" },
+    ],
+    breadcrumbName: "Bibliography",
+    index: { table: "bibliography", filter: "is_approved=eq.true", select: "id,title,updated_at", titleField: "title", linkPrefix: "/bibliography", label: "Recent entries" },
+  },
+  dataset: {
+    title: "Machine Readable Dataset | DMT Code",
+    description: "The unified DMT Code corpus. Bibliography, clinical trials, and approved symbols in one JSON document under CC-BY-4.0. Filterable by facet.",
+    heading: "Machine Readable Dataset",
+    paragraphs: [
+      "The unified corpus is available at /data.json. It merges every bibliography row, every tracked clinical trial, and every approved symbol into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
+      "License is CC-BY-4.0. Attribute to DMT Code, https://dmtcode.com. An archived, citable version is available by DOI.",
+    ],
+    links: [
+      { href: "/data.json", label: "/data.json (unified corpus)" },
+      { href: "/shop.json", label: "/shop.json (kits and bundles)" },
+      { href: "/sitemap.xml", label: "/sitemap.xml" },
+    ],
+    breadcrumbName: "Dataset",
+  },
+  about: {
+    title: "About the DMT Code project | DMT Code",
+    description: "Why the DMT Code project exists, how it operates, and how to inspect or critique the record.",
+    heading: "About the DMT Code project",
+    paragraphs: [
+      "DMT Code was built to test a narrow question with an open record: do independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol.",
+      "The project is neutral by design. Confirmations are earned by independent recognition, not solicited. The full dataset is public, licensed CC-BY-4.0, and archived with a DOI so external researchers can audit or replicate it.",
+    ],
+    links: [
+      { href: "/methods", label: "Methods" },
+      { href: "/critiques", label: "Critiques" },
+      { href: "/dataset", label: "Dataset" },
+    ],
+    breadcrumbName: "About",
+  },
+  critiques: {
+    title: "Critiques and limitations | DMT Code",
+    description: "Known limitations of the DMT Code method and dataset. Selection effects, cultural priors, and reasons the convergence signal may not survive scrutiny.",
+    heading: "Critiques and limitations",
+    paragraphs: [
+      "This page catalogues the strongest arguments against the DMT Code claim, including selection bias in who contributes, shared cultural imagery, suggestion effects, and the difficulty of blinding a self report.",
+      "Every critique here is linked to the record so a reader can test the claim rather than take a position on it.",
+    ],
+    links: [
+      { href: "/null-reports", label: "Null reports dashboard" },
+      { href: "/methods", label: "Methods" },
+    ],
+    breadcrumbName: "Critiques",
+  },
+  "null-reports": {
+    title: "Null reports dashboard | DMT Code",
+    description: "Public dashboard of negative and null replication results submitted to the DMT Code project.",
+    heading: "Null reports",
+    paragraphs: [
+      "Null results are tracked in the open. A dataset that only publishes positive confirmations cannot be judged; this page exists so failed replications are visible in the same record as the successes.",
+      "Anyone can submit a null report. Reports are indexed alongside symbols so a reader can weigh confirmation counts against non-recognition counts.",
+    ],
+    links: [
+      { href: "/registry", label: "Registry" },
+      { href: "/methods", label: "Methods" },
+    ],
+    breadcrumbName: "Null reports",
+  },
+  glossary: {
+    title: "Glossary of key terms | DMT Code",
+    description: "Definitions of the academic and technical terms used across the DMT Code project.",
+    heading: "Glossary",
+    paragraphs: [
+      "This glossary defines terms used across the DMT Code project, including N,N-DMT, 5-MeO-DMT, 650 nm, optical density, stance score, authority type, and convergence.",
+      "Definitions are kept short and factual so cross references between pages resolve to the same meaning.",
+    ],
+    breadcrumbName: "Glossary",
+  },
+  methods: {
+    title: "Methods and protocol design | DMT Code",
+    description: "The observation protocol, blinding approach, and data validation methods used by the DMT Code project.",
+    heading: "Methods",
+    paragraphs: [
+      "The observation protocol is built around a verified 650 nm laser and matched optical density. Where possible, contributors record what they saw before viewing the existing catalogue, so a match is earned by independent recognition rather than by suggestion.",
+      "Confirmation counts are public per symbol. The full corpus is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
+    ],
+    links: [
+      { href: "/protocol-guide", label: "Protocol guide" },
+      { href: "/dataset", label: "Dataset" },
+    ],
+    breadcrumbName: "Methods",
+  },
+  "open-questions": {
+    title: "Open research questions | DMT Code",
+    description: "Unresolved research questions tracked by the DMT Code project.",
+    heading: "Open questions",
+    paragraphs: [
+      "This page tracks unresolved research questions that the current dataset cannot yet answer, including dose response, wavelength specificity, and cross cultural convergence.",
+      "Each question links to the relevant subset of the corpus so researchers can pick one up and work on it.",
+    ],
+    breadcrumbName: "Open questions",
+  },
+  research: {
+    title: "Active research projects | DMT Code",
+    description: "Ongoing research projects, collaborations, and findings related to the DMT Code paradigm.",
+    heading: "Active research",
+    paragraphs: [
+      "The research page tracks projects that use the DMT Code registry or the 650 nm laser observation protocol as an input, along with published findings.",
+      "External researchers who want to use the corpus or contribute a study can do so under CC-BY-4.0 with attribution.",
+    ],
+    links: [
+      { href: "/bibliography", label: "Research bibliography" },
+      { href: "/dataset", label: "Dataset" },
+    ],
+    breadcrumbName: "Research",
+  },
+  protocols: {
+    title: "Protocol catalogue | DMT Code",
+    description: "Catalogue of psychedelic and 650 nm laser protocols indexed by the DMT Code project.",
+    heading: "Protocols",
+    paragraphs: [
+      "The protocol catalogue indexes documented psychedelic and 650 nm laser observation protocols, including dosing ranges, equipment specifications, and safety notes where available.",
+      "Protocols are indexed for reference. Nothing on this page is a personal recommendation.",
+    ],
+    links: [
+      { href: "/prepare", label: "Prepare to observe" },
+      { href: "/protocol-guide", label: "Protocol guide" },
+    ],
+    breadcrumbName: "Protocols",
+  },
+  forecasts: {
+    title: "Research and technology forecasts | DMT Code",
+    description: "Uncertainty-bounded forecasts for DMT research milestones and adjacent technology.",
+    heading: "Forecasts",
+    paragraphs: [
+      "This page publishes uncertainty-bounded forecasts for research milestones adjacent to the DMT Code project. Probabilities are expressed with an interval, not a point estimate.",
+      "Forecast rationales are versioned so a reader can inspect why an estimate has moved.",
+    ],
+    breadcrumbName: "Forecasts",
+  },
+  "protocol-guide": {
+    title: "650 nm laser protocol guide | DMT Code",
+    description: "Neutral summary of the reported 650 nm laser observation protocol used across DMT Code contributions.",
+    heading: "650 nm laser protocol guide",
+    paragraphs: [
+      "This is a neutral summary of the 650 nm laser observation protocol as reported by contributors. It documents equipment, room conditions, and observation posture. It is not medical or legal advice.",
+      "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice.",
+    ],
+    links: [
+      { href: "/prepare", label: "Prepare" },
+      { href: "/methods", label: "Methods" },
+    ],
+    breadcrumbName: "Protocol guide",
+  },
+};
+
+async function renderStatic(context: Context, key: string): Promise<Response> {
+  const page = STATIC_PAGES[key];
+  const shellRes = await context.next();
+  if (!page) return shellRes;
+
+  const path = key === "home" ? "" : `/${key}`;
+  const canonical = `${SITE}${path || "/"}`;
+
+  let recentList = "";
+  if (page.index && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+      });
+      if (res.ok) {
+        const rows = (await res.json()) as Array<Record<string, unknown>>;
+        if (rows.length) {
+          const items = rows
+            .map((r) => {
+              const t = String(r[page.index!.titleField] ?? "").trim() || String(r.id).slice(0, 8);
+              return `<li><a href="${page.index!.linkPrefix}/${esc(r.id)}">${esc(clip(t, 120))}</a></li>`;
+            })
+            .join("");
+          recentList = `<section><h2>${esc(page.index.label)}</h2><ul>${items}</ul></section>`;
+        }
+      }
+    } catch { /* ignore */ }
+  }
+
+  const linksBlock = page.links && page.links.length
+    ? `<section><h2>Related</h2><ul>${page.links
+        .map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`)
+        .join("")}</ul></section>`
+    : "";
+
+  const body = `<article data-prerender="${esc(key)}">
+  <h1>${esc(page.heading)}</h1>
+  ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${recentList}
+  ${linksBlock}
+</article>`;
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}#website`,
+    url: SITE,
+    name: "DMT Code",
+    publisher: { "@id": `${SITE}#org` },
+  };
+  const breadcrumbLd = key === "home"
+    ? null
+    : {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+          { "@type": "ListItem", position: 2, name: page.breadcrumbName, item: canonical },
+        ],
+      };
+
+  const head = [
+    `<title>${esc(page.title)}</title>`,
+    `<meta name="description" content="${esc(page.description)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${esc(page.title)}" />`,
+    `<meta property="og:description" content="${esc(page.description)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(page.title)}" />`,
+    `<meta name="twitter:description" content="${esc(page.description)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
+    breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
+  ].filter(Boolean).join("\n");
+
+  let html = await shellRes.text();
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/gi, "")
+    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+  html = html.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(html)) {
+    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
+  } else {
+    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=0, must-revalidate",
+      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+    },
+  });
+}
+
+export const config: Config = {
+  path: [
+    "/",
+    "/registry",
+    "/registry/*",
+    "/trials",
+    "/trials/*",
+    "/bibliography",
+    "/dataset",
+    "/about",
+    "/critiques",
+    "/null-reports",
+    "/glossary",
+    "/methods",
+    "/open-questions",
+    "/research",
+    "/protocols",
+    "/forecasts",
+    "/protocol-guide",
+    "/prepare",
+    "/evidence-map",
+    "/faq",
+  ],
+};
+
 
 
 

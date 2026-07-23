@@ -15,11 +15,71 @@
   function = "shop-json"
 
 [[edge_functions]]
+  path = "/"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/registry"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/registry/*"
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/trials"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/trials/*"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/bibliography"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/dataset"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/about"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/critiques"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/null-reports"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/glossary"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/methods"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/open-questions"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/research"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/protocols"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/forecasts"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/protocol-guide"
   function = "content-prerender"
 
 [[edge_functions]]

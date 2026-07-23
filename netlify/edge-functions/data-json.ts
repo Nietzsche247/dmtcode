@@ -140,11 +140,11 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,phase,trial_type,status,confirmed_status,application_url,source_url,compounds,indication,notes,eligibility,source_date,created_at"
+      "id,title,institution,organizer_lead,location,trial_type,status,confirmed_status,application_url,url,notes,eligibility,created_at"
     ),
     fetchAll(
       "symbol_submissions",
-      "id,title,description,tags,source,status,created_at,image_url",
+      "id,description,tags,status,created_at,image_url",
       "status=eq.approved"
     ),
   ]);
@@ -186,25 +186,22 @@ export default async (req: Request): Promise<Response> => {
       id: `trial_${r.id}`,
       content_type: "Trial",
       title,
-      url: (r.application_url as string) || (r.source_url as string) || `${SITE}/trials/${r.id}`,
+      url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
       doi: null,
-      compounds: normalizeCompounds(r.compounds),
-      topic: [
-        ...((r.indication as string) ? [r.indication as string] : []),
-        ...((r.trial_type as string) ? [r.trial_type as string] : []),
-      ],
+      compounds: [],
+      topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
       authority_type: "Clinical",
       stance_score: null,
       people,
       status: (r.confirmed_status as string) || (r.status as string) || null,
-      source_date: (r.source_date as string) || (r.created_at as string) || null,
+      source_date: (r.created_at as string) || null,
     };
   });
 
   const symbolItems: UnifiedItem[] = symbols.map((r) => ({
     id: `symbol_${r.id}`,
     content_type: "Symbol",
-    title: (r.title as string) || (r.description as string) || "Untitled symbol",
+    title: (r.description as string) || "Untitled symbol",
     url: `${SITE}/registry/${r.id}`,
     doi: null,
     compounds: [],

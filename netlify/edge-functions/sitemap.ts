@@ -8,18 +8,20 @@ const SUPABASE_KEY =
   Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") ??
   "";
 
-// Canonical public content URLs only. Utility/auth/user surfaces are noindexed
-// via Helmet on the page itself and intentionally excluded from the sitemap.
+// Canonical public content URLs. Static entries omit <lastmod> because there
+// is no authoritative per-page timestamp; database-backed entries below carry
+// their real row updated_at.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/registry", "0.9", "daily"],
   ["/evidence-map", "0.9", "weekly"],
   ["/trials", "0.9", "daily"],
   ["/bibliography", "0.9", "weekly"],
-  ["/tools", "0.8", "weekly"],
+  ["/prepare", "0.8", "weekly"],
+  ["/faq", "0.7", "monthly"],
   ["/events", "0.7", "weekly"],
   ["/protocols", "0.8", "weekly"],
-  ["/faq", "0.6", "monthly"],
+  ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],
   ["/about", "0.6", "monthly"],
   ["/methods", "0.6", "monthly"],
@@ -28,7 +30,14 @@ const STATIC: Array<[string, string, string]> = [
   ["/null-reports", "0.5", "weekly"],
   ["/research", "0.6", "weekly"],
   ["/dataset", "0.6", "monthly"],
-  ["/prepare", "0.8", "weekly"],
+  ["/correlations", "0.6", "weekly"],
+  ["/forecasts", "0.6", "weekly"],
+  ["/leaderboard", "0.5", "weekly"],
+  ["/bundles", "0.7", "weekly"],
+  ["/assess", "0.6", "monthly"],
+  ["/log", "0.6", "weekly"],
+  ["/submit-symbol", "0.7", "weekly"],
+  ["/join", "0.6", "monthly"],
 ];
 
 function xesc(s: string): string {
@@ -70,10 +79,9 @@ async function page(
 }
 
 export default async () => {
-  const today = new Date().toISOString().slice(0, 10);
   const urls = STATIC.map(
     ([p, pr, cf]) =>
-      `  <url><loc>${SITE}${p}</loc><lastmod>${today}</lastmod>` +
+      `  <url><loc>${SITE}${p}</loc>` +
       `<changefreq>${cf}</changefreq><priority>${pr}</priority></url>`
   );
 
@@ -83,10 +91,11 @@ export default async () => {
     priority = "0.7"
   ) => {
     for (const r of rows) {
-      const lastmod = (r.updated_at || "").slice(0, 10) || today;
+      const lastmod = (r.updated_at || "").slice(0, 10);
+      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
       urls.push(
         `  <url><loc>${SITE}${prefix}/${xesc(r.id)}</loc>` +
-          `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
+          `${lastmodTag}<changefreq>monthly</changefreq>` +
           `<priority>${priority}</priority></url>`
       );
     }
@@ -99,10 +108,11 @@ export default async () => {
   ) => {
     for (const r of rows) {
       if (!r.slug) continue;
-      const lastmod = (r.updated_at || "").slice(0, 10) || today;
+      const lastmod = (r.updated_at || "").slice(0, 10);
+      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
       urls.push(
         `  <url><loc>${SITE}${prefix}/${xesc(r.slug)}</loc>` +
-          `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
+          `${lastmodTag}<changefreq>monthly</changefreq>` +
           `<priority>${priority}</priority></url>`
       );
     }
