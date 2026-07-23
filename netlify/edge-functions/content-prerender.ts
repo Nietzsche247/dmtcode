@@ -228,6 +228,7 @@ export default async (request: Request, context: Context) => {
             endDate: r.end_date,
             identifier: r.trial_registry_id,
             sameAs,
+            publisher: { "@id": `${SITE}#org` },
             sponsor: r.institution
               ? { "@type": "Organization", name: r.institution }
               : undefined,
@@ -251,6 +252,8 @@ export default async (request: Request, context: Context) => {
             dateCreated: r.created_at,
             dateModified: r.updated_at,
             license: LICENSE,
+            publisher: { "@id": `${SITE}#org` },
+            creator: { "@id": `${SITE}#org` },
           };
 
       body = `<article data-prerender="trial">
