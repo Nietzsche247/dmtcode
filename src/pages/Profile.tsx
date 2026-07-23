@@ -13,6 +13,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { useReviewStreak } from '@/hooks/useReviewStreak';
+import { CoWitnessSettings } from '@/components/co-witness/CoWitnessSettings';
 import { Flame, Snowflake } from 'lucide-react';
 
 interface UserSymbol {
@@ -594,6 +595,16 @@ const Profile = () => {
                 )}
               </TabsContent>
             </Tabs>
+
+            {userId && (
+              <section className="mt-12 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-serif">Co-witness</h2>
+                  <a href="/co-witnesses" className="text-sm text-primary hover:underline">Open the wall</a>
+                </div>
+                <CoWitnessSettings userId={userId} />
+              </section>
+            )}
           </div>
         </main>
 

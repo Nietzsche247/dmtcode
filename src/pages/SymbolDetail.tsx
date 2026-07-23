@@ -14,6 +14,7 @@ import { SeenItButton } from '@/components/registry/SeenItButton';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { TagsManager } from '@/components/registry/TagsManager';
 import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
+import { CoWitnessModule } from '@/components/co-witness/CoWitnessModule';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
@@ -404,6 +405,14 @@ const SymbolDetail = () => {
                   submitterContext={symbol.surface_type}
                   submitterNote={symbol.context_note}
                   submitterId={symbol.user_id}
+                />
+
+                {/* Co-witness module: hidden unless the viewer holds a seen_it AND has opted in. */}
+                <CoWitnessModule
+                  symbolId={symbol.id}
+                  viewerId={userId}
+                  viewerHasSeenIt={userVotes.hasSeenIt}
+                  viewerSurfaceType={null}
                 />
 
                 {/* Descriptor tags (free-form) */}
