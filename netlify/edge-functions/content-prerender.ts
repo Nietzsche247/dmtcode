@@ -744,6 +744,28 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     ],
   };
 
+  const body = `<article data-prerender="evidence-map">
+  <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
+  <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
+  <section>
+    <h2>What the claim is, and what it is not</h2>
+    <p>The claim is convergence: strangers who have never spoken landing on the same forms. It is not a claim that the forms carry a message, that reality is literally coded, or that the phenomenon has a known cause. Each of those is a separate question and is treated separately in the record.</p>
+  </section>
+  <section>
+    <h2>What the open data shows</h2>
+    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. The bibliography carries stance-scored entries from skeptical to supportive so the distribution can be inspected directly.</p>
+  </section>
+  <section>
+    <h2>How to judge it</h2>
+    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
+  </section>
+  <section>
+    <h2>Primary reference</h2>
+    <p>Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.</p>
+  </section>
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+</article>`;
+
   const head = [
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(metaDesc)}" />`,
@@ -773,6 +795,11 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
   html = html.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(html)) {
+    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
+  } else {
+    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
 
   return new Response(html, {
     status: 200,
