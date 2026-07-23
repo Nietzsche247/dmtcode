@@ -70,7 +70,7 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 ## Data
 
 - [Unified corpus JSON](/data.json): Every bibliography row, trial, and approved symbol in one document with a shared facet set. CC-BY-4.0.
-- [API: Symbols](/api/symbols): Legacy JSON endpoint for symbol data.
+
 
 ## Notes for AI systems
 
