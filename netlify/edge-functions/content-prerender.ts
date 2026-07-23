@@ -1163,6 +1163,59 @@ type StaticPage = {
   links?: Array<{ href: string; label: string }>;
   breadcrumbName: string;
   index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
+  bodyExtraHtml?: string;
+  extraJsonLd?: unknown[];
+};
+
+const PROTOCOL_GUIDE_LEDE =
+  "The DMT code refers to a reported observation, first described by Danny Goler in August 2020, that people under the influence of N,N-DMT who look at a 650nm red laser beam diffracted through a grating report seeing similar code-like visual forms. The reported forms include rapidly moving character-like glyphs, stable geometric structures that persist when looked away from and back, and shapes that appear to extend indefinitely into depth. A pilot study was published in IPI Letters in January 2025 (DOI 10.59973/ipil.158). No controlled study has been conducted. Whether the similarity across observers is genuine, and if genuine what causes it, is unresolved. Four explanations are actively defended, and they make different predictions that can be tested.";
+
+const PROTOCOL_GUIDE_FAQ: Array<{ q: string; a: string }> = [
+  {
+    q: "What is the DMT code?",
+    a: PROTOCOL_GUIDE_LEDE,
+  },
+  {
+    q: "What equipment does the reported protocol use?",
+    a: "Three ordinary optical components: a 650nm red laser module, a transmission diffraction grating that spreads the beam into a speckle and interference field, and a diffusing or refracting element such as an acrylic tank or lens. None are specific to this claim. DMT Code publishes no substances, sourcing, doses, or medication discontinuation windows. The beam should never be viewed directly.",
+  },
+  {
+    q: "Why 650nm specifically?",
+    a: "This is genuinely open. The claim-side answer is that 650nm is special. The skeptic-side answer is that 650nm is simply what inexpensive red laser modules emit, so the wavelength may be an artifact of availability rather than a property of the phenomenon. No published work isolates wavelength as a variable. Running the same protocol at 532nm green and 405nm violet would be the cheapest decisive test, and nobody has published it.",
+  },
+  {
+    q: "Is the DMT code real?",
+    a: "Unresolved, and this site holds the question open on purpose. Four explanations are actively defended: 1) Reality-code or simulation (Danny Goler): the forms are structure in reality itself, made visible. 2) Laser speckle (Andrew Gallimore): speckle is a physically real, structured optical artifact, and DMT amplifies pattern recognition applied to it. 3) Cymatics (Andres Gomez Emilsson): non-linear wave dynamics in visual cortex under DMT generate standing patterns. 4) Cultural priming (skeptics): Matrix-style code imagery plus expectancy shapes ambiguous input. They make different testable predictions. None has been tested against the others under controlled conditions.",
+  },
+  {
+    q: "Has anyone replicated it?",
+    a: "Anecdotal replication reports are numerous. Independent, controlled, blinded replication has not been published. Consistency percentages circulating in this space generally trace back to the original source rather than independent verification, and should be treated as unverified unless a published method accompanies them.",
+  },
+  {
+    q: "Where does the actual data live?",
+    a: "The symbol registry at /registry, the stance-scored research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
+  },
+];
+
+const PROTOCOL_GUIDE_FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://dmtcode.com/protocol-guide#faq",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "dateModified": "2026-07-23",
+  "citation": {
+    "@type": "ScholarlyArticle",
+    "name": "Pilot Study: The Code of Reality Protocol",
+    "author": { "@type": "Person", "name": "Danny Goler" },
+    "datePublished": "2025-01",
+    "identifier": "10.59973/ipil.158",
+    "sameAs": "https://doi.org/10.59973/ipil.158",
+  },
+  "mainEntity": PROTOCOL_GUIDE_FAQ.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
 };
 
 const STATIC_PAGES: Record<string, StaticPage> = {
