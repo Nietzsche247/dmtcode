@@ -13,6 +13,7 @@ import { VotingButtons } from '@/components/registry/VotingButtons';
 import { SeenItButton } from '@/components/registry/SeenItButton';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { TagsManager } from '@/components/registry/TagsManager';
+import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
