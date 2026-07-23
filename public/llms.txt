@@ -44,11 +44,7 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 - [Home](/): Mission and dataset status.
 - [Symbol Registry](/registry): Browse and submit symbols with structured metadata and community validation.
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
-- [Submit Symbol](/submit-symbol): 6 step layered submission flow.
-- [Voice Logger](/log): Primary user generated contribution point for session logs.
-- [Assessment](/assess): PHQ-9, GAD-7, MEQ-4, and CEQ-7 self report scoring.
-- [Tools](/tools): Verified 650 nm laser equipment and optical components.
-- [Bundles](/bundles): Pre configured equipment bundles.
+- [Prepare](/prepare): Kits and group bundles for careful practice.
 - [Protocols](/protocols): Catalogue of psychedelic and laser protocols.
 - [Research](/research): Active research projects and findings.
 - [Bibliography](/bibliography): Stance scored research library. Filter by content type, authority, stance, tag, year, and person.
@@ -56,16 +52,12 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 - [Methods](/methods): Research methodology and protocol design.
 - [Critiques](/critiques): Limitations and counter arguments.
 - [Null Reports](/null-reports): Public dashboard of negative and null replication results.
-- [Correlations](/correlations): Cross symbol and cross protocol correlation analysis.
 - [Open Questions](/open-questions): Unresolved research questions.
-- [Forecasts](/forecasts): Technology and research timeline forecasts.
-- [Events](/events): Trials, conferences, retreats, and ceremonies.
 - [Glossary](/glossary): Key academic terms and definitions.
 - [FAQ](/faq): Neutral answers with citations.
 - [Protocol Guide](/protocol-guide): Neutral summary of the reported 650 nm laser protocol.
 - [About](/about): Project history and licensing.
 - [Join](/join): Volunteer to help build the record.
-- [Leaderboard](/leaderboard): Top contributors.
 
 ## Data
 

@@ -8,9 +8,10 @@ const SUPABASE_KEY =
   Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") ??
   "";
 
-// Canonical public content URLs. Static entries omit <lastmod> because there
-// is no authoritative per-page timestamp; database-backed entries below carry
-// their real row updated_at.
+// Canonical public content URLs. Every entry here corresponds to a route that
+// either has server prerender in content-prerender.ts or is a real app view
+// that returns 200. Removed: /correlations, /leaderboard, /bundles,
+// /submit-symbol (client-only utility, not indexable content), /assess, /log.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/registry", "0.9", "daily"],
@@ -19,7 +20,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
   ["/faq", "0.7", "monthly"],
-  ["/events", "0.7", "weekly"],
+  ["/events", "0.6", "weekly"],
   ["/protocols", "0.8", "weekly"],
   ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],
@@ -30,13 +31,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/null-reports", "0.5", "weekly"],
   ["/research", "0.6", "weekly"],
   ["/dataset", "0.6", "monthly"],
-  ["/correlations", "0.6", "weekly"],
   ["/forecasts", "0.6", "weekly"],
-  ["/leaderboard", "0.5", "weekly"],
-  ["/bundles", "0.7", "weekly"],
-  ["/assess", "0.6", "monthly"],
-  ["/log", "0.6", "weekly"],
-  ["/submit-symbol", "0.7", "weekly"],
   ["/join", "0.6", "monthly"],
 ];
 
@@ -118,14 +113,16 @@ export default async () => {
     }
   };
 
+  // Predicates below MUST match /data.json exactly so counts reconcile.
   try {
     addById("/registry", (await page("symbol_submissions", "status=eq.approved")) as any);
   } catch (_e) { /* skip */ }
   try {
-    addById("/trials", (await page("clinical_trials", "is_approved=is.true&record_type=eq.registered_trial")) as any);
+    // Match /data.json: enumerate every approved trial, not only registered.
+    addById("/trials", (await page("clinical_trials", "is_approved=is.true")) as any);
   } catch (_e) { /* skip */ }
   try {
-    addById("/bibliography", (await page("bibliography", "is_approved=is.true")) as any);
+    addById("/bibliography", (await page("bibliography", "is_approved=eq.true")) as any);
   } catch (_e) { /* skip */ }
   try {
     addBySlug(

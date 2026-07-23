@@ -95,8 +95,17 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/bibliography/*"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
+
+# 404 guard MUST run last: it whitelists known routes and 404s the rest.
+[[edge_functions]]
+  path = "/*"
+  function = "spa-guard"
 
 # Permanent redirect: /tools ranking equity moves to /prepare.
 [[redirects]]
