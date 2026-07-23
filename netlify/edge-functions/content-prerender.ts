@@ -72,6 +72,12 @@ export default async (request: Request, context: Context) => {
     const seg = url.pathname.split("/").filter(Boolean);
     const kind = seg[0];
     const id = seg[1] ?? "";
+
+    // /prepare has no id segment; render from bundles table.
+    if (kind === "prepare" && seg.length === 1) {
+      return await renderPrepare(context);
+    }
+
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
     }
@@ -84,6 +90,7 @@ export default async (request: Request, context: Context) => {
     let body = "";
     let ogImage = "";
     let noindex = false;
+
 
     if (kind === "registry") {
       const f =
