@@ -40,6 +40,7 @@ interface SymbolData {
   status: 'pending' | 'approved' | 'rejected';
   source_method: string | null;
   surface_type: string | null;
+  context_note: string | null;
   wavelength: string | null;
   dose_level: string | null;
   duration_seconds: number | null;
