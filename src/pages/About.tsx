@@ -139,6 +139,12 @@ const About = () => {
                   find out.
                 </p>
               </div>
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="text-lg font-semibold mb-3">On Danny Goler</h3>
+                <p className="text-base leading-relaxed">
+                  Danny Goler first described the observation this project studies, and he is credited as its originator throughout this site. He is aware of this project but holds no editorial role in it. What gets published here, including the critiques and null results, is decided independently, and the public dataset lets anyone check that policy against practice.
+                </p>
+              </div>
             </Card>
 
             {/* Mission Statement */}
