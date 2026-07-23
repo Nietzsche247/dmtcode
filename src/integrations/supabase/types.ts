@@ -303,6 +303,7 @@ export type Database = {
           parts_sum_cents: number
           people: number
           price_cents: number
+          related_links: Json | null
           ships_status: string
           slug: string
           sort_order: number
@@ -322,6 +323,7 @@ export type Database = {
           parts_sum_cents: number
           people?: number
           price_cents: number
+          related_links?: Json | null
           ships_status: string
           slug: string
           sort_order?: number
@@ -341,6 +343,7 @@ export type Database = {
           parts_sum_cents?: number
           people?: number
           price_cents?: number
+          related_links?: Json | null
           ships_status?: string
           slug?: string
           sort_order?: number
@@ -968,6 +971,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      product_signups: {
+        Row: {
+          bundle_slug: string
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          bundle_slug: string
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          bundle_slug?: string
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
