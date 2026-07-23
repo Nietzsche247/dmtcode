@@ -284,6 +284,28 @@ export default async (request: Request, context: Context) => {
 
 
 
+    const breadcrumbLd = kind === "registry"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+            { "@type": "ListItem", position: 2, name: "Registry", item: `${SITE}/registry` },
+            { "@type": "ListItem", position: 3, name: title.split(" \u2014 ")[0] || "Symbol", item: canonical },
+          ],
+        }
+      : kind === "trials"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+            { "@type": "ListItem", position: 2, name: "Trials", item: `${SITE}/trials` },
+            { "@type": "ListItem", position: 3, name: String(title).split(" | ")[0] || "Trial", item: canonical },
+          ],
+        }
+      : null;
+
     const head = [
       `<title>${esc(title)}</title>`,
       `<meta name="description" content="${esc(metaDesc)}" />`,
@@ -299,6 +321,7 @@ export default async (request: Request, context: Context) => {
       ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
       robotsMeta,
       ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
+      breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
     ]
       .filter(Boolean)
       .join("\n");
