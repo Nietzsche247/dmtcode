@@ -121,7 +121,7 @@ export default async (request: Request, context: Context) => {
           tagStr ? `, tagged ${tagStr}` : ""
         }. Part of the open DMT Code catalogue (CC-BY-4.0).`;
 
-      title = `Symbol ${short} \u2014 DMT Code Visual Registry`;
+      title = `Symbol ${short} | DMT Code Visual Registry`;
       metaDesc = clip(desc, 160);
       canonical = `${SITE}/registry/${r.id}`;
       ogImage = `${SITE}/card/${r.id}.png`;
@@ -152,9 +152,14 @@ export default async (request: Request, context: Context) => {
         creator: { "@id": `${SITE}#org` },
         isPartOf: {
           "@type": "Dataset",
+          "@id": `${SITE}/registry#dataset`,
           name: "DMT Code Visual Symbol Registry",
+          description:
+            "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
           url: `${SITE}/registry`,
+          identifier: "10.5281/zenodo.17816520",
           license: LICENSE,
+          creator: { "@id": `${SITE}#org` },
         },
         additionalProperty: pairs
           .filter(([, v]) => v !== null && v !== undefined && String(v) !== "")
@@ -246,9 +251,13 @@ export default async (request: Request, context: Context) => {
               : undefined,
             isPartOf: {
               "@type": "Dataset",
+              "@id": `${SITE}/trials#dataset`,
               name: "DMT Clinical Trials Observatory",
+              description:
+                "Open observatory of clinical trials involving N,N-DMT and related compounds, indexed from public trial registries.",
               url: `${SITE}/trials`,
               license: LICENSE,
+              creator: { "@id": `${SITE}#org` },
             },
           }
         : {
@@ -281,6 +290,110 @@ export default async (request: Request, context: Context) => {
   }
   <p>Tracked by the <a href="${SITE}/trials">DMT Code Clinical Trials Observatory</a>, an open record of DMT-related clinical research.</p>
 </article>`;
+    } else if (kind === "bibliography") {
+      const f =
+        "id,title,authors,journal,publication_date,doi,pmid,abstract,url," +
+        "compounds,content_type,authority_type,stance_score,tags,summary," +
+        "source_date,full_text,transcript,created_at,updated_at";
+      const r = await getRow("bibliography", id, "is_approved=eq.true", f);
+      if (!r) return shellRes;
+
+      const desc =
+        (r.summary && String(r.summary).trim()) ||
+        (r.abstract && String(r.abstract).trim().slice(0, 280)) ||
+        `A ${String(r.content_type || "reference")} indexed by the DMT Code research bibliography${
+          r.authors ? `, by ${String(r.authors).slice(0, 80)}` : ""
+        }.`;
+
+      title = `${String(r.title)} | DMT Code Bibliography`;
+      metaDesc = clip(desc, 160);
+      canonical = `${SITE}/bibliography/${r.id}`;
+
+      const sameAs: string[] = [];
+      if (r.doi) sameAs.push(`https://doi.org/${String(r.doi)}`);
+      if (r.pmid) sameAs.push(`https://pubmed.ncbi.nlm.nih.gov/${String(r.pmid)}/`);
+      if (r.url) sameAs.push(String(r.url));
+
+      const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
+      const compounds = Array.isArray(r.compounds)
+        ? (r.compounds as string[]).filter(Boolean)
+        : [];
+      const stance = r.stance_score == null ? null : Number(r.stance_score);
+      const isScholarly =
+        String(r.content_type || "").toLowerCase().includes("paper") ||
+        r.doi || r.pmid || r.journal;
+      const bodyText =
+        (r.full_text && String(r.full_text).trim()) ||
+        (r.transcript && String(r.transcript).trim()) ||
+        "";
+
+      const additional: Array<Record<string, unknown>> = [];
+      if (r.authority_type) additional.push({ "@type": "PropertyValue", name: "authority", value: String(r.authority_type) });
+      if (stance !== null) additional.push({ "@type": "PropertyValue", name: "stanceScore", value: stance });
+      if (compounds.length) additional.push({ "@type": "PropertyValue", name: "compounds", value: compounds.join(", ") });
+
+      ld = {
+        "@context": "https://schema.org",
+        "@type": isScholarly ? "ScholarlyArticle" : "CreativeWork",
+        "@id": canonical,
+        name: r.title,
+        headline: r.title,
+        description: desc,
+        url: canonical,
+        author: r.authors ? { "@type": "Person", name: String(r.authors) } : undefined,
+        datePublished: r.publication_date || r.source_date || undefined,
+        dateModified: r.updated_at || undefined,
+        identifier: r.doi ? `doi:${String(r.doi)}` : (r.pmid ? `pmid:${String(r.pmid)}` : undefined),
+        sameAs: sameAs.length ? sameAs : undefined,
+        keywords: [...tags, ...compounds],
+        publisher: { "@id": `${SITE}#org` },
+        license: LICENSE,
+        isPartOf: {
+          "@type": "Dataset",
+          "@id": `${SITE}/bibliography#dataset`,
+          name: "DMT Code Research Bibliography",
+          description:
+            "Stance scored research library covering N,N-DMT, 5-MeO-DMT, and related compounds.",
+          url: `${SITE}/bibliography`,
+          license: LICENSE,
+          creator: { "@id": `${SITE}#org` },
+        },
+        additionalProperty: additional.length ? additional : undefined,
+        text: bodyText || undefined,
+      };
+
+      const pairs: Array<[string, unknown]> = [
+        ["Authors", r.authors],
+        ["Journal", r.journal],
+        ["Published", r.publication_date || r.source_date],
+        ["DOI", r.doi],
+        ["PMID", r.pmid],
+        ["Content type", r.content_type],
+        ["Authority", r.authority_type],
+        ["Stance score", stance],
+      ];
+
+      body = `<article data-prerender="bibliography">
+  <h1>${esc(r.title)}</h1>
+  <p>${esc(desc)}</p>
+  ${rowsToDl(pairs)}
+  ${
+    r.url
+      ? `<p><a href="${esc(r.url)}" rel="noopener">View source</a></p>`
+      : ""
+  }
+  ${
+    r.doi
+      ? `<p>DOI: <a href="https://doi.org/${esc(r.doi)}" rel="noopener">${esc(r.doi)}</a></p>`
+      : ""
+  }
+  ${
+    bodyText
+      ? `<section><h2>Full text</h2><p>${esc(bodyText).slice(0, 4000)}</p></section>`
+      : ""
+  }
+  <p>Indexed by the <a href="${SITE}/bibliography">DMT Code Research Bibliography</a>, an open, stance scored library (CC-BY-4.0).</p>
+</article>`;
     } else {
       return shellRes;
     }
@@ -300,7 +413,7 @@ export default async (request: Request, context: Context) => {
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: SITE },
             { "@type": "ListItem", position: 2, name: "Registry", item: `${SITE}/registry` },
-            { "@type": "ListItem", position: 3, name: title.split(" \u2014 ")[0] || "Symbol", item: canonical },
+            { "@type": "ListItem", position: 3, name: String(title).split(" | ")[0] || "Symbol", item: canonical },
           ],
         }
       : kind === "trials"
@@ -311,6 +424,16 @@ export default async (request: Request, context: Context) => {
             { "@type": "ListItem", position: 1, name: "Home", item: SITE },
             { "@type": "ListItem", position: 2, name: "Trials", item: `${SITE}/trials` },
             { "@type": "ListItem", position: 3, name: String(title).split(" | ")[0] || "Trial", item: canonical },
+          ],
+        }
+      : kind === "bibliography"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+            { "@type": "ListItem", position: 2, name: "Bibliography", item: `${SITE}/bibliography` },
+            { "@type": "ListItem", position: 3, name: String(title).split(" | ")[0] || "Entry", item: canonical },
           ],
         }
       : null;
@@ -436,26 +559,41 @@ async function renderPrepare(context: Context): Promise<Response> {
     })),
   };
 
+  const KIT_DESC: Record<string, string> = {
+    "k1-observer": "Observer tier. Verified 650 nm laser plus matched OD eyewear for a single observer.",
+    "k2-practitioner": "Practitioner tier. Full observation instrument, observation journal, and screening card.",
+    "k3-instrument": "Instrument tier. The optical-geometry thesis in one shippable kit.",
+    "k4-complete": "Complete tier. Full instrument, journal, screening, and reference material.",
+  };
+  const sanitize = (s: string) =>
+    s.replace(/\u2014/g, ":").replace(/\u2013/g, "-").trim();
+
   const productLds = rows
     .filter((r) => r.kind === "kit")
-    .map((r) => ({
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "@id": `${canonical}#${r.slug}`,
-      name: `DMT Code ${String(r.name)} Kit`,
-      description: String(r.tagline ?? ""),
-      brand: { "@type": "Brand", name: "DMT Code" },
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "USD",
-        price: (Number(r.price_cents) / 100).toFixed(2),
-        availability:
-          r.ships_status === "now"
-            ? "https://schema.org/InStock"
-            : "https://schema.org/PreOrder",
-        url: canonical,
-      },
-    }));
+    .map((r) => {
+      const slug = String(r.slug);
+      const fallback = sanitize(String(r.tagline ?? ""));
+      const description =
+        KIT_DESC[slug] || fallback || `DMT Code ${String(r.name)} kit.`;
+      return {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "@id": `${canonical}#${r.slug}`,
+        name: `DMT Code ${String(r.name)} Kit`,
+        description,
+        brand: { "@type": "Brand", name: "DMT Code" },
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: (Number(r.price_cents) / 100).toFixed(2),
+          availability:
+            r.ships_status === "now"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/PreOrder",
+          url: canonical,
+        },
+      };
+    });
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -1358,6 +1496,7 @@ export const config: Config = {
     "/trials",
     "/trials/*",
     "/bibliography",
+    "/bibliography/*",
     "/dataset",
     "/about",
     "/critiques",
