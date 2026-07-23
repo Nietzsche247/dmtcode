@@ -146,10 +146,15 @@ export default async (request: Request, _context: Context) => {
     }
 
     await ensureWasm();
+    const fontBuffers = await loadFontBuffers();
     const resvg = new Resvg(svg, {
       background: "#F0EADA",
       fitTo: { mode: "width", value: 1200 },
-      font: { loadSystemFonts: false, defaultFontFamily: "Georgia" },
+      font: {
+        loadSystemFonts: false,
+        fontBuffers,
+        defaultFontFamily: "Hanken Grotesk",
+      },
     });
     const png = resvg.render().asPng();
     return new Response(png, {
