@@ -6,6 +6,14 @@ export const MissionFraming = () => {
     >
       <div className="space-y-6">
         <p className="label-data text-xs text-primary">THE PROJECT</p>
+        <p
+          className="text-sm md:text-base text-muted-foreground leading-relaxed"
+          style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+        >
+          The open record of a reported observation: first described by Danny Goler in 2020,
+          published as a pilot study in 2025, and unresolved. We keep the evidence, including the
+          evidence against.
+        </p>
         <h2
           className="text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight"
           style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
