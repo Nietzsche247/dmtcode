@@ -46,7 +46,7 @@ export const ContextTermPicker = ({
         .order('category', { ascending: true })
         .order('term', { ascending: true });
       if (!alive) return;
-      setTerms((data as VocabTerm[]) || []);
+      setTerms(((data as unknown) as VocabTerm[]) || []);
       setLoading(false);
     })();
     return () => {
