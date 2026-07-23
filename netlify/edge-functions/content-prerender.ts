@@ -151,7 +151,7 @@ export default async (request: Request, context: Context) => {
 
       body = `<article data-prerender="symbol">
   <h1>DMT Code Symbol ${esc(short)}</h1>
-  ${ogImage ? `<img src="${esc(ogImage)}" alt="${esc(metaDesc)}" />` : ""}
+  ${r.image_url ? `<img src="${esc(String(r.image_url))}" alt="${esc(metaDesc)}" />` : ""}
   <p>${esc(desc)}</p>
   ${rowsToDl(pairs)}
   ${
