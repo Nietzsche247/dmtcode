@@ -398,9 +398,17 @@ const SymbolDetail = () => {
                   </div>
                 )}
 
-                {/* Community tap-to-tag */}
+                {/* Two-bucket Context (Submitter + Community) */}
+                <SymbolContextPanel
+                  symbolId={symbol.id}
+                  submitterContext={symbol.surface_type}
+                  submitterNote={symbol.context_note}
+                  submitterId={symbol.user_id}
+                />
+
+                {/* Descriptor tags (free-form) */}
                 <div>
-                  <h3 className="text-sm font-medium mb-2">Community Tags</h3>
+                  <h3 className="text-sm font-medium mb-2">Descriptor tags</h3>
                   <TagsManager symbolId={symbol.id} />
                 </div>
 
