@@ -108,10 +108,11 @@ export default async () => {
   ) => {
     for (const r of rows) {
       if (!r.slug) continue;
-      const lastmod = (r.updated_at || "").slice(0, 10) || today;
+      const lastmod = (r.updated_at || "").slice(0, 10);
+      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
       urls.push(
         `  <url><loc>${SITE}${prefix}/${xesc(r.slug)}</loc>` +
-          `<lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq>` +
+          `${lastmodTag}<changefreq>monthly</changefreq>` +
           `<priority>${priority}</priority></url>`
       );
     }
