@@ -2,415 +2,143 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { ExternalLink } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+
+const FAQ_ITEMS: Array<{ q: string; a: string }> = [
+  {
+    q: 'What is the "DMT code"?',
+    a: 'People who take N,N-DMT often report seeing structured visual forms, grids, glyphs, geometric symbols, and a smaller group describes something that reads almost like written characters. The DMT Code project collects those reports in one place so the overlaps can actually be measured instead of argued about. We are not claiming the forms are a message. We are asking a narrower question: do independent people, who have never spoken, keep drawing the same shapes?',
+  },
+  {
+    q: 'Is the code real? Are you saying reality is made of code?',
+    a: 'No. We hold that question open on purpose. Our job is to gather the observations, keep the method honest, and publish everything so anyone can judge for themselves. If the overlaps turn out to be coincidence or shared cultural imagery, the data should show that too. A result that cannot fail is not worth much, so we built this to be able to fail.',
+  },
+  {
+    q: 'What do I need to get started?',
+    a: 'Everything is laid out on the prepare page, from a single-instrument Observer kit up to a full Complete kit. The core is a verified 650nm laser and the right optical density, plus an observation journal and a screening card. You can also source every part yourself. We show the do-it-yourself total next to each kit so you know exactly what you are paying for.',
+  },
+  {
+    q: 'How do I do this safely?',
+    a: 'Start with the screening card. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.',
+  },
+  {
+    q: 'Do I have to use DMT to take part?',
+    a: 'No. A lot of the work here is observation and comparison. You can browse the registry, add context to symbols other people have logged, and help judge where the forms actually converge without taking anything. The dataset gets stronger every time someone compares carefully.',
+  },
+  {
+    q: "How do you stop people from just copying each other's answers?",
+    a: 'That is the whole design problem, and it is why the flagship is a blinded comparison. Wherever we can, people record what they saw before they see the existing catalogue, so a match means two strangers landed on the same form independently rather than one person nodding along to another. Convergence only counts when it is earned that way.',
+  },
+  {
+    q: 'Can I see the raw data?',
+    a: 'Yes, all of it. The registry is public, the machine-readable corpus is at /dataset and /data.json, and it is all CC-BY-4.0, free to read, quote, and check. Every symbol shows how many people have recognized it. If something looks off, we would rather you find it.',
+  },
+  {
+    q: 'Who is behind this and why should I trust it?',
+    a: 'Trust the method, not us. The reason to take this seriously is that it is open, it is falsifiable, and the confirmations are public, not that anyone here says so. We keep a neutral position, we never seed or fake a count, and we publish the parts that would let you prove us wrong.',
+  },
+  {
+    q: 'Can my friends and I do this together?',
+    a: 'Yes, and it is often better that way. The group bundles on the prepare page share the costly instruments across two, three, or five people, so the per-person cost drops as the circle grows. Three and five also include a facilitator guide and a group agreements card, because doing this with other people asks for a little more structure.',
+  },
+  {
+    q: 'Why a 650nm laser?',
+    a: 'It is the specific red wavelength the observation protocol is built around, paired with the right optical density so it is used the same way each time. Consistent equipment is what lets one person\u2019s observation be compared against another\u2019s instead of guessing at the differences.',
+  },
+];
 
 const FAQ = () => {
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_ITEMS.map((it) => ({
+      '@type': 'Question',
+      name: it.q,
+      acceptedAnswer: { '@type': 'Answer', text: it.a },
+    })),
+  };
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://dmtcode.com/' },
+      { '@type': 'ListItem', position: 2, name: 'FAQ', item: 'https://dmtcode.com/faq' },
+    ],
+  };
+
   return (
     <>
       <Helmet>
-        <title>Frequently Asked Questions | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Common questions about 650nm laser protocols, DMT research methods, and contributing to open science." 
+        <title>Questions about the DMT Code project and preparing to observe | DMT Code</title>
+        <meta
+          name="description"
+          content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured."
         />
         <link rel="canonical" href="https://dmtcode.com/faq" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/faq" />
         <meta name="robots" content="index, follow" />
-        
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "How does red light exposure prepare the brain for visual symbol perception?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Photon stimulation at 660 nm wavelengths enhances mitochondrial ATP production, optimizing neuronal energy availability for visual processing. Timmermann et al. (2023) demonstrated that photobiomodulation increases DMT symbol coherence and clarity of discrete visual elements. DOI: 10.1038/s41598-019-51974-4"
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What is the 650 nm laser protocol?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences. Notable inter-subject consistency has been reported across independent replicators."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Can I contribute to the registry anonymously?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes. The DMT Code Glyph Registry accepts both anonymous and authenticated submissions. All data is released under CC-BY-4.0 for academic research. Visit /registry to submit symbols."
-                }
-              }
-            ]
-          })}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://dmtcode.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "FAQ",
-                "item": "https://dmtcode.com/faq"
-              }
-            ]
-          })}
-        </script>
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dmtcode.com/faq" />
+        <meta property="og:title" content="Questions about the DMT Code project and preparing to observe | DMT Code" />
+        <meta property="og:description" content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured." />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Questions about the DMT Code project and preparing to observe | DMT Code" />
+        <meta name="twitter:description" content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured." />
+        <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
         <Navigation />
-        
+
         <main id="main-content" className="relative z-10 pt-20" role="main">
-          {/* Hero Section */}
-          <section className="relative px-4 py-20 md:py-28 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-              <div className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" style={{ top: '30%' }} />
-            </div>
-            
-            <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
-              <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
-                Knowledge Base
+          <section className="relative px-4 py-16 md:py-24">
+            <div className="max-w-4xl mx-auto text-center space-y-4">
+              <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase">
+                Frequently asked
               </p>
-              
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
-                Frequently Asked
-                <span className="block text-primary mt-2">Questions</span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-[-0.03em] leading-[0.95]">
+                Questions about the project
               </h1>
-              
-              <p className="text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-                Evidence-based answers about the 650 nm laser protocol with peer-reviewed citations
+              <p className="text-base md:text-lg font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                What the DMT Code project is, how to prepare, and how the data stays honest.
               </p>
             </div>
           </section>
-          
+
           <Breadcrumb />
 
-          <section className="container mx-auto px-4 py-16 max-w-4xl">
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="border border-border/50 rounded-2xl px-6 bg-card/30">
-                <AccordionTrigger className="text-lg font-semibold">
-                  How does red light exposure prepare the brain for visual symbol perception?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    Photon stimulation at 660 nm wavelengths enhances mitochondrial ATP production, optimizing neuronal energy availability for visual processing during N,N-DMT administration. 660 nm coherent light penetrates tissue and directly stimulates cytochrome c oxidase in the electron transport chain.
-                  </p>
-                  <p>
-                    <strong>Timmermann et al. (2019)</strong> demonstrated that photobiomodulation increases DMT symbol coherence and clarity of discrete visual elements reported by participants.
-                  </p>
-                  <a 
-                    href="https://doi.org/10.1038/s41598-019-51974-4" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-gold hover:underline"
+          <section className="container mx-auto px-4 py-8 max-w-3xl">
+            <Card className="p-4 md:p-6 rounded-2xl border-border/60">
+              <Accordion type="single" collapsible className="space-y-2">
+                {FAQ_ITEMS.map((item, i) => (
+                  <AccordionItem
+                    key={i}
+                    value={`item-${i}`}
+                    className="border border-border/50 rounded-xl px-5 bg-card/30"
                   >
-                    Read Full Study DOI: 10.1038/s41598-019-51974-4
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                  <div className="mt-6">
-                    <Button asChild variant="default" size="lg">
-                      <a href="/tools">View 660 nm Equipment →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+                    <AccordionTrigger className="text-left text-base md:text-lg font-semibold">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2 pb-4 whitespace-pre-line">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Card>
 
-              <AccordionItem value="item-2" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What is the 650 nm laser protocol?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    Developed by Danny Goler and validated by Chase Hughes, the protocol uses 650 nm coherent light exposure through a diffraction grating to reliably elicit discrete visual symbols resembling alphabetic characters on any surface during N,N-DMT experiences.
-                  </p>
-                  <p>
-                    <strong>Notable inter-subject consistency</strong> has been reported across independent replicators. Symbols appear on walls, ceilings, skin, and closed eyelids when 650 nm laser is applied during N,N-DMT administration.
-                  </p>
-                  <a 
-                    href="https://doi.org/10.1002/hup.2806" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-gold hover:underline"
-                  >
-                    Davis et al. (2021) Survey DOI: 10.1002/hup.2806
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Can I contribute to the registry anonymously?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    Yes. The DMT Code Glyph Registry accepts both anonymous and authenticated submissions. All data is released under <strong>CC-BY-4.0</strong> for academic research.
-                  </p>
-                  <p>
-                    Anonymous submissions protect user privacy while maintaining data integrity for research. Authenticated submissions allow tracking of multiple symbols from the same observer for longitudinal analysis.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="default" size="lg">
-                      <a href="/registry">Submit to Registry →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What evidence exists for inter-subject symbol consistency?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    <strong>Davis et al. (2021)</strong> surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Among those using the 650 nm laser protocol, participants reported notable convergence on similar discrete visual symbols.
-                  </p>
-                  <p>
-                    Symbols clustered into 52 primary archetypes with recognizable geometric and alphabetic-like features. Independent replicators reported identical symbols in the same contextual settings (e.g., specific symbols appearing on ceiling vs. walls).
-                  </p>
-                  <a 
-                    href="https://doi.org/10.1002/hup.2806" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-gold hover:underline"
-                  >
-                    Full Survey Results DOI: 10.1002/hup.2806
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-5" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Why is accurate documentation critical immediately post-experience?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    <strong>Strassman (2001)</strong> documented rapid decay of detailed visual recall following N,N-DMT administration. Symbol clarity drops by 60% within 15 minutes and 90% within 2 hours.
-                  </p>
-                  <p>
-                    Immediate documentation using the registry's 100×100 px canvas maximizes accuracy. Contributors should draw symbols within 5 minutes of baseline return for highest fidelity.
-                  </p>
-                  <a 
-                    href="https://doi.org/10.1007/978-1-4615-0115-9" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-gold hover:underline"
-                  >
-                    Strassman (2001) Memory Research DOI: 10.1007/978-1-4615-0115-9
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  How do I use the 660 nm equipment available in your catalogue?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    660 nm red light therapy panels are used <strong>before</strong> N,N-DMT administration to prepare neuronal energy systems. Position the panel 6-12 inches from closed eyelids for 10-15 minutes prior to experience.
-                  </p>
-                  <p>
-                    Do not confuse with the <strong>650 nm laser protocol</strong>, which uses a handheld laser pointer with diffraction grating <strong>during</strong> the experience to elicit discrete visual symbols.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="default" size="lg">
-                      <a href="/protocol-guide">View Complete Protocol →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-7" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Is this protocol scientifically validated?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    The 650 nm laser protocol originated from community reports and independent replication efforts. While <strong>notable inter-subject consistency</strong> suggests a reliable phenomenon, controlled double-blind studies have not yet been conducted.
-                  </p>
-                  <p>
-                    Current evidence consists of: anecdotal reports from an independent replicator community, Goler's pilot observations published in IPI Letters (2025), and comparative analysis with Davis et al. (2021) entity encounter survey data.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="outline">
-                      <a href="/evidence-map">Review Evidence Map →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-8" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Could these symbols be optical artifacts or afterimages?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    This is a valid critique. Diffraction gratings create predictable interference patterns, and retinal photoreceptor fatigue can produce phosphenes and afterimages. However, replicators report discrete, bounded symbols <strong>within</strong> the diffraction grid rather than the grid pattern itself.
-                  </p>
-                  <p>
-                    The alphabetic-like character consistency across independent observers suggests a phenomenon beyond simple optical artifacts. Further controlled research with control conditions (sober + laser, DMT + no laser, DMT + laser) is needed to isolate variables.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="outline">
-                      <a href="/critiques">Read Scientific Critiques →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-9" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What safety precautions should I follow?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    <strong>Legal:</strong> N,N-DMT is a Schedule I controlled substance in most jurisdictions. This information is provided for educational purposes only in regions where legal.
-                  </p>
-                  <p>
-                    <strong>Physical:</strong> Never use substances alone. Always have a trusted sitter present. Ensure laser is Class 2 or lower (≤5 mW) to avoid retinal damage. Conduct sober speckle test to verify equipment function before any substance use.
-                  </p>
-                  <p>
-                    <strong>Psychological:</strong> N,N-DMT produces intense altered states. Not suitable for individuals with history of psychosis, seizure disorders, or severe anxiety. Consult medical professionals before use.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-10" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  How is the registry data used for research?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    All registry submissions are released under <strong>CC-BY-4.0 license</strong> as structured JSON/CSV exports with full metadata. Researchers can download the complete dataset to analyze symbol morphology, confirmation patterns, and correlation with experiential variables.
-                  </p>
-                  <p>
-                    Academic institutions have used registry data for: computational clustering analysis, cross-cultural symbol comparison, and exploratory statistical modeling of inter-subject consistency factors.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="default">
-                      <a href="/registry">Access Registry Downloads →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-11" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What distinguishes this from other DMT research?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    Most N,N-DMT research (Strassman 2001, Timmermann 2019, Carhart-Harris et al.) focuses on phenomenology, neurobiology, and therapeutic applications. The 650 nm laser protocol specifically targets <strong>externalized visual perception</strong> rather than closed-eye imagery.
-                  </p>
-                  <p>
-                    This project documents discrete, consistent symbols appearing on physical surfaces with notable inter-subject agreement: a specificity level rarely seen in psychedelic phenomenology research.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-12" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Are you affiliated with Danny Goler or Chase Hughes?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    No. The DMT Code Visual Symbol Catalogue is an independent, community-driven documentation project. We aggregate and archive reports of the 650 nm protocol developed by Danny Goler and validated by Chase Hughes, but we are not officially affiliated with either researcher.
-                  </p>
-                  <p>
-                    All registry data is open-access under CC-BY-4.0, making it available for analysis by any researcher or institution interested in visual symbol phenomena during N,N-DMT experiences.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-13" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  What equipment do I absolutely need to replicate this?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    <strong>Minimum Required:</strong> 650 nm red laser pointer (Class 2, ≤5 mW) + diffraction grating attachment (cross, grid, or star pattern).
-                  </p>
-                  <p>
-                    <strong>Optional but Recommended:</strong> 660 nm red light therapy panel for pre-session photobiomodulation (enhances symbol clarity per Timmermann et al. 2019).
-                  </p>
-                  <p>
-                    Total cost: $15-$30 for laser + grating, $200-$800 for optional red light therapy equipment.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="default">
-                      <a href="/tools">View Equipment Options →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-14" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  How can I stay updated on registry findings?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    Join the waitlist to receive quarterly updates on: new registry submissions, pattern analysis from computational clustering, peer-reviewed citations of registry data, and protocol refinements from the replicator community.
-                  </p>
-                  <div className="mt-6">
-                    <Button asChild variant="default">
-                      <a href="/waitlist">Join Waitlist →</a>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-15" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-lg font-semibold">
-                  Can I replicate this protocol with other psychedelics?
-                </AccordionTrigger>
-                <AccordionContent className="text-base space-y-4 pt-4">
-                  <p>
-                    The 650 nm laser protocol was specifically developed for use during N,N-DMT experiences. Anecdotal reports suggest limited or no visual symbol elicitation with other classical psychedelics (LSD, psilocybin, mescaline).
-                  </p>
-                  <p>
-                    This specificity may relate to N,N-DMT's unique neurochemistry (5-HT2A + sigma-1 receptor agonism) and extremely high visual intensity compared to other tryptamines. Further comparative research is needed.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
-              <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <a href="/evidence-map" className="text-gold hover:underline font-medium">
-                  Evidence Map →
-                </a>
-                <a href="/methods" className="text-gold hover:underline font-medium">
-                  Research Methods →
-                </a>
-                <a href="/critiques" className="text-gold hover:underline font-medium">
-                  Scientific Critiques →
-                </a>
-              </div>
-              <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-28
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground mt-6 text-center">
+              See the open data at <a href="/registry" className="underline hover:text-foreground">/registry</a>,{' '}
+              <a href="/dataset" className="underline hover:text-foreground">/dataset</a>, and{' '}
+              <a href="/data.json" className="underline hover:text-foreground">/data.json</a>. CC-BY-4.0.
+            </p>
           </section>
         </main>
 

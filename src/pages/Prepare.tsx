@@ -393,6 +393,7 @@ const Prepare = () => {
                 the <a href="/registry" className="underline hover:text-foreground">convergence registry</a>, read the machine
                 readable corpus at <a href="/dataset" className="underline hover:text-foreground">/dataset</a>, or fetch{' '}
                 <a href="/data.json" className="underline hover:text-foreground">/data.json</a> directly. CC-BY-4.0.
+                Common questions are answered at <a href="/faq" className="underline hover:text-foreground">/faq</a>.
               </p>
             </Card>
           </section>

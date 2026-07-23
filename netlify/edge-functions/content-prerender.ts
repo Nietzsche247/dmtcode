@@ -80,6 +80,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context);
     }
+    if (kind === "faq" && seg.length === 1) {
+      return await renderFaq(context);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
@@ -781,9 +784,147 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   });
 }
 
+const FAQ_ITEMS: Array<{ q: string; a: string }> = [
+  {
+    q: 'What is the "DMT code"?',
+    a: "People who take N,N-DMT often report seeing structured visual forms, grids, glyphs, geometric symbols, and a smaller group describes something that reads almost like written characters. The DMT Code project collects those reports in one place so the overlaps can actually be measured instead of argued about. We are not claiming the forms are a message. We are asking a narrower question: do independent people, who have never spoken, keep drawing the same shapes?",
+  },
+  {
+    q: "Is the code real? Are you saying reality is made of code?",
+    a: "No. We hold that question open on purpose. Our job is to gather the observations, keep the method honest, and publish everything so anyone can judge for themselves. If the overlaps turn out to be coincidence or shared cultural imagery, the data should show that too. A result that cannot fail is not worth much, so we built this to be able to fail.",
+  },
+  {
+    q: "What do I need to get started?",
+    a: "Everything is laid out on the prepare page, from a single-instrument Observer kit up to a full Complete kit. The core is a verified 650nm laser and the right optical density, plus an observation journal and a screening card. You can also source every part yourself. We show the do-it-yourself total next to each kit so you know exactly what you are paying for.",
+  },
+  {
+    q: "How do I do this safely?",
+    a: "Start with the screening card. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.",
+  },
+  {
+    q: "Do I have to use DMT to take part?",
+    a: "No. A lot of the work here is observation and comparison. You can browse the registry, add context to symbols other people have logged, and help judge where the forms actually converge without taking anything. The dataset gets stronger every time someone compares carefully.",
+  },
+  {
+    q: "How do you stop people from just copying each other's answers?",
+    a: "That is the whole design problem, and it is why the flagship is a blinded comparison. Wherever we can, people record what they saw before they see the existing catalogue, so a match means two strangers landed on the same form independently rather than one person nodding along to another. Convergence only counts when it is earned that way.",
+  },
+  {
+    q: "Can I see the raw data?",
+    a: "Yes, all of it. The registry is public, the machine-readable corpus is at /dataset and /data.json, and it is all CC-BY-4.0, free to read, quote, and check. Every symbol shows how many people have recognized it. If something looks off, we would rather you find it.",
+  },
+  {
+    q: "Who is behind this and why should I trust it?",
+    a: "Trust the method, not us. The reason to take this seriously is that it is open, it is falsifiable, and the confirmations are public, not that anyone here says so. We keep a neutral position, we never seed or fake a count, and we publish the parts that would let you prove us wrong.",
+  },
+  {
+    q: "Can my friends and I do this together?",
+    a: "Yes, and it is often better that way. The group bundles on the prepare page share the costly instruments across two, three, or five people, so the per-person cost drops as the circle grows. Three and five also include a facilitator guide and a group agreements card, because doing this with other people asks for a little more structure.",
+  },
+  {
+    q: "Why a 650nm laser?",
+    a: "It is the specific red wavelength the observation protocol is built around, paired with the right optical density so it is used the same way each time. Consistent equipment is what lets one person's observation be compared against another's instead of guessing at the differences.",
+  },
+];
+
+async function renderFaq(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/faq`;
+  const title = "Questions about the DMT Code project and preparing to observe | DMT Code";
+  const metaDesc = clip(
+    "Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured.",
+    160,
+  );
+  const ogImage = `${SITE}/placeholder.svg`;
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}#website`,
+    url: SITE,
+    name: "DMT Code",
+    publisher: { "@id": `${SITE}#org` },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "FAQ", item: canonical },
+    ],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": canonical,
+    mainEntity: FAQ_ITEMS.map((it) => ({
+      "@type": "Question",
+      name: it.q,
+      acceptedAnswer: { "@type": "Answer", text: it.a },
+    })),
+  };
+
+  const body = `<article data-prerender="faq">
+  <h1>Questions about the DMT Code project and preparing to observe</h1>
+  ${FAQ_ITEMS.map((it) => `<section><h2>${esc(it.q)}</h2><p>${esc(it.a)}</p></section>`).join("\n  ")}
+  <p>See the open data at <a href="${SITE}/registry">/registry</a>, <a href="${SITE}/dataset">/dataset</a>, and <a href="${SITE}/data.json">/data.json</a>. CC-BY-4.0.</p>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta property="og:image" content="${esc(ogImage)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
+  ].join("\n");
+
+  let html = await shellRes.text();
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/gi, "")
+    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+  html = html.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(html)) {
+    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
+  } else {
+    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=0, must-revalidate",
+      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+    },
+  });
+}
+
 export const config: Config = {
-  path: ["/registry/*", "/trials/*", "/prepare", "/evidence-map"],
+  path: ["/registry/*", "/trials/*", "/prepare", "/evidence-map", "/faq"],
 };
+
 
 
 
