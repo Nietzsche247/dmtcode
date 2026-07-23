@@ -1163,6 +1163,59 @@ type StaticPage = {
   links?: Array<{ href: string; label: string }>;
   breadcrumbName: string;
   index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
+  bodyExtraHtml?: string;
+  extraJsonLd?: unknown[];
+};
+
+const PROTOCOL_GUIDE_LEDE =
+  "The DMT code refers to a reported observation, first described by Danny Goler in August 2020, that people under the influence of N,N-DMT who look at a 650nm red laser beam diffracted through a grating report seeing similar code-like visual forms. The reported forms include rapidly moving character-like glyphs, stable geometric structures that persist when looked away from and back, and shapes that appear to extend indefinitely into depth. A pilot study was published in IPI Letters in January 2025 (DOI 10.59973/ipil.158). No controlled study has been conducted. Whether the similarity across observers is genuine, and if genuine what causes it, is unresolved. Four explanations are actively defended, and they make different predictions that can be tested.";
+
+const PROTOCOL_GUIDE_FAQ: Array<{ q: string; a: string }> = [
+  {
+    q: "What is the DMT code?",
+    a: PROTOCOL_GUIDE_LEDE,
+  },
+  {
+    q: "What equipment does the reported protocol use?",
+    a: "Three ordinary optical components: a 650nm red laser module, a transmission diffraction grating that spreads the beam into a speckle and interference field, and a diffusing or refracting element such as an acrylic tank or lens. None are specific to this claim. DMT Code publishes no substances, sourcing, doses, or medication discontinuation windows. The beam should never be viewed directly.",
+  },
+  {
+    q: "Why 650nm specifically?",
+    a: "This is genuinely open. The claim-side answer is that 650nm is special. The skeptic-side answer is that 650nm is simply what inexpensive red laser modules emit, so the wavelength may be an artifact of availability rather than a property of the phenomenon. No published work isolates wavelength as a variable. Running the same protocol at 532nm green and 405nm violet would be the cheapest decisive test, and nobody has published it.",
+  },
+  {
+    q: "Is the DMT code real?",
+    a: "Unresolved, and this site holds the question open on purpose. Four explanations are actively defended: 1) Reality-code or simulation (Danny Goler): the forms are structure in reality itself, made visible. 2) Laser speckle (Andrew Gallimore): speckle is a physically real, structured optical artifact, and DMT amplifies pattern recognition applied to it. 3) Cymatics (Andres Gomez Emilsson): non-linear wave dynamics in visual cortex under DMT generate standing patterns. 4) Cultural priming (skeptics): Matrix-style code imagery plus expectancy shapes ambiguous input. They make different testable predictions. None has been tested against the others under controlled conditions.",
+  },
+  {
+    q: "Has anyone replicated it?",
+    a: "Anecdotal replication reports are numerous. Independent, controlled, blinded replication has not been published. Consistency percentages circulating in this space generally trace back to the original source rather than independent verification, and should be treated as unverified unless a published method accompanies them.",
+  },
+  {
+    q: "Where does the actual data live?",
+    a: "The symbol registry at /registry, the stance-scored research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
+  },
+];
+
+const PROTOCOL_GUIDE_FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://dmtcode.com/protocol-guide#faq",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "dateModified": "2026-07-23",
+  "citation": {
+    "@type": "ScholarlyArticle",
+    "name": "Pilot Study: The Code of Reality Protocol",
+    "author": { "@type": "Person", "name": "Danny Goler" },
+    "datePublished": "2025-01",
+    "identifier": "10.59973/ipil.158",
+    "sameAs": "https://doi.org/10.59973/ipil.158",
+  },
+  "mainEntity": PROTOCOL_GUIDE_FAQ.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
 };
 
 const STATIC_PAGES: Record<string, StaticPage> = {
@@ -1171,6 +1224,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Peer reviewed research, live clinical trials, and machine readable data under CC-BY-4.0.",
     heading: "DMT Code",
     paragraphs: [
+      "The open record of a reported observation: first described by Danny Goler in 2020, published as a pilot study in 2025, and unresolved. We keep the evidence, including the evidence against.",
       "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
       "The registry is public. Every symbol shows its independent confirmation count. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
     ],
@@ -1250,6 +1304,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "DMT Code was built to test a narrow question with an open record: do independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol.",
       "The project is neutral by design. Confirmations are earned by independent recognition, not solicited. The full dataset is public, licensed CC-BY-4.0, and archived with a DOI so external researchers can audit or replicate it.",
+      "Where this project stands: DMT Code is the open record of a claim, not an advocate for it. The observation was described by Danny Goler in 2020 and published in 2025. What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. Every symbol is a dated, permanent, licensed record. Every source carries a stance score. Negative results are published in the same place as positive ones, under the same license. We do not know whether the phenomenon is real. We built the instrument that could find out.",
     ],
     links: [
       { href: "/methods", label: "Methods" },
@@ -1263,8 +1318,11 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Known limitations of the DMT Code method and dataset. Selection effects, cultural priors, and reasons the convergence signal may not survive scrutiny.",
     heading: "Critiques and limitations",
     paragraphs: [
-      "This page catalogues the strongest arguments against the DMT Code claim, including selection bias in who contributes, shared cultural imagery, suggestion effects, and the difficulty of blinding a self report.",
-      "Every critique here is linked to the record so a reader can test the claim rather than take a position on it.",
+      "Publishing the strongest versions of the critiques against this project is deliberate policy. If a claim cannot survive its best opponents, it does not deserve to survive. Three serious critical positions are stated below in their strongest form, credited to the people who defend them.",
+      "1) Laser speckle (Andrew Gallimore): the diffracted 650 nm beam produces speckle, a physically real, structured optical pattern. DMT amplifies pattern recognition, so shared structure across observers may reflect shared optics rather than any external code. Prediction: changing the diffraction grating should change the reported forms.",
+      "2) Cymatics (Andres Gomez Emilsson): non-linear standing-wave dynamics in visual cortex under DMT could generate structured, apparently discrete forms without any external code at all. Prediction: similar forms should appear given sufficient visual noise, with or without a laser.",
+      "3) Cultural priming (skeptics): code and glyph imagery is culturally saturated (The Matrix, hieroglyphs, digital rain), and expectancy shapes ambiguous perception. Prediction: naive observers who are not told what to expect should report different content from observers who have read the literature.",
+      "These predictions are testable, and the registry exists to accumulate the data that could distinguish them. Credit to Danny Goler as the originator of the reported observation. The critiques above are why we track null results in the same place as confirmations.",
     ],
     links: [
       { href: "/null-reports", label: "Null reports dashboard" },
@@ -1277,8 +1335,9 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Public dashboard of negative and null replication results submitted to the DMT Code project.",
     heading: "Null reports",
     paragraphs: [
-      "Null results are tracked in the open. A dataset that only publishes positive confirmations cannot be judged; this page exists so failed replications are visible in the same record as the successes.",
-      "Anyone can submit a null report. Reports are indexed alongside symbols so a reader can weigh confirmation counts against non-recognition counts.",
+      "A null report is a record from someone who ran the observation carefully and saw nothing structured, or nothing that matched anything already in the catalogue. It is the negative counterpart to a confirmation.",
+      "We publish null reports for a simple reason: a dataset that cannot record failure cannot be trusted about success. Null results are the credibility asset of this project, not an embarrassment to it. They are the reason a confirmation count means what it says.",
+      "If the count on this page is zero or near zero, that is an honest empty state and we are saying so plainly. No null reports have been fabricated. If you observed nothing, or nothing that matched, please submit that outcome so the record reflects both sides of the ledger.",
     ],
     links: [
       { href: "/registry", label: "Registry" },
@@ -1360,9 +1419,10 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   "protocol-guide": {
     title: "650 nm Laser Protocol Guide | DMT Code",
-    description: "Neutral overview of the 650 nm laser observation protocol used across DMT Code contributions. Equipment, safety, and how observations are recorded.",
+    description: "Neutral overview of the reported 650 nm laser observation protocol, first described by Danny Goler in 2020: equipment, safety, and how observations are recorded.",
     heading: "650 nm Laser Protocol Guide",
     paragraphs: [
+      PROTOCOL_GUIDE_LEDE,
       "This is a neutral summary of the 650 nm laser observation protocol as reported by contributors. It documents equipment, room conditions, and observation posture. It is not medical or legal advice.",
       "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice.",
     ],
@@ -1371,6 +1431,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/methods", label: "Methods" },
     ],
     breadcrumbName: "Protocol guide",
+    bodyExtraHtml: `<section><h2>Common questions</h2>${PROTOCOL_GUIDE_FAQ.map((f) => `<div><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("")}</section>`,
+    extraJsonLd: [PROTOCOL_GUIDE_FAQ_LD],
   },
 };
 
@@ -1417,6 +1479,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
   const body = `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${page.bodyExtraHtml ?? ""}
   ${recentList}
   ${linksBlock}
 </article>`;
@@ -1462,6 +1525,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
     `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
     breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
+    ...(page.extraJsonLd ?? []).map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
   ].filter(Boolean).join("\n");
 
   let html = await shellRes.text();

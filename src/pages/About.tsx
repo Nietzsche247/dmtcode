@@ -120,6 +120,27 @@ const About = () => {
               </a>
             </Card>
 
+            {/* Where this project stands */}
+            <Card className="p-8 bg-card border-border mb-8 transition-theme">
+              <h2 className="text-2xl font-semibold mb-4">Where this project stands</h2>
+              <div className="space-y-4 text-base leading-relaxed">
+                <p>
+                  DMT Code is the open record of a claim, not an advocate for it. The observation
+                  was described by Danny Goler in 2020 and published in 2025.
+                </p>
+                <p>
+                  What did not exist was a place to accumulate the evidence in a form anyone could
+                  inspect, including evidence that cuts against it. Every symbol is a dated,
+                  permanent, licensed record. Every source carries a stance score. Negative results
+                  are published in the same place as positive ones, under the same license.
+                </p>
+                <p className="border-l-2 border-primary/60 pl-5">
+                  We do not know whether the phenomenon is real. We built the instrument that could
+                  find out.
+                </p>
+              </div>
+            </Card>
+
             {/* Mission Statement */}
             <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Mission Statement</h2>
