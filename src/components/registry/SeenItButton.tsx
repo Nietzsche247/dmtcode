@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
+import { ShareConvergence } from './ShareConvergence';
 
 interface SeenItButtonProps {
   symbolId: string;
@@ -123,6 +124,10 @@ export const SeenItButton = ({
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-6 flex-col-reverse sm:flex-col-reverse gap-2 sm:gap-2 sm:space-x-0">
+              <ShareConvergence
+                symbolId={symbolId}
+                seenItCount={count}
+              />
               <Button
                 type="button"
                 variant="ghost"
