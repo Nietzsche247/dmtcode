@@ -31,6 +31,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/faq"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
 

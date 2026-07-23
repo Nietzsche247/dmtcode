@@ -80,6 +80,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context);
     }
+    if (kind === "faq" && seg.length === 1) {
+      return await renderFaq(context);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
