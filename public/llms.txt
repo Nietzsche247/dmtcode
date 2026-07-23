@@ -27,7 +27,10 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 
 ## Machine endpoints
 
-- /data.json: unified JSON of every bibliography row, every clinical trial, and every approved symbol, with the facets above. Accepts filter query params: content_type, compound, topic, authority_type, person, status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline.
+- /data.json: unified JSON of every bibliography row, every clinical trial, and every approved symbol, with the facets above. Accepts filter query params: content_type, compound, topic, authority_type, person, status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline. CC-BY-4.0.
+- /shop.json: kits and group bundles from the /prepare page (slug, name, kind, tier, people, price_usd, parts_sum_usd, ships_status, wave, is_best, items[]). CC-BY-4.0.
+- /dataset: HTML index of the machine readable corpus with schema.org Dataset metadata. CC-BY-4.0.
+- /prepare: HTML page of kits and group bundles with ItemList, Product, FAQPage, Dataset, and BreadcrumbList JSON-LD. CC-BY-4.0.
 - /bibliography: HTML index. Head emits a schema.org Dataset with an ItemList of featured rows. Each list item carries stanceScore and authority as additionalProperty.
 - /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. When full_text or transcript is present it is included in the "text" property so language models can quote it directly.
 - /trials: HTML index of clinical trials.
