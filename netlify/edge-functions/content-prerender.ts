@@ -77,6 +77,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "prepare" && seg.length === 1) {
       return await renderPrepare(context);
     }
+    if (kind === "evidence-map" && seg.length === 1) {
+      return await renderEvidenceMap(context);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
@@ -136,6 +139,8 @@ export default async (request: Request, context: Context) => {
         dateModified: r.updated_at,
         keywords: tags,
         license: LICENSE,
+        publisher: { "@id": `${SITE}#org` },
+        creator: { "@id": `${SITE}#org` },
         isPartOf: {
           "@type": "Dataset",
           name: "DMT Code Visual Symbol Registry",
@@ -223,6 +228,7 @@ export default async (request: Request, context: Context) => {
             endDate: r.end_date,
             identifier: r.trial_registry_id,
             sameAs,
+            publisher: { "@id": `${SITE}#org` },
             sponsor: r.institution
               ? { "@type": "Organization", name: r.institution }
               : undefined,
@@ -246,6 +252,8 @@ export default async (request: Request, context: Context) => {
             dateCreated: r.created_at,
             dateModified: r.updated_at,
             license: LICENSE,
+            publisher: { "@id": `${SITE}#org` },
+            creator: { "@id": `${SITE}#org` },
           };
 
       body = `<article data-prerender="trial">
@@ -276,6 +284,28 @@ export default async (request: Request, context: Context) => {
 
 
 
+    const breadcrumbLd = kind === "registry"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+            { "@type": "ListItem", position: 2, name: "Registry", item: `${SITE}/registry` },
+            { "@type": "ListItem", position: 3, name: title.split(" \u2014 ")[0] || "Symbol", item: canonical },
+          ],
+        }
+      : kind === "trials"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+            { "@type": "ListItem", position: 2, name: "Trials", item: `${SITE}/trials` },
+            { "@type": "ListItem", position: 3, name: String(title).split(" | ")[0] || "Trial", item: canonical },
+          ],
+        }
+      : null;
+
     const head = [
       `<title>${esc(title)}</title>`,
       `<meta name="description" content="${esc(metaDesc)}" />`,
@@ -291,6 +321,7 @@ export default async (request: Request, context: Context) => {
       ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
       robotsMeta,
       ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
+      breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
     ]
       .filter(Boolean)
       .join("\n");
@@ -619,9 +650,141 @@ async function renderPrepare(context: Context): Promise<Response> {
   });
 }
 
+async function renderEvidenceMap(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/evidence-map`;
+  const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
+  const metaDesc = clip(
+    "A balanced evidence timeline with peer reviewed citations and stance scored milestones from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
+    160,
+  );
+  const ogImage = `${SITE}/placeholder.svg`;
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}#website`,
+    url: SITE,
+    name: "DMT Code",
+    publisher: { "@id": `${SITE}#org` },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Evidence", item: canonical },
+    ],
+  };
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": canonical,
+    headline: "Is the DMT code real? Evidence Timeline and Analysis",
+    description: metaDesc,
+    url: canonical,
+    license: LICENSE,
+    publisher: { "@id": `${SITE}#org` },
+    author: { "@id": `${SITE}#org` },
+  };
+  const datasetLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${SITE}/registry#dataset`,
+    name: "DMT Code Visual Symbol Registry",
+    description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
+    license: LICENSE,
+    url: `${SITE}/registry`,
+    identifier: "10.5281/zenodo.17816520",
+    creator: { "@id": `${SITE}#org` },
+    distribution: [
+      { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE}/data.json` },
+    ],
+    sameAs: ["https://doi.org/10.5281/zenodo.17816520"],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Is the DMT code verifiable?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Every symbol in the open registry shows its independent confirmation count. The full corpus is downloadable at /data.json under CC-BY-4.0.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is it falsifiable?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Convergence claims can be tested against the registry and against blinded replication attempts. Null reports are tracked at /null-reports.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Where is the primary peer reviewed reference?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.",
+        },
+      },
+    ],
+  };
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta property="og:image" content="${esc(ogImage)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(articleLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(datasetLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
+  ].join("\n");
+
+  let html = await shellRes.text();
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/gi, "")
+    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+  html = html.replace(/<\/head>/i, `${head}\n</head>`);
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=0, must-revalidate",
+      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+    },
+  });
+}
+
 export const config: Config = {
-  path: ["/registry/*", "/trials/*", "/prepare"],
+  path: ["/registry/*", "/trials/*", "/prepare", "/evidence-map"],
 };
+
 
 
 

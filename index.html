@@ -89,20 +89,11 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "WebSite",
+          "@type": "Organization",
+          "@id": "https://dmtcode.com#org",
           "name": "DMT Code",
           "url": "https://dmtcode.com",
-          "description": "An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://dmtcode.com/registry?search={search_term_string}",
-            "query-input": "required name=search_term_string"
-          }
-        },
-        {
-          "@type": "Organization",
-          "name": "DMT Code Project",
-          "url": "https://dmtcode.com",
+          "logo": "https://dmtcode.com/favicon.svg",
           "description": "Community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
           "foundingDate": "2025",
           "contactPoint": {
@@ -111,6 +102,19 @@
             "email": "research@dmtcode.com"
           },
           "sameAs": []
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://dmtcode.com#website",
+          "name": "DMT Code",
+          "url": "https://dmtcode.com",
+          "description": "An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.",
+          "publisher": { "@id": "https://dmtcode.com#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://dmtcode.com/registry?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
         }
       ]
     }
