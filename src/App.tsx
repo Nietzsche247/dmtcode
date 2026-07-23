@@ -31,6 +31,7 @@ import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import Join from "./pages/Join";
+import Prepare from "./pages/Prepare";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
