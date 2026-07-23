@@ -83,6 +83,12 @@ export default async (request: Request, context: Context) => {
     if (kind === "faq" && seg.length === 1) {
       return await renderFaq(context);
     }
+    if (seg.length === 0) {
+      return await renderStatic(context, "home");
+    }
+    if (seg.length === 1 && STATIC_PAGES[kind]) {
+      return await renderStatic(context, kind);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
