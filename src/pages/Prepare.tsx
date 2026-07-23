@@ -381,6 +381,22 @@ const Prepare = () => {
             </Card>
           </section>
 
+          {/* OPEN DATA */}
+          <section className="max-w-4xl mx-auto px-4 mt-16">
+            <Card className="p-6 md:p-8 rounded-2xl border-border/60">
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                The open data behind this
+              </div>
+              <h2 className="font-serif text-2xl mt-2 mb-3">Verify us</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Everything on this page sits on top of an open, community maintained record. Browse
+                the <a href="/registry" className="underline hover:text-foreground">convergence registry</a>, read the machine
+                readable corpus at <a href="/dataset" className="underline hover:text-foreground">/dataset</a>, or fetch{' '}
+                <a href="/data.json" className="underline hover:text-foreground">/data.json</a> directly. CC-BY-4.0.
+              </p>
+            </Card>
+          </section>
+
           {/* DISCLAIMER */}
           <section className="max-w-4xl mx-auto px-4 mt-16 mb-24">
             <p className="text-xs text-muted-foreground leading-relaxed">

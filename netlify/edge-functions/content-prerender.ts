@@ -337,18 +337,36 @@ async function renderPrepare(context: Context): Promise<Response> {
   const shellRes = await context.next();
   if (!SUPABASE_URL || !SUPABASE_KEY) return shellRes;
 
-  const api =
-    `${SUPABASE_URL}/rest/v1/bundles?is_published=eq.true&select=id,slug,name,tagline,kind,tier,people,price_cents,parts_sum_cents,wave,ships_status,is_best,sort_order&order=sort_order.asc`;
-  const res = await fetch(api, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      Accept: "application/json",
-    },
-  });
-  if (!res.ok) return shellRes;
-  const rows = (await res.json()) as Array<Record<string, unknown>>;
+  const [bundlesRes, itemsRes] = await Promise.all([
+    fetch(
+      `${SUPABASE_URL}/rest/v1/bundles?is_published=eq.true&select=id,slug,name,tagline,kind,tier,people,price_cents,parts_sum_cents,wave,ships_status,is_best,sort_order&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+      },
+    ),
+    fetch(
+      `${SUPABASE_URL}/rest/v1/bundle_items?select=id,bundle_id,component_name,qty,is_shared,is_digital,sort_order&order=sort_order.asc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+      },
+    ),
+  ]);
+  if (!bundlesRes.ok) return shellRes;
+  const rows = (await bundlesRes.json()) as Array<Record<string, unknown>>;
   if (!rows.length) return shellRes;
+  const items = itemsRes.ok
+    ? ((await itemsRes.json()) as Array<Record<string, unknown>>)
+    : [];
+  const itemsFor = (bid: string) =>
+    items.filter((i) => String(i.bundle_id) === bid);
 
   const canonical = `${SITE}/prepare`;
   const title =
@@ -358,6 +376,12 @@ async function renderPrepare(context: Context): Promise<Response> {
     160,
   );
   const ogImage = `${SITE}/placeholder.svg`;
+
+  const usd = (cents: unknown) =>
+    `$${(Number(cents) / 100).toFixed(0)}`;
+
+  const kits = rows.filter((r) => r.kind === "kit");
+  const groups = rows.filter((r) => r.kind === "group");
 
   const itemListLd = {
     "@context": "https://schema.org",
@@ -393,18 +417,154 @@ async function renderPrepare(context: Context): Promise<Response> {
       },
     }));
 
-  const bodyList = rows
-    .map(
-      (r) =>
-        `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> - $${(Number(r.price_cents) / 100).toFixed(0)} - ${esc(
-          r.ships_status === "now" ? "Ships now" : "Preorder",
-        )}</li>`,
-    )
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}#website`,
+    url: SITE,
+    name: "DMT Code",
+    publisher: { "@id": `${SITE}#org` },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Prepare", item: canonical },
+    ],
+  };
+
+  const datasetLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${SITE}/registry#dataset`,
+    name: "DMT Code Visual Symbol Registry",
+    description:
+      "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
+    license: LICENSE,
+    url: `${SITE}/registry`,
+    identifier: "10.5281/zenodo.17816520",
+    creator: { "@id": `${SITE}#org` },
+    distribution: [
+      {
+        "@type": "DataDownload",
+        encodingFormat: "application/json",
+        contentUrl: `${SITE}/data.json`,
+      },
+      {
+        "@type": "DataDownload",
+        encodingFormat: "application/json",
+        contentUrl: `${SITE}/shop.json`,
+      },
+    ],
+    sameAs: ["https://doi.org/10.5281/zenodo.17816520"],
+  };
+
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What do I need to prepare to observe the geometry?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "A verified 650 nm laser and matched optical density filter. Kits range from the Observer (single instrument) to the Complete (full spine). See the kit ladder for bills of materials.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I prepare safely?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice. We publish no discontinuation windows.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is the data real and verifiable?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "The open registry at /registry and the unified corpus at /data.json are CC-BY-4.0. Every symbol shows contributor counts. Critique it.",
+        },
+      },
+    ],
+  };
+
+  const kitBlocks = kits
+    .map((r) => {
+      const bom = itemsFor(String(r.id))
+        .map((it) => `${esc(it.component_name)} x${Number(it.qty)}`)
+        .join(", ");
+      const diff = Number(r.price_cents) - Number(r.parts_sum_cents);
+      const delta =
+        diff >= 0
+          ? `${usd(Math.abs(diff))} more than sourcing the parts yourself`
+          : `${usd(Math.abs(diff))} less than sourcing the parts yourself`;
+      const ships =
+        r.ships_status === "now" ? "Ships now" : "Preorder";
+      return `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> ${usd(r.price_cents)} (${esc(delta)}). ${esc(ships)}. Bill of materials: ${bom || "see product page"}.</li>`;
+    })
     .join("");
+
+  const groupBlocks = groups
+    .map((r) => {
+      const people = Number(r.people) || 1;
+      const per = Math.round(Number(r.price_cents) / people);
+      const bom = itemsFor(String(r.id))
+        .map((it) => `${esc(it.component_name)} x${Number(it.qty)}`)
+        .join(", ");
+      const ships =
+        r.ships_status === "now" ? "Ships now" : "Preorder";
+      return `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> ${usd(r.price_cents)} for ${people} people (${usd(per)} per person). ${esc(ships)}. Includes: ${bom || "see product page"}.</li>`;
+    })
+    .join("");
+
   const body = `<article data-prerender="prepare">
   <h1>Careful preparation over careless purchase</h1>
   <p>${esc(metaDesc)}</p>
-  <ul>${bodyList}</ul>
+  <section>
+    <h2>Before you go further</h2>
+    <p>Adults 18 and older only. Raise the following with a qualified prescriber before any consideration of practice:</p>
+    <ul>
+      <li>MAOIs, current or recent</li>
+      <li>SSRIs and related serotonergic medications</li>
+      <li>Cardiac history</li>
+      <li>Personal or family history of psychosis</li>
+    </ul>
+    <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
+  </section>
+  <section>
+    <h2>Kit ladder (one observer)</h2>
+    <ul>${kitBlocks}</ul>
+  </section>
+  <section>
+    <h2>Group ladder (two, three, or five together)</h2>
+    <ul>${groupBlocks}</ul>
+  </section>
+  <section>
+    <h2>Guarantee</h2>
+    <ul>
+      <li>Correct on arrival. Right wavelength, right optical density, verified before shipping.</li>
+      <li>Complete. Nothing missing, nothing to order after.</li>
+      <li>Replaced if wrong. No return shipping.</li>
+      <li>Honest about timing. Every item shows its ship window before you pay.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>The open data behind this</h2>
+    <p>The convergence registry (<a href="${SITE}/registry">/registry</a>) and the machine-readable corpus (<a href="${SITE}/dataset">/dataset</a>, <a href="${SITE}/data.json">/data.json</a>) are CC-BY-4.0.</p>
+  </section>
 </article>`;
 
   const head = [
@@ -420,6 +580,11 @@ async function renderPrepare(context: Context): Promise<Response> {
     `<meta name="twitter:title" content="${esc(title)}" />`,
     `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
     `<meta name="twitter:image" content="${esc(ogImage)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(datasetLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
     `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
     ...productLds.map(
       (ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`,

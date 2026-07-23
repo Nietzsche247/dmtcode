@@ -11,6 +11,10 @@
   function = "data-json"
 
 [[edge_functions]]
+  path = "/shop.json"
+  function = "shop-json"
+
+[[edge_functions]]
   path = "/registry/*"
   function = "content-prerender"
 
