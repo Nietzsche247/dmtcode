@@ -258,6 +258,7 @@ const App = () => (
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/prepare" element={<Prepare />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
