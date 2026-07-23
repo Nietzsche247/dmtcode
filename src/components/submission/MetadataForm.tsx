@@ -140,6 +140,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       tags: selectedTags,
       sourceMethod: data.sourceMethod as 'laser_650nm' | 'closed_eye' | 'open_eye' | 'other',
       surfaceType: data.surfaceType,
+      contextNote: data.contextNote,
       wavelength: data.wavelength,
       doseLevel: data.doseLevel as 'threshold' | 'low' | 'medium' | 'high' | 'heroic' | undefined,
       durationSeconds: data.durationSeconds ?? undefined,
