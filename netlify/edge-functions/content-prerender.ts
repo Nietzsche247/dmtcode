@@ -1419,9 +1419,10 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   "protocol-guide": {
     title: "650 nm Laser Protocol Guide | DMT Code",
-    description: "Neutral overview of the 650 nm laser observation protocol used across DMT Code contributions. Equipment, safety, and how observations are recorded.",
+    description: "Neutral overview of the reported 650 nm laser observation protocol, first described by Danny Goler in 2020: equipment, safety, and how observations are recorded.",
     heading: "650 nm Laser Protocol Guide",
     paragraphs: [
+      PROTOCOL_GUIDE_LEDE,
       "This is a neutral summary of the 650 nm laser observation protocol as reported by contributors. It documents equipment, room conditions, and observation posture. It is not medical or legal advice.",
       "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice.",
     ],
@@ -1430,6 +1431,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/methods", label: "Methods" },
     ],
     breadcrumbName: "Protocol guide",
+    bodyExtraHtml: `<section><h2>Common questions</h2>${PROTOCOL_GUIDE_FAQ.map((f) => `<div><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("")}</section>`,
+    extraJsonLd: [PROTOCOL_GUIDE_FAQ_LD],
   },
 };
 
