@@ -328,6 +328,104 @@ export type Database = {
         }
         Relationships: []
       }
+      co_witness_high_fives: {
+        Row: {
+          created_at: string
+          from_user: string
+          id: string
+          symbol_id: string
+          to_user: string
+        }
+        Insert: {
+          created_at?: string
+          from_user: string
+          id?: string
+          symbol_id: string
+          to_user: string
+        }
+        Update: {
+          created_at?: string
+          from_user?: string
+          id?: string
+          symbol_id?: string
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_witness_high_fives_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      co_witness_prefs: {
+        Row: {
+          allow_high_five: boolean
+          created_at: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["co_witness_visibility"]
+        }
+        Insert: {
+          allow_high_five?: boolean
+          created_at?: string
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["co_witness_visibility"]
+        }
+        Update: {
+          allow_high_five?: boolean
+          created_at?: string
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["co_witness_visibility"]
+        }
+        Relationships: []
+      }
+      co_witness_recollections: {
+        Row: {
+          body: string
+          context_term: string | null
+          created_at: string
+          id: string
+          symbol_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          context_term?: string | null
+          created_at?: string
+          id?: string
+          symbol_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          context_term?: string | null
+          created_at?: string
+          id?: string
+          symbol_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "co_witness_recollections_context_term_fkey"
+            columns: ["context_term"]
+            isOneToOne: false
+            referencedRelation: "tag_vocabulary"
+            referencedColumns: ["term"]
+          },
+          {
+            foreignKeyName: "co_witness_recollections_symbol_id_fkey"
+            columns: ["symbol_id"]
+            isOneToOne: false
+            referencedRelation: "symbol_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_notes: {
         Row: {
           author_id: string
@@ -1893,6 +1991,27 @@ export type Database = {
     }
     Functions: {
       generate_handle: { Args: never; Returns: string }
+      get_co_witnesses: {
+        Args: { _symbol_id: string }
+        Returns: {
+          avatar_seed: string
+          context_note: string
+          handle: string
+          surface_type: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["co_witness_visibility"]
+        }[]
+      }
+      get_my_co_witnesses: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_seed: string
+          handle: string
+          other_user_id: string
+          symbol_id: string
+          visibility: Database["public"]["Enums"]["co_witness_visibility"]
+        }[]
+      }
       get_review_streak: {
         Args: { _user_id: string }
         Returns: {
@@ -1911,6 +2030,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      co_witness_visibility: "private" | "pairs_only" | "wall"
       submission_status: "pending" | "approved" | "rejected"
       symbol_vote_type: "upvote" | "downvote" | "seen_it"
       tag_kind: "context" | "general"
@@ -2042,6 +2162,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      co_witness_visibility: ["private", "pairs_only", "wall"],
       submission_status: ["pending", "approved", "rejected"],
       symbol_vote_type: ["upvote", "downvote", "seen_it"],
       tag_kind: ["context", "general"],
