@@ -1221,9 +1221,9 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     breadcrumbName: "Forecasts",
   },
   "protocol-guide": {
-    title: "650 nm laser protocol guide | DMT Code",
-    description: "Neutral summary of the reported 650 nm laser observation protocol used across DMT Code contributions.",
-    heading: "650 nm laser protocol guide",
+    title: "650 nm Laser Protocol Guide | DMT Code",
+    description: "Neutral overview of the 650 nm laser observation protocol used across DMT Code contributions. Equipment, safety, and how observations are recorded.",
+    heading: "650 nm Laser Protocol Guide",
     paragraphs: [
       "This is a neutral summary of the 650 nm laser observation protocol as reported by contributors. It documents equipment, room conditions, and observation posture. It is not medical or legal advice.",
       "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice.",
