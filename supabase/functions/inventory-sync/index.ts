@@ -52,9 +52,11 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Starting inventory sync...");
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const runStartedAt = new Date().toISOString();
 
     // Fetch all products from Shopify
     const shopifyProducts = await fetchShopifyProducts();
+    const shopifyIds = new Set(shopifyProducts.map((p) => String(p.id)));
     console.log(`Fetched ${shopifyProducts.length} products from Shopify`);
 
     const syncResults = {
@@ -62,6 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
       errors: 0,
       soldOutUpdated: 0,
       newProducts: 0,
+      pruned: 0,
     };
 
     for (const product of shopifyProducts) {
@@ -130,6 +133,27 @@ const handler = async (req: Request): Promise<Response> => {
         console.error(`Error processing ${product.title}:`, productError);
         syncResults.errors++;
       }
+    }
+
+    // Prune: any store_products row whose Shopify id is no longer present
+    // (deleted, archived, or draft in Shopify) is removed so the local mirror
+    // does not lie about availability.
+    try {
+      const { data: existing, error: listErr } = await supabase
+        .from("store_products")
+        .select("id, shopify_id");
+      if (!listErr && Array.isArray(existing)) {
+        const stale = existing.filter((row: any) => !shopifyIds.has(String(row.shopify_id)));
+        for (const row of stale) {
+          const { error: delErr } = await supabase
+            .from("store_products")
+            .delete()
+            .eq("id", row.id);
+          if (!delErr) syncResults.pruned++;
+        }
+      }
+    } catch (pruneErr) {
+      console.error("Prune step failed:", pruneErr);
     }
 
     console.log("Inventory sync complete:", syncResults);
