@@ -100,6 +100,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       description: initialData?.description || '',
       sourceMethod: initialData?.sourceMethod,
       surfaceType: initialData?.surfaceType || '',
+      contextNote: initialData?.contextNote || '',
       wavelength: initialData?.wavelength || '650nm',
       doseLevel: initialData?.doseLevel,
       durationSeconds: initialData?.durationSeconds || null,
