@@ -84,6 +84,9 @@ function NotifyInline({ slug, name }: { slug: string; name: string }) {
     setEmail('');
     setDone(true);
     setBusy(false);
+  };
+
+
 
   if (done) {
     return (
