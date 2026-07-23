@@ -77,6 +77,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "prepare" && seg.length === 1) {
       return await renderPrepare(context);
     }
+    if (kind === "evidence-map" && seg.length === 1) {
+      return await renderEvidenceMap(context);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
