@@ -140,11 +140,11 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,phase,trial_type,status,confirmed_status,application_url,source_url,compounds,indication,notes,eligibility,source_date,created_at"
+      "id,title,institution,organizer_lead,location,trial_type,status,confirmed_status,application_url,url,notes,eligibility,created_at"
     ),
     fetchAll(
       "symbol_submissions",
-      "id,title,description,tags,source,status,created_at,image_url",
+      "id,description,tags,status,created_at,image_url",
       "status=eq.approved"
     ),
   ]);
