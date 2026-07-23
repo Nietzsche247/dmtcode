@@ -139,6 +139,8 @@ export default async (request: Request, context: Context) => {
         dateModified: r.updated_at,
         keywords: tags,
         license: LICENSE,
+        publisher: { "@id": `${SITE}#org` },
+        creator: { "@id": `${SITE}#org` },
         isPartOf: {
           "@type": "Dataset",
           name: "DMT Code Visual Symbol Registry",
