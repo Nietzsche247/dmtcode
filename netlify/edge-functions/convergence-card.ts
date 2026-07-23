@@ -25,6 +25,31 @@ async function ensureWasm() {
   return wasmReady;
 }
 
+const FONT_URLS = {
+  fraunces:
+    "https://fonts.gstatic.com/s/fraunces/v31/6NUh8FyLNQOQZAnv9ZwNjucMHVn85Ni7emAe9lKqZTnbB-gzTKgYFmMlBWk.woff2",
+  hanken:
+    "https://fonts.gstatic.com/s/hankengrotesk/v8/ktkm0-EoXAqOA3AiuKvNvNUnkGvUwv0FZQ.woff2",
+  plexMono:
+    "https://fonts.gstatic.com/s/ibmplexmono/v19/-F63fjptAgt5VM-kVkqdyU8n5igg1l9kn-s.woff2",
+};
+
+let fontBuffersPromise: Promise<Uint8Array[]> | null = null;
+async function loadFontBuffers(): Promise<Uint8Array[]> {
+  if (!fontBuffersPromise) {
+    fontBuffersPromise = Promise.all(
+      Object.values(FONT_URLS).map(async (u) => {
+        const r = await fetch(u);
+        if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
+        return new Uint8Array(await r.arrayBuffer());
+      }),
+    );
+  }
+  return fontBuffersPromise;
+}
+
+
+
 async function sbGet(path: string): Promise<unknown> {
   if (!SUPABASE_URL || !SUPABASE_KEY) return null;
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -65,17 +90,19 @@ async function buildCardSvg(symbolId: string): Promise<string | null> {
   const [seenIt, tags, profileRows] = await Promise.all([
     sbCount(`symbol_votes?symbol_id=eq.${symbolId}&vote_type=eq.seen_it&select=id`),
     sbGet(
-      `symbol_tags?symbol_id=eq.${symbolId}&kind=eq.context&order=upvotes.desc&limit=3&select=tag`,
+      `symbol_tags?symbol_id=eq.${symbolId}&kind=eq.context&order=upvotes.desc&limit=3&select=tag_name`,
     ) as Promise<Array<Record<string, unknown>> | null>,
     sbGet(
-      `profiles?id=eq.${symbol.user_id}&select=display_name,avatar_url`,
+      `profiles?id=eq.${symbol.user_id}&select=handle,display_name,avatar_url`,
     ) as Promise<Array<Record<string, unknown>> | null>,
   ]);
 
   const leadingTags = (tags ?? [])
-    .map((t) => (t.tag as string) ?? "")
+    .map((t) => (t.tag_name as string) ?? "")
     .filter(Boolean);
   const profile = profileRows?.[0];
+  const submitterHandle =
+    (profile?.handle as string) ?? (profile?.display_name as string) ?? null;
 
   return renderConvergenceCard({
     symbolId,
@@ -87,12 +114,13 @@ async function buildCardSvg(symbolId: string): Promise<string | null> {
     leadingTags,
     submitter: profile
       ? {
-          handle: (profile.display_name as string) ?? null,
+          handle: submitterHandle,
           avatarUrl: (profile.avatar_url as string) ?? null,
         }
       : null,
   });
 }
+
 
 export default async (request: Request, _context: Context) => {
   const url = new URL(request.url);
@@ -118,10 +146,15 @@ export default async (request: Request, _context: Context) => {
     }
 
     await ensureWasm();
+    const fontBuffers = await loadFontBuffers();
     const resvg = new Resvg(svg, {
       background: "#F0EADA",
       fitTo: { mode: "width", value: 1200 },
-      font: { loadSystemFonts: false, defaultFontFamily: "Georgia" },
+      font: {
+        loadSystemFonts: false,
+        fontBuffers,
+        defaultFontFamily: "Hanken Grotesk",
+      },
     });
     const png = resvg.render().asPng();
     return new Response(png, {
