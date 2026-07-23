@@ -31,6 +31,7 @@ import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import Join from "./pages/Join";
+const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 import Leaderboard from "./pages/Leaderboard";
@@ -161,6 +162,7 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/co-witnesses" element={<Suspense fallback={<CalibratingLasersLoader />}><CoWitnesses /></Suspense>} />
           <Route path="/my-symbols" element={<MySymbols />} />
           <Route path="/dashboard" element={
             <ErrorBoundary>
