@@ -247,6 +247,110 @@ export type Database = {
         }
         Relationships: []
       }
+      bundle_items: {
+        Row: {
+          bundle_id: string
+          component_name: string
+          created_at: string
+          id: string
+          is_digital: boolean
+          is_shared: boolean
+          qty: number
+          retail_cents: number
+          sort_order: number
+        }
+        Insert: {
+          bundle_id: string
+          component_name: string
+          created_at?: string
+          id?: string
+          is_digital?: boolean
+          is_shared?: boolean
+          qty?: number
+          retail_cents?: number
+          sort_order?: number
+        }
+        Update: {
+          bundle_id?: string
+          component_name?: string
+          created_at?: string
+          id?: string
+          is_digital?: boolean
+          is_shared?: boolean
+          qty?: number
+          retail_cents?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_items_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "bundles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bundles: {
+        Row: {
+          created_at: string
+          id: string
+          is_best: boolean
+          is_published: boolean
+          kind: string
+          markup_pct: number | null
+          name: string
+          parts_sum_cents: number
+          people: number
+          price_cents: number
+          ships_status: string
+          slug: string
+          sort_order: number
+          tagline: string | null
+          tier: string
+          updated_at: string
+          wave: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_best?: boolean
+          is_published?: boolean
+          kind: string
+          markup_pct?: number | null
+          name: string
+          parts_sum_cents: number
+          people?: number
+          price_cents: number
+          ships_status: string
+          slug: string
+          sort_order?: number
+          tagline?: string | null
+          tier: string
+          updated_at?: string
+          wave: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_best?: boolean
+          is_published?: boolean
+          kind?: string
+          markup_pct?: number | null
+          name?: string
+          parts_sum_cents?: number
+          people?: number
+          price_cents?: number
+          ships_status?: string
+          slug?: string
+          sort_order?: number
+          tagline?: string | null
+          tier?: string
+          updated_at?: string
+          wave?: number
+        }
+        Relationships: []
+      }
       clinical_trials: {
         Row: {
           application_url: string | null
