@@ -63,6 +63,7 @@ const formSchema = z.object({
     { message: 'Please select a source method' }
   ),
   surfaceType: z.string().optional(),
+  contextNote: z.string().max(280, 'Keep under 280 characters').optional(),
   wavelength: z.string().optional(),
   doseLevel: z.string().optional(),
   durationSeconds: z.number().min(1).optional().nullable(),
@@ -75,6 +76,7 @@ export interface SymbolMetadata {
   tags: string[];
   sourceMethod: 'laser_650nm' | 'closed_eye' | 'open_eye' | 'other';
   surfaceType?: string;
+  contextNote?: string;
   wavelength?: string;
   doseLevel?: 'threshold' | 'low' | 'medium' | 'high' | 'heroic';
   durationSeconds?: number;
