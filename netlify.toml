@@ -19,6 +19,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/prepare"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
 
