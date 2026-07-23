@@ -17,6 +17,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ArrowLeft, ArrowRight, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ContextTermPicker } from '@/components/context/ContextTermPicker';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
