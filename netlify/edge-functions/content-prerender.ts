@@ -1305,6 +1305,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "DMT Code was built to test a narrow question with an open record: do independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol.",
       "The project is neutral by design. Confirmations are earned by independent recognition, not solicited. The full dataset is public, licensed CC-BY-4.0, and archived with a DOI so external researchers can audit or replicate it.",
       "Where this project stands: DMT Code is the open record of a claim, not an advocate for it. The observation was described by Danny Goler in 2020 and published in 2025. What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. Every symbol is a dated, permanent, licensed record. Every source carries a stance score. Negative results are published in the same place as positive ones, under the same license. We do not know whether the phenomenon is real. We built the instrument that could find out.",
+      "On Danny Goler: Danny Goler first described the observation this project studies, and he is credited as its originator throughout this site. He is aware of this project but holds no editorial role in it. What gets published here, including the critiques and null results, is decided independently, and the public dataset lets anyone check that policy against practice.",
     ],
     links: [
       { href: "/methods", label: "Methods" },
