@@ -259,14 +259,16 @@ const SymbolDetail = () => {
           content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
         />
         <meta property="og:url" content={`https://dmtcode.com/registry/${symbol.id}`} />
-        <meta property="og:image" content={symbol.image_url} />
+        <meta property="og:image" content={`https://dmtcode.com/card/${symbol.id}.png`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`} />
         <meta
           name="twitter:description"
           content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
         />
-        <meta name="twitter:image" content={symbol.image_url} />
+        <meta name="twitter:image" content={`https://dmtcode.com/card/${symbol.id}.png`} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
