@@ -37,16 +37,24 @@ const FONT_URLS = {
 let fontBuffersPromise: Promise<Uint8Array[]> | null = null;
 async function loadFontBuffers(): Promise<Uint8Array[]> {
   if (!fontBuffersPromise) {
-    fontBuffersPromise = Promise.all(
-      Object.values(FONT_URLS).map(async (u) => {
-        const r = await fetch(u);
-        if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
-        return new Uint8Array(await r.arrayBuffer());
-      }),
-    );
+    fontBuffersPromise = (async () => {
+      const results = await Promise.all(
+        Object.values(FONT_URLS).map(async (u) => {
+          try {
+            const r = await fetch(u);
+            if (!r.ok) return null;
+            return new Uint8Array(await r.arrayBuffer());
+          } catch {
+            return null;
+          }
+        }),
+      );
+      return results.filter((b): b is Uint8Array => b !== null);
+    })();
   }
   return fontBuffersPromise;
 }
+
 
 
 
