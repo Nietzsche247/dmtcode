@@ -38,23 +38,16 @@ let fontBuffersPromise: Promise<Uint8Array[]> | null = null;
 async function loadFontBuffers(): Promise<Uint8Array[]> {
   if (!fontBuffersPromise) {
     fontBuffersPromise = Promise.all(
-      Object.values(FONT_URLS).map((u) =>
-        fetch(u).then((r) => new Uint8Array(r.ok ? r.arrayBuffer() as unknown as ArrayBuffer : new ArrayBuffer(0))),
-      ),
-    ).then(async () => {
-      // resolve real ArrayBuffers
-      const bufs = await Promise.all(
-        Object.values(FONT_URLS).map(async (u) => {
-          const r = await fetch(u);
-          if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
-          return new Uint8Array(await r.arrayBuffer());
-        }),
-      );
-      return bufs;
-    });
+      Object.values(FONT_URLS).map(async (u) => {
+        const r = await fetch(u);
+        if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
+        return new Uint8Array(await r.arrayBuffer());
+      }),
+    );
   }
   return fontBuffersPromise;
 }
+
 
 
 async function sbGet(path: string): Promise<unknown> {
