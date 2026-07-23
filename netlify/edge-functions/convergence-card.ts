@@ -37,16 +37,24 @@ const FONT_URLS = {
 let fontBuffersPromise: Promise<Uint8Array[]> | null = null;
 async function loadFontBuffers(): Promise<Uint8Array[]> {
   if (!fontBuffersPromise) {
-    fontBuffersPromise = Promise.all(
-      Object.values(FONT_URLS).map(async (u) => {
-        const r = await fetch(u);
-        if (!r.ok) throw new Error(`font fetch failed: ${u} (${r.status})`);
-        return new Uint8Array(await r.arrayBuffer());
-      }),
-    );
+    fontBuffersPromise = (async () => {
+      const results = await Promise.all(
+        Object.values(FONT_URLS).map(async (u) => {
+          try {
+            const r = await fetch(u);
+            if (!r.ok) return null;
+            return new Uint8Array(await r.arrayBuffer());
+          } catch {
+            return null;
+          }
+        }),
+      );
+      return results.filter((b): b is Uint8Array => b !== null);
+    })();
   }
   return fontBuffersPromise;
 }
+
 
 
 
@@ -145,13 +153,18 @@ export default async (request: Request, _context: Context) => {
       });
     }
 
-    await ensureWasm();
-    const fontBuffers = await loadFontBuffers();
+    let fontBuffers: Uint8Array[] = [];
+    try {
+      await ensureWasm();
+      fontBuffers = await loadFontBuffers();
+    } catch {
+      fontBuffers = [];
+    }
     const resvg = new Resvg(svg, {
       background: "#F0EADA",
       fitTo: { mode: "width", value: 1200 },
       font: {
-        loadSystemFonts: false,
+        loadSystemFonts: fontBuffers.length === 0,
         fontBuffers,
         defaultFontFamily: "Hanken Grotesk",
       },
@@ -167,6 +180,7 @@ export default async (request: Request, _context: Context) => {
     return new Response(`card error: ${(e as Error).message}`, { status: 500 });
   }
 };
+
 
 export const config: Config = {
   path: "/card/*",

@@ -267,6 +267,27 @@ export default async (req: Request): Promise<Response> => {
     faq: legacy.faq ?? [],
   };
 
+  // Health assertion: if the corpus is empty, return 503 so agents retry
+  // instead of caching an empty dataset as truth.
+  if (items.length === 0) {
+    return new Response(
+      JSON.stringify({
+        error: "corpus_unavailable",
+        message: "Upstream data source returned zero rows. Retry shortly.",
+        counts: body.counts,
+      }, null, 2),
+      {
+        status: 503,
+        headers: {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "retry-after": "60",
+          "access-control-allow-origin": "*",
+        },
+      },
+    );
+  }
+
   return new Response(JSON.stringify(body, null, 2), {
     headers: {
       "content-type": "application/json; charset=utf-8",
@@ -275,5 +296,6 @@ export default async (req: Request): Promise<Response> => {
     },
   });
 };
+
 
 export const config: Config = { path: "/data.json" };
