@@ -38,6 +38,13 @@
   path = "/card/*"
   function = "convergence-card"
 
+# Permanent redirect: /tools ranking equity moves to /prepare.
+[[redirects]]
+  from = "/tools"
+  to = "/prepare"
+  status = 301
+  force = true
+
 # SPA fallback for every other route.
 [[redirects]]
   from = "/*"
