@@ -72,12 +72,21 @@ function NotifyInline({ slug, name }: { slug: string; name: string }) {
         event_category: 'engagement',
       });
     }
-    await new Promise((r) => setTimeout(r, 600));
+    const { error } = await (supabase as any)
+      .from('product_signups')
+      .insert({ bundle_slug: slug, email });
+    if (error) {
+      toast.error('Could not save your email. Please try again.');
+      setBusy(false);
+      return;
+    }
     toast.success('You will hear from us before it opens.');
     setEmail('');
     setDone(true);
     setBusy(false);
   };
+
+
 
   if (done) {
     return (

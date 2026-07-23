@@ -396,7 +396,7 @@ async function renderPrepare(context: Context): Promise<Response> {
   const bodyList = rows
     .map(
       (r) =>
-        `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> — $${(Number(r.price_cents) / 100).toFixed(0)} — ${esc(
+        `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> - $${(Number(r.price_cents) / 100).toFixed(0)} - ${esc(
           r.ships_status === "now" ? "Ships now" : "Preorder",
         )}</li>`,
     )
