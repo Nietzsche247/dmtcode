@@ -90,17 +90,19 @@ async function buildCardSvg(symbolId: string): Promise<string | null> {
   const [seenIt, tags, profileRows] = await Promise.all([
     sbCount(`symbol_votes?symbol_id=eq.${symbolId}&vote_type=eq.seen_it&select=id`),
     sbGet(
-      `symbol_tags?symbol_id=eq.${symbolId}&kind=eq.context&order=upvotes.desc&limit=3&select=tag`,
+      `symbol_tags?symbol_id=eq.${symbolId}&kind=eq.context&order=upvotes.desc&limit=3&select=tag_name`,
     ) as Promise<Array<Record<string, unknown>> | null>,
     sbGet(
-      `profiles?id=eq.${symbol.user_id}&select=display_name,avatar_url`,
+      `profiles?id=eq.${symbol.user_id}&select=handle,display_name,avatar_url`,
     ) as Promise<Array<Record<string, unknown>> | null>,
   ]);
 
   const leadingTags = (tags ?? [])
-    .map((t) => (t.tag as string) ?? "")
+    .map((t) => (t.tag_name as string) ?? "")
     .filter(Boolean);
   const profile = profileRows?.[0];
+  const submitterHandle =
+    (profile?.handle as string) ?? (profile?.display_name as string) ?? null;
 
   return renderConvergenceCard({
     symbolId,
@@ -112,12 +114,13 @@ async function buildCardSvg(symbolId: string): Promise<string | null> {
     leadingTags,
     submitter: profile
       ? {
-          handle: (profile.display_name as string) ?? null,
+          handle: submitterHandle,
           avatarUrl: (profile.avatar_url as string) ?? null,
         }
       : null,
   });
 }
+
 
 export default async (request: Request, _context: Context) => {
   const url = new URL(request.url);
