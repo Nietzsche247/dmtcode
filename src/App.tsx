@@ -31,6 +31,7 @@ import OpenQuestions from "./pages/OpenQuestions";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import Join from "./pages/Join";
+import Prepare from "./pages/Prepare";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -257,6 +258,7 @@ const App = () => (
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/prepare" element={<Prepare />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
