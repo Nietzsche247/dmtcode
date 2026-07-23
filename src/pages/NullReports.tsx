@@ -122,13 +122,32 @@ const NullReports = () => {
       <main className="min-h-screen bg-background py-12 px-4">
         <div className="container mx-auto max-w-6xl">
           {/* Hero */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+          <div className="mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground text-center">
               Null Reports Registry
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Help us kill selection bias – every null counts
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-center mb-10">
+              The negative record. Every null counts.
             </p>
+            <div className="max-w-3xl mx-auto space-y-4 text-base leading-relaxed">
+              <p>
+                A null report is a record from someone who ran the observation carefully and saw
+                nothing structured, or nothing that matched anything already in the catalogue. It is
+                the negative counterpart to a confirmation.
+              </p>
+              <p>
+                We publish null reports for a simple reason: a dataset that cannot record failure
+                cannot be trusted about success. Null results are the credibility asset of this
+                project, not an embarrassment to it. They are the reason a confirmation count means
+                what it says.
+              </p>
+              <p className="text-muted-foreground">
+                If the counts below are zero or near zero, that is an honest empty state and we are
+                saying so plainly. No null report on this page has been fabricated. If you observed
+                nothing, or nothing that matched, please submit that outcome so the record reflects
+                both sides of the ledger.
+              </p>
+            </div>
           </div>
 
           {/* Summary Cards */}
