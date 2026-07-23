@@ -28,6 +28,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/null-reports", "0.5", "weekly"],
   ["/research", "0.6", "weekly"],
   ["/dataset", "0.6", "monthly"],
+  ["/prepare", "0.8", "weekly"],
 ];
 
 function xesc(s: string): string {
