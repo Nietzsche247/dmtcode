@@ -105,7 +105,7 @@ export default async (request: Request, context: Context) => {
       title = `Symbol ${short} \u2014 DMT Code Visual Registry`;
       metaDesc = clip(desc, 160);
       canonical = `${SITE}/registry/${r.id}`;
-      ogImage = String(r.image_url ?? "");
+      ogImage = `${SITE}/card/${r.id}.png`;
 
       const pairs: Array<[string, unknown]> = [
         ["Dose level", r.dose_level],
