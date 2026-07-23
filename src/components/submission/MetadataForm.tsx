@@ -290,10 +290,31 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
               control={form.control}
               name="surfaceType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Surface Type</FormLabel>
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Where did you see it? (submitter context)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., wall, ceiling, skin" {...field} />
+                    <ContextTermPicker
+                      value={field.value || null}
+                      onChange={(v) => field.onChange(v || '')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="contextNote"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Short note (optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., on textured drywall in dim light"
+                      maxLength={280}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
