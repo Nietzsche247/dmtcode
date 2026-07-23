@@ -1479,6 +1479,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
   const body = `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${page.bodyExtraHtml ?? ""}
   ${recentList}
   ${linksBlock}
 </article>`;
