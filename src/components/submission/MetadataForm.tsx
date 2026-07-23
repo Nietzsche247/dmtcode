@@ -17,6 +17,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ArrowLeft, ArrowRight, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ContextTermPicker } from '@/components/context/ContextTermPicker';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
@@ -62,6 +63,7 @@ const formSchema = z.object({
     { message: 'Please select a source method' }
   ),
   surfaceType: z.string().optional(),
+  contextNote: z.string().max(280, 'Keep under 280 characters').optional(),
   wavelength: z.string().optional(),
   doseLevel: z.string().optional(),
   durationSeconds: z.number().min(1).optional().nullable(),
@@ -74,6 +76,7 @@ export interface SymbolMetadata {
   tags: string[];
   sourceMethod: 'laser_650nm' | 'closed_eye' | 'open_eye' | 'other';
   surfaceType?: string;
+  contextNote?: string;
   wavelength?: string;
   doseLevel?: 'threshold' | 'low' | 'medium' | 'high' | 'heroic';
   durationSeconds?: number;
@@ -97,6 +100,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       description: initialData?.description || '',
       sourceMethod: initialData?.sourceMethod,
       surfaceType: initialData?.surfaceType || '',
+      contextNote: initialData?.contextNote || '',
       wavelength: initialData?.wavelength || '650nm',
       doseLevel: initialData?.doseLevel,
       durationSeconds: initialData?.durationSeconds || null,
@@ -136,6 +140,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       tags: selectedTags,
       sourceMethod: data.sourceMethod as 'laser_650nm' | 'closed_eye' | 'open_eye' | 'other',
       surfaceType: data.surfaceType,
+      contextNote: data.contextNote,
       wavelength: data.wavelength,
       doseLevel: data.doseLevel as 'threshold' | 'low' | 'medium' | 'high' | 'heroic' | undefined,
       durationSeconds: data.durationSeconds ?? undefined,
@@ -285,10 +290,31 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
               control={form.control}
               name="surfaceType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Surface Type</FormLabel>
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Where did you see it? (submitter context)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., wall, ceiling, skin" {...field} />
+                    <ContextTermPicker
+                      value={field.value || null}
+                      onChange={(v) => field.onChange(v || '')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="contextNote"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Short note (optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., on textured drywall in dim light"
+                      maxLength={280}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

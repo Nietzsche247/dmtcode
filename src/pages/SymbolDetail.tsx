@@ -13,6 +13,7 @@ import { VotingButtons } from '@/components/registry/VotingButtons';
 import { SeenItButton } from '@/components/registry/SeenItButton';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { TagsManager } from '@/components/registry/TagsManager';
+import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
@@ -40,6 +41,7 @@ interface SymbolData {
   status: 'pending' | 'approved' | 'rejected';
   source_method: string | null;
   surface_type: string | null;
+  context_note: string | null;
   wavelength: string | null;
   dose_level: string | null;
   duration_seconds: number | null;
@@ -396,9 +398,17 @@ const SymbolDetail = () => {
                   </div>
                 )}
 
-                {/* Community tap-to-tag */}
+                {/* Two-bucket Context (Submitter + Community) */}
+                <SymbolContextPanel
+                  symbolId={symbol.id}
+                  submitterContext={symbol.surface_type}
+                  submitterNote={symbol.context_note}
+                  submitterId={symbol.user_id}
+                />
+
+                {/* Descriptor tags (free-form) */}
                 <div>
-                  <h3 className="text-sm font-medium mb-2">Community Tags</h3>
+                  <h3 className="text-sm font-medium mb-2">Descriptor tags</h3>
                   <TagsManager symbolId={symbol.id} />
                 </div>
 

@@ -136,6 +136,7 @@ export const SubmissionWizard = () => {
           tags: metadata.tags,
           source_method: metadata.sourceMethod,
           surface_type: metadata.surfaceType || null,
+          context_note: metadata.contextNote || null,
           wavelength: metadata.wavelength || null,
           dose_level: metadata.doseLevel || null,
           duration_seconds: metadata.durationSeconds || null,
