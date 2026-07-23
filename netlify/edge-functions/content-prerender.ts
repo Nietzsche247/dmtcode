@@ -333,4 +333,130 @@ export default async (request: Request, context: Context) => {
   }
 };
 
+async function renderPrepare(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  if (!SUPABASE_URL || !SUPABASE_KEY) return shellRes;
+
+  const api =
+    `${SUPABASE_URL}/rest/v1/bundles?is_published=eq.true&select=id,slug,name,tagline,kind,tier,people,price_cents,parts_sum_cents,wave,ships_status,is_best,sort_order&order=sort_order.asc`;
+  const res = await fetch(api, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) return shellRes;
+  const rows = (await res.json()) as Array<Record<string, unknown>>;
+  if (!rows.length) return shellRes;
+
+  const canonical = `${SITE}/prepare`;
+  const title =
+    "Prepare. Kits and group bundles for careful practice. | DMT Code";
+  const metaDesc = clip(
+    "Instrument kits and group bundles for careful, well prepared practice. Honest ship windows, plain bills of materials, no surprises.",
+    160,
+  );
+  const ogImage = `${SITE}/placeholder.svg`;
+
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": canonical,
+    name: "DMT Code Kits and Group Bundles",
+    itemListElement: rows.map((r, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: String(r.name),
+      url: `${canonical}#${r.slug}`,
+    })),
+  };
+
+  const productLds = rows
+    .filter((r) => r.kind === "kit")
+    .map((r) => ({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${canonical}#${r.slug}`,
+      name: `DMT Code ${String(r.name)} Kit`,
+      description: String(r.tagline ?? ""),
+      brand: { "@type": "Brand", name: "DMT Code" },
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "USD",
+        price: (Number(r.price_cents) / 100).toFixed(2),
+        availability:
+          r.ships_status === "now"
+            ? "https://schema.org/InStock"
+            : "https://schema.org/PreOrder",
+        url: canonical,
+      },
+    }));
+
+  const bodyList = rows
+    .map(
+      (r) =>
+        `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> — $${(Number(r.price_cents) / 100).toFixed(0)} — ${esc(
+          r.ships_status === "now" ? "Ships now" : "Preorder",
+        )}</li>`,
+    )
+    .join("");
+  const body = `<article data-prerender="prepare">
+  <h1>Careful preparation over careless purchase</h1>
+  <p>${esc(metaDesc)}</p>
+  <ul>${bodyList}</ul>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta property="og:image" content="${esc(ogImage)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
+    `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
+    ...productLds.map(
+      (ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`,
+    ),
+  ].join("\n");
+
+  let html = await shellRes.text();
+  html = html
+    .replace(/<title>[\s\S]*?<\/title>/gi, "")
+    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+  html = html.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(html)) {
+    html = html.replace(
+      /<div id="root">\s*<\/div>/i,
+      `<div id="root">${body}</div>`,
+    );
+  } else {
+    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=0, must-revalidate",
+      "netlify-cdn-cache-control":
+        "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+    },
+  });
+}
+
+export const config: Config = {
+  path: ["/registry/*", "/trials/*", "/prepare"],
+};
+
+
 export const config: Config = { path: ["/registry/*", "/trials/*"] };
