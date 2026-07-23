@@ -217,16 +217,26 @@ export function renderConvergenceCard(input: ConvergenceCardInput): string {
   ].join(" ");
 
   const bg = `<rect width="${W}" height="${H}" fill="${PAPER}"/>`;
-  // Subtle grain via a very light pattern of dots
+  // Deterministic grain: seeded PRNG keyed off symbolId so SVG and PNG match.
+  let seed = 2166136261 >>> 0;
+  for (let i = 0; i < input.symbolId.length; i++) {
+    seed ^= input.symbolId.charCodeAt(i);
+    seed = Math.imul(seed, 16777619) >>> 0;
+  }
+  const rand = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
   const grain = `<g opacity="0.06" fill="${INK}">${
     Array.from({ length: 60 })
       .map(() => {
-        const x = Math.floor(Math.random() * W);
-        const y = Math.floor(Math.random() * H);
+        const x = Math.floor(rand() * W);
+        const y = Math.floor(rand() * H);
         return `<circle cx="${x}" cy="${y}" r="0.6"/>`;
       })
       .join("")
   }</g>`;
+
 
   // Divider hairline between hero and text
   const divider = `<line x1="600" y1="120" x2="600" y2="${H - 120}" stroke="${INK}" stroke-opacity="0.08" stroke-width="1"/>`;
