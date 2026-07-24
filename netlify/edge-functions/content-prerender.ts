@@ -244,9 +244,10 @@ export default async (request: Request, context: Context) => {
       ld = isRegisteredTrial
         ? {
             "@context": "https://schema.org",
-            "@type": "MedicalStudy",
+            "@type": "MedicalTrial",
             "@id": canonical,
             name: r.title,
+            phase: r.phase || undefined,
             description: desc,
             url: canonical,
             studySubject: { "@type": "Drug", name: "N,N-Dimethyltryptamine (DMT)" },
