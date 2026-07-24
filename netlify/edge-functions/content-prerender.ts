@@ -102,6 +102,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "theories" && seg.length === 1) {
       return await renderTheories(context);
     }
+    if (kind === "retreats" && seg.length === 1) {
+      return await renderRetreats(context);
+    }
     if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
 
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
@@ -1597,6 +1600,7 @@ export const config: Config = {
     "/faq",
     "/events",
     "/events/*",
+    "/retreats",
     "/retreats/*",
     "/theories",
     "/theories/*",
@@ -1952,7 +1956,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE },
-      { "@type": "ListItem", position: 2, name: "Events", item: `${SITE}/events` },
+      { "@type": "ListItem", position: 2, name: "Retreat centers", item: `${SITE}/retreats` },
       { "@type": "ListItem", position: 3, name: String(r.name), item: canonical },
     ],
   };
@@ -1981,7 +1985,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
   ${detailsText ? paragraphsFromText(detailsText) : "<p>No further details provided.</p>"}
   ${r.website_url ? `<p><a href="${esc(String(r.website_url))}" rel="noopener">Visit website</a></p>` : ""}
   ${r.contact_email ? `<p>Contact: <a href="mailto:${esc(String(r.contact_email))}">${esc(String(r.contact_email))}</a></p>` : ""}
-  <p><a href="${SITE}/events">Back to the events timeline</a></p>
+  <p><a href="${SITE}/retreats">Back to retreat centers</a></p>
 </article>`;
 
   const head = buildHead({
