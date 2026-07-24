@@ -31,6 +31,7 @@ export const VotingButtons = ({
     seenIt,
     markReviewed,
   } = useSymbolVoting(symbolId, submitterId);
+  const location = useLocation();
   
   const { trackSelfVoteAttempted } = useUgcTracking();
 
