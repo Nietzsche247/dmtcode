@@ -319,10 +319,11 @@ export default async (req: Request): Promise<Response> => {
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.3",
+    version: "3.4",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
+    key_policy: "Keys are omitted when the value is unknown. An absent key means unknown, not false or zero.",
     filters: {
       content_type: contentTypeVocab,
       compound: "substring match against item.compounds",
