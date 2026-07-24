@@ -33,6 +33,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/dataset", "0.6", "monthly"],
   ["/forecasts", "0.6", "weekly"],
   ["/join", "0.6", "monthly"],
+  ["/co-witnesses", "0.5", "weekly"],
 ];
 
 function xesc(s: string): string {

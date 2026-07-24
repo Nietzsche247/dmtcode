@@ -103,6 +103,7 @@ export const CoWitnessModule = ({ symbolId, viewerId, viewerHasSeenIt, viewerSur
       return;
     }
     setHighFived((m) => ({ ...m, [toUser]: true }));
+    trackGA('co_witness_high_five_sent', { symbol_id: symbolId });
     toast.success('Sent');
     // Re-check mutual state
     const { data: theirs } = await (supabase as any)
@@ -138,6 +139,7 @@ export const CoWitnessModule = ({ symbolId, viewerId, viewerHasSeenIt, viewerSur
       return;
     }
     setRecollection('');
+    trackGA('co_witness_recollection_posted', { symbol_id: symbolId });
     toast.success('Added to the wall');
   };
 
