@@ -1877,6 +1877,45 @@ export type Database = {
           },
         ]
       }
+      trial_backfill_runs: {
+        Row: {
+          errors: Json
+          failed: number
+          finished_at: string | null
+          id: string
+          not_found: number
+          run_by: string | null
+          started_at: string
+          title_mismatches: Json
+          total: number
+          updated: number
+        }
+        Insert: {
+          errors?: Json
+          failed?: number
+          finished_at?: string | null
+          id?: string
+          not_found?: number
+          run_by?: string | null
+          started_at?: string
+          title_mismatches?: Json
+          total?: number
+          updated?: number
+        }
+        Update: {
+          errors?: Json
+          failed?: number
+          finished_at?: string | null
+          id?: string
+          not_found?: number
+          run_by?: string | null
+          started_at?: string
+          title_mismatches?: Json
+          total?: number
+          updated?: number
+        }
+        Relationships: []
+      }
       trial_watchlist: {
         Row: {
           created_at: string
