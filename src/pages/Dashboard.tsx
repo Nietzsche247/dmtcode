@@ -71,6 +71,7 @@ interface Stats {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { trackDashboardViewed, trackTabSwitched } = useDashboardTracking();
   const { trackDashboardTabViewed } = useUgcTracking();
   
