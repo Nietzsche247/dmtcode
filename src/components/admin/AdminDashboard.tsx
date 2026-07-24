@@ -10,6 +10,7 @@ import { SymbolSubmissionModeration } from './SymbolSubmissionModeration';
 import { NullDashboard } from './NullDashboard';
 import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
+import { TrialsBackfillPanel } from './TrialsBackfillPanel';
 import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
 import { GA4DebugTester } from './GA4DebugTester';
@@ -100,6 +101,7 @@ export const AdminDashboard = () => {
 
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
+            <TrialsBackfillPanel />
           </TabsContent>
 
           <TabsContent value="api-log" className="space-y-4">

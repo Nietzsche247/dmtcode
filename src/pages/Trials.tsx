@@ -317,18 +317,24 @@ const Trials = () => {
                           </p>
                         )}
                       </Link>
-                      {t.application_url && (
-                        <div className="mt-3">
-                          <a
-                            href={t.application_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                          >
-                            Apply <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                        </div>
-                      )}
+                      {(() => {
+                        const isRecruiting = (eff || '').toLowerCase().includes('recruit');
+                        if (!isRecruiting) return null;
+                        const joinUrl = t.url || t.application_url;
+                        if (!joinUrl) return null;
+                        return (
+                          <div className="mt-3">
+                            <a
+                              href={joinUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                            >
+                              How to join <ExternalLink className="h-3.5 w-3.5" />
+                            </a>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </li>
                 );

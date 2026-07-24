@@ -34,7 +34,7 @@ interface Trial {
   created_at: string;
 }
 
-const fmt = (d: string | null) => (d ? format(new Date(d), 'yyyy-MM-dd') : 'n/a');
+
 
 const TrialDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -158,24 +158,26 @@ const TrialDetail = () => {
         </header>
 
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
-          {[
+          {([
             ['Status', trial.confirmed_status || trial.status],
             ['Type', trial.trial_type],
             ['Institution', trial.institution],
             ['Location', trial.location],
             ['Principal investigator', trial.principal_investigator],
             ['Organizer / lead', trial.organizer_lead],
-            ['Start date', fmt(trial.start_date)],
-            ['End date', fmt(trial.end_date)],
+            ['Start date', trial.start_date ? format(new Date(trial.start_date), 'yyyy-MM-dd') : null],
+            ['End date', trial.end_date ? format(new Date(trial.end_date), 'yyyy-MM-dd') : null],
             ['Registry ID', trial.trial_registry_id],
             ['DOI', trial.doi],
             ['Source', trial.source],
-          ].map(([term, val]) => (
-            <div key={term as string}>
-              <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
-              <dd className="mt-1 text-sm">{val || 'n/a'}</dd>
-            </div>
-          ))}
+          ] as Array<[string, string | null]>)
+            .filter(([, val]) => val && String(val).trim().length > 0)
+            .map(([term, val]) => (
+              <div key={term}>
+                <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
+                <dd className="mt-1 text-sm">{val}</dd>
+              </div>
+            ))}
         </dl>
 
         {trial.description && (
@@ -200,13 +202,19 @@ const TrialDetail = () => {
         )}
 
         <div className="flex flex-wrap gap-3">
-          {trial.application_url && (
-            <Button asChild>
-              <a href={trial.application_url} target="_blank" rel="noopener noreferrer">
-                Application <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          )}
+          {(() => {
+            const eff = (trial.confirmed_status || trial.status || '').toLowerCase();
+            const isRecruiting = eff.includes('recruit');
+            const joinUrl = trial.application_url || trial.url;
+            if (!isRecruiting || !joinUrl) return null;
+            return (
+              <Button asChild>
+                <a href={joinUrl} target="_blank" rel="noopener noreferrer">
+                  How to join <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            );
+          })()}
           {trial.url && (
             <Button asChild variant="outline">
               <a href={trial.url} target="_blank" rel="noopener noreferrer">
