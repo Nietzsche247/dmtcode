@@ -52,6 +52,7 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 - [Methods](/methods): Research methodology and protocol design.
 - [Critiques](/critiques): Limitations and counter arguments.
 - [Null Reports](/null-reports): Public dashboard of negative and null replication results.
+- [Events](/events): Research timeline of community reported events and clinical trial milestones.
 - [Open Questions](/open-questions): Unresolved research questions.
 - [Glossary](/glossary): Key academic terms and definitions.
 - [FAQ](/faq): Neutral answers with citations.
