@@ -447,6 +447,8 @@ export default async (request: Request, context: Context) => {
       `<meta property="og:description" content="${esc(metaDesc)}" />`,
       `<meta property="og:url" content="${esc(canonical)}" />`,
       ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
+      ogImage && kind === "registry" ? `<meta property="og:image:width" content="1200" />` : "",
+      ogImage && kind === "registry" ? `<meta property="og:image:height" content="630" />` : "",
       `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
       `<meta name="twitter:title" content="${esc(title)}" />`,
       `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
