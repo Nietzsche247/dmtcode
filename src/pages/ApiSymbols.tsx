@@ -80,19 +80,17 @@ const ApiSymbols = () => {
       }
 
       // Filter by consistency (e.g., gte:80, lte:50, eq:90)
+      // Records without a real consistency value are excluded from consistency filters
+      // rather than being assigned a placeholder.
       if (consistency) {
         const match = consistency.match(/^(gte|lte|gt|lt|eq):(\d+)$/);
         if (match) {
           const [, op, val] = match;
           const threshold = parseInt(val, 10);
-          // Mock consistency based on index for demo (real would come from DB)
-          symbols = symbols.map((s, i) => ({
-            ...s,
-            consistency: s.consistency ?? (60 + (i % 40)) // Mock: 60-99%
-          }));
-          
+
           symbols = symbols.filter(s => {
-            const c = s.consistency || 0;
+            if (s.consistency === null || s.consistency === undefined) return false;
+            const c = s.consistency;
             switch (op) {
               case 'gte': return c >= threshold;
               case 'lte': return c <= threshold;
@@ -104,6 +102,16 @@ const ApiSymbols = () => {
           });
         }
       }
+
+      // Strip null/undefined consistency from the output so we never emit a
+      // placeholder or computed value through the public API.
+      symbols = symbols.map(s => {
+        if (s.consistency === null || s.consistency === undefined) {
+          const { consistency: _c, ...rest } = s;
+          return rest as Symbol;
+        }
+        return s;
+      });
 
       const total = symbols.length;
       
