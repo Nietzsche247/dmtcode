@@ -569,6 +569,36 @@ export type Database = {
         }
         Relationships: []
       }
+      crawler_hits: {
+        Row: {
+          bot_class: string | null
+          bot_name: string | null
+          id: string
+          path: string | null
+          referer: string | null
+          ts: string
+          user_agent: string | null
+        }
+        Insert: {
+          bot_class?: string | null
+          bot_name?: string | null
+          id?: string
+          path?: string | null
+          referer?: string | null
+          ts?: string
+          user_agent?: string | null
+        }
+        Update: {
+          bot_class?: string | null
+          bot_name?: string | null
+          id?: string
+          path?: string | null
+          referer?: string | null
+          ts?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string
