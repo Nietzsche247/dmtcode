@@ -20,7 +20,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
   ["/faq", "0.7", "monthly"],
-  ["/events", "0.6", "weekly"],
+  ["/events", "0.7", "weekly"],
   ["/protocols", "0.8", "weekly"],
   ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],
