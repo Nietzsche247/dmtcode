@@ -121,10 +121,10 @@ export default function ArticleDetail() {
           (async () => {
             const { data } = await supabase
               .from("protocols")
-              .select("slug, name")
+              .select("slug, title")
               .in("slug", a.related_protocols);
             setProtocols(
-              (data ?? []).map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.name })),
+              (data ?? []).map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.title })),
             );
           })(),
         );
