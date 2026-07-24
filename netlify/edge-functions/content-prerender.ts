@@ -469,61 +469,20 @@ export default async (request: Request, context: Context) => {
         }
       : null;
 
-    const head = [
-      `<title>${esc(title)}</title>`,
-      `<meta name="description" content="${esc(metaDesc)}" />`,
-      `<link rel="canonical" href="${esc(canonical)}" />`,
-      `<meta property="og:type" content="article" />`,
-      `<meta property="og:title" content="${esc(title)}" />`,
-      `<meta property="og:description" content="${esc(metaDesc)}" />`,
-      `<meta property="og:url" content="${esc(canonical)}" />`,
-      ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
-      ogImage && kind === "registry" ? `<meta property="og:image:width" content="1200" />` : "",
-      ogImage && kind === "registry" ? `<meta property="og:image:height" content="630" />` : "",
-      `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
-      `<meta name="twitter:title" content="${esc(title)}" />`,
-      `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-      ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
-      robotsMeta,
-      ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
-      breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    let html = await shellRes.text();
-    // Strip pre-existing per-page tags from the static shell so we do not
-    // ship duplicates. Static <head> in index.html carries generic site tags;
-    // the entity-specific versions below must replace them.
-    html = html
-      .replace(/<title>[\s\S]*?<\/title>/gi, "")
-      .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-      .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
-    html = html.replace(/<\/head>/i, `${head}\n</head>`);
-    if (/<div id="root">\s*<\/div>/i.test(html)) {
-      html = html.replace(
-        /<div id="root">\s*<\/div>/i,
-        `<div id="root">${body}</div>`
-      );
-    } else {
-      html = html.replace(
-        /<\/body>/i,
-        `<noscript>${body}</noscript>\n</body>`
-      );
-    }
-
-    return new Response(html, {
-      status: 200,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "public, max-age=0, must-revalidate",
-        "netlify-cdn-cache-control":
-          "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-      },
+    const head = buildHead({
+      title,
+      description: metaDesc,
+      canonical,
+      ogType: "article",
+      ogImage: kind === "registry" ? ogImage : undefined,
+      ogImageWidth: kind === "registry" ? 1200 : undefined,
+      ogImageHeight: kind === "registry" ? 630 : undefined,
+      robots: noindex ? "noindex,follow" : undefined,
+      jsonLd: [ld, breadcrumbLd],
     });
+
+    const html = renderShell(await shellRes.text(), head, body);
+    return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
   } catch (_e) {
     return context.next();
   }
