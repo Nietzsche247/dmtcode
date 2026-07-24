@@ -145,7 +145,7 @@ const Profile = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error('Please log in to view your profile');
-      navigate('/auth');
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     setUserId(user.id);
