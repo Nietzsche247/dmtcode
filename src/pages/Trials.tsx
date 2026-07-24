@@ -319,7 +319,10 @@ const Trials = () => {
           <>
             <ul className="grid gap-4">
               {visible.map((t) => {
-                const eff = t.confirmed_status || t.status;
+                const showVerification =
+                  t.confirmed_status && t.confirmed_status !== 'Confirmed';
+                const status = t.status;
+                const joinUrl = t.application_url || t.url;
                 return (
                   <li key={t.id}>
                     <div className="rounded border border-border/60 bg-card p-5 transition-colors hover:border-foreground/40">
@@ -327,7 +330,8 @@ const Trials = () => {
                         <h2 className="font-display text-xl leading-snug">{t.title}</h2>
                         <p className="label-data mt-2 text-[11px] text-muted-foreground">
                           {[
-                            eff || 'STATUS UNKNOWN',
+                            status,
+                            t.phase,
                             t.trial_type,
                             t.location,
                             t.institution,
@@ -338,6 +342,11 @@ const Trials = () => {
                             .join(' · ')
                             .toUpperCase()}
                         </p>
+                        {showVerification && (
+                          <p className="label-data mt-1 text-[10px] text-muted-foreground/80">
+                            VERIFICATION: {t.confirmed_status!.toUpperCase()}
+                          </p>
+                        )}
                         {t.description && (
                           <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
                             {t.description}
@@ -345,27 +354,60 @@ const Trials = () => {
                         )}
                       </Link>
                       {(() => {
-                        const isRecruiting = (eff || '').toLowerCase().includes('recruit');
-                        if (!isRecruiting) return null;
-                        const joinUrl = t.url || t.application_url;
-                        if (!joinUrl) return null;
-                        return (
-                          <div className="mt-3">
-                            <a
-                              href={joinUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                            >
-                              How to join <ExternalLink className="h-3.5 w-3.5" />
-                            </a>
-                          </div>
-                        );
+                        if (status === 'recruiting') {
+                          if (t.application_url) {
+                            return (
+                              <div className="mt-3">
+                                <a
+                                  href={t.application_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                                >
+                                  How to apply <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            );
+                          }
+                          if (t.url) {
+                            return (
+                              <div className="mt-3">
+                                <a
+                                  href={t.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                                >
+                                  Recruitment details on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            );
+                          }
+                        }
+                        if (status === 'enrolling by invitation' && t.url) {
+                          return (
+                            <div className="mt-3 space-y-1">
+                              <a
+                                href={t.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                              >
+                                Study record on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                              <p className="text-xs text-muted-foreground">
+                                This study enrols by invitation only.
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
                       })()}
                     </div>
                   </li>
                 );
               })}
+
             </ul>
             {hasMore && (
               <div className="mt-8 flex justify-center">
