@@ -35,6 +35,7 @@ interface NavItem {
 }
 
 const researchItems: NavItem[] = [
+  { title: "Articles", href: "/articles", description: "Long form answers grounded in this site's own records", icon: FileText },
   { title: "Symbol Registry", href: "/registry", description: "Community-curated catalogue of visual symbols", icon: Database },
   { title: "Evidence Map", href: "/evidence-map", description: "Pro/con analysis of research findings", icon: Map },
   { title: "Clinical Trials", href: "/trials", description: "Active psychedelic research trials", icon: FlaskConical },
