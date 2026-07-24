@@ -8,6 +8,22 @@ const SUPABASE_KEY =
   Netlify.env.get("SUPABASE_ANON_KEY") ??
   Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") ??
   "";
+// This function is duplicated verbatim in src/lib/theorySlug.ts,
+// netlify/edge-functions/content-prerender.ts and netlify/edge-functions/sitemap.ts.
+// Netlify edge functions run in Deno and cannot import from src/. If you change this,
+// change all copies or theory URLs will silently diverge between the app, the
+// prerender layer, the sitemap and the machine corpus.
+function theorySlug(title: string): string {
+  return String(title || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
 
 const KNOWN_PEOPLE = [
   "Goler",
