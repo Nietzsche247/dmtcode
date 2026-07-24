@@ -1751,6 +1751,53 @@ export const config: Config = {
 
 // ---------- Theories, Events, Retreats prerender ----------
 
+type HeadOpts = {
+  title: string;
+  description?: string;
+  canonical: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  // Width and height are emitted only when BOTH are known. Never guess them.
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  robots?: string;
+  jsonLd?: unknown[];
+};
+
+function buildHead(o: HeadOpts): string {
+  const desc = (o.description || "").trim();
+  const img = (o.ogImage || "").trim() || DEFAULT_OG_IMAGE;
+  const dims =
+    o.ogImageWidth && o.ogImageHeight
+      ? [
+          `<meta property="og:image:width" content="${o.ogImageWidth}" />`,
+          `<meta property="og:image:height" content="${o.ogImageHeight}" />`,
+        ]
+      : [];
+  return [
+    `<title>${esc(o.title)}</title>`,
+    desc ? `<meta name="description" content="${esc(desc)}" />` : "",
+    `<link rel="canonical" href="${esc(o.canonical)}" />`,
+    `<meta property="og:site_name" content="${esc(SITE_NAME)}" />`,
+    `<meta property="og:type" content="${o.ogType || "website"}" />`,
+    `<meta property="og:title" content="${esc(o.title)}" />`,
+    desc ? `<meta property="og:description" content="${esc(desc)}" />` : "",
+    `<meta property="og:url" content="${esc(o.canonical)}" />`,
+    `<meta property="og:image" content="${esc(img)}" />`,
+    ...dims,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${esc(o.title)}" />`,
+    desc ? `<meta name="twitter:description" content="${esc(desc)}" />` : "",
+    `<meta name="twitter:image" content="${esc(img)}" />`,
+    `<meta name="robots" content="${esc(o.robots || "index, follow")}" />`,
+    ...(o.jsonLd || [])
+      .filter(Boolean)
+      .map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function renderShell(
   html: string,
   head: string,
@@ -1761,7 +1808,8 @@ function renderShell(
     .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
   out = out.replace(/<\/head>/i, `${head}\n</head>`);
   if (/<div id="root">\s*<\/div>/i.test(out)) {
     out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
