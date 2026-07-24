@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { useReviewStreak } from '@/hooks/useReviewStreak';
