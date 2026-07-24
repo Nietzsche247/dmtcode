@@ -13,6 +13,16 @@ const UUID_RE =
 
 const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 
+// Site-wide social share image. This is a verbatim copy of the og:image already
+// declared in index.html, which is the source of truth. Netlify edge functions run
+// in Deno and cannot import from src/ or read index.html at request time. If the
+// image in index.html changes, change this too, or prerendered pages will unfurl
+// with a stale image.
+const DEFAULT_OG_IMAGE =
+  "https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png";
+
+const SITE_NAME = "DMT Code";
+
 function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -459,61 +469,20 @@ export default async (request: Request, context: Context) => {
         }
       : null;
 
-    const head = [
-      `<title>${esc(title)}</title>`,
-      `<meta name="description" content="${esc(metaDesc)}" />`,
-      `<link rel="canonical" href="${esc(canonical)}" />`,
-      `<meta property="og:type" content="article" />`,
-      `<meta property="og:title" content="${esc(title)}" />`,
-      `<meta property="og:description" content="${esc(metaDesc)}" />`,
-      `<meta property="og:url" content="${esc(canonical)}" />`,
-      ogImage ? `<meta property="og:image" content="${esc(ogImage)}" />` : "",
-      ogImage && kind === "registry" ? `<meta property="og:image:width" content="1200" />` : "",
-      ogImage && kind === "registry" ? `<meta property="og:image:height" content="630" />` : "",
-      `<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}" />`,
-      `<meta name="twitter:title" content="${esc(title)}" />`,
-      `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-      ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}" />` : "",
-      robotsMeta,
-      ld ? `<script type="application/ld+json">${jsonLd(ld)}</script>` : "",
-      breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    let html = await shellRes.text();
-    // Strip pre-existing per-page tags from the static shell so we do not
-    // ship duplicates. Static <head> in index.html carries generic site tags;
-    // the entity-specific versions below must replace them.
-    html = html
-      .replace(/<title>[\s\S]*?<\/title>/gi, "")
-      .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-      .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
-      .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
-    html = html.replace(/<\/head>/i, `${head}\n</head>`);
-    if (/<div id="root">\s*<\/div>/i.test(html)) {
-      html = html.replace(
-        /<div id="root">\s*<\/div>/i,
-        `<div id="root">${body}</div>`
-      );
-    } else {
-      html = html.replace(
-        /<\/body>/i,
-        `<noscript>${body}</noscript>\n</body>`
-      );
-    }
-
-    return new Response(html, {
-      status: 200,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "public, max-age=0, must-revalidate",
-        "netlify-cdn-cache-control":
-          "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-      },
+    const head = buildHead({
+      title,
+      description: metaDesc,
+      canonical,
+      ogType: "article",
+      ogImage: kind === "registry" ? ogImage : undefined,
+      ogImageWidth: kind === "registry" ? 1200 : undefined,
+      ogImageHeight: kind === "registry" ? 630 : undefined,
+      robots: noindex ? "noindex,follow" : undefined,
+      jsonLd: [ld, breadcrumbLd],
     });
+
+    const html = renderShell(await shellRes.text(), head, body);
+    return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
   } catch (_e) {
     return context.next();
   }
@@ -561,7 +530,6 @@ async function renderPrepare(context: Context): Promise<Response> {
     "Instrument kits and group bundles for careful, well prepared practice. Honest ship windows, plain bills of materials, no surprises.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const usd = (cents: unknown) =>
     `$${(Number(cents) / 100).toFixed(0)}`;
@@ -768,56 +736,16 @@ async function renderPrepare(context: Context): Promise<Response> {
   </section>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta property="og:image" content="${esc(ogImage)}" />`,
-    `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(datasetLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
-    ...productLds.map(
-      (ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`,
-    ),
-  ].join("\n");
-
-  let html = await shellRes.text();
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/gi, "")
-    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
-  html = html.replace(/<\/head>/i, `${head}\n</head>`);
-  if (/<div id="root">\s*<\/div>/i.test(html)) {
-    html = html.replace(
-      /<div id="root">\s*<\/div>/i,
-      `<div id="root">${body}</div>`,
-    );
-  } else {
-    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
-  }
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, must-revalidate",
-      "netlify-cdn-cache-control":
-        "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-    },
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, datasetLd, faqLd, itemListLd, ...productLds],
   });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 async function renderEvidenceMap(context: Context): Promise<Response> {
@@ -828,7 +756,6 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     "A balanced evidence timeline with peer reviewed citations and stance scored milestones from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -933,49 +860,16 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta property="og:image" content="${esc(ogImage)}" />`,
-    `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(articleLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(datasetLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
-  ].join("\n");
-
-  let html = await shellRes.text();
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/gi, "")
-    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
-  html = html.replace(/<\/head>/i, `${head}\n</head>`);
-  if (/<div id="root">\s*<\/div>/i.test(html)) {
-    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
-  } else {
-    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
-  }
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, must-revalidate",
-      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-    },
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, articleLd, datasetLd, faqLd],
   });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }> }> = [
@@ -1087,7 +981,6 @@ async function renderFaq(context: Context): Promise<Response> {
     "Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -1135,47 +1028,16 @@ async function renderFaq(context: Context): Promise<Response> {
 </article>`;
 
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta property="og:image" content="${esc(ogImage)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
-  ].join("\n");
-
-  let html = await shellRes.text();
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/gi, "")
-    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
-  html = html.replace(/<\/head>/i, `${head}\n</head>`);
-  if (/<div id="root">\s*<\/div>/i.test(html)) {
-    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
-  } else {
-    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
-  }
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, must-revalidate",
-      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-    },
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, faqLd],
   });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 type StaticPage = {
@@ -1701,45 +1563,16 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
         ],
       };
 
-  const head = [
-    `<title>${esc(page.title)}</title>`,
-    `<meta name="description" content="${esc(page.description)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(page.title)}" />`,
-    `<meta property="og:description" content="${esc(page.description)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(page.title)}" />`,
-    `<meta name="twitter:description" content="${esc(page.description)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
-    ...extraLd.map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
-  ].filter(Boolean).join("\n");
-
-  let html = await shellRes.text();
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/gi, "")
-    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
-  html = html.replace(/<\/head>/i, `${head}\n</head>`);
-  if (/<div id="root">\s*<\/div>/i.test(html)) {
-    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
-  } else {
-    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
-  }
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, must-revalidate",
-      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-    },
+  const head = buildHead({
+    title: page.title,
+    description: page.description,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 export const config: Config = {
@@ -1782,6 +1615,53 @@ export const config: Config = {
 
 // ---------- Theories, Events, Retreats prerender ----------
 
+type HeadOpts = {
+  title: string;
+  description?: string;
+  canonical: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+  // Width and height are emitted only when BOTH are known. Never guess them.
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  robots?: string;
+  jsonLd?: unknown[];
+};
+
+function buildHead(o: HeadOpts): string {
+  const desc = (o.description || "").trim();
+  const img = (o.ogImage || "").trim() || DEFAULT_OG_IMAGE;
+  const dims =
+    o.ogImageWidth && o.ogImageHeight
+      ? [
+          `<meta property="og:image:width" content="${o.ogImageWidth}" />`,
+          `<meta property="og:image:height" content="${o.ogImageHeight}" />`,
+        ]
+      : [];
+  return [
+    `<title>${esc(o.title)}</title>`,
+    desc ? `<meta name="description" content="${esc(desc)}" />` : "",
+    `<link rel="canonical" href="${esc(o.canonical)}" />`,
+    `<meta property="og:site_name" content="${esc(SITE_NAME)}" />`,
+    `<meta property="og:type" content="${o.ogType || "website"}" />`,
+    `<meta property="og:title" content="${esc(o.title)}" />`,
+    desc ? `<meta property="og:description" content="${esc(desc)}" />` : "",
+    `<meta property="og:url" content="${esc(o.canonical)}" />`,
+    `<meta property="og:image" content="${esc(img)}" />`,
+    ...dims,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${esc(o.title)}" />`,
+    desc ? `<meta name="twitter:description" content="${esc(desc)}" />` : "",
+    `<meta name="twitter:image" content="${esc(img)}" />`,
+    `<meta name="robots" content="${esc(o.robots || "index, follow")}" />`,
+    ...(o.jsonLd || [])
+      .filter(Boolean)
+      .map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function renderShell(
   html: string,
   head: string,
@@ -1792,7 +1672,8 @@ function renderShell(
     .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
   out = out.replace(/<\/head>/i, `${head}\n</head>`);
   if (/<div id="root">\s*<\/div>/i.test(out)) {
     out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
@@ -1952,22 +1833,13 @@ async function renderTheories(context: Context): Promise<Response> {
   </section>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
-  ].join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
@@ -2041,21 +1913,13 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
   <p><a href="${SITE}/events">Back to the events timeline</a></p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(eventLd)}</script>`,
-  ].join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [organizationLd, breadcrumbLd, eventLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
@@ -2123,23 +1987,14 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
   <p><a href="${SITE}/events">Back to the events timeline</a></p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    r.image_url ? `<meta property="og:image" content="${esc(String(r.image_url))}" />` : "",
-    `<meta name="twitter:card" content="${r.image_url ? "summary_large_image" : "summary"}" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    r.image_url ? `<meta name="twitter:image" content="${esc(String(r.image_url))}" />` : "",
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(lodgingLd)}</script>`,
-  ].filter(Boolean).join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    ogImage: r.image_url ? String(r.image_url) : undefined,
+    jsonLd: [organizationLd, breadcrumbLd, lodgingLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
@@ -2259,21 +2114,13 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(medicalLd)}</script>`,
-  ].join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [organizationLd, breadcrumbLd, medicalLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
@@ -2320,10 +2167,11 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
   }
 
   if (!match) {
-    const notFoundHead = [
-      `<title>Theory not found | DMT Code</title>`,
-      `<meta name="robots" content="noindex" />`,
-    ].join("\n");
+    const notFoundHead = buildHead({
+      title: "Theory not found | DMT Code",
+      canonical: `${SITE}/theories`,
+      robots: "noindex",
+    });
     const notFoundBody = `<article data-prerender="theory-not-found">
   <h1>Theory not found</h1>
   <p>This theory is not currently indexed or the link is out of date.</p>
@@ -2401,21 +2249,13 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
   <p><a href="${SITE}/theories">Back to all theories</a></p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    metaDesc ? `<meta name="description" content="${esc(metaDesc)}" />` : "",
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(String(match.title))}" />`,
-    metaDesc ? `<meta property="og:description" content="${esc(metaDesc)}" />` : "",
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(String(match.title))}" />`,
-    metaDesc ? `<meta name="twitter:description" content="${esc(metaDesc)}" />` : "",
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(creativeWorkLd)}</script>`,
-  ].filter(Boolean).join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [organizationLd, breadcrumbLd, creativeWorkLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
