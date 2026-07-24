@@ -1,4 +1,6 @@
 import { Helmet } from "react-helmet";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { PageHero } from "@/components/PageHero";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -66,7 +68,8 @@ const Dataset = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background transition-theme">
-        <div className="pt-24 pb-16 px-4">
+        <Navigation />
+        <div className="pt-8 pb-16 px-4">
           <div className="max-w-4xl mx-auto">
             <Breadcrumb />
             
@@ -219,6 +222,7 @@ const Dataset = () => {
             </Card>
           </div>
         </div>
+        <Footer />
       </div>
     </>
   );
