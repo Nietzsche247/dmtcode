@@ -245,7 +245,6 @@ export const LayeredSubmissionForm = () => {
       // If offline, save locally and show success
       if (!isOnline) {
         savePendingSubmission(submissionData);
-        toast.success('Symbol saved offline! Will sync when connected.');
         setStep(6);
         setIsSubmitting(false);
         return;
@@ -1300,9 +1299,6 @@ export const LayeredSubmissionForm = () => {
             <div className="flex flex-col gap-3">
               <Button onClick={resetForm} size="lg">
                 Submit Another Symbol
-              </Button>
-              <Button variant="outline" onClick={() => window.location.href = '/my-symbols'}>
-                View My Symbols
               </Button>
               <Button variant="ghost" onClick={() => window.location.href = '/registry#browse'}>
                 Explore Registry

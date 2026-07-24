@@ -2046,7 +2046,7 @@ export type Database = {
           created_at: string | null
           id: string
           rank: number | null
-          session_id: string
+          session_id: string | null
           total_submissions: number | null
           total_tags_added: number | null
           total_validations: number | null
@@ -2058,7 +2058,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           rank?: number | null
-          session_id: string
+          session_id?: string | null
           total_submissions?: number | null
           total_tags_added?: number | null
           total_validations?: number | null
@@ -2070,7 +2070,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           rank?: number | null
-          session_id?: string
+          session_id?: string | null
           total_submissions?: number | null
           total_tags_added?: number | null
           total_validations?: number | null

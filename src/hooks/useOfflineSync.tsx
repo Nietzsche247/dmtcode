@@ -88,7 +88,7 @@ export const useOfflineSync = () => {
     for (const submission of pending) {
       try {
         const { error } = await supabase
-          .from('symbol_submissions')
+          .from('registry_glyphs')
           .insert(submission.data);
 
         if (error) {

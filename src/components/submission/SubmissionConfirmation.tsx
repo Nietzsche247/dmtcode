@@ -24,8 +24,7 @@ export const SubmissionConfirmation = ({ submissionId }: SubmissionConfirmationP
       <div className="space-y-3 max-w-md">
         <h3 className="text-3xl font-black tracking-tight">Symbol Submitted!</h3>
         <p className="text-muted-foreground font-light leading-relaxed">
-          Your symbol has been added to the registry and is now pending review. 
-          Once approved, it will be visible in the public catalogue for correlation analysis.
+          Your symbol is in the public registry now. There is no review queue in front of it.
         </p>
       </div>
 
@@ -58,25 +57,10 @@ export const SubmissionConfirmation = ({ submissionId }: SubmissionConfirmationP
 
       {/* Next Steps */}
       <div className="pt-8 border-t border-border w-full max-w-md">
-        <h4 className="text-sm font-medium mb-4">What happens next?</h4>
-        <ol className="text-left text-sm text-muted-foreground space-y-2">
-          <li className="flex gap-3">
-            <span className="text-primary font-medium">1.</span>
-            Your submission enters the moderation queue
-          </li>
-          <li className="flex gap-3">
-            <span className="text-primary font-medium">2.</span>
-            A reviewer checks for quality and compliance
-          </li>
-          <li className="flex gap-3">
-            <span className="text-primary font-medium">3.</span>
-            Once approved, your symbol joins the public registry
-          </li>
-          <li className="flex gap-3">
-            <span className="text-primary font-medium">4.</span>
-            Community members can validate and add tags
-          </li>
-        </ol>
+        <h4 className="text-sm font-medium mb-4">What happens now</h4>
+        <p className="text-left text-sm text-muted-foreground leading-relaxed">
+          Community members can confirm your symbol and add tags to it. Those confirmations are what turn one person's report into convergence data.
+        </p>
       </div>
     </div>
   );

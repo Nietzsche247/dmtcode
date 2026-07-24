@@ -76,7 +76,7 @@ export const SubmissionWizard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error('Please sign in to submit');
-        navigate('/auth');
+        navigate('/auth?returnTo=/submit-symbol');
         return;
       }
 
