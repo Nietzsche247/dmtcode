@@ -25,6 +25,56 @@ interface PubmedRecord {
   doi: string | null;
   abstract: string | null;
   url: string;
+  content_type: string;
+}
+
+function decodeEntities(input: string | null | undefined): string {
+  if (!input) return '';
+  let s = String(input);
+  // 1. hex numeric refs
+  s = s.replace(/&#[xX]([0-9a-fA-F]+);/g, (m, hex) => {
+    try {
+      const cp = parseInt(hex, 16);
+      if (!Number.isFinite(cp)) return m;
+      return String.fromCodePoint(cp);
+    } catch { return m; }
+  });
+  // 2. decimal numeric refs
+  s = s.replace(/&#([0-9]+);/g, (m, dec) => {
+    try {
+      const cp = parseInt(dec, 10);
+      if (!Number.isFinite(cp)) return m;
+      return String.fromCodePoint(cp);
+    } catch { return m; }
+  });
+  // 3. named refs, &amp; last
+  s = s.replace(/&lt;/g, '<')
+       .replace(/&gt;/g, '>')
+       .replace(/&quot;/g, '"')
+       .replace(/&apos;/g, "'")
+       .replace(/&amp;/g, '&');
+  // 4. exotic whitespace to plain space
+  s = s.replace(/[\u00A0\u2005\u2009\u202F]/g, ' ');
+  // 5. non-breaking hyphen to plain hyphen
+  s = s.replace(/\u2011/g, '-');
+  return s;
+}
+
+function decodeOrNull(input: string | null | undefined): string | null {
+  if (input == null) return null;
+  const d = decodeEntities(input);
+  return d.length ? d : null;
+}
+
+function mapContentType(types: string[]): string {
+  const has = (needle: string) => types.some((t) => t.toLowerCase().includes(needle.toLowerCase()));
+  if (has('Published Erratum')) return 'Erratum';
+  if (has('Retraction of Publication') || has('Retracted Publication')) return 'Retraction';
+  if (has('Editorial')) return 'Editorial';
+  if (has('Letter') || has('Comment')) return 'Letter';
+  if (has('Review') || has('Systematic Review') || has('Meta-Analysis')) return 'Review';
+  if (has('Clinical Trial')) return 'Clinical Trial';
+  return 'Paper';
 }
 
 async function esearch(term: string, retmax = 50): Promise<string[]> {
