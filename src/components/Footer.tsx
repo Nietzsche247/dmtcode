@@ -179,6 +179,15 @@ export const Footer = () => {
             >
               data.json
             </a>
+            <Link to="/privacy" className="hover:text-primary transition-colors">
+              Privacy
+            </Link>
+            <Link to="/terms" className="hover:text-primary transition-colors">
+              Terms
+            </Link>
+            <Link to="/disclosure" className="hover:text-primary transition-colors">
+              Disclosure
+            </Link>
             <a 
               href={`https://doi.org/${ZENODO_DOI}`}
               target="_blank"

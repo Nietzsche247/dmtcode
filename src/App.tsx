@@ -28,6 +28,9 @@ import ElizabethBaker from "./pages/ElizabethBaker";
 import Critiques from "./pages/Critiques";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Disclosure from "./pages/Disclosure";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import Join from "./pages/Join";
@@ -192,6 +195,9 @@ const App = () => (
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/disclosure" element={<Disclosure />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/co-witnesses" element={<Suspense fallback={<CalibratingLasersLoader />}><CoWitnesses /></Suspense>} />
           <Route path="/my-symbols" element={<MySymbols />} />
