@@ -105,6 +105,12 @@ export default async (request: Request, context: Context) => {
     if (kind === "retreats" && seg.length === 1) {
       return await renderRetreats(context);
     }
+    if (kind === "articles" && seg.length === 1) {
+      return await renderArticlesIndex(context);
+    }
+    if (kind === "articles" && seg.length === 2 && seg[1]) {
+      return await renderArticleDetail(context, seg[1]);
+    }
     if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
 
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
