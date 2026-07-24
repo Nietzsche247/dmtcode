@@ -179,13 +179,15 @@ const bundleDataRaw = {
   },
 };
 
-// originalPrice is computed from item values so display and savings math stay honest.
+// originalPrice and discount are computed from item values so display and savings math stay honest.
 const bundleData = Object.fromEntries(
-  Object.entries(bundleDataRaw).map(([key, b]) => [
-    key,
-    { ...b, originalPrice: b.items.reduce((sum, i) => sum + i.value, 0) },
-  ])
-) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number }>;
+  Object.entries(bundleDataRaw).map(([key, b]) => {
+    const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
+    const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
+    const pct = Math.floor(rawPct);
+    return [key, { ...b, originalPrice, discount: pct > 0 ? `${pct}% OFF` : '' }];
+  })
+) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number; discount: string }>;
 
 
 const BUNDLE_PRODUCT_QUERY = `
@@ -584,9 +586,11 @@ const BundleDetail = () => {
                     Most Popular
                   </Badge>
                 )}
-                <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
-                  {bundle.discount}
-                </Badge>
+                {bundle.discount && (
+                  <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
+                    {bundle.discount}
+                  </Badge>
+                )}
               </div>
 
               {/* Details */}

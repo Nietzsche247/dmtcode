@@ -61,7 +61,6 @@ const bundlesRaw = [
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
     price: 1000,
-    discount: '13% OFF',
     tier: 'mid',
     popular: true,
     image: bundleGatewayImg,
@@ -89,7 +88,6 @@ const bundlesRaw = [
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
     price: 2200,
-    discount: '15% OFF',
     tier: 'high',
     image: bundleCompleteImg,
     items: [
@@ -116,7 +114,6 @@ const bundlesRaw = [
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
     price: 3200,
-    discount: '15% OFF',
     tier: 'premium',
     image: bundleCeremonyImg,
     items: [
@@ -283,7 +280,7 @@ const Bundles = () => {
           <section className="container mx-auto px-4 py-16 max-w-6xl text-center">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30">
               <Package className="w-3 h-3 mr-1" />
-              Save Up to 20%
+              {maxDiscountPct > 0 ? `Save Up to ${maxDiscountPct}%` : 'Curated Research Kits'}
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">

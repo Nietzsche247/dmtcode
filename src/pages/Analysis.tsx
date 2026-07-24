@@ -3,59 +3,35 @@ import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Download, Maximize2, BarChart3, Network, Layers } from 'lucide-react';
-import { useState } from 'react';
+import { Database, FileJson, BookOpen, Compass } from 'lucide-react';
 
 const Analysis = () => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  // Observable notebook embed URL - replace with actual notebook when created
-  const observableEmbedUrl = 'https://observablehq.com/embed/@d3/gallery?cells=chart';
-  
-  // Alternative: Custom t-SNE visualization notebook
-  const customNotebookUrl = 'https://observablehq.com/embed/d/abc123?cells=tsneChart,clusterLegend';
-
-  const handleFullscreen = () => {
-    const iframe = document.getElementById('observable-embed') as HTMLIFrameElement;
-    if (iframe) {
-      iframe.requestFullscreen?.();
-    }
-    setIsFullscreen(true);
-  };
-
-  const handleExportPNG = () => {
-    // Trigger export via postMessage to Observable
-    const iframe = document.getElementById('observable-embed') as HTMLIFrameElement;
-    if (iframe?.contentWindow) {
-      iframe.contentWindow.postMessage({ type: 'export', format: 'png' }, '*');
-    }
-  };
-
   return (
     <>
       <Helmet>
-        <title>Symbol Analysis | t-SNE Clustering | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Interactive t-SNE dimensionality reduction visualization of DMT Code symbol clusters. Explore patterns by consistency, tags, and sources." 
+        <title>Open Data | DMT Code Corpus</title>
+        <meta
+          name="description"
+          content="The DMT Code corpus is published as a machine-readable export under CC BY 4.0. Includes clinical trial records, bibliography sources, symbol submissions, open theories, and events."
         />
         <link rel="canonical" href="https://dmtcode.com/analysis" />
         <meta name="robots" content="index, follow" />
-        
+
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "DMT Code Symbol Analysis",
-            "description": "Interactive t-SNE visualization of visual symbol clusters from the DMT Code registry",
-            "applicationCategory": "DataVisualization",
-            "operatingSystem": "Web",
-            "author": {
-              "@type": "Organization",
-              "name": "DMT Code Project"
-            }
+            "@type": "Dataset",
+            "name": "DMT Code Open Corpus",
+            "description": "Machine-readable export of the DMT Code corpus covering clinical trial records, bibliography sources, symbol submissions, open theories, and events.",
+            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "distribution": [
+              {
+                "@type": "DataDownload",
+                "encodingFormat": "application/json",
+                "contentUrl": "https://dmtcode.com/data.json"
+              }
+            ]
           })}
         </script>
       </Helmet>
@@ -63,169 +39,116 @@ const Analysis = () => {
       <div className="relative min-h-screen bg-background">
         <Navigation />
         <Breadcrumb />
-        
+
         <main className="relative z-10 pt-4">
-          {/* Hero Section */}
-          <section className="container mx-auto px-4 py-16 text-center">
+          <section className="container mx-auto px-4 py-16 max-w-4xl text-center">
             <Badge variant="outline" className="mb-4 text-primary border-primary/30">
-              <BarChart3 className="w-3 h-3 mr-1" />
-              INTERACTIVE VISUALIZATION
+              <Database className="w-3 h-3 mr-1" />
+              OPEN DATA
             </Badge>
-            
-            <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight">
-              SYMBOL CLUSTER
-              <span className="block text-primary">ANALYSIS</span>
+
+            <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+              THE CORPUS IS
+              <span className="block text-primary">OPEN DATA</span>
             </h1>
-            
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              t-SNE dimensionality reduction of visual symbol features. Explore emergent clusters 
-              by consistency rating, motif tags, and observation source.
+
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              The full DMT Code corpus is published as a machine-readable export under a
+              Creative Commons Attribution 4.0 license. Researchers are welcome to build
+              their own analyses and visualizations on top of it.
             </p>
-
-            <div className="flex justify-center gap-4 flex-wrap mb-12">
-              <Button 
-                variant="outline" 
-                onClick={handleFullscreen}
-                className="gap-2"
-              >
-                <Maximize2 className="w-4 h-4" />
-                Fullscreen
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={handleExportPNG}
-                className="gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Export PNG
-              </Button>
-              <a 
-                href="https://observablehq.com/@dmtcode/symbol-tsne" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" className="gap-2">
-                  <ExternalLink className="w-4 h-4" />
-                  Open in Observable
-                </Button>
-              </a>
-            </div>
           </section>
 
-          {/* Observable Embed */}
-          <section className="container mx-auto px-4 pb-16">
-            <Card className="overflow-hidden border-primary/20 bg-card">
-              <div className="relative w-full" style={{ height: '700px' }}>
-                <iframe
-                  id="observable-embed"
-                  width="100%"
-                  height="700"
-                  frameBorder="0"
-                  src={observableEmbedUrl}
-                  title="t-SNE Symbol Cluster Visualization"
-                  className="bg-background"
-                  allow="fullscreen"
-                  loading="lazy"
-                ></iframe>
-                
-                {/* Fallback for when Observable doesn't load */}
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/50 pointer-events-none opacity-0 transition-opacity" id="embed-fallback">
-                  <div className="text-center p-8">
-                    <Network className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-muted-foreground">Loading visualization...</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </section>
-
-          {/* Method Explanation */}
-          <section className="container mx-auto px-4 pb-16">
+          <section className="container mx-auto px-4 pb-12 max-w-4xl">
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="p-6 bg-card border-border">
-                <Layers className="w-8 h-8 text-primary mb-4" />
-                <h3 className="text-lg font-semibold mb-2">t-SNE Algorithm</h3>
+                <FileJson className="w-8 h-8 text-primary mb-4" />
+                <h2 className="text-lg font-semibold mb-2">
+                  <a href="/data.json" className="hover:text-primary transition-colors">
+                    /data.json
+                  </a>
+                </h2>
                 <p className="text-sm text-muted-foreground">
-                  t-Distributed Stochastic Neighbor Embedding reduces high-dimensional symbol features 
-                  to 2D while preserving local structure. Similar symbols cluster together.
+                  The complete export in JSON. A single file suitable for scripting,
+                  notebooks, and downstream analysis.
                 </p>
               </Card>
 
               <Card className="p-6 bg-card border-border">
-                <BarChart3 className="w-8 h-8 text-primary mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Feature Extraction</h3>
+                <BookOpen className="w-8 h-8 text-primary mb-4" />
+                <h2 className="text-lg font-semibold mb-2">
+                  <a href="/llms.txt" className="hover:text-primary transition-colors">
+                    /llms.txt
+                  </a>
+                </h2>
                 <p className="text-sm text-muted-foreground">
-                  Symbols encoded by: motif tags (geometric, alphabetic), symmetry type, 
-                  observation source, surface texture, and inter-subject consistency scores.
+                  A machine-readable index of the site aimed at language models and
+                  research agents.
                 </p>
               </Card>
 
               <Card className="p-6 bg-card border-border">
-                <Network className="w-8 h-8 text-primary mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Live Data</h3>
+                <Compass className="w-8 h-8 text-primary mb-4" />
+                <h2 className="text-lg font-semibold mb-2">
+                  <a href="/dataset" className="hover:text-primary transition-colors">
+                    /dataset
+                  </a>
+                </h2>
                 <p className="text-sm text-muted-foreground">
-                  Visualization pulls directly from <code className="text-primary">/data.json</code> endpoint. 
-                  New submissions appear in clusters after page refresh.
+                  Dataset landing page with citation guidance and licensing details.
                 </p>
               </Card>
             </div>
           </section>
 
-          {/* Color Legend */}
-          <section className="container mx-auto px-4 pb-16">
+          <section className="container mx-auto px-4 pb-12 max-w-4xl">
             <Card className="p-6 bg-card border-border">
-              <h3 className="text-lg font-semibold mb-4">Cluster Color Legend</h3>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-red-500"></div>
-                  <span className="text-sm">650nm Laser (High Consistency)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-                  <span className="text-sm">Closed Eyes DMT</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                  <span className="text-sm">Geometric Patterns</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
-                  <span className="text-sm">Alphabetic/Letter-like</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-purple-500"></div>
-                  <span className="text-sm">Spiral/Radial</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-gray-500"></div>
-                  <span className="text-sm">Untagged/Other</span>
-                </div>
-              </div>
+              <h2 className="text-2xl font-semibold mb-4">What the export contains</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                The corpus is organized as categories rather than fixed counts, since
+                records are added and revised over time.
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
+                <li>Clinical trial records tracked from public registries.</li>
+                <li>Bibliography sources with DOIs and links to primary literature.</li>
+                <li>Symbol submissions contributed by community observers.</li>
+                <li>Open theories with attribution and provenance.</li>
+                <li>Events and retreats relevant to the research programme.</li>
+              </ul>
             </Card>
           </section>
 
-          {/* API Endpoint Info */}
-          <section className="container mx-auto px-4 pb-16">
+          <section className="container mx-auto px-4 pb-16 max-w-4xl">
             <Card className="p-6 bg-primary/5 border-primary/20">
-              <h3 className="text-lg font-semibold mb-4">Programmatic Access</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Access filtered symbol data via the public API for your own visualizations:
+              <Badge variant="outline" className="mb-3 text-primary border-primary/30">
+                ROADMAP
+              </Badge>
+              <h2 className="text-2xl font-semibold mb-3">Clustering and similarity views</h2>
+              <p className="text-sm text-muted-foreground">
+                Dimensionality reduction and similarity visualizations are not built yet.
+                They are planned as a follow-on once the symbol corpus is large enough to
+                support them. Until then, the export above is the source of truth, and
+                researchers are encouraged to prototype their own views on it.
               </p>
-              <div className="bg-background p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <code className="text-primary">GET /api/symbols?tag=helix,spiral&source=650nm_laser&consistency=gte:80&limit=100</code>
-              </div>
-              <div className="mt-4 flex gap-4">
-                <a href="/api/symbols" target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="sm">
-                    View Raw API
-                  </Button>
+            </Card>
+          </section>
+
+          <section className="container mx-auto px-4 pb-16 max-w-4xl">
+            <Card className="p-6 bg-card border-border">
+              <h2 className="text-lg font-semibold mb-2">License</h2>
+              <p className="text-sm text-muted-foreground">
+                The DMT Code corpus is released under{' '}
+                <a
+                  href="https://creativecommons.org/licenses/by/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Creative Commons Attribution 4.0 International
                 </a>
-                <a href="/data.json" target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="sm">
-                    Full Dataset (JSON)
-                  </Button>
-                </a>
-              </div>
+                . You may share and adapt the data for any purpose, including commercial
+                use, provided you attribute the source.
+              </p>
             </Card>
           </section>
         </main>
