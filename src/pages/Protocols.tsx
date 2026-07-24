@@ -66,12 +66,14 @@ const Protocols = () => {
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": protocols?.length || 0,
-              "itemListElement": protocols?.map((p, i) => ({
-                "@type": "ListItem",
-                "position": i + 1,
-                "url": `https://dmtcode.com/protocols/${p.slug}`,
-                "name": p.title
-              }))
+              "itemListElement": (protocols || [])
+                .filter((p) => p?.slug && p?.title)
+                .map((p, i) => ({
+                  "@type": "ListItem",
+                  "position": i + 1,
+                  "url": `https://dmtcode.com/protocols/${p.slug}`,
+                  "name": p.title
+                }))
             }
           })}
         </script>
@@ -121,9 +123,18 @@ const Protocols = () => {
                   </Card>
                 ))}
               </div>
+            ) : !protocols || protocols.length === 0 ? (
+              <div className="rounded border border-border/60 p-8 text-center">
+                <p className="text-muted-foreground mb-4">
+                  No published protocols yet. Documentation is being added over time.
+                </p>
+                <Link to="/protocol-guide">
+                  <Button variant="outline">Read the protocol guide</Button>
+                </Link>
+              </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {protocols?.map((protocol) => {
+                {protocols.map((protocol) => {
                   const status = statusConfig[protocol.status as keyof typeof statusConfig] || statusConfig.coming_soon;
                   const StatusIcon = status.icon;
                   
