@@ -293,6 +293,11 @@ export default async (request: Request, context: Context) => {
   <p>${esc(desc)}</p>
   ${rowsToDl(pairs)}
   ${
+    r.confirmed_status && r.confirmed_status !== "Confirmed"
+      ? `<p data-verification="${esc(String(r.confirmed_status))}"><strong>Verification status: ${esc(String(r.confirmed_status))}.</strong> This record has not been fully verified against a public trial registry entry. Treat it as unconfirmed until it is.</p>`
+      : ""
+  }
+  ${
     r.url
       ? `<p><a href="${esc(r.url)}" rel="noopener">View trial record</a></p>`
       : ""
