@@ -1624,6 +1624,7 @@ export const config: Config = {
     "/prepare",
     "/evidence-map",
     "/faq",
+    "/events",
   ],
 };
 
