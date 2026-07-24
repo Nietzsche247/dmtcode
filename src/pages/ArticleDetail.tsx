@@ -194,7 +194,7 @@ export default function ArticleDetail() {
 
       <main className="pt-20 pb-20 px-4">
         <article className="max-w-3xl mx-auto">
-          <Breadcrumb />
+          <Breadcrumb titleOverride={article.title} />
 
           <header className="mt-4 mb-8 space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">{article.title}</h1>
