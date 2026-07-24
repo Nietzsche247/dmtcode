@@ -19,7 +19,7 @@ interface TrialData {
   url: string;
 }
 
-// Psychedelic compounds to search
+// Query terms sent to the registry search
 const SEARCH_TERMS = [
   'DMT',
   'N,N-DMT',
@@ -28,50 +28,29 @@ const SEARCH_TERMS = [
   '5-MeO-DMT',
   'ibogaine',
   'LSD',
-  'MDMA'
+  'MDMA',
+  'ketamine',
+  'psychedelic',
 ];
 
-// Map ClinicalTrials.gov status to our status
-function mapStatus(overallStatus: string): string {
-  const statusLower = overallStatus.toLowerCase();
-  if (statusLower.includes('recruiting') && !statusLower.includes('not')) return 'recruiting';
-  if (statusLower.includes('not yet recruiting')) return 'planned';
-  if (statusLower.includes('active')) return 'active';
-  if (statusLower.includes('completed')) return 'completed';
-  if (statusLower.includes('terminated') || statusLower.includes('withdrawn')) return 'completed';
-  return 'planned';
+// Whole-token relevance regex used to filter each candidate study.
+// Bare "LSD" is a standalone token; "LSD-1" / "LSD1" must NOT match.
+// The negative lookaround on \w and \- keeps LSD1 / LSD-1 out.
+const RELEVANCE_REGEX = /(?<![\w-])(?:dimethyltryptamine|dmt|n,n-dmt|5-meo-dmt|psilocybin|psilocin|lsd|lysergic acid diethylamide|ayahuasca|harmine|harmaline|banisteriopsis|mescaline|peyote|ibogaine|iboga|mdma|methylenedioxymethamphetamine|ketamine|esketamine|psychedelic|psychedelics|hallucinogen|hallucinogenic|entheogen|serotonin 2a|5-ht2a|salvinorin|comp360|cyb003|cyb004|gh001|mm120|spl026|bpl-003)(?![\w-])/i;
+
+function isRelevant(title: string, interventions: string[], brief: string): boolean {
+  const parts = [title, interventions.join(' '), brief].filter(Boolean);
+  return parts.some((p) => RELEVANCE_REGEX.test(p));
 }
 
 // Normalize date from YYYY-MM to YYYY-MM-01 format
 function normalizeDate(dateStr: string | null | undefined): string | null {
   if (!dateStr) return null;
-  // If date is YYYY-MM format, append -01
-  if (/^\d{4}-\d{2}$/.test(dateStr)) {
-    return `${dateStr}-01`;
-  }
-  // If date is already YYYY-MM-DD, return as-is
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-    return dateStr;
-  }
-  // Try to extract YYYY-MM from formats like "2025-06" or "June 2025"
+  if (/^\d{4}-\d{2}$/.test(dateStr)) return `${dateStr}-01`;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
   const match = dateStr.match(/(\d{4})-(\d{2})/);
-  if (match) {
-    return `${match[1]}-${match[2]}-01`;
-  }
+  if (match) return `${match[1]}-${match[2]}-01`;
   return null;
-}
-
-// Detect compound from study data
-function detectCompound(title: string, conditions: string[]): string {
-  const text = `${title} ${conditions.join(' ')}`.toLowerCase();
-  if (text.includes('psilocybin')) return 'Psilocybin';
-  if (text.includes('dmt') || text.includes('n,n-dmt') || text.includes('dimethyltryptamine')) return 'DMT';
-  if (text.includes('ayahuasca')) return 'Ayahuasca';
-  if (text.includes('5-meo-dmt')) return '5-MeO-DMT';
-  if (text.includes('ibogaine')) return 'Ibogaine';
-  if (text.includes('lsd') || text.includes('lysergic')) return 'LSD';
-  if (text.includes('mdma')) return 'MDMA';
-  return 'Psychedelic';
 }
 
 async function sendWeeklyEmail(resend: Resend, trialsAdded: number, trialsUpdated: number, adminEmail: string) {
