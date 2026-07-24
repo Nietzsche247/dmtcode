@@ -2779,7 +2779,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   for (const p of protoRows) {
     citation.push({
       "@type": "CreativeWork",
-      name: String(p.name || p.slug),
+      name: String(p.title || p.slug),
       url: `${SITE}/protocols/${String(p.slug)}`,
     });
   }
