@@ -246,6 +246,7 @@ const Home = () => {
           
           {/* Testimonials - handles its own mode visibility */}
           <TestimonialsCarousel />
+          <LatestArticle />
           <EmailCapture source="homepage" />
           
           {/* CTA Section */}
