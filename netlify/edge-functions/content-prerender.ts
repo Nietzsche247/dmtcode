@@ -1487,7 +1487,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       ]);
       const evs = evRes.ok ? await evRes.json() as Array<Record<string, string>> : [];
       const trs = trRes.ok ? await trRes.json() as Array<Record<string, string>> : [];
-      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
+      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
       const trItems = trs.map((r) => `<li><time datetime="${esc(r.start_date)}">${esc(String(r.start_date || "").slice(0,10))}</time>: <a href="/trials/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a> (${esc(String(r.status || ""))}, ${esc(String(r.institution || ""))})</li>`).join("");
       recentList = `<section><h2>Recent events</h2><ul>${evItems || "<li>No community events reported.</li>"}</ul></section>
 <section><h2>Recent clinical trials</h2><ul>${trItems || "<li>No trials tracked.</li>"}</ul></section>
