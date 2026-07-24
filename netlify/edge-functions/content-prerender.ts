@@ -89,6 +89,15 @@ export default async (request: Request, context: Context) => {
     if (seg.length === 1 && STATIC_PAGES[kind]) {
       return await renderStatic(context, kind);
     }
+    if (kind === "theories" && seg.length === 1) {
+      return await renderTheories(context);
+    }
+    if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
+      return await renderEventDetail(context, id);
+    }
+    if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
+      return await renderRetreatDetail(context, id);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
@@ -1478,13 +1487,13 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       ]);
       const evs = evRes.ok ? await evRes.json() as Array<Record<string, string>> : [];
       const trs = trRes.ok ? await trRes.json() as Array<Record<string, string>> : [];
-      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
+      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
       const trItems = trs.map((r) => `<li><time datetime="${esc(r.start_date)}">${esc(String(r.start_date || "").slice(0,10))}</time>: <a href="/trials/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a> (${esc(String(r.status || ""))}, ${esc(String(r.institution || ""))})</li>`).join("");
       recentList = `<section><h2>Recent events</h2><ul>${evItems || "<li>No community events reported.</li>"}</ul></section>
 <section><h2>Recent clinical trials</h2><ul>${trItems || "<li>No trials tracked.</li>"}</ul></section>
 <p><em>Scholarly reference only. This timeline aggregates community reported events and publicly available clinical trial data. Inclusion does not constitute endorsement.</em></p>`;
       const listItems = [
-        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events` })),
+        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events/${r.id}` })),
         ...trs.map((r, i) => ({ "@type": "ListItem", position: evs.length + i + 1, name: String(r.title || ""), url: `${SITE}/trials/${r.id}` })),
       ];
       if (listItems.length) {
@@ -1627,6 +1636,9 @@ export const config: Config = {
     "/evidence-map",
     "/faq",
     "/events",
+    "/events/*",
+    "/retreats/*",
+    "/theories",
   ],
 };
 
@@ -1635,3 +1647,368 @@ export const config: Config = {
 
 
 
+
+// ---------- Theories, Events, Retreats prerender ----------
+
+function renderShell(
+  html: string,
+  head: string,
+  body: string,
+): string {
+  let out = html
+    .replace(/<title>[\s\S]*?<\/title>/gi, "")
+    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
+    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
+  out = out.replace(/<\/head>/i, `${head}\n</head>`);
+  if (/<div id="root">\s*<\/div>/i.test(out)) {
+    out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
+  } else {
+    out = out.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
+  }
+  return out;
+}
+
+const PRERENDER_RESP_HEADERS = {
+  "content-type": "text/html; charset=utf-8",
+  "cache-control": "public, max-age=0, must-revalidate",
+  "netlify-cdn-cache-control":
+    "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+};
+
+async function sbGetRows(
+  table: string,
+  query: string,
+): Promise<Array<Record<string, unknown>>> {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return [];
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) return [];
+  return (await res.json()) as Array<Record<string, unknown>>;
+}
+
+function originLabel(origin: unknown): string {
+  const s = String(origin || "").toLowerCase();
+  if (s === "curated" || s === "public_record" || s === "record") {
+    return "From the public record";
+  }
+  if (s === "community") return "Community";
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : "Community";
+}
+
+function paragraphsFromText(text: string): string {
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${esc(p)}</p>`)
+    .join("");
+}
+
+async function renderTheories(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/theories`;
+  const title = "Open theories: what could the DMT code be? | DMT Code";
+  const metaDesc = clip(
+    "Attributed explanatory theories for the reported DMT code phenomenon. Curated from the public record and moderated community submissions. Theories are not evidence.",
+    160,
+  );
+
+  const rows = await sbGetRows(
+    "theories",
+    "is_approved=eq.true&select=id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at&order=upvotes.desc",
+  );
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE}#website`,
+    url: SITE,
+    name: "DMT Code",
+    publisher: { "@id": `${SITE}#org` },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Theories", item: canonical },
+    ],
+  };
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${canonical}#list`,
+    name: "Open theories on the DMT code",
+    itemListElement: rows.map((r, i) => {
+      const item: Record<string, unknown> = {
+        "@type": "CreativeWork",
+        name: r.title,
+        url: canonical,
+        text: r.summary || "",
+      };
+      if (r.proponent) {
+        item.author = { "@type": "Person", name: String(r.proponent) };
+      }
+      return { "@type": "ListItem", position: i + 1, item };
+    }),
+    license: LICENSE,
+  };
+
+  const theoryBlocks = rows
+    .map((r) => {
+      const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
+      const summaryHtml = r.summary
+        ? paragraphsFromText(String(r.summary))
+        : "";
+      const contentHtml = r.content
+        ? `<section><h3>Full argument</h3>${paragraphsFromText(String(r.content))}</section>`
+        : "";
+      const proponentLine = r.proponent
+        ? `<p><strong>Proponent:</strong> ${esc(String(r.proponent))}</p>`
+        : "";
+      const sourceLine = r.source_url
+        ? `<p><strong>Source:</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
+        : (r.source_title ? `<p><strong>Source:</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
+      const tagBlock = tags.length
+        ? `<p><strong>Tags:</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
+        : "";
+      return `<article>
+  <h2>${esc(String(r.title || "Untitled theory"))}</h2>
+  <p><em>${esc(originLabel(r.origin))}</em></p>
+  ${proponentLine}
+  ${summaryHtml}
+  ${contentHtml}
+  ${sourceLine}
+  ${tagBlock}
+</article>`;
+    })
+    .join("\n");
+
+  const body = `<article data-prerender="theories">
+  <h1>Open theories</h1>
+  <section>
+    <p>Theories are not evidence. They are explanations that people have offered for what could account for the reported DMT code phenomenon. Read them as candidate hypotheses to be tested, not as findings.</p>
+    <p>Entries here are either curated from the public record (published, attributed positions) or submitted by the community and reviewed before appearing. Votes on this page are never seeded or fabricated; every count reflects real reader activity.</p>
+  </section>
+  <section>
+    <h2>Theories</h2>
+    ${theoryBlocks || "<p>No approved theories are currently indexed.</p>"}
+  </section>
+  <section>
+    <h2>Related</h2>
+    <ul>
+      <li><a href="${SITE}/registry">Visual symbol registry</a></li>
+      <li><a href="${SITE}/bibliography">Research bibliography</a></li>
+      <li><a href="${SITE}/evidence-map">Evidence map</a></li>
+      <li><a href="${SITE}/data.json">Machine readable corpus</a></li>
+    </ul>
+  </section>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
+  ].join("\n");
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderEventDetail(context: Context, id: string): Promise<Response> {
+  const shellRes = await context.next();
+  const rows = await sbGetRows(
+    "events",
+    `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,event_type,location,organizer,url`,
+  );
+  const r = rows[0];
+  if (!r) return shellRes;
+
+  const canonical = `${SITE}/events/${id}`;
+  const shortDesc = String(r.description || "").trim();
+  const detailsText = String(r.details || r.description || "").trim();
+  const title = `${String(r.title)} | DMT Code Events`;
+  const metaDesc = clip(shortDesc || `${String(r.title)} listed on the DMT Code events timeline.`, 160);
+
+  const readableDate = r.event_date
+    ? new Date(String(r.event_date)).toLocaleDateString("en-US", {
+        year: "numeric", month: "long", day: "numeric",
+      })
+    : "";
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Events", item: `${SITE}/events` },
+      { "@type": "ListItem", position: 3, name: String(r.title), item: canonical },
+    ],
+  };
+  const eventLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "@id": canonical,
+    name: r.title,
+    startDate: r.event_date,
+    description: shortDesc || undefined,
+    url: r.url || canonical,
+  };
+  if (r.location) {
+    eventLd.location = { "@type": "Place", name: String(r.location) };
+  }
+  if (r.organizer) {
+    eventLd.organizer = {
+      "@type": "Organization",
+      name: String(r.organizer),
+      ...(r.url ? { url: String(r.url) } : {}),
+    };
+  }
+
+  const body = `<article data-prerender="event">
+  <h1>${esc(String(r.title))}</h1>
+  <p><strong>${esc(readableDate)}</strong>${r.event_type ? ` &middot; ${esc(String(r.event_type))}` : ""}</p>
+  ${r.location ? `<p>Location: ${esc(String(r.location))}</p>` : ""}
+  ${r.organizer ? `<p>Organizer: ${esc(String(r.organizer))}</p>` : ""}
+  ${detailsText ? paragraphsFromText(detailsText) : "<p>No further details provided.</p>"}
+  ${r.url ? `<p><a href="${esc(String(r.url))}" rel="noopener">Official site</a></p>` : ""}
+  <p><a href="${SITE}/events">Back to the events timeline</a></p>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(eventLd)}</script>`,
+  ].join("\n");
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderRetreatDetail(context: Context, id: string): Promise<Response> {
+  const shellRes = await context.next();
+  const rows = await sbGetRows(
+    "retreats",
+    `id=eq.${id}&is_approved=is.true&select=id,name,description,details,location,country,image_url,website_url,contact_email,tags`,
+  );
+  const r = rows[0];
+  if (!r) return shellRes;
+
+  const canonical = `${SITE}/retreats/${id}`;
+  const shortDesc = String(r.description || "").trim();
+  const detailsText = String(r.details || r.description || "").trim();
+  const title = `${String(r.name)} | DMT Code Retreats`;
+  const metaDesc = clip(shortDesc || `${String(r.name)} listed on the DMT Code retreats index.`, 160);
+  const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
+  const locationLine = [r.location, r.country].filter(Boolean).map(String).join(", ");
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Events", item: `${SITE}/events` },
+      { "@type": "ListItem", position: 3, name: String(r.name), item: canonical },
+    ],
+  };
+  const lodgingLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "@id": canonical,
+    name: r.name,
+    description: shortDesc || undefined,
+    url: r.website_url || canonical,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: r.location ? String(r.location) : undefined,
+      addressCountry: r.country ? String(r.country) : undefined,
+    },
+  };
+  if (r.image_url) lodgingLd.image = String(r.image_url);
+  if (r.contact_email) lodgingLd.email = String(r.contact_email);
+  if (tags.length) lodgingLd.keywords = tags;
+
+  const body = `<article data-prerender="retreat">
+  <h1>${esc(String(r.name))}</h1>
+  ${locationLine ? `<p>Location: ${esc(locationLine)}</p>` : ""}
+  ${tags.length ? `<p>Tags: ${tags.map((t) => esc(t)).join(", ")}</p>` : ""}
+  ${r.image_url ? `<img src="${esc(String(r.image_url))}" alt="${esc(String(r.name))} retreat center" />` : ""}
+  ${detailsText ? paragraphsFromText(detailsText) : "<p>No further details provided.</p>"}
+  ${r.website_url ? `<p><a href="${esc(String(r.website_url))}" rel="noopener">Visit website</a></p>` : ""}
+  ${r.contact_email ? `<p>Contact: <a href="mailto:${esc(String(r.contact_email))}">${esc(String(r.contact_email))}</a></p>` : ""}
+  <p><a href="${SITE}/events">Back to the events timeline</a></p>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    r.image_url ? `<meta property="og:image" content="${esc(String(r.image_url))}" />` : "",
+    `<meta name="twitter:card" content="${r.image_url ? "summary_large_image" : "summary"}" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    r.image_url ? `<meta name="twitter:image" content="${esc(String(r.image_url))}" />` : "",
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(lodgingLd)}</script>`,
+  ].filter(Boolean).join("\n");
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}

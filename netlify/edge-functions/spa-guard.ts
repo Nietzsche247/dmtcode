@@ -13,7 +13,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
   "about", "critiques", "null-reports", "glossary", "methods",
   "open-questions", "research", "protocols", "forecasts", "protocol-guide",
-  "dataset",
+  "dataset", "theories", "retreats",
   // Client only app routes that must stay 200 for humans
   "auth", "admin", "submit", "submit-symbol", "submit-product", "join",
   "co-witnesses", "waitlist", "community", "log", "assess", "leaderboard",
@@ -28,8 +28,8 @@ const VALID_FIRST_SEGMENT = new Set<string>([
 // Prefixes served by another edge function or static asset the SPA fallback
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
-  // /registry/:uuid, /trials/:uuid, /bibliography/:uuid
-  const m = path.match(/^\/(registry|trials|bibliography)\/([^/]+)$/i);
+  // /registry/:uuid, /trials/:uuid, /bibliography/:uuid, /events/:uuid, /retreats/:uuid
+  const m = path.match(/^\/(registry|trials|bibliography|events|retreats)\/([^/]+)$/i);
   if (m) return UUID_RE.test(m[2]);
   // /card/:uuid.png
   const c = path.match(/^\/card\/([^/]+)\.png$/i);
