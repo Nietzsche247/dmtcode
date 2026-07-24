@@ -119,12 +119,18 @@ export default function ArticleDetail() {
       if (a.related_protocols?.length) {
         jobs.push(
           (async () => {
+            // Fetch all published protocols and filter client side to avoid
+            // PostgREST text in-list quoting issues; the table is small.
             const { data } = await supabase
               .from("protocols")
               .select("slug, title")
-              .in("slug", a.related_protocols);
+              .eq("is_published", true);
+            const bySlug = new Map((data ?? []).map((r: any) => [r.slug, r]));
             setProtocols(
-              (data ?? []).map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.title })),
+              (a.related_protocols as string[])
+                .map((s) => bySlug.get(s))
+                .filter(Boolean)
+                .map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.title })),
             );
           })(),
         );
