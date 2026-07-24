@@ -136,6 +136,24 @@
   path = "/card/*"
   function = "convergence-card"
 
+# Articles machine endpoints MUST be mapped ABOVE the content-prerender /articles/*
+# entry below, otherwise the prerender will swallow them.
+[[edge_functions]]
+  path = "/articles.json"
+  function = "articles-json"
+
+[[edge_functions]]
+  path = "/articles/feed.xml"
+  function = "articles-feed"
+
+[[edge_functions]]
+  path = "/articles"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/articles/*"
+  function = "content-prerender"
+
 # 404 guard MUST run last: it whitelists known routes and 404s the rest.
 [[edge_functions]]
   path = "/*"
