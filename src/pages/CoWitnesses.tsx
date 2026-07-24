@@ -126,10 +126,13 @@ export default function CoWitnesses() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading recollections.</p>
         ) : filtered.length === 0 ? (
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center space-y-3">
             <p className="text-sm text-muted-foreground">
-              No recollections yet. When people opt in and share, their notes show up here.
+              The wall opens as explorers opt in. If you have recognized a symbol, your field note could be the first.
             </p>
+            <Link to="/registry" className="text-sm text-primary hover:underline inline-block">
+              Browse the registry
+            </Link>
           </Card>
         ) : (
           <ul className="space-y-4">

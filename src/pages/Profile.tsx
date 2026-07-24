@@ -14,6 +14,7 @@ import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { useReviewStreak } from '@/hooks/useReviewStreak';
 import { CoWitnessSettings } from '@/components/co-witness/CoWitnessSettings';
+import { HighFivesReceived } from '@/components/co-witness/HighFivesReceived';
 import { Flame, Snowflake } from 'lucide-react';
 
 interface UserSymbol {
@@ -603,6 +604,7 @@ const Profile = () => {
                   <a href="/co-witnesses" className="text-sm text-primary hover:underline">Open the wall</a>
                 </div>
                 <CoWitnessSettings userId={userId} />
+                <HighFivesReceived userId={userId} />
               </section>
             )}
           </div>

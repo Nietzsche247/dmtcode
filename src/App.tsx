@@ -62,6 +62,7 @@ const Forecasts = lazy(() => import("./pages/Forecasts"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AvatarToastListener } from "./components/AvatarToastListener";
 import { BadgeToastListener } from "./components/BadgeToastListener";
+import { HighFiveToastListener } from "./components/co-witness/HighFiveToastListener";
 import { useGA4PageTracking } from "./hooks/useGA4PageTracking";
 
 const GA4Tracker = () => {
@@ -112,6 +113,7 @@ const App = () => (
           <GA4Tracker />
           <AvatarToastListener />
           <BadgeToastListener />
+          <HighFiveToastListener />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />

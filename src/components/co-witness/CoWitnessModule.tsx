@@ -27,6 +27,12 @@ interface Props {
 const formatContext = (s?: string | null) =>
   s ? s.replace(/_/g, ' ') : null;
 
+const trackGA = (event: string, params: Record<string, unknown>) => {
+  if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+    (window as any).gtag('event', event, params);
+  }
+};
+
 /**
  * Co-witness module. Shown ONLY to a viewer who holds a seen_it on this symbol AND
  * whose own prefs are pairs_only/wall. Reads symbol_votes via SECURITY DEFINER RPC.
@@ -103,6 +109,7 @@ export const CoWitnessModule = ({ symbolId, viewerId, viewerHasSeenIt, viewerSur
       return;
     }
     setHighFived((m) => ({ ...m, [toUser]: true }));
+    trackGA('co_witness_high_five_sent', { symbol_id: symbolId });
     toast.success('Sent');
     // Re-check mutual state
     const { data: theirs } = await (supabase as any)
@@ -138,6 +145,7 @@ export const CoWitnessModule = ({ symbolId, viewerId, viewerHasSeenIt, viewerSur
       return;
     }
     setRecollection('');
+    trackGA('co_witness_recollection_posted', { symbol_id: symbolId });
     toast.success('Added to the wall');
   };
 

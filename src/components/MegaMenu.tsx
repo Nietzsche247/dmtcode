@@ -93,6 +93,12 @@ const explorerItems: NavItem[] = [
     description: "Contributors, rankings, and discussions",
     icon: Users,
   },
+  {
+    title: "Co-witness wall",
+    href: "/co-witnesses",
+    description: "Field notes from people who recognized the same symbol",
+    icon: Users,
+  },
 ];
 
 const resourceItems: NavItem[] = [

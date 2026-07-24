@@ -94,6 +94,7 @@ export const Navigation = () => {
     { path: '/events', label: 'Events & Retreats' },
     { path: '/tools', label: 'Tools & Equipment' },
     { path: '/leaderboard', label: 'Community' },
+    { path: '/co-witnesses', label: 'Co-witness wall' },
   ];
 
 
