@@ -27,6 +27,7 @@ interface Trial {
   status: string | null;
   confirmed_status: string | null;
   trial_type: string | null;
+  phase: string | null;
   location: string | null;
   source: string | null;
   application_url: string | null;
@@ -39,6 +40,7 @@ interface Trial {
   created_at: string;
 }
 
+
 const PAGE_SIZE = 30;
 
 const Trials = () => {
@@ -48,7 +50,9 @@ const Trials = () => {
 
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [verificationFilter, setVerificationFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [institutionFilter, setInstitutionFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
@@ -71,20 +75,19 @@ const Trials = () => {
   const uniq = (vals: (string | null)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v))).sort();
 
-  const statuses = useMemo(
-    () => uniq(trials.map((t) => t.confirmed_status || t.status)),
+  const statuses = useMemo(() => uniq(trials.map((t) => t.status)), [trials]);
+  const verifications = useMemo(
+    () => uniq(trials.map((t) => t.confirmed_status)),
     [trials]
   );
   const types = useMemo(() => uniq(trials.map((t) => t.trial_type)), [trials]);
+  const phases = useMemo(() => uniq(trials.map((t) => t.phase)), [trials]);
   const locations = useMemo(() => uniq(trials.map((t) => t.location)), [trials]);
   const institutions = useMemo(() => uniq(trials.map((t) => t.institution)), [trials]);
   const sources = useMemo(() => uniq(trials.map((t) => t.source)), [trials]);
 
   const recruitingCount = useMemo(
-    () =>
-      trials.filter((t) =>
-        (t.confirmed_status || t.status || '').toLowerCase().includes('recruit')
-      ).length,
+    () => trials.filter((t) => t.status === 'recruiting').length,
     [trials]
   );
 
@@ -98,16 +101,15 @@ const Trials = () => {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     let rows = trials.filter((t) => {
-      const effectiveStatus = t.confirmed_status || t.status;
-      if (statusFilter !== 'all' && effectiveStatus !== statusFilter) return false;
+      if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+      if (verificationFilter !== 'all' && t.confirmed_status !== verificationFilter) return false;
       if (typeFilter !== 'all' && t.trial_type !== typeFilter) return false;
+      if (phaseFilter !== 'all' && t.phase !== phaseFilter) return false;
       if (locationFilter !== 'all' && t.location !== locationFilter) return false;
       if (institutionFilter !== 'all' && t.institution !== institutionFilter) return false;
       if (sourceFilter !== 'all' && t.source !== sourceFilter) return false;
       if (term) {
-        const hay = [t.title, t.institution || '']
-          .join(' ')
-          .toLowerCase();
+        const hay = [t.title, t.institution || ''].join(' ').toLowerCase();
         if (!hay.includes(term)) return false;
       }
       return true;
@@ -119,11 +121,11 @@ const Trials = () => {
       return sort === 'newest' ? bv - av : av - bv;
     });
     return rows;
-  }, [trials, q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = visible.length < filtered.length;
@@ -131,12 +133,15 @@ const Trials = () => {
   const clearFilters = () => {
     setQ('');
     setStatusFilter('all');
+    setVerificationFilter('all');
     setTypeFilter('all');
+    setPhaseFilter('all');
     setLocationFilter('all');
     setInstitutionFilter('all');
     setSourceFilter('all');
     setSort('newest');
   };
+
 
   const total = trials.length;
   const description = `Live registry of ${total} DMT and psychedelic clinical trials tracked across institutions worldwide.`;
@@ -189,12 +194,15 @@ const Trials = () => {
           <p className="label-data mt-4 text-xs text-muted-foreground">
             {loading
               ? 'LOADING TRIALS…'
-              : `${total} TRIALS TRACKED · ${recruitingCount} RECRUITING${
-                  latestUpdated
-                    ? ` · UPDATED ${format(new Date(latestUpdated), 'yyyy-MM-dd')}`
-                    : ''
-                }`}
+              : [
+                  `${total} TRIALS TRACKED`,
+                  recruitingCount > 0 ? `${recruitingCount} RECRUITING` : null,
+                  latestUpdated ? `UPDATED ${format(new Date(latestUpdated), 'yyyy-MM-dd')}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
           </p>
+
           <p className="mt-4 max-w-2xl text-muted-foreground">
             An open atlas of active and historical DMT-related clinical trials.
             Filter by status, type, location or institution to explore the current research frontier.
@@ -217,11 +225,29 @@ const Trials = () => {
               ))}
             </SelectContent>
           </Select>
+          <Select value={verificationFilter} onValueChange={setVerificationFilter}>
+            <SelectTrigger><SelectValue placeholder="Verification" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All verifications</SelectItem>
+              {verifications.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All types</SelectItem>
               {types.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={phaseFilter} onValueChange={setPhaseFilter}>
+            <SelectTrigger><SelectValue placeholder="Phase" /></SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all">All phases</SelectItem>
+              {phases.map((s) => (
                 <SelectItem key={s} value={s}>{s}</SelectItem>
               ))}
             </SelectContent>
@@ -256,6 +282,7 @@ const Trials = () => {
         </section>
 
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+
           <p className="label-data text-xs text-muted-foreground">
             {loading ? '' : `${filtered.length} RESULTS`}
           </p>
@@ -292,7 +319,10 @@ const Trials = () => {
           <>
             <ul className="grid gap-4">
               {visible.map((t) => {
-                const eff = t.confirmed_status || t.status;
+                const showVerification =
+                  t.confirmed_status && t.confirmed_status !== 'Confirmed';
+                const status = t.status;
+                const joinUrl = t.application_url || t.url;
                 return (
                   <li key={t.id}>
                     <div className="rounded border border-border/60 bg-card p-5 transition-colors hover:border-foreground/40">
@@ -300,7 +330,8 @@ const Trials = () => {
                         <h2 className="font-display text-xl leading-snug">{t.title}</h2>
                         <p className="label-data mt-2 text-[11px] text-muted-foreground">
                           {[
-                            eff || 'STATUS UNKNOWN',
+                            status,
+                            t.phase,
                             t.trial_type,
                             t.location,
                             t.institution,
@@ -311,6 +342,11 @@ const Trials = () => {
                             .join(' · ')
                             .toUpperCase()}
                         </p>
+                        {showVerification && (
+                          <p className="label-data mt-1 text-[10px] text-muted-foreground/80">
+                            VERIFICATION: {t.confirmed_status!.toUpperCase()}
+                          </p>
+                        )}
                         {t.description && (
                           <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
                             {t.description}
@@ -318,27 +354,60 @@ const Trials = () => {
                         )}
                       </Link>
                       {(() => {
-                        const isRecruiting = (eff || '').toLowerCase().includes('recruit');
-                        if (!isRecruiting) return null;
-                        const joinUrl = t.url || t.application_url;
-                        if (!joinUrl) return null;
-                        return (
-                          <div className="mt-3">
-                            <a
-                              href={joinUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                            >
-                              How to join <ExternalLink className="h-3.5 w-3.5" />
-                            </a>
-                          </div>
-                        );
+                        if (status === 'recruiting') {
+                          if (t.application_url) {
+                            return (
+                              <div className="mt-3">
+                                <a
+                                  href={t.application_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                                >
+                                  How to apply <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            );
+                          }
+                          if (t.url) {
+                            return (
+                              <div className="mt-3">
+                                <a
+                                  href={t.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                                >
+                                  Recruitment details on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            );
+                          }
+                        }
+                        if (status === 'enrolling by invitation' && t.url) {
+                          return (
+                            <div className="mt-3 space-y-1">
+                              <a
+                                href={t.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                              >
+                                Study record on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
+                              <p className="text-xs text-muted-foreground">
+                                This study enrols by invitation only.
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
                       })()}
                     </div>
                   </li>
                 );
               })}
+
             </ul>
             {hasMore && (
               <div className="mt-8 flex justify-center">

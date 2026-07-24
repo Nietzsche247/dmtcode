@@ -28,10 +28,30 @@ function fetchWithRetry(url: string): Promise<Response | null> {
 function pickPhase(phases: string[] | undefined): string | null {
   if (!phases || !phases.length) return null;
   const cleaned = phases
-    .map((p) => p.replace('PHASE', 'Phase ').replace(/_/g, ' '))
+    .map((p) => p.replace('PHASE', 'Phase ').replace(/_/g, ' ').trim())
+    .filter(Boolean)
     .join(', ');
   return cleaned || null;
 }
+
+// ClinicalTrials.gov returns markdown-escaped punctuation (e.g. "1\." or "\>").
+function unescapeRegistryText(s: string | undefined | null): string | null {
+  if (!s) return null;
+  return s.replace(/\\([^A-Za-z0-9\s])/g, '$1');
+}
+
+const STATUS_MAP: Record<string, string> = {
+  RECRUITING: 'recruiting',
+  NOT_YET_RECRUITING: 'planned',
+  ACTIVE_NOT_RECRUITING: 'active',
+  ENROLLING_BY_INVITATION: 'enrolling by invitation',
+  COMPLETED: 'completed',
+  TERMINATED: 'terminated',
+  SUSPENDED: 'suspended',
+  WITHDRAWN: 'withdrawn',
+  UNKNOWN: 'unknown',
+};
+
 
 function buildLocation(locs: any[] | undefined): string | null {
   if (!locs || !locs.length) return null;
@@ -165,12 +185,13 @@ Deno.serve(async (req) => {
         const design = ps.designModule ?? {};
 
         const briefTitle: string | undefined = ident.briefTitle;
-        const briefSummary: string | undefined = desc.briefSummary;
+        const officialTitle: string | undefined = ident.officialTitle;
+        const briefSummary = unescapeRegistryText(desc.briefSummary);
         const overallStatus: string | undefined = status.overallStatus;
         const startDate: string | undefined = status.startDateStruct?.date;
         const endDate: string | undefined = status.completionDateStruct?.date;
         const leadSponsor: string | undefined = sponsor.leadSponsor?.name;
-        const eligCriteria: string | undefined = elig.eligibilityCriteria;
+        const eligCriteria = unescapeRegistryText(elig.eligibilityCriteria);
         const overallOfficial = contacts.overallOfficials?.[0];
         const piName: string | undefined = overallOfficial?.name;
         const locStr = buildLocation(contacts.locations);
@@ -191,11 +212,18 @@ Deno.serve(async (req) => {
         if (briefSummary) update.description = briefSummary;
         if (eligibilityText) update.eligibility = eligibilityText;
         if (piName) update.principal_investigator = piName;
-        // Only set institution if we actually have it from registry
         if (leadSponsor) update.institution = leadSponsor;
-        // Only set location if registry has real locations. If none, set NULL.
         update.location = locStr;
-        if (overallStatus) update.status = overallStatus;
+
+        if (overallStatus) {
+          const mapped = STATUS_MAP[overallStatus];
+          if (mapped) {
+            update.status = mapped;
+          } else {
+            errors.push({ nct, error: `unmapped overallStatus: ${overallStatus}` });
+          }
+        }
+
         if (startDate) {
           const d = /^\d{4}-\d{2}$/.test(startDate) ? `${startDate}-01` : startDate;
           if (/^\d{4}-\d{2}-\d{2}$/.test(d)) update.start_date = d;
@@ -204,7 +232,25 @@ Deno.serve(async (req) => {
           const d = /^\d{4}-\d{2}$/.test(endDate) ? `${endDate}-01` : endDate;
           if (/^\d{4}-\d{2}-\d{2}$/.test(d)) update.end_date = d;
         }
-        if (phase) update.trial_type = phase;
+        // Phase goes to its own column, never to trial_type (which is the record taxonomy).
+        update.phase = phase;
+
+        // Title handling: if the stored title matches NEITHER officialTitle NOR briefTitle,
+        // it's a stale snapshot: overwrite with officialTitle (fallback briefTitle) and record.
+        const storedNorm = (row.title || '').trim().toLowerCase();
+        const brief = (briefTitle || '').trim();
+        const official = (officialTitle || '').trim();
+        const matchesRegistry =
+          (brief && storedNorm === brief.toLowerCase()) ||
+          (official && storedNorm === official.toLowerCase());
+        if (!matchesRegistry && (official || brief)) {
+          const newTitle = official || brief;
+          update.title = newTitle;
+          titleMismatches.push({ nct, stored_title: row.title, registry_title: newTitle });
+        } else if (brief && row.title && brief !== row.title.trim() && !official) {
+          // Informational: stored differs from briefTitle only; do not overwrite.
+          titleMismatches.push({ nct, stored_title: row.title, registry_title: brief });
+        }
 
         const { error: upErr } = await admin
           .from('clinical_trials')
@@ -217,9 +263,6 @@ Deno.serve(async (req) => {
         }
         updated++;
 
-        if (briefTitle && row.title && briefTitle.trim() !== row.title.trim()) {
-          titleMismatches.push({ nct, stored_title: row.title, registry_title: briefTitle });
-        }
       } catch (e) {
         failed++;
         errors.push({ nct, error: e instanceof Error ? e.message : 'unknown' });

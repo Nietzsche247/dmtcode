@@ -19,6 +19,7 @@ interface Trial {
   status: string | null;
   confirmed_status: string | null;
   trial_type: string | null;
+  phase: string | null;
   location: string | null;
   source: string | null;
   application_url: string | null;
@@ -33,6 +34,7 @@ interface Trial {
   updated_at: string;
   created_at: string;
 }
+
 
 
 
@@ -150,7 +152,7 @@ const TrialDetail = () => {
       <main className="container mx-auto max-w-3xl px-4 pb-24 pt-6">
         <header className="mb-8 border-b border-border/60 pb-6">
           <p className="label-data mb-3 text-[11px] text-muted-foreground">
-            CLINICAL TRIAL · {((trial.confirmed_status || trial.status) || 'STATUS UNKNOWN').toUpperCase()}
+            CLINICAL TRIAL{trial.status ? ` · ${trial.status.toUpperCase()}` : ''}
           </p>
           <h1 className="font-display text-3xl leading-tight md:text-5xl">
             {trial.title}
@@ -159,7 +161,9 @@ const TrialDetail = () => {
 
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
           {([
-            ['Status', trial.confirmed_status || trial.status],
+            ['Status', trial.status],
+            ['Verification', trial.confirmed_status && trial.confirmed_status !== 'Confirmed' ? trial.confirmed_status : null],
+            ['Phase', trial.phase],
             ['Type', trial.trial_type],
             ['Institution', trial.institution],
             ['Location', trial.location],
@@ -203,19 +207,44 @@ const TrialDetail = () => {
 
         <div className="flex flex-wrap gap-3">
           {(() => {
-            const eff = (trial.confirmed_status || trial.status || '').toLowerCase();
-            const isRecruiting = eff.includes('recruit');
-            const joinUrl = trial.application_url || trial.url;
-            if (!isRecruiting || !joinUrl) return null;
-            return (
-              <Button asChild>
-                <a href={joinUrl} target="_blank" rel="noopener noreferrer">
-                  How to join <ExternalLink className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            );
+            const status = trial.status;
+            if (status === 'recruiting') {
+              if (trial.application_url) {
+                return (
+                  <Button asChild>
+                    <a href={trial.application_url} target="_blank" rel="noopener noreferrer">
+                      How to apply <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                );
+              }
+              if (trial.url) {
+                return (
+                  <Button asChild>
+                    <a href={trial.url} target="_blank" rel="noopener noreferrer">
+                      Recruitment details on ClinicalTrials.gov <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                );
+              }
+            }
+            if (status === 'enrolling by invitation' && trial.url) {
+              return (
+                <div className="w-full space-y-1">
+                  <Button asChild>
+                    <a href={trial.url} target="_blank" rel="noopener noreferrer">
+                      Study record on ClinicalTrials.gov <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    This study enrols by invitation only.
+                  </p>
+                </div>
+              );
+            }
+            return null;
           })()}
-          {trial.url && (
+          {trial.url && trial.status !== 'recruiting' && trial.status !== 'enrolling by invitation' && (
             <Button asChild variant="outline">
               <a href={trial.url} target="_blank" rel="noopener noreferrer">
                 View trial record <ExternalLink className="ml-2 h-4 w-4" />
@@ -233,6 +262,7 @@ const TrialDetail = () => {
             <Link to="/trials">← All trials</Link>
           </Button>
         </div>
+
       </main>
 
       <Footer />
