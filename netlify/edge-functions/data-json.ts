@@ -319,7 +319,7 @@ export default async (req: Request): Promise<Response> => {
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.4",
+    version: "3.5",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
