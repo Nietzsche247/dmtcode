@@ -1642,6 +1642,7 @@ export const config: Config = {
     "/events/*",
     "/retreats/*",
     "/theories",
+    "/protocols/*",
   ],
 };
 
