@@ -32,7 +32,7 @@ const Glossary = () => {
     },
     {
       term: "Geometric Archetype",
-      definition: "Recurring symbol morphology reported across independent observers. Registry documents 52 primary archetypes with consistent features (symmetry, line structure, orientation)."
+      definition: "Recurring symbol morphology reported across independent observers, described by shared features such as symmetry, line structure, and orientation."
     },
     {
       term: "Inter-subject Consistency",
