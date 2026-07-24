@@ -213,7 +213,7 @@ const Dataset = () => {
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Version History</h4>
                 <ul className="text-muted-foreground space-y-1">
-                  <li><strong>v1.0 (December 2025)</strong> — Initial public release</li>
+                  <li><strong>v1.0 (December 2025):</strong> Initial public release</li>
                 </ul>
               </CardContent>
             </Card>

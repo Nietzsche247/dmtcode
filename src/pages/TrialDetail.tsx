@@ -34,7 +34,7 @@ interface Trial {
   created_at: string;
 }
 
-const fmt = (d: string | null) => (d ? format(new Date(d), 'yyyy-MM-dd') : '—');
+const fmt = (d: string | null) => (d ? format(new Date(d), 'yyyy-MM-dd') : 'n/a');
 
 const TrialDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -173,7 +173,7 @@ const TrialDetail = () => {
           ].map(([term, val]) => (
             <div key={term as string}>
               <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
-              <dd className="mt-1 text-sm">{val || '—'}</dd>
+              <dd className="mt-1 text-sm">{val || 'n/a'}</dd>
             </div>
           ))}
         </dl>
