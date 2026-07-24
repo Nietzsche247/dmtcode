@@ -265,7 +265,7 @@ export const VotingButtons = ({
 
       {!userId && (
         <p className="text-xs text-muted-foreground text-center">
-          <a href="/auth" className="text-primary hover:underline">Log in</a> to vote
+          <Link to={`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`} className="text-primary hover:underline">Log in</Link> to vote
         </p>
       )}
 
