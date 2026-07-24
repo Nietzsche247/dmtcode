@@ -15,6 +15,7 @@ import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { TagsManager } from '@/components/registry/TagsManager';
 import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
 import { CoWitnessModule } from '@/components/co-witness/CoWitnessModule';
+import { CoWitnessInviteDialog } from '@/components/co-witness/CoWitnessInviteDialog';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { Helmet } from 'react-helmet';
