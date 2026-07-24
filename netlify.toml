@@ -104,6 +104,18 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/theories"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/events/*"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/retreats/*"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
 
