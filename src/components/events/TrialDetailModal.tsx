@@ -129,12 +129,8 @@ const TrialDetailModal = ({ trial, open, onOpenChange }: TrialDetailModalProps) 
                 location={trial.institution}
                 url={trial.url || undefined}
               />
-            </div>
-            <NotifyMeForm
-              entityType="trial"
-              entityName={trial.title}
-              entityDate={trial.start_date}
-            />
+          </div>
+
           </div>
 
           <CommunityNotes entityType="trial" entityId={trial.id} />
