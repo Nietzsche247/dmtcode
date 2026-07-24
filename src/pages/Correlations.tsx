@@ -73,28 +73,14 @@ const Correlations = () => {
             {/* Network Analysis Dashboard */}
             <CorrelationsNetwork />
 
-            {/* Activation Threshold Notice (shown only when < 100 symbols) */}
+            {/* Activation Threshold Notice */}
             <Card className="p-8 bg-primary/5 border-primary/20 mb-12">
               <div className="flex items-start gap-4">
                 <Database className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Activation Threshold: 100 Symbols</h3>
-                  <p className="text-base leading-relaxed mb-4">
-                    Network analysis and correlation dashboard will activate automatically when the registry contains ≥100 unique symbol submissions. This threshold ensures statistical significance for clustering algorithms and co-occurrence pattern detection.
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <div className="h-3 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary transition-all duration-300"
-                          style={{ width: '52%' }}
-                        ></div>
-                      </div>
-                    </div>
-                    <span className="text-sm font-semibold text-muted-foreground">52 / 100</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-3">
-                    Current status: <strong>48 symbols remaining</strong> before activation
+                  <h3 className="text-xl font-semibold mb-3">Activation Threshold</h3>
+                  <p className="text-base leading-relaxed">
+                    Cluster analysis begins once the registry passes the activation threshold. Until then the network above shows the live state of the corpus, updated as each submission is reviewed.
                   </p>
                 </div>
               </div>
@@ -173,31 +159,11 @@ const Correlations = () => {
               </Card>
             </div>
 
-            {/* Example Network Patterns */}
-            <Card className="p-8 bg-muted/30 border-border mb-12">
-              <h3 className="text-xl font-semibold mb-6">Example: Surface-Specific Symbol Clustering</h3>
-              <div className="space-y-4 text-base leading-relaxed">
-                <p>
-                  Preliminary analysis of 52 seed symbols reveals surface-dependent clustering:
-                </p>
-                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  <li><strong>Ceiling symbols (n=14):</strong> 78% show radial symmetry, 64% classified as geometric archetypes</li>
-                  <li><strong>Hand/skin symbols (n=9):</strong> 89% asymmetric, 56% alphabetic-like characters</li>
-                  <li><strong>Closed eyelid symbols (n=18):</strong> 72% organic/fractal patterns, 83% bilateral symmetry</li>
-                  <li><strong>Wall symbols (n=11):</strong> Mixed morphology, no dominant cluster (awaiting ≥100 threshold for statistical significance)</li>
-                  <li><strong>"Toilet bowl sand" motif cluster:</strong> Preliminary co-occurrence analysis suggests S001-S047 share notable convergence (pareidolia, speckle, organic patterns)</li>
-                </ul>
-                <p className="text-sm italic">
-                  Network analysis at ≥100 symbols will test whether these preliminary patterns persist with increased sample size or represent small-sample artifacts. CLIP-based visual similarity scoring will validate whether tag-based clusters match perceptual groupings.
-                </p>
-              </div>
-            </Card>
-
             {/* How to Contribute */}
             <Card className="p-8 bg-card border-border">
               <h3 className="text-2xl font-semibold mb-4">Accelerate Analysis Activation</h3>
               <p className="text-base mb-6">
-                Submit your symbol observations to reach the 100-symbol threshold faster. Each authenticated submission contributes to statistical power for correlation detection and cluster validation.
+                Submit your symbol observations to help the registry reach the activation threshold faster. Each submission contributes to statistical power for correlation detection and cluster validation.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild variant="default" size="lg">

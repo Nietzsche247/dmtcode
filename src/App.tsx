@@ -177,7 +177,7 @@ const App = () => (
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/evidence-map" element={<EvidenceMap />} />
           <Route path="/methods" element={<Methods />} />
-          <Route path="/Elizabeth_Baker" element={<ElizabethBaker />} />
+          <Route path="/Elizabeth_Baker" element={<ProtectedRoute><ElizabethBaker /></ProtectedRoute>} />
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />

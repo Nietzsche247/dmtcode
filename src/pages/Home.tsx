@@ -245,7 +245,7 @@ const Home = () => {
           
           {/* Testimonials - handles its own mode visibility */}
           <TestimonialsCarousel />
-          <EmailCapture />
+          <EmailCapture source="homepage" />
           
           {/* CTA Section */}
           <section className="container mx-auto px-4 py-32 text-center">
