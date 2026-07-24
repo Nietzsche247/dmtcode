@@ -143,10 +143,23 @@ const bundlesRaw = [
   },
 ];
 
-const bundles = bundlesRaw.map((b) => ({
-  ...b,
-  originalPrice: b.items.reduce((sum, i) => sum + i.value, 0),
-}));
+const bundles = bundlesRaw.map((b) => {
+  const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
+  const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
+  const pct = Math.floor(rawPct);
+  return {
+    ...b,
+    originalPrice,
+    discount: pct > 0 ? `${pct}% OFF` : '',
+  };
+});
+
+const maxDiscountPct = bundles.reduce((max, b) => {
+  const pct = b.originalPrice > b.price
+    ? Math.floor(((b.originalPrice - b.price) / b.originalPrice) * 100)
+    : 0;
+  return pct > max ? pct : max;
+}, 0);
 
 
 const Bundles = () => {
