@@ -18,6 +18,7 @@ import { CoWitnessModule } from '@/components/co-witness/CoWitnessModule';
 import { CoWitnessInviteDialog } from '@/components/co-witness/CoWitnessInviteDialog';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
+import { ShareConvergenceButton } from '@/components/registry/ShareConvergenceDialog';
 import { Helmet } from 'react-helmet';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { 
