@@ -31,6 +31,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const addItem = useCartStore(state => state.addItem);
   
   // Check if coming from a bundle
