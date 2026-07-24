@@ -227,7 +227,7 @@ const About = () => {
                   <strong>Revenue model:</strong> Affiliate commissions from curated equipment catalogue (/tools) fund server costs, domain registration, and development time. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible.
                 </p>
                 <p>
-                  <strong>Conflicts of interest:</strong> None. Team members do not sell laser devices, DMT extraction services, or consulting. Affiliate products (red light therapy mats, biohacking equipment) chosen for research relevance, not profit maximization.
+                  <strong>Conflicts of interest:</strong> We sell 650 nm laser kits and earn affiliate commissions on some third party products, so we have a commercial interest in the protocol this site documents. We do not sell DMT extraction services or consulting. Our /disclosure page names every affiliate relationship and explains what we do about the conflict.
                 </p>
                 <p>
                   <strong>Financial reports:</strong> Annual summary of hosting costs, affiliate revenue, and project expenses published each January. Community accountability ensures mission alignment over commercial incentives.
