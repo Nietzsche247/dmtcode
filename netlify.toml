@@ -112,6 +112,11 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/theories/*"
+  function = "content-prerender"
+
+
+[[edge_functions]]
   path = "/events"
   function = "content-prerender"
 
