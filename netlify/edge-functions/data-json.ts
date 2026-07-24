@@ -203,6 +203,8 @@ export default async (req: Request): Promise<Response> => {
       stance_score: (r.stance_score as number) ?? null,
       people,
       status: null,
+      verification: null,
+      phase: null,
       source_date: (r.source_date as string) || (r.publication_date as string) || null,
     };
   });
@@ -229,7 +231,9 @@ export default async (req: Request): Promise<Response> => {
       authority_type: "Clinical",
       stance_score: null,
       people,
-      status: (r.confirmed_status as string) || (r.status as string) || null,
+      status: (r.status as string) || null,
+      verification: (r.confirmed_status as string) || null,
+      phase: (r.phase as string) || null,
       source_date: (r.created_at as string) || null,
     };
   });
@@ -246,6 +250,8 @@ export default async (req: Request): Promise<Response> => {
     stance_score: null,
     people: [],
     status: (r.status as string) || null,
+    verification: null,
+    phase: null,
     source_date: (r.created_at as string) || null,
   }));
 
