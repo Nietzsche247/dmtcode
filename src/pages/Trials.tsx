@@ -216,6 +216,13 @@ const Trials = () => {
             onChange={(e) => setQ(e.target.value)}
             className="sm:col-span-2 lg:col-span-2"
           />
+        <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <Input
+            placeholder="Search title or institution"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="sm:col-span-2 lg:col-span-2"
+          />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
@@ -225,11 +232,29 @@ const Trials = () => {
               ))}
             </SelectContent>
           </Select>
+          <Select value={verificationFilter} onValueChange={setVerificationFilter}>
+            <SelectTrigger><SelectValue placeholder="Verification" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All verifications</SelectItem>
+              {verifications.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All types</SelectItem>
               {types.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={phaseFilter} onValueChange={setPhaseFilter}>
+            <SelectTrigger><SelectValue placeholder="Phase" /></SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all">All phases</SelectItem>
+              {phases.map((s) => (
                 <SelectItem key={s} value={s}>{s}</SelectItem>
               ))}
             </SelectContent>
@@ -264,6 +289,7 @@ const Trials = () => {
         </section>
 
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+
           <p className="label-data text-xs text-muted-foreground">
             {loading ? '' : `${filtered.length} RESULTS`}
           </p>
