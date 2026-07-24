@@ -20,7 +20,8 @@ const ActiveTrialsList = () => {
     const { data, error } = await supabase
       .from("clinical_trials")
       .select("id, title, start_date, institution, status")
-      .in("status", ["active", "recruiting"])
+      .eq("is_approved", true)
+      .or("status.ilike.%recruit%,status.ilike.%active%")
       .order("start_date", { ascending: false })
       .limit(10);
 
