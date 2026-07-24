@@ -237,8 +237,8 @@ Deno.serve(async (req) => {
         abstract: r.abstract,
         url: r.url,
         source: 'pubmed',
-        is_approved: true,
-        content_type: 'Paper',
+        is_approved: false,
+        content_type: r.content_type,
         authority_type: 'Academic',
       });
       if (insErr) {
