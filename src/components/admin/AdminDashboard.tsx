@@ -10,6 +10,7 @@ import { SymbolSubmissionModeration } from './SymbolSubmissionModeration';
 import { NullDashboard } from './NullDashboard';
 import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
+import { TrialsBackfillPanel } from './TrialsBackfillPanel';
 import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
 import { GA4DebugTester } from './GA4DebugTester';
