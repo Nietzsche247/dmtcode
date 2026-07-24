@@ -37,7 +37,6 @@ const bundlesRaw = [
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
     price: 85,
-    discount: '20% OFF',
     tier: 'entry',
     image: bundleStarterImg,
     items: [
