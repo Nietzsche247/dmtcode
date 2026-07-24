@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-export const Breadcrumb = () => {
+export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
