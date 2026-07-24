@@ -38,7 +38,8 @@ export const Breadcrumb = () => {
     'trials': 'Clinical Trials',
     'retreats': 'Retreat centers',
     'theories': 'Open theories',
-    'co-witnesses': 'Co-witness wall'
+    'co-witnesses': 'Co-witness wall',
+    'articles': 'Articles'
   };
 
   return (

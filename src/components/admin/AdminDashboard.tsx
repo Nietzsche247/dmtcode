@@ -21,6 +21,7 @@ import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
+import { ArticlesManager } from './ArticlesManager';
 
 export const AdminDashboard = () => {
   return (
@@ -36,11 +37,12 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-15">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-16">
             <TabsTrigger value="niche-geo">🎯 Niche GEO</TabsTrigger>
             <TabsTrigger value="alerts">🔔 Alerts</TabsTrigger>
             <TabsTrigger value="forecasts">📈 Forecasts</TabsTrigger>
             <TabsTrigger value="volunteers">🙋 Volunteers</TabsTrigger>
+            <TabsTrigger value="articles">📝 Articles</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="bundles">📊 Bundles</TabsTrigger>
@@ -53,6 +55,11 @@ export const AdminDashboard = () => {
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="audit">Audit</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="articles" className="space-y-4">
+            <ArticlesManager />
+          </TabsContent>
+
 
           <TabsContent value="niche-geo" className="space-y-4">
             <NicheGeoAudit />

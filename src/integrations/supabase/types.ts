@@ -74,6 +74,69 @@ export type Database = {
         }
         Relationships: []
       }
+      articles: {
+        Row: {
+          author: string
+          body_md: string
+          compounds: string[]
+          created_at: string
+          dek: string
+          id: string
+          is_published: boolean
+          published_at: string | null
+          related_bibliography: string[]
+          related_protocols: string[]
+          related_symbols: string[]
+          related_trials: string[]
+          reviewed_by: string | null
+          slug: string
+          target_query: string | null
+          title: string
+          topic_tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          body_md: string
+          compounds?: string[]
+          created_at?: string
+          dek: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          related_bibliography?: string[]
+          related_protocols?: string[]
+          related_symbols?: string[]
+          related_trials?: string[]
+          reviewed_by?: string | null
+          slug: string
+          target_query?: string | null
+          title: string
+          topic_tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          body_md?: string
+          compounds?: string[]
+          created_at?: string
+          dek?: string
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          related_bibliography?: string[]
+          related_protocols?: string[]
+          related_symbols?: string[]
+          related_trials?: string[]
+          reviewed_by?: string | null
+          slug?: string
+          target_query?: string | null
+          title?: string
+          topic_tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       assessments: {
         Row: {
           brain_scan_url: string | null
