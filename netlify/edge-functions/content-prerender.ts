@@ -1493,7 +1493,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
 <section><h2>Recent clinical trials</h2><ul>${trItems || "<li>No trials tracked.</li>"}</ul></section>
 <p><em>Scholarly reference only. This timeline aggregates community reported events and publicly available clinical trial data. Inclusion does not constitute endorsement.</em></p>`;
       const listItems = [
-        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events` })),
+        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events/${r.id}` })),
         ...trs.map((r, i) => ({ "@type": "ListItem", position: evs.length + i + 1, name: String(r.title || ""), url: `${SITE}/trials/${r.id}` })),
       ];
       if (listItems.length) {
