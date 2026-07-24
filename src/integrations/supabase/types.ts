@@ -369,6 +369,7 @@ export type Database = {
           location: string | null
           notes: string | null
           organizer_lead: string | null
+          phase: string | null
           principal_investigator: string | null
           record_type: string
           source: string | null
@@ -395,6 +396,7 @@ export type Database = {
           location?: string | null
           notes?: string | null
           organizer_lead?: string | null
+          phase?: string | null
           principal_investigator?: string | null
           record_type?: string
           source?: string | null
@@ -421,6 +423,7 @@ export type Database = {
           location?: string | null
           notes?: string | null
           organizer_lead?: string | null
+          phase?: string | null
           principal_investigator?: string | null
           record_type?: string
           source?: string | null
