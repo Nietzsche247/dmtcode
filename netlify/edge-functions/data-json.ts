@@ -47,17 +47,27 @@ interface UnifiedItem {
   id: string;
   content_type: string;
   title: string;
-  url: string | null;
-  doi: string | null;
+  url?: string;
+  doi?: string;
   compounds: string[];
   topic: string[];
-  authority_type: string | null;
-  stance_score: number | null;
+  authority_type?: string;
+  stance_score?: number;
   people: string[];
-  status: string | null;
-  verification: string | null;
-  phase: string | null;
-  source_date: string | null;
+  status?: string;
+  verification?: string;
+  phase?: string;
+  source_date?: string;
+}
+
+function compact<T extends Record<string, unknown>>(obj: T): T {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === null || v === undefined) continue;
+    if (typeof v === "string" && v.trim() === "") continue;
+    out[k] = v;
+  }
+  return out as T;
 }
 
 async function fetchAll(
@@ -126,6 +136,8 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   const authority = params.get("authority_type");
   const person = params.get("person");
   const status = params.get("status");
+  const verification = params.get("verification");
+  const phase = params.get("phase");
   const stanceMin = params.get("stance_min");
   const stanceMax = params.get("stance_max");
   const q = params.get("q")?.toLowerCase();
@@ -143,6 +155,10 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   if (person)
     out = out.filter((i) => i.people.some((p) => p.toLowerCase().includes(person.toLowerCase())));
   if (status) out = out.filter((i) => (i.status || "").toLowerCase() === status.toLowerCase());
+  if (verification)
+    out = out.filter((i) => (i.verification || "").toLowerCase() === verification.toLowerCase());
+  if (phase)
+    out = out.filter((i) => (i.phase || "").toLowerCase().includes(phase.toLowerCase()));
   if (stanceMin != null)
     out = out.filter((i) => i.stance_score != null && i.stance_score >= parseInt(stanceMin, 10));
   if (stanceMax != null)
@@ -191,22 +207,19 @@ export default async (req: Request): Promise<Response> => {
     const title = (r.title as string | null) || "";
     const derived = derivePeople(`${authors} ${title} ${summary}`);
     const people = Array.from(new Set([...authorsToPeople(authors), ...derived]));
-    return {
+    return compact<UnifiedItem>({
       id: `bib_${r.id}`,
       content_type: (r.content_type as string) || "Paper",
       title,
       url: (r.url as string) || (r.doi ? `https://doi.org/${r.doi}` : `${SITE}/bibliography/${r.id}`),
-      doi: (r.doi as string) || null,
+      doi: (r.doi as string) || undefined,
       compounds: normalizeCompounds(r.compounds),
       topic: (r.tags as string[]) || [],
-      authority_type: (r.authority_type as string) || null,
-      stance_score: (r.stance_score as number) ?? null,
+      authority_type: (r.authority_type as string) || undefined,
+      stance_score: (r.stance_score as number) ?? undefined,
       people,
-      status: null,
-      verification: null,
-      phase: null,
-      source_date: (r.source_date as string) || (r.publication_date as string) || null,
-    };
+      source_date: (r.source_date as string) || (r.publication_date as string) || undefined,
+    });
   });
 
   const trialItems: UnifiedItem[] = trials.map((r) => {
@@ -220,39 +233,35 @@ export default async (req: Request): Promise<Response> => {
         ...derivePeople(`${title} ${lead} ${inst} ${notes}`),
       ])
     );
-    return {
+    const confirmed = (r.confirmed_status as string) || "";
+    const verification = confirmed && confirmed !== "Confirmed" ? confirmed : undefined;
+    return compact<UnifiedItem>({
       id: `trial_${r.id}`,
       content_type: "Trial",
       title,
       url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
-      doi: null,
       compounds: [],
       topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
       authority_type: "Clinical",
-      stance_score: null,
       people,
-      status: (r.status as string) || null,
-      verification: (r.confirmed_status as string) || null,
-      phase: (r.phase as string) || null,
-      source_date: (r.created_at as string) || null,
-    };
+      status: (r.status as string) || undefined,
+      verification,
+      phase: (r.phase as string) || undefined,
+      source_date: (r.created_at as string) || undefined,
+    });
   });
 
-  const symbolItems: UnifiedItem[] = symbols.map((r) => ({
+  const symbolItems: UnifiedItem[] = symbols.map((r) => compact<UnifiedItem>({
     id: `symbol_${r.id}`,
     content_type: "Symbol",
     title: (r.description as string) || "Untitled symbol",
     url: `${SITE}/registry/${r.id}`,
-    doi: null,
     compounds: [],
     topic: (r.tags as string[]) || [],
     authority_type: "Community",
-    stance_score: null,
     people: [],
-    status: (r.status as string) || null,
-    verification: null,
-    phase: null,
-    source_date: (r.created_at as string) || null,
+    status: (r.status as string) || undefined,
+    source_date: (r.created_at as string) || undefined,
   }));
 
   const items = [...bibItems, ...trialItems, ...symbolItems];
@@ -310,10 +319,11 @@ export default async (req: Request): Promise<Response> => {
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.3",
+    version: "3.4",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
+    key_policy: "Keys are omitted when the value is unknown. An absent key means unknown, not false or zero.",
     filters: {
       content_type: contentTypeVocab,
       compound: "substring match against item.compounds",

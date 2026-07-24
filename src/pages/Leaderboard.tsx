@@ -256,7 +256,7 @@ const Leaderboard = () => {
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a 
-                  href="/registry" 
+                  href="/submit-symbol" 
                   className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
                   <Upload className="w-4 h-4" />
@@ -266,7 +266,7 @@ const Leaderboard = () => {
                   href="/my-symbols" 
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium"
                 >
-                  View My Dashboard
+                  View my symbols
                 </a>
               </div>
             </Card>
