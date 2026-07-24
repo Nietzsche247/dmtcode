@@ -12,21 +12,21 @@ declare global {
   }
 }
 
-// Bundle definitions matching BundleDetail.tsx
-const bundleData: Record<string, {
+// Bundle definitions matching BundleDetail.tsx. Discount percentages are
+// computed from item values so we never overstate the saving.
+type BundleItem = { name: string; value: number; sku: string };
+type BundleDef = {
   id: string;
   name: string;
   price: number;
-  originalPrice: number;
-  discount: string;
-  items: Array<{ name: string; value: number; sku: string }>;
-}> = {
+  items: BundleItem[];
+};
+
+const bundleDefs: Record<string, BundleDef> = {
   starter: {
     id: 'starter',
     name: 'Fractal Starter Kit',
     price: 85,
-    originalPrice: 106,
-    discount: '20% OFF',
     items: [
       { name: '650nm 5mW Laser Pointer', value: 28, sku: '650nm-laser-pointer' },
       { name: '500 lines/mm Diffraction Grating', value: 22, sku: 'diffraction-grating' },
@@ -38,8 +38,6 @@ const bundleData: Record<string, {
     id: 'gateway',
     name: 'Gateway Research Kit',
     price: 1200,
-    originalPrice: 1412,
-    discount: '15% OFF',
     items: [
       { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
       { name: 'ZnSe High-Index Lens (RI 2.4)', value: 285, sku: 'znse-lens' },
@@ -52,8 +50,6 @@ const bundleData: Record<string, {
     id: 'complete',
     name: 'Complete Symbol Kit',
     price: 2300,
-    originalPrice: 2875,
-    discount: '20% OFF',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
       { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
@@ -66,8 +62,6 @@ const bundleData: Record<string, {
     id: 'ceremony',
     name: 'Extended Research Package',
     price: 3500,
-    originalPrice: 4375,
-    discount: '20% OFF',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
       { name: 'Huepar Self-Leveling Laser System', value: 895, sku: 'huepar-level' },
@@ -78,6 +72,17 @@ const bundleData: Record<string, {
     ],
   },
 };
+
+const computeBundle = (def: BundleDef) => {
+  const originalPrice = def.items.reduce((sum, i) => sum + i.value, 0);
+  const rawDiscount = originalPrice > 0 ? ((originalPrice - def.price) / originalPrice) * 100 : 0;
+  const discountPct = Math.max(0, Math.floor(rawDiscount));
+  return { ...def, originalPrice, discountPct };
+};
+
+const bundleData: Record<string, ReturnType<typeof computeBundle>> = Object.fromEntries(
+  Object.entries(bundleDefs).map(([k, v]) => [k, computeBundle(v)])
+);
 
 // SKU to slug mapping
 const skuToSlug: Record<string, string> = {

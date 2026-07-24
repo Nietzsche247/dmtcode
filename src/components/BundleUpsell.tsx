@@ -16,23 +16,27 @@ interface BundleUpsellProps {
   onClose?: () => void;
 }
 
-const JOURNAL_DISCOUNT_BUNDLE = {
+const buildBundle = (base: { id: string; name: string; description: string; originalPrice: number; price: number }) => {
+  const rawDiscount = base.originalPrice > 0 ? ((base.originalPrice - base.price) / base.originalPrice) * 100 : 0;
+  const discountPct = Math.max(0, Math.floor(rawDiscount));
+  return { ...base, discountPct };
+};
+
+const JOURNAL_DISCOUNT_BUNDLE = buildBundle({
   id: 'journal-addon',
   name: 'Research Journal',
   description: 'Add documentation journal to your laser + grating setup',
-  discount: '20% OFF',
   originalPrice: 22,
   price: 17.60,
-};
+});
 
-const PROTOCOL_STARTER_BUNDLE = {
+const PROTOCOL_STARTER_BUNDLE = buildBundle({
   id: 'protocol-starter',
   name: 'Protocol Starter Kit',
   description: 'Complete 650nm laser + diffraction grating + research journal bundle',
-  discount: '20% OFF',
   originalPrice: 85,
   price: 68,
-};
+});
 
 export const BundleUpsell = ({ onClose }: BundleUpsellProps) => {
   const navigate = useNavigate();
