@@ -85,7 +85,8 @@ const Bibliography = () => {
   }, [rows]);
 
   const listJsonLd = useMemo(() => {
-    if (!featured.length) return null;
+    const source = featured.length ? featured : rows.slice(0, 24);
+    if (!source.length) return null;
     return {
       '@context': 'https://schema.org',
       '@type': 'Dataset',
@@ -95,7 +96,7 @@ const Bibliography = () => {
       license: 'https://creativecommons.org/licenses/by/4.0/',
       hasPart: {
         '@type': 'ItemList',
-        itemListElement: featured.map((r, i) => ({
+        itemListElement: source.map((r, i) => ({
           '@type': 'ListItem',
           position: i + 1,
           item: {
@@ -115,7 +116,7 @@ const Bibliography = () => {
         })),
       },
     };
-  }, [featured]);
+  }, [featured, rows]);
 
   return (
     <>

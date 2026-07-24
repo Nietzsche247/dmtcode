@@ -22,7 +22,7 @@ const Registry = () => {
         <meta name="description" content="Browse the open, community-validated catalogue of visual symbols reported during N,N-DMT experiences. Structured metadata, community confirmations, and free CC-BY-4.0 data." />
         <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0, null reports, baseline data" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/registry" />
+        
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
@@ -68,9 +68,7 @@ const Registry = () => {
         <Navigation />
         
         <main id="main-content" className="relative z-10 pt-20" role="main">
-          <div className="block md:hidden">
-            <Breadcrumb />
-          </div>
+          <Breadcrumb />
           <RegistryHero />
           <RegistryRationale />
           <RegistryStatistics />

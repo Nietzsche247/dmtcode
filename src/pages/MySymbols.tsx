@@ -249,7 +249,7 @@ const MySymbols = () => {
             {userSymbols.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-muted-foreground mb-4">You haven't submitted any symbols yet</p>
-                <Button onClick={() => window.location.href = '/registry#submit'}>
+                <Button onClick={() => window.location.href = '/submit-symbol'}>
                   Submit Your First Symbol
                 </Button>
               </div>
