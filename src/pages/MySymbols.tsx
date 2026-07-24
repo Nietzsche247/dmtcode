@@ -36,6 +36,8 @@ interface UserSymbol {
 }
 
 const MySymbols = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [userId, setUserId] = useState<string | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
