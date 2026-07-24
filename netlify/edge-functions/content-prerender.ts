@@ -530,7 +530,6 @@ async function renderPrepare(context: Context): Promise<Response> {
     "Instrument kits and group bundles for careful, well prepared practice. Honest ship windows, plain bills of materials, no surprises.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const usd = (cents: unknown) =>
     `$${(Number(cents) / 100).toFixed(0)}`;
@@ -757,7 +756,6 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     "A balanced evidence timeline with peer reviewed citations and stance scored milestones from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -983,7 +981,6 @@ async function renderFaq(context: Context): Promise<Response> {
     "Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured.",
     160,
   );
-  const ogImage = `${SITE}/placeholder.svg`;
 
   const organizationLd = {
     "@context": "https://schema.org",
