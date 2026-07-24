@@ -35,7 +35,10 @@ export const Breadcrumb = () => {
     'dashboard': 'Dashboard',
     'profile': 'Profile',
     'my-symbols': 'My Symbols',
-    'trials': 'Clinical Trials'
+    'trials': 'Clinical Trials',
+    'retreats': 'Retreat centers',
+    'theories': 'Open theories',
+    'co-witnesses': 'Co-witness wall'
   };
 
   return (

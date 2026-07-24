@@ -46,6 +46,7 @@ const researchItems: NavItem[] = [
 
 const explorerItems: NavItem[] = [
   { title: "Events & Retreats", href: "/events", description: "Conferences, workshops, and retreat centers", icon: Calendar },
+  { title: "Retreat centers", href: "/retreats", description: "Centers that operate openly and publish who they are", icon: Users },
   { title: "Tools & Equipment", href: "/prepare", description: "Lasers, lenses, and research equipment", icon: Wrench },
   { title: "Community", href: "/leaderboard", description: "Contributors, rankings, and discussions", icon: Users },
   { title: "Co-witness wall", href: "/co-witnesses", description: "Field notes from people who recognized the same symbol", icon: Users },

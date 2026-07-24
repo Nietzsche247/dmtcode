@@ -101,18 +101,18 @@ const Events = () => {
         <title>Research Events & Clinical Trials | DMT Code</title>
         <meta
           name="description"
-          content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones."
+          content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones."
         />
         <link rel="canonical" href="https://dmtcode.com/events" />
         <meta property="og:title" content="Research Events & Clinical Trials | DMT Code" />
-        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
         <meta property="og:url" content="https://dmtcode.com/events" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/events" />
         <meta name="twitter:title" content="Research Events & Clinical Trials | DMT Code" />
-        <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
         <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
@@ -141,7 +141,7 @@ const Events = () => {
             </h1>
 
             <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-              Community-sourced and moderator-reviewed research with transparent trust metrics.
+              Community sourced and moderator reviewed. Inclusion is not an endorsement.
             </p>
           </div>
         </section>
@@ -254,8 +254,8 @@ const Events = () => {
             <strong>Medical & Legal Disclaimer:</strong> This page is for educational and research reference purposes only.
             It does not constitute medical advice, treatment recommendation, or legal counsel. Psychedelic substances remain
             controlled in most jurisdictions. Consult licensed professionals before participation in any therapeutic or ceremonial context.
-            Trust ratings reflect community perception only and do not guarantee safety or quality. The DMT Code Project assumes no liability
-            for outcomes related to information presented here. Always verify retreat credentials, legal status, and medical contraindications independently.
+            A listing here is not an endorsement. Verify legal status, medical screening, staff credentials and emergency procedures directly with the organizer or center before you book. The DMT Code Project assumes no liability
+            for outcomes related to information presented here.
           </AlertDescription>
         </Alert>
       </main>

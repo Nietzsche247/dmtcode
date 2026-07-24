@@ -1344,7 +1344,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Research Timeline and Events",
     paragraphs: [
       "This page aggregates community reported events and publicly available clinical trial data into one scholarly reference timeline. Inclusion does not constitute endorsement.",
-      "Events and trials are sourced from the community and from public registries. Trust ratings on retreat listings reflect participant feedback and are reviewed by moderators before publication.",
+      "Events and trials are sourced from the community and from public registries, and are reviewed by moderators before publication. A listing is not an endorsement. Verify legal status, medical screening and staff credentials directly with any organizer or retreat center before you book.",
     ],
     links: [
       { href: "/trials", label: "Clinical trials observatory" },
@@ -1486,7 +1486,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       const listItems = [
         ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
         ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
-        ...rets.map((r, i) => ({ "@type": "Event", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
+        ...rets.map((r, i) => ({ "@type": "LodgingBusiness", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
       ];
       if (listItems.length) {
         extraLd.push({
