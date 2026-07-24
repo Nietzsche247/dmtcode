@@ -73,6 +73,13 @@ export const UserDropdown = ({ userName, avatarUrl, onSignOut }: UserDropdownPro
           <Bookmark className="mr-2 h-4 w-4" />
           My Symbols
         </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => navigate('/submit-symbol')}
+          className="cursor-pointer min-h-[44px]"
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Submit a Symbol
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           onClick={handleSignOut}
