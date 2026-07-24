@@ -101,7 +101,7 @@ const Events = () => {
         <title>Research Events & Clinical Trials | DMT Code</title>
         <meta
           name="description"
-          content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones."
+          content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones."
         />
         <link rel="canonical" href="https://dmtcode.com/events" />
         <meta property="og:title" content="Research Events & Clinical Trials | DMT Code" />
