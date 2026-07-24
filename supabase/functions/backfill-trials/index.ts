@@ -28,10 +28,30 @@ function fetchWithRetry(url: string): Promise<Response | null> {
 function pickPhase(phases: string[] | undefined): string | null {
   if (!phases || !phases.length) return null;
   const cleaned = phases
-    .map((p) => p.replace('PHASE', 'Phase ').replace(/_/g, ' '))
+    .map((p) => p.replace('PHASE', 'Phase ').replace(/_/g, ' ').trim())
+    .filter(Boolean)
     .join(', ');
   return cleaned || null;
 }
+
+// ClinicalTrials.gov returns markdown-escaped punctuation (e.g. "1\." or "\>").
+function unescapeRegistryText(s: string | undefined | null): string | null {
+  if (!s) return null;
+  return s.replace(/\\([^A-Za-z0-9\s])/g, '$1');
+}
+
+const STATUS_MAP: Record<string, string> = {
+  RECRUITING: 'recruiting',
+  NOT_YET_RECRUITING: 'planned',
+  ACTIVE_NOT_RECRUITING: 'active',
+  ENROLLING_BY_INVITATION: 'enrolling by invitation',
+  COMPLETED: 'completed',
+  TERMINATED: 'terminated',
+  SUSPENDED: 'suspended',
+  WITHDRAWN: 'withdrawn',
+  UNKNOWN: 'unknown',
+};
+
 
 function buildLocation(locs: any[] | undefined): string | null {
   if (!locs || !locs.length) return null;
