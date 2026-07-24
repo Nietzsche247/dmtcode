@@ -178,6 +178,17 @@ export default async () => {
     }
   } catch (_e) { /* skip */ }
 
+  // Per-article canonical URLs. Predicate MUST match /data.json and /articles.json
+  // (is_published=eq.true). lastmod uses the row's real updated_at.
+  try {
+    addBySlug(
+      "/articles",
+      (await page("articles", "is_published=eq.true", "slug,updated_at")) as any,
+      "0.7"
+    );
+  } catch (_e) { /* skip */ }
+
+
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
