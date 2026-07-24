@@ -2289,10 +2289,11 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
   }
 
   if (!match) {
-    const notFoundHead = [
-      `<title>Theory not found | DMT Code</title>`,
-      `<meta name="robots" content="noindex" />`,
-    ].join("\n");
+    const notFoundHead = buildHead({
+      title: "Theory not found | DMT Code",
+      canonical: `${SITE}/theories`,
+      robots: "noindex",
+    });
     const notFoundBody = `<article data-prerender="theory-not-found">
   <h1>Theory not found</h1>
   <p>This theory is not currently indexed or the link is out of date.</p>
