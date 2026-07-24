@@ -1503,6 +1503,29 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
         });
       }
     } catch { /* ignore */ }
+  } else if (key === "home" && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/articles?is_published=eq.true&select=slug,title,dek&order=published_at.desc&limit=1`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            Accept: "application/json",
+          },
+        },
+      );
+      if (res.ok) {
+        const rows = (await res.json()) as Array<Record<string, unknown>>;
+        const a = rows[0];
+        if (a && a.slug && a.title) {
+          const slug = String(a.slug);
+          const title = String(a.title);
+          const dek = String(a.dek || "");
+          recentList = `<section><h2>Latest article</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">Read all articles</a></p></section>`;
+        }
+      }
+    } catch { /* ignore */ }
   } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
