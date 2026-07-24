@@ -156,6 +156,26 @@ export default async () => {
   try {
     addById("/retreats", (await page("retreats", "is_approved=eq.true")) as any, "0.5");
   } catch (_e) { /* skip */ }
+  // Per-theory canonical URLs. Predicate MUST match /data.json exactly (is_approved=true).
+  try {
+    const theoryRows = (await page(
+      "theories",
+      "is_approved=eq.true",
+      "id,title,updated_at"
+    )) as Array<{ id: string; title: string; updated_at: string }>;
+    for (const r of theoryRows) {
+      const slug = theorySlug(r.title || "");
+      if (!slug) continue;
+      const lastmod = (r.updated_at || "").slice(0, 10);
+      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
+      urls.push(
+        `  <url><loc>${SITE}/theories/${xesc(slug)}</loc>` +
+          `${lastmodTag}<changefreq>monthly</changefreq>` +
+          `<priority>0.6</priority></url>`
+      );
+    }
+  } catch (_e) { /* skip */ }
+
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
