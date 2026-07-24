@@ -144,15 +144,15 @@ const Trials = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Clinical Trials — DMT Research Observatory | DMT Code</title>
+        <title>Clinical Trials: DMT Research Observatory | DMT Code</title>
         <meta name="description" content={description} />
         <link rel="canonical" href="https://dmtcode.com/trials" />
-        <meta property="og:title" content="Clinical Trials — DMT Research Observatory" />
+        <meta property="og:title" content="Clinical Trials: DMT Research Observatory" />
         <meta property="og:description" content={description} />
         <meta property="og:url" content="https://dmtcode.com/trials" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Clinical Trials — DMT Research Observatory" />
+        <meta name="twitter:title" content="Clinical Trials: DMT Research Observatory" />
         <meta name="twitter:description" content={description} />
         <script type="application/ld+json">
           {JSON.stringify({
