@@ -165,6 +165,13 @@ const App = () => (
               </Suspense>
             </ErrorBoundary>
           } />
+          <Route path="/retreats" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Retreats />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/retreats/:id" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
