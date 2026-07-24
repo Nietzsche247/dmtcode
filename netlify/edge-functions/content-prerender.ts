@@ -2092,23 +2092,14 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
   <p><a href="${SITE}/events">Back to the events timeline</a></p>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="article" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    r.image_url ? `<meta property="og:image" content="${esc(String(r.image_url))}" />` : "",
-    `<meta name="twitter:card" content="${r.image_url ? "summary_large_image" : "summary"}" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    r.image_url ? `<meta name="twitter:image" content="${esc(String(r.image_url))}" />` : "",
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(lodgingLd)}</script>`,
-  ].filter(Boolean).join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    ogImage: r.image_url ? String(r.image_url) : undefined,
+    jsonLd: [organizationLd, breadcrumbLd, lodgingLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
