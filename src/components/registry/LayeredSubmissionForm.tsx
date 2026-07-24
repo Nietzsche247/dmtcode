@@ -1300,9 +1300,6 @@ export const LayeredSubmissionForm = () => {
               <Button onClick={resetForm} size="lg">
                 Submit Another Symbol
               </Button>
-              <Button variant="outline" onClick={() => window.location.href = '/my-symbols'}>
-                View My Symbols
-              </Button>
               <Button variant="ghost" onClick={() => window.location.href = '/registry#browse'}>
                 Explore Registry
               </Button>
