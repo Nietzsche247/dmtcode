@@ -283,7 +283,7 @@ export default async (req: Request): Promise<Response> => {
 
   const theoriesFeed = theories.map((r) => ({
     id: String(r.id),
-    url: `${SITE}/theories`,
+    url: `${SITE}/theories/${theorySlug(String((r.title as string) || ""))}`,
     title: (r.title as string) || null,
     summary: (r.summary as string) || null,
     content: (r.content as string) || null,
