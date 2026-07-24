@@ -59,6 +59,11 @@ export const Footer = () => {
                   Protocol Guide
                 </a>
               </li>
+              <li>
+                <a href="/co-witnesses" className="text-muted-foreground hover:text-primary transition-colors">
+                  Co-witness wall
+                </a>
+              </li>
             </ul>
           </div>
 
