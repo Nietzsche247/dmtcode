@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Building2, User, ExternalLink, FileText } from "lucide-react";
 import CommunityNotes from "./CommunityNotes";
-import NotifyMeForm from "./NotifyMeForm";
+
 import ICalExport from "./ICalExport";
 import SocialShare from "./SocialShare";
 import TrialNotifyButton from "./TrialNotifyButton";
