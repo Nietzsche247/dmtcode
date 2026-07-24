@@ -80,6 +80,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/protocols/*"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/forecasts"
   function = "content-prerender"
 

@@ -98,6 +98,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderRetreatDetail(context, id);
     }
+    if (kind === "protocols" && seg.length === 2 && seg[1]) {
+      return await renderProtocolDetail(context, seg[1]);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
@@ -1639,6 +1642,7 @@ export const config: Config = {
     "/events/*",
     "/retreats/*",
     "/theories",
+    "/protocols/*",
   ],
 };
 
@@ -2008,6 +2012,140 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
     `<script type="application/ld+json">${jsonLd(lodgingLd)}</script>`,
   ].filter(Boolean).join("\n");
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- Protocol detail prerender ----------
+
+function humanizeKey(key: string): string {
+  const s = key.replace(/[_-]+/g, " ").trim();
+  if (!s) return "";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function renderJsonNode(node: unknown, depth: number): string {
+  if (node === null || node === undefined) return "";
+  if (typeof node === "string") {
+    const t = node.trim();
+    return t ? `<p>${esc(t)}</p>` : "";
+  }
+  if (typeof node === "number" || typeof node === "boolean") {
+    return `<p>${esc(String(node))}</p>`;
+  }
+  if (Array.isArray(node)) {
+    if (!node.length) return "";
+    const allPrim = node.every(
+      (v) => v === null || ["string", "number", "boolean"].includes(typeof v),
+    );
+    if (allPrim) {
+      return `<ul>${node
+        .map((v) => `<li>${esc(String(v ?? "")).trim()}</li>`)
+        .filter((li) => li !== "<li></li>")
+        .join("")}</ul>`;
+    }
+    return node.map((v) => renderJsonNode(v, depth)).join("");
+  }
+  if (typeof node === "object") {
+    const obj = node as Record<string, unknown>;
+    const entries = Object.entries(obj).filter(
+      ([, v]) => v !== null && v !== undefined && !(typeof v === "string" && v.trim() === ""),
+    );
+    if (!entries.length) return "";
+    const hTag = `h${Math.min(6, Math.max(3, depth + 2))}`;
+    return entries
+      .map(([k, v]) => {
+        const label = humanizeKey(k);
+        if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
+          return `<p><strong>${esc(label)}:</strong> ${esc(String(v))}</p>`;
+        }
+        return `<section><${hTag}>${esc(label)}</${hTag}>${renderJsonNode(v, depth + 1)}</section>`;
+      })
+      .join("");
+  }
+  return "";
+}
+
+async function renderProtocolDetail(context: Context, slug: string): Promise<Response> {
+  const shellRes = await context.next();
+  const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  if (!cleanSlug) return shellRes;
+
+  const rows = await sbGetRows(
+    "protocols",
+    `slug=eq.${cleanSlug}&is_published=is.true&select=slug,title,compound,status,tagline,content_jsonb,updated_at`,
+  );
+  const r = rows[0];
+  if (!r) return shellRes;
+
+  const canonical = `${SITE}/protocols/${cleanSlug}`;
+  const title = `${String(r.title)} protocol | DMT Code`;
+  const tagline = String(r.tagline || "").trim();
+  const metaDesc = clip(
+    tagline || `${String(r.title)} protocol documentation indexed by DMT Code. Reference material, not medical advice.`,
+    160,
+  );
+
+  const contentHtml = r.content_jsonb ? renderJsonNode(r.content_jsonb, 0) : "";
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Protocols", item: `${SITE}/protocols` },
+      { "@type": "ListItem", position: 3, name: String(r.title), item: canonical },
+    ],
+  };
+  const medicalLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "@id": canonical,
+    name: String(r.title),
+    url: canonical,
+    description: metaDesc,
+    about: r.compound ? { "@type": "Drug", name: String(r.compound) } : undefined,
+    dateModified: r.updated_at ? String(r.updated_at) : undefined,
+    inLanguage: "en",
+    isPartOf: { "@id": `${SITE}#website` },
+    publisher: { "@id": `${SITE}#org` },
+    license: LICENSE,
+  };
+
+  const body = `<article data-prerender="protocol">
+  <h1>${esc(String(r.title))} protocol</h1>
+  ${r.compound ? `<p><strong>Compound:</strong> ${esc(String(r.compound))}</p>` : ""}
+  ${r.status ? `<p><strong>Status:</strong> ${esc(String(r.status))}</p>` : ""}
+  ${tagline ? `<p>${esc(tagline)}</p>` : ""}
+  ${contentHtml || "<p>Protocol documentation is being prepared.</p>"}
+  <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
+  <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(metaDesc)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:title" content="${esc(title)}" />`,
+    `<meta property="og:description" content="${esc(metaDesc)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(title)}" />`,
+    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(medicalLd)}</script>`,
+  ].join("\n");
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
