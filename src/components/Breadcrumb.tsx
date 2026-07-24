@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-export const Breadcrumb = () => {
+export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
@@ -57,7 +57,8 @@ export const Breadcrumb = () => {
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join('/')}`;
           const isLast = index === pathnames.length - 1;
-          const label = breadcrumbNameMap[value] || value;
+          const mapped = breadcrumbNameMap[value];
+          const label = isLast && titleOverride ? titleOverride : (mapped || value);
 
           return (
             <li key={to} className="flex items-center space-x-2">

@@ -1503,6 +1503,29 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
         });
       }
     } catch { /* ignore */ }
+  } else if (key === "home" && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/articles?is_published=eq.true&select=slug,title,dek&order=published_at.desc&limit=1`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            Accept: "application/json",
+          },
+        },
+      );
+      if (res.ok) {
+        const rows = (await res.json()) as Array<Record<string, unknown>>;
+        const a = rows[0];
+        if (a && a.slug && a.title) {
+          const slug = String(a.slug);
+          const title = String(a.title);
+          const dek = String(a.dek || "");
+          recentList = `<section><h2>Latest article</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">Read all articles</a></p></section>`;
+        }
+      }
+    } catch { /* ignore */ }
   } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
@@ -2419,9 +2442,13 @@ function mdToHtml(src: string): string {
       codes.push(`<code>${c}</code>`);
       return `\u0001C${i}\u0001`;
     });
-    // Links: [text](url). Escape target with quotes already escaped by esc0.
+    // Links: [text](url). Only allow safe schemes: http, https, mailto, site-relative (/), anchors (#).
+    // Anything else renders as plain label text with no anchor.
     t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label: string, href: string) => {
-      const safe = href.replace(/"/g, "&quot;");
+      const trimmed = href.trim();
+      const safeHref = /^(https?:\/\/|mailto:|\/[^/]|\/$|#)/i.test(trimmed) || trimmed === "/";
+      if (!safeHref) return label;
+      const safe = trimmed.replace(/"/g, "&quot;");
       return `<a href="${safe}" rel="noopener">${label}</a>`;
     });
     t = t.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
@@ -2765,9 +2792,10 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     articleBody: plainBody,
     datePublished: r.published_at,
     dateModified: r.updated_at,
-    author: r.author
-      ? { "@type": "Person", name: String(r.author) }
-      : { "@id": `${SITE}#org` },
+    author:
+      r.author && String(r.author).trim() && String(r.author).trim() !== "DMT Code Project"
+        ? { "@type": "Person", name: String(r.author) }
+        : { "@id": `${SITE}#org` },
     publisher: { "@id": `${SITE}#org` },
     license: LICENSE,
     isAccessibleForFree: true,

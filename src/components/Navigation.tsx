@@ -89,6 +89,7 @@ export const Navigation = () => {
   };
 
   const researchItems = [
+    { path: '/articles', label: 'Articles' },
     { path: '/registry', label: 'Symbol Registry' },
     { path: '/evidence-map', label: 'Evidence Map' },
     { path: '/trials', label: 'Clinical Trials' },

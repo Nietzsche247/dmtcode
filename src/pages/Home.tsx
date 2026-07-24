@@ -15,6 +15,7 @@ import { RecentContributions } from '@/components/registry/RecentContributions';
 import { CommunityStats } from '@/components/registry/CommunityStats';
 import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
+import { LatestArticle } from '@/components/home/LatestArticle';
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -245,6 +246,7 @@ const Home = () => {
           
           {/* Testimonials - handles its own mode visibility */}
           <TestimonialsCarousel />
+          <LatestArticle />
           <EmailCapture source="homepage" />
           
           {/* CTA Section */}

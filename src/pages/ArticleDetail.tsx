@@ -8,6 +8,8 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Badge } from "@/components/ui/badge";
+import { useThemeStore } from "@/stores/themeStore";
+import { cn } from "@/lib/utils";
 
 type Article = {
   id: string;
@@ -43,6 +45,7 @@ const formatDate = (iso: string | null) => {
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
   const [article, setArticle] = useState<Article | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -191,7 +194,7 @@ export default function ArticleDetail() {
 
       <main className="pt-20 pb-20 px-4">
         <article className="max-w-3xl mx-auto">
-          <Breadcrumb />
+          <Breadcrumb titleOverride={article.title} />
 
           <header className="mt-4 mb-8 space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">{article.title}</h1>
@@ -213,7 +216,7 @@ export default function ArticleDetail() {
             )}
           </header>
 
-          <div className="prose prose-invert max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
+          <div className={cn("prose max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline", resolvedTheme === 'dark' && "prose-invert")}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
