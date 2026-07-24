@@ -239,11 +239,14 @@ const Events = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Verified Retreats & Centers</h2>
+          <h2 className="text-2xl font-semibold mb-4">Retreat centers</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Retreat centers rated by community members. Ratings reflect participant feedback and are reviewed by moderators before publication.
+            Centers that operate openly and publish who they are and where. A listing here is not an endorsement. Verify legal status, medical screening and staff credentials directly with the center before booking.
           </p>
           <RetreatGrid />
+          <p className="mt-4 text-sm">
+            <Link to="/retreats" className="underline underline-offset-4 hover:text-primary">All retreat centers</Link>
+          </p>
         </section>
 
         <Alert className="mt-12 border-muted">
