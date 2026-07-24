@@ -14,6 +14,7 @@ import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { useReviewStreak } from '@/hooks/useReviewStreak';
 import { CoWitnessSettings } from '@/components/co-witness/CoWitnessSettings';
+import { HighFivesReceived } from '@/components/co-witness/HighFivesReceived';
 import { Flame, Snowflake } from 'lucide-react';
 
 interface UserSymbol {
