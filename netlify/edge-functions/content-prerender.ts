@@ -1486,7 +1486,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       const listItems = [
         ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
         ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
-        ...rets.map((r, i) => ({ "@type": "Event", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
+        ...rets.map((r, i) => ({ "@type": "LodgingBusiness", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
       ];
       if (listItems.length) {
         extraLd.push({

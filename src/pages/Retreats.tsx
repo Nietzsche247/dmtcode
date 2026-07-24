@@ -62,10 +62,12 @@ const Retreats = () => {
       "@type": "ItemList",
       numberOfItems: retreats.length,
       itemListElement: retreats.map((r, i) => {
+        const detailUrl = `https://dmtcode.com/retreats/${r.id}`;
         const item: Record<string, unknown> = {
           "@type": "LodgingBusiness",
+          "@id": detailUrl,
           name: r.name,
-          url: `https://dmtcode.com/retreats/${r.id}`,
+          url: r.website_url || detailUrl,
           address: {
             "@type": "PostalAddress",
             ...(r.location ? { addressLocality: r.location } : {}),
@@ -74,7 +76,6 @@ const Retreats = () => {
         };
         if (r.description) item.description = r.description;
         if (r.image_url) item.image = r.image_url;
-        if (r.website_url) item.url = r.website_url;
         if (r.contact_email) item.email = r.contact_email;
         return { "@type": "ListItem", position: i + 1, item };
       }),
