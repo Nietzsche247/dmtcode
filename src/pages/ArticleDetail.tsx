@@ -8,6 +8,8 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Badge } from "@/components/ui/badge";
+import { useThemeStore } from "@/stores/themeStore";
+import { cn } from "@/lib/utils";
 
 type Article = {
   id: string;
