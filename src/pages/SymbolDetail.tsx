@@ -89,7 +89,7 @@ const SymbolDetail = () => {
   const [loading, setLoading] = useState(true);
 
   // Auto-fire pending "I saw this too" vote on return from /auth
-  const { userId, userVotes, seenIt } = useSymbolVoting(id || '', symbol?.user_id);
+  const { userId, userVotes, voteCounts, seenIt } = useSymbolVoting(id || '', symbol?.user_id);
   const autoFiredRef = useRef(false);
   useEffect(() => {
     const pending = searchParams.get('pendingVote');
