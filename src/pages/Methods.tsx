@@ -109,7 +109,7 @@ const Methods = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-gold hover:underline"
                   >
-                    Timmermann et al. (2019) Experimental Design DOI: 10.1038/s41598-019-51974-4
+                    Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </AccordionContent>
