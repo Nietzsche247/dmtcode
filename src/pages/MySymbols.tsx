@@ -51,7 +51,8 @@ const MySymbols = () => {
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = '/auth';
+      toast.error('Please log in to view your symbols');
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     setUserId(user.id);
