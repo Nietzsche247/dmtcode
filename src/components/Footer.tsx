@@ -45,7 +45,7 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="/tools" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="/prepare" className="text-muted-foreground hover:text-primary transition-colors">
                   Equipment
                 </a>
               </li>

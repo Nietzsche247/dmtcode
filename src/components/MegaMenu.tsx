@@ -50,7 +50,7 @@ const researchItems: NavItem[] = [
   },
   {
     title: "Clinical Trials",
-    href: "/events",
+    href: "/trials",
     description: "Active psychedelic research trials",
     icon: FlaskConical,
   },
@@ -89,7 +89,7 @@ const explorerItems: NavItem[] = [
   },
   {
     title: "Tools & Equipment",
-    href: "/tools",
+    href: "/prepare",
     description: "Lasers, lenses, and research equipment",
     icon: Wrench,
   },
@@ -225,7 +225,7 @@ export const MegaMenu = () => {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {explorerItems
-                .filter((item) => mode === 'explorer' || item.href === '/tools' || item.href === '/events')
+                .filter((item) => mode === 'explorer' || item.href === '/prepare' || item.href === '/events')
                 .map((item) => (
                   <li key={item.href}>
                     <NavigationMenuLink asChild>
