@@ -1346,6 +1346,21 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Null reports",
   },
+  events: {
+    title: "Research Timeline and Events | DMT Code",
+    description: "Community reported research events, workshops, and DMT related clinical trial milestones. A scholarly reference timeline aggregated from public sources.",
+    heading: "Research Timeline and Events",
+    paragraphs: [
+      "This page aggregates community reported events and publicly available clinical trial data into one scholarly reference timeline. Inclusion does not constitute endorsement.",
+      "Events and trials are sourced from the community and from public registries. Trust ratings on retreat listings reflect participant feedback and are reviewed by moderators before publication.",
+    ],
+    links: [
+      { href: "/trials", label: "Clinical trials observatory" },
+      { href: "/evidence-map", label: "Evidence timeline (1926 to present)" },
+      { href: "/bibliography", label: "Research bibliography" },
+    ],
+    breadcrumbName: "Events",
+  },
   glossary: {
     title: "Glossary of key terms | DMT Code",
     description: "Definitions of the academic and technical terms used across the DMT Code project.",
