@@ -32,7 +32,7 @@ const Glossary = () => {
     },
     {
       term: "Geometric Archetype",
-      definition: "Recurring symbol morphology reported across independent observers. Registry documents 52 primary archetypes with consistent features (symmetry, line structure, orientation)."
+      definition: "Recurring symbol morphology reported across independent observers, described by shared features such as symmetry, line structure, and orientation."
     },
     {
       term: "Inter-subject Consistency",
@@ -52,7 +52,7 @@ const Glossary = () => {
     },
     {
       term: "Photobiomodulation",
-      definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Proposed mechanism for symbol clarity enhancement."
+      definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Any link to symbol clarity in the 650 nm protocol is an untested hypothesis and has not been demonstrated."
     },
     {
       term: "Registry Glyph",
@@ -140,7 +140,7 @@ const Glossary = () => {
     },
     {
       term: "Form Constant",
-      definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states. Arise from primary visual cortex (V1) architecture. Distinguished from discrete alphabetic-like symbols reported in 650 nm protocol (Michael et al. 2021, DOI: 10.1098/rstb.2000.0769)."
+      definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states. Arise from primary visual cortex (V1) architecture. Distinguished from discrete alphabetic-like symbols reported in 650 nm protocol (Michael et al. 2021, DOI: 10.3389/fpsyg.2021.720717)."
     }
   ];
 

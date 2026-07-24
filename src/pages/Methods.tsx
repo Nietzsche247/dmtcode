@@ -39,7 +39,7 @@ const Methods = () => {
                 "name": "How do you design a blinded experiment for the 650 nm laser protocol?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Double-blind design requires: (1) Sham laser device (identical appearance, no 650 nm output), (2) Independent experimenter randomizes real/sham assignment, (3) Participant and symbol recorder both blinded to condition. Control optics (wavelength, intensity) and N,N-DMT dose. Cite Timmermann et al. (2019) DOI: 10.1038/s41598-019-51974-4."
+                  "text": "Double-blind design requires: (1) Sham laser device (identical appearance, no 650 nm output), (2) Independent experimenter randomizes real/sham assignment, (3) Participant and symbol recorder both blinded to condition. Control optics (wavelength, intensity) and N,N-DMT dose. See Timmermann et al. (2019), an EEG study of the DMT state, DOI: 10.1038/s41598-019-51974-4."
                 }
               },
               {
@@ -109,7 +109,7 @@ const Methods = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-gold hover:underline"
                   >
-                    Timmermann et al. (2019) Experimental Design DOI: 10.1038/s41598-019-51974-4
+                    Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </AccordionContent>
@@ -162,12 +162,12 @@ const Methods = () => {
                     <li><strong>Symbol frequency analysis:</strong> Track how often identical symbols appear across participants. High-consistency symbols (≥3 independent observers) warrant focused analysis.</li>
                   </ul>
                   <a 
-                    href="https://doi.org/10.1098/rstb.2000.0769" 
+                    href="https://doi.org/10.3389/fpsyg.2021.720717" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-gold hover:underline"
                   >
-                    Michael et al. (2021) Form Constant Analysis DOI: 10.1098/rstb.2000.0769
+                    Michael, Luke and Robinson (2021) An Encounter With the Other: A Thematic and Content Analysis of DMT Experiences From a Naturalistic Field Study. Frontiers in Psychology 12, 720717. DOI: 10.3389/fpsyg.2021.720717
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </AccordionContent>

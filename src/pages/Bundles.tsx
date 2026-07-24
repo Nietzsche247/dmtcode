@@ -37,7 +37,6 @@ const bundlesRaw = [
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
     price: 85,
-    discount: '20% OFF',
     tier: 'entry',
     image: bundleStarterImg,
     items: [
@@ -62,7 +61,6 @@ const bundlesRaw = [
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
     price: 1000,
-    discount: '13% OFF',
     tier: 'mid',
     popular: true,
     image: bundleGatewayImg,
@@ -90,7 +88,6 @@ const bundlesRaw = [
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
     price: 2200,
-    discount: '15% OFF',
     tier: 'high',
     image: bundleCompleteImg,
     items: [
@@ -117,7 +114,6 @@ const bundlesRaw = [
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
     price: 3200,
-    discount: '15% OFF',
     tier: 'premium',
     image: bundleCeremonyImg,
     items: [
@@ -143,10 +139,23 @@ const bundlesRaw = [
   },
 ];
 
-const bundles = bundlesRaw.map((b) => ({
-  ...b,
-  originalPrice: b.items.reduce((sum, i) => sum + i.value, 0),
-}));
+const bundles = bundlesRaw.map((b) => {
+  const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
+  const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
+  const pct = Math.floor(rawPct);
+  return {
+    ...b,
+    originalPrice,
+    discount: pct > 0 ? `${pct}% OFF` : '',
+  };
+});
+
+const maxDiscountPct = bundles.reduce((max, b) => {
+  const pct = b.originalPrice > b.price
+    ? Math.floor(((b.originalPrice - b.price) / b.originalPrice) * 100)
+    : 0;
+  return pct > max ? pct : max;
+}, 0);
 
 
 const Bundles = () => {
@@ -271,7 +280,7 @@ const Bundles = () => {
           <section className="container mx-auto px-4 py-16 max-w-6xl text-center">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30">
               <Package className="w-3 h-3 mr-1" />
-              Save Up to 20%
+              {maxDiscountPct > 0 ? `Save Up to ${maxDiscountPct}%` : 'Curated Research Kits'}
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">

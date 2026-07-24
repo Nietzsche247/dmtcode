@@ -69,7 +69,6 @@ const bundleDataRaw = {
     tagline: 'Perfect for first-time researchers',
     description: 'Entry-level research kit containing calibrated 650nm laser pointer, diffraction grating for beam analysis, and protocol documentation journal. Ideal for researchers beginning systematic 650nm protocol study.',
     price: 85,
-    discount: '20% OFF',
     tier: 'entry',
     items: [
       { name: '650nm 5mW Laser Pointer', value: 28, sku: '650nm-laser-pointer' },
@@ -95,7 +94,6 @@ const bundleDataRaw = {
     tagline: 'Most popular for serious researchers',
     description: 'Comprehensive research package featuring precision 650nm laser module, high-index ZnSe lens for beam shaping, diffraction analysis equipment, and full documentation setup. Recommended for researchers committed to systematic optical study.',
     price: 1000,
-    discount: '13% OFF',
     tier: 'mid',
     popular: true,
     items: [
@@ -124,7 +122,6 @@ const bundleDataRaw = {
     tagline: 'Everything for advanced research',
     description: 'Full-spectrum optical research package with professional 660nm MitoMAT light therapy equipment, precision laser modules, multiple lens types for refractive experiments, and comprehensive documentation tools.',
     price: 2200,
-    discount: '15% OFF',
     tier: 'high',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
@@ -153,7 +150,6 @@ const bundleDataRaw = {
     tagline: 'For comprehensive optical research',
     description: 'Premium research package including professional-grade optical equipment, full MitoMAT system, self-leveling laser apparatus, multiple wavelength modules, and comprehensive integration documentation for extended research protocols.',
     price: 3200,
-    discount: '15% OFF',
     tier: 'premium',
     items: [
       { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
@@ -179,13 +175,15 @@ const bundleDataRaw = {
   },
 };
 
-// originalPrice is computed from item values so display and savings math stay honest.
+// originalPrice and discount are computed from item values so display and savings math stay honest.
 const bundleData = Object.fromEntries(
-  Object.entries(bundleDataRaw).map(([key, b]) => [
-    key,
-    { ...b, originalPrice: b.items.reduce((sum, i) => sum + i.value, 0) },
-  ])
-) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number }>;
+  Object.entries(bundleDataRaw).map(([key, b]) => {
+    const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
+    const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
+    const pct = Math.floor(rawPct);
+    return [key, { ...b, originalPrice, discount: pct > 0 ? `${pct}% OFF` : '' }];
+  })
+) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number; discount: string }>;
 
 
 const BUNDLE_PRODUCT_QUERY = `
@@ -584,9 +582,11 @@ const BundleDetail = () => {
                     Most Popular
                   </Badge>
                 )}
-                <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
-                  {bundle.discount}
-                </Badge>
+                {bundle.discount && (
+                  <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
+                    {bundle.discount}
+                  </Badge>
+                )}
               </div>
 
               {/* Details */}
