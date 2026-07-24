@@ -3,7 +3,7 @@ import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { ExplainerSection } from '@/components/ExplainerSection';
 import { ResearchSection } from '@/components/ResearchSection';
-import { TheoriesSection } from '@/components/TheoriesSection';
+
 
 import { ResearchPapersSection } from '@/components/ResearchPapersSection';
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
@@ -97,7 +97,7 @@ const Index = () => {
           <HeroSection />
           <ExplainerSection />
           <ResearchSection />
-          <TheoriesSection />
+          
           
           <TestimonialsCarousel />
           <LaserGuide />

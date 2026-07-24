@@ -213,9 +213,14 @@ export const TheoriesDashboard = () => {
             Probability & Theories Dashboard
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Community-voted explanatory frameworks for the DMT code phenomenon
+            Community proposed explanatory frameworks for the DMT code phenomenon.
+          </p>
+          <p className="text-xs text-muted-foreground max-w-2xl mx-auto mt-3 italic">
+            Starting hypotheses, listed for structure. Community voting begins from zero and is never seeded.
           </p>
         </div>
+
+
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {theories.map((theory) => (
@@ -224,14 +229,6 @@ export const TheoriesDashboard = () => {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <CardTitle className="text-lg mb-2">{theory.title}</CardTitle>
-                    {theory.probability_percentage && (
-                      <div className="space-y-2">
-                        <Progress value={theory.probability_percentage} className="h-2" />
-                        <span className="text-sm font-semibold text-primary">
-                          {theory.probability_percentage}% probability estimate
-                        </span>
-                      </div>
-                    )}
                   </div>
                   <Button
                     variant={userVotes[theory.id] ? "default" : "outline"}
