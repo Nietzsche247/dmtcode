@@ -113,6 +113,7 @@ const App = () => (
           <GA4Tracker />
           <AvatarToastListener />
           <BadgeToastListener />
+          <HighFiveToastListener />
           <PWAInstallPrompt />
           <Routes>
           <Route path="/" element={<Home />} />
