@@ -55,6 +55,8 @@ interface UnifiedItem {
   stance_score: number | null;
   people: string[];
   status: string | null;
+  verification: string | null;
+  phase: string | null;
   source_date: string | null;
 }
 
@@ -163,7 +165,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,trial_type,status,confirmed_status,application_url,url,notes,eligibility,created_at",
+      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at",
       "is_approved=is.true"
     ),
     fetchAll(
