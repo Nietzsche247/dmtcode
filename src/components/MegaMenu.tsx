@@ -72,6 +72,12 @@ const researchItems: NavItem[] = [
     description: "Skeptical perspectives and counter-evidence",
     icon: ScrollText,
   },
+  {
+    title: "Open Theories",
+    href: "/theories",
+    description: "Explanatory frameworks, attributed and voted on",
+    icon: Sparkles,
+  },
 ];
 
 const explorerItems: NavItem[] = [
