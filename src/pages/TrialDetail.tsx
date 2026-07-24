@@ -173,7 +173,7 @@ const TrialDetail = () => {
           ].map(([term, val]) => (
             <div key={term as string}>
               <dt className="label-data text-[10px] text-muted-foreground">{term}</dt>
-              <dd className="mt-1 text-sm">{val || '—'}</dd>
+              <dd className="mt-1 text-sm">{val || 'n/a'}</dd>
             </div>
           ))}
         </dl>
