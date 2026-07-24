@@ -254,8 +254,8 @@ const Events = () => {
             <strong>Medical & Legal Disclaimer:</strong> This page is for educational and research reference purposes only.
             It does not constitute medical advice, treatment recommendation, or legal counsel. Psychedelic substances remain
             controlled in most jurisdictions. Consult licensed professionals before participation in any therapeutic or ceremonial context.
-            Trust ratings reflect community perception only and do not guarantee safety or quality. The DMT Code Project assumes no liability
-            for outcomes related to information presented here. Always verify retreat credentials, legal status, and medical contraindications independently.
+            A listing here is not an endorsement. Verify legal status, medical screening, staff credentials and emergency procedures directly with the organizer or center before you book. The DMT Code Project assumes no liability
+            for outcomes related to information presented here.
           </AlertDescription>
         </Alert>
       </main>
