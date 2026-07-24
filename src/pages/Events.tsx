@@ -112,7 +112,7 @@ const Events = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/events" />
         <meta name="twitter:title" content="Research Events & Clinical Trials | DMT Code" />
-        <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
         <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
