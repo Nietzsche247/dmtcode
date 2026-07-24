@@ -81,6 +81,13 @@ export const Navigation = () => {
     setOpenSection(null);
   };
 
+  const goToAuth = () => {
+    const here = location.pathname + location.search;
+    navigate(location.pathname === '/auth' ? '/auth' : `/auth?returnTo=${encodeURIComponent(here)}`);
+    setIsOpen(false);
+    setOpenSection(null);
+  };
+
   const researchItems = [
     { path: '/registry', label: 'Symbol Registry' },
     { path: '/evidence-map', label: 'Evidence Map' },
