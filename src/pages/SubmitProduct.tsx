@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react";
 
 const SubmitProduct = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
