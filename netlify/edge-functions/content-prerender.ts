@@ -206,7 +206,7 @@ export default async (request: Request, context: Context) => {
 </article>`;
     } else if (kind === "trials") {
       const f =
-        "id,title,description,institution,principal_investigator,status," +
+        "id,title,description,institution,principal_investigator,status,phase,confirmed_status," +
         "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return shellRes;
@@ -228,6 +228,7 @@ export default async (request: Request, context: Context) => {
 
       const pairs: Array<[string, unknown]> = [
         ["Status", r.status],
+        ["Phase", r.phase],
         ["Institution", r.institution],
         ["Principal investigator", r.principal_investigator],
         ["Start date", r.start_date],
