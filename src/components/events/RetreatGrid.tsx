@@ -27,6 +27,7 @@ const RetreatGrid = () => {
     const { data, error } = await supabase
       .from("retreats")
       .select("*")
+      .eq("is_approved", true)
       .order("created_at", { ascending: false });
 
     if (error) {
