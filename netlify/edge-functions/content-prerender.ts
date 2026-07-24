@@ -1241,6 +1241,113 @@ const PROTOCOL_GUIDE_FAQ_LD = {
   })),
 };
 
+// Verbatim copy of the terms array in src/data/glossaryTerms.ts, which is the source of truth.
+// Netlify edge functions run in Deno and cannot import from src/.
+const GLOSSARY_TERMS: Array<{ term: string; definition: string }> = [
+  { term: "650 nm Laser Protocol", definition: "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration. Developed by Danny Goler, validated by Chase Hughes." },
+  { term: "Alphabetic-like Symbol", definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic). Reported with notable inter-subject consistency during 650 nm laser exposure." },
+  { term: "Coherent Light", definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, enabling precise diffraction patterns essential for symbol elicitation." },
+  { term: "Confirmation Count", definition: "Number of independent observers reporting identical or highly similar symbols in the DMT Code Glyph Registry. Metric for assessing inter-subject replication reliability." },
+  { term: "Diffraction Grating", definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in 650 nm protocol to project grid patterns that interact with N,N-DMT visual phenomena." },
+  { term: "Discrete Visual Symbol", definition: "Distinct, bounded geometric or alphabetic-like element perceived as separate from surrounding visual field. Contrasts with continuous geometric patterns or ambient visual noise." },
+  { term: "Geometric Archetype", definition: "Recurring symbol morphology reported across independent observers, described by shared features such as symmetry, line structure, and orientation." },
+  { term: "Inter-subject Consistency", definition: "Degree to which independent observers report identical or highly similar phenomena under controlled conditions. 650 nm protocol shows notable consistency across independent replicators." },
+  { term: "Motif Tag", definition: "Descriptive categorical label applied to registry symbols (e.g., 'spiral', 'bilateral', 'angular'). Facilitates pattern analysis and cross-reference between submissions." },
+  { term: "N,N-Dimethyltryptamine (N,N-DMT)", definition: "Endogenous tryptamine compound and Schedule I controlled substance. Administered via smoking, vaporisation, or intramuscular injection. Produces intense visual phenomena lasting 5-20 minutes." },
+  { term: "Perceived Surface", definition: "Physical or conceptual location where visual symbols appear during N,N-DMT experience (e.g., wall, ceiling, closed eyelids, hands). Surface type correlates with specific symbol archetypes." },
+  { term: "Photobiomodulation", definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Any link to symbol clarity in the 650 nm protocol is an untested hypothesis and has not been demonstrated." },
+  { term: "Registry Glyph", definition: "100×100 pixel black-and-white or red-and-gold symbol submitted to DMT Code Glyph Registry with structured metadata (source, dose, surface, depth, emotional valence, etc.)." },
+  { term: "Route of Administration", definition: "Method of N,N-DMT delivery: smoked/vaporised (most common, rapid onset), intramuscular injection (slower onset, longer duration), or other experimental routes." },
+  { term: "Symmetry Classification", definition: "Geometric property of registry symbols: bilateral (mirror symmetry), radial (rotational symmetry), perfect geometric (mathematical precision), or asymmetric." },
+  { term: "Visual Cortex Coherence", definition: "Synchronized neural activity in primary and secondary visual processing regions. Timmermann et al. (2019) demonstrated enhanced coherence during N,N-DMT administration correlating with discrete symbol perception." },
+  { term: "Anecdotal Evidence", definition: "First-person subjective reports not obtained through controlled experimental design. While valuable for hypothesis generation, anecdotal data lacks the rigor of double-blind randomized trials." },
+  { term: "Blinded Experiment", definition: "Research methodology where participants (single-blind) or both participants and experimenters (double-blind) do not know which condition is being tested. Essential for controlling expectancy bias and placebo effects." },
+  { term: "CC-BY-4.0 License", definition: "Creative Commons Attribution 4.0 International license. Permits redistribution and modification of registry data with proper attribution. All DMT Code registry submissions are released under this open-access license." },
+  { term: "Control Condition", definition: "Experimental baseline for comparison (e.g., sober + laser, DMT + no laser). Required to isolate the causal effect of the 650 nm laser on visual symbol perception during N,N-DMT experiences." },
+  { term: "Cross-Replication", definition: "Independent verification of reported phenomena by multiple observers under similar conditions. The notable inter-subject consistency rate represents partial cross-replication of symbol observations." },
+  { term: "Dose-Response Relationship", definition: "Correlation between substance quantity administered and intensity of observed effects. Registry metadata tracks approximate DMT dose to assess potential dose-symbol clarity relationships." },
+  { term: "Expectancy Bias", definition: "Psychological phenomenon where prior knowledge or beliefs influence subjective perception and reporting. A key critique of non-blinded visual symbol reports during N,N-DMT experiences." },
+  { term: "JSON-LD Schema", definition: "Structured data markup format for embedding machine-readable metadata in web pages. DMT Code uses JSON-LD for Dataset, FAQPage, and Product schemas to enhance search engine discoverability." },
+  { term: "Longitudinal Analysis", definition: "Research tracking the same participants across multiple sessions over time. Authenticated registry submissions enable longitudinal comparison of symbol reports from the same observer." },
+  { term: "Null Hypothesis", definition: "Statistical assumption that no relationship exists between variables being tested. For the 650 nm protocol: 'Laser exposure during DMT has no effect on visual symbol perception beyond placebo.'" },
+  { term: "Open-Access Data", definition: "Research data freely available for download, analysis, and redistribution without paywalls or institutional barriers. All registry submissions are open-access under CC-BY-4.0." },
+  { term: "Pareidolia", definition: "Cognitive tendency to perceive meaningful patterns (faces, symbols) in random or ambiguous stimuli. Potential alternative explanation for alphabetic-like symbol observations during altered states." },
+  { term: "Phosphene", definition: "Sensation of seeing light without light actually entering the eye, caused by mechanical or electrical stimulation of retinal photoreceptors. Potential optical artifact explanation for laser-elicited symbols." },
+  { term: "Replication Crisis", definition: "Scientific recognition that many published findings cannot be independently reproduced. The 650 nm protocol relies on anecdotal replication reports rather than controlled laboratory replication." },
+  { term: "Retinal Afterimage", definition: "Visual impression that persists after exposure to bright light ceases. Diffraction grating patterns could produce afterimages misinterpreted as discrete symbols during altered states." },
+  { term: "Speckle Pattern", definition: "Random granular interference pattern produced when coherent light scatters from rough surfaces. Laser speckle may contribute to fine-scale visual texture during 650 nm protocol, potentially enhancing perceived symbol detail." },
+  { term: "Entoptic Phenomenon", definition: "Visual effect originating within the eye itself rather than external light sources. Includes floaters, blood vessel shadows, and Haidinger's brushes. Coherent light exposure enhances visibility of normally subliminal entoptic structures." },
+  { term: "Form Constant", definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states, generally attributed to primary visual cortex (V1) architecture. Distinguished from the discrete alphabetic-like symbols reported under the 650 nm laser protocol, which are described as bounded character-like elements rather than continuous geometric fields." },
+];
+
+// Verbatim copy of termSlug from src/data/glossaryTerms.ts (source of truth).
+function termSlug(term: string): string {
+  return String(term || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
+
+const GLOSSARY_TERMSET_LD = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": "https://dmtcode.com/glossary#termset",
+  "url": "https://dmtcode.com/glossary",
+  "name": "DMT Code Glossary of Terms",
+  "description": "Technical definitions for 650 nm laser protocol and visual symbol classification",
+  "hasDefinedTerm": GLOSSARY_TERMS.map((t) => ({
+    "@type": "DefinedTerm",
+    "@id": `https://dmtcode.com/glossary#${termSlug(t.term)}`,
+    "url": `https://dmtcode.com/glossary#${termSlug(t.term)}`,
+    "name": t.term,
+    "description": t.definition,
+    "inDefinedTermSet": "https://dmtcode.com/glossary#termset",
+  })),
+};
+
+const METHODS_FAQ: Array<{ q: string; a: string }> = [
+  {
+    q: "How do you design a blinded experiment for the 650 nm laser protocol?",
+    a: "Double-blind experimental design requires three critical components to eliminate expectation effects and observer bias: Sham laser device: Construct device with identical appearance, weight, and operation (button press, indicator LED) but no 650 nm coherent light output. Use blocked aperture or 520 nm green LED as control wavelength. Independent randomization: Third-party experimenter (not present during experience) randomizes real/sham assignment using sealed envelopes or electronic randomization. Maintains allocation concealment until data analysis. Blinded symbol recording: Both participant and symbol recorder remain unaware of real/sham condition. Post-experience drawing occurs before unblinding. Control for optical variables: wavelength (650 nm ± 5 nm), intensity (≤5 mW), diffraction grating line density (500-1000 lines/mm). Control for pharmacological variables: N,N-DMT dose (route-matched baseline dose), set/setting standardization. Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4",
+  },
+  {
+    q: "What control conditions are necessary?",
+    a: "Rigorous replication requires four experimental conditions to isolate laser effect from DMT effects, expectation, and optical artifacts: Condition 1: Sham laser + N,N-DMT. Controls for expectation effects. If symbols appear with sham device, suggests placebo/expectation mechanism. Condition 2: Real laser + placebo substance. Controls for optical artifacts. If symbols appear without DMT, suggests retinal phosphenes or afterimages. Condition 3: No laser + N,N-DMT. Baseline DMT visual phenomena without laser stimulus. Establishes whether symbols occur spontaneously. Condition 4: Diffraction grating alone (no laser) + N,N-DMT. Controls for grating visual effects. Tests whether coherent light (vs. ambient light through grating) is necessary. Each condition requires minimum 20 participants for 80% statistical power to detect medium effect size (Cohen's d = 0.5). Use validated symbol classification schema and blinded raters for drawing analysis.",
+  },
+  {
+    q: "How do you quantify visual symbol consistency?",
+    a: "Objective symbol classification requires: Pre-registered symbol taxonomy: Define categories before data collection (geometric shapes, alphabetic-like characters, abstract patterns) rather than assigning them post hoc. Blinded rater analysis: Two independent raters (unaware of experimental condition) classify drawings using a standardized rubric. Calculate inter-rater reliability (Cohen's κ ≥ 0.70 required). Computational similarity metrics: Use image similarity algorithms (SSIM, perceptual hashing) to quantify drawing-to-drawing consistency within conditions. Symbol frequency analysis: Track how often identical symbols appear across participants. High-consistency symbols (≥3 independent observers) warrant focused analysis.",
+  },
+  {
+    q: "What statistical tests are appropriate?",
+    a: "Primary outcome: Symbol appearance rate (binary: yes/no discrete bounded symbols). Chi-square test: Compare symbol appearance frequency across real laser vs. sham laser conditions. Logistic regression: Model symbol appearance probability with predictors (laser condition, DMT dose, prior experience, expectation). Bayesian analysis: Calculate Bayes factor (BF₁₀) comparing laser-effect hypothesis vs. null hypothesis. BF₁₀ > 3 considered moderate evidence, >10 strong evidence. Secondary outcomes: Symbol complexity (quantified via fractal dimension, perimeter-to-area ratio), inter-subject similarity (average pairwise SSIM scores), consistency with pre-registered symbol taxonomy.",
+  },
+  {
+    q: "What equipment specifications are required?",
+    a: "Standardized equipment ensures replicability: Laser: 650 nm ± 5 nm wavelength, ≤5 mW power output (Class IIIa safety rating), continuous wave (not pulsed), beam diameter 1-2 mm at aperture. Diffraction grating: 500-1000 lines/mm transmission grating, mounted 2-5 cm from laser aperture. Holographic gratings preferred for uniform diffraction pattern. Sham device: Identical external housing, blocked aperture or 520 nm green LED (produces visible dot but different wavelength), same weight/button operation. Measurement tools: Spectrometer to verify 650 nm output, power meter to confirm ≤5 mW, beam profiler for spatial characterization.",
+  },
+  {
+    q: "How do you handle ethical considerations?",
+    a: "Psychedelic research requires stringent ethical protocols: Institutional approval: IRB/ethics committee approval required before any human subjects research. Submit detailed protocol including risk mitigation, informed consent procedures, participant screening. Medical screening: Exclude participants with personal/family history of psychosis, cardiovascular conditions, medications contraindicated with DMT (MAOIs, SSRIs). Harm reduction: Trained medical personnel on-site, blood pressure/heart rate monitoring, integration support sessions post-experience. Data protection: Anonymous data collection, secure storage (HIPAA/GDPR compliant), no identifiable information linked to drawings or reports. Follow guidelines from Psychedelic Science Group, MAPS, and Beckley Foundation for conducting responsible psychedelic research. Prioritize participant safety over data collection.",
+  },
+];
+
+const METHODS_FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://dmtcode.com/methods#faq",
+  "mainEntity": METHODS_FAQ.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+
 const STATIC_PAGES: Record<string, StaticPage> = {
   home: {
     title: "DMT Code | 650nm Laser Visual Symbol Research",
