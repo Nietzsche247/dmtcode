@@ -2366,3 +2366,441 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
+// ---------- Articles prerender ----------
+
+// Minimal, safe markdown to HTML converter for prerendered article bodies.
+// Every user-authored character is HTML-escaped first, so no raw HTML from the
+// source can survive. Then a small set of block and inline patterns is turned
+// back into tags. Supported: h2, h3, paragraphs, bold, italic, links,
+// unordered lists, ordered lists, blockquotes, inline code, fenced code.
+// Never emits a second <h1> because articles always render their title as h1.
+function mdToHtml(src: string): string {
+  const esc0 = (s: string) => s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+  // Extract fenced code blocks first so their contents are not processed.
+  const codeBlocks: string[] = [];
+  let text = src.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code: string) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<pre><code>${esc0(code.replace(/\n$/, ""))}</code></pre>`);
+    return `\u0000CODE${idx}\u0000`;
+  });
+
+  text = esc0(text);
+
+  const lines = text.split(/\r?\n/);
+  const out: string[] = [];
+  let inUL = false;
+  let inOL = false;
+  let inBQ = false;
+  let para: string[] = [];
+
+  const flushPara = () => {
+    if (para.length) {
+      out.push(`<p>${inline(para.join(" "))}</p>`);
+      para = [];
+    }
+  };
+  const closeUL = () => { if (inUL) { out.push("</ul>"); inUL = false; } };
+  const closeOL = () => { if (inOL) { out.push("</ol>"); inOL = false; } };
+  const closeBQ = () => { if (inBQ) { out.push("</blockquote>"); inBQ = false; } };
+
+  function inline(s: string): string {
+    let t = s;
+    // Inline code first so its content is not further transformed.
+    const codes: string[] = [];
+    t = t.replace(/`([^`\n]+)`/g, (_m, c: string) => {
+      const i = codes.length;
+      codes.push(`<code>${c}</code>`);
+      return `\u0001C${i}\u0001`;
+    });
+    // Links: [text](url). Escape target with quotes already escaped by esc0.
+    t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label: string, href: string) => {
+      const safe = href.replace(/"/g, "&quot;");
+      return `<a href="${safe}" rel="noopener">${label}</a>`;
+    });
+    t = t.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+    t = t.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    t = t.replace(/\u0001C(\d+)\u0001/g, (_m, i: string) => codes[Number(i)]);
+    return t;
+  }
+
+  for (const raw of lines) {
+    const line = raw;
+
+    // Restore fenced blocks placeholder as its own block.
+    const fencedMatch = line.match(/^\u0000CODE(\d+)\u0000$/);
+    if (fencedMatch) {
+      flushPara(); closeUL(); closeOL(); closeBQ();
+      out.push(codeBlocks[Number(fencedMatch[1])]);
+      continue;
+    }
+
+    if (/^\s*$/.test(line)) {
+      flushPara(); closeUL(); closeOL(); closeBQ();
+      continue;
+    }
+
+    const h3 = line.match(/^###\s+(.*)$/);
+    const h2 = line.match(/^##\s+(.*)$/);
+    // A single # is downgraded to h2 to guarantee only one h1 per page.
+    const h1down = line.match(/^#\s+(.*)$/);
+    if (h3) { flushPara(); closeUL(); closeOL(); closeBQ(); out.push(`<h3>${inline(h3[1])}</h3>`); continue; }
+    if (h2) { flushPara(); closeUL(); closeOL(); closeBQ(); out.push(`<h2>${inline(h2[1])}</h2>`); continue; }
+    if (h1down) { flushPara(); closeUL(); closeOL(); closeBQ(); out.push(`<h2>${inline(h1down[1])}</h2>`); continue; }
+
+    const ol = line.match(/^\s*\d+\.\s+(.*)$/);
+    const ul = line.match(/^\s*[-*+]\s+(.*)$/);
+    const bq = line.match(/^&gt;\s?(.*)$/);
+
+    if (ul) {
+      flushPara(); closeOL(); closeBQ();
+      if (!inUL) { out.push("<ul>"); inUL = true; }
+      out.push(`<li>${inline(ul[1])}</li>`);
+      continue;
+    }
+    if (ol) {
+      flushPara(); closeUL(); closeBQ();
+      if (!inOL) { out.push("<ol>"); inOL = true; }
+      out.push(`<li>${inline(ol[1])}</li>`);
+      continue;
+    }
+    if (bq) {
+      flushPara(); closeUL(); closeOL();
+      if (!inBQ) { out.push("<blockquote>"); inBQ = true; }
+      out.push(`<p>${inline(bq[1])}</p>`);
+      continue;
+    }
+
+    closeUL(); closeOL(); closeBQ();
+    para.push(line.trim());
+  }
+  flushPara(); closeUL(); closeOL(); closeBQ();
+
+  return out.join("\n");
+}
+
+// Strip markdown to plain text for the JSON-LD articleBody field.
+function mdToPlain(src: string): string {
+  return String(src || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_#>]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchInList(
+  table: string,
+  ids: string[],
+  filter: string,
+  select: string,
+  key: "id" | "slug" = "id",
+): Promise<Array<Record<string, unknown>>> {
+  if (!ids || !ids.length) return [];
+  const inList = ids.filter(Boolean).map((x) => `"${x}"`).join(",");
+  if (!inList) return [];
+  return await sbGetRows(
+    table,
+    `${key}=in.(${inList})&${filter}&select=${select}`,
+  );
+}
+
+async function renderArticlesIndex(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/articles`;
+  const title = "Articles | DMT Code";
+  const metaDesc = clip(
+    "Long form articles that answer specific questions using the DMT Code corpus. Every article names the trials, papers, symbols, and protocols it is built on.",
+    160,
+  );
+
+  const rows = await sbGetRows(
+    "articles",
+    "is_published=eq.true&select=id,slug,title,dek,published_at,updated_at&order=published_at.desc",
+  );
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Articles", item: canonical },
+    ],
+  };
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${canonical}#list`,
+    name: "DMT Code Articles",
+    numberOfItems: rows.length,
+    itemListElement: rows.map((r, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "BlogPosting",
+        url: `${SITE}/articles/${String(r.slug || "")}`,
+        headline: String(r.title || ""),
+        description: String(r.dek || ""),
+        datePublished: r.published_at,
+      },
+    })),
+    license: LICENSE,
+  };
+
+  const items = rows
+    .map((r) => {
+      const slug = String(r.slug || "");
+      return `<li><a href="/articles/${esc(slug)}"><strong>${esc(String(r.title || ""))}</strong></a>${r.dek ? ` <span>${esc(String(r.dek))}</span>` : ""}</li>`;
+    })
+    .join("");
+
+  const body = `<article data-prerender="articles-index">
+  <h1>Articles</h1>
+  <section>
+    <p>Answer shaped articles built on named evidence in the DMT Code corpus. Each piece links every trial, paper, symbol, and protocol it rests on, so readers and language models can verify the source directly. Every article is published under CC-BY-4.0.</p>
+  </section>
+  <section>
+    <h2>All articles</h2>
+    ${items ? `<ul>${items}</ul>` : "<p>No articles have been published yet.</p>"}
+  </section>
+  <section>
+    <h2>Machine access</h2>
+    <ul>
+      <li><a href="/articles.json">Full corpus JSON (CC-BY-4.0)</a></li>
+      <li><a href="/articles/feed.xml">RSS feed</a></li>
+    </ul>
+  </section>
+</article>`;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    ogImage: DEFAULT_OG_IMAGE,
+    jsonLd: [organizationLd, breadcrumbLd, itemListLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderArticleDetail(context: Context, rawSlug: string): Promise<Response> {
+  const shellRes = await context.next();
+  const slug = String(rawSlug || "").toLowerCase();
+  const rows = await sbGetRows(
+    "articles",
+    `slug=eq.${encodeURIComponent(slug)}&is_published=eq.true` +
+      `&select=id,slug,title,dek,body_md,topic_tags,compounds,` +
+      `related_trials,related_bibliography,related_symbols,related_protocols,` +
+      `author,published_at,updated_at`,
+  );
+  const r = rows[0];
+  if (!r) return shellRes;
+
+  const canonical = `${SITE}/articles/${String(r.slug)}`;
+  const title = `${String(r.title)} | DMT Code`;
+  const dek = String(r.dek || "");
+  const metaDesc = clip(dek, 160);
+
+  const published = r.published_at ? new Date(String(r.published_at)) : null;
+  const updated = r.updated_at ? new Date(String(r.updated_at)) : null;
+  const showUpdated =
+    published && updated && (updated.getTime() - published.getTime()) > 86400000;
+  const pubReadable = published
+    ? published.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "";
+  const updReadable = updated
+    ? updated.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "";
+
+  // Resolve related records for the "based on" block and citation JSON-LD.
+  const trialIds = ((r.related_trials as string[]) || []).filter(Boolean);
+  const bibIds = ((r.related_bibliography as string[]) || []).filter(Boolean);
+  const symIds = ((r.related_symbols as string[]) || []).filter(Boolean);
+  const protoSlugs = ((r.related_protocols as string[]) || []).filter(Boolean);
+
+  const [trialRows, bibRows, symRows, protoRows] = await Promise.all([
+    fetchInList("clinical_trials", trialIds, "is_approved=is.true", "id,title"),
+    fetchInList("bibliography", bibIds, "is_approved=eq.true", "id,title,doi"),
+    fetchInList("symbol_submissions", symIds, "status=eq.approved", "id"),
+    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,name", "slug"),
+  ]);
+
+  const basedParts: string[] = [];
+  if (trialRows.length) {
+    basedParts.push(
+      `<li><strong>Clinical trials:</strong><ul>${trialRows
+        .map((t) => `<li><a href="/trials/${esc(String(t.id))}">${esc(String(t.title || ""))}</a></li>`)
+        .join("")}</ul></li>`,
+    );
+  }
+  if (bibRows.length) {
+    basedParts.push(
+      `<li><strong>Bibliography:</strong><ul>${bibRows
+        .map((b) => `<li><a href="/bibliography/${esc(String(b.id))}">${esc(String(b.title || ""))}</a></li>`)
+        .join("")}</ul></li>`,
+    );
+  }
+  if (symRows.length) {
+    basedParts.push(
+      `<li><strong>Symbols:</strong><ul>${symRows
+        .map((s) => {
+          const id = String(s.id);
+          return `<li><a href="/registry/${esc(id)}">Symbol ${esc(id.slice(0, 8))}</a></li>`;
+        })
+        .join("")}</ul></li>`,
+    );
+  }
+  if (protoRows.length) {
+    basedParts.push(
+      `<li><strong>Protocols:</strong><ul>${protoRows
+        .map((p) => `<li><a href="/protocols/${esc(String(p.slug))}">${esc(String(p.name || p.slug))}</a></li>`)
+        .join("")}</ul></li>`,
+    );
+  }
+  const basedOn = basedParts.length
+    ? `<section><h2>What this is based on</h2><ul>${basedParts.join("")}</ul></section>`
+    : "";
+
+  const bodyHtml = mdToHtml(String(r.body_md || ""));
+  const plainBody = mdToPlain(String(r.body_md || ""));
+
+  const bylineBits: string[] = [];
+  if (r.author) bylineBits.push(`By ${esc(String(r.author))}`);
+  if (pubReadable) bylineBits.push(`Published ${esc(pubReadable)}`);
+  if (showUpdated && updReadable) bylineBits.push(`Updated ${esc(updReadable)}`);
+  const byline = bylineBits.length ? `<p><em>${bylineBits.join(" &middot; ")}</em></p>` : "";
+
+  const body = `<article data-prerender="article">
+  <h1>${esc(String(r.title))}</h1>
+  ${dek ? `<p><strong>${esc(dek)}</strong></p>` : ""}
+  ${byline}
+  <div>${bodyHtml}</div>
+  ${basedOn}
+  <p><a href="/articles">Back to articles</a></p>
+</article>`;
+
+  const tags = [
+    ...((r.topic_tags as string[]) || []),
+    ...((r.compounds as string[]) || []),
+  ].filter(Boolean);
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Articles", item: `${SITE}/articles` },
+      { "@type": "ListItem", position: 3, name: String(r.title), item: canonical },
+    ],
+  };
+
+  const citation: Array<Record<string, unknown>> = [];
+  for (const t of trialRows) {
+    citation.push({
+      "@type": "MedicalStudy",
+      name: String(t.title || ""),
+      url: `${SITE}/trials/${String(t.id)}`,
+    });
+  }
+  for (const b of bibRows) {
+    const node: Record<string, unknown> = {
+      "@type": "ScholarlyArticle",
+      name: String(b.title || ""),
+      url: `${SITE}/bibliography/${String(b.id)}`,
+    };
+    if (b.doi) {
+      node.identifier = String(b.doi).startsWith("http")
+        ? String(b.doi)
+        : `https://doi.org/${String(b.doi)}`;
+    }
+    citation.push(node);
+  }
+  for (const s of symRows) {
+    const id = String(s.id);
+    citation.push({
+      "@type": "CreativeWork",
+      name: `Symbol ${id.slice(0, 8)}`,
+      url: `${SITE}/registry/${id}`,
+    });
+  }
+  for (const p of protoRows) {
+    citation.push({
+      "@type": "CreativeWork",
+      name: String(p.name || p.slug),
+      url: `${SITE}/protocols/${String(p.slug)}`,
+    });
+  }
+
+  const blogPostingLd: Record<string, unknown> = {
+    "@type": "BlogPosting",
+    "@id": canonical,
+    headline: String(r.title),
+    description: dek,
+    articleBody: plainBody,
+    datePublished: r.published_at,
+    dateModified: r.updated_at,
+    author: r.author
+      ? { "@type": "Person", name: String(r.author) }
+      : { "@id": `${SITE}#org` },
+    publisher: { "@id": `${SITE}#org` },
+    license: LICENSE,
+    isAccessibleForFree: true,
+    keywords: tags,
+    mainEntityOfPage: canonical,
+    image: DEFAULT_OG_IMAGE,
+    isPartOf: { "@id": `${SITE}/articles#blog` },
+    url: canonical,
+  };
+  if (citation.length) blogPostingLd.citation = citation;
+
+  const blogLd = {
+    "@type": "Blog",
+    "@id": `${SITE}/articles#blog`,
+    name: "DMT Code Articles",
+    url: `${SITE}/articles`,
+    publisher: { "@id": `${SITE}#org` },
+  };
+
+  const graphLd = {
+    "@context": "https://schema.org",
+    "@graph": [organizationLd, blogLd, blogPostingLd, breadcrumbLd],
+  };
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    ogImage: DEFAULT_OG_IMAGE,
+    jsonLd: [graphLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
