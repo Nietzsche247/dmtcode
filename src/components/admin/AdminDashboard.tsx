@@ -101,6 +101,7 @@ export const AdminDashboard = () => {
 
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
+            <TrialsBackfillPanel />
           </TabsContent>
 
           <TabsContent value="api-log" className="space-y-4">
