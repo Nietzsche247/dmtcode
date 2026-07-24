@@ -73,59 +73,60 @@ export default function ArticleDetail() {
       const jobs: Promise<void>[] = [];
       if (a.related_trials?.length) {
         jobs.push(
-          supabase
-            .from("clinical_trials")
-            .select("id, title")
-            .in("id", a.related_trials)
-            .then(({ data }) => {
-              setTrials(
-                (data ?? []).map((r: any) => ({ href: `/trials/${r.id}`, label: r.title })),
-              );
-            }),
+          (async () => {
+            const { data } = await supabase
+              .from("clinical_trials")
+              .select("id, title")
+              .in("id", a.related_trials);
+            setTrials(
+              (data ?? []).map((r: any) => ({ href: `/trials/${r.id}`, label: r.title })),
+            );
+          })(),
         );
       }
       if (a.related_bibliography?.length) {
         jobs.push(
-          supabase
-            .from("bibliography")
-            .select("id, title")
-            .in("id", a.related_bibliography)
-            .then(({ data }) => {
-              setPapers(
-                (data ?? []).map((r: any) => ({ href: `/bibliography/${r.id}`, label: r.title })),
-              );
-            }),
+          (async () => {
+            const { data } = await supabase
+              .from("bibliography")
+              .select("id, title")
+              .in("id", a.related_bibliography);
+            setPapers(
+              (data ?? []).map((r: any) => ({ href: `/bibliography/${r.id}`, label: r.title })),
+            );
+          })(),
         );
       }
       if (a.related_symbols?.length) {
         jobs.push(
-          supabase
-            .from("symbol_submissions")
-            .select("id")
-            .in("id", a.related_symbols)
-            .then(({ data }) => {
-              setSymbols(
-                (data ?? []).map((r: any) => ({
-                  href: `/registry/${r.id}`,
-                  label: `Symbol ${String(r.id).slice(0, 8)}`,
-                })),
-              );
-            }),
+          (async () => {
+            const { data } = await supabase
+              .from("symbol_submissions")
+              .select("id")
+              .in("id", a.related_symbols);
+            setSymbols(
+              (data ?? []).map((r: any) => ({
+                href: `/registry/${r.id}`,
+                label: `Symbol ${String(r.id).slice(0, 8)}`,
+              })),
+            );
+          })(),
         );
       }
       if (a.related_protocols?.length) {
         jobs.push(
-          supabase
-            .from("protocols")
-            .select("slug, name")
-            .in("slug", a.related_protocols)
-            .then(({ data }) => {
-              setProtocols(
-                (data ?? []).map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.name })),
-              );
-            }),
+          (async () => {
+            const { data } = await supabase
+              .from("protocols")
+              .select("slug, name")
+              .in("slug", a.related_protocols);
+            setProtocols(
+              (data ?? []).map((r: any) => ({ href: `/protocols/${r.slug}`, label: r.name })),
+            );
+          })(),
         );
       }
+
       await Promise.all(jobs);
       setLoading(false);
     })();
