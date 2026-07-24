@@ -216,13 +216,6 @@ const Trials = () => {
             onChange={(e) => setQ(e.target.value)}
             className="sm:col-span-2 lg:col-span-2"
           />
-        <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <Input
-            placeholder="Search title or institution"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="sm:col-span-2 lg:col-span-2"
-          />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
