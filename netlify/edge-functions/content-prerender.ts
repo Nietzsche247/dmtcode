@@ -2534,10 +2534,22 @@ async function fetchInList(
   if (!ids || !ids.length) return [];
   const inList = ids.filter(Boolean).map((x) => `"${x}"`).join(",");
   if (!inList) return [];
-  return await sbGetRows(
-    table,
-    `${key}=in.(${inList})&${filter}&select=${select}`,
-  );
+  const path = `${key}=in.(${inList})&${filter}&select=${select}`;
+  if (!SUPABASE_URL || !SUPABASE_KEY) return [];
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${path}`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) {
+    console.error(
+      `[fetchInList] upstream not ok table=${table} status=${res.status} path=${path}`,
+    );
+    return [];
+  }
+  return (await res.json()) as Array<Record<string, unknown>>;
 }
 
 async function renderArticlesIndex(context: Context): Promise<Response> {
@@ -2663,12 +2675,23 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   const symIds = ((r.related_symbols as string[]) || []).filter(Boolean);
   const protoSlugs = ((r.related_protocols as string[]) || []).filter(Boolean);
 
-  const [trialRows, bibRows, symRows, protoRows] = await Promise.all([
+  // Protocols are looked up by fetching the full published set and filtering
+  // in JS. The table has under a dozen rows, and this avoids PostgREST quoting
+  // pitfalls on text-key in-lists that silently returned empty here before.
+  const [trialRows, bibRows, symRows, allProtoRows] = await Promise.all([
     fetchInList("clinical_trials", trialIds, "is_approved=is.true", "id,title"),
     fetchInList("bibliography", bibIds, "is_approved=eq.true", "id,title,doi"),
     fetchInList("symbol_submissions", symIds, "status=eq.approved", "id"),
-    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,title", "slug"),
+    protoSlugs.length
+      ? sbGetRows("protocols", "is_published=eq.true&select=slug,title")
+      : Promise.resolve([] as Array<Record<string, unknown>>),
   ]);
+  const protoBySlug = new Map(
+    (allProtoRows || []).map((p) => [String(p.slug), p]),
+  );
+  const protoRows = protoSlugs
+    .map((s) => protoBySlug.get(s))
+    .filter((p): p is Record<string, unknown> => !!p);
 
   const basedParts: string[] = [];
   if (trialRows.length) {
