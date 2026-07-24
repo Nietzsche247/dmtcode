@@ -95,8 +95,9 @@ async function esummaryAndAbstract(ids: string[]): Promise<PubmedRecord[]> {
   const sum = await sumRes.json();
   const xml = absRes.ok ? await absRes.text() : '';
 
-  // crude abstract extraction per pmid
+  // crude abstract + publication type extraction per pmid
   const abstractMap = new Map<string, string>();
+  const pubTypesMap = new Map<string, string[]>();
   const articleBlocks = xml.split(/<PubmedArticle>/).slice(1);
   for (const block of articleBlocks) {
     const pmidMatch = block.match(/<PMID[^>]*>(\d+)<\/PMID>/);
@@ -106,6 +107,14 @@ async function esummaryAndAbstract(ids: string[]): Promise<PubmedRecord[]> {
       .map((m) => m[1].replace(/<[^>]+>/g, '').trim())
       .join('\n\n');
     if (abs) abstractMap.set(pmid, abs);
+
+    const ptListMatch = block.match(/<PublicationTypeList>([\s\S]*?)<\/PublicationTypeList>/);
+    if (ptListMatch) {
+      const types = Array.from(ptListMatch[1].matchAll(/<PublicationType[^>]*>([\s\S]*?)<\/PublicationType>/g))
+        .map((m) => m[1].trim())
+        .filter(Boolean);
+      pubTypesMap.set(pmid, types);
+    }
   }
 
   const out: PubmedRecord[] = [];
@@ -131,15 +140,18 @@ async function esummaryAndAbstract(ids: string[]): Promise<PubmedRecord[]> {
         iso = `${y}-${mo}-${d}`;
       }
     }
+    const types = pubTypesMap.get(pmid) ?? [];
+    const content_type = types.length ? mapContentType(types) : 'Paper';
     out.push({
       pmid,
-      title: r.title || 'Untitled',
-      authors,
-      journal: r.fulljournalname || r.source || null,
+      title: decodeEntities(r.title) || 'Untitled',
+      authors: decodeOrNull(authors),
+      journal: decodeOrNull(r.fulljournalname || r.source),
       publication_date: iso,
       doi,
-      abstract: abstractMap.get(pmid) ?? null,
+      abstract: decodeOrNull(abstractMap.get(pmid)),
       url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,
+      content_type,
     });
   }
   return out;
