@@ -1776,36 +1776,54 @@ export type Database = {
           created_at: string
           id: string
           is_approved: boolean
+          origin: string
           probability_percentage: number | null
+          proponent: string | null
+          source_title: string | null
+          source_type: string | null
+          source_url: string | null
           summary: string
+          tags: string[] | null
           title: string
           updated_at: string
           upvotes: number
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
           is_approved?: boolean
+          origin?: string
           probability_percentage?: number | null
+          proponent?: string | null
+          source_title?: string | null
+          source_type?: string | null
+          source_url?: string | null
           summary: string
+          tags?: string[] | null
           title: string
           updated_at?: string
           upvotes?: number
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
           is_approved?: boolean
+          origin?: string
           probability_percentage?: number | null
+          proponent?: string | null
+          source_title?: string | null
+          source_type?: string | null
+          source_url?: string | null
           summary?: string
+          tags?: string[] | null
           title?: string
           updated_at?: string
           upvotes?: number
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {

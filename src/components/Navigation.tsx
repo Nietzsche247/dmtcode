@@ -88,6 +88,7 @@ export const Navigation = () => {
     { path: '/bibliography', label: 'Bibliography' },
     { path: '/methods', label: 'Methods' },
     { path: '/critiques', label: 'Critiques' },
+    { path: '/theories', label: 'Open Theories' },
   ];
 
   const explorerItems = [

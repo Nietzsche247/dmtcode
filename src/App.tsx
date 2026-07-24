@@ -59,6 +59,7 @@ const VoiceLogAnalysis = lazy(() => import("./pages/VoiceLogAnalysis"));
 const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
+const Theories = lazy(() => import("./pages/Theories"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AvatarToastListener } from "./components/AvatarToastListener";
 import { BadgeToastListener } from "./components/BadgeToastListener";
@@ -254,6 +255,13 @@ const App = () => (
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
                 <Forecasts />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/theories" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Theories />
               </Suspense>
             </ErrorBoundary>
           } />

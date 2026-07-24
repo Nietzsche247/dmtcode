@@ -64,6 +64,11 @@ export const Footer = () => {
                   Co-witness wall
                 </a>
               </li>
+              <li>
+                <a href="/theories" className="text-muted-foreground hover:text-primary transition-colors">
+                  Open Theories
+                </a>
+              </li>
             </ul>
           </div>
 
