@@ -105,7 +105,7 @@ const Events = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/events" />
         <meta property="og:title" content="Research Events & Clinical Trials | DMT Code" />
-        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
+        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
         <meta property="og:url" content="https://dmtcode.com/events" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
