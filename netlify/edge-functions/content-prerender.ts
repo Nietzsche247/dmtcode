@@ -98,6 +98,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderRetreatDetail(context, id);
     }
+    if (kind === "protocols" && seg.length === 2 && seg[1]) {
+      return await renderProtocolDetail(context, seg[1]);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
