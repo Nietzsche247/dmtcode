@@ -39,7 +39,7 @@ const Methods = () => {
                 "name": "How do you design a blinded experiment for the 650 nm laser protocol?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Double-blind design requires: (1) Sham laser device (identical appearance, no 650 nm output), (2) Independent experimenter randomizes real/sham assignment, (3) Participant and symbol recorder both blinded to condition. Control optics (wavelength, intensity) and N,N-DMT dose. Cite Timmermann et al. (2019) DOI: 10.1038/s41598-019-51974-4."
+                  "text": "Double-blind design requires: (1) Sham laser device (identical appearance, no 650 nm output), (2) Independent experimenter randomizes real/sham assignment, (3) Participant and symbol recorder both blinded to condition. Control optics (wavelength, intensity) and N,N-DMT dose. See Timmermann et al. (2019), an EEG study of the DMT state, DOI: 10.1038/s41598-019-51974-4."
                 }
               },
               {
