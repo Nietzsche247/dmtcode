@@ -189,7 +189,7 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
@@ -214,6 +214,11 @@ export default async (req: Request): Promise<Response> => {
       "events",
       "id,title,description,details,event_date,event_type,location,organizer,url,is_approved",
       "is_approved=is.true"
+    ),
+    fetchAll(
+      "articles",
+      "id,slug,title,dek,body_md,topic_tags,compounds,related_trials,related_bibliography,related_symbols,related_protocols,author,published_at,updated_at,is_published",
+      "is_published=eq.true"
     ),
   ]);
 
@@ -280,7 +285,25 @@ export default async (req: Request): Promise<Response> => {
     source_date: (r.created_at as string) || undefined,
   }));
 
-  const items = [...bibItems, ...trialItems, ...symbolItems];
+  // Resolve every referenced trial/paper/symbol/protocol id from the fetched
+  // sets so citations only ever list rows that actually exist and are public.
+  const trialIdSet = new Set(trials.map((t) => String(t.id)));
+  const bibIdSet = new Set(bib.map((b) => String(b.id)));
+  const symIdSet = new Set(symbols.map((s) => String(s.id)));
+
+  const articleItems: UnifiedItem[] = articles.map((r) => compact<UnifiedItem>({
+    id: `article_${r.id}`,
+    content_type: "Article",
+    title: (r.title as string) || "",
+    url: `${SITE}/articles/${r.slug}`,
+    compounds: (r.compounds as string[]) || [],
+    topic: (r.topic_tags as string[]) || [],
+    authority_type: "Editorial",
+    people: (r.author as string) ? [String(r.author)] : [],
+    source_date: (r.published_at as string) || (r.updated_at as string) || undefined,
+  }));
+
+  const items = [...bibItems, ...trialItems, ...symbolItems, ...articleItems];
 
   const filtered = applyFilters(items, url.searchParams);
 
@@ -326,6 +349,34 @@ export default async (req: Request): Promise<Response> => {
     external_url: (r.url as string) || null,
   }));
 
+  const articlesFeed = articles.map((r) => {
+    const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
+    const bibRefs = ((r.related_bibliography as string[]) || []).filter((x) => bibIdSet.has(String(x)));
+    const symRefs = ((r.related_symbols as string[]) || []).filter((x) => symIdSet.has(String(x)));
+    const protoRefs = ((r.related_protocols as string[]) || []).filter(Boolean);
+    const citations = [
+      ...trialIds.map((id) => `${SITE}/trials/${id}`),
+      ...bibRefs.map((id) => `${SITE}/bibliography/${id}`),
+      ...symRefs.map((id) => `${SITE}/registry/${id}`),
+      ...protoRefs.map((s) => `${SITE}/protocols/${s}`),
+    ];
+    return {
+      id: String(r.id),
+      slug: String(r.slug || ""),
+      url: `${SITE}/articles/${r.slug}`,
+      title: (r.title as string) || null,
+      dek: (r.dek as string) || null,
+      body: (r.body_md as string) || "",
+      author: (r.author as string) || null,
+      published_at: (r.published_at as string) || null,
+      updated_at: (r.updated_at as string) || null,
+      topic_tags: (r.topic_tags as string[]) || [],
+      compounds: (r.compounds as string[]) || [],
+      license: "CC-BY-4.0",
+      citations,
+    };
+  });
+
   const uniqSorted = (vals: (string | null | undefined)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
   const contentTypeVocab = uniqSorted(items.map((i) => i.content_type));
@@ -335,7 +386,7 @@ export default async (req: Request): Promise<Response> => {
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.5",
+    version: "3.6",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -364,11 +415,13 @@ export default async (req: Request): Promise<Response> => {
       symbols: symbolItems.length,
       theories: theoriesFeed.length,
       events: eventsFeed.length,
+      articles: articlesFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
     theories: theoriesFeed,
     events: eventsFeed,
+    articles: articlesFeed,
     faq: FAQ_ITEMS,
   };
 

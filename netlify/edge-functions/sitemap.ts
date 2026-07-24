@@ -36,6 +36,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/join", "0.6", "monthly"],
   ["/co-witnesses", "0.5", "weekly"],
   ["/theories", "0.7", "weekly"],
+  ["/articles", "0.8", "weekly"],
 ];
 
 // This function is duplicated verbatim in src/lib/theorySlug.ts,
@@ -176,6 +177,17 @@ export default async () => {
       );
     }
   } catch (_e) { /* skip */ }
+
+  // Per-article canonical URLs. Predicate MUST match /data.json and /articles.json
+  // (is_published=eq.true). lastmod uses the row's real updated_at.
+  try {
+    addBySlug(
+      "/articles",
+      (await page("articles", "is_published=eq.true", "slug,updated_at")) as any,
+      "0.7"
+    );
+  } catch (_e) { /* skip */ }
+
 
 
   const xml =
