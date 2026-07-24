@@ -34,7 +34,7 @@ interface Trial {
   created_at: string;
 }
 
-const fmt = (d: string | null) => (d ? format(new Date(d), 'yyyy-MM-dd') : '—');
+const fmt = (d: string | null) => (d ? format(new Date(d), 'yyyy-MM-dd') : 'n/a');
 
 const TrialDetail = () => {
   const { id } = useParams<{ id: string }>();
