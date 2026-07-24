@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronUp, ExternalLink, Plus } from "lucide-react";
 import { z } from "zod";
