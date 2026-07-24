@@ -47,17 +47,27 @@ interface UnifiedItem {
   id: string;
   content_type: string;
   title: string;
-  url: string | null;
-  doi: string | null;
+  url?: string;
+  doi?: string;
   compounds: string[];
   topic: string[];
-  authority_type: string | null;
-  stance_score: number | null;
+  authority_type?: string;
+  stance_score?: number;
   people: string[];
-  status: string | null;
-  verification: string | null;
-  phase: string | null;
-  source_date: string | null;
+  status?: string;
+  verification?: string;
+  phase?: string;
+  source_date?: string;
+}
+
+function compact<T extends Record<string, unknown>>(obj: T): T {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === null || v === undefined) continue;
+    if (typeof v === "string" && v.trim() === "") continue;
+    out[k] = v;
+  }
+  return out as T;
 }
 
 async function fetchAll(
