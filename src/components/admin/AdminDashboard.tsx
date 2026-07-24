@@ -20,6 +20,7 @@ import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
+import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 
 export const AdminDashboard = () => {
   return (
@@ -102,6 +103,7 @@ export const AdminDashboard = () => {
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
             <TrialsBackfillPanel />
+            <BibliographyReviewQueue />
           </TabsContent>
 
           <TabsContent value="api-log" className="space-y-4">
