@@ -60,6 +60,8 @@ const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 const Theories = lazy(() => import("./pages/Theories"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
+const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AvatarToastListener } from "./components/AvatarToastListener";
 import { BadgeToastListener } from "./components/BadgeToastListener";
