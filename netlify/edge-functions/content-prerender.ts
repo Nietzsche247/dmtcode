@@ -2534,10 +2534,22 @@ async function fetchInList(
   if (!ids || !ids.length) return [];
   const inList = ids.filter(Boolean).map((x) => `"${x}"`).join(",");
   if (!inList) return [];
-  return await sbGetRows(
-    table,
-    `${key}=in.(${inList})&${filter}&select=${select}`,
-  );
+  const path = `${key}=in.(${inList})&${filter}&select=${select}`;
+  if (!SUPABASE_URL || !SUPABASE_KEY) return [];
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${path}`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) {
+    console.error(
+      `[fetchInList] upstream not ok table=${table} status=${res.status} path=${path}`,
+    );
+    return [];
+  }
+  return (await res.json()) as Array<Record<string, unknown>>;
 }
 
 async function renderArticlesIndex(context: Context): Promise<Response> {
