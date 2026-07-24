@@ -156,6 +156,20 @@ const App = () => (
           <Route path="/correlations" element={<Correlations />} />
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/events/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <EventDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/retreats/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <RetreatDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/bibliography" element={<Bibliography />} />
           <Route path="/bibliography/:id" element={<BibliographyDetail />} />

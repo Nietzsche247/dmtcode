@@ -133,6 +133,12 @@ export default async () => {
       "0.8"
     );
   } catch (_e) { /* skip */ }
+  try {
+    addById("/events", (await page("events", "is_approved=eq.true")) as any, "0.5");
+  } catch (_e) { /* skip */ }
+  try {
+    addById("/retreats", (await page("retreats", "is_approved=eq.true")) as any, "0.5");
+  } catch (_e) { /* skip */ }
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +

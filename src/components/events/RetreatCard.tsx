@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, MapPin, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import RetreatDetailModal from "./RetreatDetailModal";
 
 interface Retreat {
   id: string;
@@ -28,7 +28,7 @@ interface TrustMetrics {
 
 const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
   const [metrics, setMetrics] = useState<TrustMetrics | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+
 
   useEffect(() => {
     fetchTrustMetrics();
@@ -79,15 +79,14 @@ const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
   };
 
   return (
-    <>
-      <Card 
+    <Link to={`/retreats/${retreat.id}`} className="block h-full">
+      <Card
         className="overflow-hidden hover:shadow-lg transition-all cursor-pointer h-full flex flex-col border border-border/50 shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
-        onClick={() => setModalOpen(true)}
       >
         {retreat.image_url && (
           <div className="h-48 overflow-hidden">
-            <img 
-              src={retreat.image_url} 
+            <img
+              src={retreat.image_url}
               alt={`${retreat.name} retreat center`}
               className="w-full h-full object-cover"
             />
@@ -161,14 +160,7 @@ const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
           )}
         </CardContent>
       </Card>
-
-      <RetreatDetailModal
-        retreat={retreat}
-        metrics={metrics}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-      />
-    </>
+    </Link>
   );
 };
 
