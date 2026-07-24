@@ -92,6 +92,8 @@ export default async (request: Request, context: Context) => {
     if (kind === "theories" && seg.length === 1) {
       return await renderTheories(context);
     }
+    if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
+
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderEventDetail(context, id);
     }
@@ -1656,6 +1658,7 @@ export const config: Config = {
     "/events/*",
     "/retreats/*",
     "/theories",
+    "/theories/*",
     "/protocols/*",
   ],
 };
@@ -1776,7 +1779,7 @@ async function renderTheories(context: Context): Promise<Response> {
       const item: Record<string, unknown> = {
         "@type": "CreativeWork",
         name: r.title,
-        url: canonical,
+        url: `${SITE}/theories/${theorySlug(String(r.title || ""))}`,
         text: r.summary || "",
       };
       if (r.proponent) {
@@ -2160,6 +2163,148 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
     `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
     `<script type="application/ld+json">${jsonLd(medicalLd)}</script>`,
   ].join("\n");
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// This function is duplicated verbatim in src/lib/theorySlug.ts
+// and netlify/edge-functions/sitemap.ts. Netlify edge functions run in Deno and cannot
+// import from src/. If you change this, change all three copies or theory URLs will
+// silently diverge between the app, the prerender layer and the sitemap.
+function theorySlug(title: string): string {
+  return String(title || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
+
+async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Response> {
+  const shellRes = await context.next();
+  const slug = String(rawSlug || "").toLowerCase();
+
+  const rows = await sbGetRows(
+    "theories",
+    "is_approved=eq.true&select=id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at,updated_at",
+  );
+
+  let match: Record<string, unknown> | null = null;
+  const bySlug = rows.filter((r) => theorySlug(String(r.title || "")) === slug);
+  if (bySlug.length === 1) {
+    match = bySlug[0];
+  } else if (bySlug.length > 1) {
+    const sorted = [...bySlug].sort((a, b) => {
+      const at = a.created_at ? Date.parse(String(a.created_at)) : 0;
+      const bt = b.created_at ? Date.parse(String(b.created_at)) : 0;
+      return at - bt;
+    });
+    match = sorted[0];
+  } else {
+    match = rows.find((r) => String(r.id) === slug) ?? null;
+  }
+
+  if (!match) {
+    const notFoundHead = [
+      `<title>Theory not found | DMT Code</title>`,
+      `<meta name="robots" content="noindex" />`,
+    ].join("\n");
+    const notFoundBody = `<article data-prerender="theory-not-found">
+  <h1>Theory not found</h1>
+  <p>This theory is not currently indexed or the link is out of date.</p>
+  <p><a href="${SITE}/theories">Back to Open theories</a></p>
+</article>`;
+    const html404 = renderShell(await shellRes.text(), notFoundHead, notFoundBody);
+    return new Response(html404, { status: 404, headers: PRERENDER_RESP_HEADERS });
+  }
+
+  const canonicalSlug = theorySlug(String(match.title || ""));
+  const canonical = `${SITE}/theories/${canonicalSlug}`;
+  const title = `${String(match.title)} | DMT Code`;
+  const metaDesc = match.summary ? clip(String(match.summary), 160) : "";
+  const tags = Array.isArray(match.tags) ? (match.tags as string[]).filter(Boolean) : [];
+
+  const summaryHtml = match.summary ? paragraphsFromText(String(match.summary)) : "";
+  const contentHtml = match.content ? paragraphsFromText(String(match.content)) : "";
+  const proponentLine = match.proponent
+    ? `<p><strong>Proposed by:</strong> ${esc(String(match.proponent))}</p>`
+    : "";
+  const originLine = match.origin
+    ? `<p><em>${esc(originLabel(match.origin))}</em></p>`
+    : "";
+  const sourceLine = match.source_url
+    ? `<p><strong>Source:</strong> <a href="${esc(String(match.source_url))}" rel="noopener">${esc(String(match.source_title || match.source_url))}</a>${match.source_type ? ` (${esc(String(match.source_type))})` : ""}</p>`
+    : (match.source_title ? `<p><strong>Source:</strong> ${esc(String(match.source_title))}${match.source_type ? ` (${esc(String(match.source_type))})` : ""}</p>` : "");
+  const tagBlock = tags.length
+    ? `<p><strong>Tags:</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
+    : "";
+  const agreeLine = (typeof match.upvotes === "number" && match.upvotes > 0)
+    ? `<p><strong>Agree:</strong> ${match.upvotes}</p>`
+    : "";
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Open theories", item: `${SITE}/theories` },
+      { "@type": "ListItem", position: 3, name: String(match.title), item: canonical },
+    ],
+  };
+  const creativeWorkLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": canonical,
+    url: canonical,
+    name: String(match.title),
+    license: LICENSE,
+  };
+  if (match.summary) creativeWorkLd.abstract = String(match.summary);
+  if (match.content) creativeWorkLd.text = String(match.content);
+  if (match.proponent) creativeWorkLd.author = { "@type": "Person", name: String(match.proponent) };
+  if (match.source_url) creativeWorkLd.isBasedOn = String(match.source_url);
+  if (tags.length > 0) creativeWorkLd.keywords = tags.join(", ");
+
+  const body = `<article data-prerender="theory">
+  <nav><a href="${SITE}/theories">Open theories</a></nav>
+  <h1>${esc(String(match.title))}</h1>
+  ${originLine}
+  ${proponentLine}
+  ${agreeLine}
+  ${summaryHtml}
+  ${contentHtml}
+  ${sourceLine}
+  ${tagBlock}
+  <p><a href="${SITE}/theories">Back to all theories</a></p>
+</article>`;
+
+  const head = [
+    `<title>${esc(title)}</title>`,
+    metaDesc ? `<meta name="description" content="${esc(metaDesc)}" />` : "",
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:title" content="${esc(String(match.title))}" />`,
+    metaDesc ? `<meta property="og:description" content="${esc(metaDesc)}" />` : "",
+    `<meta property="og:url" content="${esc(canonical)}" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${esc(String(match.title))}" />`,
+    metaDesc ? `<meta name="twitter:description" content="${esc(metaDesc)}" />` : "",
+    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
+    `<script type="application/ld+json">${jsonLd(creativeWorkLd)}</script>`,
+  ].filter(Boolean).join("\n");
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });

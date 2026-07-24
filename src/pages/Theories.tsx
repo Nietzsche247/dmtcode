@@ -5,6 +5,7 @@ import { ChevronUp, ExternalLink, Plus } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { theorySlug } from "@/lib/theorySlug";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -427,7 +428,11 @@ export default function TheoriesPage() {
                               </Badge>
                             ))}
                           </div>
-                          <CardTitle className="text-lg">{t.title}</CardTitle>
+                          <CardTitle className="text-lg">
+                            <Link to={`/theories/${theorySlug(t.title)}`} className="hover:underline">
+                              {t.title}
+                            </Link>
+                          </CardTitle>
                           {proponentLine && (
                             <p className="text-xs text-muted-foreground">{proponentLine}</p>
                           )}

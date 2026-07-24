@@ -37,6 +37,23 @@ const STATIC: Array<[string, string, string]> = [
   ["/theories", "0.7", "weekly"],
 ];
 
+// This function is duplicated verbatim in src/lib/theorySlug.ts,
+// netlify/edge-functions/content-prerender.ts and netlify/edge-functions/data-json.ts.
+// Netlify edge functions run in Deno and cannot import from src/. If you change this,
+// change all copies or theory URLs will silently diverge between the app, the
+// prerender layer, the sitemap and the machine corpus.
+function theorySlug(title: string): string {
+  return String(title || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
+
 function xesc(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -139,6 +156,26 @@ export default async () => {
   try {
     addById("/retreats", (await page("retreats", "is_approved=eq.true")) as any, "0.5");
   } catch (_e) { /* skip */ }
+  // Per-theory canonical URLs. Predicate MUST match /data.json exactly (is_approved=true).
+  try {
+    const theoryRows = (await page(
+      "theories",
+      "is_approved=eq.true",
+      "id,title,updated_at"
+    )) as Array<{ id: string; title: string; updated_at: string }>;
+    for (const r of theoryRows) {
+      const slug = theorySlug(r.title || "");
+      if (!slug) continue;
+      const lastmod = (r.updated_at || "").slice(0, 10);
+      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
+      urls.push(
+        `  <url><loc>${SITE}/theories/${xesc(slug)}</loc>` +
+          `${lastmodTag}<changefreq>monthly</changefreq>` +
+          `<priority>0.6</priority></url>`
+      );
+    }
+  } catch (_e) { /* skip */ }
+
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +

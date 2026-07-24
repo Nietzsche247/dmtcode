@@ -60,6 +60,7 @@ const AssessmentPage = lazy(() => import("./pages/AssessmentPage"));
 const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 const Theories = lazy(() => import("./pages/Theories"));
+const TheoryDetail = lazy(() => import("./pages/TheoryDetail"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -281,6 +282,14 @@ const App = () => (
               </Suspense>
             </ErrorBoundary>
           } />
+          <Route path="/theories/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <TheoryDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/join" element={<Join />} />
