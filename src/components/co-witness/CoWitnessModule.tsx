@@ -27,6 +27,12 @@ interface Props {
 const formatContext = (s?: string | null) =>
   s ? s.replace(/_/g, ' ') : null;
 
+const trackGA = (event: string, params: Record<string, unknown>) => {
+  if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+    (window as any).gtag('event', event, params);
+  }
+};
+
 /**
  * Co-witness module. Shown ONLY to a viewer who holds a seen_it on this symbol AND
  * whose own prefs are pairs_only/wall. Reads symbol_votes via SECURITY DEFINER RPC.
