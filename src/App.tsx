@@ -282,6 +282,14 @@ const App = () => (
               </Suspense>
             </ErrorBoundary>
           } />
+          <Route path="/theories/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <TheoryDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/join" element={<Join />} />
