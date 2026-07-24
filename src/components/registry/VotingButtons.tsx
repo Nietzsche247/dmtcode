@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { useUgcTracking } from '@/hooks/useUgcTracking';
+import { Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface VotingButtonsProps {
