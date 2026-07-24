@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronUp, ExternalLink, Plus } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -73,6 +73,7 @@ const SOURCE_TYPES = [
 
 export default function TheoriesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [theories, setTheories] = useState<Theory[]>([]);
   const [handles, setHandles] = useState<Record<string, string>>({});
   const [userVotes, setUserVotes] = useState<Record<string, boolean>>({});
@@ -156,7 +157,8 @@ export default function TheoriesPage() {
 
   const handleVote = async (theoryId: string) => {
     if (!isAuthenticated) {
-      navigate("/auth");
+      toast.error("Please sign in to agree with a theory");
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     const { data: userData } = await supabase.auth.getUser();
@@ -185,7 +187,8 @@ export default function TheoriesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate("/auth");
+      toast.error("Please sign in to submit a theory");
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     try {

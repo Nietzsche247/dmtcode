@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { Navigation } from "@/components/Navigation";
@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react";
 
 const SubmitProduct = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -91,7 +92,7 @@ const SubmitProduct = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Please sign in to submit a product");
-        navigate("/auth");
+        navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
         return;
       }
 

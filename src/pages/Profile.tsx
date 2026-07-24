@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { cn } from '@/lib/utils';
 import { useReviewStreak } from '@/hooks/useReviewStreak';
@@ -120,6 +120,7 @@ const StatCell = ({
 
 const Profile = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState<ProfileRecord | null>(null);
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
@@ -144,7 +145,7 @@ const Profile = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error('Please log in to view your profile');
-      navigate('/auth');
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     setUserId(user.id);

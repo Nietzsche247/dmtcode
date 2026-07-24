@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -35,6 +36,8 @@ interface UserSymbol {
 }
 
 const MySymbols = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [userId, setUserId] = useState<string | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
@@ -48,7 +51,8 @@ const MySymbols = () => {
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = '/auth';
+      toast.error('Please log in to view your symbols');
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     setUserId(user.id);

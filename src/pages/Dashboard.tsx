@@ -4,7 +4,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ProfileHeader } from '@/components/dashboard/ProfileHeader';
 import { StatsSection } from '@/components/dashboard/StatsSection';
@@ -71,6 +71,7 @@ interface Stats {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { trackDashboardViewed, trackTabSwitched } = useDashboardTracking();
   const { trackDashboardTabViewed } = useUgcTracking();
   
@@ -97,7 +98,7 @@ const Dashboard = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error('Please log in to view your dashboard');
-      navigate('/auth');
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
 

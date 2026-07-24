@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, useLocation, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { Navigation } from "@/components/Navigation";
@@ -31,6 +31,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const addItem = useCartStore(state => state.addItem);
   
   // Check if coming from a bundle
@@ -333,7 +334,7 @@ const ProductDetail = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Please sign in to submit a rating");
-        navigate("/auth");
+        navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
         return;
       }
 

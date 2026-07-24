@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthTracking } from '@/hooks/useAuthTracking';
-import { User, LogOut, LayoutDashboard, Bookmark } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Bookmark, PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,6 +72,13 @@ export const UserDropdown = ({ userName, avatarUrl, onSignOut }: UserDropdownPro
         >
           <Bookmark className="mr-2 h-4 w-4" />
           My Symbols
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => navigate('/submit-symbol')}
+          className="cursor-pointer min-h-[44px]"
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Submit a Symbol
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
