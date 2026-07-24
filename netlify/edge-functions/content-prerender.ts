@@ -1574,7 +1574,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
     `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
     breadcrumbLd ? `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>` : "",
-    ...(page.extraJsonLd ?? []).map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
+    ...extraLd.map((ld) => `<script type="application/ld+json">${jsonLd(ld)}</script>`),
   ].filter(Boolean).join("\n");
 
   let html = await shellRes.text();
