@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { ShareConvergence } from './ShareConvergence';
+import { ShareConvergenceDialog } from './ShareConvergenceDialog';
 
 interface SeenItButtonProps {
   symbolId: string;
@@ -28,12 +30,8 @@ const trackGA = (event: string, params: Record<string, unknown>) => {
   }
 };
 
-/**
- * Recognition-first "I saw this too" button.
- * Unauthenticated tap opens a reveal dialog showing the real live seen_it
- * count. Login becomes the reward (Save my recognition), never a toll.
- * Authenticated tap fires the vote immediately, unchanged.
- */
+const CW_INVITE_KEY = 'cw_invite_seen';
+
 export const SeenItButton = ({
   symbolId,
   submitterId,
@@ -43,10 +41,19 @@ export const SeenItButton = ({
 }: SeenItButtonProps) => {
   const navigate = useNavigate();
   const [revealOpen, setRevealOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [hideCard, setHideCard] = useState(false);
   const { userId, userVotes, voteCounts, loading, isOwnSubmission, seenIt } =
     useSymbolVoting(symbolId, submitterId);
 
-  const handleClick = (e: React.MouseEvent) => {
+  useEffect(() => {
+    if (revealOpen) {
+      setHideCard(false);
+      trackGA('convergence_card_previewed', { symbol_id: symbolId });
+    }
+  }, [revealOpen, symbolId]);
+
+  const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isOwnSubmission) return;
@@ -58,7 +65,23 @@ export const SeenItButton = ({
       setRevealOpen(true);
       return;
     }
-    seenIt();
+    const wasSeen = userVotes.hasSeenIt;
+    await seenIt();
+    // Only offer the share nudge on a new recognition, not on toggle-off.
+    if (wasSeen) return;
+    // Suppress the toast when the CoWitnessInviteDialog is about to appear.
+    // The invite dialog fires when localStorage cw_invite_seen is unset AND
+    // there is no co_witness_prefs row. We approximate that here with the
+    // localStorage check to avoid a duplicate DB round-trip.
+    if (typeof window !== 'undefined' && !window.localStorage.getItem(CW_INVITE_KEY)) {
+      return;
+    }
+    toast.success('Recognition recorded.', {
+      action: {
+        label: 'Share it',
+        onClick: () => setShareOpen(true),
+      },
+    });
   };
 
   const handleSaveRecognition = () => {
@@ -123,6 +146,15 @@ export const SeenItButton = ({
                   : 'Save it and start the count. Every recognition helps us map where these forms converge.'}
               </DialogDescription>
             </DialogHeader>
+            {!hideCard && (
+              <img
+                src={`/card/${symbolId}.svg`}
+                alt="Convergence card for this symbol"
+                loading="lazy"
+                onError={() => setHideCard(true)}
+                className="w-full rounded-lg border border-border mt-4"
+              />
+            )}
             <DialogFooter className="mt-6 flex-col-reverse sm:flex-col-reverse gap-2 sm:gap-2 sm:space-x-0">
               <ShareConvergence
                 symbolId={symbolId}
@@ -150,6 +182,13 @@ export const SeenItButton = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      <ShareConvergenceDialog
+        symbolId={symbolId}
+        seenItCount={count}
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+      />
     </>
   );
 };

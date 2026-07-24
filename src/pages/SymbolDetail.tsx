@@ -18,6 +18,7 @@ import { CoWitnessModule } from '@/components/co-witness/CoWitnessModule';
 import { CoWitnessInviteDialog } from '@/components/co-witness/CoWitnessInviteDialog';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { ShareButtons } from '@/components/ShareButtons';
+import { ShareConvergenceButton } from '@/components/registry/ShareConvergenceDialog';
 import { Helmet } from 'react-helmet';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { 
@@ -88,7 +89,7 @@ const SymbolDetail = () => {
   const [loading, setLoading] = useState(true);
 
   // Auto-fire pending "I saw this too" vote on return from /auth
-  const { userId, userVotes, seenIt } = useSymbolVoting(id || '', symbol?.user_id);
+  const { userId, userVotes, voteCounts, seenIt } = useSymbolVoting(id || '', symbol?.user_id);
   const autoFiredRef = useRef(false);
   useEffect(() => {
     const pending = searchParams.get('pendingVote');
@@ -330,6 +331,14 @@ const SymbolDetail = () => {
                   className="w-full justify-center"
                   imageUrl={symbol.image_url}
                 />
+
+                <div className="flex justify-center">
+                  <ShareConvergenceButton
+                    symbolId={symbol.id}
+                    seenItCount={voteCounts.seenItCount}
+                  />
+                </div>
+
 
                 {/* Actions */}
                 <div className="flex items-center justify-between">
