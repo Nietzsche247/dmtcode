@@ -19,6 +19,7 @@ interface Trial {
   status: string | null;
   confirmed_status: string | null;
   trial_type: string | null;
+  phase: string | null;
   location: string | null;
   source: string | null;
   application_url: string | null;
@@ -33,6 +34,7 @@ interface Trial {
   updated_at: string;
   created_at: string;
 }
+
 
 
 
