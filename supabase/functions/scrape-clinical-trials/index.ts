@@ -175,50 +175,56 @@ Deno.serve(async (req) => {
             const sponsorModule = protocolSection.sponsorCollaboratorsModule;
             const designModule = protocolSection.designModule;
             const contactsModule = protocolSection.contactsLocationsModule;
-            const conditionsModule = protocolSection.conditionsModule;
+            const descriptionModule = protocolSection.descriptionModule;
+            const armsModule = protocolSection.armsInterventionsModule;
 
             // Filter by start date >= 2024
             const startDateStr = statusModule?.startDateStruct?.date;
             if (startDateStr) {
               const startYear = parseInt(startDateStr.substring(0, 4));
-              if (startYear < 2024) {
-                continue; // Skip older trials
-              }
+              if (startYear < 2024) continue;
             }
 
-            const overallStatus = statusModule?.overallStatus || 'UNKNOWN';
-            const mappedStatus = mapStatus(overallStatus);
+            const briefTitle: string = identification?.briefTitle
+              || identification?.officialTitle
+              || 'Untitled Study';
+            const briefSummary: string | null = descriptionModule?.briefSummary || null;
+            const interventionNames: string[] = (armsModule?.interventions || [])
+              .map((iv: any) => iv?.name).filter(Boolean);
 
-            // Extract locations
+            // Whole-token relevance filter across title, interventions, brief summary
+            if (!isRelevant(briefTitle, interventionNames, briefSummary || '')) {
+              continue;
+            }
+
+            const overallStatus: string = statusModule?.overallStatus || 'UNKNOWN';
+
             const locations = contactsModule?.locations
-              ?.slice(0, 3) // Limit to first 3 locations
-              ?.map((loc: any) => `${loc.city || ''}, ${loc.country || ''}`)
-              .filter((loc: string) => loc.trim() !== ',')
-              .join('; ') || 'Not specified';
-
-            // Detect compound from title and conditions
-            const conditions = conditionsModule?.conditions || [];
-            const compound = detectCompound(
-              identification?.officialTitle || identification?.briefTitle || '',
-              conditions
-            );
+              ?.slice(0, 3)
+              ?.map((loc: any) => [loc.facility, loc.city, loc.country].filter(Boolean).join(', '))
+              .filter((s: string) => !!s)
+              .join('; ') || null;
 
             const nctId = identification?.nctId || '';
-            
+            const phase = designModule?.phases?.length
+              ? designModule.phases.map((p: string) => p.replace('PHASE', 'Phase ').replace(/_/g, ' ')).join(', ')
+              : null;
+
             const trial: TrialData = {
               nctId,
-              title: identification?.officialTitle || identification?.briefTitle || 'Untitled Study',
-              status: mappedStatus,
-              phase: designModule?.phases?.join(', ') || 'Not specified',
-              sponsor: sponsorModule?.leadSponsor?.name || 'Unknown',
-              locations,
-              startDate: normalizeDate(startDateStr) || new Date().toISOString().split('T')[0],
+              title: briefTitle,
+              status: overallStatus,
+              phase: phase || '',
+              sponsor: sponsorModule?.leadSponsor?.name || '',
+              locations: locations || '',
+              startDate: normalizeDate(startDateStr) || '',
               completionDate: normalizeDate(statusModule?.completionDateStruct?.date),
-              compound,
+              compound: '',
               url: `https://clinicaltrials.gov/study/${nctId}`,
             };
 
             if (trial.nctId) {
+              (trial as any).briefSummary = briefSummary;
               allTrials.push(trial);
             }
           }
@@ -232,16 +238,15 @@ Deno.serve(async (req) => {
     trialsFound = allTrials.length;
     console.log(`Total trials found: ${trialsFound}`);
 
-    // Remove duplicates by NCT ID
     const uniqueTrials = Array.from(
       new Map(allTrials.map(trial => [trial.nctId, trial])).values()
     );
 
     console.log(`Unique trials after deduplication: ${uniqueTrials.length}`);
 
-    // Upsert trials into database
     for (const trial of uniqueTrials) {
-      // Check if trial already exists
+      const briefSummary = (trial as any).briefSummary as string | null;
+
       const { data: existing } = await supabase
         .from('clinical_trials')
         .select('id, status')
@@ -249,49 +254,49 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (existing) {
-        // Update existing trial if status changed
+        // Update status only if changed. Do not overwrite description here;
+        // real descriptions are refreshed via the admin backfill function.
         if (existing.status !== trial.status) {
           const { error: updateError } = await supabase
             .from('clinical_trials')
             .update({
               status: trial.status,
-              title: trial.title,
-              description: `Phase: ${trial.phase} | Sponsor: ${trial.sponsor} | Compound: ${trial.compound}`,
               updated_at: new Date().toISOString(),
             })
             .eq('id', existing.id);
 
           if (!updateError) {
             trialsUpdated++;
-            console.log(`Updated trial ${trial.nctId} - status changed to ${trial.status}`);
           }
         }
         continue;
       }
 
-      // Insert new trial
+      // New trials land as unapproved so a human vets them before public list.
       const { error: insertError } = await supabase
         .from('clinical_trials')
         .insert({
           title: trial.title,
-          description: `Phase: ${trial.phase} | Sponsor: ${trial.sponsor} | Compound: ${trial.compound}`,
-          institution: trial.sponsor,
+          description: briefSummary,
+          institution: trial.sponsor || null,
           principal_investigator: null,
-          start_date: trial.startDate,
+          location: trial.locations || null,
+          trial_type: trial.phase || null,
+          start_date: trial.startDate || null,
           end_date: trial.completionDate,
           status: trial.status,
           trial_registry_id: trial.nctId,
           url: trial.url,
-          is_approved: true, // Auto-approve scraped trials
+          is_approved: false,
         });
 
       if (insertError) {
         console.error(`Error inserting trial ${trial.nctId}:`, insertError);
       } else {
         trialsAdded++;
-        console.log(`Successfully added trial: ${trial.nctId} (${trial.compound})`);
       }
     }
+
 
     // Send weekly email summary if configured
     let emailSent = false;
