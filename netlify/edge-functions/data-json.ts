@@ -264,8 +264,37 @@ export default async (req: Request): Promise<Response> => {
     updated_at: (r.updated_at as string) || null,
   }));
 
+  const theoriesFeed = theories.map((r) => ({
+    id: String(r.id),
+    url: `${SITE}/theories`,
+    title: (r.title as string) || null,
+    summary: (r.summary as string) || null,
+    content: (r.content as string) || null,
+    proponent: (r.proponent as string) || null,
+    source_title: (r.source_title as string) || null,
+    source_url: (r.source_url as string) || null,
+    source_type: (r.source_type as string) || null,
+    origin: (r.origin as string) || null,
+    tags: (r.tags as string[]) || [],
+    upvotes: Number(r.upvotes ?? 0),
+    created_at: (r.created_at as string) || null,
+  }));
+
+  const eventsFeed = events.map((r) => ({
+    id: String(r.id),
+    url: `${SITE}/events/${r.id}`,
+    title: (r.title as string) || null,
+    description: (r.description as string) || null,
+    details: (r.details as string) || null,
+    event_date: (r.event_date as string) || null,
+    event_type: (r.event_type as string) || null,
+    location: (r.location as string) || null,
+    organizer: (r.organizer as string) || null,
+    external_url: (r.url as string) || null,
+  }));
+
   const body = {
-    version: "3.1",
+    version: "3.2",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -289,9 +318,13 @@ export default async (req: Request): Promise<Response> => {
       bibliography: bibItems.length,
       trials: trialItems.length,
       symbols: symbolItems.length,
+      theories: theoriesFeed.length,
+      events: eventsFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
+    theories: theoriesFeed,
+    events: eventsFeed,
     faq: FAQ_ITEMS,
   };
 
