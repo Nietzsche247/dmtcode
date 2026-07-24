@@ -379,7 +379,7 @@ export default async (req: Request): Promise<Response> => {
 
   const uniqSorted = (vals: (string | null | undefined)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
-  const contentTypeVocab = uniqSorted(items.map((i) => i.content_type));
+  const contentTypeVocab = uniqSorted([...items.map((i) => i.content_type), "Article"]);
   const authorityVocab = uniqSorted(items.map((i) => i.authority_type));
   const statusVocab = uniqSorted(trialItems.map((i) => i.status));
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
