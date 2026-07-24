@@ -20,6 +20,7 @@ import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
+import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 
 export const AdminDashboard = () => {
   return (
