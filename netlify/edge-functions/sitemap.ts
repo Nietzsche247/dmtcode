@@ -37,6 +37,23 @@ const STATIC: Array<[string, string, string]> = [
   ["/theories", "0.7", "weekly"],
 ];
 
+// This function is duplicated verbatim in src/lib/theorySlug.ts,
+// netlify/edge-functions/content-prerender.ts and netlify/edge-functions/data-json.ts.
+// Netlify edge functions run in Deno and cannot import from src/. If you change this,
+// change all copies or theory URLs will silently diverge between the app, the
+// prerender layer, the sitemap and the machine corpus.
+function theorySlug(title: string): string {
+  return String(title || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['\u2018\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+}
+
 function xesc(s: string): string {
   return s
     .replace(/&/g, "&amp;")
