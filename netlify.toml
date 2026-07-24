@@ -125,6 +125,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/retreats"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/retreats/*"
   function = "content-prerender"
 
