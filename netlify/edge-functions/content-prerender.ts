@@ -429,9 +429,6 @@ export default async (request: Request, context: Context) => {
       return shellRes;
     }
 
-    const robotsMeta = noindex
-      ? `<meta name="robots" content="noindex,follow" />`
-      : "";
 
 
 
