@@ -197,12 +197,20 @@ const Events = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Events Timeline</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Top: Public & private events (dark red) • Bottom: Clinical trials (color-coded by status)
+            Upcoming events and clinical trials. Past events are kept below for the record.
           </p>
           <div className="flex gap-8">
-            <div className="flex-1 space-y-6">
-              <EventsTimeline />
+            <div className="flex-1 space-y-10">
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Upcoming</h3>
+                <EventsTimeline filter="upcoming" emptyLabel="No upcoming events yet." />
+              </div>
               <TrialsTimeline />
+              <div>
+                <h3 className="text-lg font-semibold mb-1 text-muted-foreground">Past events</h3>
+                <p className="text-xs text-muted-foreground mb-3">Past events, kept for the record.</p>
+                <EventsTimeline filter="past" muted emptyLabel="No past events on record." />
+              </div>
             </div>
             {/* Summary Columns - Desktop only */}
             <div className="hidden lg:flex flex-col gap-6 w-80 flex-shrink-0">

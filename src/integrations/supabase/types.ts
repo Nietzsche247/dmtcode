@@ -603,6 +603,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          details: string | null
           erowid_flag: boolean | null
           event_date: string
           event_type: string
@@ -618,6 +619,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          details?: string | null
           erowid_flag?: boolean | null
           event_date: string
           event_type: string
@@ -633,6 +635,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          details?: string | null
           erowid_flag?: boolean | null
           event_date?: string
           event_type?: string
@@ -1303,6 +1306,7 @@ export type Database = {
           country: string | null
           created_at: string
           description: string | null
+          details: string | null
           id: string
           image_url: string | null
           is_approved: boolean
@@ -1318,6 +1322,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          details?: string | null
           id?: string
           image_url?: string | null
           is_approved?: boolean
@@ -1333,6 +1338,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          details?: string | null
           id?: string
           image_url?: string | null
           is_approved?: boolean
