@@ -28,6 +28,9 @@ const VALID_FIRST_SEGMENT = new Set<string>([
 // Prefixes served by another edge function or static asset the SPA fallback
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
+  // /articles/:slug uses human-readable slugs, not UUIDs
+  const a = path.match(/^\/articles\/([^/]+)$/i);
+  if (a) return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a[1]);
   // /registry/:uuid, /trials/:uuid, /bibliography/:uuid, /events/:uuid, /retreats/:uuid
   const m = path.match(/^\/(registry|trials|bibliography|events|retreats)\/([^/]+)$/i);
   if (m) return UUID_RE.test(m[2]);
