@@ -136,6 +136,8 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   const authority = params.get("authority_type");
   const person = params.get("person");
   const status = params.get("status");
+  const verification = params.get("verification");
+  const phase = params.get("phase");
   const stanceMin = params.get("stance_min");
   const stanceMax = params.get("stance_max");
   const q = params.get("q")?.toLowerCase();
@@ -153,6 +155,10 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   if (person)
     out = out.filter((i) => i.people.some((p) => p.toLowerCase().includes(person.toLowerCase())));
   if (status) out = out.filter((i) => (i.status || "").toLowerCase() === status.toLowerCase());
+  if (verification)
+    out = out.filter((i) => (i.verification || "").toLowerCase() === verification.toLowerCase());
+  if (phase)
+    out = out.filter((i) => (i.phase || "").toLowerCase().includes(phase.toLowerCase()));
   if (stanceMin != null)
     out = out.filter((i) => i.stance_score != null && i.stance_score >= parseInt(stanceMin, 10));
   if (stanceMax != null)
