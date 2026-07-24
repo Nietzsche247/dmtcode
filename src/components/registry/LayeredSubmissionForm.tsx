@@ -245,7 +245,6 @@ export const LayeredSubmissionForm = () => {
       // If offline, save locally and show success
       if (!isOnline) {
         savePendingSubmission(submissionData);
-        toast.success('Symbol saved offline! Will sync when connected.');
         setStep(6);
         setIsSubmitting(false);
         return;
