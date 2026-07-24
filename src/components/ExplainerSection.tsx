@@ -55,11 +55,11 @@ export const ExplainerSection = () => {
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              <span className="text-foreground font-medium">Neurophysiological basis:</span> <a href="https://doi.org/10.1038/s41598-019-51974-4" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Timmermann et al. (2019)</a> demonstrated that N,N-DMT administration produces enhanced coherence in visual cortex regions via EEG analysis. When combined with 660 nm photobiomodulation, mitochondrial ATP production in neurons increases, potentially optimizing visual processing for discrete symbol perception.
+              <span className="text-foreground font-medium">Neurophysiological context:</span> <a href="https://doi.org/10.1038/s41598-019-51974-4" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Timmermann et al. (2019)</a> is an EEG study of the N,N-DMT state and reports changes in cortical signal complexity and connectivity. It does not test the 650 nm laser protocol and does not evaluate photobiomodulation; any link between red-light exposure and symbol clarity remains an untested hypothesis.
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              The DMT Code Glyph Registry collects these recurring visual elements in a structured, machine-readable format. <span className="text-foreground font-medium">Memory decay matters:</span> <a href="https://doi.org/10.1007/978-1-4615-0115-9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Strassman (2001)</a> found that detailed visual recall drops by 60% within 15 minutes and 90% within 2 hours. Drawing symbols immediately using the registry canvas improves data accuracy.
+              The DMT Code Glyph Registry collects these recurring visual elements in a structured, machine-readable format. <span className="text-foreground font-medium">Memory decay matters:</span> fine visual detail from the experience fades quickly once acute effects subside. Drawing symbols immediately using the registry canvas preserves substantially more structural detail than recording them later.
             </p>
 
             <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 my-8">
