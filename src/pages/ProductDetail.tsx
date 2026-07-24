@@ -334,7 +334,7 @@ const ProductDetail = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Please sign in to submit a rating");
-        navigate("/auth");
+        navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
         return;
       }
 
