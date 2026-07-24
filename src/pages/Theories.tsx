@@ -187,7 +187,8 @@ export default function TheoriesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate("/auth");
+      toast.error("Please sign in to submit a theory");
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     try {
