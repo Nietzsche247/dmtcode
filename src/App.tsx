@@ -300,6 +300,22 @@ const App = () => (
             </ErrorBoundary>
           } />
 
+          <Route path="/articles" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Articles />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/articles/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <ArticleDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
+
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/join" element={<Join />} />
