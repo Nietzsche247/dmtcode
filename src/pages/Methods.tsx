@@ -162,12 +162,12 @@ const Methods = () => {
                     <li><strong>Symbol frequency analysis:</strong> Track how often identical symbols appear across participants. High-consistency symbols (≥3 independent observers) warrant focused analysis.</li>
                   </ul>
                   <a 
-                    href="https://doi.org/10.1098/rstb.2000.0769" 
+                    href="https://doi.org/10.3389/fpsyg.2021.720717" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-gold hover:underline"
                   >
-                    Michael et al. (2021) Form Constant Analysis DOI: 10.1098/rstb.2000.0769
+                    Michael, Luke and Robinson (2021) An Encounter With the Other: A Thematic and Content Analysis of DMT Experiences From a Naturalistic Field Study. Frontiers in Psychology 12, 720717. DOI: 10.3389/fpsyg.2021.720717
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </AccordionContent>
