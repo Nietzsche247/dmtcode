@@ -332,6 +332,14 @@ const SymbolDetail = () => {
                   imageUrl={symbol.image_url}
                 />
 
+                <div className="flex justify-center">
+                  <ShareConvergenceButton
+                    symbolId={symbol.id}
+                    seenItCount={voteCounts.seenItCount}
+                  />
+                </div>
+
+
                 {/* Actions */}
                 <div className="flex items-center justify-between">
                   <VotingButtons 
