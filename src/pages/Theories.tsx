@@ -73,6 +73,7 @@ const SOURCE_TYPES = [
 
 export default function TheoriesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [theories, setTheories] = useState<Theory[]>([]);
   const [handles, setHandles] = useState<Record<string, string>>({});
   const [userVotes, setUserVotes] = useState<Record<string, boolean>>({});
