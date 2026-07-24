@@ -31,6 +31,9 @@ export const CompetitorSpy = () => {
 
   return (
     <div className="space-y-6">
+      <div className="p-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-sm font-semibold uppercase tracking-wide text-center">
+        Sample data, not live
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>Competitor Tracking</CardTitle>
