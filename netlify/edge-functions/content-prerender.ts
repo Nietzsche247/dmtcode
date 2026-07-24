@@ -1104,47 +1104,16 @@ async function renderFaq(context: Context): Promise<Response> {
 </article>`;
 
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta property="og:image" content="${esc(ogImage)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<meta name="twitter:image" content="${esc(ogImage)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(faqLd)}</script>`,
-  ].join("\n");
-
-  let html = await shellRes.text();
-  html = html
-    .replace(/<title>[\s\S]*?<\/title>/gi, "")
-    .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
-    .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "");
-  html = html.replace(/<\/head>/i, `${head}\n</head>`);
-  if (/<div id="root">\s*<\/div>/i.test(html)) {
-    html = html.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
-  } else {
-    html = html.replace(/<\/body>/i, `<noscript>${body}</noscript>\n</body>`);
-  }
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=0, must-revalidate",
-      "netlify-cdn-cache-control": "public, s-maxage=3600, stale-while-revalidate=86400, durable",
-    },
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, faqLd],
   });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 type StaticPage = {
