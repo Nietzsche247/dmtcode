@@ -102,7 +102,7 @@ const Index = () => {
           <TestimonialsCarousel />
           <LaserGuide />
           <ShopSection />
-          <EmailCapture />
+          <EmailCapture source="homepage" />
         </main>
 
         <Footer />
