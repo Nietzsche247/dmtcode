@@ -2667,7 +2667,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     fetchInList("clinical_trials", trialIds, "is_approved=is.true", "id,title"),
     fetchInList("bibliography", bibIds, "is_approved=eq.true", "id,title,doi"),
     fetchInList("symbol_submissions", symIds, "status=eq.approved", "id"),
-    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,name", "slug"),
+    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,title", "slug"),
   ]);
 
   const basedParts: string[] = [];
