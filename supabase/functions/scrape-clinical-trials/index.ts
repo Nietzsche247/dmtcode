@@ -19,7 +19,11 @@ interface TrialData {
   url: string;
 }
 
-// Query terms sent to the registry search
+// Query terms sent to the registry search.
+// Deliberately narrow: bare "ketamine" and "psychedelic" pull thousands of
+// perioperative / anaesthesia / analgesia studies. Ketamine + esketamine still
+// pass the local RELEVANCE_REGEX when they surface via a genuinely psychedelic
+// search term, and are additionally gated by KETAMINE_CONTEXT_REGEX below.
 const SEARCH_TERMS = [
   'DMT',
   'N,N-DMT',
@@ -29,19 +33,26 @@ const SEARCH_TERMS = [
   'ibogaine',
   'LSD',
   'MDMA',
-  'ketamine',
-  'psychedelic',
 ];
 
-// Whole-token relevance regex used to filter each candidate study.
-// Bare "LSD" is a standalone token; "LSD-1" / "LSD1" must NOT match.
-// The negative lookaround on \w and \- keeps LSD1 / LSD-1 out.
-const RELEVANCE_REGEX = /(?<![\w-])(?:dimethyltryptamine|dmt|n,n-dmt|5-meo-dmt|psilocybin|psilocin|lsd|lysergic acid diethylamide|ayahuasca|harmine|harmaline|banisteriopsis|mescaline|peyote|ibogaine|iboga|mdma|methylenedioxymethamphetamine|ketamine|esketamine|psychedelic|psychedelics|hallucinogen|hallucinogenic|entheogen|serotonin 2a|5-ht2a|salvinorin|comp360|cyb003|cyb004|gh001|mm120|spl026|bpl-003)(?![\w-])/i;
+// Psychedelic tokens (excluding ketamine/esketamine). Any match here passes
+// unconditionally.
+const PSYCHEDELIC_REGEX = /(?<![\w-])(?:dimethyltryptamine|dmt|n,n-dmt|5-meo-dmt|psilocybin|psilocin|lsd|lysergic acid diethylamide|ayahuasca|harmine|harmaline|banisteriopsis|mescaline|peyote|ibogaine|iboga|mdma|methylenedioxymethamphetamine|psychedelic|psychedelics|hallucinogen|hallucinogenic|entheogen|serotonin 2a|5-ht2a|salvinorin|comp360|cyb003|cyb004|gh001|mm120|spl026|bpl-003)(?![\w-])/i;
+
+// Ketamine tokens. Only qualifies when paired with a psychiatric or
+// consciousness context.
+const KETAMINE_REGEX = /(?<![\w-])(?:ketamine|esketamine)(?![\w-])/i;
+
+const KETAMINE_CONTEXT_REGEX = /(?<![\w-])(?:depression|depressive|treatment-resistant|suicidal|suicidality|ptsd|post-traumatic|anxiety|psychiatric|psychiatry|mood disorder|bipolar|ocd|obsessive-compulsive|substance use|alcohol use disorder|addiction|anhedonia|consciousness|dissociative|psychotherapy|assisted therapy)(?![\w-])/i;
 
 function isRelevant(title: string, interventions: string[], brief: string): boolean {
   const parts = [title, interventions.join(' '), brief].filter(Boolean);
-  return parts.some((p) => RELEVANCE_REGEX.test(p));
+  const blob = parts.join(' \n ');
+  if (PSYCHEDELIC_REGEX.test(blob)) return true;
+  if (KETAMINE_REGEX.test(blob) && KETAMINE_CONTEXT_REGEX.test(blob)) return true;
+  return false;
 }
+
 
 // Normalize date from YYYY-MM to YYYY-MM-01 format
 function normalizeDate(dateStr: string | null | undefined): string | null {
