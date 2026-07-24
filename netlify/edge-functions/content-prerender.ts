@@ -1344,7 +1344,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Research Timeline and Events",
     paragraphs: [
       "This page aggregates community reported events and publicly available clinical trial data into one scholarly reference timeline. Inclusion does not constitute endorsement.",
-      "Events and trials are sourced from the community and from public registries. Trust ratings on retreat listings reflect participant feedback and are reviewed by moderators before publication.",
+      "Events and trials are sourced from the community and from public registries, and are reviewed by moderators before publication. A listing is not an endorsement. Verify legal status, medical screening and staff credentials directly with any organizer or retreat center before you book.",
     ],
     links: [
       { href: "/trials", label: "Clinical trials observatory" },
