@@ -1461,7 +1461,40 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
   const canonical = `${SITE}${path || "/"}`;
 
   let recentList = "";
-  if (page.index && SUPABASE_URL && SUPABASE_KEY) {
+  const extraLd: unknown[] = [...(page.extraJsonLd ?? [])];
+
+  if (key === "events" && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const headers = {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      };
+      const [evRes, trRes] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/events?select=id,title,event_date,location,event_type&order=event_date.desc&limit=6`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/clinical_trials?is_approved=is.true&select=id,title,start_date,institution,status&order=start_date.desc&limit=6`, { headers }),
+      ]);
+      const evs = evRes.ok ? await evRes.json() as Array<Record<string, string>> : [];
+      const trs = trRes.ok ? await trRes.json() as Array<Record<string, string>> : [];
+      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
+      const trItems = trs.map((r) => `<li><time datetime="${esc(r.start_date)}">${esc(String(r.start_date || "").slice(0,10))}</time>: <a href="/trials/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a> (${esc(String(r.status || ""))}, ${esc(String(r.institution || ""))})</li>`).join("");
+      recentList = `<section><h2>Recent events</h2><ul>${evItems || "<li>No community events reported.</li>"}</ul></section>
+<section><h2>Recent clinical trials</h2><ul>${trItems || "<li>No trials tracked.</li>"}</ul></section>
+<p><em>Scholarly reference only. This timeline aggregates community reported events and publicly available clinical trial data. Inclusion does not constitute endorsement.</em></p>`;
+      const listItems = [
+        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events` })),
+        ...trs.map((r, i) => ({ "@type": "ListItem", position: evs.length + i + 1, name: String(r.title || ""), url: `${SITE}/trials/${r.id}` })),
+      ];
+      if (listItems.length) {
+        extraLd.push({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "DMT Code Research Timeline",
+          itemListElement: listItems,
+        });
+      }
+    } catch { /* ignore */ }
+  } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
       const res = await fetch(url, {
