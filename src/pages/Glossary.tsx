@@ -140,7 +140,7 @@ const Glossary = () => {
     },
     {
       term: "Form Constant",
-      definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states. Arise from primary visual cortex (V1) architecture. Distinguished from discrete alphabetic-like symbols reported in 650 nm protocol (Michael et al. 2021, DOI: 10.1098/rstb.2000.0769)."
+      definition: "Recurring geometric pattern (tunnels, spirals, honeycombs, lattices) observed across diverse altered states. Arise from primary visual cortex (V1) architecture. Distinguished from discrete alphabetic-like symbols reported in 650 nm protocol (Michael et al. 2021, DOI: 10.3389/fpsyg.2021.720717)."
     }
   ];
 
