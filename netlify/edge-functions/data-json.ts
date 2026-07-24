@@ -189,7 +189,7 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
@@ -214,6 +214,11 @@ export default async (req: Request): Promise<Response> => {
       "events",
       "id,title,description,details,event_date,event_type,location,organizer,url,is_approved",
       "is_approved=is.true"
+    ),
+    fetchAll(
+      "articles",
+      "id,slug,title,dek,body_md,topic_tags,compounds,related_trials,related_bibliography,related_symbols,related_protocols,author,published_at,updated_at,is_published",
+      "is_published=eq.true"
     ),
   ]);
 
