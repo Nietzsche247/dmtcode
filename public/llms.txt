@@ -36,6 +36,9 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 - /trials: HTML index of clinical trials.
 - /trials/:id: HTML detail. Head emits schema.org MedicalStudy with sponsor, phase, status, and application URL.
 - /registry: HTML index of community submitted symbols. Per symbol pages at /registry/:id are server prerendered with CreativeWork JSON-LD.
+- /theories: HTML index of attributed explanatory theories for the reported DMT code phenomenon. Curated from the public record (published, attributed positions) plus moderated community submissions. Theories are candidate hypotheses, not evidence. Head emits an ItemList of CreativeWork entries. Also mirrored into /data.json under the top-level "theories" array.
+- /events: HTML timeline of community reported events and DMT related clinical trial milestones. Every event now has a permanent detail page at /events/:id with long-form details, Schema.org Event JSON-LD, and a BreadcrumbList. The events array is also mirrored into /data.json under the top-level "events" array.
+- /retreats/:id: HTML detail page for community submitted retreat centers. Head emits Schema.org LodgingBusiness with address, image, contact, and tag keywords.
 - /sitemap.xml: full URL index, regenerated from the database on each request.
 - License: CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/). Attribute to DMT Code, https://dmtcode.com.
 
