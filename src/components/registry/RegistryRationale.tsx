@@ -11,13 +11,10 @@ export const RegistryRationale = () => {
           </p>
           
           <div className="bg-card border border-primary/30 rounded-lg p-6">
-            <p className="font-semibold text-primary mb-3">Memory Decay Timeline (Strassman, 2001):</p>
-            <ul className="space-y-2 text-sm">
-              <li>• <strong>0-5 minutes:</strong> 85-90% symbol detail retention</li>
-              <li>• <strong>5-15 minutes:</strong> 40% retention (60% loss)</li>
-              <li>• <strong>15-60 minutes:</strong> 20% retention (80% loss)</li>
-              <li>• <strong>2+ hours:</strong> 10% retention (90% loss)</li>
-            </ul>
+            <p className="font-semibold text-primary mb-3">Why immediate capture matters</p>
+            <p className="text-sm">
+              Recall of fine visual detail from the experience degrades rapidly once the acute effects subside. Sketching or describing what was observed as soon as the session ends preserves far more structural detail than recording the same content later, when only broad impressions tend to remain.
+            </p>
           </div>
 
           <p>
