@@ -52,7 +52,7 @@ const Glossary = () => {
     },
     {
       term: "Photobiomodulation",
-      definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Proposed mechanism for symbol clarity enhancement."
+      definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Any link to symbol clarity in the 650 nm protocol is an untested hypothesis and has not been demonstrated."
     },
     {
       term: "Registry Glyph",
