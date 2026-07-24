@@ -1,7 +1,7 @@
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
 import { ResearchSection } from '@/components/ResearchSection';
-import { TheoriesSection } from '@/components/TheoriesSection';
+
 
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
 import { Footer } from '@/components/Footer';
@@ -65,7 +65,7 @@ const Research = () => {
               </a>
             </div>
             <ResearchSection />
-            <TheoriesSection />
+            
             <TheoriesDashboard />
             
           </div>
