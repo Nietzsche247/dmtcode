@@ -1389,10 +1389,12 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Definitions of the academic and technical terms used across the DMT Code project.",
     heading: "Glossary",
     paragraphs: [
-      "This glossary defines terms used across the DMT Code project, including N,N-DMT, 5-MeO-DMT, 650 nm, optical density, stance score, authority type, and convergence.",
+      "This glossary defines terms used across the DMT Code project, including the 650 nm laser protocol, discrete visual symbol, inter-subject consistency, form constant, entoptic phenomenon, expectancy bias, pareidolia and phosphene.",
       "Definitions are kept short and factual so cross references between pages resolve to the same meaning.",
     ],
     breadcrumbName: "Glossary",
+    bodyExtraHtml: `<section><h2>Definitions</h2>${GLOSSARY_TERMS.map((t) => `<div id="${termSlug(t.term)}"><h3>${esc(t.term)}</h3><p>${esc(t.definition)}</p></div>`).join("")}</section>`,
+    extraJsonLd: [GLOSSARY_TERMSET_LD],
   },
   methods: {
     title: "Methods and protocol design | DMT Code",
@@ -1407,6 +1409,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/dataset", label: "Dataset" },
     ],
     breadcrumbName: "Methods",
+    bodyExtraHtml: `<section><h2>Common questions</h2>${METHODS_FAQ.map((f) => `<div><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("")}</section>`,
+    extraJsonLd: [METHODS_FAQ_LD],
   },
   "open-questions": {
     title: "Open research questions | DMT Code",
