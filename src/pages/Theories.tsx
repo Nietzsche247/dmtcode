@@ -428,7 +428,11 @@ export default function TheoriesPage() {
                               </Badge>
                             ))}
                           </div>
-                          <CardTitle className="text-lg">{t.title}</CardTitle>
+                          <CardTitle className="text-lg">
+                            <Link to={`/theories/${theorySlug(t.title)}`} className="hover:underline">
+                              {t.title}
+                            </Link>
+                          </CardTitle>
                           {proponentLine && (
                             <p className="text-xs text-muted-foreground">{proponentLine}</p>
                           )}
