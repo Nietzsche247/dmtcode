@@ -17,18 +17,18 @@ interface TrialNotifyButtonProps {
 
 const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
   const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isOnList, setIsOnList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !email.includes("@")) {
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast({
         title: "Invalid email",
-        description: "Please enter a valid email address",
+        description: "Please enter a valid email address.",
         variant: "destructive",
       });
       return;
@@ -38,7 +38,7 @@ const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       const { error } = await supabase
         .from("trial_watchlist")
         .insert({
@@ -50,25 +50,26 @@ const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
       if (error) {
         if (error.code === "23505") {
           toast({
-            title: "Already subscribed",
-            description: "You're already watching this trial",
+            title: "Already on the list",
+            description: "That address is already on this trial's watch list.",
           });
+          setIsOpen(false);
         } else {
           throw error;
         }
       } else {
-        setIsSubscribed(true);
+        setIsOnList(true);
         toast({
-          title: "Subscribed!",
-          description: `You'll be notified about updates to "${trialTitle.substring(0, 50)}..."`,
+          title: "Added to the watch list",
+          description: "Your address is recorded for this trial. Status alerts are not automated yet.",
         });
         setIsOpen(false);
       }
     } catch (error) {
-      console.error("Subscribe error:", error);
+      console.error("Trial watch list insert failed:", error);
       toast({
-        title: "Error",
-        description: "Failed to subscribe. Please try again.",
+        title: "Could not save",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -76,11 +77,11 @@ const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
     }
   };
 
-  if (isSubscribed) {
+  if (isOnList) {
     return (
       <Button variant="outline" size="sm" disabled className="gap-2">
         <Check className="h-4 w-4" />
-        Watching
+        On the watch list
       </Button>
     );
   }
@@ -90,18 +91,18 @@ const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Bell className="h-4 w-4" />
-          Notify Me
+          Watch this trial
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="end">
-        <form onSubmit={handleSubscribe} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium text-sm flex items-center gap-2">
               <BellRing className="h-4 w-4" />
-              Get trial updates
+              Trial watch list
             </h4>
             <p className="text-xs text-muted-foreground">
-              We'll notify you when this trial's status changes.
+              We record your address against this trial. Automated status alerts are not running yet, so nothing will arrive until they are. Your address is used for this and nothing else.
             </p>
           </div>
           <Input
@@ -112,8 +113,11 @@ const TrialNotifyButton = ({ trialId, trialTitle }: TrialNotifyButtonProps) => {
             required
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Subscribing..." : "Subscribe"}
+            {isLoading ? "Saving..." : "Add me"}
           </Button>
+          <p className="text-[11px] text-muted-foreground">
+            To be removed, write to info@dmtcode.com.
+          </p>
         </form>
       </PopoverContent>
     </Popover>
