@@ -157,7 +157,7 @@ export const Navigation = () => {
                 />
               ) : (
                 <Button 
-                  onClick={() => navigate('/auth')} 
+                  onClick={goToAuth} 
                   size="sm"
                   className="rounded-full px-4 hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all min-h-[44px]"
                 >
