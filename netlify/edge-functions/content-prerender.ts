@@ -2698,7 +2698,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   if (protoRows.length) {
     basedParts.push(
       `<li><strong>Protocols:</strong><ul>${protoRows
-        .map((p) => `<li><a href="/protocols/${esc(String(p.slug))}">${esc(String(p.name || p.slug))}</a></li>`)
+        .map((p) => `<li><a href="/protocols/${esc(String(p.slug))}">${esc(String(p.title || p.slug))}</a></li>`)
         .join("")}</ul></li>`,
     );
   }
