@@ -1636,6 +1636,9 @@ export const config: Config = {
     "/evidence-map",
     "/faq",
     "/events",
+    "/events/*",
+    "/retreats/*",
+    "/theories",
   ],
 };
 
