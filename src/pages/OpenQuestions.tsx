@@ -16,8 +16,6 @@ const OpenQuestions = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/open-questions" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/open-questions" />
-        <link rel="alternate" hrefLang="es" href="https://dmtcode.com/open-questions" />
-        <link rel="alternate" hrefLang="fr" href="https://dmtcode.com/open-questions" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

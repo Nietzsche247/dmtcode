@@ -1484,20 +1484,27 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
         Authorization: `Bearer ${SUPABASE_KEY}`,
         Accept: "application/json",
       };
-      const [evRes, trRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/events?select=id,title,event_date,location,event_type&order=event_date.desc&limit=6`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/clinical_trials?is_approved=is.true&select=id,title,start_date,institution,status&order=start_date.desc&limit=6`, { headers }),
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const [upRes, pastRes, reRes] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,location,event_type&order=event_date.asc&limit=12`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,location,event_type&order=event_date.desc&limit=12`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/retreats?is_approved=eq.true&select=id,name,description,location,country,website_url&order=created_at.desc&limit=12`, { headers }),
       ]);
-      const evs = evRes.ok ? await evRes.json() as Array<Record<string, string>> : [];
-      const trs = trRes.ok ? await trRes.json() as Array<Record<string, string>> : [];
-      const evItems = evs.map((r) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}</li>`).join("");
-      const trItems = trs.map((r) => `<li><time datetime="${esc(r.start_date)}">${esc(String(r.start_date || "").slice(0,10))}</time>: <a href="/trials/${esc(r.id)}">${esc(clip(String(r.title || ""), 120))}</a> (${esc(String(r.status || ""))}, ${esc(String(r.institution || ""))})</li>`).join("");
-      recentList = `<section><h2>Recent events</h2><ul>${evItems || "<li>No community events reported.</li>"}</ul></section>
-<section><h2>Recent clinical trials</h2><ul>${trItems || "<li>No trials tracked.</li>"}</ul></section>
-<p><em>Scholarly reference only. This timeline aggregates community reported events and publicly available clinical trial data. Inclusion does not constitute endorsement.</em></p>`;
+      const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
+      const pasts = pastRes.ok ? await pastRes.json() as Array<Record<string, string>> : [];
+      const rets = reRes.ok ? await reRes.json() as Array<Record<string, string>> : [];
+      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+      const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+      const sections: string[] = [];
+      if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
+      if (pasts.length) sections.push(`<section><h2>Past events</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
+      if (rets.length) sections.push(`<section><h2>Retreats</h2><ul>${rets.map(renderRe).join("")}</ul></section>`);
+      if (!sections.length) sections.push(`<section><h2>No approved events or retreats yet</h2><p>Nothing has been approved for this timeline yet. Submissions are reviewed before publication.</p></section>`);
+      recentList = sections.join("\n") + `\n<p><em>Scholarly reference only. Inclusion does not constitute endorsement.</em></p>`;
       const listItems = [
-        ...evs.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: String(r.title || ""), url: `${SITE}/events/${r.id}` })),
-        ...trs.map((r, i) => ({ "@type": "ListItem", position: evs.length + i + 1, name: String(r.title || ""), url: `${SITE}/trials/${r.id}` })),
+        ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
+        ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
+        ...rets.map((r, i) => ({ "@type": "Event", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
       ];
       if (listItems.length) {
         extraLd.push({

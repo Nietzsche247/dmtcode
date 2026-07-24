@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -35,39 +36,44 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground">Resources</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href="/registry" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/registry" className="text-muted-foreground hover:text-primary transition-colors">
                   Glyph Registry
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/dataset" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/dataset" className="text-muted-foreground hover:text-primary transition-colors">
                   Dataset & DOI
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/tools" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/prepare" className="text-muted-foreground hover:text-primary transition-colors">
                   Equipment
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/bibliography" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/bibliography" className="text-muted-foreground hover:text-primary transition-colors">
                   Research
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/protocol-guide" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/protocol-guide" className="text-muted-foreground hover:text-primary transition-colors">
                   Protocol Guide
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/co-witnesses" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/co-witnesses" className="text-muted-foreground hover:text-primary transition-colors">
                   Co-witness wall
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/theories" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/theories" className="text-muted-foreground hover:text-primary transition-colors">
                   Open Theories
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">
+                  FAQ
+                </Link>
               </li>
             </ul>
           </div>
@@ -76,24 +82,24 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground">Legal</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacy
-                </a>
+                <Link to="/critiques" className="text-muted-foreground hover:text-primary transition-colors">
+                  Critiques
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms
-                </a>
+                <Link to="/methods" className="text-muted-foreground hover:text-primary transition-colors">
+                  Methods
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Disclosure
-                </a>
+                <Link to="/null-reports" className="text-muted-foreground hover:text-primary transition-colors">
+                  Null reports
+                </Link>
               </li>
             </ul>
           </div>

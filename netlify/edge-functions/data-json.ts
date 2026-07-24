@@ -55,6 +55,8 @@ interface UnifiedItem {
   stance_score: number | null;
   people: string[];
   status: string | null;
+  verification: string | null;
+  phase: string | null;
   source_date: string | null;
 }
 
@@ -163,7 +165,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,trial_type,status,confirmed_status,application_url,url,notes,eligibility,created_at",
+      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at",
       "is_approved=is.true"
     ),
     fetchAll(
@@ -201,6 +203,8 @@ export default async (req: Request): Promise<Response> => {
       stance_score: (r.stance_score as number) ?? null,
       people,
       status: null,
+      verification: null,
+      phase: null,
       source_date: (r.source_date as string) || (r.publication_date as string) || null,
     };
   });
@@ -227,7 +231,9 @@ export default async (req: Request): Promise<Response> => {
       authority_type: "Clinical",
       stance_score: null,
       people,
-      status: (r.confirmed_status as string) || (r.status as string) || null,
+      status: (r.status as string) || null,
+      verification: (r.confirmed_status as string) || null,
+      phase: (r.phase as string) || null,
       source_date: (r.created_at as string) || null,
     };
   });
@@ -244,6 +250,8 @@ export default async (req: Request): Promise<Response> => {
     stance_score: null,
     people: [],
     status: (r.status as string) || null,
+    verification: null,
+    phase: null,
     source_date: (r.created_at as string) || null,
   }));
 
@@ -293,18 +301,28 @@ export default async (req: Request): Promise<Response> => {
     external_url: (r.url as string) || null,
   }));
 
+  const uniqSorted = (vals: (string | null | undefined)[]) =>
+    Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
+  const contentTypeVocab = uniqSorted(items.map((i) => i.content_type));
+  const authorityVocab = uniqSorted(items.map((i) => i.authority_type));
+  const statusVocab = uniqSorted(trialItems.map((i) => i.status));
+  const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
+  const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
+
   const body = {
-    version: "3.2",
+    version: "3.3",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
     filters: {
-      content_type: ["Trial", "Paper", "Podcast", "Media", "Dataset", "Book", "Essay", "Symbol"],
+      content_type: contentTypeVocab,
       compound: "substring match against item.compounds",
       topic: "substring match against item.topic",
-      authority_type: ["Academic", "Clinical", "Journalism", "Community", "Independent"],
+      authority_type: authorityVocab,
       person: "substring match against item.people (see known names)",
-      status: "trial status such as recruiting, active, completed",
+      status: statusVocab,
+      verification: verificationVocab,
+      phase: phaseVocab,
       stance_min: "integer, inclusive lower bound",
       stance_max: "integer, inclusive upper bound",
       q: "free text over title, people, topic",
