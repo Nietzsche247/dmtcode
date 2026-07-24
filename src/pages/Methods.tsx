@@ -6,6 +6,33 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
+const FAQ_ENTRIES = [
+  {
+    q: "How do you design a blinded experiment for the 650 nm laser protocol?",
+    a: "Double-blind experimental design requires three critical components to eliminate expectation effects and observer bias: Sham laser device: Construct device with identical appearance, weight, and operation (button press, indicator LED) but no 650 nm coherent light output. Use blocked aperture or 520 nm green LED as control wavelength. Independent randomization: Third-party experimenter (not present during experience) randomizes real/sham assignment using sealed envelopes or electronic randomization. Maintains allocation concealment until data analysis. Blinded symbol recording: Both participant and symbol recorder remain unaware of real/sham condition. Post-experience drawing occurs before unblinding. Control for optical variables: wavelength (650 nm ± 5 nm), intensity (≤5 mW), diffraction grating line density (500-1000 lines/mm). Control for pharmacological variables: N,N-DMT dose (route-matched baseline dose), set/setting standardization. Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4"
+  },
+  {
+    q: "What control conditions are necessary?",
+    a: "Rigorous replication requires four experimental conditions to isolate laser effect from DMT effects, expectation, and optical artifacts: Condition 1: Sham laser + N,N-DMT. Controls for expectation effects. If symbols appear with sham device, suggests placebo/expectation mechanism. Condition 2: Real laser + placebo substance. Controls for optical artifacts. If symbols appear without DMT, suggests retinal phosphenes or afterimages. Condition 3: No laser + N,N-DMT. Baseline DMT visual phenomena without laser stimulus. Establishes whether symbols occur spontaneously. Condition 4: Diffraction grating alone (no laser) + N,N-DMT. Controls for grating visual effects. Tests whether coherent light (vs. ambient light through grating) is necessary. Each condition requires minimum 20 participants for 80% statistical power to detect medium effect size (Cohen's d = 0.5). Use validated symbol classification schema and blinded raters for drawing analysis."
+  },
+  {
+    q: "How do you quantify visual symbol consistency?",
+    a: "Objective symbol classification requires: Pre-registered symbol taxonomy: Define categories before data collection (geometric shapes, alphabetic-like characters, abstract patterns) rather than assigning them post hoc. Blinded rater analysis: Two independent raters (unaware of experimental condition) classify drawings using a standardized rubric. Calculate inter-rater reliability (Cohen's κ ≥ 0.70 required). Computational similarity metrics: Use image similarity algorithms (SSIM, perceptual hashing) to quantify drawing-to-drawing consistency within conditions. Symbol frequency analysis: Track how often identical symbols appear across participants. High-consistency symbols (≥3 independent observers) warrant focused analysis."
+  },
+  {
+    q: "What statistical tests are appropriate?",
+    a: "Primary outcome: Symbol appearance rate (binary: yes/no discrete bounded symbols). Chi-square test: Compare symbol appearance frequency across real laser vs. sham laser conditions. Logistic regression: Model symbol appearance probability with predictors (laser condition, DMT dose, prior experience, expectation). Bayesian analysis: Calculate Bayes factor (BF₁₀) comparing laser-effect hypothesis vs. null hypothesis. BF₁₀ > 3 considered moderate evidence, >10 strong evidence. Secondary outcomes: Symbol complexity (quantified via fractal dimension, perimeter-to-area ratio), inter-subject similarity (average pairwise SSIM scores), consistency with pre-registered symbol taxonomy."
+  },
+  {
+    q: "What equipment specifications are required?",
+    a: "Standardized equipment ensures replicability: Laser: 650 nm ± 5 nm wavelength, ≤5 mW power output (Class IIIa safety rating), continuous wave (not pulsed), beam diameter 1-2 mm at aperture. Diffraction grating: 500-1000 lines/mm transmission grating, mounted 2-5 cm from laser aperture. Holographic gratings preferred for uniform diffraction pattern. Sham device: Identical external housing, blocked aperture or 520 nm green LED (produces visible dot but different wavelength), same weight/button operation. Measurement tools: Spectrometer to verify 650 nm output, power meter to confirm ≤5 mW, beam profiler for spatial characterization."
+  },
+  {
+    q: "How do you handle ethical considerations?",
+    a: "Psychedelic research requires stringent ethical protocols: Institutional approval: IRB/ethics committee approval required before any human subjects research. Submit detailed protocol including risk mitigation, informed consent procedures, participant screening. Medical screening: Exclude participants with personal/family history of psychosis, cardiovascular conditions, medications contraindicated with DMT (MAOIs, SSRIs). Harm reduction: Trained medical personnel on-site, blood pressure/heart rate monitoring, integration support sessions post-experience. Data protection: Anonymous data collection, secure storage (HIPAA/GDPR compliant), no identifiable information linked to drawings or reports. Follow guidelines from Psychedelic Science Group, MAPS, and Beckley Foundation for conducting responsible psychedelic research. Prioritize participant safety over data collection."
+  }
+];
+
 const Methods = () => {
   return (
     <>
@@ -33,24 +60,11 @@ const Methods = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "How do you design a blinded experiment for the 650 nm laser protocol?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Double-blind design requires: (1) Sham laser device (identical appearance, no 650 nm output), (2) Independent experimenter randomizes real/sham assignment, (3) Participant and symbol recorder both blinded to condition. Control optics (wavelength, intensity) and N,N-DMT dose. See Timmermann et al. (2019), an EEG study of the DMT state, DOI: 10.1038/s41598-019-51974-4."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What control conditions are necessary?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Essential controls: (1) Sham laser + N,N-DMT, (2) Real laser + placebo substance, (3) No laser + N,N-DMT, (4) Diffraction grating alone (no laser) + N,N-DMT. Each condition requires ≥20 participants for statistical power."
-                }
-              }
-            ]
+            "mainEntity": FAQ_ENTRIES.map((f) => ({
+              "@type": "Question",
+              "name": f.q,
+              "acceptedAnswer": { "@type": "Answer", "text": f.a }
+            }))
           })}
         </script>
         <script type="application/ld+json">
@@ -199,7 +213,7 @@ const Methods = () => {
                   </ul>
                   <div className="mt-6">
                     <Button asChild variant="default" size="lg">
-                      <a href="/tools">View Verified Equipment Catalogue →</a>
+                      <a href="/prepare">View Verified Equipment Catalogue →</a>
                     </Button>
                   </div>
                 </AccordionContent>
@@ -240,9 +254,6 @@ const Methods = () => {
                   Protocol Guide →
                 </a>
               </div>
-              <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-28
-              </p>
             </div>
           </section>
         </main>
