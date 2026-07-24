@@ -162,17 +162,8 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">8. Does pre-session photobiomodulation (660 nm red light therapy) enhance symbol clarity?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Timmermann et al. (2019) demonstrated enhanced visual cortex coherence with red light exposure. Controlled trial comparing DMT + laser with vs. without 15-minute pre-exposure to 660 nm red light therapy would test mitochondrial ATP hypothesis.
+                  Untested hypothesis. A controlled trial comparing DMT plus 650 nm laser with and without 15 minutes of pre-exposure to 660 nm red light therapy would test whether a mitochondrial ATP mechanism plays any role in reported symbol clarity. No published study currently supports this claim.
                 </p>
-                <a 
-                  href="https://doi.org/10.1038/s41598-019-51974-4" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
-                >
-                  Timmermann et al. (2019) Photobiomodulation Effects
-                  <ExternalLink className="w-4 h-4" />
-                </a>
               </Card>
 
               <Card className="p-6 border-border">
