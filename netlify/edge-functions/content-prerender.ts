@@ -1611,6 +1611,8 @@ export const config: Config = {
     "/theories",
     "/theories/*",
     "/protocols/*",
+    "/articles",
+    "/articles/*",
   ],
 };
 
