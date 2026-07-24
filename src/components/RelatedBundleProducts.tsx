@@ -293,8 +293,10 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        This item is part of the <span className="text-foreground font-medium">{suggestedBundle.name}</span>. 
-        Get the complete kit and save {suggestedBundle.discount}.
+        This item is part of the <span className="text-foreground font-medium">{suggestedBundle.name}</span>.
+        {suggestedBundle.discountPct > 0
+          ? ` Get the complete kit and save ${suggestedBundle.discountPct}%.`
+          : ' Get the complete kit.'}
       </p>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
