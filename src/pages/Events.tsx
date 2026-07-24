@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Helmet } from "react-helmet";
@@ -107,12 +108,12 @@ const Events = () => {
         <meta property="og:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
         <meta property="og:url" content="https://dmtcode.com/events" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://dmtcode.com/favicon.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/events" />
         <meta name="twitter:title" content="Research Events & Clinical Trials | DMT Code" />
         <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials, and verified retreats. Community-sourced scholarly reference for DMT research milestones." />
-        <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
+        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
           <script type="application/ld+json">
@@ -238,11 +239,14 @@ const Events = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Verified Retreats & Centers</h2>
+          <h2 className="text-2xl font-semibold mb-4">Retreat centers</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Retreat centers rated by community members. Ratings reflect participant feedback and are reviewed by moderators before publication.
+            Centers that operate openly and publish who they are and where. A listing here is not an endorsement. Verify legal status, medical screening and staff credentials directly with the center before booking.
           </p>
           <RetreatGrid />
+          <p className="mt-4 text-sm">
+            <Link to="/retreats" className="underline underline-offset-4 hover:text-primary">All retreat centers</Link>
+          </p>
         </section>
 
         <Alert className="mt-12 border-muted">

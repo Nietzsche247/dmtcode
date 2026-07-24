@@ -102,6 +102,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "theories" && seg.length === 1) {
       return await renderTheories(context);
     }
+    if (kind === "retreats" && seg.length === 1) {
+      return await renderRetreats(context);
+    }
     if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
 
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
@@ -429,9 +432,6 @@ export default async (request: Request, context: Context) => {
       return shellRes;
     }
 
-    const robotsMeta = noindex
-      ? `<meta name="robots" content="noindex,follow" />`
-      : "";
 
 
 
@@ -1600,6 +1600,7 @@ export const config: Config = {
     "/faq",
     "/events",
     "/events/*",
+    "/retreats",
     "/retreats/*",
     "/theories",
     "/theories/*",
@@ -1955,7 +1956,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE },
-      { "@type": "ListItem", position: 2, name: "Events", item: `${SITE}/events` },
+      { "@type": "ListItem", position: 2, name: "Retreat centers", item: `${SITE}/retreats` },
       { "@type": "ListItem", position: 3, name: String(r.name), item: canonical },
     ],
   };
@@ -1984,7 +1985,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
   ${detailsText ? paragraphsFromText(detailsText) : "<p>No further details provided.</p>"}
   ${r.website_url ? `<p><a href="${esc(String(r.website_url))}" rel="noopener">Visit website</a></p>` : ""}
   ${r.contact_email ? `<p>Contact: <a href="mailto:${esc(String(r.contact_email))}">${esc(String(r.contact_email))}</a></p>` : ""}
-  <p><a href="${SITE}/events">Back to the events timeline</a></p>
+  <p><a href="${SITE}/retreats">Back to retreat centers</a></p>
 </article>`;
 
   const head = buildHead({
@@ -1994,6 +1995,103 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     ogType: "article",
     ogImage: r.image_url ? String(r.image_url) : undefined,
     jsonLd: [organizationLd, breadcrumbLd, lodgingLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderRetreats(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/retreats`;
+  const title = "Retreat centers | DMT Code";
+  const metaDesc =
+    "Psychedelic retreat centers that operate openly and publish who they are and where. A listing is not an endorsement. Verify legal status and medical screening directly with each center.";
+
+  const rows = await sbGetRows(
+    "retreats",
+    "is_approved=is.true&select=id,name,description,details,location,country,image_url,website_url,contact_email,tags&order=name.asc",
+  );
+
+  const para1 =
+    "Centers that operate openly and publish who they are, where they operate, and under what legal framework. This list is short on purpose. Centers we could not confirm are currently operating are not shown.";
+  const para2 =
+    "A listing here is not an endorsement. Psychedelic retreats carry real medical and psychological risk, and the legal position varies by country and changes. Verify current legal status, medical screening practice, staff credentials and emergency procedures directly with the center before you book.";
+
+  const blocks = rows
+    .map((r) => {
+      const name = String(r.name || "").trim();
+      const id = String(r.id || "");
+      const loc = [r.location, r.country].filter(Boolean).map(String).join(", ");
+      const description = String(r.description || "").trim();
+      const details = String(r.details || "").trim();
+      const website = r.website_url ? String(r.website_url) : "";
+      return `<article>
+  <h2><a href="${SITE}/retreats/${esc(id)}">${esc(name)}</a></h2>
+  ${loc ? `<p>${esc(loc)}</p>` : ""}
+  ${description ? `<p>${esc(description)}</p>` : ""}
+  ${details ? paragraphsFromText(details) : ""}
+  ${website ? `<p><a href="${esc(website)}" rel="noopener">${esc(website)}</a></p>` : ""}
+</article>`;
+    })
+    .join("\n");
+
+  const body = `<article data-prerender="retreats">
+  <h1>Retreat centers</h1>
+  <section>
+    <p>${esc(para1)}</p>
+    <p>${esc(para2)}</p>
+  </section>
+  ${rows.length ? `<section><h2>Centers</h2>${blocks}</section>` : ""}
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Retreat centers", item: canonical },
+    ],
+  };
+
+  const jsonLdArr: unknown[] = [breadcrumbLd];
+  if (rows.length) {
+    const itemListLd = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "@id": `${canonical}#list`,
+      name: "Retreat centers",
+      numberOfItems: rows.length,
+      itemListElement: rows.map((r, i) => {
+        const detailUrl = `${SITE}/retreats/${String(r.id)}`;
+        const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
+        const item: Record<string, unknown> = {
+          "@type": "LodgingBusiness",
+          "@id": detailUrl,
+          name: r.name,
+          url: r.website_url || detailUrl,
+          address: {
+            "@type": "PostalAddress",
+            ...(r.location ? { addressLocality: String(r.location) } : {}),
+            ...(r.country ? { addressCountry: String(r.country) } : {}),
+          },
+        };
+        if (r.description) item.description = String(r.description);
+        if (r.image_url) item.image = String(r.image_url);
+        if (r.contact_email) item.email = String(r.contact_email);
+        if (tags.length) item.keywords = tags;
+        return { "@type": "ListItem", position: i + 1, item };
+      }),
+    };
+    jsonLdArr.push(itemListLd);
+  }
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: jsonLdArr,
   });
 
   const html = renderShell(await shellRes.text(), head, body);
