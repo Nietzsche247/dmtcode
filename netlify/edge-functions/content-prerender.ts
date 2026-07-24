@@ -89,6 +89,15 @@ export default async (request: Request, context: Context) => {
     if (seg.length === 1 && STATIC_PAGES[kind]) {
       return await renderStatic(context, kind);
     }
+    if (kind === "theories" && seg.length === 1) {
+      return await renderTheories(context);
+    }
+    if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
+      return await renderEventDetail(context, id);
+    }
+    if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
+      return await renderRetreatDetail(context, id);
+    }
 
     if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
