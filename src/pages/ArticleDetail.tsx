@@ -45,6 +45,7 @@ const formatDate = (iso: string | null) => {
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
   const [article, setArticle] = useState<Article | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
