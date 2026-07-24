@@ -604,6 +604,7 @@ const Profile = () => {
                   <a href="/co-witnesses" className="text-sm text-primary hover:underline">Open the wall</a>
                 </div>
                 <CoWitnessSettings userId={userId} />
+                <HighFivesReceived userId={userId} />
               </section>
             )}
           </div>
