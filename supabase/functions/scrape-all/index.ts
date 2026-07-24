@@ -98,14 +98,14 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
         } else {
           const { error } = await supabase.from('clinical_trials').insert({
             title,
-            description: `Phase: ${proto.designModule?.phases?.join(', ') || 'N/A'} | Sponsor: ${proto.sponsorCollaboratorsModule?.leadSponsor?.name || 'Unknown'} | Compound: ${compound}`,
-            institution: proto.sponsorCollaboratorsModule?.leadSponsor?.name || 'Unknown',
-            start_date: normalizeDate(startDateStr) || new Date().toISOString().split('T')[0],
+            description: proto.descriptionModule?.briefSummary || null,
+            institution: proto.sponsorCollaboratorsModule?.leadSponsor?.name || null,
+            start_date: normalizeDate(startDateStr) || null,
             end_date: normalizeDate(proto.statusModule?.completionDateStruct?.date),
             status,
             trial_registry_id: nctId,
             url: `https://clinicaltrials.gov/study/${nctId}`,
-            is_approved: true,
+            is_approved: false,
           });
           if (!error) added++;
         }
