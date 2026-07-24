@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthTracking } from '@/hooks/useAuthTracking';
-import { User, LogOut, LayoutDashboard, Bookmark } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Bookmark, PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
