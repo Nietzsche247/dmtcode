@@ -19,17 +19,22 @@ interface Props {
   filter?: "upcoming" | "past" | "all";
   muted?: boolean;
   emptyLabel?: string;
+  types?: string[];
 }
 
-const EventsTimeline = ({ filter = "all", muted = false, emptyLabel }: Props) => {
+const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Props) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const typesKey = (types ?? []).slice().sort().join("|");
 
   useEffect(() => {
     (async () => {
       const today = new Date().toISOString().slice(0, 10);
       let query = supabase.from("events").select("*").eq("is_approved", true);
+      if (types && types.length > 0) {
+        query = query.in("event_type", types);
+      }
       if (filter === "upcoming") {
         query = query.gte("event_date", today).order("event_date", { ascending: true });
       } else if (filter === "past") {
@@ -42,7 +47,7 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel }: Props) =>
       else setEvents(data || []);
       setLoading(false);
     })();
-  }, [filter]);
+  }, [filter, typesKey]);
 
   if (loading) return <Skeleton className="w-full h-32" />;
 
