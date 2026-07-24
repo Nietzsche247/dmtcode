@@ -3,18 +3,40 @@ import { Input } from '@/components/ui/input';
 import { Mail, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
-export const EmailCapture = () => {
+interface EmailCaptureProps {
+  source?: string;
+}
+
+export const EmailCapture = ({ source = 'waitlist' }: EmailCaptureProps) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmed = email.trim();
+    if (!trimmed) return;
+
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast.success('Welcome to the community!');
-    setEmail('');
+    const { error } = await supabase
+      .from('waitlist')
+      .insert({ email: trimmed, source });
+
     setIsSubmitting(false);
+
+    if (error) {
+      if ((error as { code?: string }).code === '23505') {
+        toast.success('You are already on the list.');
+        setEmail('');
+        return;
+      }
+      toast.error('Something went wrong. Please try again.');
+      return;
+    }
+
+    toast.success('Thanks, you are on the list.');
+    setEmail('');
   };
 
   return (
@@ -25,7 +47,7 @@ export const EmailCapture = () => {
         </div>
         
         <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">
-          Join 2,000+ Replicators
+          Join the replication effort
         </h2>
         
         <p className="text-muted-foreground font-light mb-8 max-w-lg mx-auto">
@@ -40,6 +62,7 @@ export const EmailCapture = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              maxLength={255}
               className="flex-1 h-12 rounded-xl bg-secondary/30 border-border/50 focus:border-primary"
             />
             <Button 
