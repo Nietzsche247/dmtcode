@@ -549,6 +549,7 @@ const SymbolDetail = () => {
         </main>
 
         <Footer />
+        <CoWitnessInviteDialog userId={userId} hasSeenIt={userVotes.hasSeenIt} />
       </div>
     </>
   );
