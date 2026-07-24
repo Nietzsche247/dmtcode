@@ -194,12 +194,15 @@ const Trials = () => {
           <p className="label-data mt-4 text-xs text-muted-foreground">
             {loading
               ? 'LOADING TRIALS…'
-              : `${total} TRIALS TRACKED · ${recruitingCount} RECRUITING${
-                  latestUpdated
-                    ? ` · UPDATED ${format(new Date(latestUpdated), 'yyyy-MM-dd')}`
-                    : ''
-                }`}
+              : [
+                  `${total} TRIALS TRACKED`,
+                  recruitingCount > 0 ? `${recruitingCount} RECRUITING` : null,
+                  latestUpdated ? `UPDATED ${format(new Date(latestUpdated), 'yyyy-MM-dd')}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
           </p>
+
           <p className="mt-4 max-w-2xl text-muted-foreground">
             An open atlas of active and historical DMT-related clinical trials.
             Filter by status, type, location or institution to explore the current research frontier.
