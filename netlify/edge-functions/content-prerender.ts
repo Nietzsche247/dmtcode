@@ -2667,7 +2667,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     fetchInList("clinical_trials", trialIds, "is_approved=is.true", "id,title"),
     fetchInList("bibliography", bibIds, "is_approved=eq.true", "id,title,doi"),
     fetchInList("symbol_submissions", symIds, "status=eq.approved", "id"),
-    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,name", "slug"),
+    fetchInList("protocols", protoSlugs, "is_published=eq.true", "slug,title", "slug"),
   ]);
 
   const basedParts: string[] = [];
@@ -2698,7 +2698,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   if (protoRows.length) {
     basedParts.push(
       `<li><strong>Protocols:</strong><ul>${protoRows
-        .map((p) => `<li><a href="/protocols/${esc(String(p.slug))}">${esc(String(p.name || p.slug))}</a></li>`)
+        .map((p) => `<li><a href="/protocols/${esc(String(p.slug))}">${esc(String(p.title || p.slug))}</a></li>`)
         .join("")}</ul></li>`,
     );
   }
@@ -2779,7 +2779,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   for (const p of protoRows) {
     citation.push({
       "@type": "CreativeWork",
-      name: String(p.name || p.slug),
+      name: String(p.title || p.slug),
       url: `${SITE}/protocols/${String(p.slug)}`,
     });
   }

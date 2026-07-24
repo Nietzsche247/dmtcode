@@ -379,14 +379,14 @@ export default async (req: Request): Promise<Response> => {
 
   const uniqSorted = (vals: (string | null | undefined)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
-  const contentTypeVocab = uniqSorted(items.map((i) => i.content_type));
+  const contentTypeVocab = uniqSorted([...items.map((i) => i.content_type), "Article"]);
   const authorityVocab = uniqSorted(items.map((i) => i.authority_type));
   const statusVocab = uniqSorted(trialItems.map((i) => i.status));
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.6",
+    version: "3.7",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
