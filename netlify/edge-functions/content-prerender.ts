@@ -1921,22 +1921,13 @@ async function renderTheories(context: Context): Promise<Response> {
   </section>
 </article>`;
 
-  const head = [
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(metaDesc)}" />`,
-    `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(metaDesc)}" />`,
-    `<meta property="og:url" content="${esc(canonical)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
-    `<meta name="twitter:title" content="${esc(title)}" />`,
-    `<meta name="twitter:description" content="${esc(metaDesc)}" />`,
-    `<script type="application/ld+json">${jsonLd(organizationLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(websiteLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>`,
-    `<script type="application/ld+json">${jsonLd(itemListLd)}</script>`,
-  ].join("\n");
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd],
+  });
 
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
