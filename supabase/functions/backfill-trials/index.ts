@@ -28,7 +28,8 @@ function fetchWithRetry(url: string): Promise<Response | null> {
 function pickPhase(phases: string[] | undefined): string | null {
   if (!phases || !phases.length) return null;
   const cleaned = phases
-    .map((p) => p.replace('PHASE', 'Phase ').replace(/_/g, ' ').trim())
+    .filter((p) => p !== 'NA')
+    .map((p) => p.replace('EARLY_PHASE', 'Early Phase ').replace('PHASE', 'Phase ').replace(/_/g, ' ').trim())
     .filter(Boolean)
     .join(', ');
   return cleaned || null;
