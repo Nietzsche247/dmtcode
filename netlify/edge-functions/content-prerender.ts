@@ -2769,9 +2769,10 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     articleBody: plainBody,
     datePublished: r.published_at,
     dateModified: r.updated_at,
-    author: r.author
-      ? { "@type": "Person", name: String(r.author) }
-      : { "@id": `${SITE}#org` },
+    author:
+      r.author && String(r.author).trim() && String(r.author).trim() !== "DMT Code Project"
+        ? { "@type": "Person", name: String(r.author) }
+        : { "@id": `${SITE}#org` },
     publisher: { "@id": `${SITE}#org` },
     license: LICENSE,
     isAccessibleForFree: true,
