@@ -36,6 +36,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/join", "0.6", "monthly"],
   ["/co-witnesses", "0.5", "weekly"],
   ["/theories", "0.7", "weekly"],
+  ["/articles", "0.8", "weekly"],
 ];
 
 // This function is duplicated verbatim in src/lib/theorySlug.ts,
