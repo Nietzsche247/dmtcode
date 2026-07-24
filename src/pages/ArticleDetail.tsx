@@ -216,7 +216,7 @@ export default function ArticleDetail() {
             )}
           </header>
 
-          <div className={cn("prose max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline", useThemeStore.getState().resolvedTheme === 'dark' && "prose-invert")}>
+          <div className={cn("prose max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline", resolvedTheme === 'dark' && "prose-invert")}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
