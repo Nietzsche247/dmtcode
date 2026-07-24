@@ -173,9 +173,11 @@ export const BundleUpsell = ({ onClose }: BundleUpsellProps) => {
             <h4 className="font-black text-sm tracking-tight">
               {upsellType === 'journal' ? 'Complete Your Setup' : 'Upgrade to Bundle'}
             </h4>
-            <Badge className="bg-primary/20 text-primary text-xs font-semibold">
-              {bundle.discount}
-            </Badge>
+            {bundle.discountPct > 0 && (
+              <Badge className="bg-primary/20 text-primary text-xs font-semibold">
+                {bundle.discountPct}% OFF
+              </Badge>
+            )}
           </div>
           
           <p className="text-xs text-muted-foreground font-light leading-relaxed">
