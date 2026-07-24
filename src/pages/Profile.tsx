@@ -120,6 +120,7 @@ const StatCell = ({
 
 const Profile = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState<ProfileRecord | null>(null);
   const [mySymbols, setMySymbols] = useState<UserSymbol[]>([]);
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
