@@ -157,7 +157,8 @@ export default function TheoriesPage() {
 
   const handleVote = async (theoryId: string) => {
     if (!isAuthenticated) {
-      navigate("/auth");
+      toast.error("Please sign in to agree with a theory");
+      navigate(`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
     const { data: userData } = await supabase.auth.getUser();
