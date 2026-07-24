@@ -2419,9 +2419,13 @@ function mdToHtml(src: string): string {
       codes.push(`<code>${c}</code>`);
       return `\u0001C${i}\u0001`;
     });
-    // Links: [text](url). Escape target with quotes already escaped by esc0.
+    // Links: [text](url). Only allow safe schemes: http, https, mailto, site-relative (/), anchors (#).
+    // Anything else renders as plain label text with no anchor.
     t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label: string, href: string) => {
-      const safe = href.replace(/"/g, "&quot;");
+      const trimmed = href.trim();
+      const safeHref = /^(https?:\/\/|mailto:|\/[^/]|\/$|#)/i.test(trimmed) || trimmed === "/";
+      if (!safeHref) return label;
+      const safe = trimmed.replace(/"/g, "&quot;");
       return `<a href="${safe}" rel="noopener">${label}</a>`;
     });
     t = t.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
