@@ -33,7 +33,9 @@ const Research = () => {
     })();
   }, []);
 
-  const dateModified = new Date().toISOString().slice(0, 10);
+  const dateModified = citations.length
+    ? (citations.map((c) => c.publication_date).filter(Boolean).sort().pop() || new Date().toISOString().slice(0, 10))
+    : new Date().toISOString().slice(0, 10);
 
   const citationLd = citations.map((c) => ({
     '@type': 'ScholarlyArticle',
@@ -52,7 +54,7 @@ const Research = () => {
           content="Academic papers, studies, and publications related to the DMT laser code phenomenon."
         />
         <link rel="canonical" href="https://dmtcode.com/research" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/research" />
+        
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -87,7 +89,10 @@ const Research = () => {
           <Navigation />
           <Breadcrumb />
           <div className="pt-4">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 space-y-4">
+              <h1 className="font-display text-4xl md:text-5xl tracking-tight">
+                Published Research and Literature
+              </h1>
               <a
                 href="/trials"
                 className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
