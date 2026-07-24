@@ -65,6 +65,14 @@ Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timm
 - [About](/about): Project history and licensing.
 - [Join](/join): Volunteer to help build the record.
 
+## Articles
+
+Long form articles that answer specific questions using the DMT Code corpus. Each article names every trial, paper, symbol, and protocol it rests on so readers and language models can verify the source directly. Published under CC-BY-4.0.
+
+- https://dmtcode.com/articles          the human index
+- https://dmtcode.com/articles.json     the full corpus, CC-BY-4.0
+- https://dmtcode.com/articles/feed.xml RSS
+
 ## Data
 
 - [Unified corpus JSON](/data.json): Every bibliography row, trial, and approved symbol in one document with a shared facet set. CC-BY-4.0.
