@@ -1,6 +1,11 @@
 [build]
   publish = "dist"
 
+# Bot logger runs FIRST so every crawler hit is captured before other logic.
+[[edge_functions]]
+  path = "/*"
+  function = "bot-logger"
+
 # Edge functions run BEFORE the SPA fallback so crawlers and agents get real data.
 [[edge_functions]]
   path = "/sitemap.xml"
