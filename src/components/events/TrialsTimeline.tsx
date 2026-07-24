@@ -35,6 +35,7 @@ const TrialsTimeline = () => {
       const { data, error } = await supabase
         .from("clinical_trials")
         .select("*")
+        .eq("is_approved", true)
         .order("start_date", { ascending: false })
         .limit(200);
       if (error) console.error("Error fetching trials:", error);
