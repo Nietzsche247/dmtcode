@@ -290,7 +290,7 @@ export const Navigation = () => {
                     <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">Sign Out</Button>
                   </>
                 ) : (
-                  <Button onClick={() => handleNavigation('/auth')} className="w-full rounded-full min-h-[44px] hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all">Sign In</Button>
+                  <Button onClick={goToAuth} className="w-full rounded-full min-h-[44px] hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all">Sign In</Button>
                 )}
               </div>
             </div>
