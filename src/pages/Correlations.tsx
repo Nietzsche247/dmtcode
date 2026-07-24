@@ -159,31 +159,11 @@ const Correlations = () => {
               </Card>
             </div>
 
-            {/* Example Network Patterns */}
-            <Card className="p-8 bg-muted/30 border-border mb-12">
-              <h3 className="text-xl font-semibold mb-6">Example: Surface-Specific Symbol Clustering</h3>
-              <div className="space-y-4 text-base leading-relaxed">
-                <p>
-                  Preliminary analysis of 52 seed symbols reveals surface-dependent clustering:
-                </p>
-                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  <li><strong>Ceiling symbols (n=14):</strong> 78% show radial symmetry, 64% classified as geometric archetypes</li>
-                  <li><strong>Hand/skin symbols (n=9):</strong> 89% asymmetric, 56% alphabetic-like characters</li>
-                  <li><strong>Closed eyelid symbols (n=18):</strong> 72% organic/fractal patterns, 83% bilateral symmetry</li>
-                  <li><strong>Wall symbols (n=11):</strong> Mixed morphology, no dominant cluster (awaiting ≥100 threshold for statistical significance)</li>
-                  <li><strong>"Toilet bowl sand" motif cluster:</strong> Preliminary co-occurrence analysis suggests S001-S047 share notable convergence (pareidolia, speckle, organic patterns)</li>
-                </ul>
-                <p className="text-sm italic">
-                  Network analysis at ≥100 symbols will test whether these preliminary patterns persist with increased sample size or represent small-sample artifacts. CLIP-based visual similarity scoring will validate whether tag-based clusters match perceptual groupings.
-                </p>
-              </div>
-            </Card>
-
             {/* How to Contribute */}
             <Card className="p-8 bg-card border-border">
               <h3 className="text-2xl font-semibold mb-4">Accelerate Analysis Activation</h3>
               <p className="text-base mb-6">
-                Submit your symbol observations to reach the 100-symbol threshold faster. Each authenticated submission contributes to statistical power for correlation detection and cluster validation.
+                Submit your symbol observations to help the registry reach the activation threshold faster. Each submission contributes to statistical power for correlation detection and cluster validation.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild variant="default" size="lg">
