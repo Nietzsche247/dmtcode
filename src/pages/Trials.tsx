@@ -50,7 +50,9 @@ const Trials = () => {
 
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [verificationFilter, setVerificationFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [institutionFilter, setInstitutionFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
@@ -73,20 +75,19 @@ const Trials = () => {
   const uniq = (vals: (string | null)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v))).sort();
 
-  const statuses = useMemo(
-    () => uniq(trials.map((t) => t.confirmed_status || t.status)),
+  const statuses = useMemo(() => uniq(trials.map((t) => t.status)), [trials]);
+  const verifications = useMemo(
+    () => uniq(trials.map((t) => t.confirmed_status)),
     [trials]
   );
   const types = useMemo(() => uniq(trials.map((t) => t.trial_type)), [trials]);
+  const phases = useMemo(() => uniq(trials.map((t) => t.phase)), [trials]);
   const locations = useMemo(() => uniq(trials.map((t) => t.location)), [trials]);
   const institutions = useMemo(() => uniq(trials.map((t) => t.institution)), [trials]);
   const sources = useMemo(() => uniq(trials.map((t) => t.source)), [trials]);
 
   const recruitingCount = useMemo(
-    () =>
-      trials.filter((t) =>
-        (t.confirmed_status || t.status || '').toLowerCase().includes('recruit')
-      ).length,
+    () => trials.filter((t) => t.status === 'recruiting').length,
     [trials]
   );
 
@@ -100,16 +101,15 @@ const Trials = () => {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     let rows = trials.filter((t) => {
-      const effectiveStatus = t.confirmed_status || t.status;
-      if (statusFilter !== 'all' && effectiveStatus !== statusFilter) return false;
+      if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+      if (verificationFilter !== 'all' && t.confirmed_status !== verificationFilter) return false;
       if (typeFilter !== 'all' && t.trial_type !== typeFilter) return false;
+      if (phaseFilter !== 'all' && t.phase !== phaseFilter) return false;
       if (locationFilter !== 'all' && t.location !== locationFilter) return false;
       if (institutionFilter !== 'all' && t.institution !== institutionFilter) return false;
       if (sourceFilter !== 'all' && t.source !== sourceFilter) return false;
       if (term) {
-        const hay = [t.title, t.institution || '']
-          .join(' ')
-          .toLowerCase();
+        const hay = [t.title, t.institution || ''].join(' ').toLowerCase();
         if (!hay.includes(term)) return false;
       }
       return true;
@@ -121,11 +121,11 @@ const Trials = () => {
       return sort === 'newest' ? bv - av : av - bv;
     });
     return rows;
-  }, [trials, q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, statusFilter, typeFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = visible.length < filtered.length;
@@ -133,12 +133,15 @@ const Trials = () => {
   const clearFilters = () => {
     setQ('');
     setStatusFilter('all');
+    setVerificationFilter('all');
     setTypeFilter('all');
+    setPhaseFilter('all');
     setLocationFilter('all');
     setInstitutionFilter('all');
     setSourceFilter('all');
     setSort('newest');
   };
+
 
   const total = trials.length;
   const description = `Live registry of ${total} DMT and psychedelic clinical trials tracked across institutions worldwide.`;
