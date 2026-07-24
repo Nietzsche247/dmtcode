@@ -92,11 +92,7 @@ const EventDetailModal = ({ event, open, onOpenChange }: EventDetailModalProps) 
               location={event.location || undefined}
               url={event.url || undefined}
             />
-            <NotifyMeForm
-              entityType="event"
-              entityName={event.title}
-              entityDate={event.event_date}
-            />
+
           </div>
 
           <CommunityNotes entityType="event" entityId={event.id} />
