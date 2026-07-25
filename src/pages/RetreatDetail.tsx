@@ -114,8 +114,11 @@ const RetreatDetail = () => {
         ) : (
           <article className="space-y-6">
             <header className="space-y-4">
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight">{retreat.name}</h1>
-              <div className="flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <h1 className="text-3xl md:text-5xl font-black tracking-tight">{retreat.name}</h1>
+                <FollowButton entityType="retreat" entityId={retreat.id} />
+              </div>
+
                 {locationLine && (
                   <span className="inline-flex items-center gap-1"><MapPin className="w-4 h-4" /> {locationLine}</span>
                 )}
