@@ -9,8 +9,9 @@ import { Helmet } from 'react-helmet';
 const Waitlist = () => {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
-  // Real route context only: utm_item is the product slug set by the product
-  // detail notify control, utm_tier is the bundle id used by /bundles/{id}.
+  // Real route context only: utm_item is set by UnifiedProductDetail.tsx (sold
+  // out notify) and by the Tools sold out CTA. utm_tier is set by
+  // BundleDetail.tsx and BundleCard.tsx and carries the bundle id.
   const productSlug = searchParams.get('utm_item') || searchParams.get('utm_tier');
   const routeSource = pathname.replace(/^\/+|\/+$/g, '') || 'home';
 
