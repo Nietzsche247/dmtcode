@@ -19,11 +19,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface BundleMetric {
   name: string;
-  price: number;
   views: number;
   addToCart: number;
   purchases: number;
-  revenue: number;
   conversionRate: number;
 }
 
@@ -34,7 +32,6 @@ interface UpsellMetrics {
   dismissed: number;
   clickRate: number;
   conversionRate: number;
-  revenueGenerated: number;
 }
 
 interface FunnelStep {
@@ -91,7 +88,7 @@ export const BundleAnalytics = () => {
   if (loading && !data) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
               <CardHeader className="pb-2">
@@ -139,13 +136,11 @@ export const BundleAnalytics = () => {
   }
 
   const bundleMetrics = data?.bundleMetrics || {};
-  const upsellMetrics = data?.upsellMetrics || { shown: 0, clicked: 0, converted: 0, clickRate: 0, conversionRate: 0, revenueGenerated: 0 };
+  const upsellMetrics = data?.upsellMetrics || { shown: 0, clicked: 0, converted: 0, clickRate: 0, conversionRate: 0 };
   const funnelSteps = data?.funnelSteps || [];
   const recentEvents = data?.recentEvents || [];
 
-  const totalRevenue = Object.values(bundleMetrics).reduce((sum, b) => sum + b.revenue, 0);
   const totalPurchases = Object.values(bundleMetrics).reduce((sum, b) => sum + b.purchases, 0);
-  const avgOrderValue = totalPurchases > 0 ? totalRevenue / totalPurchases : 0;
 
   return (
     <div className="space-y-6">
@@ -171,20 +166,7 @@ export const BundleAnalytics = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              {data?.totalEvents || 0} events tracked
-            </p>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Bundle Purchases</CardTitle>
@@ -194,19 +176,6 @@ export const BundleAnalytics = () => {
             <div className="text-2xl font-bold">{totalPurchases}</div>
             <p className="text-xs text-muted-foreground">
               From checkout starts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${avgOrderValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              Per completed checkout
             </p>
           </CardContent>
         </Card>
@@ -237,9 +206,6 @@ export const BundleAnalytics = () => {
               <div key={id} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="font-mono text-xs">
-                      ${bundle.price}
-                    </Badge>
                     <span className="font-medium">{bundle.name}</span>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -307,7 +273,7 @@ export const BundleAnalytics = () => {
           <CardDescription>Bundle upsell prompt performance in cart</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg text-center">
               <div className="text-2xl font-bold">{upsellMetrics.shown.toLocaleString()}</div>
               <div className="text-xs text-muted-foreground">Upsells Shown</div>
@@ -319,12 +285,6 @@ export const BundleAnalytics = () => {
             <div className="p-4 bg-muted/50 rounded-lg text-center">
               <div className="text-2xl font-bold">{upsellMetrics.converted}</div>
               <div className="text-xs text-muted-foreground">Conversions</div>
-            </div>
-            <div className="p-4 bg-muted/50 rounded-lg text-center">
-              <div className="text-2xl font-bold text-green-500">
-                ${upsellMetrics.revenueGenerated.toLocaleString()}
-              </div>
-              <div className="text-xs text-muted-foreground">Revenue Generated</div>
             </div>
           </div>
           
