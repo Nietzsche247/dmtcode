@@ -68,13 +68,12 @@ const bundleDataRaw = {
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
     description: 'Entry-level research kit containing calibrated 650nm laser pointer, diffraction grating for beam analysis, and protocol documentation journal. Ideal for researchers beginning systematic 650nm protocol study.',
-    price: 85,
     tier: 'entry',
     items: [
-      { name: '650nm 5mW Laser Pointer', value: 28, sku: '650nm-laser-pointer' },
-      { name: '500 lines/mm Diffraction Grating', value: 22, sku: 'diffraction-grating' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
-      { name: 'Lab Session Timer', value: 21, sku: 'lab-timer' },
+      { name: '650nm 5mW Laser Pointer', sku: '650nm-laser-pointer' },
+      { name: '500 lines/mm Diffraction Grating', sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
+      { name: 'Lab Session Timer', sku: 'lab-timer' },
     ],
     features: [
       'Calibrated 650nm laser pointer',
@@ -93,15 +92,14 @@ const bundleDataRaw = {
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
     description: 'Comprehensive research package featuring precision 650nm laser module, high-index ZnSe lens for beam shaping, diffraction analysis equipment, and full documentation setup. Recommended for researchers committed to systematic optical study.',
-    price: 1000,
     tier: 'mid',
     popular: true,
     items: [
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'ZnSe High-Index Lens (RI 2.4)', value: 285, sku: 'znse-lens' },
-      { name: '1000 lines/mm Diffraction Grating', value: 145, sku: 'diffraction-grating' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
-      { name: 'Precision Lab Timer', value: 42, sku: 'lab-timer' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens (RI 2.4)', sku: 'znse-lens' },
+      { name: '1000 lines/mm Diffraction Grating', sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
+      { name: 'Precision Lab Timer', sku: 'lab-timer' },
     ],
     features: [
       'Precision 650nm laser module',
@@ -121,14 +119,13 @@ const bundleDataRaw = {
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
     description: 'Full-spectrum optical research package with professional 660nm MitoMAT light therapy equipment, precision laser modules, multiple lens types for refractive experiments, and comprehensive documentation tools.',
-    price: 2200,
     tier: 'high',
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'ZnSe High-Index Lens Set', value: 425, sku: 'znse-lens' },
-      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
+      { name: 'MitoMAT 660nm Red Light Mat', sku: 'mitomat' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens Set', sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', sku: 'refraction-tank' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
     ],
     features: [
       'Full-body 660nm light therapy mat',
@@ -149,15 +146,14 @@ const bundleDataRaw = {
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
     description: 'Premium research package including professional-grade optical equipment, full MitoMAT system, self-leveling laser apparatus, multiple wavelength modules, and comprehensive integration documentation for extended research protocols.',
-    price: 3200,
     tier: 'premium',
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
-      { name: 'Huepar Self-Leveling Laser System', value: 895, sku: 'huepar-level' },
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'Complete ZnSe Lens Kit', value: 580, sku: 'znse-lens' },
-      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
-      { name: 'Extended Protocol Journal Set', value: 95, sku: 'protocol-journal' },
+      { name: 'MitoMAT 660nm Red Light Mat', sku: 'mitomat' },
+      { name: 'Huepar Self-Leveling Laser System', sku: 'huepar-level' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'Complete ZnSe Lens Kit', sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', sku: 'refraction-tank' },
+      { name: 'Extended Protocol Journal Set', sku: 'protocol-journal' },
     ],
     features: [
       'Professional optical equipment',
@@ -175,15 +171,7 @@ const bundleDataRaw = {
   },
 };
 
-// originalPrice and discount are computed from item values so display and savings math stay honest.
-const bundleData = Object.fromEntries(
-  Object.entries(bundleDataRaw).map(([key, b]) => {
-    const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
-    const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
-    const pct = Math.floor(rawPct);
-    return [key, { ...b, originalPrice, discount: pct > 0 ? `${pct}% OFF` : '' }];
-  })
-) as typeof bundleDataRaw & Record<string, (typeof bundleDataRaw)[keyof typeof bundleDataRaw] & { originalPrice: number; discount: string }>;
+const bundleData = bundleDataRaw;
 
 
 const BUNDLE_PRODUCT_QUERY = `
@@ -325,7 +313,6 @@ const BundleContentsSection = ({
                     bundle_name: bundle.name,
                     item_name: item.name,
                     item_sku: item.sku,
-                    item_value: item.value,
                     in_stock: !isOutOfStock,
                   });
                 }
@@ -354,12 +341,6 @@ const BundleContentsSection = ({
                         Low Stock
                       </Badge>
                     )}
-                    <span 
-                      className="text-muted-foreground text-sm"
-                      style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
-                    >
-                      ${item.value}
-                    </span>
                   </div>
                 </div>
                 {/* 1px #C41E3A glowing beam underline on hover */}
@@ -378,12 +359,6 @@ const BundleContentsSection = ({
             </Link>
           );
         })}
-      </div>
-      <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
-        <p className="text-sm text-muted-foreground">
-          <span className="text-primary font-semibold">Total value: ${bundle.items.reduce((sum, item) => sum + item.value, 0)}</span>
-          {' '}— Bundle price: <span className="text-foreground font-bold">${bundle.price}</span>
-        </p>
       </div>
     </section>
   );
@@ -407,7 +382,6 @@ const BundleDetail = () => {
       window.posthog.capture('bundle_viewed', {
         bundle_id: bundle.id,
         bundle_name: bundle.name,
-        bundle_price: bundle.price,
         bundle_tier: bundle.tier,
       });
     }
@@ -466,7 +440,6 @@ const BundleDetail = () => {
       window.posthog.capture('bundle_added_to_cart', {
         bundle_id: bundle.id,
         bundle_name: bundle.name,
-        bundle_price: bundle.price,
         bundle_tier: bundle.tier,
         shopify_product_id: shopifyProduct?.id || null,
         available: isAvailable,
@@ -506,7 +479,7 @@ const BundleDetail = () => {
         <title>{bundle.name} | DMT Code Research Equipment</title>
         <meta name="description" content={bundle.description} />
         <link rel="canonical" href={`https://dmtcode.com/bundles/${bundle.id}`} />
-        <meta property="og:title" content={`${bundle.name} - $${bundle.price}`} />
+        <meta property="og:title" content={bundle.name} />
         <meta property="og:description" content={bundle.description} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
@@ -525,13 +498,6 @@ const BundleDetail = () => {
             "name": bundle.name,
             "description": bundle.description,
             "image": ogImageUrl,
-            "offers": {
-              "@type": "Offer",
-              "price": bundle.price,
-              "priceCurrency": "USD",
-              "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-              "priceValidUntil": "2026-12-31"
-            },
 
           })}
 
@@ -582,11 +548,6 @@ const BundleDetail = () => {
                     Most Popular
                   </Badge>
                 )}
-                {bundle.discount && (
-                  <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
-                    {bundle.discount}
-                  </Badge>
-                )}
               </div>
 
               {/* Details */}
@@ -600,24 +561,11 @@ const BundleDetail = () => {
                   </h1>
                 </div>
 
-                <div className="flex items-baseline gap-4 flex-wrap">
-                  <span className="text-4xl md:text-5xl font-black text-primary">
-                    ${bundle.price}
-                  </span>
-                  {bundle.originalPrice > bundle.price && (
-                    <>
-                      <span className="text-xl text-muted-foreground line-through">
-                        ${bundle.originalPrice}
-                      </span>
-                      <Badge variant="secondary" className="text-sm">
-                        Save ${bundle.originalPrice - bundle.price}
-                      </Badge>
-                    </>
-                  )}
-                  {!isAvailable && (
+                {!isAvailable && (
+                  <div className="flex items-baseline gap-4 flex-wrap">
                     <Badge variant="destructive" className="text-sm">Sold Out</Badge>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   {bundle.description}

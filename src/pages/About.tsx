@@ -229,9 +229,6 @@ const About = () => {
                 <p>
                   <strong>Conflicts of interest:</strong> We sell 650 nm laser kits and earn affiliate commissions on some third party products, so we have a commercial interest in the protocol this site documents. We do not sell DMT extraction services or consulting. Our /disclosure page names every affiliate relationship and explains what we do about the conflict.
                 </p>
-                <p>
-                  <strong>Financial reports:</strong> Annual summary of hosting costs, affiliate revenue, and project expenses published each January. Community accountability ensures mission alignment over commercial incentives.
-                </p>
               </div>
             </Card>
 

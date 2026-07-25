@@ -13,16 +13,12 @@ declare global {
 
 interface BundleItem {
   name: string;
-  value: number;
 }
 
 interface BundleCardProps {
   id: string;
   name: string;
   tagline: string;
-  price: number;
-  originalPrice: number;
-  discount: string;
   tier: string;
   popular?: boolean;
   image: string;
@@ -42,9 +38,6 @@ export const BundleCard = ({
   id,
   name,
   tagline,
-  price,
-  originalPrice,
-  discount,
   tier,
   popular,
   image,
@@ -67,8 +60,6 @@ export const BundleCard = ({
         bundle_id: id,
         bundle_name: name,
         label: cta,
-        value: price,
-        currency: 'USD',
         send_to: 'G-CWVKJBDG7L',
       });
     }
@@ -77,11 +68,7 @@ export const BundleCard = ({
       window.posthog.capture('bundle_viewed', {
         bundle_id: id,
         bundle_name: name,
-        bundle_price: price,
         bundle_tier: tier,
-        discount_applied: true,
-        original_price: originalPrice,
-        savings: originalPrice - price,
       });
     }
     onClick(id);
@@ -92,7 +79,7 @@ export const BundleCard = ({
       className={`relative p-8 bg-gradient-to-br ${color} ${borderColor} border-2 hover:scale-[1.02] transition-all duration-300 animate-fade-slide-up group cursor-pointer`}
       onClick={handleClick}
       role="article"
-      aria-label={`${name} bundle - $${price}, ${discount}`}
+      aria-label={`${name} bundle`}
     >
       {popular && (
         <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-black shadow-lg z-10">
@@ -117,7 +104,6 @@ export const BundleCard = ({
         
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={`${badgeColor} font-black text-xs`}>{discount}</Badge>
             {!availabilityLoading && !available && (
               <Badge variant="destructive" className="font-black text-xs flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" />
@@ -131,14 +117,6 @@ export const BundleCard = ({
           <p className="text-muted-foreground font-light text-sm mt-1">{tagline}</p>
         </div>
 
-        {/* Price with Inter Black + Inter Light 300 */}
-        <div className="flex items-baseline gap-3">
-          <span className="text-4xl font-black text-primary tracking-tight">${price}</span>
-          {originalPrice > price && (
-            <span className="text-lg text-muted-foreground line-through font-light">${originalPrice}</span>
-          )}
-        </div>
-
         <div className="space-y-2">
           <p className="text-xs font-black text-muted-foreground uppercase tracking-wider">Includes:</p>
           <ul className="space-y-2">
@@ -146,7 +124,6 @@ export const BundleCard = ({
               <li key={i} className="flex items-center gap-2 text-sm">
                 <Check className="w-4 h-4 text-primary flex-shrink-0" />
                 <span className="font-medium">{item.name}</span>
-                <span className="text-muted-foreground font-light ml-auto">${item.value}</span>
               </li>
             ))}
           </ul>

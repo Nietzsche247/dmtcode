@@ -37,7 +37,7 @@ const peyoteRetreat = {
   url: "https://peyoteway.org/spirit-walks?utm_source=tools_journey&utm_medium=affiliate&utm_campaign=dmtcode"
 };
 
-// Bundle definitions live in /bundles (single source of truth). Tools links there.
+// Bundle contents live in /bundles. Tools links there.
 
 
 const Tools = () => {
@@ -555,7 +555,7 @@ const Tools = () => {
                   )}
                 </div>
 
-                {/* Bundles link (single source of truth lives on /bundles) */}
+                {/* Bundles link (bundle contents live on /bundles) */}
                 <div className="pt-12 space-y-4 text-center">
                   <h3 className="text-2xl md:text-3xl font-bold">Pre-Curated Bundles</h3>
                   <p className="text-muted-foreground">Save vs. individual items. Availability updates live from the store.</p>

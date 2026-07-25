@@ -63,10 +63,10 @@ serve(async (req) => {
 
     // Process events into metrics
     const bundleMetrics: Record<string, any> = {
-      starter: { name: 'Fractal Starter Kit', price: 85, views: 0, addToCart: 0, purchases: 0, revenue: 0, conversionRate: 0 },
-      gateway: { name: 'Gateway Research Kit', price: 1200, views: 0, addToCart: 0, purchases: 0, revenue: 0, conversionRate: 0 },
-      complete: { name: 'Complete Symbol Kit', price: 2300, views: 0, addToCart: 0, purchases: 0, revenue: 0, conversionRate: 0 },
-      ceremony: { name: 'Extended Ceremony Package', price: 3500, views: 0, addToCart: 0, purchases: 0, revenue: 0, conversionRate: 0 },
+      starter: { name: 'Fractal Starter Kit', views: 0, addToCart: 0, purchases: 0, conversionRate: 0 },
+      gateway: { name: 'Gateway Research Kit', views: 0, addToCart: 0, purchases: 0, conversionRate: 0 },
+      complete: { name: 'Complete Symbol Kit', views: 0, addToCart: 0, purchases: 0, conversionRate: 0 },
+      ceremony: { name: 'Extended Ceremony Package', views: 0, addToCart: 0, purchases: 0, conversionRate: 0 },
     };
 
     const upsellMetrics = {
@@ -76,7 +76,6 @@ serve(async (req) => {
       dismissed: 0,
       clickRate: 0,
       conversionRate: 0,
-      revenueGenerated: 0,
     };
 
     const funnelCounts = {
@@ -121,7 +120,6 @@ serve(async (req) => {
           funnelCounts.checkoutStarted++;
           if (mappedKey && bundleMetrics[mappedKey]) {
             bundleMetrics[mappedKey].purchases++;
-            bundleMetrics[mappedKey].revenue += bundleMetrics[mappedKey].price;
           }
           break;
         case 'bundle_upsell_shown':
@@ -171,7 +169,6 @@ serve(async (req) => {
     upsellMetrics.conversionRate = upsellMetrics.clicked > 0
       ? parseFloat(((upsellMetrics.converted / upsellMetrics.clicked) * 100).toFixed(2))
       : 0;
-    upsellMetrics.revenueGenerated = upsellMetrics.converted * 85; // Starter kit price
 
     // Build funnel steps
     const totalViews = funnelCounts.views || 1;
