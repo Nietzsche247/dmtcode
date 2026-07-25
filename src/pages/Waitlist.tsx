@@ -1,3 +1,4 @@
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
 import { EmailCapture } from '@/components/EmailCapture';
@@ -6,6 +7,13 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 
 const Waitlist = () => {
+  const [searchParams] = useSearchParams();
+  const { pathname } = useLocation();
+  // Real route context only: utm_item is the product slug set by the product
+  // detail notify control, utm_tier is the bundle id used by /bundles/{id}.
+  const productSlug = searchParams.get('utm_item') || searchParams.get('utm_tier');
+  const routeSource = pathname.replace(/^\/+|\/+$/g, '') || 'home';
+
   return (
     <>
       <Helmet>
