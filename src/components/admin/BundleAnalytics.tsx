@@ -10,7 +10,6 @@ import {
   Eye, 
   Package, 
   ArrowUpRight, 
-  DollarSign,
   Target,
   RefreshCw,
   AlertCircle
@@ -297,7 +296,7 @@ export const BundleAnalytics = () => {
               <p className="text-sm text-muted-foreground">
                 Upsell click-through rate is <span className="text-primary font-semibold">{upsellMetrics.clickRate}%</span>. 
                 {upsellMetrics.clickRate > 10 
-                  ? ' Performance is strong—consider expanding upsell placement.'
+                  ? ' Performance is strong, consider expanding upsell placement.'
                   : ' Consider testing different upsell messaging or timing.'}
               </p>
             </div>
