@@ -26,7 +26,6 @@ export interface UnifiedProduct {
 export interface BundleInfo {
   id: string;
   name: string;
-  price: number;
   items: string[];
 }
 
