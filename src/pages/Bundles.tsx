@@ -30,20 +30,18 @@ declare global {
 
 // Research-focused bundles - NO woo/mystical items allowed
 // Only: calibrated 650nm lasers, diffraction gratings, lab-grade timers, protocol journals, optical equipment
-// originalPrice is derived from summed item values so the math is always honest.
 const bundlesRaw = [
   {
     id: 'starter',
     name: 'Fractal Starter Kit',
     tagline: 'Perfect for first-time researchers',
-    price: 85,
     tier: 'entry',
     image: bundleStarterImg,
     items: [
-      { name: '650nm 5mW Laser Pointer', value: 28 },
-      { name: '500 lines/mm Diffraction Grating', value: 22 },
-      { name: 'Protocol Documentation Journal', value: 35 },
-      { name: 'Lab Session Timer', value: 21 },
+      { name: '650nm 5mW Laser Pointer' },
+      { name: '500 lines/mm Diffraction Grating' },
+      { name: 'Protocol Documentation Journal' },
+      { name: 'Lab Session Timer' },
     ],
     features: [
       'Calibrated 650nm laser pointer',
@@ -60,16 +58,15 @@ const bundlesRaw = [
     id: 'gateway',
     name: 'Gateway Research Kit',
     tagline: 'Most popular for serious researchers',
-    price: 1000,
     tier: 'mid',
     popular: true,
     image: bundleGatewayImg,
     items: [
-      { name: 'Quarton VLM-650 Laser Module', value: 650 },
-      { name: 'ZnSe High-Index Lens (RI 2.4)', value: 285 },
-      { name: '1000 lines/mm Diffraction Grating', value: 145 },
-      { name: 'Protocol Documentation Journal', value: 35 },
-      { name: 'Precision Lab Timer', value: 42 },
+      { name: 'Quarton VLM-650 Laser Module' },
+      { name: 'ZnSe High-Index Lens (RI 2.4)' },
+      { name: '1000 lines/mm Diffraction Grating' },
+      { name: 'Protocol Documentation Journal' },
+      { name: 'Precision Lab Timer' },
     ],
     features: [
       'Precision 650nm laser module',
@@ -87,15 +84,14 @@ const bundlesRaw = [
     id: 'complete',
     name: 'Complete Symbol Kit',
     tagline: 'Everything for advanced research',
-    price: 2200,
     tier: 'high',
     image: bundleCompleteImg,
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299 },
-      { name: 'Quarton VLM-650 Laser Module', value: 650 },
-      { name: 'ZnSe High-Index Lens Set', value: 425 },
-      { name: 'Refraction Analysis Tank', value: 185 },
-      { name: 'Protocol Documentation Journal', value: 35 },
+      { name: 'MitoMAT 660nm Red Light Mat' },
+      { name: 'Quarton VLM-650 Laser Module' },
+      { name: 'ZnSe High-Index Lens Set' },
+      { name: 'Refraction Analysis Tank' },
+      { name: 'Protocol Documentation Journal' },
     ],
     features: [
       'Full-body 660nm light therapy mat',
@@ -113,16 +109,15 @@ const bundlesRaw = [
     id: 'ceremony',
     name: 'Extended Research Package',
     tagline: 'For comprehensive optical research',
-    price: 3200,
     tier: 'premium',
     image: bundleCeremonyImg,
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299 },
-      { name: 'Huepar Self-Leveling Laser System', value: 895 },
-      { name: 'Quarton VLM-650 Laser Module', value: 650 },
-      { name: 'Complete ZnSe Lens Kit', value: 580 },
-      { name: 'Refraction Analysis Tank', value: 185 },
-      { name: 'Extended Protocol Journal Set', value: 95 },
+      { name: 'MitoMAT 660nm Red Light Mat' },
+      { name: 'Huepar Self-Leveling Laser System' },
+      { name: 'Quarton VLM-650 Laser Module' },
+      { name: 'Complete ZnSe Lens Kit' },
+      { name: 'Refraction Analysis Tank' },
+      { name: 'Extended Protocol Journal Set' },
     ],
     features: [
       'Professional optical equipment',
@@ -139,23 +134,7 @@ const bundlesRaw = [
   },
 ];
 
-const bundles = bundlesRaw.map((b) => {
-  const originalPrice = b.items.reduce((sum, i) => sum + i.value, 0);
-  const rawPct = originalPrice > b.price ? ((originalPrice - b.price) / originalPrice) * 100 : 0;
-  const pct = Math.floor(rawPct);
-  return {
-    ...b,
-    originalPrice,
-    discount: pct > 0 ? `${pct}% OFF` : '',
-  };
-});
-
-const maxDiscountPct = bundles.reduce((max, b) => {
-  const pct = b.originalPrice > b.price
-    ? Math.floor(((b.originalPrice - b.price) / b.originalPrice) * 100)
-    : 0;
-  return pct > max ? pct : max;
-}, 0);
+const bundles = bundlesRaw;
 
 
 const Bundles = () => {
@@ -188,7 +167,6 @@ const Bundles = () => {
       window.posthog.capture('bundle_viewed', {
         bundle_id: bundleId,
         bundle_name: bundle.name,
-        bundle_price: bundle.price,
         bundle_tier: bundle.tier,
       });
     }
