@@ -123,9 +123,24 @@ export default async (request: Request, context: Context) => {
       return await renderProtocolDetail(context, seg[1]);
     }
 
-    if (!UUID_RE.test(id) || !SUPABASE_URL || !SUPABASE_KEY) {
+    // Fail open: without backend credentials nothing is prerendered and nothing 404s.
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
       return context.next();
     }
+
+    // Handled kinds only: extra path segments are not real pages.
+    if (HANDLED_DETAIL_KINDS.has(kind) && seg.length >= 3) {
+      return await notFoundPrerender(context);
+    }
+    // UUID keyed detail kinds: a malformed id is not a real page.
+    if (UUID_DETAIL_KINDS.has(kind) && seg.length === 2 && !UUID_RE.test(id)) {
+      return await notFoundPrerender(context);
+    }
+
+    if (!UUID_RE.test(id)) {
+      return context.next();
+    }
+
 
     const shellRes = await context.next();
     let title = "";
