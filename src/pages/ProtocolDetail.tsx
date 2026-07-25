@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { FollowButton } from '@/components/FollowButton';
+
 import { 
   FlaskConical, Stethoscope, Clock, ArrowLeft, Mic, 
   BookOpen, Shield, Pill, Brain, FileText, ExternalLink,
@@ -143,12 +145,16 @@ const ProtocolDetail = () => {
                 </p>
               </div>
 
-              <Link to={`/log?protocol=${protocol.slug}`}>
-                <Button size="lg" className="gap-2">
-                  <Mic className="w-5 h-5" />
-                  {isClinicalMode ? 'Start Clinical Session Log' : 'Start Logging This Protocol'}
-                </Button>
-              </Link>
+              <div className="flex flex-wrap items-center gap-3">
+                <FollowButton entityType="protocol" entityId={protocol.id} size="lg" />
+                <Link to={`/log?protocol=${protocol.slug}`}>
+                  <Button size="lg" className="gap-2">
+                    <Mic className="w-5 h-5" />
+                    {isClinicalMode ? 'Start Clinical Session Log' : 'Start Logging This Protocol'}
+                  </Button>
+                </Link>
+              </div>
+
             </div>
           </section>
 

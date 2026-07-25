@@ -18,6 +18,8 @@ import { HighFivesReceived } from '@/components/co-witness/HighFivesReceived';
 import { Flame, Snowflake } from 'lucide-react';
 import { WatchedTrials } from '@/components/profile/WatchedTrials';
 import { ActivityThread } from '@/components/profile/ActivityThread';
+import { Following } from '@/components/profile/Following';
+
 
 interface UserSymbol {
   id: string;
@@ -613,6 +615,8 @@ const Profile = () => {
 
             {userId && <WatchedTrials userId={userId} />}
             {userId && <ActivityThread userId={userId} />}
+            {userId && <Following userId={userId} />}
+
           </div>
         </main>
 

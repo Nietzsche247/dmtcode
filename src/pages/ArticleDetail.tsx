@@ -10,6 +10,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
+import { FollowButton } from "@/components/FollowButton";
+
 
 type Article = {
   id: string;
@@ -211,6 +213,8 @@ export default function ArticleDetail() {
               {showUpdated && <span>Updated {formatDate(article.updated_at)}</span>}
               {article.reviewed_by && <span>Reviewed by {article.reviewed_by}</span>}
             </div>
+            <FollowButton entityType="article" entityId={article.id} />
+
             {article.topic_tags?.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {article.topic_tags.map((t) => (

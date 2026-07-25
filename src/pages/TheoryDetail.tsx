@@ -8,6 +8,8 @@ import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { theorySlug, resolveTheoryBySlug } from "@/lib/theorySlug";
+import { FollowButton } from "@/components/FollowButton";
+
 
 type Theory = {
   id: string;
@@ -156,7 +158,11 @@ export default function TheoryDetail() {
               {theory.tags?.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
               ))}
+              <span className="ml-auto">
+                <FollowButton entityType="theory" entityId={theory.id} />
+              </span>
             </div>
+
             <h1 className="text-3xl md:text-4xl font-bold leading-tight">{theory.title}</h1>
             {theory.proponent && (
               <p className="text-sm text-muted-foreground">Proposed by {theory.proponent}</p>
