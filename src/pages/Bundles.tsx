@@ -247,7 +247,7 @@ const Bundles = () => {
           <section className="container mx-auto px-4 py-16 max-w-6xl text-center">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30">
               <Package className="w-3 h-3 mr-1" />
-              {maxDiscountPct > 0 ? `Save Up to ${maxDiscountPct}%` : 'Curated Research Kits'}
+              Curated Research Kits
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
