@@ -16,9 +16,78 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Mic } from 'lucide-react';
 
+interface DrawnGlyph {
+  id: string;
+  image_data: string;
+  source: string | null;
+  created_at: string | null;
+}
+
+const DrawnGlyphReports = () => {
+  const [glyphs, setGlyphs] = useState<DrawnGlyph[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const { data } = await supabase
+        .from('registry_glyphs')
+        .select('id, image_data, source, created_at')
+        .order('created_at', { ascending: false });
+      if (!active) return;
+      const rows = (data || []).filter(
+        (r): r is DrawnGlyph => typeof r.image_data === 'string' && r.image_data.length > 0
+      );
+      setGlyphs(rows);
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (glyphs.length === 0) return null;
+
+  return (
+    <section className="container mx-auto px-4 py-12 max-w-6xl" aria-labelledby="drawn-glyph-reports">
+      <h2 id="drawn-glyph-reports" className="text-2xl md:text-3xl font-semibold text-foreground mb-3">
+        Drawn glyph reports
+      </h2>
+      <p className="text-sm text-muted-foreground max-w-3xl mb-8">
+        These are {glyphs.length} anonymous freehand drawings submitted through the registry's drawing tool,
+        shown unedited and uncurated.
+      </p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {glyphs.map((g) => (
+          <article key={g.id} className="rounded-lg border border-border bg-card overflow-hidden">
+            <img
+              src={`data:image/png;base64,${g.image_data}`}
+              alt="Anonymous freehand glyph drawing submitted to the registry"
+              loading="lazy"
+              className="w-full aspect-square object-contain bg-background"
+            />
+            <div className="p-3 flex flex-wrap items-center gap-2">
+              {g.source ? (
+                <Badge variant="secondary" className="text-xs">
+                  {g.source.replace(/_/g, ' ')}
+                </Badge>
+              ) : null}
+              {g.created_at ? (
+                <span className="text-xs text-muted-foreground">
+                  {new Date(g.created_at).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                </span>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const Registry = () => {
   const navigate = useNavigate();
   return (
+
     <>
       <Helmet>
         <title>DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)</title>
