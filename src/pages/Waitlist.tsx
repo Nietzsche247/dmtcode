@@ -65,7 +65,7 @@ const Waitlist = () => {
                 </p>
               </div>
             </section>
-            <EmailCapture />
+            <EmailCapture source={routeSource} productSlug={productSlug} />
           </div>
         </main>
 
