@@ -198,26 +198,15 @@ const Bundles = () => {
             "name": "DMT Code Research Equipment Bundles",
             "description": meta.description,
             "numberOfItems": bundles.length,
-            "itemListElement": bundles.map((bundle, index) => {
-              const isAvailable = availability?.[bundle.id]?.availableForSale === true;
-              return {
-                "@type": "ListItem",
-                "position": index + 1,
-                "item": {
-                  "@type": "Product",
-                  "name": bundle.name,
-                  "description": bundle.tagline,
-                  "offers": {
-                    "@type": "Offer",
-                    "price": bundle.price,
-                    "priceCurrency": "USD",
-                    "availability": isAvailable
-                      ? "https://schema.org/InStock"
-                      : "https://schema.org/OutOfStock"
-                  }
-                }
-              };
-            })
+            "itemListElement": bundles.map((bundle, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "Product",
+                "name": bundle.name,
+                "description": bundle.tagline
+              }
+            }))
 
           })}
         </script>
