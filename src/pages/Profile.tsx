@@ -16,6 +16,8 @@ import { useReviewStreak } from '@/hooks/useReviewStreak';
 import { CoWitnessSettings } from '@/components/co-witness/CoWitnessSettings';
 import { HighFivesReceived } from '@/components/co-witness/HighFivesReceived';
 import { Flame, Snowflake } from 'lucide-react';
+import { WatchedTrials } from '@/components/profile/WatchedTrials';
+import { ActivityThread } from '@/components/profile/ActivityThread';
 
 interface UserSymbol {
   id: string;
@@ -608,6 +610,9 @@ const Profile = () => {
                 <HighFivesReceived userId={userId} />
               </section>
             )}
+
+            {userId && <WatchedTrials userId={userId} />}
+            {userId && <ActivityThread userId={userId} />}
           </div>
         </main>
 
