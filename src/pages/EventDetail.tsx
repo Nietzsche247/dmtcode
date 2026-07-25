@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink, ArrowLeft, MapPin, Calendar } from "lucide-react";
+import { FollowButton } from "@/components/FollowButton";
+
 
 interface EventRow {
   id: string;
@@ -122,7 +124,10 @@ const EventDetail = () => {
         ) : (
           <article className="space-y-6">
             <header className="space-y-4">
-              <Badge variant="secondary">{event.event_type}</Badge>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <Badge variant="secondary">{event.event_type}</Badge>
+                <FollowButton entityType="event" entityId={event.id} />
+              </div>
               <h1 className="text-3xl md:text-5xl font-black tracking-tight">{event.title}</h1>
               <div className="flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
                 <span className="inline-flex items-center gap-1"><Calendar className="w-4 h-4" /> {readableDate}</span>
@@ -132,6 +137,7 @@ const EventDetail = () => {
                 {event.organizer && <span>Organizer: {event.organizer}</span>}
               </div>
             </header>
+
 
             <div className="prose prose-neutral dark:prose-invert max-w-none">
               {paragraphs.length > 0 ? (
