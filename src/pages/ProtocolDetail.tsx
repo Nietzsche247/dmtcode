@@ -145,12 +145,16 @@ const ProtocolDetail = () => {
                 </p>
               </div>
 
-              <Link to={`/log?protocol=${protocol.slug}`}>
-                <Button size="lg" className="gap-2">
-                  <Mic className="w-5 h-5" />
-                  {isClinicalMode ? 'Start Clinical Session Log' : 'Start Logging This Protocol'}
-                </Button>
-              </Link>
+              <div className="flex flex-wrap items-center gap-3">
+                <FollowButton entityType="protocol" entityId={protocol.id} size="lg" />
+                <Link to={`/log?protocol=${protocol.slug}`}>
+                  <Button size="lg" className="gap-2">
+                    <Mic className="w-5 h-5" />
+                    {isClinicalMode ? 'Start Clinical Session Log' : 'Start Logging This Protocol'}
+                  </Button>
+                </Link>
+              </div>
+
             </div>
           </section>
 
