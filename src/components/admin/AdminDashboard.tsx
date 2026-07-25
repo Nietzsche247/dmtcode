@@ -22,6 +22,7 @@ import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 import { ArticlesManager } from './ArticlesManager';
+import { CrawlerIntelligence } from './CrawlerIntelligence';
 
 export const AdminDashboard = () => {
   return (
@@ -49,6 +50,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="nulls">Null Reports</TabsTrigger>
             <TabsTrigger value="scraper">Scraper</TabsTrigger>
             <TabsTrigger value="api-log">📡 API Log</TabsTrigger>
+            <TabsTrigger value="crawlers">🕷️ Crawlers</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="competitor">Competitors</TabsTrigger>
@@ -116,6 +118,12 @@ export const AdminDashboard = () => {
           <TabsContent value="api-log" className="space-y-4">
             <ApiAccessLog />
           </TabsContent>
+
+          <TabsContent value="crawlers" className="space-y-4">
+            <CrawlerIntelligence />
+          </TabsContent>
+
+
 
           <TabsContent value="geo" className="space-y-4">
             <GeoAeoInsights />
