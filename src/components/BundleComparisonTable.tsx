@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 const bundles = [
-  { id: 'starter', name: 'Fractal Starter', price: 85, tier: 'entry' },
-  { id: 'gateway', name: 'Gateway Research', price: 1200, tier: 'mid', popular: true },
-  { id: 'complete', name: 'Complete Symbol', price: 2300, tier: 'high' },
-  { id: 'ceremony', name: 'Extended Ceremony', price: 3500, tier: 'premium' },
+  { id: 'starter', name: 'Fractal Starter', tier: 'entry' },
+  { id: 'gateway', name: 'Gateway Research', tier: 'mid', popular: true },
+  { id: 'complete', name: 'Complete Symbol', tier: 'high' },
+  { id: 'ceremony', name: 'Extended Ceremony', tier: 'premium' },
 ];
 
 type FeatureValue = boolean | string | 'partial';
@@ -80,7 +80,6 @@ export const BundleComparisonTable = () => {
                       Popular
                     </Badge>
                   )}
-                  <span className="text-primary font-bold">${bundle.price}</span>
                 </div>
               </TableHead>
             ))}

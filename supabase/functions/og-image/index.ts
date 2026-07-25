@@ -6,29 +6,25 @@ const corsHeaders = {
 };
 
 // Bundle data for OG image generation
-const bundleInfo: Record<string, { name: string; tagline: string; price: number; tier: string }> = {
+const bundleInfo: Record<string, { name: string; tagline: string; tier: string }> = {
   starter: {
     name: "Fractal Starter Kit",
     tagline: "Perfect for first-time researchers",
-    price: 85,
     tier: "entry",
   },
   gateway: {
     name: "Gateway Research Kit",
     tagline: "Most popular for serious researchers",
-    price: 1200,
     tier: "mid",
   },
   complete: {
     name: "Complete Symbol Kit",
     tagline: "Everything for advanced research",
-    price: 2300,
     tier: "high",
   },
   ceremony: {
     name: "Extended Ceremony Package",
     tagline: "For immersive ceremonial research",
-    price: 3500,
     tier: "premium",
   },
 };
@@ -126,11 +122,6 @@ function generateOGImageSVG(bundleId: string): string {
   <!-- Tagline -->
   <text x="60" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="300" fill="#9CA3AF">
     ${bundle.tagline}
-  </text>
-  
-  <!-- Price -->
-  <text x="60" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="900" fill="#C41E3A">
-    $${bundle.price}
   </text>
   
   <!-- CTA hint -->
