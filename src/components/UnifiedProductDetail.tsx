@@ -254,7 +254,6 @@ export const UnifiedProductDetail = ({
                   <p className="text-sm text-muted-foreground font-light mb-2">
                     {bundle.items.length} items included
                   </p>
-                  <p className="text-xl font-black">${bundle.price}</p>
                 </Link>
               ))}
             </div>

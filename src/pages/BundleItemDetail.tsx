@@ -4,10 +4,10 @@ import { getBundleItem, bundleItems } from '@/data/bundleItems';
 
 // Bundle definitions
 const BUNDLES: BundleInfo[] = [
-  { id: 'starter', name: 'Fractal Starter Kit', price: 85, items: ['650nm-laser-pointer', 'diffraction-grating'] },
-  { id: 'gateway', name: 'Gateway Research Kit', price: 299, items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer'] },
-  { id: 'complete', name: 'Complete Symbol Kit', price: 599, items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer', 'quarton-laser-module', 'znse-lens'] },
-  { id: 'ceremony', name: 'Extended Ceremony Package', price: 1999, items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer', 'quarton-laser-module', 'znse-lens', 'mitomat-yoga-mat', 'huepar-laser-level', 'refraction-tank'] },
+  { id: 'starter', name: 'Fractal Starter Kit', items: ['650nm-laser-pointer', 'diffraction-grating'] },
+  { id: 'gateway', name: 'Gateway Research Kit', items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer'] },
+  { id: 'complete', name: 'Complete Symbol Kit', items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer', 'quarton-laser-module', 'znse-lens'] },
+  { id: 'ceremony', name: 'Extended Ceremony Package', items: ['650nm-laser-pointer', 'diffraction-grating', 'protocol-journal', 'lab-timer', 'quarton-laser-module', 'znse-lens', 'mitomat-yoga-mat', 'huepar-laser-level', 'refraction-tank'] },
 ];
 
 const BundleItemDetail = () => {

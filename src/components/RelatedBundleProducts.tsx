@@ -12,13 +12,12 @@ declare global {
   }
 }
 
-// Bundle definitions matching BundleDetail.tsx. Discount percentages are
-// computed from item values so we never overstate the saving.
-type BundleItem = { name: string; value: number; sku: string };
+// Bundle definitions matching BundleDetail.tsx. No prices: bundles are not
+// purchasable products, so no dollar figures are rendered here.
+type BundleItem = { name: string; sku: string };
 type BundleDef = {
   id: string;
   name: string;
-  price: number;
   items: BundleItem[];
 };
 
@@ -26,63 +25,50 @@ const bundleDefs: Record<string, BundleDef> = {
   starter: {
     id: 'starter',
     name: 'Fractal Starter Kit',
-    price: 85,
     items: [
-      { name: '650nm 5mW Laser Pointer', value: 28, sku: '650nm-laser-pointer' },
-      { name: '500 lines/mm Diffraction Grating', value: 22, sku: 'diffraction-grating' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
-      { name: 'Lab Session Timer', value: 21, sku: 'lab-timer' },
+      { name: '650nm 5mW Laser Pointer', sku: '650nm-laser-pointer' },
+      { name: '500 lines/mm Diffraction Grating', sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
+      { name: 'Lab Session Timer', sku: 'lab-timer' },
     ],
   },
   gateway: {
     id: 'gateway',
     name: 'Gateway Research Kit',
-    price: 1200,
     items: [
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'ZnSe High-Index Lens (RI 2.4)', value: 285, sku: 'znse-lens' },
-      { name: '1000 lines/mm Diffraction Grating', value: 145, sku: 'diffraction-grating' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
-      { name: 'Precision Lab Timer', value: 42, sku: 'lab-timer' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens (RI 2.4)', sku: 'znse-lens' },
+      { name: '1000 lines/mm Diffraction Grating', sku: 'diffraction-grating' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
+      { name: 'Precision Lab Timer', sku: 'lab-timer' },
     ],
   },
   complete: {
     id: 'complete',
     name: 'Complete Symbol Kit',
-    price: 2300,
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'ZnSe High-Index Lens Set', value: 425, sku: 'znse-lens' },
-      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
-      { name: 'Protocol Documentation Journal', value: 35, sku: 'protocol-journal' },
+      { name: 'MitoMAT 660nm Red Light Mat', sku: 'mitomat' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'ZnSe High-Index Lens Set', sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', sku: 'refraction-tank' },
+      { name: 'Protocol Documentation Journal', sku: 'protocol-journal' },
     ],
   },
   ceremony: {
     id: 'ceremony',
     name: 'Extended Research Package',
-    price: 3500,
     items: [
-      { name: 'MitoMAT 660nm Red Light Mat', value: 1299, sku: 'mitomat' },
-      { name: 'Huepar Self-Leveling Laser System', value: 895, sku: 'huepar-level' },
-      { name: 'Quarton VLM-650 Laser Module', value: 650, sku: 'quarton-module' },
-      { name: 'Complete ZnSe Lens Kit', value: 580, sku: 'znse-lens' },
-      { name: 'Refraction Analysis Tank', value: 185, sku: 'refraction-tank' },
-      { name: 'Extended Protocol Journal Set', value: 95, sku: 'protocol-journal' },
+      { name: 'MitoMAT 660nm Red Light Mat', sku: 'mitomat' },
+      { name: 'Huepar Self-Leveling Laser System', sku: 'huepar-level' },
+      { name: 'Quarton VLM-650 Laser Module', sku: 'quarton-module' },
+      { name: 'Complete ZnSe Lens Kit', sku: 'znse-lens' },
+      { name: 'Refraction Analysis Tank', sku: 'refraction-tank' },
+      { name: 'Extended Protocol Journal Set', sku: 'protocol-journal' },
     ],
   },
 };
 
-const computeBundle = (def: BundleDef) => {
-  const originalPrice = def.items.reduce((sum, i) => sum + i.value, 0);
-  const rawDiscount = originalPrice > 0 ? ((originalPrice - def.price) / originalPrice) * 100 : 0;
-  const discountPct = Math.max(0, Math.floor(rawDiscount));
-  return { ...def, originalPrice, discountPct };
-};
-
-const bundleData: Record<string, ReturnType<typeof computeBundle>> = Object.fromEntries(
-  Object.entries(bundleDefs).map(([k, v]) => [k, computeBundle(v)])
-);
+const bundleData: Record<string, BundleDef> = bundleDefs;
 
 // SKU to slug mapping
 const skuToSlug: Record<string, string> = {
@@ -189,9 +175,6 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
               <p className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">
                 {item.name}
               </p>
-              <p className="text-xs text-muted-foreground">
-                ${item.value}
-              </p>
               
               {/* 1px #C41E3A glowing beam underline on hover */}
               <div 
@@ -241,7 +224,6 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
     return slug !== currentProductSlug && item.sku !== currentSku;
   }) || [];
   
-  const savings = suggestedBundle ? suggestedBundle.originalPrice - suggestedBundle.price : 0;
   
   // Track impression on mount
   useEffect(() => {
@@ -249,14 +231,12 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
       window.posthog?.capture('bundle_upsell_shown', {
         bundle_id: suggestedBundle.id,
         bundle_name: suggestedBundle.name,
-        bundle_price: suggestedBundle.price,
-        bundle_savings: savings,
         current_product: currentProductSlug,
         upsell_items_count: otherItems.length,
         type: 'complete_the_bundle',
       });
     }
-  }, [currentProductSlug, suggestedBundle, otherItems.length, savings]);
+  }, [currentProductSlug, suggestedBundle, otherItems.length]);
   
   if (!suggestedBundle || matchingBundles.length === 0 || otherItems.length === 0) return null;
   
@@ -275,8 +255,6 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
     window.posthog?.capture('bundle_upsell_view_bundle_clicked', {
       bundle_id: suggestedBundle.id,
       bundle_name: suggestedBundle.name,
-      bundle_price: suggestedBundle.price,
-      bundle_savings: savings,
       current_product: currentProductSlug,
       type: 'complete_the_bundle',
     });
@@ -287,16 +265,11 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className="w-5 h-5 text-amber-400" />
         <h3 className="text-lg font-semibold">Complete the Bundle</h3>
-        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
-          Save ${savings}
-        </Badge>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
         This item is part of the <span className="text-foreground font-medium">{suggestedBundle.name}</span>.
-        {suggestedBundle.discountPct > 0
-          ? ` Get the complete kit and save ${suggestedBundle.discountPct}%.`
-          : ' Get the complete kit.'}
+        {' '}See what the complete kit contains.
       </p>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
@@ -340,10 +313,7 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
       )}
       
       <div className="flex items-center justify-between pt-4 border-t border-border/50">
-        <div>
-          <p className="text-2xl font-bold text-primary">${suggestedBundle.price}</p>
-          <p className="text-sm text-muted-foreground line-through">${suggestedBundle.originalPrice}</p>
-        </div>
+        <div />
         
         <Button asChild className="group" onClick={handleViewBundleClick}>
           <Link to={`/bundles/${suggestedBundle.id}`}>
