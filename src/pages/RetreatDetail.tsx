@@ -118,11 +118,12 @@ const RetreatDetail = () => {
                 <h1 className="text-3xl md:text-5xl font-black tracking-tight">{retreat.name}</h1>
                 <FollowButton entityType="retreat" entityId={retreat.id} />
               </div>
-
+              <div className="flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
                 {locationLine && (
                   <span className="inline-flex items-center gap-1"><MapPin className="w-4 h-4" /> {locationLine}</span>
                 )}
               </div>
+
               {retreat.tags && retreat.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {retreat.tags.map((t, i) => (
