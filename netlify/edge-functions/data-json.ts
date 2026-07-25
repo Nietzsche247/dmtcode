@@ -189,7 +189,7 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events, articles] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles, registryGlyphs] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
@@ -219,6 +219,11 @@ export default async (req: Request): Promise<Response> => {
       "articles",
       "id,slug,title,dek,body_md,topic_tags,compounds,related_trials,related_bibliography,related_symbols,related_protocols,author,published_at,updated_at,is_published",
       "is_published=eq.true"
+    ),
+    fetchAll(
+      "registry_glyphs",
+      "id,source,created_at,image_data",
+      "order=created_at.desc"
     ),
   ]);
 
@@ -377,6 +382,14 @@ export default async (req: Request): Promise<Response> => {
     };
   });
 
+  const registryGlyphsFeed = registryGlyphs
+    .filter((r) => typeof r.image_data === "string" && (r.image_data as string).length > 0)
+    .map((r) => compact({
+      id: String(r.id),
+      source: (r.source as string) || undefined,
+      created_at: (r.created_at as string) || undefined,
+    }));
+
   const uniqSorted = (vals: (string | null | undefined)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
   const contentTypeVocab = uniqSorted([...items.map((i) => i.content_type), "Article"]);
@@ -386,7 +399,7 @@ export default async (req: Request): Promise<Response> => {
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
   const body = {
-    version: "3.7",
+    version: "3.8",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -416,12 +429,15 @@ export default async (req: Request): Promise<Response> => {
       theories: theoriesFeed.length,
       events: eventsFeed.length,
       articles: articlesFeed.length,
+      registry_glyphs: registryGlyphsFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
     theories: theoriesFeed,
     events: eventsFeed,
     articles: articlesFeed,
+    registry_glyphs: registryGlyphsFeed,
+    registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
     faq: FAQ_ITEMS,
   };
 
