@@ -161,8 +161,13 @@ const Tools = () => {
     navigate(`/products/${productId}`);
   };
 
-  const handleWaitlistClick = (productTitle: string, tier: string) => {
-    const utm = `?utm_source=tools_soldout&utm_product=${encodeURIComponent(productTitle)}&utm_tier=${tier}`;
+  const handleWaitlistClick = (productTitle: string, productHandle: string) => {
+    // productHandle is the identifier /products/{id} resolves, the same value
+    // this card already uses to link to its own detail page.
+    const identifier = productHandle
+      ? `&utm_item=${encodeURIComponent(productHandle)}`
+      : '';
+    const utm = `?utm_source=tools_soldout&utm_product=${encodeURIComponent(productTitle)}${identifier}`;
     navigate(`/waitlist${utm}`);
   };
 
