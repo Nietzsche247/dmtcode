@@ -10,6 +10,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
+import { FollowButton } from "@/components/FollowButton";
+
 
 type Article = {
   id: string;

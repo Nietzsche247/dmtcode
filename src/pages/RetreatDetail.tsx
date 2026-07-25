@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink, ArrowLeft, MapPin, Mail } from "lucide-react";
+import { FollowButton } from "@/components/FollowButton";
+
 
 interface RetreatRow {
   id: string;

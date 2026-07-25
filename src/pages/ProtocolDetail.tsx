@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { FollowButton } from '@/components/FollowButton';
+
 import { 
   FlaskConical, Stethoscope, Clock, ArrowLeft, Mic, 
   BookOpen, Shield, Pill, Brain, FileText, ExternalLink,
