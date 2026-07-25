@@ -175,7 +175,7 @@ export default async (request: Request, context: Context) => {
         "emotional_valence,recurrence,source_method,duration_seconds," +
         "upvotes,created_at,updated_at";
       const r = await getRow("symbol_submissions", id, "status=eq.approved", f);
-      if (!r) return shellRes;
+      if (!r) return notFound404(await shellRes.text(), { title: "Symbol not found | DMT Code", heading: "Symbol not found", text: "This symbol is not currently indexed or the link is out of date.", canonical: `${SITE}/registry`, backHref: `${SITE}/registry`, backLabel: "Visual symbol registry", marker: "registry-not-found" });
 
       const short = String(r.id).slice(0, 8);
       const tags = Array.isArray(r.tags) ? (r.tags as string[]) : [];
@@ -262,7 +262,7 @@ export default async (request: Request, context: Context) => {
         "id,title,description,institution,principal_investigator,status,phase,confirmed_status," +
         "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
-      if (!r) return shellRes;
+      if (!r) return notFound404(await shellRes.text(), { title: "Trial not found | DMT Code", heading: "Trial not found", text: "This trial is not currently indexed or the link is out of date.", canonical: `${SITE}/trials`, backHref: `${SITE}/trials`, backLabel: "Clinical trials", marker: "trial-not-found" });
       const isRegisteredTrial =
         r.record_type === "registered_trial" ||
         (typeof r.trial_registry_id === "string" &&
@@ -368,7 +368,7 @@ export default async (request: Request, context: Context) => {
         "compounds,content_type,authority_type,stance_score,tags,summary," +
         "source_date,full_text,transcript,created_at,updated_at";
       const r = await getRow("bibliography", id, "is_approved=eq.true", f);
-      if (!r) return shellRes;
+      if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
 
       const desc =
         (r.summary && String(r.summary).trim()) ||
@@ -1957,7 +1957,7 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
     `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,event_type,location,organizer,url`,
   );
   const r = rows[0];
-  if (!r) return shellRes;
+  if (!r) return notFound404(await shellRes.text(), { title: "Event not found | DMT Code", heading: "Event not found", text: "This event is not currently indexed or the link is out of date.", canonical: `${SITE}/events`, backHref: `${SITE}/events`, backLabel: "Events timeline", marker: "event-not-found" });
 
   const canonical = `${SITE}/events/${id}`;
   const shortDesc = String(r.description || "").trim();
@@ -2037,7 +2037,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     `id=eq.${id}&is_approved=is.true&select=id,name,description,details,location,country,image_url,website_url,contact_email,tags`,
   );
   const r = rows[0];
-  if (!r) return shellRes;
+  if (!r) return notFound404(await shellRes.text(), { title: "Retreat not found | DMT Code", heading: "Retreat not found", text: "This retreat is not currently indexed or the link is out of date.", canonical: `${SITE}/retreats`, backHref: `${SITE}/retreats`, backLabel: "Retreats", marker: "retreat-not-found" });
 
   const canonical = `${SITE}/retreats/${id}`;
   const shortDesc = String(r.description || "").trim();
@@ -2255,14 +2255,14 @@ function renderJsonNode(node: unknown, depth: number): string {
 async function renderProtocolDetail(context: Context, slug: string): Promise<Response> {
   const shellRes = await context.next();
   const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  if (!cleanSlug) return shellRes;
+  if (!cleanSlug) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
 
   const rows = await sbGetRows(
     "protocols",
     `slug=eq.${cleanSlug}&is_published=is.true&select=slug,title,compound,status,tagline,content_jsonb,updated_at`,
   );
   const r = rows[0];
-  if (!r) return shellRes;
+  if (!r) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
 
   const canonical = `${SITE}/protocols/${cleanSlug}`;
   const title = `${String(r.title)} protocol | DMT Code`;
@@ -2724,7 +2724,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
       `author,published_at,updated_at`,
   );
   const r = rows[0];
-  if (!r) return shellRes;
+  if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
 
   const canonical = `${SITE}/articles/${String(r.slug)}`;
   const title = `${String(r.title)} | DMT Code`;
