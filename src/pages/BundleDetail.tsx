@@ -548,11 +548,6 @@ const BundleDetail = () => {
                     Most Popular
                   </Badge>
                 )}
-                {bundle.discount && (
-                  <Badge className={`absolute top-4 right-4 ${bundle.badgeColor}`}>
-                    {bundle.discount}
-                  </Badge>
-                )}
               </div>
 
               {/* Details */}
