@@ -11,6 +11,23 @@ const SUPABASE_KEY =
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Detail kinds this function dispatches. UUID keyed kinds must have a valid uuid
+// as the second segment; the slug keyed kinds are validated by their lookup.
+const UUID_DETAIL_KINDS = new Set<string>([
+  "registry",
+  "trials",
+  "bibliography",
+  "events",
+  "retreats",
+]);
+const HANDLED_DETAIL_KINDS = new Set<string>([
+  ...UUID_DETAIL_KINDS,
+  "theories",
+  "protocols",
+  "articles",
+]);
+
+
 const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 
 // Site-wide social share image. This is a verbatim copy of the og:image already
