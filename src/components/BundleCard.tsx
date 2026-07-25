@@ -161,7 +161,9 @@ export const BundleCard = ({
               className="w-full h-12 min-h-[44px] rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-black text-sm uppercase tracking-wide"
               onClick={(e) => {
                 e.stopPropagation();
-                const utm = `?utm_source=bundle_soldout&utm_campaign=${encodeURIComponent(name)}&utm_tier=${tier}`;
+                // utm_tier carries the real bundle id, the same identifier
+                // /bundles/{id} uses, matching BundleDetail.tsx.
+                const utm = `?utm_source=bundle_soldout&utm_campaign=${encodeURIComponent(name)}&utm_tier=${encodeURIComponent(id)}`;
                 navigate(`/waitlist${utm}`);
               }}
             >
