@@ -2369,19 +2369,17 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
   }
 
   if (!match) {
-    const notFoundHead = buildHead({
+    return notFound404(await shellRes.text(), {
       title: "Theory not found | DMT Code",
+      heading: "Theory not found",
+      text: "This theory is not currently indexed or the link is out of date.",
       canonical: `${SITE}/theories`,
-      robots: "noindex",
+      backHref: `${SITE}/theories`,
+      backLabel: "Back to Open theories",
+      marker: "theory-not-found",
     });
-    const notFoundBody = `<article data-prerender="theory-not-found">
-  <h1>Theory not found</h1>
-  <p>This theory is not currently indexed or the link is out of date.</p>
-  <p><a href="${SITE}/theories">Back to Open theories</a></p>
-</article>`;
-    const html404 = renderShell(await shellRes.text(), notFoundHead, notFoundBody);
-    return new Response(html404, { status: 404, headers: PRERENDER_RESP_HEADERS });
   }
+
 
   const canonicalSlug = theorySlug(String(match.title || ""));
   const canonical = `${SITE}/theories/${canonicalSlug}`;
