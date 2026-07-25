@@ -38,6 +38,9 @@ const PROBE_PATTERNS = [
   '/wp/',
 ];
 
+const utcStamp = (d: Date) => d.toISOString().slice(0, 16).replace('T', ' ');
+
+
 const isProbe = (path: string | null) => {
   const p = (path || '').toLowerCase();
   if (p === '/graphql') return true;
@@ -127,7 +130,7 @@ export const CrawlerIntelligence = () => {
 
       {minTs && maxTs && (
         <p className="text-sm text-muted-foreground">
-          {`Logging window: ${format(minTs, 'MMM d, yyyy HH:mm')} UTC to ${format(maxTs, 'MMM d, yyyy HH:mm')} UTC. Only requests matching a known-bot allowlist are logged. Human visitors are never logged.`}
+          {`Logging window: ${utcStamp(minTs)} UTC to ${utcStamp(maxTs)} UTC. Only requests matching a known-bot allowlist are logged. Human visitors are never logged.`}
         </p>
       )}
 
