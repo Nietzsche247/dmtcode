@@ -22,6 +22,7 @@ import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 import { ArticlesManager } from './ArticlesManager';
+import { CrawlerIntelligence } from './CrawlerIntelligence';
 
 export const AdminDashboard = () => {
   return (
