@@ -7,9 +7,15 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface EmailCaptureProps {
   source?: string;
+  /**
+   * Identifier of the specific product or bundle the visitor asked about,
+   * taken from real route context (never invented). When present, the signup
+   * is recorded against that record instead of the general waitlist.
+   */
+  productSlug?: string | null;
 }
 
-export const EmailCapture = ({ source = 'waitlist' }: EmailCaptureProps) => {
+export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailCaptureProps) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,9 +25,13 @@ export const EmailCapture = ({ source = 'waitlist' }: EmailCaptureProps) => {
     if (!trimmed) return;
 
     setIsSubmitting(true);
-    const { error } = await supabase
-      .from('waitlist')
-      .insert({ email: trimmed, source });
+    const { error } = productSlug
+      ? await supabase
+          .from('product_signups')
+          .insert({ email: trimmed, bundle_slug: productSlug })
+      : await supabase
+          .from('waitlist')
+          .insert({ email: trimmed, source });
 
     setIsSubmitting(false);
 
