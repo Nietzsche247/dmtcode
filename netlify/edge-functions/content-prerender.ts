@@ -1754,6 +1754,47 @@ const PRERENDER_RESP_HEADERS = {
     "public, s-maxage=3600, stale-while-revalidate=86400, durable",
 };
 
+type NotFoundOpts = {
+  title?: string;
+  heading?: string;
+  text?: string;
+  canonical?: string;
+  backHref?: string;
+  backLabel?: string;
+  marker?: string;
+};
+
+// Shared not-found prerender. Returns HTTP 404 with a noindex head so unknown
+// detail records stop being indexed as soft 404s.
+function notFound404(shellHtml: string, o: NotFoundOpts = {}): Response {
+  const head = buildHead({
+    title: o.title || "Not found | DMT Code",
+    canonical: o.canonical || `${SITE}/`,
+    robots: "noindex, follow",
+  });
+  const backHref = o.backHref || `${SITE}/`;
+  const backLabel = o.backLabel || "DMT Code homepage";
+  const body = `<article data-prerender="${esc(o.marker || "not-found")}">
+  <h1>${esc(o.heading || "Not found")}</h1>
+  <p>${esc(o.text || "This record is not currently indexed or the link is out of date.")}</p>
+  <p><a href="${esc(backHref)}">${esc(backLabel)}</a></p>
+</article>`;
+  return new Response(renderShell(shellHtml, head, body), {
+    status: 404,
+    headers: PRERENDER_RESP_HEADERS,
+  });
+}
+
+async function notFoundPrerender(
+  context: Context,
+  o: NotFoundOpts = {},
+): Promise<Response> {
+  const shellRes = await context.next();
+  return notFound404(await shellRes.text(), o);
+}
+
+
+
 async function sbGetRows(
   table: string,
   query: string,
