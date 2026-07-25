@@ -438,7 +438,7 @@ const Tools = () => {
                                   className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground touch-manipulation"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleWaitlistClick(title, 'single');
+                                    handleWaitlistClick(title, handle);
                                   }}
                                   aria-label={`Join waitlist for ${title}`}
                                   size="lg"
