@@ -181,6 +181,7 @@ const Registry = () => {
           <LayeredSubmissionForm />
           <RegistryBrowser />
           <RegistryDownloads />
+          <DrawnGlyphReports />
           <RegistryResources />
         </main>
 
