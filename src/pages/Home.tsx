@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { ConvergenceHero } from '@/components/home/ConvergenceHero';
 import { ExplainerSection } from '@/components/ExplainerSection';
-import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -244,8 +243,6 @@ const Home = () => {
             </AnimatedSection>
           </section>
           
-          {/* Testimonials - handles its own mode visibility */}
-          <TestimonialsCarousel />
           <LatestArticle />
           <EmailCapture source="homepage" />
           

@@ -314,45 +314,45 @@ export default async (req: Request): Promise<Response> => {
 
   // Top-level "symbols" projection: every approved symbol with the fields
   // agents most need without re-querying. "faq" mirrors the live /faq page.
-  const symbolsFeed = symbols.map((r) => ({
+  const symbolsFeed = symbols.map((r) => compact({
     id: String(r.id),
     url: `${SITE}/registry/${r.id}`,
-    description: (r.description as string) || null,
+    description: (r.description as string) || undefined,
     tags: (r.tags as string[]) || [],
-    image_url: (r.image_url as string) || null,
+    image_url: (r.image_url as string) || undefined,
     upvotes: Number(r.upvotes ?? 0),
-    created_at: (r.created_at as string) || null,
-    updated_at: (r.updated_at as string) || null,
-  }));
+    created_at: (r.created_at as string) || undefined,
+    updated_at: (r.updated_at as string) || undefined,
+  })));
 
-  const theoriesFeed = theories.map((r) => ({
+  const theoriesFeed = theories.map((r) => compact({
     id: String(r.id),
     url: `${SITE}/theories/${theorySlug(String((r.title as string) || ""))}`,
-    title: (r.title as string) || null,
-    summary: (r.summary as string) || null,
-    content: (r.content as string) || null,
-    proponent: (r.proponent as string) || null,
-    source_title: (r.source_title as string) || null,
-    source_url: (r.source_url as string) || null,
-    source_type: (r.source_type as string) || null,
-    origin: (r.origin as string) || null,
+    title: (r.title as string) || undefined,
+    summary: (r.summary as string) || undefined,
+    content: (r.content as string) || undefined,
+    proponent: (r.proponent as string) || undefined,
+    source_title: (r.source_title as string) || undefined,
+    source_url: (r.source_url as string) || undefined,
+    source_type: (r.source_type as string) || undefined,
+    origin: (r.origin as string) || undefined,
     tags: (r.tags as string[]) || [],
     upvotes: Number(r.upvotes ?? 0),
-    created_at: (r.created_at as string) || null,
-  }));
+    created_at: (r.created_at as string) || undefined,
+  })));
 
-  const eventsFeed = events.map((r) => ({
+  const eventsFeed = events.map((r) => compact({
     id: String(r.id),
     url: `${SITE}/events/${r.id}`,
-    title: (r.title as string) || null,
-    description: (r.description as string) || null,
-    details: (r.details as string) || null,
-    event_date: (r.event_date as string) || null,
-    event_type: (r.event_type as string) || null,
-    location: (r.location as string) || null,
-    organizer: (r.organizer as string) || null,
-    external_url: (r.url as string) || null,
-  }));
+    title: (r.title as string) || undefined,
+    description: (r.description as string) || undefined,
+    details: (r.details as string) || undefined,
+    event_date: (r.event_date as string) || undefined,
+    event_type: (r.event_type as string) || undefined,
+    location: (r.location as string) || undefined,
+    organizer: (r.organizer as string) || undefined,
+    external_url: (r.url as string) || undefined,
+  })));
 
   const articlesFeed = articles.map((r) => {
     const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
@@ -365,21 +365,21 @@ export default async (req: Request): Promise<Response> => {
       ...symRefs.map((id) => `${SITE}/registry/${id}`),
       ...protoRefs.map((s) => `${SITE}/protocols/${s}`),
     ];
-    return {
+    return compact({
       id: String(r.id),
       slug: String(r.slug || ""),
       url: `${SITE}/articles/${r.slug}`,
-      title: (r.title as string) || null,
-      dek: (r.dek as string) || null,
+      title: (r.title as string) || undefined,
+      dek: (r.dek as string) || undefined,
       body: (r.body_md as string) || "",
-      author: (r.author as string) || null,
-      published_at: (r.published_at as string) || null,
-      updated_at: (r.updated_at as string) || null,
+      author: (r.author as string) || undefined,
+      published_at: (r.published_at as string) || undefined,
+      updated_at: (r.updated_at as string) || undefined,
       topic_tags: (r.topic_tags as string[]) || [],
       compounds: (r.compounds as string[]) || [],
       license: "CC-BY-4.0",
       citations,
-    };
+    });
   });
 
   const registryGlyphsFeed = registryGlyphs
