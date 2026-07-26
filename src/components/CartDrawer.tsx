@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -56,6 +56,31 @@ export const CartDrawer = () => {
 
   const getBundleType = (handle: string): 'starter' | 'gateway' | 'complete' | 'ceremony' | null => {
     return BUNDLE_TYPE_MAP[handle] || null;
+  };
+
+  const persistedRef = useRef(false);
+
+  // Persist the captured address before any network side effect, so a failed
+  // invoke or a closed drawer never loses it.
+  const persistEmail = async () => {
+    if (persistedRef.current || !email) return;
+    persistedRef.current = true;
+    const bundleSlug = bundleInCart?.product.node?.handle || '';
+    try {
+      if (bundleSlug) {
+        await (supabase as any)
+          .from('product_signups')
+          .insert({ bundle_slug: bundleSlug, email });
+      } else {
+        const routeSource = window.location.pathname.replace(/^\/+|\/+$/g, '') || 'home';
+        await (supabase as any)
+          .from('waitlist')
+          .insert({ email, source: routeSource });
+      }
+    } catch (err) {
+      persistedRef.current = false;
+      console.error('Failed to persist email:', err);
+    }
   };
 
   const triggerEmailSequence = async (bundleType: 'starter' | 'gateway' | 'complete' | 'ceremony', orderId: string) => {
@@ -129,6 +154,7 @@ export const CartDrawer = () => {
           const bundleType = getBundleType(bundleHandle);
           
           if (bundleType) {
+            await persistEmail();
             const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             await triggerEmailSequence(bundleType, orderId);
             toast.success('Email sequence started!', {
@@ -164,6 +190,7 @@ export const CartDrawer = () => {
       return;
     }
     setEmailCaptured(true);
+    void persistEmail();
     toast.success('Email saved!', {
       description: 'You\'ll receive onboarding emails after purchase.',
     });
