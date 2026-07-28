@@ -16,18 +16,10 @@ import { CanvasExport } from './CanvasExport';
 import { usePrimacyCheck } from '@/hooks/usePrimacyCheck';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { AlertTriangle } from 'lucide-react';
+import { formatSealedAt } from '@/lib/sealFormat';
+import { VisualFieldMap } from './VisualFieldMap';
 
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
-// Renders e.g. "14:32 UTC on 28 July 2026"
-const formatSealedAt = (iso: string): string => {
-  const d = new Date(iso);
-  const hh = String(d.getUTCHours()).padStart(2, '0');
-  const mm = String(d.getUTCMinutes()).padStart(2, '0');
-  const day = d.getUTCDate();
-  const month = d.toLocaleDateString('en-GB', { month: 'long', timeZone: 'UTC' });
-  return `${hh}:${mm} UTC on ${day} ${month} ${d.getUTCFullYear()}`;
-};
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 interface FormData {
   // Priming control
@@ -73,6 +65,14 @@ interface FormData {
   orcid: string;
   confidenceRating: number;
 
+  // Visual field map
+  fieldBand: string;
+  fieldDepth: string;
+  fieldAttachment: string;
+  fieldAnchoring: string;
+  fieldOrientation: string;
+  fieldLocations: string;
+
   // Privacy
   privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
   publicationConsent: boolean;
@@ -106,6 +106,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   const [annotationDraft, setAnnotationDraft] = useState('');
   const [annotations, setAnnotations] = useState<GlyphAnnotation[]>([]);
   const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
+  const [fieldPin, setFieldPin] = useState<{ x: number; y: number } | null>(null);
+  const [cannotPlace, setCannotPlace] = useState(false);
+  const [otherPins, setOtherPins] = useState<{ x: number; y: number }[]>([]);
+  const [wasOfflineCapture, setWasOfflineCapture] = useState(false);
+  const [offlineCapturedAt, setOfflineCapturedAt] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
@@ -136,6 +141,12 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     description: '',
     orcid: '',
     confidenceRating: 3,
+    fieldBand: '',
+    fieldDepth: '',
+    fieldAttachment: '',
+    fieldAnchoring: '',
+    fieldOrientation: '',
+    fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
     publicationConsent: false,
     pseudonym: ''
@@ -222,7 +233,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       return;
     }
     
-    setStep((prev) => Math.min(6, prev + 1) as Step);
+    setStep((prev) => Math.min(7, prev + 1) as Step);
   };
 
   const handleBack = () => {
@@ -280,13 +291,24 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         lighting_conditions: formData.timeOfDay || null,
         privacy_level: formData.privacyLevel,
         publication_consent: formData.publicationConsent,
-        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null
+        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null,
+        field_x: cannotPlace ? null : (fieldPin ? fieldPin.x : null),
+        field_y: cannotPlace ? null : (fieldPin ? fieldPin.y : null),
+        field_band: formData.fieldBand || null,
+        depth: formData.fieldDepth || null,
+        field_attachment: formData.fieldAttachment || null,
+        field_anchoring: formData.fieldAnchoring || null,
+        orientation: formData.fieldOrientation || null,
+        field_locations: formData.fieldLocations || null
       };
 
       // If offline, save locally and show success
       if (!isOnline) {
-        savePendingSubmission(submissionData);
-        setStep(6);
+        const capturedAt = new Date().toISOString();
+        savePendingSubmission({ ...submissionData, offline_captured_at: capturedAt });
+        setWasOfflineCapture(true);
+        setOfflineCapturedAt(capturedAt);
+        setStep(7);
         setIsSubmitting(false);
         return;
       }
@@ -309,9 +331,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
 
       // Load similar symbols
       await loadSimilarSymbols(insertedGlyph.id);
+      await loadOtherPins(insertedGlyph.id);
 
       toast.success(`Symbol #${totalSymbols + 1} submitted!`);
-      setStep(6);
+      setStep(7);
       
     } catch (error) {
       console.error('Submission error:', error);
@@ -476,6 +499,18 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     setSimilarSymbols(scored);
   };
 
+  const loadOtherPins = async (insertedId: string) => {
+    const { data } = await supabase
+      .from('registry_glyphs')
+      .select('id, field_x, field_y')
+      .not('field_x', 'is', null)
+      .not('field_y', 'is', null)
+      .not('sealed_at', 'is', null)
+      .neq('id', insertedId)
+      .limit(200);
+    setOtherPins((data || []).map(r => ({ x: Number(r.field_x), y: Number(r.field_y) })));
+  };
+
   const loadAnnotations = async (glyphId: string) => {
     const { data } = await supabase
       .from('glyph_annotations')
@@ -531,6 +566,12 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     description: '',
     orcid: '',
     confidenceRating: 3,
+    fieldBand: '',
+    fieldDepth: '',
+    fieldAttachment: '',
+    fieldAnchoring: '',
+    fieldOrientation: '',
+    fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
     publicationConsent: false,
     pseudonym: ''
@@ -544,6 +585,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     setOriginalRecordHash(null);
     setAnnotations([]);
     setAnnotationDraft('');
+    setFieldPin(null);
+    setCannotPlace(false);
+    setOtherPins([]);
+    setWasOfflineCapture(false);
+    setOfflineCapturedAt(null);
     localStorage.removeItem('dmtcode-canvas-draft');
     loadTotalSymbols();
     if (userId) loadUserStats(userId);
@@ -585,7 +631,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
         <div className="flex justify-center items-center gap-2 mb-8">
-          {[0, 1, 2, 3, 4, 5].map((s) => (
+          {[0, 1, 2, 3, 4, 5, 6].map((s) => (
             <div 
               key={s}
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -1175,11 +1221,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
 
-        {/* Step 5: Optional Details */}
-        {step === 5 && (
+        {/* Step 6: Optional Details */}
+        {step === 6 && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-4">Step 5: Optional Details (20 seconds)</h3>
+              <h3 className="text-xl font-semibold mb-4">Step 6: Optional Details (20 seconds)</h3>
               <p className="text-sm text-muted-foreground mb-6">
                 Add any additional details about the symbol.
               </p>
@@ -1395,8 +1441,8 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
 
-        {/* Step 6: Confirmation & Gamification */}
-        {step === 6 && (
+        {/* Step 7: Confirmation & Gamification */}
+        {step === 7 && (
           <div className="space-y-8 text-center">
             <div className="space-y-2">
               <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
