@@ -1746,9 +1746,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   No other sealed report currently shares two or more of the features you described.
                 </p>
               )}
-            </div>
+              </div>
+            )}
 
-            {fieldPin && !cannotPlace && (
+            {!wasOfflineCapture && fieldPin && !cannotPlace && (
               <div>
                 <h4 className="text-lg font-semibold mb-4">Where others placed theirs</h4>
                 <VisualFieldMap value={fieldPin} otherPins={otherPins} readOnly />
@@ -1756,6 +1757,15 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   {otherPins.length > 0
                     ? 'Your marker is filled. Every hollow marker is another sealed report.'
                     : 'No other sealed report has placed a marker on the field map yet. Yours is the first.'}
+                </p>
+              </div>
+            )}
+
+            {wasOfflineCapture && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Nothing has been compared yet</h4>
+                <p className="text-sm text-muted-foreground">
+                  We cannot compare this with other reports until it reaches us. When it syncs it will be sealed first, and the comparison happens after that.
                 </p>
               </div>
             )}
