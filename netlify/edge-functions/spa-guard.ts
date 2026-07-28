@@ -19,7 +19,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "co-witnesses", "waitlist", "community", "log", "assess", "leaderboard",
   "correlations", "events", "dashboard", "profile", "my-symbols", "analysis",
   "tools", "bundles", "products", "api", "contribute", "Elizabeth_Baker",
-  "card", "articles", "privacy", "terms", "disclosure",
+  "card", "articles", "guides", "privacy", "terms", "disclosure",
   // Machine endpoints and public assets
   "data.json", "shop.json", "sitemap.xml", "llms.txt", "robots.txt",
   "manifest.json", "timeline.json", "favicon.svg",
@@ -29,8 +29,8 @@ const VALID_FIRST_SEGMENT = new Set<string>([
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
   // /articles/:slug uses human-readable slugs, not UUIDs
-  const a = path.match(/^\/articles\/([^/]+)$/i);
-  if (a) return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a[1]);
+  const a = path.match(/^\/(articles|guides)\/([^/]+)$/i);
+  if (a) return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a[2]);
   // /registry/:uuid, /trials/:uuid, /bibliography/:uuid, /events/:uuid, /retreats/:uuid
   const m = path.match(/^\/(registry|trials|bibliography|events|retreats)\/([^/]+)$/i);
   if (m) return UUID_RE.test(m[2]);

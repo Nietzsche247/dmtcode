@@ -24,6 +24,7 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
     'admin': 'Admin',
     'auth': 'Login',
     'dataset': 'Dataset',
+    'guides': 'Guides',
     'bundles': 'Bundles',
     'null-reports': 'Null Reports',
     'leaderboard': 'Community',

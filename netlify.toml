@@ -166,6 +166,14 @@
   path = "/articles/*"
   function = "content-prerender"
 
+[[edge_functions]]
+  path = "/guides"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/guides/*"
+  function = "content-prerender"
+
 # 404 guard MUST run last: it whitelists known routes and 404s the rest.
 [[edge_functions]]
   path = "/*"
