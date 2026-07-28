@@ -126,6 +126,11 @@ export const AdminDashboard = () => {
             <CrawlerIntelligence />
           </TabsContent>
 
+          <TabsContent value="funnel" className="space-y-4">
+            <ConversionFunnel />
+          </TabsContent>
+
+
 
 
           <TabsContent value="geo" className="space-y-4">
