@@ -114,7 +114,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-4">
-            No spam. Unsubscribe anytime.
+            No spam. One notification, then nothing. Reply to any email from us to be removed.
           </p>
         </form>
       </div>
