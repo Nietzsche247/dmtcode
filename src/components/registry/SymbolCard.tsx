@@ -83,7 +83,12 @@ export const SymbolCard = ({
 
       {/* Content */}
       <div className="space-y-3">
+        {imageUrl?.startsWith('/placeholder-symbol-') && (
+          <Badge variant="secondary" className="text-xs">Curated starter set</Badge>
+        )}
+
         {/* Description */}
+
         {description && (
           <p className="text-sm text-muted-foreground line-clamp-2">
             {highlightText(description)}
