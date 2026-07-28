@@ -1728,6 +1728,9 @@ export const config: Config = {
     "/protocols/*",
     "/articles",
     "/articles/*",
+    "/privacy",
+    "/terms",
+    "/disclosure",
   ],
 };
 
