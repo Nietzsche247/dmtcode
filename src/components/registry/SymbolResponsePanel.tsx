@@ -52,7 +52,7 @@ interface SealedMemory {
 type Counts = Record<string, number>;
 
 const COUNT_LABELS: [string, string][] = [
-  ['independent_prior_record', 'independent prior records'],
+  ['independent_prior_record', 'independent prior records claimed'],
   ['independent_prior_record_blind', 'of those, recorded before any catalogue exposure'],
   ['candidate_match', 'awaiting review'],
   ['reviewed_match', 'reviewed and matched'],
@@ -271,9 +271,11 @@ export const SymbolResponsePanel = ({
           )}
 
           <p className="text-xs text-muted-foreground">
-            Recording this marks a candidate match. A candidate match is not a confirmed match. A
-            human reviewer decides that, and until then it stays labelled as a candidate.
+            This records a claim, not a match. Nothing compares the two records automatically yet. A
+            reviewer decides whether they actually converge, and until that happens your entry stays
+            a claim and is counted as one.
           </p>
+
         </div>
 
         {SIMPLE_RESPONSES.map(({ type, label }) => {
@@ -345,9 +347,9 @@ export const SymbolResponsePanel = ({
           </ul>
         )}
         <p className="text-xs text-muted-foreground">
-          These counters are kept apart on purpose. Recognition, an independent prior record, a
-          candidate match and a reviewed match are four different things, and only the last two are
-          on the evidence track.
+          These counters are kept apart on purpose. Recognition, a claimed independent prior record,
+          a claim under review and a reviewed match are four different things, and only the last two
+          are on the evidence track.
         </p>
       </section>
     </Card>

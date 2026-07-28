@@ -52,6 +52,12 @@ interface SealedMemory {
   created_at: string;
 }
 
+interface FollowedSymbol {
+  id: string;
+  description: string | null;
+  image_url: string | null;
+}
+
 interface Annotation {
   id: string;
   glyph_id: string;
@@ -141,6 +147,7 @@ const MySymbols = () => {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [followedSymbols, setFollowedSymbols] = useState<FollowedSymbol[]>([]);
 
   useEffect(() => {
     checkAuth();
@@ -159,8 +166,30 @@ const MySymbols = () => {
       loadUserBadges(user.id),
       loadUserSymbols(user.id),
       loadMemories(user.id),
+      loadFollowedSymbols(user.id),
     ]);
     setLoading(false);
+  };
+
+  const loadFollowedSymbols = async (uid: string) => {
+    const { data: follows } = await supabase
+      .from('follows')
+      .select('entity_id')
+      .eq('user_id', uid)
+      .eq('entity_type', 'symbol');
+
+    const ids = Array.from(new Set((follows ?? []).map((f: any) => f.entity_id)));
+    if (ids.length === 0) {
+      setFollowedSymbols([]);
+      return;
+    }
+
+    const { data } = await supabase
+      .from('symbol_submissions')
+      .select('id, description, image_url')
+      .in('id', ids);
+
+    setFollowedSymbols((data ?? []) as FollowedSymbol[]);
   };
 
   const loadUserBadges = async (uid: string) => {
@@ -461,6 +490,35 @@ const MySymbols = () => {
                       )}
                     </Card>
                   ))}
+                </div>
+              </section>
+            )}
+
+            {followedSymbols.length > 0 && (
+              <section className="mb-12">
+                <h2 className="text-2xl font-bold mb-2">Symbols you are following</h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                  You will be told when something changes for these, once notifications are switched on.
+                </p>
+                <div className="space-y-2">
+                  {followedSymbols.map(sym => {
+                    const desc = (sym.description ?? '').trim();
+                    const label = desc ? desc.slice(0, 70) : 'Untitled symbol';
+                    return (
+                      <Card key={sym.id} className="p-4 bg-card border-border">
+                        <Link to={`/registry/${sym.id}`} className="flex items-center gap-4 hover:underline">
+                          {sym.image_url && (
+                            <img
+                              src={sym.image_url}
+                              alt={label}
+                              className="w-12 h-12 object-contain bg-white border border-border shrink-0"
+                            />
+                          )}
+                          <span className="text-sm font-medium">{label}</span>
+                        </Link>
+                      </Card>
+                    );
+                  })}
                 </div>
               </section>
             )}
