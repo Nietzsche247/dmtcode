@@ -1302,6 +1302,78 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               )}
             </div>
 
+            {/* Privacy */}
+            <div>
+              <h4 className="text-base font-semibold mb-3">Who can see this memory</h4>
+              <RadioGroup
+                value={formData.privacyLevel}
+                onValueChange={(val) => setFormData(prev => ({ ...prev, privacyLevel: val as FormData['privacyLevel'] }))}
+                className="space-y-3"
+              >
+                {[
+                  {
+                    value: 'anonymous_matchable',
+                    label: 'Anonymous and matchable',
+                    help: 'Shown publicly with no name attached. Included in convergence comparisons.'
+                  },
+                  {
+                    value: 'public_pseudonym',
+                    label: 'Public under a pseudonym',
+                    help: 'Shown publicly with a name you choose.'
+                  },
+                  {
+                    value: 'researcher_available',
+                    label: 'Available to researchers',
+                    help: 'Shown publicly and flagged as available for formal research contact.'
+                  },
+                  {
+                    value: 'private',
+                    label: 'Private to me',
+                    help: userId
+                      ? 'Visible only to you. Not included in public comparisons.'
+                      : 'Sign in to keep a memory private. Without an account there is no way to show it back only to you.'
+                  }
+                ].map(opt => (
+                  <div key={opt.value} className="flex items-start space-x-2">
+                    <RadioGroupItem
+                      value={opt.value}
+                      id={`privacy-${opt.value}`}
+                      disabled={opt.value === 'private' && !userId}
+                      className="mt-1"
+                    />
+                    <div>
+                      <Label htmlFor={`privacy-${opt.value}`}>{opt.label}</Label>
+                      <p className="text-xs text-muted-foreground">{opt.help}</p>
+                    </div>
+                  </div>
+                ))}
+              </RadioGroup>
+
+              {formData.privacyLevel === 'public_pseudonym' && (
+                <div className="mt-4">
+                  <Label htmlFor="pseudonym" className="mb-2 block">Pseudonym</Label>
+                  <Input
+                    id="pseudonym"
+                    maxLength={40}
+                    value={formData.pseudonym}
+                    onChange={(e) => setFormData(prev => ({ ...prev, pseudonym: e.target.value }))}
+                  />
+                </div>
+              )}
+
+              <div className="flex items-start space-x-2 mt-4">
+                <Checkbox
+                  id="publicationConsent"
+                  checked={formData.publicationConsent}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, publicationConsent: checked === true }))}
+                  className="mt-1"
+                />
+                <Label htmlFor="publicationConsent" className="font-normal">
+                  I consent to this record being included in the public CC BY 4.0 data export.
+                </Label>
+              </div>
+            </div>
+
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
