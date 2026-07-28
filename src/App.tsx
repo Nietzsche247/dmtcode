@@ -338,6 +338,14 @@ const App = () => (
             </ErrorBoundary>
           } />
 
+          <Route path="/capture" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Capture />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
 
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
