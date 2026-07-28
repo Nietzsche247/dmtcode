@@ -100,6 +100,16 @@ export default async (request: Request, context: Context) => {
     const kind = seg[0];
     const id = seg[1] ?? "";
 
+    // Machine endpoints and static assets are served by other edge functions
+    // (articles-feed, sitemap, data-json, articles-json). content-prerender is
+    // declared in netlify.toml and therefore runs before in-source configured
+    // functions, so any path ending in a file extension must pass straight
+    // through untouched or this function swallows it and 404s it.
+    if (/\.[a-z0-9]{2,5}$/i.test(url.pathname)) {
+      return context.next();
+    }
+
+
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
       return await renderPrepare(context);
