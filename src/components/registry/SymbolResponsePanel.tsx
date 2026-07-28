@@ -52,7 +52,7 @@ interface SealedMemory {
 type Counts = Record<string, number>;
 
 const COUNT_LABELS: [string, string][] = [
-  ['independent_prior_record', 'independent prior records'],
+  ['independent_prior_record', 'independent prior records claimed'],
   ['independent_prior_record_blind', 'of those, recorded before any catalogue exposure'],
   ['candidate_match', 'awaiting review'],
   ['reviewed_match', 'reviewed and matched'],
