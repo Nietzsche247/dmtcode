@@ -195,7 +195,7 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events, articles, registryGlyphs] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
@@ -230,6 +230,11 @@ export default async (req: Request): Promise<Response> => {
       "registry_glyphs",
       "id,source,created_at,image_data",
       "order=created_at.desc"
+    ),
+    fetchAll(
+      "guides",
+      "slug,question,short_answer,evidence_grade,what_supports,what_weakens,what_is_unknown,what_would_change,related_paths,last_reviewed,updated_at,sort_order",
+      "is_published=eq.true"
     ),
   ]);
 
@@ -400,6 +405,24 @@ export default async (req: Request): Promise<Response> => {
       created_at: (r.created_at as string) || undefined,
     }));
 
+  const nonEmptyArray = (v: unknown) =>
+    Array.isArray(v) && v.length > 0 ? v : undefined;
+
+  const guidesFeed = guides.map((r) => compact({
+    slug: String(r.slug || ""),
+    url: `${SITE}/guides/${r.slug}`,
+    question: (r.question as string) || undefined,
+    short_answer: (r.short_answer as string) || undefined,
+    evidence_grade: (r.evidence_grade as string) || undefined,
+    what_supports: nonEmptyArray(r.what_supports),
+    what_weakens: nonEmptyArray(r.what_weakens),
+    what_is_unknown: nonEmptyArray(r.what_is_unknown),
+    what_would_change: nonEmptyArray(r.what_would_change),
+    related_paths: nonEmptyArray(r.related_paths),
+    last_reviewed: (r.last_reviewed as string) || undefined,
+    updated_at: (r.updated_at as string) || undefined,
+  }));
+
   const uniqSorted = (vals: (string | null | undefined)[]) =>
     Array.from(new Set(vals.filter((v): v is string => !!v && v.trim().length > 0))).sort();
   const contentTypeVocab = uniqSorted([...items.map((i) => i.content_type), "Article"]);
@@ -412,7 +435,7 @@ export default async (req: Request): Promise<Response> => {
   const symbolsCommunity = symbols.length - symbolsCurated;
 
   const body = {
-    version: "3.9",
+    version: "4.0",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -445,6 +468,7 @@ export default async (req: Request): Promise<Response> => {
       events: eventsFeed.length,
       articles: articlesFeed.length,
       registry_glyphs: registryGlyphsFeed.length,
+      guides: guidesFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
@@ -452,6 +476,8 @@ export default async (req: Request): Promise<Response> => {
     events: eventsFeed,
     articles: articlesFeed,
     registry_glyphs: registryGlyphsFeed,
+    guides: guidesFeed,
+    guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
     symbols_note: "Symbols marked record_class curated_starter were curated by the project from public imagery as a starting corpus and do not count as observed evidence. Use counts_toward_evidence to filter.",
     faq: FAQ_ITEMS,
