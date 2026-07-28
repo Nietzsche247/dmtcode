@@ -41,6 +41,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/guides" className="text-muted-foreground hover:text-primary transition-colors">
+                  Guides
+                </Link>
+              </li>
+              <li>
                 <Link to="/registry" className="text-muted-foreground hover:text-primary transition-colors">
                   Glyph Registry
                 </Link>

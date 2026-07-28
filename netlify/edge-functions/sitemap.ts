@@ -37,6 +37,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/co-witnesses", "0.5", "weekly"],
   ["/theories", "0.7", "weekly"],
   ["/articles", "0.8", "weekly"],
+  ["/guides", "0.8", "weekly"],
   ["/privacy", "0.3", "yearly"],
   ["/terms", "0.3", "yearly"],
   ["/disclosure", "0.4", "yearly"],
@@ -187,6 +188,15 @@ export default async () => {
     addBySlug(
       "/articles",
       (await page("articles", "is_published=eq.true", "slug,updated_at")) as any,
+      "0.7"
+    );
+  } catch (_e) { /* skip */ }
+
+  // Per-guide canonical URLs. Predicate MUST match /data.json (is_published=eq.true).
+  try {
+    addBySlug(
+      "/guides",
+      (await page("guides", "is_published=eq.true", "slug,updated_at")) as any,
       "0.7"
     );
   } catch (_e) { /* skip */ }
