@@ -349,7 +349,7 @@ export default async (req: Request): Promise<Response> => {
     tags: (r.tags as string[]) || [],
     upvotes: Number(r.upvotes ?? 0),
     created_at: (r.created_at as string) || undefined,
-  })));
+  }));
 
   const eventsFeed = events.map((r) => compact({
     id: String(r.id),
@@ -362,7 +362,7 @@ export default async (req: Request): Promise<Response> => {
     location: (r.location as string) || undefined,
     organizer: (r.organizer as string) || undefined,
     external_url: (r.url as string) || undefined,
-  })));
+  }));
 
   const articlesFeed = articles.map((r) => {
     const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
