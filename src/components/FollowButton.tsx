@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export type FollowEntityType = 'article' | 'theory' | 'protocol' | 'retreat' | 'event';
+export type FollowEntityType = 'article' | 'theory' | 'protocol' | 'retreat' | 'event' | 'trial';
 
 interface FollowButtonProps {
   entityType: FollowEntityType;
