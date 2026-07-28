@@ -137,7 +137,7 @@ const Bundles = () => {
                   >
                     {row.is_best && (
                       <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-black shadow-lg z-10 whitespace-nowrap">
-                        Most Requested
+                        Featured
                       </Badge>
                     )}
 
