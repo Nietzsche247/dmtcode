@@ -458,13 +458,20 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     customTags: '',
     description: '',
     orcid: '',
-    confidenceRating: 3
+    confidenceRating: 3,
+    privacyLevel: 'anonymous_matchable',
+    publicationConsent: false,
+    pseudonym: ''
   });
     setStep(0);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
     setIsNullReport(false);
+    setSealedAt(null);
+    setOriginalRecordHash(null);
+    setAnnotations([]);
+    setAnnotationDraft('');
     localStorage.removeItem('dmtcode-canvas-draft');
     loadTotalSymbols();
     if (userId) loadUserStats(userId);
