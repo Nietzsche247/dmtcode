@@ -60,7 +60,7 @@ const DrawnGlyphReports = () => {
         {glyphs.map((g) => (
           <article key={g.id} className="rounded-lg border border-border bg-card overflow-hidden">
             <img
-              src={`data:image/png;base64,${g.image_data}`}
+              src={g.image_data.startsWith('data:') ? g.image_data : `data:image/png;base64,${g.image_data}`}
               alt="Anonymous freehand glyph drawing submitted to the registry"
               loading="lazy"
               className="w-full aspect-square object-contain bg-background"
