@@ -167,7 +167,7 @@ const Bundles = () => {
                       <p className="text-xs font-black text-muted-foreground uppercase tracking-wider">
                         Notify me when this ships
                       </p>
-                      <div className="[&_section]:py-0 [&_section]:px-0 [&_section]:border-0 [&_h2]:hidden [&_p]:mt-0 [&_section>div]:max-w-none [&_form]:max-w-none">
+                      <div className="[&_section]:py-0 [&_section]:px-0 [&_section]:border-0 [&_h2]:hidden [&_section>div>div]:hidden [&_section>div>p]:hidden [&_section>div]:max-w-none [&_form]:max-w-none [&_form]:mt-3 [&_form_p]:mt-2">
                         <EmailCapture source="bundles" productSlug={row.slug} />
                       </div>
                     </div>
