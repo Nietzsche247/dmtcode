@@ -26,9 +26,7 @@ import {
   Clock, 
   Eye, 
   ChevronUp, 
-  Award, 
-  Zap,
-  Target
+  Award
 } from 'lucide-react';
 import { format } from 'date-fns';
 

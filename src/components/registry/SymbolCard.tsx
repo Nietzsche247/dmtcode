@@ -2,7 +2,6 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Eye } from 'lucide-react';
-import { VotingButtons } from './VotingButtons';
 import { SeenItButton } from './SeenItButton';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
@@ -142,15 +141,6 @@ export const SymbolCard = ({
         {/* Prominent one-tap confirmation */}
         <div className="pt-2">
           <SeenItButton symbolId={id} submitterId={submitterId} size="sm" className="w-full justify-center" imageUrl={imageUrl} />
-        </div>
-
-        {/* Secondary voting */}
-        <div className="pt-1">
-          <VotingButtons
-            symbolId={id}
-            submitterId={submitterId}
-            variant="compact"
-          />
         </div>
       </div>
     </Card>

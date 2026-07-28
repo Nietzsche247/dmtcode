@@ -104,7 +104,7 @@ export const SeenItButton = ({
         size={size}
         onClick={handleClick}
         disabled={loading || isOwnSubmission}
-        aria-label="I saw this too"
+        aria-label="This echoes my memory"
         className={cn(
           'rounded-full gap-2 group',
           active && 'bg-primary text-primary-foreground',
@@ -113,7 +113,7 @@ export const SeenItButton = ({
         )}
       >
         <Eye className={cn('w-4 h-4', active && 'fill-current')} />
-        <span className="font-body">I saw this too</span>
+        <span className="font-body">This echoes my memory</span>
         <span
           className={cn(
             'font-display text-base leading-none tabular-nums px-2 py-0.5 rounded-full',
