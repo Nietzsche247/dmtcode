@@ -178,7 +178,10 @@ const Registry = () => {
             </div>
           </section>
 
-          <LayeredSubmissionForm />
+          <p className="container mx-auto px-4 max-w-4xl text-sm text-muted-foreground">
+            Recording here is marked as catalogue exposed, because this page shows other people's symbols. To record a memory blind, start at the <a href="/capture" className="underline hover:text-foreground">capture page</a> instead.
+          </p>
+          <LayeredSubmissionForm captureRoute="registry_page" />
           <RegistryBrowser />
           <RegistryDownloads />
           <DrawnGlyphReports />
