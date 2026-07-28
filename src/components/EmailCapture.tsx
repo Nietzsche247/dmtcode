@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -9,8 +9,9 @@ interface EmailCaptureProps {
   source?: string;
   /**
    * Identifier of the specific product or bundle the visitor asked about,
-   * taken from real route context (never invented). When present, the signup
-   * is recorded against that record instead of the general waitlist.
+   * taken from real route context (never invented). When present and it
+   * matches a published bundle slug, the signup is recorded against that
+   * record instead of the general waitlist.
    */
   productSlug?: string | null;
 }
@@ -18,6 +19,23 @@ interface EmailCaptureProps {
 export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailCaptureProps) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const publishedSlugs = useRef<Set<string> | null>(null);
+
+  useEffect(() => {
+    if (!productSlug || publishedSlugs.current) return;
+    let active = true;
+    supabase
+      .from('bundles')
+      .select('slug')
+      .eq('is_published', true)
+      .then(({ data }) => {
+        if (!active || !data) return;
+        publishedSlugs.current = new Set(data.map((b) => b.slug));
+      });
+    return () => {
+      active = false;
+    };
+  }, [productSlug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,15 +43,26 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
     if (!trimmed) return;
 
     setIsSubmitting(true);
-    const { error } = productSlug
+
+    let slugs = publishedSlugs.current;
+    if (productSlug && !slugs) {
+      const { data } = await supabase.from('bundles').select('slug').eq('is_published', true);
+      slugs = new Set((data ?? []).map((b) => b.slug));
+      publishedSlugs.current = slugs;
+    }
+
+    const validSlug = productSlug && slugs?.has(productSlug) ? productSlug : null;
+
+    const { error } = validSlug
       ? await supabase
           .from('product_signups')
-          .insert({ email: trimmed, bundle_slug: productSlug })
+          .insert({ email: trimmed, bundle_slug: validSlug })
       : await supabase
           .from('waitlist')
           .insert({ email: trimmed, source });
 
     setIsSubmitting(false);
+
 
     if (error) {
       if ((error as { code?: string }).code === '23505') {
@@ -85,7 +114,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-4">
-            No spam. Unsubscribe anytime.
+            No spam. One notification, then nothing. Reply to any email from us to be removed.
           </p>
         </form>
       </div>
