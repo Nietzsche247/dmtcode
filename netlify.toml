@@ -133,6 +133,18 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/privacy"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/terms"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/disclosure"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
 
