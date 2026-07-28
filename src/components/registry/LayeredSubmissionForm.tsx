@@ -16,18 +16,10 @@ import { CanvasExport } from './CanvasExport';
 import { usePrimacyCheck } from '@/hooks/usePrimacyCheck';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { AlertTriangle } from 'lucide-react';
+import { formatSealedAt } from '@/lib/sealFormat';
+import { VisualFieldMap } from './VisualFieldMap';
 
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
-// Renders e.g. "14:32 UTC on 28 July 2026"
-const formatSealedAt = (iso: string): string => {
-  const d = new Date(iso);
-  const hh = String(d.getUTCHours()).padStart(2, '0');
-  const mm = String(d.getUTCMinutes()).padStart(2, '0');
-  const day = d.getUTCDate();
-  const month = d.toLocaleDateString('en-GB', { month: 'long', timeZone: 'UTC' });
-  return `${hh}:${mm} UTC on ${day} ${month} ${d.getUTCFullYear()}`;
-};
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 interface FormData {
   // Priming control
@@ -73,6 +65,14 @@ interface FormData {
   orcid: string;
   confidenceRating: number;
 
+  // Visual field map
+  fieldBand: string;
+  fieldDepth: string;
+  fieldAttachment: string;
+  fieldAnchoring: string;
+  fieldOrientation: string;
+  fieldLocations: string;
+
   // Privacy
   privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
   publicationConsent: boolean;
@@ -106,6 +106,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   const [annotationDraft, setAnnotationDraft] = useState('');
   const [annotations, setAnnotations] = useState<GlyphAnnotation[]>([]);
   const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
+  const [fieldPin, setFieldPin] = useState<{ x: number; y: number } | null>(null);
+  const [cannotPlace, setCannotPlace] = useState(false);
+  const [otherPins, setOtherPins] = useState<{ x: number; y: number }[]>([]);
+  const [wasOfflineCapture, setWasOfflineCapture] = useState(false);
+  const [offlineCapturedAt, setOfflineCapturedAt] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
@@ -136,6 +141,12 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     description: '',
     orcid: '',
     confidenceRating: 3,
+    fieldBand: '',
+    fieldDepth: '',
+    fieldAttachment: '',
+    fieldAnchoring: '',
+    fieldOrientation: '',
+    fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
     publicationConsent: false,
     pseudonym: ''
@@ -222,7 +233,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       return;
     }
     
-    setStep((prev) => Math.min(6, prev + 1) as Step);
+    setStep((prev) => Math.min(7, prev + 1) as Step);
   };
 
   const handleBack = () => {
@@ -280,13 +291,24 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         lighting_conditions: formData.timeOfDay || null,
         privacy_level: formData.privacyLevel,
         publication_consent: formData.publicationConsent,
-        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null
+        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null,
+        field_x: cannotPlace ? null : (fieldPin ? fieldPin.x : null),
+        field_y: cannotPlace ? null : (fieldPin ? fieldPin.y : null),
+        field_band: formData.fieldBand || null,
+        depth: formData.fieldDepth || null,
+        field_attachment: formData.fieldAttachment || null,
+        field_anchoring: formData.fieldAnchoring || null,
+        orientation: formData.fieldOrientation || null,
+        field_locations: formData.fieldLocations || null
       };
 
       // If offline, save locally and show success
       if (!isOnline) {
-        savePendingSubmission(submissionData);
-        setStep(6);
+        const capturedAt = new Date().toISOString();
+        savePendingSubmission({ ...submissionData, offline_captured_at: capturedAt });
+        setWasOfflineCapture(true);
+        setOfflineCapturedAt(capturedAt);
+        setStep(7);
         setIsSubmitting(false);
         return;
       }
@@ -309,9 +331,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
 
       // Load similar symbols
       await loadSimilarSymbols(insertedGlyph.id);
+      await loadOtherPins(insertedGlyph.id);
 
       toast.success(`Symbol #${totalSymbols + 1} submitted!`);
-      setStep(6);
+      setStep(7);
       
     } catch (error) {
       console.error('Submission error:', error);
@@ -476,6 +499,18 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     setSimilarSymbols(scored);
   };
 
+  const loadOtherPins = async (insertedId: string) => {
+    const { data } = await supabase
+      .from('registry_glyphs')
+      .select('id, field_x, field_y')
+      .not('field_x', 'is', null)
+      .not('field_y', 'is', null)
+      .not('sealed_at', 'is', null)
+      .neq('id', insertedId)
+      .limit(200);
+    setOtherPins((data || []).map(r => ({ x: Number(r.field_x), y: Number(r.field_y) })));
+  };
+
   const loadAnnotations = async (glyphId: string) => {
     const { data } = await supabase
       .from('glyph_annotations')
@@ -531,6 +566,12 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     description: '',
     orcid: '',
     confidenceRating: 3,
+    fieldBand: '',
+    fieldDepth: '',
+    fieldAttachment: '',
+    fieldAnchoring: '',
+    fieldOrientation: '',
+    fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
     publicationConsent: false,
     pseudonym: ''
@@ -544,6 +585,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     setOriginalRecordHash(null);
     setAnnotations([]);
     setAnnotationDraft('');
+    setFieldPin(null);
+    setCannotPlace(false);
+    setOtherPins([]);
+    setWasOfflineCapture(false);
+    setOfflineCapturedAt(null);
     localStorage.removeItem('dmtcode-canvas-draft');
     loadTotalSymbols();
     if (userId) loadUserStats(userId);
@@ -585,7 +631,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
         <div className="flex justify-center items-center gap-2 mb-8">
-          {[0, 1, 2, 3, 4, 5].map((s) => (
+          {[0, 1, 2, 3, 4, 5, 6].map((s) => (
             <div 
               key={s}
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -1169,17 +1215,215 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
               <Button onClick={handleNext}>
+                Next: Visual Field Map <ChevronRight className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: Visual Field Map */}
+        {step === 5 && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Step 5: Where in the field did it appear?</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Place a marker where the form appeared, relative to the centre of what you were looking at. Nobody else's marker is shown to you yet. That is deliberate, because a placement you make after seeing other people's is no longer independent.
+              </p>
+            </div>
+
+            {!cannotPlace && (
+              <VisualFieldMap value={fieldPin} onChange={setFieldPin} />
+            )}
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="cannotPlace"
+                checked={cannotPlace}
+                onCheckedChange={(checked) => {
+                  const next = checked === true;
+                  setCannotPlace(next);
+                  if (next) setFieldPin(null);
+                }}
+                className="mt-1"
+              />
+              <div>
+                <Label htmlFor="cannotPlace" className="font-normal">I cannot place it</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Some forms have no location, or the memory does not include one. That is a real answer and it is recorded as one.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">Relative to the diffraction band</Label>
+              <RadioGroup
+                value={formData.fieldBand}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldBand: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="inside_band" id="fieldBand_inside_band" />
+                  <Label htmlFor="fieldBand_inside_band" className="font-normal">Inside the band</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="on_band" id="fieldBand_on_band" />
+                  <Label htmlFor="fieldBand_on_band" className="font-normal">On the band itself</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="outside_band" id="fieldBand_outside_band" />
+                  <Label htmlFor="fieldBand_outside_band" className="font-normal">Outside the band</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldBand_unsure" />
+                  <Label htmlFor="fieldBand_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">How far away did it seem</Label>
+              <RadioGroup
+                value={formData.fieldDepth}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldDepth: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="near" id="fieldDepth_near" />
+                  <Label htmlFor="fieldDepth_near" className="font-normal">Close to me</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="intermediate" id="fieldDepth_intermediate" />
+                  <Label htmlFor="fieldDepth_intermediate" className="font-normal">Middle distance</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="far" id="fieldDepth_far" />
+                  <Label htmlFor="fieldDepth_far" className="font-normal">Far away</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldDepth_unsure" />
+                  <Label htmlFor="fieldDepth_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">How was it attached</Label>
+              <RadioGroup
+                value={formData.fieldAttachment}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldAttachment: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="on_surface" id="fieldAttachment_on_surface" />
+                  <Label htmlFor="fieldAttachment_on_surface" className="font-normal">On the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="floating" id="fieldAttachment_floating" />
+                  <Label htmlFor="fieldAttachment_floating" className="font-normal">Floating in front of the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="recessed" id="fieldAttachment_recessed" />
+                  <Label htmlFor="fieldAttachment_recessed" className="font-normal">Set back behind the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="layered" id="fieldAttachment_layered" />
+                  <Label htmlFor="fieldAttachment_layered" className="font-normal">Layered, more than one depth at once</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldAttachment_unsure" />
+                  <Label htmlFor="fieldAttachment_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">When you moved your head or eyes</Label>
+              <RadioGroup
+                value={formData.fieldAnchoring}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldAnchoring: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="fixed_in_space" id="fieldAnchoring_fixed_in_space" />
+                  <Label htmlFor="fieldAnchoring_fixed_in_space" className="font-normal">It stayed where it was</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="moved_with_me" id="fieldAnchoring_moved_with_me" />
+                  <Label htmlFor="fieldAnchoring_moved_with_me" className="font-normal">It moved with me</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldAnchoring_unsure" />
+                  <Label htmlFor="fieldAnchoring_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">Orientation</Label>
+              <RadioGroup
+                value={formData.fieldOrientation}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldOrientation: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="upright" id="fieldOrientation_upright" />
+                  <Label htmlFor="fieldOrientation_upright" className="font-normal">Upright</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="inverted" id="fieldOrientation_inverted" />
+                  <Label htmlFor="fieldOrientation_inverted" className="font-normal">Inverted</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="rotated" id="fieldOrientation_rotated" />
+                  <Label htmlFor="fieldOrientation_rotated" className="font-normal">Rotated to one side</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no_clear_orientation" id="fieldOrientation_no_clear_orientation" />
+                  <Label htmlFor="fieldOrientation_no_clear_orientation" className="font-normal">No clear orientation</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldOrientation_unsure" />
+                  <Label htmlFor="fieldOrientation_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">One place or many</Label>
+              <RadioGroup
+                value={formData.fieldLocations}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldLocations: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="one_place" id="fieldLocations_one_place" />
+                  <Label htmlFor="fieldLocations_one_place" className="font-normal">One place only</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="several_places" id="fieldLocations_several_places" />
+                  <Label htmlFor="fieldLocations_several_places" className="font-normal">Several distinct places</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="everywhere" id="fieldLocations_everywhere" />
+                  <Label htmlFor="fieldLocations_everywhere" className="font-normal">Across the whole field</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldLocations_unsure" />
+                  <Label htmlFor="fieldLocations_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={handleBack}>
+                <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              </Button>
+              <Button onClick={handleNext}>
                 Next: Optional Details <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 5: Optional Details */}
-        {step === 5 && (
+        {/* Step 6: Optional Details */}
+        {step === 6 && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-4">Step 5: Optional Details (20 seconds)</h3>
+              <h3 className="text-xl font-semibold mb-4">Step 6: Optional Details (20 seconds)</h3>
               <p className="text-sm text-muted-foreground mb-6">
                 Add any additional details about the symbol.
               </p>
@@ -1395,8 +1639,8 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
 
-        {/* Step 6: Confirmation & Gamification */}
-        {step === 6 && (
+        {/* Step 7: Confirmation & Gamification */}
+        {step === 7 && (
           <div className="space-y-8 text-center">
             <div className="space-y-2">
               <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
@@ -1418,6 +1662,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   ? 'You recorded this before opening the catalogue.'
                   : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
               </p>
+              {wasOfflineCapture && offlineCapturedAt && (
+                <p className="text-sm text-muted-foreground">
+                  You recorded this while offline. Your device reported the time as {formatSealedAt(offlineCapturedAt)}. We sealed it at {sealedAt ? formatSealedAt(sealedAt) : 'the server time recorded on sync'} when it reached us, and that server time is the one we can actually vouch for.
+                </p>
+              )}
               {!userId && (
                 <p className="text-sm text-muted-foreground">
                   You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
@@ -1479,6 +1728,18 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 </p>
               )}
             </div>
+
+            {fieldPin && !cannotPlace && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Where others placed theirs</h4>
+                <VisualFieldMap value={fieldPin} otherPins={otherPins} readOnly />
+                <p className="text-xs text-muted-foreground mt-3">
+                  {otherPins.length > 0
+                    ? 'Your marker is filled. Every hollow marker is another sealed report.'
+                    : 'No other sealed report has placed a marker on the field map yet. Yours is the first.'}
+                </p>
+              </div>
+            )}
 
             {userId && submittedSymbolId && (
               <div className="text-left">

@@ -1398,6 +1398,12 @@ export type Database = {
           depth: string | null
           drawing_duration_seconds: number | null
           emotional_valence: string | null
+          field_anchoring: string | null
+          field_attachment: string | null
+          field_band: string | null
+          field_locations: string | null
+          field_x: number | null
+          field_y: number | null
           free_text_notes: string | null
           id: string
           image_data: string
@@ -1405,7 +1411,9 @@ export type Database = {
           lighting_conditions: string | null
           motif_tags: string[] | null
           motion: string | null
+          offline_captured_at: string | null
           orcid: string | null
+          orientation: string | null
           original_record_hash: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
@@ -1436,6 +1444,12 @@ export type Database = {
           depth?: string | null
           drawing_duration_seconds?: number | null
           emotional_valence?: string | null
+          field_anchoring?: string | null
+          field_attachment?: string | null
+          field_band?: string | null
+          field_locations?: string | null
+          field_x?: number | null
+          field_y?: number | null
           free_text_notes?: string | null
           id?: string
           image_data: string
@@ -1443,7 +1457,9 @@ export type Database = {
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          offline_captured_at?: string | null
           orcid?: string | null
+          orientation?: string | null
           original_record_hash?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
@@ -1474,6 +1490,12 @@ export type Database = {
           depth?: string | null
           drawing_duration_seconds?: number | null
           emotional_valence?: string | null
+          field_anchoring?: string | null
+          field_attachment?: string | null
+          field_band?: string | null
+          field_locations?: string | null
+          field_x?: number | null
+          field_y?: number | null
           free_text_notes?: string | null
           id?: string
           image_data?: string
@@ -1481,7 +1503,9 @@ export type Database = {
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          offline_captured_at?: string | null
           orcid?: string | null
+          orientation?: string | null
           original_record_hash?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
@@ -2477,6 +2501,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      registry_glyph_content: {
+        Args: { rec: Database["public"]["Tables"]["registry_glyphs"]["Row"] }
+        Returns: Json
       }
     }
     Enums: {
