@@ -1718,8 +1718,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               />
             )}
 
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
+            {!wasOfflineCapture && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
               {similarSymbols.length > 0 ? (
                 <>
                   <div className="grid grid-cols-3 gap-4">
