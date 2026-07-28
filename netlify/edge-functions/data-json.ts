@@ -408,8 +408,11 @@ export default async (req: Request): Promise<Response> => {
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
+  const symbolsCurated = symbols.filter((r) => isCuratedStarter(r.image_url)).length;
+  const symbolsCommunity = symbols.length - symbolsCurated;
+
   const body = {
-    version: "3.8",
+    version: "3.9",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
