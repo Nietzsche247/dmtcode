@@ -331,7 +331,9 @@ export default async (req: Request): Promise<Response> => {
     upvotes: Number(r.upvotes ?? 0),
     created_at: (r.created_at as string) || undefined,
     updated_at: (r.updated_at as string) || undefined,
-  })));
+    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
+  }));
 
   const theoriesFeed = theories.map((r) => compact({
     id: String(r.id),
