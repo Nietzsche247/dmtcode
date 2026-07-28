@@ -1,0 +1,1 @@
+ALTER TABLE public.product_signups ADD COLUMN notified_at timestamptz;

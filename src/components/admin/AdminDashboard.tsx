@@ -23,6 +23,7 @@ import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 import { ArticlesManager } from './ArticlesManager';
 import { CrawlerIntelligence } from './CrawlerIntelligence';
+import { KitSignups } from './KitSignups';
 
 export const AdminDashboard = () => {
   return (
@@ -99,6 +100,7 @@ export const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="bundles" className="space-y-4">
+            <KitSignups />
             <RepoCloneButton />
             <GA4DebugTester />
             <GA4KeyEventChecklist />

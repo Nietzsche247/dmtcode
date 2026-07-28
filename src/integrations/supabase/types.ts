@@ -1101,18 +1101,21 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          notified_at: string | null
         }
         Insert: {
           bundle_slug: string
           created_at?: string
           email: string
           id?: string
+          notified_at?: string | null
         }
         Update: {
           bundle_slug?: string
           created_at?: string
           email?: string
           id?: string
+          notified_at?: string | null
         }
         Relationships: []
       }
