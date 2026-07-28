@@ -74,7 +74,13 @@ interface UnifiedItem {
   verification?: string;
   phase?: string;
   source_date?: string;
+  record_class?: string;
+  counts_toward_evidence?: boolean;
 }
+
+// Curated starter symbols are identified purely by their image_url prefix.
+const isCuratedStarter = (imageUrl: unknown): boolean =>
+  typeof imageUrl === "string" && imageUrl.startsWith("/placeholder-symbol-");
 
 function compact<T extends Record<string, unknown>>(obj: T): T {
   const out: Record<string, unknown> = {};
