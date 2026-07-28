@@ -262,7 +262,15 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         free_text_notes: formData.description || null,
         drawing_duration_seconds: drawingDuration,
         confidence_rating: formData.confidenceRating,
-        orcid: formData.orcid || null
+        orcid: formData.orcid || null,
+        prior_exposure: formData.primingExposure === 'priming_none' ? false : true,
+        catalog_exposure_before_submission: formData.primingExposure || null,
+        capture_route: captureRoute,
+        motion: formData.movements.length ? formData.movements.join(', ') : null,
+        lighting_conditions: formData.timeOfDay || null,
+        privacy_level: formData.privacyLevel,
+        publication_consent: formData.publicationConsent,
+        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null
       };
 
       // If offline, save locally and show success
@@ -283,12 +291,14 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
 
       // Store submitted symbol ID
       setSubmittedSymbolId(insertedGlyph.id);
+      setSealedAt(insertedGlyph.sealed_at ?? null);
+      setOriginalRecordHash(insertedGlyph.original_record_hash ?? null);
 
       // Check for new badges
       await checkBadges();
 
       // Load similar symbols
-      await loadSimilarSymbols(tags.slice(0, 5));
+      await loadSimilarSymbols(insertedGlyph.id);
 
       toast.success(`Symbol #${totalSymbols + 1} submitted!`);
       setStep(6);
