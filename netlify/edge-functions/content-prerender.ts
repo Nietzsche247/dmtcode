@@ -1710,6 +1710,11 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
+// This in-source path list is authoritative for this function. netlify.toml
+// declares the same paths, and BOTH must be kept in sync: adding a route to
+// netlify.toml alone does NOT reach this function, the request falls through
+// to the SPA shell and silently soft-404s. Any new prerendered route must be
+// added here AND in netlify.toml.
 export const config: Config = {
   path: [
     "/",
