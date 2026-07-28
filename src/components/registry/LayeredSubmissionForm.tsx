@@ -1221,6 +1221,204 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
 
+        {/* Step 5: Visual Field Map */}
+        {step === 5 && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Step 5: Where in the field did it appear?</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Place a marker where the form appeared, relative to the centre of what you were looking at. Nobody else's marker is shown to you yet. That is deliberate, because a placement you make after seeing other people's is no longer independent.
+              </p>
+            </div>
+
+            {!cannotPlace && (
+              <VisualFieldMap value={fieldPin} onChange={setFieldPin} />
+            )}
+
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="cannotPlace"
+                checked={cannotPlace}
+                onCheckedChange={(checked) => {
+                  const next = checked === true;
+                  setCannotPlace(next);
+                  if (next) setFieldPin(null);
+                }}
+                className="mt-1"
+              />
+              <div>
+                <Label htmlFor="cannotPlace" className="font-normal">I cannot place it</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Some forms have no location, or the memory does not include one. That is a real answer and it is recorded as one.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">Relative to the diffraction band</Label>
+              <RadioGroup
+                value={formData.fieldBand}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldBand: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="inside_band" id="fieldBand_inside_band" />
+                  <Label htmlFor="fieldBand_inside_band" className="font-normal">Inside the band</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="on_band" id="fieldBand_on_band" />
+                  <Label htmlFor="fieldBand_on_band" className="font-normal">On the band itself</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="outside_band" id="fieldBand_outside_band" />
+                  <Label htmlFor="fieldBand_outside_band" className="font-normal">Outside the band</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldBand_unsure" />
+                  <Label htmlFor="fieldBand_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">How far away did it seem</Label>
+              <RadioGroup
+                value={formData.fieldDepth}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldDepth: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="near" id="fieldDepth_near" />
+                  <Label htmlFor="fieldDepth_near" className="font-normal">Close to me</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="intermediate" id="fieldDepth_intermediate" />
+                  <Label htmlFor="fieldDepth_intermediate" className="font-normal">Middle distance</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="far" id="fieldDepth_far" />
+                  <Label htmlFor="fieldDepth_far" className="font-normal">Far away</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldDepth_unsure" />
+                  <Label htmlFor="fieldDepth_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">How was it attached</Label>
+              <RadioGroup
+                value={formData.fieldAttachment}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldAttachment: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="on_surface" id="fieldAttachment_on_surface" />
+                  <Label htmlFor="fieldAttachment_on_surface" className="font-normal">On the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="floating" id="fieldAttachment_floating" />
+                  <Label htmlFor="fieldAttachment_floating" className="font-normal">Floating in front of the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="recessed" id="fieldAttachment_recessed" />
+                  <Label htmlFor="fieldAttachment_recessed" className="font-normal">Set back behind the surface</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="layered" id="fieldAttachment_layered" />
+                  <Label htmlFor="fieldAttachment_layered" className="font-normal">Layered, more than one depth at once</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldAttachment_unsure" />
+                  <Label htmlFor="fieldAttachment_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">When you moved your head or eyes</Label>
+              <RadioGroup
+                value={formData.fieldAnchoring}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldAnchoring: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="fixed_in_space" id="fieldAnchoring_fixed_in_space" />
+                  <Label htmlFor="fieldAnchoring_fixed_in_space" className="font-normal">It stayed where it was</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="moved_with_me" id="fieldAnchoring_moved_with_me" />
+                  <Label htmlFor="fieldAnchoring_moved_with_me" className="font-normal">It moved with me</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldAnchoring_unsure" />
+                  <Label htmlFor="fieldAnchoring_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">Orientation</Label>
+              <RadioGroup
+                value={formData.fieldOrientation}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldOrientation: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="upright" id="fieldOrientation_upright" />
+                  <Label htmlFor="fieldOrientation_upright" className="font-normal">Upright</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="inverted" id="fieldOrientation_inverted" />
+                  <Label htmlFor="fieldOrientation_inverted" className="font-normal">Inverted</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="rotated" id="fieldOrientation_rotated" />
+                  <Label htmlFor="fieldOrientation_rotated" className="font-normal">Rotated to one side</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no_clear_orientation" id="fieldOrientation_no_clear_orientation" />
+                  <Label htmlFor="fieldOrientation_no_clear_orientation" className="font-normal">No clear orientation</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldOrientation_unsure" />
+                  <Label htmlFor="fieldOrientation_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-base mb-3 block">One place or many</Label>
+              <RadioGroup
+                value={formData.fieldLocations}
+                onValueChange={(v) => setFormData(prev => ({ ...prev, fieldLocations: v }))}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="one_place" id="fieldLocations_one_place" />
+                  <Label htmlFor="fieldLocations_one_place" className="font-normal">One place only</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="several_places" id="fieldLocations_several_places" />
+                  <Label htmlFor="fieldLocations_several_places" className="font-normal">Several distinct places</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="everywhere" id="fieldLocations_everywhere" />
+                  <Label htmlFor="fieldLocations_everywhere" className="font-normal">Across the whole field</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="unsure" id="fieldLocations_unsure" />
+                  <Label htmlFor="fieldLocations_unsure" className="font-normal">Not sure</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={handleBack}>
+                <ChevronLeft className="mr-2 w-4 h-4" /> Back
+              </Button>
+              <Button onClick={handleNext}>
+                Next: Optional Details <ChevronRight className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Step 6: Optional Details */}
         {step === 6 && (
           <div className="space-y-6">
@@ -1464,6 +1662,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   ? 'You recorded this before opening the catalogue.'
                   : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
               </p>
+              {wasOfflineCapture && offlineCapturedAt && (
+                <p className="text-sm text-muted-foreground">
+                  You recorded this while offline. Your device reported the time as {formatSealedAt(offlineCapturedAt)}. We sealed it at {sealedAt ? formatSealedAt(sealedAt) : 'the server time recorded on sync'} when it reached us, and that server time is the one we can actually vouch for.
+                </p>
+              )}
               {!userId && (
                 <p className="text-sm text-muted-foreground">
                   You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
@@ -1525,6 +1728,18 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 </p>
               )}
             </div>
+
+            {fieldPin && !cannotPlace && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Where others placed theirs</h4>
+                <VisualFieldMap value={fieldPin} otherPins={otherPins} readOnly />
+                <p className="text-xs text-muted-foreground mt-3">
+                  {otherPins.length > 0
+                    ? 'Your marker is filled. Every hollow marker is another sealed report.'
+                    : 'No other sealed report has placed a marker on the field map yet. Yours is the first.'}
+                </p>
+              </div>
+            )}
 
             {userId && submittedSymbolId && (
               <div className="text-left">
