@@ -111,7 +111,7 @@ export const SymbolResponsePanel = ({
         await loadMine(user.id);
         const { data: glyphs } = await supabase
           .from('registry_glyphs')
-          .select('id, sealed_at, description, capture_route, prior_exposure')
+          .select('id, sealed_at, free_text_notes, capture_route, prior_exposure')
           .eq('user_id', user.id)
           .not('sealed_at', 'is', null)
           .order('sealed_at', { ascending: false });
@@ -120,7 +120,7 @@ export const SymbolResponsePanel = ({
           (glyphs || []).map((g: any) => ({
             id: g.id,
             sealed_at: g.sealed_at,
-            description: g.description ?? null,
+            description: g.free_text_notes ?? null,
           })),
         );
       }
