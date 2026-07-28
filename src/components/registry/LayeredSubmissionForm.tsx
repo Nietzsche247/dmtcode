@@ -1440,26 +1440,72 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               />
             )}
 
-            {similarSymbols.length > 0 && (
-              <div>
-                <h4 className="text-lg font-semibold mb-4">Similar Symbols</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  {similarSymbols.map(sym => (
-                     <div key={sym.id} className="border border-border rounded-lg p-4">
-                      <img 
-                        src={sym.image_data} 
-                        alt={`DMT glyph archetype similar to your submission, reported ${sym.confirmation_count} times`}
-                        className="w-full h-auto mb-2"
-                        style={{ imageRendering: 'pixelated' }}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        {sym.confirmation_count} reports
-                      </p>
-                    </div>
-                  ))}
-                </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
+              {similarSymbols.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-3 gap-4">
+                    {similarSymbols.map(sym => (
+                      <div key={sym.id} className="border border-border rounded-lg p-4">
+                        <img
+                          src={sym.image_data}
+                          alt="Another sealed report sharing described features with your submission"
+                          className="w-full h-auto mb-2"
+                          style={{ imageRendering: 'pixelated' }}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {sym.sharedCount} features in common
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Shared features are not evidence of a shared source. They are the starting point for a comparison.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No other sealed report currently shares two or more of the features you described.
+                </p>
+              )}
+            </div>
+
+            {userId && submittedSymbolId && (
+              <div className="text-left">
+                <Label htmlFor="annotation" className="text-base mb-2 block">
+                  Add a dated note to this memory (optional)
+                </Label>
+                <Textarea
+                  id="annotation"
+                  rows={3}
+                  value={annotationDraft}
+                  onChange={(e) => setAnnotationDraft(e.target.value)}
+                />
+                <Button
+                  className="mt-3"
+                  onClick={saveAnnotation}
+                  disabled={isSavingAnnotation || !annotationDraft.trim()}
+                >
+                  {isSavingAnnotation ? 'Saving...' : 'Save note'}
+                </Button>
+
+                {annotations.length > 0 && (
+                  <ul className="mt-4 space-y-3">
+                    {annotations.map(a => (
+                      <li key={a.id} className="border border-border rounded-lg p-3">
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {new Date(a.created_at).toLocaleDateString(undefined, {
+                            day: 'numeric', month: 'long', year: 'numeric'
+                          })}
+                        </p>
+                        <p className="text-sm">{a.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
+
 
             {userStats && (
               <div className="bg-muted/50 p-6 rounded-lg">
