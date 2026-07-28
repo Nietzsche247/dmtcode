@@ -47,8 +47,9 @@ export const Following = ({ userId }: { userId: string }) => {
       const retreatIds = idsFor('retreat');
       const eventIds = idsFor('event');
       const trialIds = idsFor('trial');
+      const symbolIds = idsFor('symbol');
 
-      const [articles, theories, protocols, retreats, events, trials] = await Promise.all([
+      const [articles, theories, protocols, retreats, events, trials, symbols] = await Promise.all([
         articleIds.length
           ? supabase.from('articles').select('id, title, slug').in('id', articleIds)
           : Promise.resolve({ data: [] as any[] }),
@@ -66,6 +67,9 @@ export const Following = ({ userId }: { userId: string }) => {
           : Promise.resolve({ data: [] as any[] }),
         trialIds.length
           ? supabase.from('clinical_trials').select('id, title').in('id', trialIds)
+          : Promise.resolve({ data: [] as any[] }),
+        symbolIds.length
+          ? supabase.from('symbol_submissions').select('id, description, image_url').in('id', symbolIds)
           : Promise.resolve({ data: [] as any[] }),
       ]);
 
@@ -95,6 +99,17 @@ export const Following = ({ userId }: { userId: string }) => {
         if (row.entity_type === 'trial') {
           const tr = (trials.data ?? []).find((x: any) => x.id === row.entity_id);
           return tr ? { id: row.id, type: 'trial', label: tr.title, to: `/trials/${tr.id}` } : null;
+        }
+        if (row.entity_type === 'symbol') {
+          const sy = (symbols.data ?? []).find((x: any) => x.id === row.entity_id);
+          if (!sy) return null;
+          const desc = (sy.description ?? '').trim();
+          return {
+            id: row.id,
+            type: 'symbol',
+            label: desc ? desc.slice(0, 70) : 'Untitled symbol',
+            to: `/registry/${sy.id}`,
+          };
         }
         return null;
       };
