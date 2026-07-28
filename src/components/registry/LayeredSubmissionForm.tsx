@@ -1643,33 +1643,52 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         {step === 7 && (
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
-              {sealedAt && (
-                <p className="text-sm text-muted-foreground">
-                  Sealed at {formatSealedAt(sealedAt)}.
-                </p>
+              <h3 className="text-2xl font-bold mb-2">
+                {wasOfflineCapture ? 'Your memory is saved on this device' : 'Your memory has been sealed'}
+              </h3>
+
+              {wasOfflineCapture ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    You were offline when you recorded this, so it is stored on this device and has not been sealed yet.
+                    {offlineCapturedAt ? ` Your device reported the time as ${formatSealedAt(offlineCapturedAt)}.` : ''}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    When you are back online it will be sent to us and sealed with a server timestamp, and the server time is the one we can actually vouch for. If you clear this browser's data before that happens, the record is lost.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Once it is sealed the record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {sealedAt && (
+                    <p className="text-sm text-muted-foreground">
+                      Sealed at {formatSealedAt(sealedAt)}.
+                    </p>
+                  )}
+                  {originalRecordHash && (
+                    <p className="text-sm text-muted-foreground font-mono">
+                      Fingerprint {originalRecordHash.slice(0, 12)}
+                    </p>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+                  </p>
+                </>
               )}
-              {originalRecordHash && (
-                <p className="text-sm text-muted-foreground font-mono">
-                  Fingerprint {originalRecordHash.slice(0, 12)}
-                </p>
-              )}
-              <p className="text-sm text-muted-foreground">
-                This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
-              </p>
+
               <p className="text-sm text-muted-foreground">
                 {captureRoute === 'capture_page'
                   ? 'You recorded this before opening the catalogue.'
                   : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
               </p>
-              {wasOfflineCapture && offlineCapturedAt && (
-                <p className="text-sm text-muted-foreground">
-                  You recorded this while offline. Your device reported the time as {formatSealedAt(offlineCapturedAt)}. We sealed it at {sealedAt ? formatSealedAt(sealedAt) : 'the server time recorded on sync'} when it reached us, and that server time is the one we can actually vouch for.
-                </p>
-              )}
+
               {!userId && (
                 <p className="text-sm text-muted-foreground">
-                  You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
+                  {wasOfflineCapture
+                    ? 'You are not signed in, so this memory cannot be added to a private vault. It will be sealed when it reaches us and it counts.'
+                    : 'You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.'}
                 </p>
               )}
             </div>
@@ -1699,8 +1718,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               />
             )}
 
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
+            {!wasOfflineCapture && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
               {similarSymbols.length > 0 ? (
                 <>
                   <div className="grid grid-cols-3 gap-4">
@@ -1727,9 +1747,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   No other sealed report currently shares two or more of the features you described.
                 </p>
               )}
-            </div>
+              </div>
+            )}
 
-            {fieldPin && !cannotPlace && (
+            {!wasOfflineCapture && fieldPin && !cannotPlace && (
               <div>
                 <h4 className="text-lg font-semibold mb-4">Where others placed theirs</h4>
                 <VisualFieldMap value={fieldPin} otherPins={otherPins} readOnly />
@@ -1737,6 +1758,15 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                   {otherPins.length > 0
                     ? 'Your marker is filled. Every hollow marker is another sealed report.'
                     : 'No other sealed report has placed a marker on the field map yet. Yours is the first.'}
+                </p>
+              </div>
+            )}
+
+            {wasOfflineCapture && (
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Nothing has been compared yet</h4>
+                <p className="text-sm text-muted-foreground">
+                  We cannot compare this with other reports until it reaches us. When it syncs it will be sealed first, and the comparison happens after that.
                 </p>
               </div>
             )}
@@ -1777,31 +1807,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               </div>
             )}
 
-
-            {userStats && (
-              <div className="bg-muted/50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold mb-4">Your Stats</h4>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-primary">{(userStats.total_submissions || 0) + 1}</div>
-                    <div className="text-sm text-muted-foreground">Total Submissions</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-primary">{totalSymbols + 1}</div>
-                    <div className="text-sm text-muted-foreground">Registry Size</div>
-                  </div>
-                </div>
-                {(userStats.total_submissions || 0) + 1 < 5 && (
-                  <p className="text-sm text-muted-foreground mt-4">
-                    Submit {5 - ((userStats.total_submissions || 0) + 1)} more for Contributor badge
-                  </p>
-                )}
-              </div>
-            )}
-
             <div className="flex flex-col gap-3">
               <Button onClick={resetForm} size="lg">
-                Submit Another Symbol
+                Capture another memory
               </Button>
               <Button variant="ghost" onClick={() => window.location.href = '/registry#browse'}>
                 Explore Registry
