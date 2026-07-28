@@ -9,8 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { VotingButtons } from '@/components/registry/VotingButtons';
-import { SeenItButton } from '@/components/registry/SeenItButton';
+import { SymbolResponsePanel } from '@/components/registry/SymbolResponsePanel';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
 import { TagsManager } from '@/components/registry/TagsManager';
 import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
@@ -27,9 +26,7 @@ import {
   Clock, 
   Eye, 
   ChevronUp, 
-  Award, 
-  Zap,
-  Target
+  Award
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -210,10 +207,8 @@ const SymbolDetail = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  const formatLabel = (value: string | null, fallback = 'Not specified') => {
-    if (!value) return fallback;
-    return value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  };
+  const prettify = (value: string) =>
+    value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   if (loading) {
     return (
@@ -240,10 +235,6 @@ const SymbolDetail = () => {
   if (!symbol) {
     return null;
   }
-
-  const validationPercentage = viewCount > 0 
-    ? Math.round((validationCount / viewCount) * 100) 
-    : 0;
 
   return (
     <>
@@ -333,15 +324,6 @@ const SymbolDetail = () => {
                 )}
 
 
-                {/* Prominent one-tap confirmation */}
-                <SeenItButton
-                  symbolId={symbol.id}
-                  submitterId={symbol.user_id}
-                  size="lg"
-                  className="w-full justify-center"
-                  imageUrl={symbol.image_url}
-                />
-
                 <div className="flex justify-center">
                   <ShareConvergenceButton
                     symbolId={symbol.id}
@@ -350,13 +332,14 @@ const SymbolDetail = () => {
                 </div>
 
 
+                <SymbolResponsePanel
+                  targetId={symbol.id}
+                  submitterId={symbol.user_id}
+                  imageUrl={symbol.image_url}
+                />
+
                 {/* Actions */}
-                <div className="flex items-center justify-between">
-                  <VotingButtons 
-                    symbolId={symbol.id} 
-                    submitterId={symbol.user_id}
-                    variant="full"
-                  />
+                <div className="flex items-center justify-end">
                   <div className="flex items-center gap-2">
                     <SaveButton symbolId={symbol.id} size="default" />
                     <ShareButtons 
@@ -396,18 +379,15 @@ const SymbolDetail = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Card className="p-4 bg-card/50 text-center">
-                    <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{validationCount}</div>
-                    <div className="text-xs text-muted-foreground">Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}</div>
-                  </Card>
-                  <Card className="p-4 bg-card/50 text-center">
-                    <Target className="w-5 h-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{validationPercentage}%</div>
-                    <div className="text-xs text-muted-foreground">Validation rate</div>
-                  </Card>
-                </div>
+                {validationCount > 0 && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card className="p-4 bg-card/50 text-center">
+                      <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
+                      <div className="text-2xl font-bold">{validationCount}</div>
+                      <div className="text-xs text-muted-foreground">Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}</div>
+                    </Card>
+                  </div>
+                )}
 
                 {/* Tags */}
                 {symbol.tags && symbol.tags.length > 0 && (
@@ -447,30 +427,21 @@ const SymbolDetail = () => {
                 <Card className="p-4 bg-card/50">
                   <h3 className="font-medium mb-3">Experience Metadata</h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Source:</span>
-                      <p className="font-medium">{formatLabel(symbol.source_method)}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Wavelength:</span>
-                      <p className="font-medium">{symbol.wavelength || '650nm'}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Surface:</span>
-                      <p className="font-medium">{formatLabel(symbol.surface_type)}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Dose Level:</span>
-                      <p className="font-medium">{formatLabel(symbol.dose_level)}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Recurrence:</span>
-                      <p className="font-medium">{formatLabel(symbol.recurrence)}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Emotional Tone:</span>
-                      <p className="font-medium">{formatLabel(symbol.emotional_valence)}</p>
-                    </div>
+                    {([
+                      ['Source', symbol.source_method],
+                      ['Wavelength', symbol.wavelength],
+                      ['Surface', symbol.surface_type],
+                      ['Dose Level', symbol.dose_level],
+                      ['Recurrence', symbol.recurrence],
+                      ['Emotional Tone', symbol.emotional_valence],
+                    ] as [string, string | null][])
+                      .filter(([, value]) => Boolean(value))
+                      .map(([label, value]) => (
+                        <div key={label}>
+                          <span className="text-muted-foreground">{label}:</span>
+                          <p className="font-medium">{prettify(value as string)}</p>
+                        </div>
+                      ))}
                     {symbol.duration_seconds && (
                       <div>
                         <span className="text-muted-foreground">Duration:</span>
@@ -496,10 +467,12 @@ const SymbolDetail = () => {
                       </Avatar>
                       <div className="flex-1">
                         <p className="font-medium">{contributor.display_name}</p>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Award className="w-3 h-3" />
-                          Reputation: {contributor.reputation_score}
-                        </p>
+                        {contributor.reputation_score > 0 && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Award className="w-3 h-3" />
+                            Reputation: {contributor.reputation_score}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </Card>

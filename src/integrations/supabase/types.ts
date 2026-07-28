@@ -1756,6 +1756,53 @@ export type Database = {
           },
         ]
       }
+      symbol_responses: {
+        Row: {
+          created_at: string
+          id: string
+          linked_glyph_id: string | null
+          note: string | null
+          response_type: string
+          review_status: string
+          reviewed_at: string | null
+          target: string
+          target_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          linked_glyph_id?: string | null
+          note?: string | null
+          response_type: string
+          review_status?: string
+          reviewed_at?: string | null
+          target: string
+          target_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          linked_glyph_id?: string | null
+          note?: string | null
+          response_type?: string
+          review_status?: string
+          reviewed_at?: string | null
+          target?: string
+          target_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "symbol_responses_linked_glyph_id_fkey"
+            columns: ["linked_glyph_id"]
+            isOneToOne: false
+            referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       symbol_submissions: {
         Row: {
           context_note: string | null
@@ -2504,6 +2551,10 @@ export type Database = {
       }
       registry_glyph_content: {
         Args: { rec: Database["public"]["Tables"]["registry_glyphs"]["Row"] }
+        Returns: Json
+      }
+      symbol_response_counts: {
+        Args: { p_target: string; p_target_id: string }
         Returns: Json
       }
     }
