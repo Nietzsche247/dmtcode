@@ -52,6 +52,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="scraper">Scraper</TabsTrigger>
             <TabsTrigger value="api-log">📡 API Log</TabsTrigger>
             <TabsTrigger value="crawlers">🕷️ Crawlers</TabsTrigger>
+            <TabsTrigger value="funnel">🪜 Engagement</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="competitor">Competitors</TabsTrigger>
@@ -124,6 +125,11 @@ export const AdminDashboard = () => {
           <TabsContent value="crawlers" className="space-y-4">
             <CrawlerIntelligence />
           </TabsContent>
+
+          <TabsContent value="funnel" className="space-y-4">
+            <ConversionFunnel />
+          </TabsContent>
+
 
 
 

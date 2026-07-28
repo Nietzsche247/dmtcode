@@ -1,176 +1,200 @@
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, TrendingUp, AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+type WindowKey = '7d' | '30d' | 'all';
+
+const WINDOWS: { key: WindowKey; label: string; days: number | null }[] = [
+  { key: '7d', label: 'Last 7 days', days: 7 },
+  { key: '30d', label: 'Last 30 days', days: 30 },
+  { key: 'all', label: 'All time', days: null },
+];
+
+interface KitRow {
+  slug: string;
+  name: string;
+  count: number;
+}
+
+interface WindowData {
+  start: Date | null;
+  end: Date;
+  accounts: number | null;
+  waitlist: number | null;
+  signups: number | null;
+  kits: KitRow[];
+  submissions: number | null;
+  glyphs: number | null;
+  watchlist: number | null;
+  follows: number | null;
+}
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+// Returns a count, or null when the read fails (RLS or otherwise) so the row can be omitted.
+async function countOf(table: string, since: Date | null): Promise<number | null> {
+  let q = supabase.from(table as never).select('*', { count: 'exact', head: true });
+  if (since) q = q.gte('created_at', since.toISOString());
+  const { count, error } = await q;
+  if (error) return null;
+  return count ?? 0;
+}
+
+async function kitInterest(since: Date | null): Promise<KitRow[]> {
+  let q = supabase.from('product_signups').select('bundle_slug, created_at');
+  if (since) q = q.gte('created_at', since.toISOString());
+  const [{ data: signups, error }, { data: bundles }] = await Promise.all([
+    q,
+    supabase.from('bundles').select('slug, name'),
+  ]);
+  if (error || !signups) return [];
+  const names = new Map((bundles ?? []).map((b) => [b.slug, b.name]));
+  const tally = new Map<string, number>();
+  for (const s of signups) {
+    if (!s.bundle_slug) continue;
+    tally.set(s.bundle_slug, (tally.get(s.bundle_slug) ?? 0) + 1);
+  }
+  return Array.from(tally.entries())
+    .map(([slug, count]) => ({ slug, name: names.get(slug) ?? slug, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+async function loadWindow(days: number | null): Promise<WindowData> {
+  const end = new Date();
+  const start = days === null ? null : new Date(Date.now() - days * 86400000);
+  const [accounts, waitlist, signups, kits, submissions, glyphs, watchlist, follows] =
+    await Promise.all([
+      countOf('profiles', start),
+      countOf('waitlist', start),
+      countOf('product_signups', start),
+      kitInterest(start),
+      countOf('symbol_submissions', start),
+      countOf('registry_glyphs', start),
+      countOf('trial_watchlist', start),
+      countOf('follows', start),
+    ]);
+  return { start, end, accounts, waitlist, signups, kits, submissions, glyphs, watchlist, follows };
+}
+
+const StatRow = ({
+  label,
+  value,
+  caption,
+}: {
+  label: string;
+  value: number;
+  caption?: string;
+}) => (
+  <div className="flex items-start justify-between gap-4 p-3 bg-muted rounded-lg">
+    <div className="space-y-1">
+      <p className="text-sm font-medium">{label}</p>
+      {caption && <p className="text-xs text-muted-foreground">{caption}</p>}
+    </div>
+    <span className="text-lg font-semibold tabular-nums">{value.toLocaleString()}</span>
+  </div>
+);
+
+const WindowSection = ({ label, data }: { label: string; data: WindowData }) => {
+  const emails = (data.waitlist ?? 0) + (data.signups ?? 0);
+  const emailsReadable = data.waitlist !== null || data.signups !== null;
+  const contributions = (data.submissions ?? 0) + (data.glyphs ?? 0);
+  const contributionsReadable = data.submissions !== null || data.glyphs !== null;
+  const attention = (data.watchlist ?? 0) + (data.follows ?? 0);
+  const attentionReadable = data.watchlist !== null || data.follows !== null;
+  const kitTotal = data.kits.reduce((n, k) => n + k.count, 0);
+
+  const rows = [
+    data.accounts ? (
+      <StatRow key="accounts" label="Accounts created" value={data.accounts} />
+    ) : null,
+    emailsReadable && emails > 0 ? (
+      <StatRow
+        key="emails"
+        label="Emails captured"
+        value={emails}
+        caption={`${data.waitlist ?? 0} general waitlist, ${data.signups ?? 0} kit signups`}
+      />
+    ) : null,
+    contributionsReadable && contributions > 0 ? (
+      <StatRow
+        key="contributions"
+        label="Contributions"
+        value={contributions}
+        caption={`${data.submissions ?? 0} symbol submissions, ${data.glyphs ?? 0} registry glyphs`}
+      />
+    ) : null,
+    attentionReadable && attention > 0 ? (
+      <StatRow
+        key="attention"
+        label="Watching and following"
+        value={attention}
+        caption={`${data.watchlist ?? 0} trials watched, ${data.follows ?? 0} follows`}
+      />
+    ) : null,
+  ].filter(Boolean);
+
+  if (rows.length === 0 && kitTotal === 0) return null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{label}</CardTitle>
+        <CardDescription>
+          actions recorded between {data.start ? fmt(data.start) : 'the first record'} and{' '}
+          {fmt(data.end)}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {kitTotal > 0 && (
+          <div className="p-4 rounded-lg border-2 border-primary/40 bg-primary/5 space-y-3">
+            <div className="flex items-baseline justify-between">
+              <p className="text-sm font-semibold uppercase tracking-wide">Kit interest</p>
+              <span className="text-2xl font-bold tabular-nums">{kitTotal.toLocaleString()}</span>
+            </div>
+            <div className="space-y-2">
+              {data.kits.map((k) => (
+                <div key={k.slug} className="flex items-center justify-between gap-4">
+                  <span className="text-sm">{k.name}</span>
+                  <Badge variant="secondary">{k.count.toLocaleString()}</Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {rows}
+      </CardContent>
+    </Card>
+  );
+};
 
 export const ConversionFunnel = () => {
-  const funnelSteps = [
-    { name: 'Landing', visitors: 10000, conversion: 100, source: 'Mixed' },
-    { name: 'Research Read', visitors: 6800, conversion: 68, source: '42% from AI citations' },
-    { name: 'Tools View', visitors: 4420, conversion: 65, source: '38% from Goler study mention' },
-    { name: 'Waitlist/Affiliate', visitors: 1768, conversion: 40, source: '15% from laser queries' }
-  ];
+  const [data, setData] = useState<Record<WindowKey, WindowData> | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const alerts = [
-    {
-      type: 'spike',
-      message: 'New AI mention spike on Goler study',
-      impact: '+23 citations in last 7 days',
-      date: '2 hours ago'
-    },
-    {
-      type: 'ranking',
-      message: '"Journey query ranking drop"',
-      impact: 'Position 2→5 for "DMT laser journey"',
-      date: '1 day ago'
-    },
-    {
-      type: 'opportunity',
-      message: 'High-potential prompt detected',
-      impact: '"laser DMT tools" - 340 monthly searches',
-      date: '3 days ago'
-    }
-  ];
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const results = await Promise.all(WINDOWS.map((w) => loadWindow(w.days)));
+      if (!active) return;
+      setData({ '7d': results[0], '30d': results[1], all: results[2] });
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-6">
-      <div className="p-3 rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-sm font-semibold uppercase tracking-wide text-center">
-        Sample data, not live
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Conversion Funnel</CardTitle>
-          <CardDescription>
-            Overlay GEO/SEO data on user journey
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {funnelSteps.map((step, idx) => (
-            <div key={step.name} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-24">
-                    <p className="text-sm font-medium">{step.name}</p>
-                  </div>
-                  {idx < funnelSteps.length - 1 && (
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">
-                    {step.visitors.toLocaleString()} visitors
-                  </span>
-                  <Badge variant="secondary">
-                    {step.conversion}%
-                  </Badge>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary"
-                  style={{ width: `${step.conversion}%` }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground pl-24">
-                {step.source}
-              </p>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Drop-off Analysis</CardTitle>
-          <CardDescription>
-            Where users are leaving and why
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
-              <div className="space-y-1 flex-1">
-                <p className="text-sm font-medium">Research → Tools (35% drop-off)</p>
-                <p className="text-xs text-muted-foreground">
-                  Users reading research but not viewing tools. Suggest: Add more internal links from research to equipment.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-yellow-500 mt-0.5" />
-              <div className="space-y-1 flex-1">
-                <p className="text-sm font-medium">Tools → Conversion (60% drop-off)</p>
-                <p className="text-xs text-muted-foreground">
-                  High interest but low conversion. Suggest: Simplify checkout, add urgency messaging.
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Real-time Alerts</CardTitle>
-          <CardDescription>
-            Email/Slack notifications for critical events
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {alerts.map((alert, idx) => (
-            <div key={idx} className="p-3 bg-muted rounded-lg">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1 flex-1">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    <p className="text-sm font-medium">{alert.message}</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {alert.impact}
-                  </p>
-                </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {alert.date}
-                </span>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Citation Impact Tracking</CardTitle>
-          <CardDescription>
-            Which citations drive affiliate purchases
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-            <span className="text-sm">Goler citation (IPI Letters)</span>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">15% affiliate traffic</Badge>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </div>
-          </div>
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-            <span className="text-sm">Timmermann neural data</span>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">8% affiliate traffic</Badge>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </div>
-          </div>
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-            <span className="text-sm">Laser protocol mentions</span>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">22% affiliate traffic</Badge>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <p className="text-sm text-muted-foreground">
+        This site does not track visitors, so there is no visit count to convert from. These are
+        consented actions users actually took.
+      </p>
+      {loading && <p className="text-sm text-muted-foreground">Loading recorded actions.</p>}
+      {data &&
+        WINDOWS.map((w) => <WindowSection key={w.key} label={w.label} data={data[w.key]} />)}
     </div>
   );
 };
