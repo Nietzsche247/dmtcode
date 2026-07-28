@@ -271,9 +271,11 @@ export const SymbolResponsePanel = ({
           )}
 
           <p className="text-xs text-muted-foreground">
-            Recording this marks a candidate match. A candidate match is not a confirmed match. A
-            human reviewer decides that, and until then it stays labelled as a candidate.
+            This records a claim, not a match. Nothing compares the two records automatically yet. A
+            reviewer decides whether they actually converge, and until that happens your entry stays
+            a claim and is counted as one.
           </p>
+
         </div>
 
         {SIMPLE_RESPONSES.map(({ type, label }) => {
