@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { theorySlug } from '@/lib/theorySlug';
 
 interface Entry {
   key: string;
@@ -88,6 +89,82 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
           created_at: w.created_at,
           to: `/trials/${w.trial_id}`,
         });
+      }
+
+      const { data: followsData } = await supabase
+        .from('follows')
+        .select('id, entity_type, entity_id, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(30);
+
+      const follows = followsData || [];
+      if (follows.length > 0) {
+        const idsFor = (type: string) =>
+          Array.from(new Set(follows.filter((f) => f.entity_type === type).map((f) => f.entity_id)));
+
+        const articleIds = idsFor('article');
+        const theoryIds = idsFor('theory');
+        const protocolIds = idsFor('protocol');
+        const retreatIds = idsFor('retreat');
+        const eventIds = idsFor('event');
+        const followedTrialIds = idsFor('trial');
+
+        const [articles, theories, protocols, retreats, events, trials] = await Promise.all([
+          articleIds.length
+            ? supabase.from('articles').select('id, title, slug').in('id', articleIds)
+            : Promise.resolve({ data: [] as any[] }),
+          theoryIds.length
+            ? supabase.from('theories').select('id, title').in('id', theoryIds)
+            : Promise.resolve({ data: [] as any[] }),
+          protocolIds.length
+            ? supabase.from('protocols').select('id, title, slug').in('id', protocolIds)
+            : Promise.resolve({ data: [] as any[] }),
+          retreatIds.length
+            ? supabase.from('retreats').select('id, name').in('id', retreatIds)
+            : Promise.resolve({ data: [] as any[] }),
+          eventIds.length
+            ? supabase.from('events').select('id, title').in('id', eventIds)
+            : Promise.resolve({ data: [] as any[] }),
+          followedTrialIds.length
+            ? supabase.from('clinical_trials').select('id, title').in('id', followedTrialIds)
+            : Promise.resolve({ data: [] as any[] }),
+        ]);
+
+        for (const f of follows) {
+          let text: string | null = null;
+          let to: string | undefined;
+
+          if (f.entity_type === 'article') {
+            const a = (articles.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (a) { text = a.title; to = `/articles/${a.slug}`; }
+          } else if (f.entity_type === 'theory') {
+            const t = (theories.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (t) { text = t.title; to = `/theories/${theorySlug(t.title)}`; }
+          } else if (f.entity_type === 'protocol') {
+            const p = (protocols.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (p) { text = p.title; to = `/protocols/${p.slug}`; }
+          } else if (f.entity_type === 'retreat') {
+            const r = (retreats.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (r) { text = r.name; to = `/retreats/${r.id}`; }
+          } else if (f.entity_type === 'event') {
+            const e = (events.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (e) { text = e.title; to = `/events/${e.id}`; }
+          } else if (f.entity_type === 'trial') {
+            const tr = (trials.data ?? []).find((x: any) => x.id === f.entity_id);
+            if (tr) { text = tr.title; to = `/trials/${tr.id}`; }
+          }
+
+          if (!text || !to) continue;
+
+          merged.push({
+            key: `follow-${f.id}`,
+            label: 'Followed',
+            text,
+            created_at: f.created_at,
+            to,
+          });
+        }
       }
 
       merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
