@@ -74,7 +74,13 @@ interface UnifiedItem {
   verification?: string;
   phase?: string;
   source_date?: string;
+  record_class?: string;
+  counts_toward_evidence?: boolean;
 }
+
+// Curated starter symbols are identified purely by their image_url prefix.
+const isCuratedStarter = (imageUrl: unknown): boolean =>
+  typeof imageUrl === "string" && imageUrl.startsWith("/placeholder-symbol-");
 
 function compact<T extends Record<string, unknown>>(obj: T): T {
   const out: Record<string, unknown> = {};
@@ -284,10 +290,12 @@ export default async (req: Request): Promise<Response> => {
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
-    authority_type: "Community",
+    authority_type: isCuratedStarter(r.image_url) ? "Curated" : "Community",
     people: [],
     status: (r.status as string) || undefined,
     source_date: (r.created_at as string) || undefined,
+    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
   }));
 
   // Resolve every referenced trial/paper/symbol/protocol id from the fetched
@@ -323,7 +331,9 @@ export default async (req: Request): Promise<Response> => {
     upvotes: Number(r.upvotes ?? 0),
     created_at: (r.created_at as string) || undefined,
     updated_at: (r.updated_at as string) || undefined,
-  })));
+    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
+  }));
 
   const theoriesFeed = theories.map((r) => compact({
     id: String(r.id),
@@ -339,7 +349,7 @@ export default async (req: Request): Promise<Response> => {
     tags: (r.tags as string[]) || [],
     upvotes: Number(r.upvotes ?? 0),
     created_at: (r.created_at as string) || undefined,
-  })));
+  }));
 
   const eventsFeed = events.map((r) => compact({
     id: String(r.id),
@@ -352,7 +362,7 @@ export default async (req: Request): Promise<Response> => {
     location: (r.location as string) || undefined,
     organizer: (r.organizer as string) || undefined,
     external_url: (r.url as string) || undefined,
-  })));
+  }));
 
   const articlesFeed = articles.map((r) => {
     const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
@@ -398,8 +408,11 @@ export default async (req: Request): Promise<Response> => {
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
+  const symbolsCurated = symbols.filter((r) => isCuratedStarter(r.image_url)).length;
+  const symbolsCommunity = symbols.length - symbolsCurated;
+
   const body = {
-    version: "3.8",
+    version: "3.9",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -426,6 +439,8 @@ export default async (req: Request): Promise<Response> => {
       bibliography: bibItems.length,
       trials: trialItems.length,
       symbols: symbolItems.length,
+      symbols_community: symbolsCommunity,
+      symbols_curated: symbolsCurated,
       theories: theoriesFeed.length,
       events: eventsFeed.length,
       articles: articlesFeed.length,
@@ -438,6 +453,7 @@ export default async (req: Request): Promise<Response> => {
     articles: articlesFeed,
     registry_glyphs: registryGlyphsFeed,
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
+    symbols_note: "Symbols marked record_class curated_starter were curated by the project from public imagery as a starting corpus and do not count as observed evidence. Use counts_toward_evidence to filter.",
     faq: FAQ_ITEMS,
   };
 
