@@ -1388,11 +1388,33 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         {/* Step 6: Confirmation & Gamification */}
         {step === 6 && (
           <div className="space-y-8 text-center">
-            <div>
-              <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-bold mb-2">Symbol #{totalSymbols + 1} Submitted!</h3>
-              <p className="text-muted-foreground">Thank you for contributing to the registry</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
+              {sealedAt && (
+                <p className="text-sm text-muted-foreground">
+                  Sealed at {formatSealedAt(sealedAt)}.
+                </p>
+              )}
+              {originalRecordHash && (
+                <p className="text-sm text-muted-foreground font-mono">
+                  Fingerprint {originalRecordHash.slice(0, 12)}
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground">
+                This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {captureRoute === 'capture_page'
+                  ? 'You recorded this before opening the catalogue.'
+                  : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
+              </p>
+              {!userId && (
+                <p className="text-sm text-muted-foreground">
+                  You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
+                </p>
+              )}
             </div>
+
 
             {newBadges.length > 0 && (
               <div className="bg-primary/10 p-6 rounded-lg">
