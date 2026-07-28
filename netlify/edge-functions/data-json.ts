@@ -439,6 +439,8 @@ export default async (req: Request): Promise<Response> => {
       bibliography: bibItems.length,
       trials: trialItems.length,
       symbols: symbolItems.length,
+      symbols_community: symbolsCommunity,
+      symbols_curated: symbolsCurated,
       theories: theoriesFeed.length,
       events: eventsFeed.length,
       articles: articlesFeed.length,
@@ -451,6 +453,7 @@ export default async (req: Request): Promise<Response> => {
     articles: articlesFeed,
     registry_glyphs: registryGlyphsFeed,
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
+    symbols_note: "Symbols marked record_class curated_starter were curated by the project from public imagery as a starting corpus and do not count as observed evidence. Use counts_toward_evidence to filter.",
     faq: FAQ_ITEMS,
   };
 
