@@ -347,9 +347,9 @@ export const SymbolResponsePanel = ({
           </ul>
         )}
         <p className="text-xs text-muted-foreground">
-          These counters are kept apart on purpose. Recognition, an independent prior record, a
-          candidate match and a reviewed match are four different things, and only the last two are
-          on the evidence track.
+          These counters are kept apart on purpose. Recognition, a claimed independent prior record,
+          a claim under review and a reviewed match are four different things, and only the last two
+          are on the evidence track.
         </p>
       </section>
     </Card>
