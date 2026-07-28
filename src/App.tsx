@@ -323,6 +323,21 @@ const App = () => (
             </ErrorBoundary>
           } />
 
+          <Route path="/guides" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Guides />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/guides/:slug" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <GuideDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
 
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/auth" element={<Auth />} />
