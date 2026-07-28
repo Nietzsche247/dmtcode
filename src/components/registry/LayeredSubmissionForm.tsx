@@ -19,6 +19,16 @@ import { AlertTriangle } from 'lucide-react';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
+// Renders e.g. "14:32 UTC on 28 July 2026"
+const formatSealedAt = (iso: string): string => {
+  const d = new Date(iso);
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  const day = d.getUTCDate();
+  const month = d.toLocaleDateString('en-GB', { month: 'long', timeZone: 'UTC' });
+  return `${hh}:${mm} UTC on ${day} ${month} ${d.getUTCFullYear()}`;
+};
+
 interface FormData {
   // Priming control
   primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | '';
