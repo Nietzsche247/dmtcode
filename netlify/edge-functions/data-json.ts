@@ -290,10 +290,12 @@ export default async (req: Request): Promise<Response> => {
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
-    authority_type: "Community",
+    authority_type: isCuratedStarter(r.image_url) ? "Curated" : "Community",
     people: [],
     status: (r.status as string) || undefined,
     source_date: (r.created_at as string) || undefined,
+    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
   }));
 
   // Resolve every referenced trial/paper/symbol/protocol id from the fetched
