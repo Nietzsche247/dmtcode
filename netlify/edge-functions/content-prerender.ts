@@ -3003,3 +3003,306 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
+// ---------------------------------------------------------------------------
+// Guides. Slug keyed canonical answer pages. Every visible block is rendered
+// only when the underlying column holds real content; an empty column renders
+// nothing at all, no heading and no placeholder text.
+// ---------------------------------------------------------------------------
+
+type GuideSource = {
+  claim?: unknown;
+  source_title?: unknown;
+  source_author?: unknown;
+  source_publication?: unknown;
+  source_url?: unknown;
+  doi?: unknown;
+};
+
+function gText(v: unknown): string {
+  return typeof v === "string" ? v.trim() : "";
+}
+
+function gEntries(v: unknown): GuideSource[] {
+  return Array.isArray(v)
+    ? (v.filter((x) => x && typeof x === "object") as GuideSource[])
+    : [];
+}
+
+function gStrings(v: unknown): string[] {
+  return Array.isArray(v) ? v.map((x) => gText(x)).filter(Boolean) : [];
+}
+
+function guideSourceList(entries: GuideSource[]): string {
+  const items = entries
+    .filter((e) => gText(e.claim))
+    .map((e) => {
+      const parts = [
+        gText(e.source_author),
+        gText(e.source_title),
+        gText(e.source_publication),
+      ].filter(Boolean);
+      const line = parts.join(", ");
+      const url = gText(e.source_url);
+      const doi = gText(e.doi);
+      let out = `<li>${esc(gText(e.claim))}`;
+      if (line) {
+        out += url
+          ? `<br /><a href="${esc(url)}" rel="noopener">${esc(line)}</a>`
+          : `<br />${esc(line)}`;
+      }
+      if (doi) {
+        out += `<br />DOI <a href="https://doi.org/${esc(doi)}" rel="noopener">${esc(doi)}</a>`;
+      }
+      return out + "</li>";
+    });
+  return items.length ? `<ul>${items.join("")}</ul>` : "";
+}
+
+function guidePlainList(values: string[]): string {
+  return values.length
+    ? `<ul>${values.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>`
+    : "";
+}
+
+function guideDate(v: unknown): string {
+  const s = gText(v);
+  if (!s) return "";
+  const d = new Date(s.length === 10 ? `${s}T00:00:00Z` : s);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+const GUIDES_SUBLINE =
+  "Direct answers to the questions people actually ask, each one graded by how strong the evidence behind it really is.";
+
+async function renderGuidesIndex(context: Context): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/guides`;
+  const title = "Guides | DMT Code";
+  const metaDesc = GUIDES_SUBLINE;
+
+  const rows = await sbGetRows(
+    "guides",
+    "is_published=eq.true&select=slug,question,short_answer,evidence_grade,last_reviewed,updated_at&order=sort_order.asc",
+  );
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Guides", item: canonical },
+    ],
+  };
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${canonical}#list`,
+    name: "DMT Code Guides",
+    numberOfItems: rows.length,
+    itemListElement: rows.map((r, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Question",
+        url: `${SITE}/guides/${gText(r.slug)}`,
+        name: gText(r.question),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: gText(r.short_answer),
+        },
+      },
+    })),
+    license: LICENSE,
+  };
+
+  const items = rows
+    .map((r) => {
+      const slug = gText(r.slug);
+      const answer = gText(r.short_answer);
+      const grade = gText(r.evidence_grade);
+      return (
+        `<li><a href="/guides/${esc(slug)}"><strong>${esc(gText(r.question))}</strong></a>` +
+        (answer ? ` <span>${esc(answer)}</span>` : "") +
+        (grade ? ` <span>Evidence grade: ${esc(grade)}</span>` : "") +
+        `</li>`
+      );
+    })
+    .join("");
+
+  const body = `<article data-prerender="guides-index">
+  <h1>Guides</h1>
+  <p>${esc(GUIDES_SUBLINE)}</p>
+  <section>
+    <h2>All guides</h2>
+    ${items ? `<ul>${items}</ul>` : "<p>No guides have been published yet.</p>"}
+  </section>
+</article>`;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    ogImage: DEFAULT_OG_IMAGE,
+    jsonLd: [organizationLd, breadcrumbLd, itemListLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderGuideDetail(context: Context, rawSlug: string): Promise<Response> {
+  const shellRes = await context.next();
+  const slug = String(rawSlug || "").toLowerCase();
+  const rows = await sbGetRows(
+    "guides",
+    `slug=eq.${encodeURIComponent(slug)}&is_published=eq.true&select=*`,
+  );
+  const r = rows[0];
+  if (!r) {
+    return notFound404(await shellRes.text(), {
+      title: "Guide not found | DMT Code",
+      heading: "Guide not found",
+      text: "This guide is not currently published or the link is out of date.",
+      canonical: `${SITE}/guides`,
+      backHref: `${SITE}/guides`,
+      backLabel: "Guides",
+      marker: "guide-not-found",
+    });
+  }
+
+  const question = gText(r.question);
+  const shortAnswer = gText(r.short_answer);
+  const canonical = `${SITE}/guides/${gText(r.slug)}`;
+  const title = `${question} | DMT Code`;
+  const metaDesc = clip(shortAnswer, 160);
+
+  const grade = gText(r.evidence_grade);
+  const gradeNote = gText(r.evidence_grade_note);
+  const safety = gText(r.safety_note);
+  const supports = gEntries(r.what_supports);
+  const weakens = gEntries(r.what_weakens);
+  const unknowns = gStrings(r.what_is_unknown);
+  const changes = gStrings(r.what_would_change);
+  const related = (Array.isArray(r.related_paths) ? r.related_paths : [])
+    .filter((x) => x && typeof x === "object")
+    .map((x) => x as { label?: unknown; path?: unknown })
+    .filter((x) => gText(x.label) && gText(x.path));
+  const bodyHtml = gText(r.body_md) ? mdToHtml(gText(r.body_md)) : "";
+  const reviewed = guideDate(r.last_reviewed);
+
+  const supportsList = guideSourceList(supports);
+  const weakensList = guideSourceList(weakens);
+  const unknownsList = guidePlainList(unknowns);
+  const changesList = guidePlainList(changes);
+
+  const blocks: string[] = [];
+  if (question) blocks.push(`<h1>${esc(question)}</h1>`);
+  if (shortAnswer) blocks.push(`<p><strong>${esc(shortAnswer)}</strong></p>`);
+  if (grade) {
+    blocks.push(`<p><strong>Evidence grade</strong> ${esc(grade)}</p>`);
+    if (gradeNote) blocks.push(`<p>${esc(gradeNote)}</p>`);
+  }
+  if (safety) blocks.push(`<aside>${esc(safety)}</aside>`);
+  if (supportsList) blocks.push(`<h2>What supports this</h2>${supportsList}`);
+  if (weakensList) blocks.push(`<h2>What weakens this</h2>${weakensList}`);
+  if (unknownsList) blocks.push(`<h2>What is still unknown</h2>${unknownsList}`);
+  if (changesList) blocks.push(`<h2>What would change this answer</h2>${changesList}`);
+  if (bodyHtml) blocks.push(`<div>${bodyHtml}</div>`);
+  if (related.length) {
+    blocks.push(
+      `<h2>Related pages on this site</h2><ul>${related
+        .map(
+          (x) =>
+            `<li><a href="${esc(gText(x.path))}">${esc(gText(x.label))}</a></li>`,
+        )
+        .join("")}</ul>`,
+    );
+  }
+  if (reviewed) blocks.push(`<p>Last reviewed ${esc(reviewed)}</p>`);
+
+  const body = `<article data-prerender="guide-detail">\n${blocks.join("\n")}\n</article>`;
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Guides", item: `${SITE}/guides` },
+      { "@type": "ListItem", position: 3, name: question, item: canonical },
+    ],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: {
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: shortAnswer },
+    },
+  };
+
+  const citation: Array<Record<string, unknown>> = [];
+  for (const e of [...supports, ...weakens]) {
+    const name = gText(e.source_title);
+    if (!name) continue;
+    const node: Record<string, unknown> = { "@type": "CreativeWork", name };
+    const author = gText(e.source_author);
+    const publisher = gText(e.source_publication);
+    const url = gText(e.source_url);
+    const doi = gText(e.doi);
+    if (author) node.author = author;
+    if (publisher) node.publisher = publisher;
+    if (url) node.url = url;
+    if (doi) node.sameAs = `https://doi.org/${doi}`;
+    citation.push(node);
+  }
+
+  const articleLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": canonical,
+    headline: question,
+    description: shortAnswer,
+    url: canonical,
+    dateModified: r.updated_at,
+    publisher: { "@id": `${SITE}#org` },
+    license: LICENSE,
+  };
+  if (citation.length) articleLd.citation = citation;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    ogImage: DEFAULT_OG_IMAGE,
+    jsonLd: [organizationLd, breadcrumbLd, faqLd, articleLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
