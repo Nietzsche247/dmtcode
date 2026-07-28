@@ -1,0 +1,2 @@
+ALTER TABLE public.follows DROP CONSTRAINT follows_entity_type_check;
+ALTER TABLE public.follows ADD CONSTRAINT follows_entity_type_check CHECK (entity_type IN ('article','theory','protocol','retreat','event','trial'));

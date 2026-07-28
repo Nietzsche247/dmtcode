@@ -46,8 +46,9 @@ export const Following = ({ userId }: { userId: string }) => {
       const protocolIds = idsFor('protocol');
       const retreatIds = idsFor('retreat');
       const eventIds = idsFor('event');
+      const trialIds = idsFor('trial');
 
-      const [articles, theories, protocols, retreats, events] = await Promise.all([
+      const [articles, theories, protocols, retreats, events, trials] = await Promise.all([
         articleIds.length
           ? supabase.from('articles').select('id, title, slug').in('id', articleIds)
           : Promise.resolve({ data: [] as any[] }),
@@ -62,6 +63,9 @@ export const Following = ({ userId }: { userId: string }) => {
           : Promise.resolve({ data: [] as any[] }),
         eventIds.length
           ? supabase.from('events').select('id, title').in('id', eventIds)
+          : Promise.resolve({ data: [] as any[] }),
+        trialIds.length
+          ? supabase.from('clinical_trials').select('id, title').in('id', trialIds)
           : Promise.resolve({ data: [] as any[] }),
       ]);
 
@@ -87,6 +91,10 @@ export const Following = ({ userId }: { userId: string }) => {
         if (row.entity_type === 'event') {
           const e = (events.data ?? []).find((x: any) => x.id === row.entity_id);
           return e ? { id: row.id, type: 'event', label: e.title, to: `/events/${e.id}` } : null;
+        }
+        if (row.entity_type === 'trial') {
+          const tr = (trials.data ?? []).find((x: any) => x.id === row.entity_id);
+          return tr ? { id: row.id, type: 'trial', label: tr.title, to: `/trials/${tr.id}` } : null;
         }
         return null;
       };

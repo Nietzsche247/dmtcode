@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
+import FollowButton from '@/components/FollowButton';
 
 interface Trial {
   id: string;
@@ -157,6 +158,7 @@ const TrialDetail = () => {
           <h1 className="font-display text-3xl leading-tight md:text-5xl">
             {trial.title}
           </h1>
+          <FollowButton entityType="trial" entityId={trial.id} className="mt-4" />
         </header>
 
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
