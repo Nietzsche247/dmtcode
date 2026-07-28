@@ -62,9 +62,24 @@ interface FormData {
   description: string;
   orcid: string;
   confidenceRating: number;
+
+  // Privacy
+  privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
+  publicationConsent: boolean;
+  pseudonym: string;
 }
 
-export const LayeredSubmissionForm = () => {
+interface LayeredSubmissionFormProps {
+  captureRoute?: 'capture_page' | 'registry_page';
+}
+
+interface GlyphAnnotation {
+  id: string;
+  body: string;
+  created_at: string;
+}
+
+export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: LayeredSubmissionFormProps = {}) => {
   const [step, setStep] = useState<Step>(0);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +91,11 @@ export const LayeredSubmissionForm = () => {
   const [isNullReport, setIsNullReport] = useState(false);
   const [svgData, setSvgData] = useState<string>('');
   const [submittedSymbolId, setSubmittedSymbolId] = useState<string>('');
+  const [sealedAt, setSealedAt] = useState<string | null>(null);
+  const [originalRecordHash, setOriginalRecordHash] = useState<string | null>(null);
+  const [annotationDraft, setAnnotationDraft] = useState('');
+  const [annotations, setAnnotations] = useState<GlyphAnnotation[]>([]);
+  const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
