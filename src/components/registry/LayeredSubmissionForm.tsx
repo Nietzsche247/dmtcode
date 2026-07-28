@@ -19,6 +19,16 @@ import { AlertTriangle } from 'lucide-react';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
+// Renders e.g. "14:32 UTC on 28 July 2026"
+const formatSealedAt = (iso: string): string => {
+  const d = new Date(iso);
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  const day = d.getUTCDate();
+  const month = d.toLocaleDateString('en-GB', { month: 'long', timeZone: 'UTC' });
+  return `${hh}:${mm} UTC on ${day} ${month} ${d.getUTCFullYear()}`;
+};
+
 interface FormData {
   // Priming control
   primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | '';
@@ -62,9 +72,24 @@ interface FormData {
   description: string;
   orcid: string;
   confidenceRating: number;
+
+  // Privacy
+  privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
+  publicationConsent: boolean;
+  pseudonym: string;
 }
 
-export const LayeredSubmissionForm = () => {
+interface LayeredSubmissionFormProps {
+  captureRoute?: 'capture_page' | 'registry_page';
+}
+
+interface GlyphAnnotation {
+  id: string;
+  body: string;
+  created_at: string;
+}
+
+export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: LayeredSubmissionFormProps = {}) => {
   const [step, setStep] = useState<Step>(0);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +101,11 @@ export const LayeredSubmissionForm = () => {
   const [isNullReport, setIsNullReport] = useState(false);
   const [svgData, setSvgData] = useState<string>('');
   const [submittedSymbolId, setSubmittedSymbolId] = useState<string>('');
+  const [sealedAt, setSealedAt] = useState<string | null>(null);
+  const [originalRecordHash, setOriginalRecordHash] = useState<string | null>(null);
+  const [annotationDraft, setAnnotationDraft] = useState('');
+  const [annotations, setAnnotations] = useState<GlyphAnnotation[]>([]);
+  const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     primingExposure: '',
@@ -105,7 +135,10 @@ export const LayeredSubmissionForm = () => {
     customTags: '',
     description: '',
     orcid: '',
-    confidenceRating: 3
+    confidenceRating: 3,
+    privacyLevel: 'anonymous_matchable',
+    publicationConsent: false,
+    pseudonym: ''
   });
 
   // Primacy contamination check (after formData is defined)
@@ -239,7 +272,15 @@ export const LayeredSubmissionForm = () => {
         free_text_notes: formData.description || null,
         drawing_duration_seconds: drawingDuration,
         confidence_rating: formData.confidenceRating,
-        orcid: formData.orcid || null
+        orcid: formData.orcid || null,
+        prior_exposure: formData.primingExposure === 'priming_none' ? false : true,
+        catalog_exposure_before_submission: formData.primingExposure || null,
+        capture_route: captureRoute,
+        motion: formData.movements.length ? formData.movements.join(', ') : null,
+        lighting_conditions: formData.timeOfDay || null,
+        privacy_level: formData.privacyLevel,
+        publication_consent: formData.publicationConsent,
+        pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null
       };
 
       // If offline, save locally and show success
@@ -260,12 +301,14 @@ export const LayeredSubmissionForm = () => {
 
       // Store submitted symbol ID
       setSubmittedSymbolId(insertedGlyph.id);
+      setSealedAt(insertedGlyph.sealed_at ?? null);
+      setOriginalRecordHash(insertedGlyph.original_record_hash ?? null);
 
       // Check for new badges
       await checkBadges();
 
       // Load similar symbols
-      await loadSimilarSymbols(tags.slice(0, 5));
+      await loadSimilarSymbols(insertedGlyph.id);
 
       toast.success(`Symbol #${totalSymbols + 1} submitted!`);
       setStep(6);
@@ -394,17 +437,69 @@ export const LayeredSubmissionForm = () => {
     setNewBadges(earnedBadges);
   };
 
-  const loadSimilarSymbols = async (tags: string[]) => {
+  const loadSimilarSymbols = async (insertedId: string) => {
+    // Descriptive features only. Context tags (priming, wavelength, method,
+    // location, room, outdoor, surface, time of day) are deliberately excluded.
+    const basis = [
+      ...formData.formTypes,
+      ...formData.geometricShapes,
+      ...formData.letterLikeStyles,
+      ...formData.culturalStyles,
+      formData.symmetry,
+      ...formData.colors,
+      ...formData.movements,
+      formData.sizeImpression,
+      ...formData.customTags.split(',').map(t => t.trim())
+    ].filter(Boolean);
+
+    if (basis.length < 2) {
+      setSimilarSymbols([]);
+      return;
+    }
+
     const { data } = await supabase
       .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags')
-      .order('confirmation_count', { ascending: false })
-      .limit(3);
-    
-    if (data) {
-      setSimilarSymbols(data);
-    }
+      .select('id, image_data, motif_tags, sealed_at, created_at')
+      .overlaps('motif_tags', basis)
+      .neq('id', insertedId)
+      .limit(50);
+
+    const scored = (data || [])
+      .map(row => ({
+        ...row,
+        sharedCount: basis.filter(t => (row.motif_tags || []).includes(t)).length
+      }))
+      .filter(row => row.sharedCount >= 2)
+      .sort((a, b) => b.sharedCount - a.sharedCount)
+      .slice(0, 3);
+
+    setSimilarSymbols(scored);
   };
+
+  const loadAnnotations = async (glyphId: string) => {
+    const { data } = await supabase
+      .from('glyph_annotations')
+      .select('id, body, created_at')
+      .eq('glyph_id', glyphId)
+      .order('created_at', { ascending: true });
+    setAnnotations(data || []);
+  };
+
+  const saveAnnotation = async () => {
+    if (!userId || !submittedSymbolId || !annotationDraft.trim()) return;
+    setIsSavingAnnotation(true);
+    const { error } = await supabase
+      .from('glyph_annotations')
+      .insert({ glyph_id: submittedSymbolId, user_id: userId, body: annotationDraft.trim() });
+    setIsSavingAnnotation(false);
+    if (error) {
+      toast.error('Could not save the note');
+      return;
+    }
+    setAnnotationDraft('');
+    await loadAnnotations(submittedSymbolId);
+  };
+
 
   const resetForm = () => {
     setFormData({
@@ -435,13 +530,20 @@ export const LayeredSubmissionForm = () => {
     customTags: '',
     description: '',
     orcid: '',
-    confidenceRating: 3
+    confidenceRating: 3,
+    privacyLevel: 'anonymous_matchable',
+    publicationConsent: false,
+    pseudonym: ''
   });
     setStep(0);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
     setIsNullReport(false);
+    setSealedAt(null);
+    setOriginalRecordHash(null);
+    setAnnotations([]);
+    setAnnotationDraft('');
     localStorage.removeItem('dmtcode-canvas-draft');
     loadTotalSymbols();
     if (userId) loadUserStats(userId);
@@ -1210,6 +1312,78 @@ export const LayeredSubmissionForm = () => {
               )}
             </div>
 
+            {/* Privacy */}
+            <div>
+              <h4 className="text-base font-semibold mb-3">Who can see this memory</h4>
+              <RadioGroup
+                value={formData.privacyLevel}
+                onValueChange={(val) => setFormData(prev => ({ ...prev, privacyLevel: val as FormData['privacyLevel'] }))}
+                className="space-y-3"
+              >
+                {[
+                  {
+                    value: 'anonymous_matchable',
+                    label: 'Anonymous and matchable',
+                    help: 'Shown publicly with no name attached. Included in convergence comparisons.'
+                  },
+                  {
+                    value: 'public_pseudonym',
+                    label: 'Public under a pseudonym',
+                    help: 'Shown publicly with a name you choose.'
+                  },
+                  {
+                    value: 'researcher_available',
+                    label: 'Available to researchers',
+                    help: 'Shown publicly and flagged as available for formal research contact.'
+                  },
+                  {
+                    value: 'private',
+                    label: 'Private to me',
+                    help: userId
+                      ? 'Visible only to you. Not included in public comparisons.'
+                      : 'Sign in to keep a memory private. Without an account there is no way to show it back only to you.'
+                  }
+                ].map(opt => (
+                  <div key={opt.value} className="flex items-start space-x-2">
+                    <RadioGroupItem
+                      value={opt.value}
+                      id={`privacy-${opt.value}`}
+                      disabled={opt.value === 'private' && !userId}
+                      className="mt-1"
+                    />
+                    <div>
+                      <Label htmlFor={`privacy-${opt.value}`}>{opt.label}</Label>
+                      <p className="text-xs text-muted-foreground">{opt.help}</p>
+                    </div>
+                  </div>
+                ))}
+              </RadioGroup>
+
+              {formData.privacyLevel === 'public_pseudonym' && (
+                <div className="mt-4">
+                  <Label htmlFor="pseudonym" className="mb-2 block">Pseudonym</Label>
+                  <Input
+                    id="pseudonym"
+                    maxLength={40}
+                    value={formData.pseudonym}
+                    onChange={(e) => setFormData(prev => ({ ...prev, pseudonym: e.target.value }))}
+                  />
+                </div>
+              )}
+
+              <div className="flex items-start space-x-2 mt-4">
+                <Checkbox
+                  id="publicationConsent"
+                  checked={formData.publicationConsent}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, publicationConsent: checked === true }))}
+                  className="mt-1"
+                />
+                <Label htmlFor="publicationConsent" className="font-normal">
+                  I consent to this record being included in the public CC BY 4.0 data export.
+                </Label>
+              </div>
+            </div>
+
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
@@ -1224,11 +1398,33 @@ export const LayeredSubmissionForm = () => {
         {/* Step 6: Confirmation & Gamification */}
         {step === 6 && (
           <div className="space-y-8 text-center">
-            <div>
-              <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-bold mb-2">Symbol #{totalSymbols + 1} Submitted!</h3>
-              <p className="text-muted-foreground">Thank you for contributing to the registry</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
+              {sealedAt && (
+                <p className="text-sm text-muted-foreground">
+                  Sealed at {formatSealedAt(sealedAt)}.
+                </p>
+              )}
+              {originalRecordHash && (
+                <p className="text-sm text-muted-foreground font-mono">
+                  Fingerprint {originalRecordHash.slice(0, 12)}
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground">
+                This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {captureRoute === 'capture_page'
+                  ? 'You recorded this before opening the catalogue.'
+                  : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
+              </p>
+              {!userId && (
+                <p className="text-sm text-muted-foreground">
+                  You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
+                </p>
+              )}
             </div>
+
 
             {newBadges.length > 0 && (
               <div className="bg-primary/10 p-6 rounded-lg">
@@ -1254,26 +1450,72 @@ export const LayeredSubmissionForm = () => {
               />
             )}
 
-            {similarSymbols.length > 0 && (
-              <div>
-                <h4 className="text-lg font-semibold mb-4">Similar Symbols</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  {similarSymbols.map(sym => (
-                     <div key={sym.id} className="border border-border rounded-lg p-4">
-                      <img 
-                        src={sym.image_data} 
-                        alt={`DMT glyph archetype similar to your submission, reported ${sym.confirmation_count} times`}
-                        className="w-full h-auto mb-2"
-                        style={{ imageRendering: 'pixelated' }}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        {sym.confirmation_count} reports
-                      </p>
-                    </div>
-                  ))}
-                </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Does it echo anyone else's?</h4>
+              {similarSymbols.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-3 gap-4">
+                    {similarSymbols.map(sym => (
+                      <div key={sym.id} className="border border-border rounded-lg p-4">
+                        <img
+                          src={sym.image_data}
+                          alt="Another sealed report sharing described features with your submission"
+                          className="w-full h-auto mb-2"
+                          style={{ imageRendering: 'pixelated' }}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {sym.sharedCount} features in common
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Shared features are not evidence of a shared source. They are the starting point for a comparison.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No other sealed report currently shares two or more of the features you described.
+                </p>
+              )}
+            </div>
+
+            {userId && submittedSymbolId && (
+              <div className="text-left">
+                <Label htmlFor="annotation" className="text-base mb-2 block">
+                  Add a dated note to this memory (optional)
+                </Label>
+                <Textarea
+                  id="annotation"
+                  rows={3}
+                  value={annotationDraft}
+                  onChange={(e) => setAnnotationDraft(e.target.value)}
+                />
+                <Button
+                  className="mt-3"
+                  onClick={saveAnnotation}
+                  disabled={isSavingAnnotation || !annotationDraft.trim()}
+                >
+                  {isSavingAnnotation ? 'Saving...' : 'Save note'}
+                </Button>
+
+                {annotations.length > 0 && (
+                  <ul className="mt-4 space-y-3">
+                    {annotations.map(a => (
+                      <li key={a.id} className="border border-border rounded-lg p-3">
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {new Date(a.created_at).toLocaleDateString(undefined, {
+                            day: 'numeric', month: 'long', year: 'numeric'
+                          })}
+                        </p>
+                        <p className="text-sm">{a.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
+
 
             {userStats && (
               <div className="bg-muted/50 p-6 rounded-lg">

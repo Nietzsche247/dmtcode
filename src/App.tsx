@@ -70,6 +70,7 @@ const Retreats = lazy(() => import("./pages/Retreats"));
 const Articles = lazy(() => import("./pages/Articles"));
 const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 const Guides = lazy(() => import("./pages/Guides"));
+const Capture = lazy(() => import("./pages/Capture"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AvatarToastListener } from "./components/AvatarToastListener";
@@ -334,6 +335,14 @@ const App = () => (
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
                 <GuideDetail />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
+          <Route path="/capture" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Capture />
               </Suspense>
             </ErrorBoundary>
           } />

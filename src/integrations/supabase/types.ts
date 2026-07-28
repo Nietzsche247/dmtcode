@@ -815,6 +815,38 @@ export type Database = {
         }
         Relationships: []
       }
+      glyph_annotations: {
+        Row: {
+          body: string
+          created_at: string
+          glyph_id: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          glyph_id: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          glyph_id?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glyph_annotations_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       glyph_votes: {
         Row: {
           created_at: string
@@ -1356,6 +1388,8 @@ export type Database = {
         Row: {
           approximate_dose: string | null
           body_position: string | null
+          capture_route: string | null
+          catalog_exposure_before_submission: string | null
           clarity_rating: number | null
           communicative_intent: string | null
           confidence_rating: number | null
@@ -1372,10 +1406,15 @@ export type Database = {
           motif_tags: string[] | null
           motion: string | null
           orcid: string | null
+          original_record_hash: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
+          privacy_level: string
           protocol_id: string | null
+          pseudonym: string | null
+          publication_consent: boolean
           route_of_administration: string | null
+          sealed_at: string | null
           source: string
           symbol_recurrence: string | null
           symmetry: string | null
@@ -1387,6 +1426,8 @@ export type Database = {
         Insert: {
           approximate_dose?: string | null
           body_position?: string | null
+          capture_route?: string | null
+          catalog_exposure_before_submission?: string | null
           clarity_rating?: number | null
           communicative_intent?: string | null
           confidence_rating?: number | null
@@ -1403,10 +1444,15 @@ export type Database = {
           motif_tags?: string[] | null
           motion?: string | null
           orcid?: string | null
+          original_record_hash?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
+          privacy_level?: string
           protocol_id?: string | null
+          pseudonym?: string | null
+          publication_consent?: boolean
           route_of_administration?: string | null
+          sealed_at?: string | null
           source: string
           symbol_recurrence?: string | null
           symmetry?: string | null
@@ -1418,6 +1464,8 @@ export type Database = {
         Update: {
           approximate_dose?: string | null
           body_position?: string | null
+          capture_route?: string | null
+          catalog_exposure_before_submission?: string | null
           clarity_rating?: number | null
           communicative_intent?: string | null
           confidence_rating?: number | null
@@ -1434,10 +1482,15 @@ export type Database = {
           motif_tags?: string[] | null
           motion?: string | null
           orcid?: string | null
+          original_record_hash?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
+          privacy_level?: string
           protocol_id?: string | null
+          pseudonym?: string | null
+          publication_consent?: boolean
           route_of_administration?: string | null
+          sealed_at?: string | null
           source?: string
           symbol_recurrence?: string | null
           symmetry?: string | null
