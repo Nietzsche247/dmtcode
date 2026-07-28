@@ -23,6 +23,7 @@ import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
 import { ArticlesManager } from './ArticlesManager';
 import { CrawlerIntelligence } from './CrawlerIntelligence';
+import { KitSignups } from './KitSignups';
 
 export const AdminDashboard = () => {
   return (
