@@ -892,6 +892,69 @@ export type Database = {
           },
         ]
       }
+      guides: {
+        Row: {
+          body_md: string | null
+          created_at: string
+          evidence_grade: string | null
+          evidence_grade_note: string | null
+          id: string
+          is_published: boolean
+          last_reviewed: string | null
+          question: string
+          related_paths: Json
+          safety_note: string | null
+          short_answer: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          what_is_unknown: Json
+          what_supports: Json
+          what_weakens: Json
+          what_would_change: Json
+        }
+        Insert: {
+          body_md?: string | null
+          created_at?: string
+          evidence_grade?: string | null
+          evidence_grade_note?: string | null
+          id?: string
+          is_published?: boolean
+          last_reviewed?: string | null
+          question: string
+          related_paths?: Json
+          safety_note?: string | null
+          short_answer: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          what_is_unknown?: Json
+          what_supports?: Json
+          what_weakens?: Json
+          what_would_change?: Json
+        }
+        Update: {
+          body_md?: string | null
+          created_at?: string
+          evidence_grade?: string | null
+          evidence_grade_note?: string | null
+          id?: string
+          is_published?: boolean
+          last_reviewed?: string | null
+          question?: string
+          related_paths?: Json
+          safety_note?: string | null
+          short_answer?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          what_is_unknown?: Json
+          what_supports?: Json
+          what_weakens?: Json
+          what_would_change?: Json
+        }
+        Relationships: []
+      }
       market_disagreements: {
         Row: {
           created_at: string
