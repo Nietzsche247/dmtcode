@@ -46,8 +46,9 @@ export const Following = ({ userId }: { userId: string }) => {
       const protocolIds = idsFor('protocol');
       const retreatIds = idsFor('retreat');
       const eventIds = idsFor('event');
+      const trialIds = idsFor('trial');
 
-      const [articles, theories, protocols, retreats, events] = await Promise.all([
+      const [articles, theories, protocols, retreats, events, trials] = await Promise.all([
         articleIds.length
           ? supabase.from('articles').select('id, title, slug').in('id', articleIds)
           : Promise.resolve({ data: [] as any[] }),
@@ -62,6 +63,9 @@ export const Following = ({ userId }: { userId: string }) => {
           : Promise.resolve({ data: [] as any[] }),
         eventIds.length
           ? supabase.from('events').select('id, title').in('id', eventIds)
+          : Promise.resolve({ data: [] as any[] }),
+        trialIds.length
+          ? supabase.from('clinical_trials').select('id, title').in('id', trialIds)
           : Promise.resolve({ data: [] as any[] }),
       ]);
 
