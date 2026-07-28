@@ -125,7 +125,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     customTags: '',
     description: '',
     orcid: '',
-    confidenceRating: 3
+    confidenceRating: 3,
+    privacyLevel: 'anonymous_matchable',
+    publicationConsent: false,
+    pseudonym: ''
   });
 
   // Primacy contamination check (after formData is defined)
