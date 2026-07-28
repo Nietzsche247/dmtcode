@@ -427,17 +427,69 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     setNewBadges(earnedBadges);
   };
 
-  const loadSimilarSymbols = async (tags: string[]) => {
+  const loadSimilarSymbols = async (insertedId: string) => {
+    // Descriptive features only. Context tags (priming, wavelength, method,
+    // location, room, outdoor, surface, time of day) are deliberately excluded.
+    const basis = [
+      ...formData.formTypes,
+      ...formData.geometricShapes,
+      ...formData.letterLikeStyles,
+      ...formData.culturalStyles,
+      formData.symmetry,
+      ...formData.colors,
+      ...formData.movements,
+      formData.sizeImpression,
+      ...formData.customTags.split(',').map(t => t.trim())
+    ].filter(Boolean);
+
+    if (basis.length < 2) {
+      setSimilarSymbols([]);
+      return;
+    }
+
     const { data } = await supabase
       .from('registry_glyphs')
-      .select('id, image_data, confirmation_count, motif_tags')
-      .order('confirmation_count', { ascending: false })
-      .limit(3);
-    
-    if (data) {
-      setSimilarSymbols(data);
-    }
+      .select('id, image_data, motif_tags, sealed_at, created_at')
+      .overlaps('motif_tags', basis)
+      .neq('id', insertedId)
+      .limit(50);
+
+    const scored = (data || [])
+      .map(row => ({
+        ...row,
+        sharedCount: basis.filter(t => (row.motif_tags || []).includes(t)).length
+      }))
+      .filter(row => row.sharedCount >= 2)
+      .sort((a, b) => b.sharedCount - a.sharedCount)
+      .slice(0, 3);
+
+    setSimilarSymbols(scored);
   };
+
+  const loadAnnotations = async (glyphId: string) => {
+    const { data } = await supabase
+      .from('glyph_annotations')
+      .select('id, body, created_at')
+      .eq('glyph_id', glyphId)
+      .order('created_at', { ascending: true });
+    setAnnotations(data || []);
+  };
+
+  const saveAnnotation = async () => {
+    if (!userId || !submittedSymbolId || !annotationDraft.trim()) return;
+    setIsSavingAnnotation(true);
+    const { error } = await supabase
+      .from('glyph_annotations')
+      .insert({ glyph_id: submittedSymbolId, user_id: userId, body: annotationDraft.trim() });
+    setIsSavingAnnotation(false);
+    if (error) {
+      toast.error('Could not save the note');
+      return;
+    }
+    setAnnotationDraft('');
+    await loadAnnotations(submittedSymbolId);
+  };
+
 
   const resetForm = () => {
     setFormData({
