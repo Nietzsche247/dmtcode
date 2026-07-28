@@ -1807,31 +1807,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               </div>
             )}
 
-
-            {userStats && (
-              <div className="bg-muted/50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold mb-4">Your Stats</h4>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-primary">{(userStats.total_submissions || 0) + 1}</div>
-                    <div className="text-sm text-muted-foreground">Total Submissions</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-primary">{totalSymbols + 1}</div>
-                    <div className="text-sm text-muted-foreground">Registry Size</div>
-                  </div>
-                </div>
-                {(userStats.total_submissions || 0) + 1 < 5 && (
-                  <p className="text-sm text-muted-foreground mt-4">
-                    Submit {5 - ((userStats.total_submissions || 0) + 1)} more for Contributor badge
-                  </p>
-                )}
-              </div>
-            )}
-
             <div className="flex flex-col gap-3">
               <Button onClick={resetForm} size="lg">
-                Submit Another Symbol
+                Capture another memory
               </Button>
               <Button variant="ghost" onClick={() => window.location.href = '/registry#browse'}>
                 Explore Registry
