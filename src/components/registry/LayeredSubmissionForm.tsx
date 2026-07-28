@@ -1643,33 +1643,52 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         {step === 7 && (
           <div className="space-y-8 text-center">
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold mb-2">Your memory has been sealed</h3>
-              {sealedAt && (
-                <p className="text-sm text-muted-foreground">
-                  Sealed at {formatSealedAt(sealedAt)}.
-                </p>
+              <h3 className="text-2xl font-bold mb-2">
+                {wasOfflineCapture ? 'Your memory is saved on this device' : 'Your memory has been sealed'}
+              </h3>
+
+              {wasOfflineCapture ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    You were offline when you recorded this, so it is stored on this device and has not been sealed yet.
+                    {offlineCapturedAt ? ` Your device reported the time as ${formatSealedAt(offlineCapturedAt)}.` : ''}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    When you are back online it will be sent to us and sealed with a server timestamp, and the server time is the one we can actually vouch for. If you clear this browser's data before that happens, the record is lost.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Once it is sealed the record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {sealedAt && (
+                    <p className="text-sm text-muted-foreground">
+                      Sealed at {formatSealedAt(sealedAt)}.
+                    </p>
+                  )}
+                  {originalRecordHash && (
+                    <p className="text-sm text-muted-foreground font-mono">
+                      Fingerprint {originalRecordHash.slice(0, 12)}
+                    </p>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
+                  </p>
+                </>
               )}
-              {originalRecordHash && (
-                <p className="text-sm text-muted-foreground font-mono">
-                  Fingerprint {originalRecordHash.slice(0, 12)}
-                </p>
-              )}
-              <p className="text-sm text-muted-foreground">
-                This record cannot be edited, by you or by us. If your memory of it changes, you can add a dated note beside it and both versions will be kept.
-              </p>
+
               <p className="text-sm text-muted-foreground">
                 {captureRoute === 'capture_page'
                   ? 'You recorded this before opening the catalogue.'
                   : 'You recorded this from the registry page, so this report is marked as catalogue exposed.'}
               </p>
-              {wasOfflineCapture && offlineCapturedAt && (
-                <p className="text-sm text-muted-foreground">
-                  You recorded this while offline. Your device reported the time as {formatSealedAt(offlineCapturedAt)}. We sealed it at {sealedAt ? formatSealedAt(sealedAt) : 'the server time recorded on sync'} when it reached us, and that server time is the one we can actually vouch for.
-                </p>
-              )}
+
               {!userId && (
                 <p className="text-sm text-muted-foreground">
-                  You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.
+                  {wasOfflineCapture
+                    ? 'You are not signed in, so this memory cannot be added to a private vault. It will be sealed when it reaches us and it counts.'
+                    : 'You are not signed in, so this memory cannot be added to a private vault. It is sealed and it counts.'}
                 </p>
               )}
             </div>
