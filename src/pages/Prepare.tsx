@@ -101,7 +101,7 @@ function NotifyInline({ slug, name }: { slug: string; name: string }) {
     <form onSubmit={submit} className="border-t border-border/40 pt-4 mt-4 space-y-2">
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
         <Bell className="w-3.5 h-3.5" />
-        Notify me when this opens
+        Notify me when this ships
       </div>
       <div className="flex gap-2">
         <Input
