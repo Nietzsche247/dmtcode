@@ -1747,6 +1747,8 @@ export const config: Config = {
     "/protocols/*",
     "/articles",
     "/articles/*",
+    "/guides",
+    "/guides/*",
     "/privacy",
     "/terms",
     "/disclosure",
