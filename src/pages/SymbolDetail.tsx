@@ -323,6 +323,16 @@ const SymbolDetail = () => {
                   )}
                 </Card>
 
+                {symbol.image_url?.startsWith('/placeholder-symbol-') && (
+                  <div className="space-y-2">
+                    <Badge variant="secondary">Curated starter set</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Curated by the project from public imagery in November 2025 as part of the registry's starting corpus, not a user submission.
+                    </p>
+                  </div>
+                )}
+
+
                 {/* Prominent one-tap confirmation */}
                 <SeenItButton
                   symbolId={symbol.id}
