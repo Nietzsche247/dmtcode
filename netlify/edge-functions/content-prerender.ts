@@ -25,6 +25,7 @@ const HANDLED_DETAIL_KINDS = new Set<string>([
   "theories",
   "protocols",
   "articles",
+  "guides",
 ]);
 
 
