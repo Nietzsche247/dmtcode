@@ -16,6 +16,7 @@ import { SymbolContextPanel } from '@/components/context/SymbolContextPanel';
 import { CoWitnessModule } from '@/components/co-witness/CoWitnessModule';
 import { CoWitnessInviteDialog } from '@/components/co-witness/CoWitnessInviteDialog';
 import { SaveButton } from '@/components/dashboard/SaveButton';
+import { FollowButton } from '@/components/FollowButton';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ShareConvergenceButton } from '@/components/registry/ShareConvergenceDialog';
 import { Helmet } from 'react-helmet';
@@ -341,6 +342,7 @@ const SymbolDetail = () => {
                 {/* Actions */}
                 <div className="flex items-center justify-end">
                   <div className="flex items-center gap-2">
+                    <FollowButton entityType="symbol" entityId={symbol.id} />
                     <SaveButton symbolId={symbol.id} size="default" />
                     <ShareButtons 
                       title={`Symbol ${symbol.id.slice(0, 8)}`}
