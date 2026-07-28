@@ -1215,7 +1215,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
               <Button onClick={handleNext}>
-                Next: Optional Details <ChevronRight className="ml-2 w-4 h-4" />
+                Next: Visual Field Map <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
