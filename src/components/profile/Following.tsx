@@ -92,6 +92,10 @@ export const Following = ({ userId }: { userId: string }) => {
           const e = (events.data ?? []).find((x: any) => x.id === row.entity_id);
           return e ? { id: row.id, type: 'event', label: e.title, to: `/events/${e.id}` } : null;
         }
+        if (row.entity_type === 'trial') {
+          const tr = (trials.data ?? []).find((x: any) => x.id === row.entity_id);
+          return tr ? { id: row.id, type: 'trial', label: tr.title, to: `/trials/${tr.id}` } : null;
+        }
         return null;
       };
 
