@@ -100,12 +100,13 @@ export default async (request: Request, context: Context) => {
     const kind = seg[0];
     const id = seg[1] ?? "";
 
-    // Machine endpoints and static assets are served by other edge functions
-    // (articles-feed, sitemap, data-json, articles-json). content-prerender is
-    // declared in netlify.toml and therefore runs before in-source configured
-    // functions, so any path ending in a file extension must pass straight
-    // through untouched or this function swallows it and 404s it.
-    if (/\.[a-z0-9]{2,5}$/i.test(url.pathname)) {
+    // Machine endpoints served by OTHER edge functions must pass straight through.
+    // content-prerender is declared in netlify.toml and therefore runs BEFORE
+    // functions that rely on an in-source `export const config`, so without this
+    // it swallows them and 404s them. Keep this an explicit allowlist, never a
+    // blanket extension regex, or missing paths become 200 soft-404s.
+    const MACHINE_ENDPOINTS = new Set<string>(["/articles/feed.xml"]);
+    if (MACHINE_ENDPOINTS.has(url.pathname)) {
       return context.next();
     }
 
