@@ -119,6 +119,12 @@ export default async (request: Request, context: Context) => {
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context);
     }
+    if (kind === "timeline" && seg.length === 1) {
+      return await renderTimelineIndex(context, request);
+    }
+    if (kind === "timeline" && seg.length === 2 && seg[1]) {
+      return await renderTimelineEntry(context, request, seg[1]);
+    }
     if (kind === "faq" && seg.length === 1) {
       return await renderFaq(context);
     }
@@ -805,7 +811,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   const canonical = `${SITE}/evidence-map`;
   const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
   const metaDesc = clip(
-    "A balanced evidence timeline with peer reviewed citations and stance scored milestones from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
+    "A balanced evidence timeline with peer reviewed citations and resolved DOIs from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
     160,
   );
 
@@ -881,10 +887,10 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
       },
       {
         "@type": "Question",
-        name: "Where is the primary peer reviewed reference?",
+        name: "Where is the reference for the 650 nm laser protocol?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.",
+          text: "Goler D. 2025, Detailing a Pilot Study: The 'Code of Reality' Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness. IPI Letters, pages N1 to N5, DOI 10.59973/ipil.158. It is a pilot report in a letters venue rather than a controlled trial. The dated chronology at /timeline labels it that way and lists the peer reviewed DMT literature separately.",
         },
       },
     ],
@@ -899,15 +905,19 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   </section>
   <section>
     <h2>What the open data shows</h2>
-    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. The bibliography carries stance-scored entries from skeptical to supportive so the distribution can be inspected directly.</p>
+    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
   </section>
   <section>
     <h2>How to judge it</h2>
     <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
   </section>
   <section>
-    <h2>Primary reference</h2>
-    <p>Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.</p>
+    <h2>Primary reference for the laser protocol</h2>
+    <p>Goler D. 2025, Detailing a Pilot Study: The 'Code of Reality' Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness. IPI Letters, pages N1 to N5, DOI <a href="https://doi.org/10.59973/ipil.158">10.59973/ipil.158</a>. It is a pilot report in a letters venue rather than a controlled trial, and the chronology labels it that way. The peer reviewed literature on DMT phenomenology is separate and is listed in the same chronology.</p>
+  </section>
+  <section>
+    <h2>The dated record</h2>
+    <p>Every source on this timeline also exists as a dated record with its own address at <a href="${SITE}/timeline">/timeline</a>, where the same set can be sorted by date, person, place or kind of evidence and filtered by tag. The underlying data is <a href="${SITE}/timeline.json">/timeline.json</a> and the schema for adding a paper is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>.</p>
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
@@ -1131,7 +1141,7 @@ const PROTOCOL_GUIDE_FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Where does the actual data live?",
-    a: "The symbol registry at /registry, the stance-scored research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
+    a: "The symbol registry at /registry, the research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
   },
 ];
 
@@ -1811,6 +1821,8 @@ export const config: Config = {
     "/protocol-guide",
     "/prepare",
     "/evidence-map",
+    "/timeline",
+    "/timeline/*",
     "/faq",
     "/events",
     "/events/*",
