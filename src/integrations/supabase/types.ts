@@ -1812,12 +1812,17 @@ export type Database = {
           downvotes: number
           duration_seconds: number | null
           emotional_valence: string | null
+          evidence_status: Database["public"]["Enums"]["symbol_evidence_status"]
           id: string
           image_url: string
+          is_curated_example: boolean
           moderated_at: string | null
           moderated_by: string | null
+          moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
+          published_at: string | null
           recurrence: string | null
           rejection_reason: string | null
+          review_due_at: string | null
           source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
           surface_type: string | null
@@ -1827,6 +1832,7 @@ export type Database = {
           upvotes: number
           user_id: string
           vector_json: Json | null
+          visibility_status: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength: string | null
         }
         Insert: {
@@ -1837,12 +1843,17 @@ export type Database = {
           downvotes?: number
           duration_seconds?: number | null
           emotional_valence?: string | null
+          evidence_status?: Database["public"]["Enums"]["symbol_evidence_status"]
           id?: string
           image_url: string
+          is_curated_example?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
+          moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          published_at?: string | null
           recurrence?: string | null
           rejection_reason?: string | null
+          review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
@@ -1852,6 +1863,7 @@ export type Database = {
           upvotes?: number
           user_id: string
           vector_json?: Json | null
+          visibility_status?: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength?: string | null
         }
         Update: {
@@ -1862,12 +1874,17 @@ export type Database = {
           downvotes?: number
           duration_seconds?: number | null
           emotional_valence?: string | null
+          evidence_status?: Database["public"]["Enums"]["symbol_evidence_status"]
           id?: string
           image_url?: string
+          is_curated_example?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
+          moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          published_at?: string | null
           recurrence?: string | null
           rejection_reason?: string | null
+          review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
@@ -1877,6 +1894,7 @@ export type Database = {
           upvotes?: number
           user_id?: string
           vector_json?: Json | null
+          visibility_status?: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength?: string | null
         }
         Relationships: []
@@ -2562,6 +2580,19 @@ export type Database = {
       app_role: "admin" | "moderator" | "user"
       co_witness_visibility: "private" | "pairs_only" | "wall"
       submission_status: "pending" | "approved" | "rejected"
+      symbol_evidence_status:
+        | "raw"
+        | "eligible"
+        | "ineligible"
+        | "candidate_match"
+        | "reviewed_convergence"
+        | "controlled_replication"
+      symbol_moderation_status:
+        | "unreviewed"
+        | "reviewed"
+        | "denied"
+        | "reported"
+      symbol_visibility_status: "private" | "public" | "hidden"
       symbol_vote_type: "upvote" | "downvote" | "seen_it"
       tag_kind: "context" | "general"
     }
@@ -2694,6 +2725,21 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       co_witness_visibility: ["private", "pairs_only", "wall"],
       submission_status: ["pending", "approved", "rejected"],
+      symbol_evidence_status: [
+        "raw",
+        "eligible",
+        "ineligible",
+        "candidate_match",
+        "reviewed_convergence",
+        "controlled_replication",
+      ],
+      symbol_moderation_status: [
+        "unreviewed",
+        "reviewed",
+        "denied",
+        "reported",
+      ],
+      symbol_visibility_status: ["private", "public", "hidden"],
       symbol_vote_type: ["upvote", "downvote", "seen_it"],
       tag_kind: ["context", "general"],
     },
