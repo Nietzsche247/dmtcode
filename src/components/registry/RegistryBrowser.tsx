@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, FileEdit } from 'lucide-react';
@@ -7,18 +7,9 @@ import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
+import { isCuratedExample } from '@/lib/submissionStatus';
 
 const RESONANCE_MIN_RESPONSES = 5;
-
-interface SeededSymbol {
-  id: string;
-  description: string;
-  tags: string[];
-  source: string;
-  surface: string;
-  symmetry: string;
-  doi: string;
-}
 
 interface SymbolSubmission {
   id: string;
@@ -28,6 +19,7 @@ interface SymbolSubmission {
   upvotes: number;
   downvotes: number;
   status: 'pending' | 'approved' | 'rejected';
+  is_curated_example: boolean;
   source_method: string | null;
   created_at: string;
   user_id: string;
@@ -42,10 +34,8 @@ interface ProfileData {
 export const RegistryBrowser = () => {
   const navigate = useNavigate();
   const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
-  const seededSectionRef = useRef<HTMLDivElement>(null);
-  
+
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
-  const [seededSymbols, setSeededSymbols] = useState<SeededSymbol[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
@@ -58,24 +48,7 @@ export const RegistryBrowser = () => {
 
   useEffect(() => {
     loadSymbols();
-    loadSeededSymbols();
   }, []);
-
-  const loadSeededSymbols = async () => {
-    try {
-      const response = await fetch('/data.json');
-      const data = await response.json();
-      if (data.symbols) {
-        setSeededSymbols(data.symbols);
-      }
-    } catch (error) {
-      console.error('Failed to load seeded symbols:', error);
-    }
-  };
-
-  const scrollToSeededSymbols = () => {
-    seededSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   useEffect(() => {
     // Track filter changes
@@ -100,7 +73,7 @@ export const RegistryBrowser = () => {
     // Load approved submissions
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, created_at, user_id')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, is_curated_example, source_method, created_at, user_id')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
@@ -218,6 +191,39 @@ export const RegistryBrowser = () => {
     return filtered;
   }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
 
+  // Observer submissions and curated examples are rendered in two separate
+  // sections and are never mixed into one grid. A curated example is an
+  // illustration added by the site operator, not a report from a person who saw
+  // something, and a reader must be able to tell which is which at a glance.
+  const observerSymbols = useMemo(
+    () =>
+      filteredSymbols.filter(
+        (s) => !isCuratedExample({ image_url: s.image_url, is_curated_example: s.is_curated_example })
+      ),
+    [filteredSymbols]
+  );
+
+  const curatedSymbols = useMemo(
+    () =>
+      filteredSymbols.filter((s) =>
+        isCuratedExample({ image_url: s.image_url, is_curated_example: s.is_curated_example })
+      ),
+    [filteredSymbols]
+  );
+
+  // A count of zero renders as nothing at all, never as a printed zero.
+  const resultSegments: string[] = [];
+  if (observerSymbols.length > 0) {
+    resultSegments.push(
+      `${observerSymbols.length} observer submission${observerSymbols.length === 1 ? '' : 's'}`
+    );
+  }
+  if (curatedSymbols.length > 0) {
+    resultSegments.push(
+      `${curatedSymbols.length} curated example${curatedSymbols.length === 1 ? '' : 's'}`
+    );
+  }
+
   const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
 
   const clearFilters = () => {
@@ -238,7 +244,7 @@ export const RegistryBrowser = () => {
             Browse Registry
           </h2>
           <p className="text-muted-foreground text-center md:text-left">
-            Community-submitted symbols with voting and validation
+            Observer submissions and curated examples, listed separately and never mixed
           </p>
         </div>
         <Button 
@@ -277,9 +283,11 @@ export const RegistryBrowser = () => {
       />
 
       {/* Results count */}
-      <div className="text-center text-sm text-muted-foreground mb-6">
-        Showing {filteredSymbols.length} of {symbols.length} symbols
-      </div>
+      {resultSegments.length > 0 && (
+        <div className="text-center text-sm text-muted-foreground mb-6">
+          Showing {resultSegments.join(' and ')}
+        </div>
+      )}
 
       {/* Loading state */}
       {loading && (
@@ -308,17 +316,6 @@ export const RegistryBrowser = () => {
               Submit Your Symbol
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            {seededSymbols.length > 0 && (
-              <p className="text-sm text-muted-foreground">
-                Or{' '}
-                <button 
-                  onClick={scrollToSeededSymbols}
-                  className="text-primary hover:underline font-medium"
-                >
-                  browse our seeded reference library
-                </button>
-              </p>
-            )}
           </div>
         </div>
       )}
@@ -335,64 +332,71 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
-      {/* Symbol Grid - User submissions */}
-      {!loading && filteredSymbols.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSymbols.map((symbol) => (
-            <SymbolCard
-              key={symbol.id}
-              id={symbol.id}
-              imageUrl={symbol.image_url}
-              description={symbol.description}
-              tags={symbol.tags}
-              upvotes={symbol.upvotes}
-              validationCount={validationCounts[symbol.id] || 0}
-              status={symbol.status}
-              contributor={profiles[symbol.user_id] ? {
-                id: profiles[symbol.user_id].id,
-                displayName: profiles[symbol.user_id].display_name,
-                avatarUrl: profiles[symbol.user_id].avatar_url,
-              } : null}
-              createdAt={symbol.created_at}
-              submitterId={symbol.user_id}
-              highlightTerms={highlightTerms}
-            />
-          ))}
+      {/* Observer submissions */}
+      {!loading && observerSymbols.length > 0 && (
+        <div>
+          <h3 className="text-xl md:text-2xl font-bold mb-2">Observer submissions</h3>
+          <p className="text-sm text-muted-foreground mb-6 max-w-3xl leading-relaxed">
+            Forms submitted by people reporting what they saw. Each one publishes the moment it is
+            submitted. Publication here is not review and it is not approval.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {observerSymbols.map((symbol) => (
+              <SymbolCard
+                key={symbol.id}
+                id={symbol.id}
+                imageUrl={symbol.image_url}
+                description={symbol.description}
+                tags={symbol.tags}
+                upvotes={symbol.upvotes}
+                validationCount={validationCounts[symbol.id] || 0}
+                status={symbol.status}
+                curated={symbol.is_curated_example}
+                contributor={profiles[symbol.user_id] ? {
+                  id: profiles[symbol.user_id].id,
+                  displayName: profiles[symbol.user_id].display_name,
+                  avatarUrl: profiles[symbol.user_id].avatar_url,
+                } : null}
+                createdAt={symbol.created_at}
+                submitterId={symbol.user_id}
+                highlightTerms={highlightTerms}
+              />
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Seeded Reference Library */}
-      {!loading && seededSymbols.length > 0 && (
-        <div ref={seededSectionRef} className="mt-20 pt-12 border-t border-border/50">
-          <div className="text-center mb-10">
-            <h3 className="text-2xl md:text-3xl font-bold mb-2">Reference Library</h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {seededSymbols.length} documented symbols from peer-reviewed research (Davis et al., Timmermann et al.)
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {seededSymbols.map((symbol) => (
-              <div 
+      {/* Curated examples */}
+      {!loading && curatedSymbols.length > 0 && (
+        <div className="mt-16 pt-12 border-t border-border/50">
+          <h3 className="text-xl md:text-2xl font-bold mb-2">Curated examples</h3>
+          <p className="text-sm text-muted-foreground mb-6 max-w-3xl leading-relaxed">
+            These were added by the site operator in November 2025 from public imagery so the
+            registry would not open empty. They are not observer submissions. Nobody reported
+            seeing them, and they are excluded from every evidence and convergence total on this
+            site.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {curatedSymbols.map((symbol) => (
+              <SymbolCard
                 key={symbol.id}
-                className="group relative bg-card/50 border border-border/50 rounded-lg p-4 hover:border-primary/30 transition-colors"
-              >
-                <div className="aspect-square bg-muted/30 rounded-md mb-3 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground font-mono">{symbol.id}</span>
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                  {symbol.description}
-                </p>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {symbol.tags.slice(0, 2).map((tag) => (
-                    <span 
-                      key={tag}
-                      className="text-[10px] px-1.5 py-0.5 bg-muted/50 rounded text-muted-foreground"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                id={symbol.id}
+                imageUrl={symbol.image_url}
+                description={symbol.description}
+                tags={symbol.tags}
+                upvotes={symbol.upvotes}
+                validationCount={validationCounts[symbol.id] || 0}
+                status={symbol.status}
+                curated={symbol.is_curated_example}
+                contributor={profiles[symbol.user_id] ? {
+                  id: profiles[symbol.user_id].id,
+                  displayName: profiles[symbol.user_id].display_name,
+                  avatarUrl: profiles[symbol.user_id].avatar_url,
+                } : null}
+                createdAt={symbol.created_at}
+                submitterId={symbol.user_id}
+                highlightTerms={highlightTerms}
+              />
             ))}
           </div>
         </div>
