@@ -3,39 +3,71 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 
 /**
- * Real convergence stats. Reads ONLY symbol_submissions + symbol_votes.
- * The seeded registry_glyphs table is a separate reference library and is
- * intentionally NOT counted here.
+ * Real registry statistics.
+ *
+ * Two rules govern this component.
+ *
+ * 1. Curated examples never count as observer submissions. The forms added by
+ *    the site operator in November 2025 are illustrations, not reports from
+ *    people who saw something, and folding them into a contributor total would
+ *    overstate participation.
+ *
+ * 2. A recognition recorded on this site is post exposure recognition. The
+ *    reader was already looking at the symbol here when they pressed the
+ *    control. It is not an independent match and it must never be labelled as
+ *    one. Independence is the question this registry exists to answer, not
+ *    something a vote count can settle.
+ *
+ * registry_glyphs is a separate anonymous capture table and is not counted here.
  */
 export const RegistryStatistics = () => {
   const [stats, setStats] = useState({
-    contributedSubmissions: 0,
-    independentConfirmations: 0,
-    multiConfirmed: 0,
-    lastUpdated: null as Date | null,
+    observerSubmissions: 0,
+    curatedExamples: 0,
+    recognitions: 0,
+    multiRecognized: 0,
+    lastContribution: null as Date | null,
   });
 
   const loadStats = async () => {
-    const [{ count: subCount }, { count: seenCount }, { data: multi }, { data: latest }] =
-      await Promise.all([
-        supabase.from('symbol_submissions').select('*', { count: 'exact', head: true }),
-        supabase
-          .from('symbol_votes')
-          .select('*', { count: 'exact', head: true })
-          .eq('vote_type', 'seen_it'),
-        supabase.from('symbol_submissions').select('id').gte('upvotes', 3),
-        supabase
-          .from('symbol_submissions')
-          .select('created_at')
-          .order('created_at', { ascending: false })
-          .limit(1),
-      ]);
+    const [
+      { count: observerCount },
+      { count: curatedCount },
+      { count: seenCount },
+      { data: multi },
+      { data: latest },
+    ] = await Promise.all([
+      supabase
+        .from('symbol_submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_curated_example', false),
+      supabase
+        .from('symbol_submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_curated_example', true),
+      supabase
+        .from('symbol_votes')
+        .select('*', { count: 'exact', head: true })
+        .eq('vote_type', 'seen_it'),
+      supabase
+        .from('symbol_submissions')
+        .select('id')
+        .eq('is_curated_example', false)
+        .gte('upvotes', 3),
+      supabase
+        .from('symbol_submissions')
+        .select('created_at')
+        .eq('is_curated_example', false)
+        .order('created_at', { ascending: false })
+        .limit(1),
+    ]);
 
     setStats({
-      contributedSubmissions: subCount ?? 0,
-      independentConfirmations: seenCount ?? 0,
-      multiConfirmed: multi?.length ?? 0,
-      lastUpdated: latest && latest[0] ? new Date(latest[0].created_at) : null,
+      observerSubmissions: observerCount ?? 0,
+      curatedExamples: curatedCount ?? 0,
+      recognitions: seenCount ?? 0,
+      multiRecognized: multi?.length ?? 0,
+      lastContribution: latest && latest[0] ? new Date(latest[0].created_at) : null,
     });
   };
 
@@ -64,42 +96,59 @@ export const RegistryStatistics = () => {
   return (
     <section className="container mx-auto px-4 py-12">
       <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">Live Statistics</h2>
-      <p className="text-center text-sm text-muted-foreground mb-8">
-        Contributed symbols and independent confirmations from real participants.
-        Seeded reference glyphs are excluded.
+      <p className="text-center text-sm text-muted-foreground mb-8 max-w-3xl mx-auto">
+        Counted live from the database. Curated examples added by the site operator are counted
+        separately and are never folded into the observer total. Anonymous captures made through
+        the drawing tool are held in a different table and are not counted here.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
         <Card className="p-6 text-center bg-card border-border">
           <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
-            {stats.contributedSubmissions}
+            {stats.observerSubmissions}
           </div>
-          <div className="text-sm text-muted-foreground">Contributed Submissions</div>
+          <div className="text-sm text-muted-foreground">Observer Submissions</div>
+          <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
+            People reporting what they saw
+          </p>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
           <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
-            {stats.independentConfirmations}
+            {stats.recognitions}
           </div>
-          <div className="text-sm text-muted-foreground">Independent Confirmations</div>
+          <div className="text-sm text-muted-foreground">Recognized After Seeing It Here</div>
+          <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
+            Recognition after exposure to this catalogue, not an independent match
+          </p>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
           <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
-            {stats.multiConfirmed}
+            {stats.multiRecognized}
           </div>
-          <div className="text-sm text-muted-foreground">
-            Symbols Recognized by ≥3 Participants
-          </div>
+          <div className="text-sm text-muted-foreground">Recognized by 3 or More Readers</div>
+          <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
+            Observer submissions only
+          </p>
         </Card>
 
         <Card className="p-6 text-center bg-card border-border">
           <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
-            {stats.lastUpdated ? stats.lastUpdated.toLocaleDateString() : 'N/A'}
+            {stats.curatedExamples}
           </div>
-          <div className="text-sm text-muted-foreground">Last Contribution</div>
+          <div className="text-sm text-muted-foreground">Curated Examples</div>
+          <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
+            Added by the site operator, excluded from every evidence total
+          </p>
         </Card>
       </div>
+
+      {stats.lastContribution && (
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Last observer submission {stats.lastContribution.toLocaleDateString()}
+        </p>
+      )}
     </section>
   );
 };
