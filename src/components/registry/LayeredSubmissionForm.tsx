@@ -18,6 +18,7 @@ import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { AlertTriangle } from 'lucide-react';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from './VisualFieldMap';
+import { SignInToContribute } from '@/components/SignInToContribute';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
@@ -254,6 +255,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleSubmit = async () => {
+    if (!userId) {
+      toast.error('Please sign in first so your record can be stamped to you');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
