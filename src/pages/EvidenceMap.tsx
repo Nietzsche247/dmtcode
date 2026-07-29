@@ -1,44 +1,88 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { EVIDENCE_LABEL, byDate, loadTimeline, sourceLink } from '@/lib/timeline';
 
 const EvidenceMap = () => {
+  const [recordCount, setRecordCount] = useState<number | null>(null);
+  const [timelineFailed, setTimelineFailed] = useState(false);
+
   useEffect(() => {
-    // Load TimelineJS CSS
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css';
     document.head.appendChild(link);
 
-    // Load TimelineJS script
-    const script = document.createElement('script');
-    script.src = 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js';
-    script.async = true;
-    script.onload = () => {
-      // Initialize timeline after script loads
-      if (window.TL && window.TL.Timeline) {
-        new window.TL.Timeline('timeline-embed', '/timeline.json', {
-          initial_zoom: 5,
-          start_at_end: false,
-          hash_bookmark: true,
-          scale_factor: 2,
-          timenav_height: 200,
-          marker_height_min: 30,
-          marker_width_min: 100,
-          default_bg_color: { r: 0, g: 0, b: 0 },
-          font: 'bitter-raleway'
+    let script: HTMLScriptElement | null = null;
+    let cancelled = false;
+
+    loadTimeline()
+      .then((file) => {
+        if (cancelled) return;
+        setRecordCount(file.entries.length);
+
+        const events = [...file.entries].sort(byDate).map((e) => {
+          const href = sourceLink(e.source);
+          const body =
+            `<p>${e.summary}</p>` +
+            (e.source.citation ? `<p>${e.source.citation}</p>` : '') +
+            (e.source.note ? `<p>${e.source.note}</p>` : '') +
+            (href ? `<p><a href="${href}" target="_blank" rel="noopener noreferrer">Read the source</a></p>` : '') +
+            `<p><a href="/timeline/${e.id}">Open the full record on this site</a></p>`;
+          return {
+            unique_id: e.id,
+            group: EVIDENCE_LABEL[e.evidence_class] ?? e.evidence_class,
+            start_date: {
+              year: e.date.year,
+              ...(e.date.month ? { month: e.date.month } : {}),
+              ...(e.date.day ? { day: e.date.day } : {}),
+            },
+            text: { headline: e.headline, text: body },
+          };
         });
-      }
-    };
-    document.body.appendChild(script);
+
+        script = document.createElement('script');
+        script.src = 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js';
+        script.async = true;
+        script.onload = () => {
+          if (cancelled) return;
+          if (window.TL && window.TL.Timeline) {
+            new window.TL.Timeline(
+              'timeline-embed',
+              {
+                title: { text: { headline: file.title.headline, text: file.title.text } },
+                events,
+              },
+              {
+                initial_zoom: 5,
+                start_at_end: false,
+                hash_bookmark: true,
+                scale_factor: 2,
+                timenav_height: 200,
+                marker_height_min: 30,
+                marker_width_min: 100,
+                default_bg_color: { r: 0, g: 0, b: 0 },
+                font: 'bitter-raleway',
+              }
+            );
+          }
+        };
+        document.body.appendChild(script);
+      })
+      .catch(() => {
+        if (!cancelled) setTimelineFailed(true);
+      });
 
     return () => {
-      document.head.removeChild(link);
-      document.body.removeChild(script);
+      cancelled = true;
+      if (link.parentNode) link.parentNode.removeChild(link);
+      if (script && script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
+
 
   return (
     <>
