@@ -41,12 +41,7 @@ const Index = () => {
                 "@type": "WebSite",
                 "name": "DMT Code Visual Symbol Catalogue",
                 "url": "https://dmtcode.com",
-                "description": "An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences.",
-                "potentialAction": {
-                  "@type": "SearchAction",
-                  "target": "https://dmtcode.com/registry?q={search_term_string}",
-                  "query-input": "required name=search_term_string"
-                }
+                "description": "An open, community-maintained catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences."
               },
               {
                 "@type": "Organization",
@@ -61,7 +56,7 @@ const Index = () => {
                 "name": "DMT Code Visual Symbol Catalogue",
                 "description": "Open-access catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Includes structured metadata on source, route of administration, and phenomenological characteristics.",
                 "url": "https://dmtcode.com/data.json",
-                "dateModified": "2025-11-28",
+                
                 "license": "https://creativecommons.org/licenses/by/4.0/",
                 "distribution": {
                   "@type": "DataDownload",

@@ -107,15 +107,7 @@ const Home = () => {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
-            "license": "https://creativecommons.org/licenses/by/4.0/",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://dmtcode.com/api/symbols?tag={search_term_string}"
-              },
-              "query-input": "required name=search_term_string"
-            }
+            "license": "https://creativecommons.org/licenses/by/4.0/"
           })}
         </script>
       </Helmet>
