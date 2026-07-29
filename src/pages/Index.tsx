@@ -56,7 +56,6 @@ const Index = () => {
                 "name": "DMT Code Visual Symbol Catalogue",
                 "description": "Open-access catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Includes structured metadata on source, route of administration, and phenomenological characteristics.",
                 "url": "https://dmtcode.com/data.json",
-                
                 "license": "https://creativecommons.org/licenses/by/4.0/",
                 "distribution": {
                   "@type": "DataDownload",
