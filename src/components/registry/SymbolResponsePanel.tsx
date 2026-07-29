@@ -210,6 +210,12 @@ export const SymbolResponsePanel = ({
           className="w-full justify-center"
           imageUrl={imageUrl}
         />
+        <DidNotMatchButton
+          symbolId={targetId}
+          submitterId={submitterId}
+          size="lg"
+          className="w-full justify-center"
+        />
         <p className="text-xs text-muted-foreground">
           Recognition after viewing tells us what the community responds to. It is not evidence,
           because you have already seen the image.
