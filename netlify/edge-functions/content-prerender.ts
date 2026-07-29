@@ -879,7 +879,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
         name: "Is the DMT code verifiable?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Every symbol in the open registry shows its independent confirmation count. The full corpus is downloadable at /data.json under CC-BY-4.0.",
+          text: "The record is built so that it can fail, which is what makes the question answerable. The registry publishes every observer submission, and it shows how many readers said a form echoed their own memory after seeing it here. That is recognition after exposure, not independent confirmation. The full corpus is downloadable at /data.json under CC-BY-4.0.",
         },
       },
       {
