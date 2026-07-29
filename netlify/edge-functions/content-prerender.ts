@@ -1621,6 +1621,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "It runs in four steps: draw the symbol, add the details, review what you are about to submit, and confirm.",
       "The details step records a description, tags, the observation method, the surface type, a context note, the wavelength used, the dose level, how long it lasted, whether it recurred, and its emotional tone. The drawing is stored as an image and as vector data so it can be compared shape to shape rather than pixel to pixel.",
       "If you want your record weighed as an independent account, use the capture route instead. That one seals and timestamps what you describe before showing you anything from the catalogue.",
+      "Symbols publish to the registry the moment you submit them. An administrator has 72 hours to review a submission and deny it, and symbols marked as not matching more often than they are recognized sort to the bottom of the browse list.",
     ],
     links: [
       { href: "/capture", label: "Capture a memory" },
