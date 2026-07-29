@@ -142,9 +142,11 @@ const Critiques = () => {
               <h3 className="text-xl font-semibold mb-4">Why this list matters</h3>
               <p className="text-base leading-relaxed">
                 These predictions are testable, and the registry exists to accumulate the data that
-                could distinguish them. Every symbol carries its metadata. Every source carries a
-                stance score. Null results are published in the same place as the positive ones. The
-                point is not to win the argument. The point is to make the argument decidable.
+                could distinguish them. Every symbol carries its metadata. Stance scores exist for
+                part of the bibliography and are still being filled in, so a source without one has
+                not been assessed yet rather than judged neutral. Null results are published in the
+                same place as the positive ones. The point is not to win the argument. The point is
+                to make the argument decidable.
               </p>
             </Card>
 
