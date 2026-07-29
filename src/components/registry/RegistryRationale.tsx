@@ -2,14 +2,15 @@ export const RegistryRationale = () => {
   return (
     <section className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="bg-muted/30 border border-border rounded-lg p-8">
-        <h3 className="text-2xl font-semibold mb-6 text-center">Why Immediate Documentation is Critical</h3>
-        
+        <h3 className="text-2xl font-semibold mb-6 text-center">Why immediate documentation matters</h3>
+
         <div className="space-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
           <p>
-            Recurring atomic visual elements are frequently reported with <strong>high consistency across independent sessions</strong>. 
-            Accurate documentation immediately post-experience is critical due to <strong>rapid decay of detailed recall</strong>.
+            Whether reports from different people genuinely converge is the open question this project exists
+            to answer. The registry does not assert that they do. What it can do is collect records good enough
+            to test that question, and the quality of a record depends heavily on when it was made.
           </p>
-          
+
           <div className="bg-card border border-primary/30 rounded-lg p-6">
             <p className="font-semibold text-primary mb-3">Why immediate capture matters</p>
             <p className="text-sm">
@@ -18,26 +19,21 @@ export const RegistryRationale = () => {
           </div>
 
           <p>
-            <strong>Inter-subject consistency:</strong> Davis et al. (2021) surveyed 2,561 participants who reported entity encounters during N,N-DMT administration. Of those using the 650 nm laser protocol, <strong>notable convergence similar discrete visual symbols</strong> across independent, non-communicating sessions.
+            Timing is not the only thing that matters. A record made after the person has already browsed this
+            catalogue cannot show independent convergence, because the forms shown here become part of what is
+            being remembered. That is why the capture route exists, and why every submission records whether the
+            catalogue had been seen first.
           </p>
 
-          <p>
-            Lawrence et al. (2022) documented that participants who drew symbols within 5 minutes of baseline return produced nearly identical geometric structures when shown symbols from other participants' submissions, suggesting genuine inter-subject pattern consistency rather than cultural contamination.
+          <p className="text-sm">
+            This section previously cited two studies in support of a consistency claim. One citation pointed to
+            an unrelated paper, and the other used a DOI that does not resolve. Both have been removed rather
+            than replaced, because no verified source for that claim has been found.
           </p>
 
           <p className="text-center font-semibold text-foreground pt-4">
             Contribute now to build the open research catalogue.
           </p>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 mt-8 text-sm">
-          <a href="https://doi.org/10.1007/978-1-4615-0115-9" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
-            Strassman (2001) DOI: 10.1007/978-1-4615-0115-9
-          </a>
-          <span className="text-muted-foreground">·</span>
-          <a href="https://doi.org/10.1002/hup.2806" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">
-            Davis et al. (2021) DOI: 10.1002/hup.2806
-          </a>
         </div>
       </div>
     </section>
