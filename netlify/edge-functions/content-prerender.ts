@@ -910,7 +910,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   </section>
   <section>
     <h2>What the open data shows</h2>
-    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
+    <p>The <a href="${SITE}/registry">visual symbol registry</a> publishes every observer submission the moment it is made, and shows how many readers said the form echoed their own memory after seeing it here. That is recognition after exposure, not an independent match. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
   </section>
   <section>
     <h2>How to judge it</h2>
