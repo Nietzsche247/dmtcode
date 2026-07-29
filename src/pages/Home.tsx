@@ -183,7 +183,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers report nearly identical discrete visual symbols without prior communication.</span>
+                    <span>Reports of recurring symbol forms come from self selected observers who are usually aware of the protocol beforehand. Establishing whether the convergence is real requires records sealed before the observer sees the catalogue, which is what the capture route collects.</span>
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
@@ -231,13 +231,13 @@ const Home = () => {
               </h2>
               <div className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                 <p>
-                  DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone can contribute. All submissions are reviewed by moderators before publication.
+                  DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone with an account can contribute. Symbols publish immediately and an administrator has 72 hours to review and deny. Events, retreats, clinical trial records and theories are reviewed before they appear.
                 </p>
                 <p>
-                  Danny Goler developed this protocol and Chase Hughes validated it across independent replicators. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
+                  Danny Goler developed this protocol and published a pilot account of it in IPI Letters in 2025. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
                 </p>
                 <p>
-                  Davis et al. (2021) documented notable inter-subject consistency in reports of discrete visual symbols. This consistency across independent sessions suggests these phenomena deserve careful documentation and analysis.
+                  Individual reports of similar forms are what prompted this project. They are not yet evidence of convergence, because almost everyone who reports one has already read about the protocol. Separating a real shared structure from a shared expectation is the whole task, and it is why this site publishes null reports and competing explanations alongside the symbols.
                 </p>
               </div>
             </AnimatedSection>

@@ -43,15 +43,15 @@ export const ExplainerSection = () => {
         >
           <div className="prose prose-invert max-w-none space-y-6">
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              In 2020, researcher <span className="text-foreground font-medium">Danny Goler</span> reported a novel phenomenon. He found that shining a <span className="text-foreground font-medium">650 nm red laser</span> through a diffraction grating during N,N-DMT administration produces discrete visual symbols resembling alphabetic characters on any surface. Over <span className="text-foreground font-medium">an independent replicator community</span> have since replicated this protocol, with <span className="text-foreground font-medium">notable convergence consistent symbol observations</span> (<a href="https://doi.org/10.1002/hup.2806" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">Davis et al., 2021</a>).
+              In 2020, <span className="text-foreground font-medium">Danny Goler</span> reported that shining a <span className="text-foreground font-medium">650 nm red laser</span> through a diffraction grating during N,N-DMT administration produces discrete visual symbols that appear on ordinary surfaces. He published a pilot account of the protocol in <a href="https://doi.org/10.59973/ipil.158" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">IPI Letters (2025)</a>. Others have since tried to repeat it and report similar forms. Those attempts are self selected, unblinded and self reported, and no controlled replication has been published.
             </p>
             
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              The 650 nm wavelength, when projected through a diffraction grating (cross, grid, or star pattern), creates a structured visual field that interacts with endogenous N,N-DMT-induced visual processing. Observers report seeing discrete, bounded symbols that appear to float within or overlay the diffraction grid pattern. These symbols exhibit remarkable inter-subject consistency: independent participants report identical geometric and alphabetic-like elements in the same contextual settings.
+              The 650 nm wavelength, when projected through a diffraction grating (cross, grid, or star pattern), creates a structured visual field that interacts with endogenous N,N-DMT-induced visual processing. Observers report seeing discrete, bounded symbols that appear to float within or overlay the diffraction grid pattern. Whether those reports converge more than chance and expectation would produce is the question this site was built to test, and it is not yet answered.
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              <span className="text-foreground font-medium">Chase Hughes</span> validated Goler's protocol through structured replication studies. He documented that symbols maintain structural coherence across observers who have never communicated with each other. Participants independently draw nearly identical symbols when asked to recreate their observations immediately after the experience (Goler 2025, IPI Letters).
+              Claims that the protocol has been independently validated circulate widely. We have not been able to find a published source for any of them. Our bibliography lists that claim as unverified rather than repeating it, and it will stay that way until a source exists that can be read and checked.
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">

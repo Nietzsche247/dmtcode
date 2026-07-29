@@ -80,12 +80,11 @@ export const ConvergenceHero = () => {
   const specimen = featured ?? {
     id: 'placeholder',
     image_url: '/placeholder-symbol-1.svg',
-    tags: ['katakana-like', 'shifting', 'grid'],
-    wavelength: '650nm',
+    tags: [],
     dose_level: null,
     surface_type: null,
     upvotes: 0,
-  };
+  } as unknown as TopSymbol;
 
   const displayCount = confirmCount || specimen.upvotes || 0;
   const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
@@ -103,12 +102,11 @@ export const ConvergenceHero = () => {
             className="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] leading-[1.02] tracking-[-0.02em] text-foreground"
             style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 400 }}
           >
-            People who never met keep drawing the same shapes.
+            Is there a recurring visual structure people can learn to see?
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl"
              style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif", fontWeight: 400 }}>
-            An open record of the visual symbols independently reported during N,N-DMT experiences.
-            Browse them. Confirm the ones you've seen. Help decode a shared perception.
+            An open record of the visual forms people report during N,N-DMT experiences. Some of them recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -118,7 +116,7 @@ export const ConvergenceHero = () => {
               className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial"
             >
               <Eye className="w-4 h-4 mr-2" />
-              I saw this too
+              Browse the record
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button
@@ -134,7 +132,7 @@ export const ConvergenceHero = () => {
 
           <p className="label-data text-xs text-muted-foreground pt-4">
             {totalApproved > 0
-              ? `${totalApproved} FORMS CATALOGUED${verifiedCount > 0 ? ` · ${verifiedCount} INDEPENDENTLY VERIFIED` : ''}`
+              ? `${totalApproved} FORMS CATALOGUED${verifiedCount > 0 ? ` · ${verifiedCount} RECOGNIZED BY 3 OR MORE READERS` : ''}`
               : 'OPEN CATALOGUE · CC-BY-4.0'}
           </p>
         </div>
@@ -162,22 +160,24 @@ export const ConvergenceHero = () => {
               />
             </div>
 
-            <div className="mt-6 text-center">
-              <div
-                className="text-6xl md:text-7xl lg:text-8xl leading-none text-primary tabular-nums"
-                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
-              >
-                {displayCount}
+            {displayCount > 0 && (
+              <div className="mt-6 text-center">
+                <div
+                  className="text-6xl md:text-7xl lg:text-8xl leading-none text-primary tabular-nums"
+                  style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+                >
+                  {displayCount}
+                </div>
+                <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
+                  READERS RECOGNIZED THIS AFTER SEEING IT HERE
+                </p>
               </div>
-              <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
-                {displayCount === 1 ? 'PERSON' : 'PEOPLE'} INDEPENDENTLY REPORTED THIS FORM
-              </p>
-            </div>
+            )}
 
             <div className="mt-5 pt-4 border-t border-border/60">
               <p className="label-data text-[10px] text-muted-foreground truncate">
                 SPECIMEN {specimen.id.slice(0, 8)}
-                {specimen.wavelength ? ` · ${specimen.wavelength}` : ' · 650 NM'}
+                {specimen.wavelength ? ` · ${specimen.wavelength}` : ''}
                 {tagLine ? ` · ${tagLine}` : ''}
               </p>
             </div>
@@ -189,8 +189,8 @@ export const ConvergenceHero = () => {
       <div className="max-w-5xl mx-auto mt-24 md:mt-32 grid md:grid-cols-3 gap-8 md:gap-12 border-t border-border/50 pt-14">
         {[
           { n: '01', h: 'Observe', d: 'Notice a discrete visual form during an N,N-DMT experience.' },
-          { n: '02', h: 'Draw or Confirm', d: 'Reconstruct it on the canvas — or confirm one already reported.' },
-          { n: '03', h: 'It joins the open record', d: 'Peer-reviewed, CC-BY-4.0, downloadable as data.' },
+          { n: '02', h: 'Draw or Respond', d: 'Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.' },
+          { n: '03', h: 'It joins the open record', d: 'Openly licensed CC-BY-4.0 and downloadable as data.' },
         ].map((step) => (
           <div key={step.n} className="space-y-3">
             <p className="label-data text-xs text-primary">{step.n}</p>
@@ -213,7 +213,7 @@ export const ConvergenceHero = () => {
         <div className="max-w-6xl mx-auto mt-24 border-t border-border/50 pt-10">
           <div className="flex items-baseline justify-between mb-6">
             <p className="label-data text-xs text-muted-foreground">
-              MOST CONFIRMED SPECIMENS
+              MOST RECOGNIZED SPECIMENS
             </p>
             <Link to="/registry" className="label-data text-xs text-primary hover:underline">
               BROWSE ALL →
@@ -235,9 +235,11 @@ export const ConvergenceHero = () => {
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
                   />
                 </div>
-                <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
-                  {s.upvotes} CONFIRMED
-                </p>
+                {s.upvotes > 0 && (
+                  <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
+                    {s.upvotes} RECOGNIZED
+                  </p>
+                )}
               </Link>
             ))}
           </div>
