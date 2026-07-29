@@ -51,6 +51,7 @@ const VoiceLogger = () => {
   const [selectedProtocol, setSelectedProtocol] = useState<string>(protocolSlug || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [submittedLogId, setSubmittedLogId] = useState<string | null>(null);
   
   // Clinical mode state
@@ -64,15 +65,21 @@ const VoiceLogger = () => {
 
   useEffect(() => {
     checkUser();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+      setAuthChecked(true);
+    });
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (audioUrl) URL.revokeObjectURL(audioUrl);
+      subscription.unsubscribe();
     };
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) setUserId(user.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    setUserId(session?.user?.id ?? null);
+    setAuthChecked(true);
   };
 
   const { data: protocols } = useQuery({
