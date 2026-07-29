@@ -143,20 +143,28 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         
         toast.success('Vote removed');
       } else {
-        // For upvote/downvote, they are mutually exclusive
-        if (voteType === 'upvote' || voteType === 'downvote') {
-          const oppositeType = voteType === 'upvote' ? 'downvote' : 'upvote';
-          const hasOpposite = voteType === 'upvote' ? userVotes.hasDownvoted : userVotes.hasUpvoted;
-          
-          if (hasOpposite) {
-            // Remove opposite vote first
-            await supabase
-              .from('symbol_votes')
-              .delete()
-              .eq('symbol_id', symbolId)
-              .eq('user_id', userId)
-              .eq('vote_type', oppositeType);
-          }
+        // Recognition and non-recognition are mutually exclusive.
+        // seen_it and upvote both mean "yes". downvote means "no".
+        const conflicting: VoteType[] =
+          voteType === 'downvote'
+            ? ['upvote', 'seen_it']
+            : voteType === 'upvote' || voteType === 'seen_it'
+              ? ['downvote']
+              : [];
+
+        const held = conflicting.filter((t) =>
+          t === 'upvote' ? userVotes.hasUpvoted :
+          t === 'downvote' ? userVotes.hasDownvoted :
+          userVotes.hasSeenIt
+        );
+
+        if (held.length > 0) {
+          await supabase
+            .from('symbol_votes')
+            .delete()
+            .eq('symbol_id', symbolId)
+            .eq('user_id', userId)
+            .in('vote_type', held);
         }
 
         // Insert new vote
