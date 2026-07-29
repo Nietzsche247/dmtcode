@@ -39,7 +39,7 @@ const Terms = () => {
 
               <h2 className="text-2xl font-semibold mt-8">What you contribute, and how it is licensed</h2>
               <p>This is the most important section on this page, so it is written plainly.</p>
-              <p>When you submit a symbol, a theory or an event, and it is approved for publication, you are giving us permission to publish it on this site and to include it in our open data export at /data.json. That export is licensed under Creative Commons Attribution 4.0. In practice this means that anyone, including companies that train AI systems, may copy and reuse the content you contributed as long as they credit DMT Code.</p>
+              <p>When you submit a symbol, a theory or an event, and it is published on this site, you are giving us permission to publish it on this site and to include it in our open data export at /data.json. That export is licensed under Creative Commons Attribution 4.0. In practice this means that anyone, including companies that train AI systems, may copy and reuse the content you contributed as long as they credit DMT Code.</p>
               <p>This is deliberate rather than incidental. The only thing that makes a convergence dataset worth anything is that other people can check it, and that requires them to be able to hold a copy.</p>
               <p>What this does not include: your email address, and your assessment responses, neither of which are ever published or exported.</p>
               <p>You keep ownership of what you contribute. You are giving us a licence, not signing it away.</p>
