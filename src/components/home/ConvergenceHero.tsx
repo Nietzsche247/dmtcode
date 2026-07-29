@@ -235,9 +235,11 @@ export const ConvergenceHero = () => {
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
                   />
                 </div>
-                <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
-                  {s.upvotes} CONFIRMED
-                </p>
+                {s.upvotes > 0 && (
+                  <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
+                    {s.upvotes} RECOGNIZED
+                  </p>
+                )}
               </Link>
             ))}
           </div>
