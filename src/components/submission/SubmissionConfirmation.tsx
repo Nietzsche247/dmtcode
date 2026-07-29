@@ -59,7 +59,7 @@ export const SubmissionConfirmation = ({ submissionId }: SubmissionConfirmationP
       <div className="pt-8 border-t border-border w-full max-w-md">
         <h4 className="text-sm font-medium mb-4">What happens now</h4>
         <p className="text-left text-sm text-muted-foreground leading-relaxed">
-          Community members can confirm your symbol and add tags to it. Those confirmations are what turn one person's report into convergence data.
+          Readers can respond to your symbol and add tags to it. A response recorded after somebody has seen your drawing is not the same as an independent record, and the site labels it that way.
         </p>
         <p className="text-left text-sm text-muted-foreground leading-relaxed mt-3">
           An administrator has 72 hours from now to review this submission and deny it. A denied submission is hidden rather than deleted. After that window it stands.
