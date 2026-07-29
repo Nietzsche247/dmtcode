@@ -9,37 +9,37 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>About DMT Code - Mission & Team | DMT Code</title>
+        <title>About the DMT Code project | DMT Code</title>
         <meta 
           name="description" 
-          content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." 
+          content="Why the DMT Code project exists, how it operates, and how to inspect or critique the record." 
         />
         <link rel="canonical" href="https://dmtcode.com/about" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/about" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="About DMT Code - Mission & Team | DMT Code" />
-        <meta property="og:description" content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." />
+        <meta property="og:title" content="About the DMT Code project | DMT Code" />
+        <meta property="og:description" content="Why the DMT Code project exists, how it operates, and how to inspect or critique the record." />
         <meta property="og:url" content="https://dmtcode.com/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/about" />
-        <meta name="twitter:title" content="About DMT Code - Mission & Team | DMT Code" />
-        <meta name="twitter:description" content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." />
+        <meta name="twitter:title" content="About the DMT Code project | DMT Code" />
+        <meta name="twitter:description" content="Why the DMT Code project exists, how it operates, and how to inspect or critique the record." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AboutPage",
-            "headline": "About DMT Code Project - Team & Ethics",
-            "description": "Team credentials and ethical framework for DMT Code Visual Symbol Catalogue",
+            "headline": "About the DMT Code project",
+            "description": "Why the DMT Code project exists, how it operates, and how to inspect or critique the record.",
             "author": {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
             "datePublished": "2025-11-29",
-            "dateModified": "2025-11-29"
+            "dateModified": "2026-07-29"
           })}
         </script>
         <script type="application/ld+json">
@@ -76,16 +76,16 @@ const About = () => {
             
             <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
               <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
-                Our Team
+                Who runs this
               </p>
               
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] leading-[0.9] animate-blur-in-up animation-delay-100" style={{ animationFillMode: 'forwards' }}>
-                About DMT Code
-                <span className="block text-primary mt-2">Project</span>
+                About the DMT Code
+                <span className="block text-primary mt-2">project</span>
               </h1>
               
               <p className="text-lg md:text-xl font-light text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-                Team credentials, ethical framework, and commitment to neutral science
+                Who runs this project, how it is funded, and what it will and will not claim
               </p>
             </div>
           </section>
@@ -151,7 +151,7 @@ const About = () => {
             <Card className="p-8 bg-card border-border mb-8 transition-theme">
               <h2 className="text-2xl font-semibold mb-4">Mission Statement</h2>
               <p className="text-base leading-relaxed">
-                DMT Code is an open, community-maintained catalogue documenting discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Our mission is to create a comprehensive, scientifically rigorous database of these reported phenomena for academic research, pattern analysis, and independent replication studies. We prioritize neutral terminology, harm-reduction ethics, and transparency in all operations.
+                DMT Code is an open community project collecting firsthand reports, null observations, competing theories, scientific research, events, trials, and open data related to the reported DMT-laser phenomenon. It exists so the claim can be examined rather than argued about. We are not trying to prove the phenomenon is real and we are not trying to prove it is not. We are trying to build a record complete enough and open enough that someone can eventually find out, and to keep every part of that record inspectable while they do.
               </p>
             </Card>
 
@@ -160,9 +160,9 @@ const About = () => {
               <h2 className="text-2xl font-semibold mb-4">Core Values</h2>
               <div className="space-y-4">
                 <div className="p-4 bg-muted/30 rounded-lg transition-theme">
-                  <h3 className="font-semibold mb-2">Neutral Science</h3>
+                  <h3 className="font-semibold mb-2">Two tracks, clearly labelled</h3>
                   <p className="text-sm text-muted-foreground">
-                    We use strictly academic terminology ("discrete visual symbols," "N,N-DMT administration," "650 nm laser exposure") and avoid mystical framing. Data speaks for itself without interpretive overlay.
+                    Records use plain descriptive language such as discrete visual symbols, N,N-DMT administration and 650 nm laser exposure, so one report can be compared with another. Interpretation is welcome here, and it is kept on its own track and labelled as interpretation rather than mixed into the record. A folk reading and a testable hypothesis are both allowed to exist on this site. They are not allowed to be presented as the same kind of thing.
                   </p>
                 </div>
                 <div className="p-4 bg-muted/30 rounded-lg transition-theme">
@@ -188,19 +188,21 @@ const About = () => {
 
             {/* Team Credentials */}
             <Card className="p-8 bg-card border-border mb-8 transition-theme">
-              <h2 className="text-2xl font-semibold mb-4">Team Credentials</h2>
+              <h2 className="text-2xl font-semibold mb-4">Who runs this project</h2>
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Research Team</h3>
+                  <h3 className="font-semibold text-lg mb-2">People</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     DMT Code is run by its founder with help from volunteers. An earlier version of this page said the team included MSc Neuroscience holders with published work in visual perception and psychopharmacology. Nothing on this site let a reader check that, so the claim has been removed. If a contributor holds a relevant credential and wants it published, it will be published with a name attached to it.
                   </p>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                    <li>Peer-reviewed literature analysis and citation verification</li>
-                    <li>Database architecture and real-time data infrastructure (Supabase, PostgreSQL)</li>
-                    <li>Statistical analysis and computational pattern recognition</li>
-                    <li>Community moderation and ethical oversight</li>
-                  </ul>
+                  <h3 className="font-semibold text-lg mb-2">What this project does today</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    It runs the submission and publication system, the database behind it, and the open corpus at /data.json. It collects reports, null reports, critiques, theories, sources, events and trials, and it publishes them under a license that lets anyone take the whole record and check it independently.
+                  </p>
+                  <h3 className="font-semibold text-lg mb-2">What it does not do yet</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    It does not perform statistical analysis or computational pattern recognition. There is not yet enough independently submitted material for either to mean anything, and publishing an analysis of a handful of records would manufacture a result rather than find one. It has no moderation team either. Review is done by the project admin. An earlier version of this page listed peer-reviewed literature analysis and citation verification as a standing capability. Citations published on this site have failed verification before. Where that happened the citation was retracted in public on the page that carried it rather than quietly corrected, and the capability claim has now been removed from this page as well.
+                  </p>
                 </div>
 
                 <div>
@@ -224,7 +226,7 @@ const About = () => {
               <h2 className="text-2xl font-semibold mb-4">Funding & Transparency</h2>
               <div className="space-y-4 text-base leading-relaxed">
                 <p>
-                  <strong>Revenue model:</strong> Affiliate commissions from curated equipment catalogue (/tools) fund server costs, domain registration, and development time. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible.
+                  <strong>Revenue model:</strong> Affiliate commissions from the curated equipment catalogue at /prepare, together with direct sales through our own store, are intended to cover server costs, domain registration, and development time. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible.
                 </p>
                 <p>
                   <strong>Conflicts of interest:</strong> We sell 650 nm laser kits and earn affiliate commissions on some third party products, so we have a commercial interest in the protocol this site documents. We do not sell DMT extraction services or consulting. Our /disclosure page names every affiliate relationship and explains what we do about the conflict.
@@ -239,7 +241,7 @@ const About = () => {
                 We welcome collaboration with academic institutions, skeptical researchers, and harm-reduction organizations. If you're conducting controlled experiments on 650 nm laser protocol or analyzing registry data, we can provide technical support and dataset access.
               </p>
               <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-                <li><strong>Academic inquiries:</strong> research@dmtcode.com (dataset access, API documentation, replication design consultation)</li>
+                <li><strong>Academic inquiries:</strong> research@dmtcode.com (dataset access, replication design consultation). The machine readable corpus is at /data.json and needs no request.</li>
                 <li><strong>Media/press:</strong> media@dmtcode.com (interviews, fact-checking, source attribution)</li>
                 <li><strong>Moderation/reports:</strong> Report harmful content via registry interface or community@dmtcode.com</li>
               </ul>
@@ -265,7 +267,7 @@ const About = () => {
                 </a>
               </div>
               <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-12-04
+                Last updated: 2026-07-29
               </p>
             </div>
           </section>
