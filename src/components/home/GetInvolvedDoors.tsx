@@ -10,7 +10,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
     {
       to: '/registry',
       title: 'I saw this',
-      body: 'Browse the record. Confirm the forms you have already seen.',
+      body: 'Browse the record. Tell us which forms echo something you saw.',
       Icon: Eye,
       tone: 'ghost' as const,
     },

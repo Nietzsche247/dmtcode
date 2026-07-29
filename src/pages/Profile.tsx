@@ -381,7 +381,7 @@ const Profile = () => {
               <span className="text-foreground font-medium tabular-nums">{canon.symbols}</span>{' '}
               symbol{canon.symbols === 1 ? '' : 's'} and{' '}
               <span className="text-foreground font-medium tabular-nums">{canon.confirmations}</span>{' '}
-              confirmation{canon.confirmations === 1 ? '' : 's'} so far.{' '}
+              recognition{canon.confirmations === 1 ? '' : 's'} so far.{' '}
               <Link to="/registry" className="text-primary underline underline-offset-2">Add yours.</Link>
             </p>
 
@@ -393,7 +393,7 @@ const Profile = () => {
                 nextMove={{ to: '/submit-symbol', text: 'Record what you saw' }}
               />
               <StatCell
-                label="Validations Received"
+                label="Recognitions Received"
                 value={stats.totalValidations}
                 nextMove={{ to: '/registry', text: 'Share a symbol to invite recognition' }}
               />
@@ -460,7 +460,7 @@ const Profile = () => {
             <Tabs defaultValue="my-symbols" className="w-full">
               <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-2xl">
                 <TabsTrigger value="my-symbols">My Symbols ({mySymbols.length})</TabsTrigger>
-                <TabsTrigger value="confirmations">Confirmations ({confirmationsGiven.length})</TabsTrigger>
+                <TabsTrigger value="confirmations">Recognized ({confirmationsGiven.length})</TabsTrigger>
                 <TabsTrigger value="voice">Voice Logs ({voiceLogs.length})</TabsTrigger>
                 <TabsTrigger value="saved">Saved ({savedSymbols.length})</TabsTrigger>
               </TabsList>
@@ -508,7 +508,7 @@ const Profile = () => {
               <TabsContent value="confirmations" className="mt-8">
                 {confirmationsGiven.length === 0 ? (
                   <div className="text-center text-muted-foreground">
-                    You haven't confirmed any symbols yet.{' '}
+                    You have not marked any symbol as one you recognize yet.{' '}
                     <a href="/registry" className="text-primary underline">Browse the registry</a>
                   </div>
                 ) : (
@@ -517,7 +517,7 @@ const Profile = () => {
                       <a key={s.id} href={`/registry/${s.id}`} className="block">
                         <img
                           src={s.image_url}
-                          alt={s.tags?.slice(0, 3).join(', ') || 'confirmed symbol'}
+                          alt={s.tags?.slice(0, 3).join(', ') || 'symbol you recognized'}
                           className="w-full aspect-square border border-border object-contain bg-white hover:border-primary transition-colors"
                           loading="lazy"
                         />

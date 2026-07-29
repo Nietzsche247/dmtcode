@@ -638,7 +638,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       {authChecked && !userId && (
         <SignInToContribute
           title="Sign in to add your record"
-          body="An account is what makes the record count. It stamps what you describe to you, so if someone else describes the same thing later, the order is on the record and yours came first. It also lets you keep a memory private, follow a symbol, and confirm a match when one rings true. We give you an avatar, so your name stays yours."
+          body="An account is what makes the record count. It stamps what you describe to you, so if someone else describes the same thing later, the order is on the record and yours came first. It also lets you keep a memory private, follow a symbol, and tell us when one echoes what you saw. We give you an avatar, so your name stays yours."
         />
       )}
 

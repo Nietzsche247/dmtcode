@@ -167,7 +167,7 @@ export const CorrelationsNetwork = () => {
           <Network className="w-16 h-16 mx-auto text-muted-foreground" />
           <h3 className="text-2xl font-semibold">Network Analysis Locked</h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Network graph and correlation analysis requires ≥100 symbols with multiple confirmations. 
+            Network graph and correlation analysis requires ≥100 symbols with multiple recognitions. 
             Current dataset: {symbols.length} symbols.
           </p>
           <div className="h-3 bg-muted rounded-full max-w-sm mx-auto overflow-hidden">
@@ -251,7 +251,7 @@ export const CorrelationsNetwork = () => {
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold capitalize">{surface}</h4>
                   <Badge variant="outline">
-                    {nodes.length} symbols · {avgConfirmations.toFixed(1)} avg confirmations
+                    {nodes.length} symbols · {avgConfirmations.toFixed(1)} avg recognitions
                   </Badge>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
