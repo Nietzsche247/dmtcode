@@ -5,6 +5,7 @@ import { Eye } from 'lucide-react';
 import { SeenItButton } from './SeenItButton';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
+import { isCuratedExample, CURATED_EXAMPLE_NOTICE } from '@/lib/submissionStatus';
 
 interface SymbolCardProps {
   id: string;
@@ -14,6 +15,7 @@ interface SymbolCardProps {
   upvotes: number;
   validationCount: number;
   status?: 'pending' | 'approved' | 'rejected';
+  curated?: boolean | null;
   contributor?: {
     id: string;
     displayName: string;
@@ -32,6 +34,7 @@ export const SymbolCard = ({
   upvotes,
   validationCount,
   status,
+  curated,
   contributor,
   createdAt,
   submitterId,
@@ -49,6 +52,11 @@ export const SymbolCard = ({
         : part
     );
   };
+
+  // The is_curated_example column is authoritative. The image_url prefix is a
+  // fallback so the original starter rows stay labelled even where the caller
+  // has not passed the column through.
+  const isCurated = isCuratedExample({ image_url: imageUrl, is_curated_example: curated });
 
   const getInitials = (name: string) => {
     return name
@@ -82,8 +90,13 @@ export const SymbolCard = ({
 
       {/* Content */}
       <div className="space-y-3">
-        {imageUrl?.startsWith('/placeholder-symbol-') && (
-          <Badge variant="secondary" className="text-xs">Curated starter set</Badge>
+        {isCurated && (
+          <div className="space-y-1">
+            <Badge variant="secondary" className="text-xs">Curated example</Badge>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {CURATED_EXAMPLE_NOTICE}
+            </p>
+          </div>
         )}
 
         {/* Description */}
