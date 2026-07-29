@@ -71,6 +71,11 @@ interface UnifiedItem {
   stance_score?: number;
   people: string[];
   status?: string;
+  visibility_status?: string;
+  moderation_status?: string;
+  evidence_status?: string;
+  review_overdue?: boolean;
+  is_curated_example?: boolean;
   verification?: string;
   phase?: string;
   source_date?: string;
@@ -78,9 +83,22 @@ interface UnifiedItem {
   counts_toward_evidence?: boolean;
 }
 
-// Curated starter symbols are identified purely by their image_url prefix.
+// Curated examples are flagged by the is_curated_example column on
+// symbol_submissions. The image_url prefix check is kept as a fallback so the
+// five original starter rows stay classified correctly even if the column is
+// ever unavailable to this key.
 const isCuratedStarter = (imageUrl: unknown): boolean =>
   typeof imageUrl === "string" && imageUrl.startsWith("/placeholder-symbol-");
+
+const isCurated = (r: Record<string, unknown>): boolean =>
+  r.is_curated_example === true || isCuratedStarter(r.image_url);
+
+// Overdue is never stored. It is derived at request time from moderation_status
+// and review_due_at, so it can never go stale.
+const isReviewOverdue = (r: Record<string, unknown>): boolean =>
+  String(r.moderation_status ?? "") === "unreviewed" &&
+  typeof r.review_due_at === "string" &&
+  new Date(r.review_due_at as string).getTime() < Date.now();
 
 function compact<T extends Record<string, unknown>>(obj: T): T {
   const out: Record<string, unknown> = {};
@@ -158,6 +176,8 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   const authority = params.get("authority_type");
   const person = params.get("person");
   const status = params.get("status");
+  const evidenceStatus = params.get("evidence_status");
+  const moderationStatus = params.get("moderation_status");
   const verification = params.get("verification");
   const phase = params.get("phase");
   const stanceMin = params.get("stance_min");
@@ -177,6 +197,10 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   if (person)
     out = out.filter((i) => i.people.some((p) => p.toLowerCase().includes(person.toLowerCase())));
   if (status) out = out.filter((i) => (i.status || "").toLowerCase() === status.toLowerCase());
+  if (evidenceStatus)
+    out = out.filter((i) => (i.evidence_status || "").toLowerCase() === evidenceStatus.toLowerCase());
+  if (moderationStatus)
+    out = out.filter((i) => (i.moderation_status || "").toLowerCase() === moderationStatus.toLowerCase());
   if (verification)
     out = out.filter((i) => (i.verification || "").toLowerCase() === verification.toLowerCase());
   if (phase)
@@ -190,6 +214,36 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
       `${i.title} ${i.people.join(" ")} ${i.topic.join(" ")}`.toLowerCase().includes(q)
     );
   return out.slice(offset, offset + limit);
+}
+
+// Reaction counts come from symbol_votes, which is publicly readable. Returns
+// null when the table cannot be read, so the caller omits the key rather than
+// publishing a zero it cannot stand behind.
+async function fetchVoteCounts(): Promise<Record<string, Record<string, number>> | null> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/symbol_votes?select=symbol_id,vote_type&limit=10000`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+      },
+    );
+    if (!res.ok) return null;
+    const rows = (await res.json()) as Record<string, unknown>[];
+    const out: Record<string, Record<string, number>> = {};
+    for (const r of rows) {
+      const k = String(r.symbol_id);
+      const t = String(r.vote_type);
+      out[k] = out[k] ?? {};
+      out[k][t] = (out[k][t] ?? 0) + 1;
+    }
+    return out;
+  } catch (_e) {
+    return null;
+  }
 }
 
 export default async (req: Request): Promise<Response> => {
@@ -206,9 +260,13 @@ export default async (req: Request): Promise<Response> => {
       "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at",
       "is_approved=is.true"
     ),
+    // The status=eq.approved filter is retained because the row level security
+    // policy on this table is expressed in terms of the legacy status column.
+    // A database trigger keeps status and visibility_status in sync, so this is
+    // the same set of rows as visibility_status=eq.public.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,upvotes,image_url,created_at,updated_at",
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at",
       "status=eq.approved"
     ),
     fetchAll(
@@ -237,6 +295,8 @@ export default async (req: Request): Promise<Response> => {
       "is_published=eq.true"
     ),
   ]);
+
+  const voteCounts = await fetchVoteCounts();
 
   const bibItems: UnifiedItem[] = bib.map((r) => {
     const authors = (r.authors as string | null) || "";
@@ -295,12 +355,17 @@ export default async (req: Request): Promise<Response> => {
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
-    authority_type: isCuratedStarter(r.image_url) ? "Curated" : "Community",
+    authority_type: isCurated(r) ? "Curated" : "Community",
     people: [],
     status: (r.status as string) || undefined,
+    visibility_status: (r.visibility_status as string) || undefined,
+    moderation_status: (r.moderation_status as string) || undefined,
+    evidence_status: (r.evidence_status as string) || undefined,
+    review_overdue: isReviewOverdue(r),
+    is_curated_example: isCurated(r),
     source_date: (r.created_at as string) || undefined,
-    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
-    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
+    record_class: isCurated(r) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCurated(r) ? false : true,
   }));
 
   // Resolve every referenced trial/paper/symbol/protocol id from the fetched
@@ -325,20 +390,32 @@ export default async (req: Request): Promise<Response> => {
 
   const filtered = applyFilters(items, url.searchParams);
 
-  // Top-level "symbols" projection: every approved symbol with the fields
+  // Top-level "symbols" projection: every published symbol with the fields
   // agents most need without re-querying. "faq" mirrors the live /faq page.
-  const symbolsFeed = symbols.map((r) => compact({
-    id: String(r.id),
-    url: `${SITE}/registry/${r.id}`,
-    description: (r.description as string) || undefined,
-    tags: (r.tags as string[]) || [],
-    image_url: (r.image_url as string) || undefined,
-    upvotes: Number(r.upvotes ?? 0),
-    created_at: (r.created_at as string) || undefined,
-    updated_at: (r.updated_at as string) || undefined,
-    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
-    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
-  }));
+  const symbolsFeed = symbols.map((r) => {
+    const sid = String(r.id);
+    return compact({
+      id: sid,
+      url: `${SITE}/registry/${sid}`,
+      description: (r.description as string) || undefined,
+      tags: (r.tags as string[]) || [],
+      image_url: (r.image_url as string) || undefined,
+      visibility_status: (r.visibility_status as string) || undefined,
+      moderation_status: (r.moderation_status as string) || undefined,
+      evidence_status: (r.evidence_status as string) || undefined,
+      is_curated_example: isCurated(r),
+      published_at: (r.published_at as string) || undefined,
+      review_due_at: (r.review_due_at as string) || undefined,
+      review_overdue: isReviewOverdue(r),
+      recognized_count: Number(r.upvotes ?? 0),
+      not_a_match_count: Number(r.downvotes ?? 0),
+      upvote_count: voteCounts ? (voteCounts[sid]?.upvote ?? 0) : undefined,
+      created_at: (r.created_at as string) || undefined,
+      updated_at: (r.updated_at as string) || undefined,
+      record_class: isCurated(r) ? "curated_starter" : "community_observation",
+      counts_toward_evidence: isCurated(r) ? false : true,
+    });
+  });
 
   const theoriesFeed = theories.map((r) => compact({
     id: String(r.id),
@@ -431,11 +508,33 @@ export default async (req: Request): Promise<Response> => {
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
-  const symbolsCurated = symbols.filter((r) => isCuratedStarter(r.image_url)).length;
+  const symbolsCurated = symbols.filter((r) => isCurated(r)).length;
   const symbolsCommunity = symbols.length - symbolsCurated;
+  const symbolsReviewOverdue = symbols.filter((r) => isReviewOverdue(r)).length;
+  const symbolsUnreviewed = symbols.filter(
+    (r) => String(r.moderation_status ?? "") === "unreviewed",
+  ).length;
+
+  // Published verbatim from the column comments on symbol_submissions so the
+  // export and the database can never drift apart in what they claim a field means.
+  const FIELD_DEFINITIONS: Record<string, string> = {
+    status: "LEGACY. Kept because row level security policies and existing queries depend on it. It is now kept in sync with visibility_status by the sync_symbol_submission_status trigger. New code should read visibility_status, moderation_status and evidence_status instead.",
+    visibility_status: "Who can see this row. private = only the author. public = published and readable by anyone. hidden = withdrawn from public view but never deleted.",
+    moderation_status: "What a human moderator has actually done. unreviewed = nobody has looked at it yet. reviewed = a moderator looked and let it stand. denied = a moderator rejected it. reported = a reader flagged it and it awaits a decision. There is deliberately no stored overdue value. Overdue is derived as moderation_status = unreviewed and review_due_at < now(), so it can never go stale.",
+    evidence_status: "How this row may be used as evidence. raw = an observer report with nothing established about it. eligible = meets the criteria to enter convergence analysis. ineligible = excluded from convergence analysis, for example a curated example that is not an observer submission. candidate_match = resembles another record and awaits assessment. reviewed_convergence = a reviewer has assessed the match. controlled_replication = arose from a controlled, blinded protocol. Being published does not change this field.",
+    published_at: "When the row first became publicly visible. Null means it has never been public. Never backfilled with a guess.",
+    review_due_at: "published_at plus 72 hours. The deadline by which a moderator was meant to look at it. Null where no review clock applies.",
+    review_overdue: "Computed at request time, never stored. True when moderation_status is unreviewed and review_due_at is in the past. A symbol nobody reviewed inside the window is overdue, not approved.",
+    is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
+    recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",
+    not_a_match_count: "How many signed in readers recorded that this symbol does not resemble what they saw. It is published for completeness. It does not hide the symbol and it does not change where the symbol sits in any default browse order.",
+    upvote_count: "How many signed in readers pressed the older generic upvote control. It is a popularity signal only and carries no evidential weight. The key is omitted when the vote table could not be read.",
+    record_class: "curated_starter = added by the site operator as an illustrative example. community_observation = submitted by an account holder reporting their own experience.",
+    counts_toward_evidence: "False for curated examples, true for observer submissions. This field says whether the row may enter a convergence count at all. It says nothing about whether the row has been reviewed.",
+  };
 
   const body = {
-    version: "4.0",
+    version: "4.1",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -447,6 +546,8 @@ export default async (req: Request): Promise<Response> => {
       authority_type: authorityVocab,
       person: "substring match against item.people (see known names)",
       status: statusVocab,
+      evidence_status: "raw, eligible, ineligible, candidate_match, reviewed_convergence, controlled_replication. Symbols only.",
+      moderation_status: "unreviewed, reviewed, denied, reported. Symbols only.",
       verification: verificationVocab,
       phase: phaseVocab,
       stance_min: "integer, inclusive lower bound",
@@ -456,6 +557,8 @@ export default async (req: Request): Promise<Response> => {
       offset: "pagination offset",
     },
     known_people: KNOWN_PEOPLE,
+    field_definitions: FIELD_DEFINITIONS,
+    dataset_version_note: "Version 4.1 adds visibility_status, moderation_status, evidence_status, is_curated_example, published_at, review_due_at and review_overdue to every symbol, and replaces the symbols[].upvotes key with recognized_count, not_a_match_count and upvote_count. The old upvotes key stored the seen it tally rather than the upvote tally, which made it easy to misread. Read field_definitions before treating any count here as evidence.",
     counts: {
       total: items.length,
       returned: filtered.length,
@@ -464,6 +567,8 @@ export default async (req: Request): Promise<Response> => {
       symbols: symbolItems.length,
       symbols_community: symbolsCommunity,
       symbols_curated: symbolsCurated,
+      symbols_unreviewed: symbolsUnreviewed,
+      symbols_review_overdue: symbolsReviewOverdue,
       theories: theoriesFeed.length,
       events: eventsFeed.length,
       articles: articlesFeed.length,
@@ -479,7 +584,7 @@ export default async (req: Request): Promise<Response> => {
     guides: guidesFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
-    symbols_note: "Symbols marked record_class curated_starter were curated by the project from public imagery as a starting corpus and do not count as observed evidence. Use counts_toward_evidence to filter.",
+    symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
     faq: FAQ_ITEMS,
   };
 

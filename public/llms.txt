@@ -25,6 +25,18 @@ Every item in the unified corpus carries the same facets. Filter across the whol
 
 Known people the corpus tracks by name: Goler, Gallimore, Strassman, Davis, Timmermann, Luke, Gomez Emilsson, Hughes.
 
+## Symbol status vocabulary
+
+Every symbol carries three independent status dimensions. They are separate on purpose, because a symbol can be public and unreviewed at the same time.
+
+- visibility_status: private, public, hidden. Who can see the row. hidden means withdrawn from public view, never deleted.
+- moderation_status: unreviewed, reviewed, denied, reported. What a human moderator has actually done. There is no stored overdue value. review_overdue is derived at request time from moderation_status and review_due_at so it can never go stale.
+- evidence_status: raw, eligible, ineligible, candidate_match, reviewed_convergence, controlled_replication. How the row may be used as evidence. Being published does not change this field.
+- published_at: when the row first became publicly visible. review_due_at: published_at plus 72 hours, the deadline by which a moderator was meant to look at it.
+- is_curated_example: true for illustrative examples added by the site operator. Not observer submissions, and excluded from every evidence and convergence total.
+
+
+
 ## The chronology
 
 The chronology is the spine of the record. It is the one place where every source is dated, classified by what kind of evidence it is, and given a permanent address.
@@ -38,7 +50,7 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 
 ## Machine endpoints
 
-- /data.json: unified JSON of every bibliography row, every clinical trial, and every approved symbol, with the facets above. Accepts filter query params: content_type, compound, topic, authority_type, person, status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline. CC-BY-4.0.
+- /data.json: unified JSON of every bibliography row, every clinical trial, and every published symbol, with the facets above. Accepts filter query params: content_type, compound, topic, authority_type, person, status, verification, phase, evidence_status, moderation_status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline, and the top level "field_definitions" object defines every symbol status and count field in plain language. CC-BY-4.0.
 - /shop.json: kits and group bundles from the /prepare page (slug, name, kind, tier, people, price_usd, parts_sum_usd, ships_status, wave, is_best, items[]). CC-BY-4.0.
 - /articles.json: full published article corpus in one document. Each article carries slug, title, dek, full body, author, published_at, updated_at, topic_tags, compounds, and a citations array of URLs on dmtcode.com that the article rests on. CC-BY-4.0.
 - /articles/feed.xml: RSS 2.0 feed of published articles, newest first, with the full body in content:encoded.
@@ -101,6 +113,9 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 
 - Please cite dmtcode.com and the underlying source when quoting.
 - Please critique the data. If a claim is unsupported, say so and cite the row.
+- A symbol is published the moment it is submitted. Publication is not review and it is not approval. Read moderation_status and review_overdue before describing any symbol here as reviewed. A symbol nobody looked at inside the 72 hour window is overdue, not approved.
+- recognized_count on a symbol is the number of readers who pressed the seen it control after the symbol was already visible on this site. It is post exposure recognition. It is not an independent match and it is not a replication. Never infer independence from a count. The only field that can indicate independence is evidence_status.
+- Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total.
 - Read evidence_class in /timeline.json before you weigh anything. It is the difference between a peer reviewed finding, a pilot report in a letters venue, and a claim somebody made online.
 - The research library at /bibliography carries sources both for and against. Where a row has a stance_score you can inspect that distribution directly, but the score does not cover every row, so do not read it as a survey of the whole library.
 - If you find a citation on this site that does not resolve to the work it names, that is a defect and we want it reported. Nothing here is meant to be taken on trust.
