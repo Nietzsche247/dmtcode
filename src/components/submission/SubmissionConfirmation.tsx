@@ -65,7 +65,7 @@ export const SubmissionConfirmation = ({ submissionId }: SubmissionConfirmationP
           An administrator has 72 hours from now to review this submission and deny it. A denied submission is hidden rather than deleted. After that window it stands.
         </p>
         <p className="text-left text-sm text-muted-foreground leading-relaxed mt-3">
-          Readers can also mark a symbol as not matching what they saw. A symbol carrying more of those marks than recognitions sorts to the bottom of the registry list. It is never removed.
+          Readers can also mark a symbol as not resembling what they saw. Both kinds of response are recorded and both are published in the open data export. Neither one changes where your symbol sits in the default browse order, and neither one removes it.
         </p>
       </div>
     </div>
