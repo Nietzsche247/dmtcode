@@ -26,10 +26,18 @@ import {
   Calendar, 
   Clock, 
   Eye, 
-  ChevronUp, 
   Award
 } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+  isCuratedExample,
+  isReviewOverdue,
+  visibilityLabel,
+  moderationLabel,
+  evidenceLabel,
+  moderationTone,
+  CURATED_EXAMPLE_NOTICE,
+} from '@/lib/submissionStatus';
 
 interface SymbolData {
   id: string;
@@ -40,6 +48,12 @@ interface SymbolData {
   upvotes: number;
   downvotes: number;
   status: 'pending' | 'approved' | 'rejected';
+  visibility_status?: string | null;
+  moderation_status?: string | null;
+  evidence_status?: string | null;
+  is_curated_example?: boolean | null;
+  published_at?: string | null;
+  review_due_at?: string | null;
   source_method: string | null;
   surface_type: string | null;
   context_note: string | null;
@@ -64,6 +78,7 @@ interface RelatedSymbol {
   image_url: string;
   tags: string[] | null;
   upvotes: number;
+  is_curated_example?: boolean | null;
 }
 
 interface Validator {
@@ -190,7 +205,7 @@ const SymbolDetail = () => {
     if (symbolData.tags && symbolData.tags.length > 0) {
       const { data: related } = await supabase
         .from('symbol_submissions')
-        .select('id, image_url, tags, upvotes')
+        .select('id, image_url, tags, upvotes, is_curated_example')
         .eq('status', 'approved')
         .neq('id', symbolId)
         .contains('tags', [symbolData.tags[0]])
@@ -210,6 +225,17 @@ const SymbolDetail = () => {
 
   const prettify = (value: string) =>
     value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  // Visibility, moderation and evidence are three separate facts. Being visible
+  // is not the same as having been reviewed, and neither one makes a symbol
+  // evidence. They are shown side by side so that no single green badge can
+  // imply an approval nobody actually gave.
+  const TONE_CLASS: Record<string, string> = {
+    positive: 'bg-green-500/20 text-green-400 border-green-500/30',
+    caution: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    negative: 'bg-red-500/20 text-red-400 border-red-500/30',
+    neutral: 'bg-muted text-muted-foreground border-border',
+  };
 
   if (loading) {
     return (
@@ -315,11 +341,14 @@ const SymbolDetail = () => {
                   )}
                 </Card>
 
-                {symbol.image_url?.startsWith('/placeholder-symbol-') && (
+                {isCuratedExample(symbol) && (
                   <div className="space-y-2">
-                    <Badge variant="secondary">Curated starter set</Badge>
+                    <Badge variant="secondary">Curated example</Badge>
                     <p className="text-sm text-muted-foreground">
-                      Curated by the project from public imagery in November 2025 as part of the registry's starting corpus, not a user submission.
+                      {CURATED_EXAMPLE_NOTICE}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Curated by the project from public imagery in November 2025 as part of the registry's starting corpus.
                     </p>
                   </div>
                 )}
@@ -357,27 +386,35 @@ const SymbolDetail = () => {
               <div className="space-y-6">
                 {/* Header */}
                 <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge 
-                      className={
-                        symbol.status === 'approved' 
-                          ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                          : symbol.status === 'rejected'
-                          ? 'bg-red-500/20 text-red-400 border-red-500/30'
-                          : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                      }
-                    >
-                      {symbol.status === 'approved'
-                        ? 'Published'
-                        : symbol.status === 'rejected'
-                          ? 'Hidden after review'
-                          : 'Not published'}
-                    </Badge>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {visibilityLabel(symbol) && (
+                      <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
+                        {visibilityLabel(symbol)}
+                      </Badge>
+                    )}
+                    {moderationLabel(symbol) && (
+                      <Badge variant="outline" className={TONE_CLASS[moderationTone(symbol)]}>
+                        {moderationLabel(symbol)}
+                      </Badge>
+                    )}
+                    {evidenceLabel(symbol) && (
+                      <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
+                        {evidenceLabel(symbol)}
+                      </Badge>
+                    )}
                     <span className="text-sm text-muted-foreground flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       {format(new Date(symbol.created_at), 'MMM d, yyyy')}
                     </span>
                   </div>
+
+                  {symbol.moderation_status === 'unreviewed' && (
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {isReviewOverdue(symbol)
+                        ? 'This symbol was published the moment it was submitted. A moderator was meant to look at it within 72 hours and that window has passed. Publication here is not review and it is not approval.'
+                        : 'This symbol was published the moment it was submitted. A moderator has 72 hours to review it. Publication here is not review and it is not approval.'}
+                    </p>
+                  )}
                   <h1 className="text-2xl font-bold mb-2">Symbol #{symbol.id.slice(0, 8)}</h1>
                   {symbol.description && (
                     <p className="text-muted-foreground">{symbol.description}</p>
@@ -526,11 +563,20 @@ const SymbolDetail = () => {
                             loading="lazy"
                           />
                         </div>
+                        {isCuratedExample(related) && (
+                          <p className="text-[10px] text-muted-foreground mb-1">
+                            Curated example
+                          </p>
+                        )}
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <ChevronUp className="w-3 h-3" />
-                            {related.upvotes}
-                          </span>
+                          {related.upvotes > 0 ? (
+                            <span className="flex items-center gap-1">
+                              <Eye className="w-3 h-3" />
+                              {related.upvotes} recognized
+                            </span>
+                          ) : (
+                            <span />
+                          )}
                           {related.tags && related.tags[0] && (
                             <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                               {related.tags[0]}
