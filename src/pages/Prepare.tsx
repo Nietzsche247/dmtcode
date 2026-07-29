@@ -261,7 +261,7 @@ const Prepare = () => {
         <title>Prepare. Kits and group bundles for careful practice.</title>
         <meta
           name="description"
-          content="Instrument kits and group bundles for careful, well prepared practice. Honest ship windows, plain bills of materials, no surprises."
+          content="Kits and group bundles for careful practice. The two kits that ship now are printed material only. Everything with a 650 nm module is preorder."
         />
         <link rel="canonical" href="https://dmtcode.com/prepare" />
       </Helmet>
@@ -275,7 +275,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Instrument kits for one observer. Group bundles for two, three, or five. Honest ship windows, plain bills of materials, no surprises."
+            subtitle="Kits for one observer. Group bundles for two, three, or five. Every bill of materials is listed in full. There is no checkout on this page. The notify form on each card records interest and nothing else."
           />
 
           {/* SAFETY */}
@@ -299,6 +299,13 @@ const Prepare = () => {
                     We publish no discontinuation windows. Timing decisions belong to a clinician
                     who knows your history.
                   </p>
+                  <p className="text-xs text-muted-foreground">
+                    Every bundle that contains a 650 nm optical module also contains eyewear marked
+                    Safety Eyewear OD2+. We have not published the measured output of that module,
+                    its laser classification, or the optical density curve of that eyewear. Until
+                    we do, do not look into the beam, do not aim it at anyone, and treat every
+                    reflective surface in the room as part of the beam path.
+                  </p>
                 </div>
               </div>
             </Card>
@@ -312,8 +319,9 @@ const Prepare = () => {
               </div>
               <h2 className="font-serif text-3xl md:text-4xl mt-2">For one observer</h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Four tiers, each a superset of the last. Same optical spine, more instruments as
-                you climb.
+                Four tiers, each a superset of the last. Observer and Practitioner are printed
+                material only. The 650 nm optical module, the diffraction grating set and the
+                OD2+ safety eyewear first appear in the Instrument tier.
               </p>
             </header>
 
@@ -358,24 +366,38 @@ const Prepare = () => {
           <section className="max-w-4xl mx-auto px-4 mt-24">
             <Card className="p-8 rounded-2xl border-border/60">
               <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                What we promise
+                What we can say today
               </div>
-              <h2 className="font-serif text-3xl mt-2 mb-6">Guarantee</h2>
+              <h2 className="font-serif text-3xl mt-2 mb-6">What is settled and what is not</h2>
               <div className="space-y-4 text-sm leading-relaxed">
                 <p>
-                  <strong>Correct on arrival.</strong> The right wavelength, the right optical
-                  density, the right pairing. Verified before it ships.
+                  <strong>The bill of materials is the whole bill.</strong> Every component of
+                  every kit is listed on this page with its quantity. Nothing is held back for a
+                  later upsell.
                 </p>
                 <p>
-                  <strong>Complete.</strong> Nothing missing, nothing to order after.
+                  <strong>The price sits above the parts total, not below it.</strong> Every kit
+                  and bundle on this page costs more than sourcing the same parts yourself, and
+                  each kit card prints that difference in dollars. You are paying for assembly and
+                  for the printed material, not for a discount.
                 </p>
                 <p>
-                  <strong>Replaced if wrong.</strong> If any component is not as described, we
-                  replace it. No return shipping.
+                  <strong>Two kits can be produced now. Five bundles cannot.</strong> Observer and
+                  Practitioner are printed material and are marked as shipping now. Every bundle
+                  that contains a 650 nm optical module is preorder, and preorder here means no
+                  source and no date have been confirmed.
                 </p>
                 <p>
-                  <strong>Honest about timing.</strong> Every item shows its ship window before you
-                  pay. If it slips, you hear it from us first.
+                  <strong>There is no checkout on this page.</strong> Nothing here can be paid for
+                  yet. The notify form on each card records an email address against that bundle
+                  and does nothing else.
+                </p>
+                <p>
+                  <strong>The optical specifications are not published.</strong> We have not
+                  published a manufacturer, a model, a measured wavelength, a measured output, a
+                  laser classification, a grating line density, or an optical density curve for the
+                  eyewear. Until those are published, treat the optical components on this page as
+                  unspecified.
                 </p>
               </div>
             </Card>

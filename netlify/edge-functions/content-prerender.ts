@@ -590,7 +590,7 @@ async function renderPrepare(context: Context): Promise<Response> {
   const title =
     "Prepare. Kits and group bundles for careful practice. | DMT Code";
   const metaDesc = clip(
-    "Instrument kits and group bundles for careful, well prepared practice. Honest ship windows, plain bills of materials, no surprises.",
+    "Kits and group bundles for careful practice. The two kits that ship now are printed material only. Everything with a 650 nm module is preorder.",
     160,
   );
 
@@ -614,10 +614,10 @@ async function renderPrepare(context: Context): Promise<Response> {
   };
 
   const KIT_DESC: Record<string, string> = {
-    "k1-observer": "Observer tier. Verified 650 nm laser plus matched OD eyewear for a single observer.",
-    "k2-practitioner": "Practitioner tier. Full observation instrument, observation journal, and screening card.",
-    "k3-instrument": "Instrument tier. The optical-geometry thesis in one shippable kit.",
-    "k4-complete": "Complete tier. Full instrument, journal, screening, and reference material.",
+    "k1-observer": "Observer tier. Printed material only: field guide, observation journal, screening card, reference chart, and reflection workbook. No optical components.",
+    "k2-practitioner": "Practitioner tier. Printed material only. The Observer set plus an integration prompt deck and a music referral card. No optical components.",
+    "k3-instrument": "Instrument tier. The first tier that adds a 650 nm optical module, a diffraction grating set, and OD2+ safety eyewear. Preorder.",
+    "k4-complete": "Complete tier. The Instrument set plus mask, non-metal bottle, grounding object, containment bowl, and a coil-bound journal upgrade. Preorder.",
   };
   const sanitize = (s: string) =>
     s.replace(/\u2014/g, ":").replace(/\u2013/g, "-").trim();
@@ -711,7 +711,7 @@ async function renderPrepare(context: Context): Promise<Response> {
         name: "What do I need to prepare to observe the geometry?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "A verified 650 nm laser and matched optical density filter. Kits range from the Observer (single instrument) to the Complete (full spine). See the kit ladder for bills of materials.",
+          text: "The Observer and Practitioner kits are printed material only and contain no optical components. The Instrument and Complete kits add a 650 nm optical module, a diffraction grating set, and OD2+ safety eyewear. Full bills of materials are listed on the prepare page.",
         },
       },
       {
@@ -775,6 +775,7 @@ async function renderPrepare(context: Context): Promise<Response> {
       <li>Personal or family history of psychosis</li>
     </ul>
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
+    <p>Every bundle that contains a 650 nm optical module also contains eyewear marked Safety Eyewear OD2+. We have not published the measured output of that module, its laser classification, or the optical density curve of that eyewear. Until we do, do not look into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <section>
     <h2>Kit ladder (one observer)</h2>
@@ -785,12 +786,13 @@ async function renderPrepare(context: Context): Promise<Response> {
     <ul>${groupBlocks}</ul>
   </section>
   <section>
-    <h2>Guarantee</h2>
+    <h2>What is settled and what is not</h2>
     <ul>
-      <li>Correct on arrival. Right wavelength, right optical density, verified before shipping.</li>
-      <li>Complete. Nothing missing, nothing to order after.</li>
-      <li>Replaced if wrong. No return shipping.</li>
-      <li>Honest about timing. Every item shows its ship window before you pay.</li>
+      <li>The bill of materials is the whole bill. Every component of every kit is listed with its quantity.</li>
+      <li>The price sits above the parts total, not below it. Every kit and bundle on this page costs more than sourcing the same parts yourself.</li>
+      <li>Two kits can be produced now. Every bundle containing a 650 nm optical module is preorder, and preorder here means no source and no date have been confirmed.</li>
+      <li>There is no checkout on this page. The notify form records an email address against a bundle and does nothing else.</li>
+      <li>The optical specifications are not published. No manufacturer, model, measured wavelength, measured output, laser classification, grating line density, or eyewear optical density curve has been published.</li>
     </ul>
   </section>
   <section>

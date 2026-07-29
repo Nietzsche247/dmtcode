@@ -25,11 +25,11 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   tools: {
     research: {
       title: 'Research Equipment & Protocol Tools | DMT Code',
-      description: 'Verified 650nm laser equipment, optical components, and research tools for controlled symbol documentation studies.',
+      description: 'Kits and optical components for symbol documentation. Two kits ship now and are printed material only. Kits containing a 650nm module are preorder and their specifications are not yet published.',
     },
     explorer: {
       title: 'Journey Equipment | From Entry-Level to Premium | DMT Code',
-      description: 'Curated equipment for consciousness exploration. $12 starter items to $2,000 ceremonial experiences. Fund ongoing research.',
+      description: 'Kits and group bundles from $109 to $879. Bills of materials are published in full. There is no checkout yet, only a notify list.',
     },
   },
   bibliography: {
@@ -65,11 +65,11 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   bundles: {
     research: {
       title: 'Research Kits & Protocol Equipment Bundles | DMT Code',
-      description: 'Pre-configured equipment bundles for 650nm protocol research. Starter to advanced kits with verified components.',
+      description: 'Equipment bundles for 650nm protocol observation, from $109 to $879. Every bill of materials is published. Component specifications are not yet published.',
     },
     explorer: {
-      title: 'Journey Kits & Bundles | Save Up to 20% | DMT Code',
-      description: 'Curated equipment packages for every explorer. From $85 starter kits to $2,300 complete ceremony bundles.',
+      title: 'Kits & Group Bundles | $109 to $879 | DMT Code',
+      description: 'Equipment packages for one observer or for groups of two, three, or five. From $109 to $879. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
     },
   },
 };
