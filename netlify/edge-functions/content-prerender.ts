@@ -1816,7 +1816,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "Nobody has answered this yet. It gets answered faster with more first hand accounts, recorded carefully, by people who were not told in advance what they were supposed to see. Describe what you saw before you look at anyone else's, read what has already been collected, come to an event, and join a trial when one opens.",
       "The observation protocol is built around a 650 nm laser passed through a diffraction grating. Where possible, contributors record what they saw before viewing the existing catalogue, so a match is earned by independent recognition rather than by suggestion.",
-      "Confirmation counts are public per symbol. The dataset is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
+      "Recognition counts are public per symbol, and they count readers who responded after seeing the form here rather than independent observers. The dataset is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
       "A note on what follows: it is a draft study design, not the original protocol and not a validated result. Anyone running it with human participants needs qualified laser safety review and ethics approval first.",
     ],
     links: [
