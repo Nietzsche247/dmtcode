@@ -1,0 +1,310 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dmtcode.com/timeline.schema.json",
+  "title": "DMT Code chronology",
+  "description": "Schema for public/timeline.json. Every entry is a dated record of published research, a legal decision, a platform fact, or a community claim. The evidence_class field states which of those it is, and nothing is presented as research unless its identifier resolves to the work described. To add a paper or article, append one object to entries that validates against #/definitions/entry.",
+  "type": "object",
+  "required": ["schema_version", "provenance", "title", "evidence_classes", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of this schema the file was authored against.",
+      "const": "2.0"
+    },
+    "schema_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where this schema is published."
+    },
+    "provenance": {
+      "type": "object",
+      "description": "How the citations in this file were checked, and when.",
+      "required": ["verified_on", "verified_against", "rule"],
+      "additionalProperties": false,
+      "properties": {
+        "verified_on": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO date of the most recent full citation verification pass."
+        },
+        "verified_against": {
+          "type": "string",
+          "description": "Which authorities the citations were resolved against."
+        },
+        "rule": {
+          "type": "string",
+          "description": "The standing rule the file is maintained under."
+        }
+      }
+    },
+    "title": {
+      "type": "object",
+      "required": ["headline", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "headline": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evidence_classes": {
+      "type": "object",
+      "description": "Human-readable definition of each evidence_class value. Every value used by an entry must have a key here.",
+      "required": [
+        "peer_reviewed",
+        "book",
+        "legal",
+        "letters",
+        "journalism",
+        "commentary",
+        "platform_record",
+        "community_report"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "peer_reviewed": { "type": "string" },
+        "book": { "type": "string" },
+        "legal": { "type": "string" },
+        "letters": { "type": "string" },
+        "journalism": { "type": "string" },
+        "commentary": { "type": "string" },
+        "platform_record": { "type": "string" },
+        "community_report": { "type": "string" }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "description": "The chronology. Order in the file is not significant; sort on date.sort_key.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/entry" }
+    }
+  },
+  "definitions": {
+    "entry": {
+      "type": "object",
+      "description": "One dated record. Omit any optional key you cannot fill truthfully. Never set a key to null, an empty string, or a placeholder such as Unknown, TBD, or n/a.",
+      "required": ["id", "date", "headline", "summary", "tags", "evidence_class", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable url-safe slug. Used as the drill-in route at /timeline/{id}. Lowercase letters, digits and hyphens only. Must be unique across the file and must never be changed once published, because links depend on it. Convention: firstauthor-year-shortsubject.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "minLength": 3,
+          "maxLength": 80
+        },
+        "date": { "$ref": "#/definitions/date" },
+        "headline": {
+          "type": "string",
+          "description": "Short title for the entry. Plain sentence case. No HTML.",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "summary": {
+          "type": "string",
+          "description": "What the work found or what happened, in plain language, and where relevant what it does not establish. No HTML. State only what the cited source supports.",
+          "minLength": 1
+        },
+        "people": {
+          "type": "array",
+          "description": "People the entry is about, for the sort-by-person view. Include only named individuals actually identified by the source.",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/person" }
+        },
+        "place": { "$ref": "#/definitions/place" },
+        "tags": {
+          "type": "array",
+          "description": "Lowercase hyphenated topic tags for filtering. Reuse existing tags rather than coining near-duplicates.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "uniqueItems": true
+        },
+        "evidence_class": {
+          "type": "string",
+          "description": "What kind of thing this is. Determines how the UI presents it. Anything without a resolvable published identifier belongs in community_report and is not shown as evidence.",
+          "enum": [
+            "peer_reviewed",
+            "book",
+            "legal",
+            "letters",
+            "journalism",
+            "commentary",
+            "platform_record",
+            "community_report"
+          ]
+        },
+        "source": { "$ref": "#/definitions/source" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "evidence_class": { "const": "peer_reviewed" } } },
+          "then": {
+            "properties": {
+              "source": { "required": ["kind", "title", "authors", "container", "year", "doi"] }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "evidence_class": { "const": "book" } } },
+          "then": {
+            "properties": {
+              "source": { "required": ["kind", "title", "authors", "publisher", "year", "isbn"] }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "evidence_class": { "const": "legal" } } },
+          "then": {
+            "properties": { "source": { "required": ["kind", "title", "citation", "url"] } }
+          }
+        },
+        {
+          "if": { "properties": { "evidence_class": { "const": "journalism" } } },
+          "then": {
+            "properties": { "source": { "required": ["kind", "title", "container", "url"] } }
+          }
+        },
+        {
+          "if": { "properties": { "evidence_class": { "const": "commentary" } } },
+          "then": {
+            "properties": { "source": { "required": ["kind", "authors", "url"] } }
+          }
+        },
+        {
+          "if": { "properties": { "evidence_class": { "const": "community_report" } } },
+          "then": {
+            "properties": { "source": { "required": ["kind", "note"] } }
+          }
+        }
+      ]
+    },
+    "date": {
+      "type": "object",
+      "description": "When it happened, to whatever precision is actually known. Do not guess a month or day to make a date look complete.",
+      "required": ["year", "precision", "sort_key"],
+      "additionalProperties": false,
+      "properties": {
+        "year": { "type": "integer", "minimum": 1800, "maximum": 2100 },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "precision": {
+          "type": "string",
+          "description": "Which fields are real. year means month and day are unknown and must be omitted. month means day is unknown and must be omitted.",
+          "enum": ["year", "month", "day"]
+        },
+        "sort_key": {
+          "type": "string",
+          "description": "Zero-padded YYYY-MM-DD used for sorting only. Unknown month or day is written as 00, which sorts before January without implying it. When two year-only entries share a year, increment the day segment (1994-00-00, 1994-00-01) to fix their relative order. Never render this to a user.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "precision": { "const": "year" } } },
+          "then": { "not": { "anyOf": [{ "required": ["month"] }, { "required": ["day"] }] } }
+        },
+        {
+          "if": { "properties": { "precision": { "const": "month" } } },
+          "then": { "required": ["month"], "not": { "required": ["day"] } }
+        },
+        {
+          "if": { "properties": { "precision": { "const": "day" } } },
+          "then": { "required": ["month", "day"] }
+        }
+      ]
+    },
+    "person": {
+      "type": "object",
+      "required": ["name", "sort"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name as the source spells it, diacritics included.",
+          "minLength": 1
+        },
+        "sort": {
+          "type": "string",
+          "description": "Surname in plain ASCII, for a sort that does not break on diacritics. Szara for Szara, Kluver for Kluver.",
+          "pattern": "^[A-Za-z][A-Za-z'-]*$"
+        }
+      }
+    },
+    "place": {
+      "type": "object",
+      "description": "Where the work was done. Omit the whole object unless the source states it. Do not infer a city from an author's later affiliation.",
+      "required": ["label", "country"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "City, or city and institution.",
+          "minLength": 1
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code, uppercase.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "The citation. Fill only fields the source actually supports. An identifier goes in here only after it has been resolved and the returned title read back and matched. Never write a DOI, ISBN or URL you have not resolved.",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "journal_article",
+            "book",
+            "court_opinion",
+            "letters_article",
+            "news_article",
+            "web_page",
+            "database_record",
+            "unpublished"
+          ]
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "authors": {
+          "type": "array",
+          "description": "Authors as printed, in printed order.",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "container": {
+          "type": "string",
+          "description": "Journal, publication or venue the work appeared in."
+        },
+        "volume": { "type": "string" },
+        "pages": { "type": "string" },
+        "publisher": { "type": "string" },
+        "year": { "type": "integer", "minimum": 1800, "maximum": 2100 },
+        "doi": {
+          "type": "string",
+          "description": "Bare DOI, no https://doi.org prefix. Must resolve at api.crossref.org/works/{doi} to the work named in title.",
+          "pattern": "^10\\.[0-9]{4,9}/[^\\s]+$"
+        },
+        "isbn": {
+          "type": "string",
+          "description": "ISBN-13 with hyphens.",
+          "pattern": "^97[89](-[0-9]+){3}-[0-9X]$"
+        },
+        "url": { "type": "string", "format": "uri" },
+        "citation": {
+          "type": "string",
+          "description": "Formal citation string where no DOI or ISBN applies, such as a law report reference."
+        },
+        "note": {
+          "type": "string",
+          "description": "Required for community_report. States plainly that no published source exists and that the entry is recorded as history, not offered as evidence."
+        }
+      }
+    }
+  }
+}
