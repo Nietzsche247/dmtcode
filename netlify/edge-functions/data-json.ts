@@ -534,7 +534,7 @@ export default async (req: Request): Promise<Response> => {
   };
 
   const body = {
-    version: "4.0",
+    version: "4.1",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -546,6 +546,8 @@ export default async (req: Request): Promise<Response> => {
       authority_type: authorityVocab,
       person: "substring match against item.people (see known names)",
       status: statusVocab,
+      evidence_status: "raw, eligible, ineligible, candidate_match, reviewed_convergence, controlled_replication. Symbols only.",
+      moderation_status: "unreviewed, reviewed, denied, reported. Symbols only.",
       verification: verificationVocab,
       phase: phaseVocab,
       stance_min: "integer, inclusive lower bound",
@@ -555,6 +557,8 @@ export default async (req: Request): Promise<Response> => {
       offset: "pagination offset",
     },
     known_people: KNOWN_PEOPLE,
+    field_definitions: FIELD_DEFINITIONS,
+    dataset_version_note: "Version 4.1 adds visibility_status, moderation_status, evidence_status, is_curated_example, published_at, review_due_at and review_overdue to every symbol, and replaces the symbols[].upvotes key with recognized_count, not_a_match_count and upvote_count. The old upvotes key stored the seen it tally rather than the upvote tally, which made it easy to misread. Read field_definitions before treating any count here as evidence.",
     counts: {
       total: items.length,
       returned: filtered.length,
@@ -563,6 +567,8 @@ export default async (req: Request): Promise<Response> => {
       symbols: symbolItems.length,
       symbols_community: symbolsCommunity,
       symbols_curated: symbolsCurated,
+      symbols_unreviewed: symbolsUnreviewed,
+      symbols_review_overdue: symbolsReviewOverdue,
       theories: theoriesFeed.length,
       events: eventsFeed.length,
       articles: articlesFeed.length,
@@ -578,7 +584,7 @@ export default async (req: Request): Promise<Response> => {
     guides: guidesFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
-    symbols_note: "Symbols marked record_class curated_starter were curated by the project from public imagery as a starting corpus and do not count as observed evidence. Use counts_toward_evidence to filter.",
+    symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
     faq: FAQ_ITEMS,
   };
 
