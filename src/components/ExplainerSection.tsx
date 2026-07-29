@@ -51,7 +51,7 @@ export const ExplainerSection = () => {
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              <span className="text-foreground font-medium">Chase Hughes</span> validated Goler's protocol through structured replication studies. He documented that symbols maintain structural coherence across observers who have never communicated with each other. Participants independently draw nearly identical symbols when asked to recreate their observations immediately after the experience (Goler 2025, IPI Letters).
+              Claims that the protocol has been independently validated circulate widely. We have not been able to find a published source for any of them. Our bibliography lists that claim as unverified rather than repeating it, and it will stay that way until a source exists that can be read and checked.
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
