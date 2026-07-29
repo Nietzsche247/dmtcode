@@ -160,22 +160,24 @@ export const ConvergenceHero = () => {
               />
             </div>
 
-            <div className="mt-6 text-center">
-              <div
-                className="text-6xl md:text-7xl lg:text-8xl leading-none text-primary tabular-nums"
-                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
-              >
-                {displayCount}
+            {displayCount > 0 && (
+              <div className="mt-6 text-center">
+                <div
+                  className="text-6xl md:text-7xl lg:text-8xl leading-none text-primary tabular-nums"
+                  style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+                >
+                  {displayCount}
+                </div>
+                <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
+                  READERS RECOGNIZED THIS AFTER SEEING IT HERE
+                </p>
               </div>
-              <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
-                {displayCount === 1 ? 'PERSON' : 'PEOPLE'} INDEPENDENTLY REPORTED THIS FORM
-              </p>
-            </div>
+            )}
 
             <div className="mt-5 pt-4 border-t border-border/60">
               <p className="label-data text-[10px] text-muted-foreground truncate">
                 SPECIMEN {specimen.id.slice(0, 8)}
-                {specimen.wavelength ? ` · ${specimen.wavelength}` : ' · 650 NM'}
+                {specimen.wavelength ? ` · ${specimen.wavelength}` : ''}
                 {tagLine ? ` · ${tagLine}` : ''}
               </p>
             </div>
