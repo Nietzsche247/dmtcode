@@ -274,7 +274,7 @@ const VoiceLogger = () => {
           name="description" 
           content={isClinicalMode 
             ? "Clinical voice logging for ketamine-assisted psychotherapy sessions. Record, analyze therapeutic themes, and export PDF reports for patient charts."
-            : "Document your consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol and therapeutic sessions."
+            : "Record a voice note after your session. The audio is sent for automatic transcription, and the transcript is scanned for a fixed list of keywords. You need an account, because the recording stays yours."
           }
         />
         <link rel="canonical" href="https://dmtcode.com/log" />
@@ -284,14 +284,14 @@ const VoiceLogger = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dmtcode.com/log" />
         <meta property="og:title" content="Voice Logger | Document Your Experience | DMT Code" />
-        <meta property="og:description" content="Document consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol sessions. UGC-powered research." />
+        <meta property="og:description" content="Record a voice note after your session. The audio is sent for automatic transcription, and the transcript is scanned for a fixed list of keywords." />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/log" />
         <meta name="twitter:title" content="Voice Logger | Document Your Experience | DMT Code" />
-        <meta name="twitter:description" content="Document consciousness experiences with voice logging. Record, transcribe, and analyze insights from DMT laser protocol sessions." />
+        <meta name="twitter:description" content="Record a voice note after your session. The audio is sent for automatic transcription, and the transcript is scanned for a fixed list of keywords." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
@@ -646,7 +646,7 @@ const VoiceLogger = () => {
                           </li>
                           <li className="flex items-start gap-2">
                             <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-                            Selecting a protocol helps match your experience to research patterns
+                            Selecting a protocol tags the log, so it can be grouped with other logs that used the same protocol
                           </li>
                         </>
                       )}

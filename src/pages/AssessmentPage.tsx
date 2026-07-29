@@ -120,8 +120,8 @@ export default function Assess() {
                   Record Your Experience First
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Use our Voice Logger to capture your thoughts immediately after your session while memories are fresh. 
-                  Your recording will be transcribed and analyzed.
+                  Use the Voice Logger to capture your thoughts right after your session, while the memory is fresh. You need an account, because the recording stays yours. 
+                  The audio is sent for automatic transcription, and the transcript is then scanned for a fixed list of keywords and grouped under theme names. That grouping is a word match on the text. It is not an interpretation of what you experienced.
                 </p>
               </div>
               <Button 
