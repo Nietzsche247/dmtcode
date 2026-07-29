@@ -91,7 +91,7 @@ interface GlyphAnnotation {
 }
 
 export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: LayeredSubmissionFormProps = {}) => {
-  const [step, setStep] = useState<Step>(0);
+  const [step, setStep] = useState<Step>(1);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -209,10 +209,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleNext = () => {
-    if (step === 0 && !formData.primingExposure) {
-      toast.error('Please answer the priming question');
-      return;
-    }
     if (step === 1 && !isNullReport && !formData.imageData) {
       toast.error('Please draw a symbol first');
       return;
@@ -251,12 +247,16 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleBack = () => {
-    setStep((prev) => Math.max(0, prev - 1) as Step);
+    setStep((prev) => Math.max(1, prev - 1) as Step);
   };
 
   const handleSubmit = async () => {
     if (!userId) {
       toast.error('Please sign in first so your record can be stamped to you');
+      return;
+    }
+    if (!formData.primingExposure) {
+      toast.error('Please answer the last question above so we can weigh your record');
       return;
     }
 
@@ -595,7 +595,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     publicationConsent: false,
     pseudonym: ''
   });
-    setStep(0);
+    setStep(1);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
@@ -665,7 +665,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
         <div className="flex justify-center items-center gap-2 mb-8">
-          {[0, 1, 2, 3, 4, 5, 6].map((s) => (
+          {[1, 2, 3, 4, 5, 6].map((s) => (
             <div 
               key={s}
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -674,7 +674,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 'bg-muted text-muted-foreground'
               }`}
             >
-              {s === 0 ? '?' : s}
+              {s}
             </div>
           ))}
         </div>
@@ -1590,6 +1590,33 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               )}
             </div>
 
+            <div className="space-y-3 border-t pt-6">
+              <Label className="text-base font-medium">
+                One last thing, so we can weigh your record properly. Before your experience, had you seen any of this imagery?
+              </Label>
+              <RadioGroup
+                value={formData.primingExposure}
+                onValueChange={(value) => setFormData({ ...formData, primingExposure: value as typeof formData.primingExposure })}
+                className="grid gap-2 sm:grid-cols-3"
+              >
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_none" id="p-none" />
+                  <Label htmlFor="p-none" className="cursor-pointer font-normal">No, none of it</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_matrix_only" id="p-matrix" />
+                  <Label htmlFor="p-matrix" className="cursor-pointer font-normal">Only Matrix style rain</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_laser_exposed" id="p-laser" />
+                  <Label htmlFor="p-laser" className="cursor-pointer font-normal">Yes, Goler or Discovery</Label>
+                </div>
+              </RadioGroup>
+              {formData.primingExposure === 'priming_none' && (
+                <p className="text-sm text-gold">Unprimed records carry the most weight. Thank you.</p>
+              )}
+            </div>
+
             {/* Privacy */}
             <div>
               <h4 className="text-base font-semibold mb-3">Who can see this memory</h4>
@@ -1666,7 +1693,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
-              <Button onClick={handleSubmit} disabled={isSubmitting}>
+              <Button onClick={handleSubmit} disabled={isSubmitting || !formData.primingExposure}>
                 {isSubmitting ? 'Submitting...' : 'Submit Symbol'}
               </Button>
             </div>
