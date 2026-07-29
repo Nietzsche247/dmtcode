@@ -24,7 +24,7 @@ const Terms = () => {
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms</h1>
-            <p className="text-lg text-muted-foreground mb-10">Effective 24 July 2026.</p>
+            <p className="text-lg text-muted-foreground mb-10">Effective 29 July 2026.</p>
 
             <div className="space-y-6 text-base leading-relaxed">
               <h2 className="text-2xl font-semibold mt-8">What this site is</h2>
@@ -49,7 +49,7 @@ const Terms = () => {
               <h2 className="text-2xl font-semibold mt-8">Moderation</h2>
               <p>Symbols you draw and submit appear in the public registry immediately. There is no queue in front of them. Administrators then have 72 hours from publication to review a submission and deny it. A denied submission is hidden rather than deleted, so a record of what was submitted survives. After that window it stands, unless it is later reported and found to break the rules below.</p>
               <p>Events, retreats, clinical trial records and theories work the other way around. Those are reviewed before they appear.</p>
-              <p>Placement in the registry is set by readers, not by us. Anyone signed in can mark a symbol as not matching what they saw. When a symbol carries more of those marks than recognitions, it sorts to the bottom of the browse list. Voting moves a symbol. It never removes one.</p>
+              <p>Anyone signed in can mark a symbol as echoing their memory, or as not resembling what they saw. Both responses are recorded and both are published in our open data export. Neither one reorders the registry for anybody else. The browse list follows whichever sort the reader picked. One of those sorts does weigh community responses, but the reader has to choose it and it ranks only symbols carrying at least five responses. A response never removes a symbol and never hides one.</p>
               <p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Buying equipment</h2>

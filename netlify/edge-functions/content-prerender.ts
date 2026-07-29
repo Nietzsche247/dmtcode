@@ -1922,7 +1922,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "The terms you agree to when you use DMT Code or contribute to it.",
     heading: "Terms",
     paragraphs: [
-      "Effective 24 July 2026.",
+      "Effective 29 July 2026.",
     ],
     breadcrumbName: "Terms",
     bodyExtraHtml: `<section><h2>What this site is</h2><p>DMT Code is a research project that collects and publishes reports of a visual phenomenon, alongside clinical trial records, a bibliography, and competing explanations for what the phenomenon might be. It takes no position on whether the phenomenon is real. Nothing here asserts that it is, and nothing here asserts that it is not.</p></section>
