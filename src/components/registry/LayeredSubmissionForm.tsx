@@ -622,7 +622,22 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           Your null report is valuable for baseline comparison. Complete the same metadata form to document what you didn't see.
         </p>
       )}
-      
+
+      {!authChecked && (
+        <div className="max-w-4xl mx-auto py-12 text-center text-muted-foreground">
+          Checking your account…
+        </div>
+      )}
+
+      {authChecked && !userId && (
+        <SignInToContribute
+          title="Sign in to add your record"
+          body="An account is what makes the record count. It stamps what you describe to you, so if someone else describes the same thing later, the order is on the record and yours came first. It also lets you keep a memory private, follow a symbol, and confirm a match when one rings true. We give you an avatar, so your name stays yours."
+        />
+      )}
+
+      {authChecked && userId && (
+      <>
       {/* Offline indicator */}
       {!isOnline && (
         <div className="max-w-4xl mx-auto mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center gap-2 text-amber-500">
