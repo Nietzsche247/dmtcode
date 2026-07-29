@@ -116,7 +116,7 @@ export const ConvergenceHero = () => {
               className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial"
             >
               <Eye className="w-4 h-4 mr-2" />
-              I saw this too
+              Browse the record
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button
