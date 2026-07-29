@@ -879,7 +879,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
         name: "Is the DMT code verifiable?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Every symbol in the open registry shows its independent confirmation count. The full corpus is downloadable at /data.json under CC-BY-4.0.",
+          text: "The record is built so that it can fail, which is what makes the question answerable. The registry publishes every observer submission, and it shows how many readers said a form echoed their own memory after seeing it here. That is recognition after exposure, not independent confirmation. The full corpus is downloadable at /data.json under CC-BY-4.0.",
         },
       },
       {
@@ -910,11 +910,11 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   </section>
   <section>
     <h2>What the open data shows</h2>
-    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
+    <p>The <a href="${SITE}/registry">visual symbol registry</a> publishes every observer submission the moment it is made, and shows how many readers said the form echoed their own memory after seeing it here. That is recognition after exposure, not an independent match. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
   </section>
   <section>
     <h2>How to judge it</h2>
-    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
+    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry, and when you look at how many readers recognized a form, remember that they saw it here before they responded. Then read the null-reports dashboard. If the convergence is real, it should hold up under blinded conditions, where an account is sealed before the person ever views the catalogue. If it is not real, that failure should be visible in the same record. The dataset is designed to be able to fail.</p>
   </section>
   <section>
     <h2>Primary reference for the laser protocol</h2>
@@ -1553,7 +1553,7 @@ const GLOSSARY_TERMS: Array<{ term: string; definition: string }> = [
   { term: "650 nm Laser Protocol", definition: "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration. Developed by Danny Goler." },
   { term: "Alphabetic-like Symbol", definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic). Reported with notable inter-subject consistency during 650 nm laser exposure." },
   { term: "Coherent Light", definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, enabling precise diffraction patterns essential for symbol elicitation." },
-  { term: "Confirmation Count", definition: "Number of independent observers reporting identical or highly similar symbols in the DMT Code Glyph Registry. Metric for assessing inter-subject replication reliability." },
+  { term: "Confirmation Count", definition: "A count of readers who said a registry form echoed their own memory. Because those readers saw the form in this catalogue before they responded, the number measures recognition after exposure, not independent convergence. An independent match requires an account sealed before the person viewed the catalogue." },
   { term: "Diffraction Grating", definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in 650 nm protocol to project grid patterns that interact with N,N-DMT visual phenomena." },
   { term: "Discrete Visual Symbol", definition: "Distinct, bounded geometric or alphabetic-like element perceived as separate from surrounding visual field. Contrasts with continuous geometric patterns or ambient visual noise." },
   { term: "Geometric Archetype", definition: "Recurring symbol morphology reported across independent observers, described by shared features such as symmetry, line structure, and orientation." },
@@ -1662,7 +1662,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "The open record of a reported observation: first described by Danny Goler in 2020, published as a pilot study in 2025, and unresolved. We keep the evidence, including the evidence against.",
       "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
-      "The registry is public. Every symbol shows its independent confirmation count. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
+      "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
     ],
     links: [
       { href: "/registry", label: "Visual symbol registry" },
@@ -1674,7 +1674,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   registry: {
     title: "Visual Symbol Registry | DMT Code",
-    description: "Open, community maintained catalogue of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Every symbol shows its independent confirmation count.",
+    description: "Open catalogue of visual forms reported in connection with N,N-DMT experiences. Observer submissions and curated examples are listed separately, with machine readable data under CC-BY-4.0.",
     heading: "Visual Symbol Registry",
     paragraphs: [
       "The registry catalogues discrete visual forms that observers have reported. Each entry records the form, contextual metadata, and the number of independent people who have recognized it. Convergence is measured, not asserted.",
@@ -1773,7 +1773,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Null reports",
     paragraphs: [
       "A null report is a record from someone who ran the observation carefully and saw nothing structured, or nothing that matched anything already in the catalogue. It is the negative counterpart to a confirmation.",
-      "We publish null reports for a simple reason: a dataset that cannot record failure cannot be trusted about success. Null results are the credibility asset of this project, not an embarrassment to it. They are the reason a confirmation count means what it says.",
+      "We publish null reports for a simple reason: a dataset that cannot record failure cannot be trusted about success. Null results are the credibility asset of this project, not an embarrassment to it. They are the reason any claim of convergence here can be checked rather than taken on trust.",
       "If the count on this page is zero or near zero, that is an honest empty state and we are saying so plainly. No null reports have been fabricated. If you observed nothing, or nothing that matched, please submit that outcome so the record reflects both sides of the ledger.",
     ],
     links: [
@@ -1816,7 +1816,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "Nobody has answered this yet. It gets answered faster with more first hand accounts, recorded carefully, by people who were not told in advance what they were supposed to see. Describe what you saw before you look at anyone else's, read what has already been collected, come to an event, and join a trial when one opens.",
       "The observation protocol is built around a 650 nm laser passed through a diffraction grating. Where possible, contributors record what they saw before viewing the existing catalogue, so a match is earned by independent recognition rather than by suggestion.",
-      "Confirmation counts are public per symbol. The dataset is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
+      "Recognition counts are public per symbol, and they count readers who responded after seeing the form here rather than independent observers. The dataset is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
       "A note on what follows: it is a draft study design, not the original protocol and not a validated result. Anyone running it with human participants needs qualified laser safety review and ethics approval first.",
     ],
     links: [
