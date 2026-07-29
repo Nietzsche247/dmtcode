@@ -25,6 +25,7 @@ interface DrawnGlyph {
 
 const DrawnGlyphReports = () => {
   const [glyphs, setGlyphs] = useState<DrawnGlyph[]>([]);
+  const [totalRows, setTotalRows] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -34,6 +35,11 @@ const DrawnGlyphReports = () => {
         .select('id, image_data, source, created_at')
         .order('created_at', { ascending: false });
       if (!active) return;
+      // Every row in the table is counted, including any whose drawing data is
+      // missing and cannot be rendered. A row that will not display is still a
+      // submission somebody made, so the shortfall is stated in public rather
+      // than quietly dropped out of the total.
+      setTotalRows((data || []).length);
       const rows = (data || []).filter(
         (r): r is DrawnGlyph => typeof r.image_data === 'string' && r.image_data.length > 0
       );
@@ -47,6 +53,8 @@ const DrawnGlyphReports = () => {
 
   if (glyphs.length === 0) return null;
 
+  const missing = totalRows - glyphs.length;
+
   return (
     <section className="container mx-auto px-4 py-12 max-w-6xl" aria-labelledby="drawn-glyph-reports">
       <h2 id="drawn-glyph-reports" className="text-2xl md:text-3xl font-semibold text-foreground mb-3">
@@ -55,7 +63,17 @@ const DrawnGlyphReports = () => {
       <p className="text-sm text-muted-foreground max-w-3xl mb-8">
         These are {glyphs.length} anonymous freehand drawings submitted through the registry's drawing tool,
         shown unedited and uncurated.
+        {missing > 0 && (
+          <>
+            {' '}
+            The table holds {totalRows} rows in total.{' '}
+            {missing === 1
+              ? 'One of them stored no drawing data and cannot be rendered, so it is counted here but not shown.'
+              : `${missing} of them stored no drawing data and cannot be rendered, so they are counted here but not shown.`}
+          </>
+        )}
       </p>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {glyphs.map((g) => (
           <article key={g.id} className="rounded-lg border border-border bg-card overflow-hidden">
