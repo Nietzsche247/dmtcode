@@ -91,7 +91,7 @@ interface GlyphAnnotation {
 }
 
 export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: LayeredSubmissionFormProps = {}) => {
-  const [step, setStep] = useState<Step>(0);
+  const [step, setStep] = useState<Step>(1);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -209,10 +209,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleNext = () => {
-    if (step === 0 && !formData.primingExposure) {
-      toast.error('Please answer the priming question');
-      return;
-    }
     if (step === 1 && !isNullReport && !formData.imageData) {
       toast.error('Please draw a symbol first');
       return;
@@ -251,12 +247,16 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleBack = () => {
-    setStep((prev) => Math.max(0, prev - 1) as Step);
+    setStep((prev) => Math.max(1, prev - 1) as Step);
   };
 
   const handleSubmit = async () => {
     if (!userId) {
       toast.error('Please sign in first so your record can be stamped to you');
+      return;
+    }
+    if (!formData.primingExposure) {
+      toast.error('Please answer the last question above so we can weigh your record');
       return;
     }
 
@@ -595,7 +595,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     publicationConsent: false,
     pseudonym: ''
   });
-    setStep(0);
+    setStep(1);
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
@@ -665,7 +665,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       <Card className="max-w-4xl mx-auto p-8 bg-card border-border">
         {/* Progress indicator */}
         <div className="flex justify-center items-center gap-2 mb-8">
-          {[0, 1, 2, 3, 4, 5, 6].map((s) => (
+          {[1, 2, 3, 4, 5, 6].map((s) => (
             <div 
               key={s}
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -674,85 +674,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 'bg-muted text-muted-foreground'
               }`}
             >
-              {s === 0 ? '?' : s}
+              {s}
             </div>
           ))}
         </div>
-
-        {/* Step 0: Priming Control */}
-        {step === 0 && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Before You Begin: Priming Control</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                This question helps us understand whether your experience was influenced by prior exposure to similar visual content.
-              </p>
-            </div>
-            
-            <div className="space-y-4">
-              <Label className="text-base font-medium">
-                Before your experience, had you ever seen Danny Goler videos, The Discovery trailer, or Matrix-style digital rain? *
-              </Label>
-              <RadioGroup
-                value={formData.primingExposure}
-                onValueChange={(value) => setFormData(prev => ({ 
-                  ...prev, 
-                  primingExposure: value as FormData['primingExposure']
-                }))}
-              >
-                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
-                  <RadioGroupItem value="priming_none" id="priming_none" />
-                  <Label htmlFor="priming_none" className="flex-1 cursor-pointer">
-                    <span className="font-medium block mb-1 flex items-center gap-2">
-                      No – I had never seen any of it
-                      <span className="text-xs px-2 py-0.5 bg-gold/20 text-gold rounded-full">⭐ Auto-badge</span>
-                    </span>
-                    <span className="text-sm text-muted-foreground">No prior exposure to laser protocol videos or Matrix-style rain</span>
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
-                  <RadioGroupItem value="priming_matrix_only" id="priming_matrix_only" />
-                  <Label htmlFor="priming_matrix_only" className="flex-1 cursor-pointer">
-                    <span className="font-medium block mb-1">Yes – but only Matrix-style rain, not laser-specific</span>
-                    <span className="text-sm text-muted-foreground">Seen Matrix digital rain effect but no DMT laser protocol content</span>
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-2 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
-                  <RadioGroupItem value="priming_laser_exposed" id="priming_laser_exposed" />
-                  <Label htmlFor="priming_laser_exposed" className="flex-1 cursor-pointer">
-                    <span className="font-medium block mb-1">Yes – I had watched Goler or Discovery trailer content</span>
-                    <span className="text-sm text-muted-foreground">Seen Danny Goler videos or The Discovery trailer before my experience</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-
-              {formData.primingExposure === 'priming_none' && (
-                <Card className="p-4 bg-primary/5 border-primary/20">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Award className="w-5 h-5 text-gold flex-shrink-0" />
-                    <div>
-                      <span className="font-medium text-gold">
-                        ⭐ Auto-granted: "Primacy Validated" Badge
-                      </span>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Your submission qualifies for the Primacy Validated badge because you had no prior exposure. 
-                        We'll run a soft check on your description to ensure transparency. You can still submit regardless.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              )}
-            </div>
-            
-            <div className="flex justify-end">
-              <Button onClick={handleNext} disabled={!formData.primingExposure}>
-                Next: Draw Symbol <ChevronRight className="ml-2 w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
 
         {/* Step 1: Draw Symbol (or skip for null reports) */}
         {step === 1 && (
@@ -1590,6 +1515,33 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               )}
             </div>
 
+            <div className="space-y-3 border-t pt-6">
+              <Label className="text-base font-medium">
+                One last thing, so we can weigh your record properly. Before your experience, had you seen any of this imagery?
+              </Label>
+              <RadioGroup
+                value={formData.primingExposure}
+                onValueChange={(value) => setFormData({ ...formData, primingExposure: value as typeof formData.primingExposure })}
+                className="grid gap-2 sm:grid-cols-3"
+              >
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_none" id="p-none" />
+                  <Label htmlFor="p-none" className="cursor-pointer font-normal">No, none of it</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_matrix_only" id="p-matrix" />
+                  <Label htmlFor="p-matrix" className="cursor-pointer font-normal">Only Matrix style rain</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_laser_exposed" id="p-laser" />
+                  <Label htmlFor="p-laser" className="cursor-pointer font-normal">Yes, Goler or Discovery</Label>
+                </div>
+              </RadioGroup>
+              {formData.primingExposure === 'priming_none' && (
+                <p className="text-sm text-gold">Unprimed records carry the most weight. Thank you.</p>
+              )}
+            </div>
+
             {/* Privacy */}
             <div>
               <h4 className="text-base font-semibold mb-3">Who can see this memory</h4>
@@ -1666,7 +1618,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
-              <Button onClick={handleSubmit} disabled={isSubmitting}>
+              <Button onClick={handleSubmit} disabled={isSubmitting || !formData.primingExposure}>
                 {isSubmitting ? 'Submitting...' : 'Submit Symbol'}
               </Button>
             </div>
