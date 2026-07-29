@@ -116,10 +116,17 @@ export const SymbolCard = ({
 
         {/* Stats Row */}
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span className="flex items-center gap-1" title="Confirmations">
-            <Eye className="w-4 h-4" />
-            Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}
-          </span>
+          {validationCount > 0 ? (
+            <span
+              className="flex items-center gap-1"
+              title="These people saw this symbol on this page and then marked that it echoes their memory. That is recognition after exposure to the catalogue, which is not the same as an independent record made before seeing it."
+            >
+              <Eye className="w-4 h-4" />
+              {validationCount} recognized this after seeing it here
+            </span>
+          ) : (
+            <span />
+          )}
           <SaveButton symbolId={id} size="sm" />
         </div>
 

@@ -273,9 +273,14 @@ export default async (request: Request, context: Context) => {
           .join("")}</ul></section>`
       : ""
   }
-  <p>Independently confirmed by ${Number(
-    r.upvotes ?? 0
-  )} contributors. Part of the <a href="${SITE}/registry">DMT Code Visual Symbol Registry</a>, an open dataset (CC-BY-4.0) of visual phenomena reported during N,N-DMT experiences.</p>
+  ${
+    Number(r.upvotes ?? 0) > 0
+      ? `<p>${Number(r.upvotes ?? 0)} community ${
+          Number(r.upvotes ?? 0) === 1 ? "member has" : "members have"
+        } marked this symbol as echoing their own memory after it was published here. That is recognition after exposure to the catalogue, not an independent record made before seeing it.</p>`
+      : ""
+  }
+  <p>Part of the <a href="${SITE}/registry">DMT Code Visual Symbol Registry</a>, an open dataset (CC-BY-4.0) of visual phenomena reported during N,N-DMT experiences.</p>
 </article>`;
     } else if (kind === "trials") {
       const f =

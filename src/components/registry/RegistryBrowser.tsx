@@ -8,6 +8,8 @@ import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 
+const RESONANCE_MIN_RESPONSES = 5;
+
 interface SeededSymbol {
   id: string;
   description: string;
@@ -145,6 +147,11 @@ export const RegistryBrowser = () => {
   const filteredSymbols = useMemo(() => {
     let filtered = [...symbols];
 
+    const responseTotal = (s: SymbolSubmission) =>
+      (s.upvotes || 0) + (s.downvotes || 0) + (validationCounts[s.id] || 0);
+    const resonanceScore = (s: SymbolSubmission) =>
+      (s.upvotes || 0) + (validationCounts[s.id] || 0) - (s.downvotes || 0);
+
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -183,21 +190,32 @@ export const RegistryBrowser = () => {
           (validationCounts[b.id] || 0) - (validationCounts[a.id] || 0)
         );
         break;
+      case 'most_responses':
+        filtered.sort((a, b) => responseTotal(b) - responseTotal(a));
+        break;
+      case 'resonance': {
+        // Only symbols with enough responses to mean anything get ranked.
+        // Everything else keeps newest-first order and follows after them.
+        const ranked = filtered
+          .filter((s) => responseTotal(s) >= RESONANCE_MIN_RESPONSES)
+          .sort((a, b) => resonanceScore(b) - resonanceScore(a));
+        const unranked = filtered
+          .filter((s) => responseTotal(s) < RESONANCE_MIN_RESPONSES)
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        filtered = [...ranked, ...unranked];
+        break;
+      }
       case 'newest':
       default:
         filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
     }
 
-    // Community demotion. A symbol carrying more "did not match" marks than
-    // recognitions sinks below everything else, whichever sort is active.
-    // Order inside each group is preserved.
-    const ordered = [
-      ...filtered.filter((s) => (s.downvotes || 0) <= (s.upvotes || 0)),
-      ...filtered.filter((s) => (s.downvotes || 0) > (s.upvotes || 0)),
-    ];
-
-    return ordered;
+    // The sort the reader chose is the only thing that orders this list. There
+    // is no second pass. A symbol that one person says did not match what they
+    // saw keeps its place, because a rare form only a few people recognize is
+    // exactly the kind of thing this registry exists to find.
+    return filtered;
   }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
 
   const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
@@ -236,14 +254,11 @@ export const RegistryBrowser = () => {
 
       {/* Credibility Legend */}
       <div className="max-w-4xl mx-auto mb-6 px-4">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">👍 <span className="text-xs">Seen this</span></span>
-          <span className="flex items-center gap-1.5">👎 <span className="text-xs">Did not see</span></span>
-          <span className="flex items-center gap-1.5">✅ <span className="text-xs">Multiple confirmations</span></span>
-          <span className="flex items-center gap-1.5">⭐ <span className="text-xs">High consistency</span></span>
-        </div>
-        <p className="text-xs text-muted-foreground text-center mt-3">
-          Symbols marked as not matching more often than they are recognized sort to the bottom of this list. Voting moves a symbol. It never removes one.
+        <p className="text-xs text-muted-foreground text-center">
+          This list is ordered by the sort you choose and by nothing else. Marking a symbol as not
+          resembling what you saw is recorded as data, and it never pushes that symbol down the list
+          for anyone else. Community resonance is the one ordering that weighs responses, and it
+          ranks only symbols carrying at least {RESONANCE_MIN_RESPONSES} responses.
         </p>
       </div>
 
