@@ -390,20 +390,32 @@ export default async (req: Request): Promise<Response> => {
 
   const filtered = applyFilters(items, url.searchParams);
 
-  // Top-level "symbols" projection: every approved symbol with the fields
+  // Top-level "symbols" projection: every published symbol with the fields
   // agents most need without re-querying. "faq" mirrors the live /faq page.
-  const symbolsFeed = symbols.map((r) => compact({
-    id: String(r.id),
-    url: `${SITE}/registry/${r.id}`,
-    description: (r.description as string) || undefined,
-    tags: (r.tags as string[]) || [],
-    image_url: (r.image_url as string) || undefined,
-    upvotes: Number(r.upvotes ?? 0),
-    created_at: (r.created_at as string) || undefined,
-    updated_at: (r.updated_at as string) || undefined,
-    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
-    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
-  }));
+  const symbolsFeed = symbols.map((r) => {
+    const sid = String(r.id);
+    return compact({
+      id: sid,
+      url: `${SITE}/registry/${sid}`,
+      description: (r.description as string) || undefined,
+      tags: (r.tags as string[]) || [],
+      image_url: (r.image_url as string) || undefined,
+      visibility_status: (r.visibility_status as string) || undefined,
+      moderation_status: (r.moderation_status as string) || undefined,
+      evidence_status: (r.evidence_status as string) || undefined,
+      is_curated_example: isCurated(r),
+      published_at: (r.published_at as string) || undefined,
+      review_due_at: (r.review_due_at as string) || undefined,
+      review_overdue: isReviewOverdue(r),
+      recognized_count: Number(r.upvotes ?? 0),
+      not_a_match_count: Number(r.downvotes ?? 0),
+      upvote_count: voteCounts ? (voteCounts[sid]?.upvote ?? 0) : undefined,
+      created_at: (r.created_at as string) || undefined,
+      updated_at: (r.updated_at as string) || undefined,
+      record_class: isCurated(r) ? "curated_starter" : "community_observation",
+      counts_toward_evidence: isCurated(r) ? false : true,
+    });
+  });
 
   const theoriesFeed = theories.map((r) => compact({
     id: String(r.id),
