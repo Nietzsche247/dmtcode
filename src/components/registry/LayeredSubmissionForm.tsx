@@ -1848,5 +1848,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       </Card>
       </>
       )}
+    </section>
   );
 };
