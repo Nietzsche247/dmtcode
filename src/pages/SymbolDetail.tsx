@@ -367,7 +367,11 @@ const SymbolDetail = () => {
                           : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
                       }
                     >
-                      {symbol.status}
+                      {symbol.status === 'approved'
+                        ? 'Published'
+                        : symbol.status === 'rejected'
+                          ? 'Hidden after review'
+                          : 'Not published'}
                     </Badge>
                     <span className="text-sm text-muted-foreground flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -386,7 +390,7 @@ const SymbolDetail = () => {
                     <Card className="p-4 bg-card/50 text-center">
                       <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
                       <div className="text-2xl font-bold">{validationCount}</div>
-                      <div className="text-xs text-muted-foreground">{validationCount} recognized this after seeing it here</div>
+                      <div className="text-xs text-muted-foreground">recognized this after seeing it here</div>
                     </Card>
                   </div>
                 )}
@@ -484,7 +488,7 @@ const SymbolDetail = () => {
                 {validators.length > 0 && (
                   <div>
                     <h3 className="text-sm font-medium mb-2">
-                      Validated by ({validationCount} users)
+                      Recognized after seeing it here ({validationCount})
                     </h3>
                     <div className="flex -space-x-2">
                       {validators.slice(0, 8).map((v, i) => (
