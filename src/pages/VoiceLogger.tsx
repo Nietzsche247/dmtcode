@@ -13,6 +13,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { SignInToContribute } from '@/components/SignInToContribute';
 import { toast } from 'sonner';
 import { 
   Mic, MicOff, Pause, Play, Square, Upload, 
@@ -51,6 +52,7 @@ const VoiceLogger = () => {
   const [selectedProtocol, setSelectedProtocol] = useState<string>(protocolSlug || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [submittedLogId, setSubmittedLogId] = useState<string | null>(null);
   
   // Clinical mode state
@@ -64,15 +66,21 @@ const VoiceLogger = () => {
 
   useEffect(() => {
     checkUser();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+      setAuthChecked(true);
+    });
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (audioUrl) URL.revokeObjectURL(audioUrl);
+      subscription.unsubscribe();
     };
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) setUserId(user.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    setUserId(session?.user?.id ?? null);
+    setAuthChecked(true);
   };
 
   const { data: protocols } = useQuery({
@@ -162,6 +170,11 @@ const VoiceLogger = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userId) {
+      toast.error('Please sign in first so this log stays yours');
+      return;
+    }
+
     if (!audioBlob) {
       toast.error('No recording to submit');
       return;
@@ -170,7 +183,7 @@ const VoiceLogger = () => {
     setIsSubmitting(true);
 
     try {
-      const sessionId = userId || `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const sessionId = userId;
       const protocolId = protocols?.find(p => p.slug === selectedProtocol)?.id || null;
 
       const fileName = `${sessionId}/${Date.now()}.webm`;
@@ -343,6 +356,16 @@ const VoiceLogger = () => {
 
               {/* Voice Logger Tab */}
               <TabsContent value="voice">
+                {!authChecked && (
+                  <div className="py-12 text-center text-muted-foreground">Checking your account…</div>
+                )}
+                {authChecked && !userId && (
+                  <SignInToContribute
+                    title="Sign in to record a log"
+                    body="An account is what keeps the recording and its transcript yours. It is what lets you come back to the analysis later, keep it private, and have it counted alongside everyone else's. We give you an avatar, so your name stays yours."
+                  />
+                )}
+                {authChecked && userId && (
                 <Card className="p-8">
                   {/* Protocol Selection */}
                   <div className="mb-8">
@@ -630,6 +653,7 @@ const VoiceLogger = () => {
                     </ul>
                   </div>
                 </Card>
+                )}
               </TabsContent>
 
               {/* Draw Glyphs Tab */}

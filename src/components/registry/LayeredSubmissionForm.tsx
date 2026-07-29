@@ -18,6 +18,7 @@ import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { AlertTriangle } from 'lucide-react';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from './VisualFieldMap';
+import { SignInToContribute } from '@/components/SignInToContribute';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
@@ -94,6 +95,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [totalSymbols, setTotalSymbols] = useState(0);
   const [userStats, setUserStats] = useState<any>(null);
   const [similarSymbols, setSimilarSymbols] = useState<any[]>([]);
@@ -161,21 +163,33 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   useEffect(() => {
     checkUser();
     loadTotalSymbols();
-    
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+      setAuthChecked(true);
+    });
+
     // Check URL for null report mode
     const params = new URLSearchParams(window.location.search);
     if (params.get('null') === 'true') {
       setIsNullReport(true);
       setFormData(prev => ({ ...prev, isNullReport: true }));
     }
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-      loadUserStats(user.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      setUserId(session.user.id);
+      loadUserStats(session.user.id);
+    } else {
+      setUserId(null);
     }
+    setAuthChecked(true);
   };
 
   const loadUserStats = async (uid: string) => {
@@ -241,6 +255,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   };
 
   const handleSubmit = async () => {
+    if (!userId) {
+      toast.error('Please sign in first so your record can be stamped to you');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -609,7 +628,22 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           Your null report is valuable for baseline comparison. Complete the same metadata form to document what you didn't see.
         </p>
       )}
-      
+
+      {!authChecked && (
+        <div className="max-w-4xl mx-auto py-12 text-center text-muted-foreground">
+          Checking your account…
+        </div>
+      )}
+
+      {authChecked && !userId && (
+        <SignInToContribute
+          title="Sign in to add your record"
+          body="An account is what makes the record count. It stamps what you describe to you, so if someone else describes the same thing later, the order is on the record and yours came first. It also lets you keep a memory private, follow a symbol, and confirm a match when one rings true. We give you an avatar, so your name stays yours."
+        />
+      )}
+
+      {authChecked && userId && (
+      <>
       {/* Offline indicator */}
       {!isOnline && (
         <div className="max-w-4xl mx-auto mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center gap-2 text-amber-500">
@@ -1818,6 +1852,8 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
       </Card>
+      </>
+      )}
     </section>
   );
 };
