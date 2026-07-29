@@ -1563,7 +1563,6 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 <section><h2>What we do not do</h2><p>We do not accept payment for a listing, a favourable description, or a place in the registry. We do not sell, source or broker any controlled substance. We do not sell visitor data.</p></section>
 <section><h2>Corrections</h2><p>If you believe something on this page is incomplete, write to info@dmtcode.com and we will correct it.</p></section>`,
   },
-  },
   capture: {
     title: "Capture a memory | DMT Code",
     description: "Record and seal a first person account of a visual form seen during a DMT session, before viewing the catalogue.",
