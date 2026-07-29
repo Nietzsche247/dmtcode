@@ -132,7 +132,7 @@ export const ConvergenceHero = () => {
 
           <p className="label-data text-xs text-muted-foreground pt-4">
             {totalApproved > 0
-              ? `${totalApproved} FORMS CATALOGUED${verifiedCount > 0 ? ` · ${verifiedCount} INDEPENDENTLY VERIFIED` : ''}`
+              ? `${totalApproved} FORMS CATALOGUED${verifiedCount > 0 ? ` · ${verifiedCount} RECOGNIZED BY 3 OR MORE READERS` : ''}`
               : 'OPEN CATALOGUE · CC-BY-4.0'}
           </p>
         </div>
