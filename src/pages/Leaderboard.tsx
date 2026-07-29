@@ -61,7 +61,7 @@ const Leaderboard = () => {
         <title>Community Leaderboard | DMT Code</title>
         <meta 
           name="description" 
-          content="Top contributors to the DMT Code Visual Symbol Registry. Rankings based on symbol submissions, validations, and community engagement." 
+          content="Top contributors to the DMT Code Visual Symbol Registry. Rankings based on symbol submissions, reader responses, and community engagement." 
         />
         <link rel="canonical" href="https://dmtcode.com/leaderboard" />
         <meta name="robots" content="noindex, nofollow" />
@@ -71,7 +71,7 @@ const Leaderboard = () => {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "headline": "Community Leaderboard",
-            "description": "Top contributors to DMT Code Visual Symbol Registry by submissions and validations",
+            "description": "Top contributors to DMT Code Visual Symbol Registry by submissions and reader responses",
             "author": {
               "@type": "Organization",
               "name": "DMT Code Project"
@@ -111,7 +111,7 @@ const Leaderboard = () => {
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Community Leaderboard</h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Top contributors building the open research catalogue through symbol submissions and community validation
+                Top contributors building the open research catalogue through symbol submissions and reader responses
               </p>
             </div>
 
@@ -133,7 +133,7 @@ const Leaderboard = () => {
                 <div className="text-4xl font-bold text-gold mb-2">
                   {registryStats?.uniqueSymbols || 0}
                 </div>
-                <div className="text-sm text-muted-foreground">Confirmations</div>
+                <div className="text-sm text-muted-foreground">Recognitions</div>
               </Card>
             </div>
 
@@ -252,7 +252,7 @@ const Leaderboard = () => {
             <Card className="p-8 bg-primary/5 border-primary/20 mt-12 text-center">
               <h2 className="text-2xl font-semibold mb-4">Join the Research Community</h2>
               <p className="text-base text-muted-foreground mb-6">
-                Contribute to the open catalogue by submitting your observed symbols and validating community submissions
+                Contribute to the open catalogue by submitting what you observed and responding to what others have submitted
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a 

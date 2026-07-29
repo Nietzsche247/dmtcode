@@ -474,9 +474,11 @@ const MySymbols = () => {
                         className="w-full h-auto mb-3 border border-border object-contain bg-white"
                       />
                       <div className="text-center mb-3">
-                        <p className="text-sm font-semibold">
-                          {symbol.upvotes} {symbol.upvotes === 1 ? 'Confirmation' : 'Confirmations'}
-                        </p>
+                        {symbol.upvotes > 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
+                          </p>
+                        )}
                         <p className="text-xs text-muted-foreground">
                           {new Date(symbol.created_at).toLocaleDateString()}
                         </p>
