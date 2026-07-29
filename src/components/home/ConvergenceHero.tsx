@@ -80,12 +80,11 @@ export const ConvergenceHero = () => {
   const specimen = featured ?? {
     id: 'placeholder',
     image_url: '/placeholder-symbol-1.svg',
-    tags: ['katakana-like', 'shifting', 'grid'],
-    wavelength: '650nm',
+    tags: [],
     dose_level: null,
     surface_type: null,
     upvotes: 0,
-  };
+  } as unknown as TopSymbol;
 
   const displayCount = confirmCount || specimen.upvotes || 0;
   const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
