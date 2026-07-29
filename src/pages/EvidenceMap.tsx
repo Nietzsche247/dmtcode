@@ -102,16 +102,15 @@ const EvidenceMap = () => {
             "description": "Comprehensive timeline documenting research from Klüver's 1926 form constants to Goler's 2025 laser protocol pilot study",
             "author": [
               {
-                "@type": "Person",
-                "name": "Danny Goler",
-                "affiliation": "Independent Researcher"
+                "@type": "Organization",
+                "name": "DMT Code"
               }
             ],
             "citation": [
               {
                 "@type": "ScholarlyArticle",
-                "name": "First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration",
-                "author": "Goler D.",
+                "name": "Detailing a Pilot Study: The \"Code of Reality\" Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness",
+                "author": "Goler, D.",
                 "datePublished": "2025",
                 "identifier": {
                   "@type": "PropertyValue",
@@ -122,15 +121,20 @@ const EvidenceMap = () => {
               },
               {
                 "@type": "ScholarlyArticle",
-                "name": "Preprint [2021] DOI pending",
-                "author": "Davis A.",
-                "datePublished": "2021",
-                "description": "Survey of entity encounter experiences"
+                "name": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine: Phenomenology, interpretation, and enduring effects",
+                "author": "Davis, A.K.",
+                "datePublished": "2020",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.1177/0269881120916143"
+                },
+                "url": "https://doi.org/10.1177/0269881120916143"
               },
               {
                 "@type": "ScholarlyArticle",
-                "name": "DMT models the near-death experience",
-                "author": "Timmermann C. et al.",
+                "name": "Neural correlates of the DMT experience assessed with multivariate EEG",
+                "author": "Timmermann, C.",
                 "datePublished": "2019",
                 "identifier": {
                   "@type": "PropertyValue",
@@ -141,7 +145,7 @@ const EvidenceMap = () => {
               }
             ],
             "datePublished": "2025-11-30",
-            "dateModified": "2025-11-30"
+            "dateModified": "2026-07-29"
           })}
         </script>
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
@@ -215,7 +219,7 @@ const EvidenceMap = () => {
                   href="/trials"
                   className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
                 >
-
+                  → EXPLORE CLINICAL TRIALS OBSERVATORY
                 </a>
               </div>
             </div>
@@ -240,7 +244,7 @@ const EvidenceMap = () => {
                 <li>• <strong>Click any event</strong> to read full details and access DOI links</li>
                 <li>• <strong>Drag the timeline</strong> to explore different periods</li>
                 <li>• <strong>Zoom controls</strong> at bottom adjust detail level</li>
-                <li>• <strong>Gold links</strong> connect to peer-reviewed publications</li>
+                <li>• <strong>Each event</strong> links to its source and to the full record on this site</li>
               </ul>
             </div>
 
@@ -275,7 +279,7 @@ const EvidenceMap = () => {
 declare global {
   interface Window {
     TL: {
-      Timeline: new (containerId: string, dataSource: string, options?: any) => void;
+      Timeline: new (containerId: string, dataSource: string | object, options?: any) => void;
     };
   }
 }
