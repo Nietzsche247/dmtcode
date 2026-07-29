@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { SeenItButton } from './SeenItButton';
+import { DidNotMatchButton } from './DidNotMatchButton';
 import { formatSealedAt } from '@/lib/sealFormat';
 
 type TargetKind = 'symbol_submission' | 'registry_glyph';
