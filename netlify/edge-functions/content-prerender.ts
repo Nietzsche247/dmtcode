@@ -1773,7 +1773,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Null reports",
     paragraphs: [
       "A null report is a record from someone who ran the observation carefully and saw nothing structured, or nothing that matched anything already in the catalogue. It is the negative counterpart to a confirmation.",
-      "We publish null reports for a simple reason: a dataset that cannot record failure cannot be trusted about success. Null results are the credibility asset of this project, not an embarrassment to it. They are the reason a confirmation count means what it says.",
+      "We publish null reports for a simple reason: a dataset that cannot record failure cannot be trusted about success. Null results are the credibility asset of this project, not an embarrassment to it. They are the reason any claim of convergence here can be checked rather than taken on trust.",
       "If the count on this page is zero or near zero, that is an honest empty state and we are saying so plainly. No null reports have been fabricated. If you observed nothing, or nothing that matched, please submit that outcome so the record reflects both sides of the ledger.",
     ],
     links: [
