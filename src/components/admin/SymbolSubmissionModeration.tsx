@@ -28,7 +28,18 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
   profile?: { display_name: string; avatar_url: string | null } | null;
 };
 
-type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
+type StatusFilter = 'all' | 'new72' | 'pending' | 'approved' | 'rejected';
+
+const WINDOW_MS = 72 * 60 * 60 * 1000;
+
+const timeLeftLabel = (createdAt: string) => {
+  const remaining = new Date(createdAt).getTime() + WINDOW_MS - Date.now();
+  if (remaining <= 0) return 'window closed';
+  const hours = Math.floor(remaining / (60 * 60 * 1000));
+  if (hours >= 1) return `${hours} ${hours === 1 ? 'hour' : 'hours'} left`;
+  const minutes = Math.max(1, Math.floor(remaining / (60 * 1000)));
+  return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} left`;
+};
 
 const PAGE_SIZE = 20;
 
