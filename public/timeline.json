@@ -1,294 +1,999 @@
 {
-  "title": {
-    "text": {
-      "headline": "DMT Visual Phenomena Research Timeline",
-      "text": "<p>From Klüver's form constants to the 650 nm laser protocol ,  100 years of research into geometric hallucinations and N,N-DMT visual effects</p>"
-    }
+  "schema_version": "2.0",
+  "schema_url": "https://dmtcode.com/timeline.schema.json",
+  "provenance": {
+    "verified_on": "2026-07-29",
+    "verified_against": "Crossref DOI resolution, US Supreme Court opinion record, and this site's own database",
+    "rule": "Every entry carries an evidence_class. Nothing is listed as published research unless its DOI resolves to the work described. Claims with no source are labelled community_report and are not presented as evidence."
   },
-  "events": [
+  "title": {
+    "headline": "A chronology of research into DMT visual phenomena",
+    "text": "From Klüver's form constants in 1926 to the 650 nm laser protocol, a dated record of what has been published, what has been observed, and what is still only claimed. Sort it by date, by person, by place, or by kind of evidence. The question this chronology cannot yet answer is how many people run the protocol and see nothing, because nobody has counted. That is why null reports are collected here."
+  },
+  "evidence_classes": {
+    "peer_reviewed": "Published in a peer-reviewed journal. The DOI resolves to the work described.",
+    "book": "Published book. Identified by ISBN. Not peer reviewed.",
+    "legal": "Court decision or statute. Identified by citation and official opinion text.",
+    "letters": "Published in a letters or news-and-views venue outside mainstream peer review.",
+    "journalism": "Reporting by a named publication.",
+    "commentary": "Public comment by a named researcher, outside a formal publication.",
+    "platform_record": "A record in this site's own database, checkable against the public data export.",
+    "community_report": "Community history with no published source. Recorded so the origin is visible. Not evidence."
+  },
+  "entries": [
     {
-      "start_date": {
-        "year": "1926"
+      "id": "kluver-1926-form-constants",
+      "date": {
+        "year": 1926,
+        "precision": "year",
+        "sort_key": "1926-00-00"
       },
-      "text": {
-        "headline": "Klüver Identifies Form Constants",
-        "text": "<p>Heinrich Klüver describes four universal geometric patterns (tunnels, spirals, honeycombs, lattices) induced by mescaline. First systematic documentation of psychedelic visual hallucinations.</p><p><a href='https://doi.org/10.1037/h0074964' target='_blank' style='color: #ffeb3b;'>DOI: 10.1037/h0074964</a></p>"
+      "headline": "Klüver names the form constants",
+      "summary": "Klüver catalogues the recurring geometric categories people report under mescaline. His four form constants, the lattice or honeycomb, the cobweb, the tunnel and the spiral, become the vocabulary every later account of geometric hallucination is measured against.",
+      "people": [
+        {
+          "name": "Heinrich Klüver",
+          "sort": "Kluver"
+        }
+      ],
+      "tags": [
+        "form-constants",
+        "mescaline",
+        "phenomenology",
+        "visual-geometry"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Mescal Visions and Eidetic Vision",
+        "authors": [
+          "Klüver, H."
+        ],
+        "container": "The American Journal of Psychology",
+        "volume": "37",
+        "pages": "502",
+        "year": 1926,
+        "doi": "10.2307/1414910",
+        "url": "https://doi.org/10.2307/1414910",
+        "citation": "Klüver, H. (1926). Mescal Visions and Eidetic Vision. The American Journal of Psychology, 37, 502."
       }
     },
     {
-      "start_date": {
-        "year": "1956"
+      "id": "szara-1956-first-human-dmt",
+      "date": {
+        "year": 1956,
+        "precision": "year",
+        "sort_key": "1956-00-00"
       },
-      "text": {
-        "headline": "First DMT Human Studies",
-        "text": "<p>Stephen Szára conducts first documented human N,N-DMT administration studies in Hungary. Reports intense visual hallucinations lasting 30-60 minutes.</p><p><a href='https://doi.org/10.1007/BF00403735' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/BF00403735</a></p>"
+      "headline": "First documented human DMT administration",
+      "summary": "Szára administers DMT to human subjects and reports the psychological effects alongside its metabolism. This is the earliest documented human DMT session in the published record.",
+      "people": [
+        {
+          "name": "Stephen Szára",
+          "sort": "Szara"
+        }
+      ],
+      "place": {
+        "label": "Budapest, Hungary",
+        "country": "HU"
+      },
+      "tags": [
+        "dmt",
+        "first-human-study",
+        "pharmacology",
+        "serotonin"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Dimethyltryptamin: Its metabolism in man; the relation of its psychotic effect to the serotonin metabolism",
+        "authors": [
+          "Szára, S."
+        ],
+        "container": "Experientia",
+        "volume": "12",
+        "year": 1956,
+        "doi": "10.1007/BF02157378",
+        "url": "https://doi.org/10.1007/BF02157378",
+        "citation": "Szára, S. (1956). Dimethyltryptamin: Its metabolism in man; the relation of its psychotic effect to the serotonin metabolism. Experientia, 12."
       }
     },
     {
-      "start_date": {
-        "year": "1976"
+      "id": "christian-1977-endogenous-dmt",
+      "date": {
+        "year": 1977,
+        "precision": "year",
+        "sort_key": "1977-00-00"
       },
-      "text": {
-        "headline": "Endogenous DMT Discovery",
-        "text": "<p>DMT confirmed as naturally occurring in human cerebrospinal fluid and blood. Raises questions about endogenous function in consciousness.</p><p><a href='https://doi.org/10.1126/science.1257894' target='_blank' style='color: #ffeb3b;'>DOI: 10.1126/science.1257894</a></p>"
+      "headline": "DMT identified in mammalian brain tissue",
+      "summary": "DMT is identified in mammalian brain tissue and proposed as a possible endogenous neuroregulatory agent. Whether the human body produces DMT in quantities that matter behaviourally has been argued over ever since, and is still not settled.",
+      "people": [
+        {
+          "name": "Stephen T. Christian",
+          "sort": "Christian"
+        },
+        {
+          "name": "R. Harrison",
+          "sort": "Harrison"
+        },
+        {
+          "name": "E. Quayle",
+          "sort": "Quayle"
+        },
+        {
+          "name": "J. Pagel",
+          "sort": "Pagel"
+        },
+        {
+          "name": "J. Monti",
+          "sort": "Monti"
+        }
+      ],
+      "tags": [
+        "endogenous-dmt",
+        "neurochemistry",
+        "open-question"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "The in vitro identification of dimethyltryptamine (DMT) in mammalian brain and its characterization as a possible endogenous neuroregulatory agent",
+        "authors": [
+          "Christian, S.T.",
+          "Harrison, R.",
+          "Quayle, E.",
+          "Pagel, J.",
+          "Monti, J."
+        ],
+        "container": "Biochemical Medicine",
+        "volume": "18",
+        "year": 1977,
+        "doi": "10.1016/0006-2944(77)90088-6",
+        "url": "https://doi.org/10.1016/0006-2944(77)90088-6",
+        "citation": "Christian, S.T., Harrison, R., Quayle, E., Pagel, J., & Monti, J. (1977). The in vitro identification of dimethyltryptamine (DMT) in mammalian brain and its characterization as a possible endogenous neuroregulatory agent. Biochemical Medicine, 18."
       }
     },
     {
-      "start_date": {
-        "year": "1979"
+      "id": "ermentrout-cowan-1979-v1-model",
+      "date": {
+        "year": 1979,
+        "precision": "year",
+        "sort_key": "1979-00-00"
       },
-      "text": {
-        "headline": "Pineal Gland DMT Hypothesis",
-        "text": "<p>Strassman proposes pineal gland as potential source of endogenous DMT production. Controversial 'spirit molecule' hypothesis emerges.</p><p><a href='https://doi.org/10.1016/0306-4522(79)90104-5' target='_blank' style='color: #ffeb3b;'>DOI: 10.1016/0306-4522(79)90104-5</a></p>"
+      "headline": "Geometric hallucination derived from cortical wiring",
+      "summary": "Ermentrout and Cowan derive Klüver's form constants from the architecture of primary visual cortex. Stripes and hexagons of cortical activity map, through the retino-cortical transform, onto the tunnels and spirals people describe. This remains the strongest standing argument that geometric hallucination is generated inside the visual system rather than received from outside it.",
+      "people": [
+        {
+          "name": "G. Bard Ermentrout",
+          "sort": "Ermentrout"
+        },
+        {
+          "name": "Jack D. Cowan",
+          "sort": "Cowan"
+        }
+      ],
+      "place": {
+        "label": "Chicago, Illinois, United States",
+        "country": "US"
+      },
+      "tags": [
+        "form-constants",
+        "visual-cortex",
+        "modelling",
+        "v1",
+        "skeptical-explanation"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "A mathematical theory of visual hallucination patterns",
+        "authors": [
+          "Ermentrout, G.B.",
+          "Cowan, J.D."
+        ],
+        "container": "Biological Cybernetics",
+        "volume": "34",
+        "year": 1979,
+        "doi": "10.1007/BF00336965",
+        "url": "https://doi.org/10.1007/BF00336965",
+        "citation": "Ermentrout, G.B., & Cowan, J.D. (1979). A mathematical theory of visual hallucination patterns. Biological Cybernetics, 34."
       }
     },
     {
-      "start_date": {
-        "year": "1984"
+      "id": "strassman-1994-dose-response-i",
+      "date": {
+        "year": 1994,
+        "precision": "year",
+        "sort_key": "1994-00-00"
       },
-      "text": {
-        "headline": "Ermentrout-Cowan V1 Model",
-        "text": "<p>Mathematical model explains how visual cortex (V1) architecture generates geometric hallucinations. Predicts form constant patterns from neural connectivity.</p><p><a href='https://doi.org/10.1007/BF00336965' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/BF00336965</a></p>"
+      "headline": "The New Mexico dose-response study",
+      "summary": "The first US human DMT research in a generation. Strassman and Qualls establish dose-response relationships for intravenous DMT under clinical conditions, reopening a line of work that had been closed since the 1970s.",
+      "people": [
+        {
+          "name": "Rick Strassman",
+          "sort": "Strassman"
+        },
+        {
+          "name": "Clifford Qualls",
+          "sort": "Qualls"
+        }
+      ],
+      "place": {
+        "label": "Albuquerque, New Mexico, United States",
+        "country": "US"
+      },
+      "tags": [
+        "dmt",
+        "human-study",
+        "dose-response",
+        "clinical"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Dose-Response Study of N,N-Dimethyltryptamine in Humans: I. Neuroendocrine, Autonomic, and Cardiovascular Effects",
+        "authors": [
+          "Strassman, R.J.",
+          "Qualls, C.R."
+        ],
+        "container": "Archives of General Psychiatry",
+        "volume": "51",
+        "year": 1994,
+        "doi": "10.1001/archpsyc.1994.03950020009001",
+        "url": "https://doi.org/10.1001/archpsyc.1994.03950020009001",
+        "citation": "Strassman, R.J., & Qualls, C.R. (1994). Dose-Response Study of N,N-Dimethyltryptamine in Humans: I. Neuroendocrine, Autonomic, and Cardiovascular Effects. Archives of General Psychiatry, 51."
       }
     },
     {
-      "start_date": {
-        "year": "1990"
+      "id": "strassman-1994-dose-response-ii",
+      "date": {
+        "year": 1994,
+        "precision": "year",
+        "sort_key": "1994-00-01"
       },
-      "text": {
-        "headline": "Strassman UNM DMT Study Begins",
-        "text": "<p>Rick Strassman launches first U.S. human DMT research in 25 years at University of New Mexico. Studies 60 volunteers with IV DMT.</p><p><a href='https://doi.org/10.1007/s002130050582' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/s002130050582</a></p>"
+      "headline": "A rating scale for the DMT state",
+      "summary": "The companion paper reports subjective effects and introduces a purpose-built rating scale. It is the first serious attempt to put numbers on what the DMT state feels like from the inside.",
+      "people": [
+        {
+          "name": "Rick Strassman",
+          "sort": "Strassman"
+        },
+        {
+          "name": "Clifford Qualls",
+          "sort": "Qualls"
+        },
+        {
+          "name": "Eberhard Uhlenhuth",
+          "sort": "Uhlenhuth"
+        },
+        {
+          "name": "Robert Kellner",
+          "sort": "Kellner"
+        }
+      ],
+      "place": {
+        "label": "Albuquerque, New Mexico, United States",
+        "country": "US"
+      },
+      "tags": [
+        "dmt",
+        "phenomenology",
+        "measurement",
+        "rating-scale"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Dose-Response Study of N,N-Dimethyltryptamine in Humans: II. Subjective Effects and Preliminary Results of a New Rating Scale",
+        "authors": [
+          "Strassman, R.J.",
+          "Qualls, C.R.",
+          "Uhlenhuth, E.H.",
+          "Kellner, R."
+        ],
+        "container": "Archives of General Psychiatry",
+        "volume": "51",
+        "year": 1994,
+        "doi": "10.1001/archpsyc.1994.03950020022002",
+        "url": "https://doi.org/10.1001/archpsyc.1994.03950020022002",
+        "citation": "Strassman, R.J., Qualls, C.R., Uhlenhuth, E.H., & Kellner, R. (1994). Dose-Response Study of N,N-Dimethyltryptamine in Humans: II. Subjective Effects and Preliminary Results of a New Rating Scale. Archives of General Psychiatry, 51."
       }
     },
     {
-      "start_date": {
-        "year": "1994"
+      "id": "strassman-2001-spirit-molecule",
+      "date": {
+        "year": 2001,
+        "precision": "year",
+        "sort_key": "2001-00-00"
       },
-      "text": {
-        "headline": "DMT Rapid Memory Decay Observed",
-        "text": "<p>Strassman documents extreme difficulty recalling visual details post-experience. Memory consolidation appears disrupted during DMT state.</p><p><a href='https://doi.org/10.1007/s002130050582' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/s002130050582</a></p>"
+      "headline": "The Spirit Molecule puts the pineal hypothesis into circulation",
+      "summary": "Strassman's account of the New Mexico study for a general readership, and the book that made the pineal gland hypothesis widely known. The pineal claim is presented as a hypothesis in this book, not as a finding, and it has not since been established in humans. Much of the popular framing of DMT dates from here.",
+      "people": [
+        {
+          "name": "Rick Strassman",
+          "sort": "Strassman"
+        }
+      ],
+      "place": {
+        "label": "Rochester, Vermont, United States",
+        "country": "US"
+      },
+      "tags": [
+        "pineal",
+        "endogenous-dmt",
+        "hypothesis",
+        "popular-science"
+      ],
+      "evidence_class": "book",
+      "source": {
+        "kind": "book",
+        "title": "DMT: The Spirit Molecule",
+        "authors": [
+          "Strassman, R."
+        ],
+        "publisher": "Park Street Press",
+        "year": 2001,
+        "isbn": "978-0-89281-927-0",
+        "citation": "Strassman, R. (2001). DMT: The Spirit Molecule. Park Street Press. ISBN 978-0-89281-927-0."
       }
     },
     {
-      "start_date": {
-        "year": "2001"
+      "id": "bressloff-2001-euclidean-symmetry",
+      "date": {
+        "year": 2001,
+        "precision": "year",
+        "sort_key": "2001-00-01"
       },
-      "text": {
-        "headline": "Strassman: Memory Decay Problem",
-        "text": "<p>Strassman publishes 'DMT: The Spirit Molecule' documenting rapid forgetting of visual content. 'Like trying to remember a dream while waking.'</p><p><a href='https://doi.org/10.1007/978-1-4615-0115-9' target='_blank' style='color: #ffeb3b;'>DOI: 10.1007/978-1-4615-0115-9</a></p>"
+      "headline": "Euclidean symmetry and the striate cortex",
+      "summary": "The Ermentrout and Cowan model is extended to account for contoured patterns as well as plain geometry. This remains the reference physical explanation for tunnels, spirals, lattices and honeycombs. It does not attempt to explain reports of discrete symbol-like or alphabetic forms, which is exactly the gap this registry is pointed at.",
+      "people": [
+        {
+          "name": "Paul C. Bressloff",
+          "sort": "Bressloff"
+        },
+        {
+          "name": "Jack D. Cowan",
+          "sort": "Cowan"
+        },
+        {
+          "name": "Martin Golubitsky",
+          "sort": "Golubitsky"
+        },
+        {
+          "name": "Peter J. Thomas",
+          "sort": "Thomas"
+        },
+        {
+          "name": "Matthew C. Wiener",
+          "sort": "Wiener"
+        }
+      ],
+      "tags": [
+        "form-constants",
+        "visual-cortex",
+        "modelling",
+        "symmetry",
+        "skeptical-explanation"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Geometric visual hallucinations, Euclidean symmetry and the functional architecture of striate cortex",
+        "authors": [
+          "Bressloff, P.C.",
+          "Cowan, J.D.",
+          "Golubitsky, M.",
+          "Thomas, P.J.",
+          "Wiener, M.C."
+        ],
+        "container": "Philosophical Transactions of the Royal Society B: Biological Sciences",
+        "volume": "356",
+        "year": 2001,
+        "doi": "10.1098/rstb.2000.0769",
+        "url": "https://doi.org/10.1098/rstb.2000.0769",
+        "citation": "Bressloff, P.C., Cowan, J.D., Golubitsky, M., Thomas, P.J., & Wiener, M.C. (2001). Geometric visual hallucinations, Euclidean symmetry and the functional architecture of striate cortex. Philosophical Transactions of the Royal Society B, 356."
       }
     },
     {
-      "start_date": {
-        "year": "2005"
+      "id": "gonzales-2006-o-centro",
+      "date": {
+        "year": 2006,
+        "month": 2,
+        "day": 21,
+        "precision": "day",
+        "sort_key": "2006-02-21"
       },
-      "text": {
-        "headline": "Ayahuasca Legal Framework",
-        "text": "<p>Religious use of ayahuasca (DMT-containing brew) protected under U.S. law for UDV and Santo Daime churches. Opens path for ceremonial research.</p><p><a href='https://www.supremecourt.gov/opinions/05pdf/04-1084.pdf' target='_blank' style='color: #ffeb3b;'>Supreme Court Opinion</a></p>"
+      "headline": "Ayahuasca protected under US religious freedom law",
+      "summary": "The Supreme Court upholds a preliminary injunction allowing the União do Vegetal to use its DMT-containing ayahuasca tea in worship, under the Religious Freedom Restoration Act. The decision concerns religious exemption. It does not create a research pathway.",
+      "place": {
+        "label": "Washington, D.C., United States",
+        "country": "US"
+      },
+      "tags": [
+        "law",
+        "ayahuasca",
+        "religious-use",
+        "policy"
+      ],
+      "evidence_class": "legal",
+      "source": {
+        "kind": "court_opinion",
+        "title": "Gonzales v. O Centro Espírita Beneficente União do Vegetal, 546 U.S. 418 (2006)",
+        "year": 2006,
+        "url": "https://www.supremecourt.gov/opinions/05pdf/04-1084.pdf",
+        "citation": "Gonzales v. O Centro Espírita Beneficente União do Vegetal, 546 U.S. 418 (2006). Decided February 21, 2006. Docket 04-1084."
       }
     },
     {
-      "start_date": {
-        "year": "2010"
+      "id": "gallimore-strassman-2016-extended-state",
+      "date": {
+        "year": 2016,
+        "precision": "year",
+        "sort_key": "2016-00-00"
       },
-      "text": {
-        "headline": "Imperial College Psychedelic Unit",
-        "text": "<p>David Nutt, Amanda Feilding, and Robin Carhart-Harris establish psychedelic research program. First modern EEG studies of DMT begin planning.</p><p><a href='https://doi.org/10.1177/0269881110379283' target='_blank' style='color: #ffeb3b;'>DOI: 10.1177/0269881110379283</a></p>"
+      "headline": "A protocol for holding the DMT state open",
+      "summary": "Gallimore and Strassman model a target-controlled intravenous infusion that would keep a person in the DMT state long enough to look around and report back. The paper is a design, not a trial. It sets the agenda for the extended-state work that follows.",
+      "people": [
+        {
+          "name": "Andrew R. Gallimore",
+          "sort": "Gallimore"
+        },
+        {
+          "name": "Rick Strassman",
+          "sort": "Strassman"
+        }
+      ],
+      "tags": [
+        "dmtx",
+        "extended-state",
+        "infusion",
+        "protocol-design"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "A Model for the Application of Target-Controlled Intravenous Infusion for a Prolonged Immersive DMT Psychedelic Experience",
+        "authors": [
+          "Gallimore, A.R.",
+          "Strassman, R.J."
+        ],
+        "container": "Frontiers in Pharmacology",
+        "volume": "7",
+        "year": 2016,
+        "doi": "10.3389/fphar.2016.00211",
+        "url": "https://doi.org/10.3389/fphar.2016.00211",
+        "citation": "Gallimore, A.R., & Strassman, R.J. (2016). A Model for the Application of Target-Controlled Intravenous Infusion for a Prolonged Immersive DMT Psychedelic Experience. Frontiers in Pharmacology, 7."
       }
     },
     {
-      "start_date": {
-        "year": "2013"
+      "id": "dmt-dialogues-2018",
+      "date": {
+        "year": 2018,
+        "precision": "year",
+        "sort_key": "2018-00-00"
       },
-      "text": {
-        "headline": "DMT Extended-State Studies",
-        "text": "<p>Andrew Gallimore proposes continuous IV infusion protocol to extend DMT state. Theoretical framework for sustained psychedelic research.</p><p><a href='https://doi.org/10.3389/fpsyg.2015.00211' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyg.2015.00211</a></p>"
+      "headline": "DMT Dialogues published",
+      "summary": "Researchers, clinicians and experiencers put their accounts side by side in a single volume. Notable less for any one finding than for treating first-person reports as material worth collecting systematically, which is the premise this registry runs on.",
+      "people": [
+        {
+          "name": "David Luke",
+          "sort": "Luke"
+        },
+        {
+          "name": "Rory Spowers",
+          "sort": "Spowers"
+        },
+        {
+          "name": "Anton Bilton",
+          "sort": "Bilton"
+        }
+      ],
+      "tags": [
+        "phenomenology",
+        "entities",
+        "book",
+        "first-person-reports"
+      ],
+      "evidence_class": "book",
+      "source": {
+        "kind": "book",
+        "title": "DMT Dialogues: Encounters with the Spirit Molecule",
+        "authors": [
+          "Luke, D.",
+          "Spowers, R.",
+          "Bilton, A."
+        ],
+        "publisher": "Park Street Press",
+        "year": 2018,
+        "isbn": "978-1-62055-747-1",
+        "citation": "Luke, D., Spowers, R., & Bilton, A. (Eds.). (2018). DMT Dialogues: Encounters with the Spirit Molecule. Park Street Press. ISBN 978-1-62055-747-1."
       }
     },
     {
-      "start_date": {
-        "year": "2016"
+      "id": "timmermann-2019-eeg",
+      "date": {
+        "year": 2019,
+        "precision": "year",
+        "sort_key": "2019-00-00"
       },
-      "text": {
-        "headline": "First Modern DMT Neuroimaging",
-        "text": "<p>Imperial College publishes first modern fMRI and EEG data during DMT experiences. Shows decreased alpha wave activity and default mode network disruption.</p><p><a href='https://doi.org/10.1038/srep20233' target='_blank' style='color: #ffeb3b;'>DOI: 10.1038/srep20233</a></p>"
+      "headline": "The EEG signature of the DMT state",
+      "summary": "Timmermann and colleagues record EEG through intravenous DMT sessions and find a marked drop in alpha power alongside increased signal diversity. The first modern electrophysiological picture of the state, and the point at which DMT stopped being untouchable in mainstream neuroscience.",
+      "people": [
+        {
+          "name": "Christopher Timmermann",
+          "sort": "Timmermann"
+        }
+      ],
+      "place": {
+        "label": "London, United Kingdom",
+        "country": "GB"
+      },
+      "tags": [
+        "eeg",
+        "neuroimaging",
+        "signal-diversity",
+        "dmt"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Neural correlates of the DMT experience assessed with multivariate EEG",
+        "authors": [
+          "Timmermann, C.",
+          "et al."
+        ],
+        "container": "Scientific Reports",
+        "volume": "9",
+        "year": 2019,
+        "doi": "10.1038/s41598-019-51974-4",
+        "url": "https://doi.org/10.1038/s41598-019-51974-4",
+        "citation": "Timmermann, C., et al. (2019). Neural correlates of the DMT experience assessed with multivariate EEG. Scientific Reports, 9."
       }
     },
     {
-      "start_date": {
-        "year": "2018"
+      "id": "davis-2020-entity-survey",
+      "date": {
+        "year": 2020,
+        "precision": "year",
+        "sort_key": "2020-00-00"
       },
-      "text": {
-        "headline": "DMT Dialogues Conference",
-        "text": "<p>First international conference dedicated to DMT research. Researchers, anthropologists, and experiencers gather to discuss phenomenology and neuroscience.</p><p><a href='https://www.dmtdialogues.com' target='_blank' style='color: #ffeb3b;'>DMT Dialogues</a></p>"
+      "headline": "The entity encounter survey",
+      "summary": "2,561 people who reported meeting an entity under inhaled DMT answered a structured survey. 41 percent reported fear during the encounter. 69 percent said they received a message. 19 percent said they received a prediction about the future. Respondents most often described the entity as conscious, intelligent and benevolent. The survey records what people say. It does not test whether anything was there.",
+      "people": [
+        {
+          "name": "Alan K. Davis",
+          "sort": "Davis"
+        },
+        {
+          "name": "John M. Clifton",
+          "sort": "Clifton"
+        },
+        {
+          "name": "Eric G. Weaver",
+          "sort": "Weaver"
+        },
+        {
+          "name": "Ethan S. Hurwitz",
+          "sort": "Hurwitz"
+        },
+        {
+          "name": "Matthew W. Johnson",
+          "sort": "Johnson"
+        },
+        {
+          "name": "Roland R. Griffiths",
+          "sort": "Griffiths"
+        }
+      ],
+      "place": {
+        "label": "Baltimore, Maryland, United States",
+        "country": "US"
+      },
+      "tags": [
+        "entities",
+        "survey",
+        "phenomenology",
+        "large-sample",
+        "dmt"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine: Phenomenology, interpretation, and enduring effects",
+        "authors": [
+          "Davis, A.K.",
+          "Clifton, J.M.",
+          "Weaver, E.G.",
+          "Hurwitz, E.S.",
+          "Johnson, M.W.",
+          "Griffiths, R.R."
+        ],
+        "container": "Journal of Psychopharmacology",
+        "volume": "34",
+        "year": 2020,
+        "doi": "10.1177/0269881120916143",
+        "url": "https://doi.org/10.1177/0269881120916143",
+        "citation": "Davis, A.K., Clifton, J.M., Weaver, E.G., Hurwitz, E.S., Johnson, M.W., & Griffiths, R.R. (2020). Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine: Phenomenology, interpretation, and enduring effects. Journal of Psychopharmacology, 34."
       }
     },
     {
-      "start_date": {
-        "year": "2019"
+      "id": "lawrence-2022-phenomenology",
+      "date": {
+        "year": 2022,
+        "precision": "year",
+        "sort_key": "2022-00-00"
       },
-      "text": {
-        "headline": "Timmermann EEG Breakthrough",
-        "text": "<p>Chris Timmermann publishes landmark EEG study showing DMT increases brain entropy and disorganized neural activity. Contradicts simple 'hallucination' model.</p><p><a href='https://doi.org/10.1038/s41598-019-51974-4' target='_blank' style='color: #ffeb3b;'>DOI: 10.1038/s41598-019-51974-4</a></p>"
+      "headline": "What people actually report seeing",
+      "summary": "A structured analysis of the content of inhaled DMT experiences, sorting what people describe into recurring categories. This is the closest published relative to what this registry is attempting with drawings, and a useful yardstick for whether the symbols collected here look like anything the literature already knows about.",
+      "people": [
+        {
+          "name": "David W. Lawrence",
+          "sort": "Lawrence"
+        },
+        {
+          "name": "Robin Carhart-Harris",
+          "sort": "Carhart-Harris"
+        },
+        {
+          "name": "Roland R. Griffiths",
+          "sort": "Griffiths"
+        },
+        {
+          "name": "Christopher Timmermann",
+          "sort": "Timmermann"
+        }
+      ],
+      "place": {
+        "label": "London, United Kingdom",
+        "country": "GB"
+      },
+      "tags": [
+        "phenomenology",
+        "content-analysis",
+        "dmt",
+        "categories"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Phenomenology and content of the inhaled N,N-dimethyltryptamine (N,N-DMT) experience",
+        "authors": [
+          "Lawrence, D.W.",
+          "Carhart-Harris, R.",
+          "Griffiths, R.",
+          "Timmermann, C."
+        ],
+        "container": "Scientific Reports",
+        "volume": "12",
+        "year": 2022,
+        "doi": "10.1038/s41598-022-11999-8",
+        "url": "https://doi.org/10.1038/s41598-022-11999-8",
+        "citation": "Lawrence, D.W., Carhart-Harris, R., Griffiths, R., & Timmermann, C. (2022). Phenomenology and content of the inhaled N,N-dimethyltryptamine (N,N-DMT) experience. Scientific Reports, 12."
       }
     },
     {
-      "start_date": {
-        "year": "2020"
+      "id": "timmermann-2023-eeg-fmri",
+      "date": {
+        "year": 2023,
+        "precision": "year",
+        "sort_key": "2023-00-00"
       },
-      "text": {
-        "headline": "Geometric Hallucination Topology",
-        "text": "<p>Michael et al. publish mathematical model connecting V1 cortex architecture to form constants. Explains tunnels, spirals, but not alphabetic symbols.</p><p><a href='https://doi.org/10.1098/rstb.2000.0769' target='_blank' style='color: #ffeb3b;'>DOI: 10.1098/rstb.2000.0769</a></p>"
+      "headline": "DMT under EEG and fMRI at the same time",
+      "summary": "The first simultaneous EEG and fMRI recordings during intravenous DMT. Global connectivity rises, network segregation falls, and the size of the change tracks the intensity of the experience. This is the modern neuroimaging baseline for DMT.",
+      "people": [
+        {
+          "name": "Christopher Timmermann",
+          "sort": "Timmermann"
+        },
+        {
+          "name": "Robin Carhart-Harris",
+          "sort": "Carhart-Harris"
+        },
+        {
+          "name": "David Nutt",
+          "sort": "Nutt"
+        }
+      ],
+      "place": {
+        "label": "London, United Kingdom",
+        "country": "GB"
+      },
+      "tags": [
+        "fmri",
+        "eeg",
+        "neuroimaging",
+        "connectivity",
+        "dmt"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Human brain effects of DMT assessed via EEG-fMRI",
+        "authors": [
+          "Timmermann, C.",
+          "Roseman, L.",
+          "Haridas, S.",
+          "Rosas, F.E.",
+          "Luan, L.",
+          "Kettner, H.",
+          "Martell, J.",
+          "Erritzoe, D.",
+          "Tagliazucchi, E.",
+          "Pallavicini, C.",
+          "Girn, M.",
+          "Alamia, A.",
+          "Leech, R.",
+          "Nutt, D.J.",
+          "Carhart-Harris, R."
+        ],
+        "container": "Proceedings of the National Academy of Sciences",
+        "volume": "120",
+        "year": 2023,
+        "doi": "10.1073/pnas.2218949120",
+        "url": "https://doi.org/10.1073/pnas.2218949120",
+        "citation": "Timmermann, C., et al. (2023). Human brain effects of DMT assessed via EEG-fMRI. Proceedings of the National Academy of Sciences, 120."
       }
     },
     {
-      "start_date": {
-        "year": "2021",
-        "month": "6"
+      "id": "luan-2023-extended-dmt",
+      "date": {
+        "year": 2023,
+        "precision": "year",
+        "sort_key": "2023-00-01"
       },
-      "text": {
-        "headline": "Davis: Phenomenology Survey",
-        "text": "<p>Alan Davis publishes largest phenomenology survey (n=2,561) of DMT experiences. 65% report 'instructional' or 'communicative' emotional tone.</p><p><a href='https://doi.org/10.1002/hup.2806' target='_blank' style='color: #ffeb3b;'>DOI: 10.1002/hup.2806</a></p>"
+      "headline": "The extended state is tested in people",
+      "summary": "Continuous intravenous infusion holds volunteers in the DMT state well beyond the few minutes an inhaled dose allows. The design modelled on paper in 2016 becomes an actual trial, which is what makes careful reporting from inside the state possible at all.",
+      "people": [
+        {
+          "name": "Lisa X. Luan",
+          "sort": "Luan"
+        },
+        {
+          "name": "Christopher Timmermann",
+          "sort": "Timmermann"
+        },
+        {
+          "name": "Robin Carhart-Harris",
+          "sort": "Carhart-Harris"
+        }
+      ],
+      "place": {
+        "label": "London, United Kingdom",
+        "country": "GB"
+      },
+      "tags": [
+        "dmtx",
+        "extended-state",
+        "infusion",
+        "clinical-trial"
+      ],
+      "evidence_class": "peer_reviewed",
+      "source": {
+        "kind": "journal_article",
+        "title": "Psychological and physiological effects of extended DMT",
+        "authors": [
+          "Luan, L.X.",
+          "Eckernäs, E.",
+          "Ashton, M.",
+          "Rosas, F.E.",
+          "Uthaug, M.V.",
+          "Bartha, A.",
+          "Jagger, S.",
+          "Gascon-Perai, K.",
+          "Gomes, L.",
+          "Nutt, D.J.",
+          "Erritzøe, D.",
+          "Carhart-Harris, R.L.",
+          "Timmermann, C."
+        ],
+        "container": "Journal of Psychopharmacology",
+        "volume": "38",
+        "year": 2023,
+        "doi": "10.1177/02698811231196877",
+        "url": "https://doi.org/10.1177/02698811231196877",
+        "citation": "Luan, L.X., et al. (2023). Psychological and physiological effects of extended DMT. Journal of Psychopharmacology, 38."
       }
     },
     {
-      "start_date": {
-        "year": "2021",
-        "month": "9"
+      "id": "community-2023-laser-protocol-spreads",
+      "date": {
+        "year": 2023,
+        "precision": "year",
+        "sort_key": "2023-00-02"
       },
-      "text": {
-        "headline": "Entity Encounter Meta-Analysis",
-        "text": "<p>Structured analysis of 'entity encounters' during DMT. 80% report autonomous beings; 50% describe entities with communicative intent.</p><p><a href='https://doi.org/10.1002/hup.2806' target='_blank' style='color: #ffeb3b;'>DOI: 10.1002/hup.2806</a></p>"
+      "headline": "Laser and grating experiments spread outside institutions",
+      "summary": "Independent experimenters begin combining a red laser with a diffraction grating during DMT sessions and reporting symbol-like forms on surfaces. No study, no controls, no published record. This is where the protocol this site catalogues comes from, and it is listed here as origin rather than as evidence.",
+      "tags": [
+        "laser-protocol",
+        "origin",
+        "independent-research",
+        "unverified"
+      ],
+      "evidence_class": "community_report",
+      "source": {
+        "kind": "unpublished",
+        "note": "No published source exists for this period. Recorded so the origin of the protocol is visible. Treat it as community history, not as evidence."
       }
     },
     {
-      "start_date": {
-        "year": "2022",
-        "month": "3"
+      "id": "community-2024-online-groups",
+      "date": {
+        "year": 2024,
+        "precision": "year",
+        "sort_key": "2024-00-00"
       },
-      "text": {
-        "headline": "Lawrence: Extended DMT Protocol",
-        "text": "<p>DMT Extended State Trial (DMTx) achieves sustained 30+ minute experiences via continuous infusion. Allows detailed phenomenology mapping.</p><p><a href='https://doi.org/10.3389/fpsyt.2022.842749' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyt.2022.842749</a></p>"
+      "headline": "Online groups form around the protocol",
+      "summary": "Discussion groups form around the laser protocol and begin comparing reports informally. Success rates circulated in these groups have never been measured under any defined denominator, so no figure is repeated here.",
+      "tags": [
+        "community",
+        "online-groups",
+        "unverified",
+        "selection-bias"
+      ],
+      "evidence_class": "community_report",
+      "source": {
+        "kind": "unpublished",
+        "note": "No published source. No counted denominator exists for any success rate claim from this period."
       }
     },
     {
-      "start_date": {
-        "year": "2022",
-        "month": "8"
+      "id": "gomez-emilsson-2024-candid-take",
+      "date": {
+        "year": 2024,
+        "month": 12,
+        "day": 6,
+        "precision": "day",
+        "sort_key": "2024-12-06"
       },
-      "text": {
-        "headline": "VR Integration Experiments",
-        "text": "<p>Researchers begin testing VR headsets during DMT states to provide external visual anchors. Mixed results with equipment discomfort.</p><p><a href='https://doi.org/10.3389/fpsyg.2022.1021565' target='_blank' style='color: #ffeb3b;'>DOI: 10.3389/fpsyg.2022.1021565</a></p>"
+      "headline": "A consciousness researcher gives a public assessment",
+      "summary": "Andres Gomez-Emilsson of the Qualia Research Institute posted what he called his candid take on the DMT laser claims, describing the setup and comparing the reported effect to other visual phenomena. The post is linked in full rather than summarised further here, because a one line paraphrase of someone else's assessment is exactly the kind of thing this chronology is trying to stop doing. Read it and judge it yourself.",
+      "people": [
+        {
+          "name": "Andrés Gómez-Emilsson",
+          "sort": "Gomez-Emilsson"
+        }
+      ],
+      "tags": [
+        "commentary",
+        "assessment",
+        "qualia-research-institute",
+        "laser-protocol"
+      ],
+      "evidence_class": "commentary",
+      "source": {
+        "kind": "web_page",
+        "title": "My candid take on the DMT laser claims",
+        "authors": [
+          "Gómez-Emilsson, A."
+        ],
+        "container": "X",
+        "year": 2024,
+        "url": "https://x.com/algekalipso/status/1865112324178350236",
+        "citation": "Gómez-Emilsson, A. (2024, December 6). My candid take on the DMT laser claims. X."
       }
     },
     {
-      "start_date": {
-        "year": "2023",
-        "month": "1"
+      "id": "goler-2025-pilot-study",
+      "date": {
+        "year": 2025,
+        "month": 1,
+        "day": 8,
+        "precision": "day",
+        "sort_key": "2025-01-08"
       },
-      "text": {
-        "headline": "Underground Laser Experiments Begin",
-        "text": "<p>Independent researchers begin experimenting with handheld lasers as visual anchors during DMT experiences. Early reports describe 'symbols appearing on surfaces.'</p><p style='color: #888;'>Unpublished observations</p>"
+      "headline": "The Code of Reality pilot is published",
+      "summary": "The first published description of the 650 nm laser and diffraction grating protocol, reporting consistency across observers. It is filed as News and Views in a venue outside mainstream peer review, with a small documented sample and no blinding. It is the reference document for the protocol this site catalogues. It is not a controlled trial and should not be read as one.",
+      "people": [
+        {
+          "name": "Danny Goler",
+          "sort": "Goler"
+        }
+      ],
+      "tags": [
+        "laser-protocol",
+        "650-nm",
+        "diffraction-grating",
+        "pilot-study",
+        "symbols"
+      ],
+      "evidence_class": "letters",
+      "source": {
+        "kind": "letters_article",
+        "title": "Detailing a Pilot Study: The \"Code of Reality\" Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness",
+        "authors": [
+          "Goler, D."
+        ],
+        "container": "IPI Letters",
+        "year": 2025,
+        "doi": "10.59973/ipil.158",
+        "url": "https://ipipublishing.org/index.php/ipil/article/view/158",
+        "citation": "Goler, D. (2025). Detailing a Pilot Study: The Code of Reality Protocol. IPI Letters. DOI 10.59973/ipil.158.",
+        "volume": "3(1)"
       }
     },
     {
-      "start_date": {
-        "year": "2023",
-        "month": "7"
+      "id": "vice-2025-press-scrutiny",
+      "date": {
+        "year": 2025,
+        "month": 1,
+        "day": 28,
+        "precision": "day",
+        "sort_key": "2025-01-28"
       },
-      "text": {
-        "headline": "Diffraction Grating Optimization",
-        "text": "<p>Danny Goler discovers diffraction grating caps enhance symbol clarity. Pattern dispersion creates stable surface for projection.</p><p style='color: #888;'>Personal communication</p>"
+      "headline": "First major press scrutiny",
+      "summary": "The first substantial journalistic profile of the protocol, setting the claims next to skeptical commentary from working scientists. Read it alongside the pilot paper rather than instead of it.",
+      "tags": [
+        "journalism",
+        "skepticism",
+        "coverage"
+      ],
+      "evidence_class": "journalism",
+      "source": {
+        "kind": "news_article",
+        "title": "The Man Who Can 'Prove' Life Is a Simulation, With Just a DMT Vape and a Laser",
+        "authors": [
+          "Busby, M."
+        ],
+        "container": "Vice",
+        "year": 2025,
+        "url": "https://www.vice.com/en/article/danny-goler-dmt-vape-laser-simulation/",
+        "citation": "Busby, M. (2025, January 28). Vice."
+      },
+      "people": [
+        {
+          "name": "Mattha Busby",
+          "sort": "Busby"
+        }
+      ]
+    },
+    {
+      "id": "registry-2025-first-glyph",
+      "date": {
+        "year": 2025,
+        "month": 11,
+        "day": 24,
+        "precision": "day",
+        "sort_key": "2025-11-24"
+      },
+      "headline": "First glyph recorded in this registry",
+      "summary": "The earliest record in the public registry on this site. A curated starter set was entered first so the catalogue had a shape people could argue with. Those entries are labelled as a starter set and are not participant submissions.",
+      "tags": [
+        "registry",
+        "dmtcode",
+        "milestone",
+        "starter-set"
+      ],
+      "evidence_class": "platform_record",
+      "source": {
+        "kind": "database_record",
+        "title": "Public symbol registry",
+        "url": "https://dmtcode.com/registry",
+        "citation": "Earliest created_at in the public registry table on dmtcode.com, 24 November 2025."
       }
     },
     {
-      "start_date": {
-        "year": "2024",
-        "month": "2"
+      "id": "registry-2025-first-submission",
+      "date": {
+        "year": 2025,
+        "month": 11,
+        "day": 30,
+        "precision": "day",
+        "sort_key": "2025-11-30"
       },
-      "text": {
-        "headline": "650nm Wavelength Isolation",
-        "text": "<p>Systematic testing across wavelengths (405nm blue, 532nm green, 650nm red). Only 650nm red shows consistent alphabetic-like symbol morphology.</p><p style='color: #888;'>Goler pilot data</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2024",
-        "month": "6"
-      },
-      "text": {
-        "headline": "Chase Hughes Validation",
-        "text": "<p>Behavioral psychologist Chase Hughes independently replicates Goler protocol. Confirms symbol appearance with 650nm laser + diffraction grating.</p><p style='color: #888;'>Personal communication</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2024",
-        "month": "9"
-      },
-      "text": {
-        "headline": "First Cross-Session Symbol Match",
-        "text": "<p>Two independent participants report identical symbol morphology (angular 'N'-like glyph) during separate sessions. First evidence of potential reproducibility.</p><p style='color: #888;'>Unpublished observations</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2024",
-        "month": "11"
-      },
-      "text": {
-        "headline": "Online Community Formation",
-        "text": "<p>Reddit and Discord groups form around laser protocol experimentation. Self-reported success rate 70-90% with proper technique.</p><p style='color: #888;'>Community reports</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2025",
-        "month": "1"
-      },
-      "text": {
-        "headline": "Goler Pilot Study",
-        "text": "<p>Danny Goler completes pilot study (n=community-scale) showing notable inter-subject consistency in reported symbol appearance. Alphabetic-like characters predominate.</p><p><a href='https://dmtcode.com/research' target='_blank' style='color: #ffeb3b;'>Goler 2025 (IPI Letters)</a></p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2025",
-        "month": "4"
-      },
-      "text": {
-        "headline": "Morris Skepticism Published",
-        "text": "<p>Neuroscientist Morris publishes methodological critique. Notes absence of control groups, blinding, placebo conditions. Calls for rigorous experimental validation.</p><p style='color: #888;'>Morris critique (unpublished)</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2025",
-        "month": "6"
-      },
-      "text": {
-        "headline": "Optical Artifact Debate",
-        "text": "<p>Researchers debate whether symbols are retinal phosphenes vs externally projected phenomena. Symbol appearance on diverse surfaces (walls, skin, closed eyes) complicates artifact hypothesis.</p><p style='color: #888;'>Ongoing research</p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2025",
-        "month": "9"
-      },
-      "text": {
-        "headline": "DMT Code Registry Launch",
-        "text": "<p>dmtcode.com launches as open community-maintained catalogue of discrete visual symbols. Features canvas drawing tool, metadata tracking, confirmation voting.</p><p><a href='https://dmtcode.com' target='_blank' style='color: #ffeb3b;'>dmtcode.com</a></p>"
-      }
-    },
-    {
-      "start_date": {
-        "year": "2025",
-        "month": "11"
-      },
-      "text": {
-        "headline": "Null Report Tracking Begins",
-        "text": "<p>Registry implements null report submission path. First systematic tracking of negative results (wavelength × surface conditions with no symbols). Selection bias mitigation.</p><p><a href='https://dmtcode.com/null-reports' target='_blank' style='color: #ffeb3b;'>Null Reports</a></p>"
+      "headline": "First participant submission",
+      "summary": "The first symbol drawn and submitted by a participant through the public tool, rather than entered by the site. The point at which the registry stopped being a catalogue and started being a record.",
+      "tags": [
+        "registry",
+        "dmtcode",
+        "milestone",
+        "participant"
+      ],
+      "evidence_class": "platform_record",
+      "source": {
+        "kind": "database_record",
+        "title": "Public symbol registry",
+        "url": "https://dmtcode.com/registry",
+        "citation": "Earliest created_at in the participant submissions table on dmtcode.com, 30 November 2025."
       }
     }
   ]
