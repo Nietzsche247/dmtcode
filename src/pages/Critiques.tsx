@@ -39,12 +39,7 @@ const Critiques = () => {
               "name": "DMT Code Project"
             },
             "datePublished": "2025-11-29",
-            "dateModified": "2025-11-29",
-            "reviewedBy": {
-              "@type": "Person",
-              "name": "DMT Code Project Research Team",
-              "jobTitle": "MSc Neuroscience"
-            }
+            "dateModified": "2025-11-29"
           })}
         </script>
         <script type="application/ld+json">
