@@ -1976,7 +1976,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   join: {
     title: "Help build it | DMT Code",
-    description: "Volunteer to help run a real experiment into a shared visual world. Recorders, translators, analysts, developers, and test subjects welcome.",
+    description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome.",
     heading: "A real experiment with an unknown answer.",
     paragraphs: [
       "Thousands of people report vivid, structured experiences. We are testing whether those reports truly converge, or whether optics, shared neurobiology, expectation, and memory explain the apparent overlap.",

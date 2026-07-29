@@ -12,20 +12,20 @@ const About = () => {
         <title>About DMT Code - Mission & Team | DMT Code</title>
         <meta 
           name="description" 
-          content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." 
+          content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." 
         />
         <link rel="canonical" href="https://dmtcode.com/about" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/about" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="About DMT Code - Mission & Team | DMT Code" />
-        <meta property="og:description" content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." />
+        <meta property="og:description" content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." />
         <meta property="og:url" content="https://dmtcode.com/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/about" />
         <meta name="twitter:title" content="About DMT Code - Mission & Team | DMT Code" />
-        <meta name="twitter:description" content="Open-source academic database for cataloguing visual symbols from the Code of Reality phenomenon." />
+        <meta name="twitter:description" content="Who runs DMT Code, how it is funded, and the standards it holds itself to. An open, community-maintained record of reported visual symbols." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
         <script type="application/ld+json">
@@ -131,7 +131,7 @@ const About = () => {
                 <p>
                   What did not exist was a place to accumulate the evidence in a form anyone could
                   inspect, including evidence that cuts against it. Every symbol is a dated,
-                  permanent, licensed record. Every source carries a stance score. Negative results
+                  permanent, licensed record. Stance scores exist for part of the bibliography and are still being filled in, so a source without one has not been assessed yet rather than judged neutral. Negative results
                   are published in the same place as positive ones, under the same license.
                 </p>
                 <p className="border-l-2 border-primary/60 pl-5">
@@ -193,7 +193,7 @@ const About = () => {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Research Team</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    DMT Code Project maintained by volunteers with backgrounds in neuroscience, data science, and psychedelic research. Team includes MSc Neuroscience holders with published work in visual perception and psychopharmacology.
+                    DMT Code is run by its founder with help from volunteers. An earlier version of this page said the team included MSc Neuroscience holders with published work in visual perception and psychopharmacology. Nothing on this site let a reader check that, so the claim has been removed. If a contributor holds a relevant credential and wants it published, it will be published with a name attached to it.
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                     <li>Peer-reviewed literature analysis and citation verification</li>
@@ -204,16 +204,16 @@ const About = () => {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Advisory Network</h3>
+                  <h3 className="font-semibold text-lg mb-2">Affiliations</h3>
                   <p className="text-sm text-muted-foreground">
-                    Informal consultation with researchers cited in bibliography (Davis, Timmermann, Lawrence) for methodological guidance. No formal institutional affiliation. Independent, community-driven project model inspired by citizen science initiatives (Zooniverse, iNaturalist, Paul Stamets' Microdose.me).
+                    This project has no institutional affiliation and no advisory board. An earlier version of this page said it consulted informally with researchers cited in the bibliography. No such consultation is on record, so the claim has been removed rather than left standing. The researchers whose work is cited here have not endorsed this project and are not associated with it. The model is community-driven, in the spirit of open citizen science projects such as Zooniverse and iNaturalist.
                   </p>
                 </div>
 
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Code of Conduct</h3>
                   <p className="text-sm text-muted-foreground">
-                    All team members commit to: (1) Neutral scientific framing, (2) Harm-reduction messaging, (3) Respect for dissenting perspectives, (4) Transparent data handling, (5) Legal compliance. Community moderators enforce respectful discourse and remove harmful content (dosing advice, unsupported medical claims, harassment).
+                    All contributors commit to: (1) Neutral scientific framing, (2) Harm-reduction messaging, (3) Respect for dissenting perspectives, (4) Transparent data handling, (5) Legal compliance. Moderation is currently performed by the project admin rather than by a moderator team. Content that breaks these rules is hidden from public view rather than deleted, so the record of what was submitted stays intact.
                   </p>
                 </div>
               </div>

@@ -140,7 +140,7 @@ const Join = () => {
     <>
       <Helmet>
         <title>Help build it | DMT Code</title>
-        <meta name="description" content="Volunteer to help run a real experiment into a shared visual world. Recorders, translators, analysts, developers, and test subjects welcome." />
+        <meta name="description" content="Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome." />
         <link rel="canonical" href="https://dmtcode.com/join" />
       </Helmet>
 
