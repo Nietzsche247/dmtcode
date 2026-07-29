@@ -18,7 +18,7 @@ export const MissionFraming = () => {
           className="text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight"
           style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
         >
-          Thousands of strangers keep seeing the same hidden world. You might have seen it too.
+          Thousands of people say they have seen the same hidden world. You might be one of them.
         </h2>
 
         <p
@@ -26,7 +26,8 @@ export const MissionFraming = () => {
           style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
         >
           This is not a claim. It is an experiment, and you can be part of it. We record what people
-          see and test it honestly, together, until we know what is real.
+          see, then test whether the reports truly converge, or whether optics, shared
+          neurobiology, expectation, and memory explain the overlap.
         </p>
 
         <p

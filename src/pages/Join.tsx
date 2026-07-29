@@ -160,8 +160,9 @@ const Join = () => {
             style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
           >
             <p>
-              Thousands of strangers keep seeing the same hidden world. We are testing that
-              honestly, together, until we know what is real.
+              Thousands of people report vivid, structured experiences. We are testing whether those
+              reports truly converge, or whether optics, shared neurobiology, expectation, and
+              memory explain the apparent overlap.
             </p>
             <p>
               You do not need credentials to help. You need care, honesty, and time. Tell us how you

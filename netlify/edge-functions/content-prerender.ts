@@ -1552,9 +1552,9 @@ const PROTOCOL_GUIDE_FAQ_LD = {
 const GLOSSARY_TERMS: Array<{ term: string; definition: string }> = [
   { term: "650 nm Laser Protocol", definition: "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration. Developed by Danny Goler." },
   { term: "Alphabetic-like Symbol", definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic), described as bounded and character like rather than as a continuous geometric field." },
-  { term: "Coherent Light", definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, enabling precise diffraction patterns essential for symbol elicitation." },
+  { term: "Coherent Light", definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, which is what allows a diffraction grating to project a precise pattern." },
   { term: "Confirmation Count", definition: "A count of readers who said a registry form echoed their own memory. Because those readers saw the form in this catalogue before they responded, the number measures recognition after exposure, not independent convergence. An independent match requires an account sealed before the person viewed the catalogue." },
-  { term: "Diffraction Grating", definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in 650 nm protocol to project grid patterns that interact with N,N-DMT visual phenomena." },
+  { term: "Diffraction Grating", definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in the 650 nm protocol to project a grid pattern. Whether that pattern has any effect on N,N-DMT visual phenomena is the question under test." },
   { term: "Discrete Visual Symbol", definition: "Distinct, bounded geometric or alphabetic-like element perceived as separate from surrounding visual field. Contrasts with continuous geometric patterns or ambient visual noise." },
   { term: "Geometric Archetype", definition: "A symbol morphology that recurs across submissions, described by shared features such as symmetry, line structure, and orientation. Recurrence in the registry is not by itself evidence of independent convergence, because contributors may have seen earlier submissions before making their own." },
   { term: "Inter-subject Consistency", definition: "The degree to which independent observers report identical or highly similar phenomena under controlled conditions. Whether the 650 nm protocol produces it has not been established, because the reports gathered so far come from observers who were free to view the catalogue first." },
@@ -1677,7 +1677,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Open catalogue of visual forms reported in connection with N,N-DMT experiences. Observer submissions and curated examples are listed separately, with machine readable data under CC-BY-4.0.",
     heading: "Visual Symbol Registry",
     paragraphs: [
-      "The registry catalogues discrete visual forms that observers have reported. Each entry records the form, contextual metadata, and the number of independent people who have recognized it. Convergence is measured, not asserted.",
+      "The registry catalogues discrete visual forms that observers have reported. Each entry records the form, its contextual metadata, and how many readers said it echoed their own memory after seeing it here. That is recognition after exposure, not independent convergence.",
       "Anyone can contribute. Anyone can download the full dataset. The corpus is CC-BY-4.0.",
     ],
     links: [
@@ -1739,7 +1739,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "About the DMT Code project",
     paragraphs: [
       "DMT Code was built to test a narrow question with an open record: do independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol.",
-      "The project is neutral by design. Confirmations are earned by independent recognition, not solicited. The full dataset is public, licensed CC-BY-4.0, and archived with a DOI so external researchers can audit or replicate it.",
+      "The project is neutral by design. Recognition counts are gathered by showing readers the catalogue, so they record recognition after exposure rather than independent confirmation. The full dataset is public, licensed CC-BY-4.0, and archived with a DOI so external researchers can audit or replicate it.",
       "Where this project stands: DMT Code is the open record of a claim, not an advocate for it. The observation was described by Danny Goler in 2020 and published in 2025. What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. Every symbol is a dated, permanent, licensed record. Every source carries a stance score. Negative results are published in the same place as positive ones, under the same license. We do not know whether the phenomenon is real. We built the instrument that could find out.",
       "On Danny Goler: Danny Goler first described the observation this project studies, and he is credited as its originator throughout this site. He is aware of this project but holds no editorial role in it. What gets published here, including the critiques and null results, is decided independently, and the public dataset lets anyone check that policy against practice.",
     ],
@@ -1979,7 +1979,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Volunteer to help run a real experiment into a shared visual world. Recorders, translators, analysts, developers, and test subjects welcome.",
     heading: "A real experiment with an unknown answer.",
     paragraphs: [
-      "Thousands of strangers keep seeing the same hidden world. We are testing that honestly, together, until we know what is real.",
+      "Thousands of people report vivid, structured experiences. We are testing whether those reports truly converge, or whether optics, shared neurobiology, expectation, and memory explain the apparent overlap.",
       "You do not need credentials to help. You need care, honesty, and time. Tell us how you can contribute and we will match you to a role.",
       "Volunteering asks for an email, the roles you can help with, and optionally your experience level, languages, skills, and why you want to help. You need an account so the entry is tied to a person. Your real name stays private and you are given an avatar instead.",
       "We may confirm something extraordinary, or we may find it was the mind all along. Both results matter. Thank you for helping us find out honestly.",
