@@ -1099,6 +1099,7 @@ type StaticPage = {
   paragraphs: string[];
   links?: Array<{ href: string; label: string }>;
   breadcrumbName: string;
+  robots?: string;
   index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
   bodyExtraHtml?: string;
   extraJsonLd?: unknown[];
@@ -1562,6 +1563,72 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 <section><h2>What we do not do</h2><p>We do not accept payment for a listing, a favourable description, or a place in the registry. We do not sell, source or broker any controlled substance. We do not sell visitor data.</p></section>
 <section><h2>Corrections</h2><p>If you believe something on this page is incomplete, write to info@dmtcode.com and we will correct it.</p></section>`,
   },
+  capture: {
+    title: "Capture a memory | DMT Code",
+    description: "Record and seal a first person account of a visual form seen during a DMT session, before viewing the catalogue.",
+    heading: "Have you seen something you cannot explain?",
+    paragraphs: [
+      "Describe it before you look at anyone else's. Your account is sealed and timestamped the moment you submit, so if it later turns out to match another report, the record shows your memory came first.",
+      "This is why the order matters. A description written after browsing a catalogue cannot be told apart from a description shaped by it. A description written before browsing can. That single difference is what turns a personal memory into something an outside analyst can weigh.",
+      "You draw what you saw, describe it in your own words, note the conditions, and place it in your visual field. The last question asks whether you had seen this kind of imagery before your experience, so records from people who came in unprimed can be counted separately.",
+      "You need an account to record one. The account is what stamps the record to you and fixes its place in the order. Your real name stays private and you are given an avatar instead.",
+      "Nothing from the catalogue is shown to you until after your own record is sealed. Only then are candidate matches offered.",
+    ],
+    links: [
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/evidence-map", label: "Evidence map" },
+      { href: "/methods", label: "Methods" },
+      { href: "/events", label: "Events" },
+      { href: "/trials", label: "Clinical trials" },
+    ],
+    breadcrumbName: "Capture",
+  },
+  join: {
+    title: "Help build it | DMT Code",
+    description: "Volunteer to help run a real experiment into a shared visual world. Recorders, translators, analysts, developers, and test subjects welcome.",
+    heading: "A real experiment with an unknown answer.",
+    paragraphs: [
+      "Thousands of strangers keep seeing the same hidden world. We are testing that honestly, together, until we know what is real.",
+      "You do not need credentials to help. You need care, honesty, and time. Tell us how you can contribute and we will match you to a role.",
+      "Volunteering asks for an email, the roles you can help with, and optionally your experience level, languages, skills, and why you want to help. You need an account so the entry is tied to a person. Your real name stays private and you are given an avatar instead.",
+      "We may confirm something extraordinary, or we may find it was the mind all along. Both results matter. Thank you for helping us find out honestly.",
+    ],
+    bodyExtraHtml: `<section><h2>Roles</h2><ul>${[
+      "Test Subject (blinded study)",
+      "Recorder",
+      "Translator",
+      "Moderator",
+      "Analyst",
+      "Developer",
+      "Outreach",
+      "Peer Support",
+    ].map((r) => `<li>${esc(r)}</li>`).join("")}</ul></section>`,
+    links: [
+      { href: "/capture", label: "Submit what you saw" },
+      { href: "/trials", label: "Clinical trials" },
+      { href: "/events", label: "Events" },
+      { href: "/about", label: "About the project" },
+    ],
+    breadcrumbName: "Help build it",
+  },
+  "submit-symbol": {
+    title: "Submit a symbol to the registry | DMT Code",
+    description: "The account holder tool for drawing a symbol and adding it to the DMT Code visual registry with its observation metadata.",
+    heading: "Submit a symbol to the registry",
+    robots: "noindex, follow",
+    paragraphs: [
+      "This is the tool for adding a drawn symbol to the visual registry. It needs an account, so it is not public content and search engines are asked not to index it.",
+      "It runs in four steps: draw the symbol, add the details, review what you are about to submit, and confirm.",
+      "The details step records a description, tags, the observation method, the surface type, a context note, the wavelength used, the dose level, how long it lasted, whether it recurred, and its emotional tone. The drawing is stored as an image and as vector data so it can be compared shape to shape rather than pixel to pixel.",
+      "If you want your record weighed as an independent account, use the capture route instead. That one seals and timestamps what you describe before showing you anything from the catalogue.",
+    ],
+    links: [
+      { href: "/capture", label: "Capture a memory" },
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/methods", label: "Methods" },
+    ],
+    breadcrumbName: "Submit a symbol",
+  },
 };
 
 
@@ -1708,6 +1775,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     description: page.description,
     canonical,
     ogType: "website",
+    robots: page.robots,
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
 
@@ -1757,6 +1825,9 @@ export const config: Config = {
     "/privacy",
     "/terms",
     "/disclosure",
+    "/capture",
+    "/join",
+    "/submit-symbol",
   ],
 };
 
