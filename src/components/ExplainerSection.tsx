@@ -47,7 +47,7 @@ export const ExplainerSection = () => {
             </p>
             
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
-              The 650 nm wavelength, when projected through a diffraction grating (cross, grid, or star pattern), creates a structured visual field that interacts with endogenous N,N-DMT-induced visual processing. Observers report seeing discrete, bounded symbols that appear to float within or overlay the diffraction grid pattern. These symbols exhibit remarkable inter-subject consistency: independent participants report identical geometric and alphabetic-like elements in the same contextual settings.
+              The 650 nm wavelength, when projected through a diffraction grating (cross, grid, or star pattern), creates a structured visual field that interacts with endogenous N,N-DMT-induced visual processing. Observers report seeing discrete, bounded symbols that appear to float within or overlay the diffraction grid pattern. Whether those reports converge more than chance and expectation would produce is the question this site was built to test, and it is not yet answered.
             </p>
 
             <p className="text-lg leading-relaxed font-light text-muted-foreground">
