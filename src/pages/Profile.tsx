@@ -486,9 +486,11 @@ const Profile = () => {
                           />
                         </div>
                         <div className="text-center">
-                          <p className="text-sm text-muted-foreground mb-2">
-                            <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
-                          </p>
+                          {symbol.upvotes > 0 && (
+                            <p className="text-sm text-muted-foreground mb-2">
+                              <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
+                            </p>
+                          )}
                           {symbol.tags && symbol.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 justify-center">
                               {symbol.tags.slice(0, 3).map((tag, idx) => (
@@ -576,9 +578,11 @@ const Profile = () => {
                           />
                         </div>
                         <div className="text-center">
-                          <p className="text-sm text-muted-foreground mb-2">
-                            <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
-                          </p>
+                          {symbol.upvotes > 0 && (
+                            <p className="text-sm text-muted-foreground mb-2">
+                              <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
+                            </p>
+                          )}
                           {symbol.tags && symbol.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 justify-center mb-3">
                               {symbol.tags.slice(0, 3).map((tag, idx) => (
