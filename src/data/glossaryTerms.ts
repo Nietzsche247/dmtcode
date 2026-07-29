@@ -14,7 +14,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Coherent Light",
-    definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, enabling precise diffraction patterns essential for symbol elicitation."
+    definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, which is what allows a diffraction grating to project a precise pattern."
   },
   {
     term: "Confirmation Count",
@@ -22,7 +22,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Diffraction Grating",
-    definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in 650 nm protocol to project grid patterns that interact with N,N-DMT visual phenomena."
+    definition: "Optical component with periodic structure that splits coherent light into distinct beams. Used in the 650 nm protocol to project a grid pattern. Whether that pattern has any effect on N,N-DMT visual phenomena is the question under test."
   },
   {
     term: "Discrete Visual Symbol",
