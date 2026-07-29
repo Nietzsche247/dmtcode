@@ -1422,8 +1422,9 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "The observation protocol, blinding approach, and data validation methods used by the DMT Code project.",
     heading: "Methods",
     paragraphs: [
-      "The observation protocol is built around a verified 650 nm laser and matched optical density. Where possible, contributors record what they saw before viewing the existing catalogue, so a match is earned by independent recognition rather than by suggestion.",
-      "Confirmation counts are public per symbol. The full corpus is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
+      "Draft research framework. Not the original protocol, and not yet validated. This page describes a controlled study design that has not been run, has not been reviewed by an ethics board, and has not been validated. It is not a description of the originally reported protocol, and it is not instructions for personal use. Laser exposure and psychedelic exposure both carry real risk. Any replication needs qualified laser safety review and institutional ethics approval before it involves a human being.",
+      "The observation protocol is built around a 650 nm laser passed through a diffraction grating. Where possible, contributors record what they saw before viewing the existing catalogue, so a match is earned by independent recognition rather than by suggestion.",
+      "Confirmation counts are public per symbol. The dataset is downloadable so external analysts can inspect the methodology and re-run their own aggregations.",
     ],
     links: [
       { href: "/protocol-guide", label: "Protocol guide" },
