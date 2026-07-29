@@ -1831,6 +1831,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
           </div>
         )}
       </Card>
+      )}
     </section>
   );
 };
