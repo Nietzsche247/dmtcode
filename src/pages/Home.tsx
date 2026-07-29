@@ -183,7 +183,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Davis et al. (2021) documented notable inter-subject consistency: independent observers report nearly identical discrete visual symbols without prior communication.</span>
+                    <span>Reports of recurring symbol forms come from self selected observers who are usually aware of the protocol beforehand. Establishing whether the convergence is real requires records sealed before the observer sees the catalogue, which is what the capture route collects.</span>
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
