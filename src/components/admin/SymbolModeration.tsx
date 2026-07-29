@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Check, X, Eye, EyeOff, Ban } from 'lucide-react';
+import { Check, EyeOff } from 'lucide-react';
 
 interface RegistrySymbol {
   id: string;
@@ -59,12 +59,14 @@ export const SymbolModeration = () => {
       setRecentSymbols(recent);
     }
 
-    // Load flagged symbols (would need a flag column in future)
-    // For now just show all symbols with low confirmation
+    // registry_glyphs has no review status column, so there is no real pending
+    // queue yet. confirmation_count defaults to 1 and has never been
+    // incremented, so filtering on it matched every row in the table. Until a
+    // review status column exists, list the most recent glyphs and label the
+    // section for what it actually is.
     const { data: pending } = await supabase
       .from('registry_glyphs')
       .select('*')
-      .eq('confirmation_count', 1)
       .order('created_at', { ascending: false })
       .limit(20);
 
@@ -89,19 +91,9 @@ export const SymbolModeration = () => {
     }
   };
 
-  const handleReject = async (symbolId: string) => {
-    const { error } = await supabase
-      .from('registry_glyphs')
-      .delete()
-      .eq('id', symbolId);
-
-    if (error) {
-      toast.error('Failed to reject symbol');
-    } else {
-      toast.success('Symbol rejected and removed');
-      loadSymbols();
-    }
-  };
+  // There is deliberately no delete handler in this component. registry_glyphs
+  // holds sealed captures, and a sealed record must not be destroyable from an
+  // admin screen. Hiding is the strongest action available here.
 
   const handleHide = async (symbolId: string) => {
     const { error } = await supabase
@@ -147,9 +139,6 @@ export const SymbolModeration = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <Badge variant="outline">{symbol.source}</Badge>
-                    <span className="text-muted-foreground">
-                      {symbol.confirmation_count} confirmations
-                    </span>
                   </div>
                   {symbol.motif_tags && symbol.motif_tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
@@ -170,26 +159,20 @@ export const SymbolModeration = () => {
                     variant="default"
                     onClick={() => handleApprove(symbol.id)}
                     className="flex-1"
-                    aria-label="Approve symbol"
+                    aria-label="Show this symbol in the gallery"
                   >
                     <Check className="w-4 h-4 mr-1" />
-                    Approve
+                    Show
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => handleHide(symbol.id)}
-                    aria-label="Hide symbol"
+                    className="flex-1"
+                    aria-label="Hide this symbol from the gallery, keeping the record"
                   >
-                    <EyeOff className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleReject(symbol.id)}
-                    aria-label="Reject and delete symbol"
-                  >
-                    <X className="w-4 h-4" />
+                    <EyeOff className="w-4 h-4 mr-1" />
+                    Hide
                   </Button>
                 </div>
               </Card>
@@ -200,9 +183,9 @@ export const SymbolModeration = () => {
 
       {/* Pending Review */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Pending Review (Low Confirmation)</h2>
+        <h2 className="text-2xl font-bold mb-6">All registry glyphs, most recent first</h2>
         <div className="text-sm text-muted-foreground mb-4">
-          {pendingSymbols.length} symbols with ≤1 confirmation requiring review
+          Showing the {pendingSymbols.length} most recent glyphs. There is no review queue yet, because registry_glyphs has no review status column. This section used to filter on confirmation_count, which defaults to 1 and has never been incremented, so it matched every row.
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {pendingSymbols.length === 0 ? (
@@ -225,15 +208,18 @@ export const SymbolModeration = () => {
                     variant="outline"
                     onClick={() => handleApprove(symbol.id)}
                     className="flex-1"
+                    aria-label="Show this symbol in the gallery"
                   >
                     <Check className="w-3 h-3" />
                   </Button>
                   <Button
                     size="sm"
-                    variant="destructive"
-                    onClick={() => handleReject(symbol.id)}
+                    variant="outline"
+                    onClick={() => handleHide(symbol.id)}
+                    className="flex-1"
+                    aria-label="Hide this symbol from the gallery, keeping the record"
                   >
-                    <X className="w-3 h-3" />
+                    <EyeOff className="w-3 h-3" />
                   </Button>
                 </div>
               </Card>
@@ -252,13 +238,13 @@ export const SymbolModeration = () => {
           </div>
           <div>
             <div className="text-3xl font-bold text-primary">{pendingSymbols.length}</div>
-            <div className="text-sm text-muted-foreground">Pending review</div>
+            <div className="text-sm text-muted-foreground">Glyphs listed below</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-primary">
               {recentSymbols.filter(s => s.is_unique).length}
             </div>
-            <div className="text-sm text-muted-foreground">Approved (unique)</div>
+            <div className="text-sm text-muted-foreground">Shown in gallery</div>
           </div>
         </div>
       </Card>
