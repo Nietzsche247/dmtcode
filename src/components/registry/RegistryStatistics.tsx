@@ -89,7 +89,7 @@ export const RegistryStatistics = () => {
             {stats.multiConfirmed}
           </div>
           <div className="text-sm text-muted-foreground">
-            Symbols Confirmed by ≥3 Participants
+            Symbols Recognized by ≥3 Participants
           </div>
         </Card>
 

@@ -6,7 +6,7 @@ export interface GlossaryTerm {
 export const terms: GlossaryTerm[] = [
   {
     term: "650 nm Laser Protocol",
-    definition: "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration. Developed by Danny Goler, validated by Chase Hughes."
+    definition: "Experimental method using coherent light at 650 nanometer wavelength through a diffraction grating to elicit discrete visual symbols during N,N-DMT administration. Developed by Danny Goler."
   },
   {
     term: "Alphabetic-like Symbol",
