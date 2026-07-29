@@ -94,6 +94,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [totalSymbols, setTotalSymbols] = useState(0);
   const [userStats, setUserStats] = useState<any>(null);
   const [similarSymbols, setSimilarSymbols] = useState<any[]>([]);
@@ -161,21 +162,33 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   useEffect(() => {
     checkUser();
     loadTotalSymbols();
-    
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+      setAuthChecked(true);
+    });
+
     // Check URL for null report mode
     const params = new URLSearchParams(window.location.search);
     if (params.get('null') === 'true') {
       setIsNullReport(true);
       setFormData(prev => ({ ...prev, isNullReport: true }));
     }
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-      loadUserStats(user.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      setUserId(session.user.id);
+      loadUserStats(session.user.id);
+    } else {
+      setUserId(null);
     }
+    setAuthChecked(true);
   };
 
   const loadUserStats = async (uid: string) => {
