@@ -46,7 +46,7 @@ const PAGE_SIZE = 20;
 export const SymbolSubmissionModeration = () => {
   const [submissions, setSubmissions] = useState<SymbolSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('new72');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -64,7 +64,7 @@ export const SymbolSubmissionModeration = () => {
   const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
 
   // Stats
-  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, today: 0 });
+  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, today: 0, awaiting72: 0 });
 
   useEffect(() => {
     // Track admin page view
@@ -101,11 +101,14 @@ export const SymbolSubmissionModeration = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [pending, approved, rejected, todayCount] = await Promise.all([
+    const cutoff72 = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+
+    const [pending, approved, rejected, todayCount, awaiting72] = await Promise.all([
       supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
       supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
       supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString()),
+      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', cutoff72).is('moderated_at', null),
     ]);
 
     setStats({
@@ -113,6 +116,7 @@ export const SymbolSubmissionModeration = () => {
       approved: approved.count || 0,
       rejected: rejected.count || 0,
       today: todayCount.count || 0,
+      awaiting72: awaiting72.count || 0,
     });
   };
 
@@ -356,7 +360,11 @@ export const SymbolSubmissionModeration = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Card className="p-4 text-center">
+          <div className="text-3xl font-bold text-orange-500">{stats.awaiting72}</div>
+          <div className="text-sm text-muted-foreground">Awaiting review (72h)</div>
+        </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-yellow-500">{stats.pending}</div>
           <div className="text-sm text-muted-foreground">Pending</div>
@@ -379,7 +387,11 @@ export const SymbolSubmissionModeration = () => {
       <Card className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilter); setCurrentPage(1); }} className="flex-1">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="new72">
+                New (72h)
+                {stats.awaiting72 > 0 && <Badge variant="secondary" className="ml-2">{stats.awaiting72}</Badge>}
+              </TabsTrigger>
               <TabsTrigger value="pending">
                 Pending
                 {stats.pending > 0 && <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>}
@@ -568,6 +580,11 @@ export const SymbolSubmissionModeration = () => {
                       <span className="text-sm text-muted-foreground">
                         {formatDistanceToNow(new Date(submission.created_at), { addSuffix: true })}
                       </span>
+                      {statusFilter === 'new72' && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {timeLeftLabel(submission.created_at)}
+                        </div>
+                      )}
                     </td>
                     <td className="p-3">
                       <span className="text-sm">
