@@ -191,14 +191,31 @@ const EvidenceMap = () => {
                 Is the DMT code real?
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Explore 30 stance-scored milestones with clickable DOIs and peer-reviewed citations.
+                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Every record is labelled by the kind of evidence it is, and every DOI here has been resolved against Crossref.
               </p>
-              <div className="mt-6">
+              {recordCount !== null && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {recordCount} dated records.
+                </p>
+              )}
+              {timelineFailed && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  The timeline data did not load. The same records are listed at{' '}
+                  <Link to="/timeline" className="text-gold hover:underline">/timeline</Link>.
+                </p>
+              )}
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Link
+                  to="/timeline"
+                  className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                >
+                  SORT AND FILTER THE SAME RECORDS
+                </Link>
                 <a
                   href="/trials"
                   className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
                 >
-                  → EXPLORE CLINICAL TRIALS OBSERVATORY
+
                 </a>
               </div>
             </div>
