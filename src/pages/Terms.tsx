@@ -39,7 +39,7 @@ const Terms = () => {
 
               <h2 className="text-2xl font-semibold mt-8">What you contribute, and how it is licensed</h2>
               <p>This is the most important section on this page, so it is written plainly.</p>
-              <p>When you submit a symbol, a theory or an event, and it is approved for publication, you are giving us permission to publish it on this site and to include it in our open data export at /data.json. That export is licensed under Creative Commons Attribution 4.0. In practice this means that anyone, including companies that train AI systems, may copy and reuse the content you contributed as long as they credit DMT Code.</p>
+              <p>When you submit a symbol, a theory or an event, and it is published on this site, you are giving us permission to publish it on this site and to include it in our open data export at /data.json. That export is licensed under Creative Commons Attribution 4.0. In practice this means that anyone, including companies that train AI systems, may copy and reuse the content you contributed as long as they credit DMT Code.</p>
               <p>This is deliberate rather than incidental. The only thing that makes a convergence dataset worth anything is that other people can check it, and that requires them to be able to hold a copy.</p>
               <p>What this does not include: your email address, and your assessment responses, neither of which are ever published or exported.</p>
               <p>You keep ownership of what you contribute. You are giving us a licence, not signing it away.</p>
@@ -47,7 +47,9 @@ const Terms = () => {
               <p>Only submit material that is yours to submit.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Moderation</h2>
-              <p>Contributions are reviewed before they appear. We can decline or remove anything, and we generally hide rather than delete, so that a record of what was submitted survives.</p>
+              <p>Symbols you draw and submit appear in the public registry immediately. There is no queue in front of them. Administrators then have 72 hours from publication to review a submission and deny it. A denied submission is hidden rather than deleted, so a record of what was submitted survives. After that window it stands, unless it is later reported and found to break the rules below.</p>
+              <p>Events, retreats, clinical trial records and theories work the other way around. Those are reviewed before they appear.</p>
+              <p>Placement in the registry is set by readers, not by us. Anyone signed in can mark a symbol as not matching what they saw. When a symbol carries more of those marks than recognitions, it sorts to the bottom of the browse list. Voting moves a symbol. It never removes one.</p>
               <p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Buying equipment</h2>

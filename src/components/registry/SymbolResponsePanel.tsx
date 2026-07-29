@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { SeenItButton } from './SeenItButton';
+import { DidNotMatchButton } from './DidNotMatchButton';
 import { formatSealedAt } from '@/lib/sealFormat';
 
 type TargetKind = 'symbol_submission' | 'registry_glyph';
@@ -209,6 +210,12 @@ export const SymbolResponsePanel = ({
           size="lg"
           className="w-full justify-center"
           imageUrl={imageUrl}
+        />
+        <DidNotMatchButton
+          symbolId={targetId}
+          submitterId={submitterId}
+          size="lg"
+          className="w-full justify-center"
         />
         <p className="text-xs text-muted-foreground">
           Recognition after viewing tells us what the community responds to. It is not evidence,

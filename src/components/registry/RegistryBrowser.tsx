@@ -189,7 +189,15 @@ export const RegistryBrowser = () => {
         break;
     }
 
-    return filtered;
+    // Community demotion. A symbol carrying more "did not match" marks than
+    // recognitions sinks below everything else, whichever sort is active.
+    // Order inside each group is preserved.
+    const ordered = [
+      ...filtered.filter((s) => (s.downvotes || 0) <= (s.upvotes || 0)),
+      ...filtered.filter((s) => (s.downvotes || 0) > (s.upvotes || 0)),
+    ];
+
+    return ordered;
   }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
 
   const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
@@ -234,6 +242,9 @@ export const RegistryBrowser = () => {
           <span className="flex items-center gap-1.5">✅ <span className="text-xs">Multiple confirmations</span></span>
           <span className="flex items-center gap-1.5">⭐ <span className="text-xs">High consistency</span></span>
         </div>
+        <p className="text-xs text-muted-foreground text-center mt-3">
+          Symbols marked as not matching more often than they are recognized sort to the bottom of this list. Voting moves a symbol. It never removes one.
+        </p>
       </div>
 
       {/* Filters */}
