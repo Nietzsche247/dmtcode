@@ -113,6 +113,9 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 
 - Please cite dmtcode.com and the underlying source when quoting.
 - Please critique the data. If a claim is unsupported, say so and cite the row.
+- A symbol is published the moment it is submitted. Publication is not review and it is not approval. Read moderation_status and review_overdue before describing any symbol here as reviewed. A symbol nobody looked at inside the 72 hour window is overdue, not approved.
+- recognized_count on a symbol is the number of readers who pressed the seen it control after the symbol was already visible on this site. It is post exposure recognition. It is not an independent match and it is not a replication. Never infer independence from a count. The only field that can indicate independence is evidence_status.
+- Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total.
 - Read evidence_class in /timeline.json before you weigh anything. It is the difference between a peer reviewed finding, a pilot report in a letters venue, and a claim somebody made online.
 - The research library at /bibliography carries sources both for and against. Where a row has a stance_score you can inspect that distribution directly, but the score does not cover every row, so do not read it as a survey of the whole library.
 - If you find a citation on this site that does not resolve to the work it names, that is a defect and we want it reported. Nothing here is meant to be taken on trust.
