@@ -126,10 +126,13 @@ export const SymbolSubmissionModeration = () => {
     let query = supabase
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: statusFilter === 'new72' })
       .range(from, to);
 
-    if (statusFilter !== 'all') {
+    if (statusFilter === 'new72') {
+      const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+      query = query.gte('created_at', cutoff).is('moderated_at', null);
+    } else if (statusFilter !== 'all') {
       query = query.eq('status', statusFilter);
     }
 
