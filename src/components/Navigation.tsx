@@ -92,6 +92,7 @@ export const Navigation = () => {
     { path: '/articles', label: 'Articles' },
     { path: '/registry', label: 'Symbol Registry' },
     { path: '/evidence-map', label: 'Evidence Map' },
+    { path: '/timeline', label: 'Chronology' },
     { path: '/trials', label: 'Clinical Trials' },
     { path: '/bibliography', label: 'Bibliography' },
     { path: '/methods', label: 'Methods' },

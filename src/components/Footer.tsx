@@ -65,6 +65,12 @@ export const Footer = () => {
                   Bibliography
                 </Link>
               </li>
+              <li>
+                <Link to="/timeline" className="text-muted-foreground hover:text-primary transition-colors">
+                  Chronology
+                </Link>
+              </li>
+
 
               <li>
                 <Link to="/trials" className="text-muted-foreground hover:text-primary transition-colors">

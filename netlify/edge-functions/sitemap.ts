@@ -18,6 +18,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/capture", "0.9", "weekly"],
   ["/registry", "0.9", "daily"],
   ["/evidence-map", "0.9", "weekly"],
+  ["/timeline", "0.8", "weekly"],
   ["/trials", "0.9", "daily"],
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
@@ -100,7 +101,7 @@ async function page(
   return out;
 }
 
-export default async () => {
+export default async (request: Request) => {
   const urls = STATIC.map(
     ([p, pr, cf]) =>
       `  <url><loc>${SITE}${p}</loc>` +
@@ -202,6 +203,36 @@ export default async () => {
       "0.7"
     );
   } catch (_e) { /* skip */ }
+
+  // Chronology records. The list comes from the static file public/timeline.json,
+  // which is the single source of truth for /timeline and every /timeline/{id}.
+  // That file is deliberately not mapped to any edge function in netlify.toml, so
+  // fetching it here cannot re-enter this handler. Never hardcode a copy of these
+  // ids: a second copy would drift out of sync with the file.
+  try {
+    const tlRes = await fetch(new URL("/timeline.json", request.url).toString(), {
+      headers: { Accept: "application/json" },
+    });
+    if (tlRes.ok) {
+      const tlFile = (await tlRes.json()) as {
+        provenance?: { verified_on?: string };
+        entries?: Array<{ id?: string }>;
+      };
+      const verifiedOn = tlFile?.provenance?.verified_on ?? "";
+      const tlLastmod = /^\d{4}-\d{2}-\d{2}$/.test(verifiedOn)
+        ? `<lastmod>${verifiedOn}</lastmod>`
+        : "";
+      for (const e of tlFile?.entries ?? []) {
+        if (!e || !e.id) continue;
+        urls.push(
+          `  <url><loc>${SITE}/timeline/${xesc(e.id)}</loc>` +
+            `${tlLastmod}<changefreq>monthly</changefreq>` +
+            `<priority>0.6</priority></url>`
+        );
+      }
+    }
+  } catch (_e) { /* skip */ }
+
 
 
 
