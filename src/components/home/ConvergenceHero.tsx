@@ -213,7 +213,7 @@ export const ConvergenceHero = () => {
         <div className="max-w-6xl mx-auto mt-24 border-t border-border/50 pt-10">
           <div className="flex items-baseline justify-between mb-6">
             <p className="label-data text-xs text-muted-foreground">
-              MOST CONFIRMED SPECIMENS
+              MOST RECOGNIZED SPECIMENS
             </p>
             <Link to="/registry" className="label-data text-xs text-primary hover:underline">
               BROWSE ALL →
