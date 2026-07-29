@@ -914,7 +914,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   </section>
   <section>
     <h2>How to judge it</h2>
-    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
+    <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry, and when you look at how many readers recognized a form, remember that they saw it here before they responded. Then read the null-reports dashboard. If the convergence is real, it should hold up under blinded conditions, where an account is sealed before the person ever views the catalogue. If it is not real, that failure should be visible in the same record. The dataset is designed to be able to fail.</p>
   </section>
   <section>
     <h2>Primary reference for the laser protocol</h2>
