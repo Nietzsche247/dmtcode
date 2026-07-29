@@ -260,9 +260,13 @@ export default async (req: Request): Promise<Response> => {
       "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at",
       "is_approved=is.true"
     ),
+    // The status=eq.approved filter is retained because the row level security
+    // policy on this table is expressed in terms of the legacy status column.
+    // A database trigger keeps status and visibility_status in sync, so this is
+    // the same set of rows as visibility_status=eq.public.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,upvotes,image_url,created_at,updated_at",
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at",
       "status=eq.approved"
     ),
     fetchAll(
@@ -291,6 +295,8 @@ export default async (req: Request): Promise<Response> => {
       "is_published=eq.true"
     ),
   ]);
+
+  const voteCounts = await fetchVoteCounts();
 
   const bibItems: UnifiedItem[] = bib.map((r) => {
     const authors = (r.authors as string | null) || "";
@@ -349,12 +355,17 @@ export default async (req: Request): Promise<Response> => {
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
-    authority_type: isCuratedStarter(r.image_url) ? "Curated" : "Community",
+    authority_type: isCurated(r) ? "Curated" : "Community",
     people: [],
     status: (r.status as string) || undefined,
+    visibility_status: (r.visibility_status as string) || undefined,
+    moderation_status: (r.moderation_status as string) || undefined,
+    evidence_status: (r.evidence_status as string) || undefined,
+    review_overdue: isReviewOverdue(r),
+    is_curated_example: isCurated(r),
     source_date: (r.created_at as string) || undefined,
-    record_class: isCuratedStarter(r.image_url) ? "curated_starter" : "community_observation",
-    counts_toward_evidence: isCuratedStarter(r.image_url) ? false : true,
+    record_class: isCurated(r) ? "curated_starter" : "community_observation",
+    counts_toward_evidence: isCurated(r) ? false : true,
   }));
 
   // Resolve every referenced trial/paper/symbol/protocol id from the fetched
