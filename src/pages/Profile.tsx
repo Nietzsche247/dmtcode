@@ -487,7 +487,7 @@ const Profile = () => {
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-muted-foreground mb-2">
-                            Confirmed by <span className="font-semibold">{symbol.upvotes}</span> viewer{symbol.upvotes !== 1 ? 's' : ''}
+                            <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
                           </p>
                           {symbol.tags && symbol.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 justify-center">
@@ -577,7 +577,7 @@ const Profile = () => {
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-muted-foreground mb-2">
-                            Confirmed by <span className="font-semibold">{symbol.upvotes}</span> viewer{symbol.upvotes !== 1 ? 's' : ''}
+                            <span className="font-semibold">{symbol.upvotes}</span> recognized this after seeing it here
                           </p>
                           {symbol.tags && symbol.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 justify-center mb-3">

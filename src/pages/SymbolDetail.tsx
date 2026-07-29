@@ -386,7 +386,7 @@ const SymbolDetail = () => {
                     <Card className="p-4 bg-card/50 text-center">
                       <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
                       <div className="text-2xl font-bold">{validationCount}</div>
-                      <div className="text-xs text-muted-foreground">Confirmed by {validationCount} viewer{validationCount === 1 ? '' : 's'}</div>
+                      <div className="text-xs text-muted-foreground">{validationCount} recognized this after seeing it here</div>
                     </Card>
                   </div>
                 )}

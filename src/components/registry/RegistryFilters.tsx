@@ -111,10 +111,12 @@ export const RegistryFilters = ({
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="oldest">Oldest First</SelectItem>
-                    <SelectItem value="most_upvoted">Most Upvoted</SelectItem>
-                    <SelectItem value="most_validated">Most Validated</SelectItem>
+                    <SelectItem value="newest">Newest first</SelectItem>
+                    <SelectItem value="oldest">Oldest first</SelectItem>
+                    <SelectItem value="most_validated">Most recognized</SelectItem>
+                    <SelectItem value="most_upvoted">Most upvoted</SelectItem>
+                    <SelectItem value="most_responses">Most responded to</SelectItem>
+                    <SelectItem value="resonance">Community resonance</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
