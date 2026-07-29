@@ -107,8 +107,6 @@
   path = "/timeline/*"
   function = "content-prerender"
 
-
-
 [[edge_functions]]
   path = "/faq"
   function = "content-prerender"
