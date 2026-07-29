@@ -10,7 +10,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Alphabetic-like Symbol",
-    definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic). Reported with notable inter-subject consistency during 650 nm laser exposure."
+    definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic), described as bounded and character like rather than as a continuous geometric field."
   },
   {
     term: "Coherent Light",
@@ -18,7 +18,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Confirmation Count",
-    definition: "Number of independent observers reporting identical or highly similar symbols in the DMT Code Glyph Registry. Metric for assessing inter-subject replication reliability."
+    definition: "A count of readers who said a registry form echoed their own memory. Because those readers saw the form in this catalogue before they responded, the number measures recognition after exposure, not independent convergence. An independent match requires an account sealed before the person viewed the catalogue."
   },
   {
     term: "Diffraction Grating",
@@ -30,11 +30,11 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Geometric Archetype",
-    definition: "Recurring symbol morphology reported across independent observers, described by shared features such as symmetry, line structure, and orientation."
+    definition: "A symbol morphology that recurs across submissions, described by shared features such as symmetry, line structure, and orientation. Recurrence in the registry is not by itself evidence of independent convergence, because contributors may have seen earlier submissions before making their own."
   },
   {
     term: "Inter-subject Consistency",
-    definition: "Degree to which independent observers report identical or highly similar phenomena under controlled conditions. 650 nm protocol shows notable consistency across independent replicators."
+    definition: "The degree to which independent observers report identical or highly similar phenomena under controlled conditions. Whether the 650 nm protocol produces it has not been established, because the reports gathered so far come from observers who were free to view the catalogue first."
   },
   {
     term: "Motif Tag",
@@ -46,7 +46,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Perceived Surface",
-    definition: "Physical or conceptual location where visual symbols appear during N,N-DMT experience (e.g., wall, ceiling, closed eyelids, hands). Surface type correlates with specific symbol archetypes."
+    definition: "Physical or conceptual location where visual symbols appear during N,N-DMT experience (e.g., wall, ceiling, closed eyelids, hands). Recorded as metadata so any relationship to symbol form can be tested later rather than assumed."
   },
   {
     term: "Photobiomodulation",
@@ -66,7 +66,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Visual Cortex Coherence",
-    definition: "Synchronized neural activity in primary and secondary visual processing regions. Timmermann et al. (2019) demonstrated enhanced coherence during N,N-DMT administration correlating with discrete symbol perception."
+    definition: "Synchronized neural activity in primary and secondary visual processing regions. No link between cortical coherence and the symbols catalogued here has been established."
   },
   {
     term: "Anecdotal Evidence",
@@ -86,7 +86,7 @@ export const terms: GlossaryTerm[] = [
   },
   {
     term: "Cross-Replication",
-    definition: "Independent verification of reported phenomena by multiple observers under similar conditions. The notable inter-subject consistency rate represents partial cross-replication of symbol observations."
+    definition: "Independent verification of reported phenomena by multiple observers under similar conditions. No cross replication of the symbol observations catalogued here has been demonstrated under blinded conditions."
   },
   {
     term: "Dose-Response Relationship",
