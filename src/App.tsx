@@ -64,6 +64,8 @@ const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 const Theories = lazy(() => import("./pages/Theories"));
 const TheoryDetail = lazy(() => import("./pages/TheoryDetail"));
+const Timeline = lazy(() => import("./pages/Timeline"));
+const TimelineEntry = lazy(() => import("./pages/TimelineEntry"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 const Retreats = lazy(() => import("./pages/Retreats"));
