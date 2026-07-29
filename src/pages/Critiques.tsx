@@ -143,7 +143,7 @@ const Critiques = () => {
               <p className="text-base leading-relaxed">
                 These predictions are testable, and the registry exists to accumulate the data that
                 could distinguish them. Every symbol carries its metadata. Every source carries a
-                stance score. Null results are published in the same place as confirmations. The
+                stance score. Null results are published in the same place as the positive ones. The
                 point is not to win the argument. The point is to make the argument decidable.
               </p>
             </Card>
