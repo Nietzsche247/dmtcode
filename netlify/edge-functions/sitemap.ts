@@ -10,10 +10,12 @@ const SUPABASE_KEY =
 
 // Canonical public content URLs. Every entry here corresponds to a route that
 // either has server prerender in content-prerender.ts or is a real app view
-// that returns 200. Removed: /correlations, /leaderboard, /bundles,
-// /submit-symbol (client-only utility, not indexable content), /assess, /log.
+// that returns 200. Removed: /correlations, /leaderboard, /bundles, /assess,
+// /log. /submit-symbol is server rendered but is deliberately noindex, so it
+// stays out of the sitemap.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
+  ["/capture", "0.9", "weekly"],
   ["/registry", "0.9", "daily"],
   ["/evidence-map", "0.9", "weekly"],
   ["/trials", "0.9", "daily"],

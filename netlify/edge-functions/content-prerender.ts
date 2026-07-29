@@ -1099,6 +1099,7 @@ type StaticPage = {
   paragraphs: string[];
   links?: Array<{ href: string; label: string }>;
   breadcrumbName: string;
+  robots?: string;
   index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
   bodyExtraHtml?: string;
   extraJsonLd?: unknown[];
@@ -1708,6 +1709,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     description: page.description,
     canonical,
     ogType: "website",
+    robots: page.robots,
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
 
@@ -1757,6 +1759,9 @@ export const config: Config = {
     "/privacy",
     "/terms",
     "/disclosure",
+    "/capture",
+    "/join",
+    "/submit-symbol",
   ],
 };
 
