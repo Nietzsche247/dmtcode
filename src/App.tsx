@@ -311,6 +311,23 @@ const App = () => (
             </ErrorBoundary>
           } />
 
+          <Route path="/timeline" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Timeline />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/timeline/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <TimelineEntry />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
+
+
           <Route path="/articles" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
