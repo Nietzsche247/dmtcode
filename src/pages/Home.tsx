@@ -138,8 +138,8 @@ const Home = () => {
                       Record Your Experience First
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Use our Voice Logger to capture your thoughts immediately after your session while memories are fresh. 
-                      Your recording will be transcribed and analyzed.
+                      Use the Voice Logger to capture your thoughts right after your session, while the memory is fresh. You need an account, because the recording stays yours. 
+                      The audio is sent for automatic transcription, and the transcript is then scanned for a fixed list of keywords and grouped under theme names. That grouping is a word match on the text. It is not an interpretation of what you experienced.
                     </p>
                   </div>
                   <Button 
@@ -171,7 +171,7 @@ const Home = () => {
                 <ul className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                   <li className="flex gap-4">
                     <Target className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>The 650 nm protocol uses coherent red light through a diffraction grating during N,N-DMT administration to produce discrete visual symbols on any surface.</span>
+                    <span>The 650 nm protocol passes coherent red light through a diffraction grating during N,N-DMT administration. Observers report seeing discrete visual symbols during that exposure. Whether the light produces them, or whether they would be reported without it, is the open question this project exists to settle.</span>
                   </li>
                   <li className="flex gap-4">
                     <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
@@ -179,7 +179,7 @@ const Home = () => {
                   </li>
                   <li className="flex gap-4">
                     <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>The registry accepts anonymous submissions with structured metadata. All data is downloadable as CSV or JSON under a CC-BY-4.0 license.</span>
+                    <span>Submitting to the registry requires an account, and each submission carries structured metadata. The registry pages export records as CSV or JSON, and the full corpus is published at /data.json under a CC-BY-4.0 license.</span>
                   </li>
                   <li className="flex gap-4">
                     <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />

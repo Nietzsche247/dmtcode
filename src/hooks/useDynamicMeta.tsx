@@ -15,7 +15,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   home: {
     research: {
       title: 'DMT Code | 650nm Laser Visual Symbol Research',
-      description: 'Open peer-reviewed catalogue of visual symbols from 650nm laser and N,N-DMT research. CSV/JSON datasets, CC-BY-4.0 licensed.',
+      description: 'Open community catalogue of visual symbols reported during 650nm laser and N,N-DMT sessions. CSV/JSON datasets, CC-BY-4.0 licensed.',
     },
     explorer: {
       title: 'DMT Code | Visual Symbol Discovery & Community Research Hub',
