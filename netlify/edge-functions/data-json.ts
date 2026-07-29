@@ -508,8 +508,30 @@ export default async (req: Request): Promise<Response> => {
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
 
-  const symbolsCurated = symbols.filter((r) => isCuratedStarter(r.image_url)).length;
+  const symbolsCurated = symbols.filter((r) => isCurated(r)).length;
   const symbolsCommunity = symbols.length - symbolsCurated;
+  const symbolsReviewOverdue = symbols.filter((r) => isReviewOverdue(r)).length;
+  const symbolsUnreviewed = symbols.filter(
+    (r) => String(r.moderation_status ?? "") === "unreviewed",
+  ).length;
+
+  // Published verbatim from the column comments on symbol_submissions so the
+  // export and the database can never drift apart in what they claim a field means.
+  const FIELD_DEFINITIONS: Record<string, string> = {
+    status: "LEGACY. Kept because row level security policies and existing queries depend on it. It is now kept in sync with visibility_status by the sync_symbol_submission_status trigger. New code should read visibility_status, moderation_status and evidence_status instead.",
+    visibility_status: "Who can see this row. private = only the author. public = published and readable by anyone. hidden = withdrawn from public view but never deleted.",
+    moderation_status: "What a human moderator has actually done. unreviewed = nobody has looked at it yet. reviewed = a moderator looked and let it stand. denied = a moderator rejected it. reported = a reader flagged it and it awaits a decision. There is deliberately no stored overdue value. Overdue is derived as moderation_status = unreviewed and review_due_at < now(), so it can never go stale.",
+    evidence_status: "How this row may be used as evidence. raw = an observer report with nothing established about it. eligible = meets the criteria to enter convergence analysis. ineligible = excluded from convergence analysis, for example a curated example that is not an observer submission. candidate_match = resembles another record and awaits assessment. reviewed_convergence = a reviewer has assessed the match. controlled_replication = arose from a controlled, blinded protocol. Being published does not change this field.",
+    published_at: "When the row first became publicly visible. Null means it has never been public. Never backfilled with a guess.",
+    review_due_at: "published_at plus 72 hours. The deadline by which a moderator was meant to look at it. Null where no review clock applies.",
+    review_overdue: "Computed at request time, never stored. True when moderation_status is unreviewed and review_due_at is in the past. A symbol nobody reviewed inside the window is overdue, not approved.",
+    is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
+    recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",
+    not_a_match_count: "How many signed in readers recorded that this symbol does not resemble what they saw. It is published for completeness. It does not hide the symbol and it does not change where the symbol sits in any default browse order.",
+    upvote_count: "How many signed in readers pressed the older generic upvote control. It is a popularity signal only and carries no evidential weight. The key is omitted when the vote table could not be read.",
+    record_class: "curated_starter = added by the site operator as an illustrative example. community_observation = submitted by an account holder reporting their own experience.",
+    counts_toward_evidence: "False for curated examples, true for observer submissions. This field says whether the row may enter a convergence count at all. It says nothing about whether the row has been reviewed.",
+  };
 
   const body = {
     version: "4.0",
