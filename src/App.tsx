@@ -64,6 +64,8 @@ const SharedAssessment = lazy(() => import("./pages/SharedAssessment"));
 const Forecasts = lazy(() => import("./pages/Forecasts"));
 const Theories = lazy(() => import("./pages/Theories"));
 const TheoryDetail = lazy(() => import("./pages/TheoryDetail"));
+const Timeline = lazy(() => import("./pages/Timeline"));
+const TimelineEntry = lazy(() => import("./pages/TimelineEntry"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 const Retreats = lazy(() => import("./pages/Retreats"));
@@ -308,6 +310,23 @@ const App = () => (
               </Suspense>
             </ErrorBoundary>
           } />
+
+          <Route path="/timeline" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <Timeline />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+          <Route path="/timeline/:id" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                <TimelineEntry />
+              </Suspense>
+            </ErrorBoundary>
+          } />
+
+
 
           <Route path="/articles" element={
             <ErrorBoundary>

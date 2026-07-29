@@ -1,44 +1,88 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { EVIDENCE_LABEL, byDate, loadTimeline, sourceLink } from '@/lib/timeline';
 
 const EvidenceMap = () => {
+  const [recordCount, setRecordCount] = useState<number | null>(null);
+  const [timelineFailed, setTimelineFailed] = useState(false);
+
   useEffect(() => {
-    // Load TimelineJS CSS
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = 'https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css';
     document.head.appendChild(link);
 
-    // Load TimelineJS script
-    const script = document.createElement('script');
-    script.src = 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js';
-    script.async = true;
-    script.onload = () => {
-      // Initialize timeline after script loads
-      if (window.TL && window.TL.Timeline) {
-        new window.TL.Timeline('timeline-embed', '/timeline.json', {
-          initial_zoom: 5,
-          start_at_end: false,
-          hash_bookmark: true,
-          scale_factor: 2,
-          timenav_height: 200,
-          marker_height_min: 30,
-          marker_width_min: 100,
-          default_bg_color: { r: 0, g: 0, b: 0 },
-          font: 'bitter-raleway'
+    let script: HTMLScriptElement | null = null;
+    let cancelled = false;
+
+    loadTimeline()
+      .then((file) => {
+        if (cancelled) return;
+        setRecordCount(file.entries.length);
+
+        const events = [...file.entries].sort(byDate).map((e) => {
+          const href = sourceLink(e.source);
+          const body =
+            `<p>${e.summary}</p>` +
+            (e.source.citation ? `<p>${e.source.citation}</p>` : '') +
+            (e.source.note ? `<p>${e.source.note}</p>` : '') +
+            (href ? `<p><a href="${href}" target="_blank" rel="noopener noreferrer">Read the source</a></p>` : '') +
+            `<p><a href="/timeline/${e.id}">Open the full record on this site</a></p>`;
+          return {
+            unique_id: e.id,
+            group: EVIDENCE_LABEL[e.evidence_class] ?? e.evidence_class,
+            start_date: {
+              year: e.date.year,
+              ...(e.date.month ? { month: e.date.month } : {}),
+              ...(e.date.day ? { day: e.date.day } : {}),
+            },
+            text: { headline: e.headline, text: body },
+          };
         });
-      }
-    };
-    document.body.appendChild(script);
+
+        script = document.createElement('script');
+        script.src = 'https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js';
+        script.async = true;
+        script.onload = () => {
+          if (cancelled) return;
+          if (window.TL && window.TL.Timeline) {
+            new window.TL.Timeline(
+              'timeline-embed',
+              {
+                title: { text: { headline: file.title.headline, text: file.title.text } },
+                events,
+              },
+              {
+                initial_zoom: 5,
+                start_at_end: false,
+                hash_bookmark: true,
+                scale_factor: 2,
+                timenav_height: 200,
+                marker_height_min: 30,
+                marker_width_min: 100,
+                default_bg_color: { r: 0, g: 0, b: 0 },
+                font: 'bitter-raleway',
+              }
+            );
+          }
+        };
+        document.body.appendChild(script);
+      })
+      .catch(() => {
+        if (!cancelled) setTimelineFailed(true);
+      });
 
     return () => {
-      document.head.removeChild(link);
-      document.body.removeChild(script);
+      cancelled = true;
+      if (link.parentNode) link.parentNode.removeChild(link);
+      if (script && script.parentNode) script.parentNode.removeChild(script);
     };
   }, []);
+
 
   return (
     <>
@@ -46,7 +90,7 @@ const EvidenceMap = () => {
         <title>Is the DMT code real? Evidence Timeline & Analysis | DMT Code</title>
         <meta 
           name="description" 
-          content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations, competing hypotheses, and stance-scored milestones from 1926 to 2025." 
+          content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." 
         />
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         
@@ -58,16 +102,15 @@ const EvidenceMap = () => {
             "description": "Comprehensive timeline documenting research from Klüver's 1926 form constants to Goler's 2025 laser protocol pilot study",
             "author": [
               {
-                "@type": "Person",
-                "name": "Danny Goler",
-                "affiliation": "Independent Researcher"
+                "@type": "Organization",
+                "name": "DMT Code"
               }
             ],
             "citation": [
               {
                 "@type": "ScholarlyArticle",
-                "name": "First pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during N,N-dimethyltryptamine (DMT) administration",
-                "author": "Goler D.",
+                "name": "Detailing a Pilot Study: The \"Code of Reality\" Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness",
+                "author": "Goler, D.",
                 "datePublished": "2025",
                 "identifier": {
                   "@type": "PropertyValue",
@@ -78,15 +121,20 @@ const EvidenceMap = () => {
               },
               {
                 "@type": "ScholarlyArticle",
-                "name": "Preprint [2021] DOI pending",
-                "author": "Davis A.",
-                "datePublished": "2021",
-                "description": "Survey of entity encounter experiences"
+                "name": "Survey of entity encounter experiences occasioned by inhaled N,N-dimethyltryptamine: Phenomenology, interpretation, and enduring effects",
+                "author": "Davis, A.K.",
+                "datePublished": "2020",
+                "identifier": {
+                  "@type": "PropertyValue",
+                  "propertyID": "DOI",
+                  "value": "10.1177/0269881120916143"
+                },
+                "url": "https://doi.org/10.1177/0269881120916143"
               },
               {
                 "@type": "ScholarlyArticle",
-                "name": "DMT models the near-death experience",
-                "author": "Timmermann C. et al.",
+                "name": "Neural correlates of the DMT experience assessed with multivariate EEG",
+                "author": "Timmermann, C.",
                 "datePublished": "2019",
                 "identifier": {
                   "@type": "PropertyValue",
@@ -97,21 +145,21 @@ const EvidenceMap = () => {
               }
             ],
             "datePublished": "2025-11-30",
-            "dateModified": "2025-11-30"
+            "dateModified": "2026-07-29"
           })}
         </script>
         <link rel="canonical" href="https://dmtcode.com/evidence-map" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
-        <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and stance-scored milestones from 1926 to 2025." />
+        <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
         <meta property="og:url" content="https://dmtcode.com/evidence-map" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/evidence-map" />
         <meta name="twitter:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
-        <meta name="twitter:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and stance-scored milestones from 1926 to 2025." />
+        <meta name="twitter:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
         <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         
         <script type="application/ld+json">
@@ -147,9 +195,26 @@ const EvidenceMap = () => {
                 Is the DMT code real?
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Explore 30 stance-scored milestones with clickable DOIs and peer-reviewed citations.
+                A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Every record is labelled by the kind of evidence it is, and every DOI here has been resolved against Crossref.
               </p>
-              <div className="mt-6">
+              {recordCount !== null && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {recordCount} dated records.
+                </p>
+              )}
+              {timelineFailed && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  The timeline data did not load. The same records are listed at{' '}
+                  <Link to="/timeline" className="text-gold hover:underline">/timeline</Link>.
+                </p>
+              )}
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Link
+                  to="/timeline"
+                  className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                >
+                  SORT AND FILTER THE SAME RECORDS
+                </Link>
                 <a
                   href="/trials"
                   className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
@@ -179,7 +244,7 @@ const EvidenceMap = () => {
                 <li>• <strong>Click any event</strong> to read full details and access DOI links</li>
                 <li>• <strong>Drag the timeline</strong> to explore different periods</li>
                 <li>• <strong>Zoom controls</strong> at bottom adjust detail level</li>
-                <li>• <strong>Gold links</strong> connect to peer-reviewed publications</li>
+                <li>• <strong>Each event</strong> links to its source and to the full record on this site</li>
               </ul>
             </div>
 
@@ -214,7 +279,7 @@ const EvidenceMap = () => {
 declare global {
   interface Window {
     TL: {
-      Timeline: new (containerId: string, dataSource: string, options?: any) => void;
+      Timeline: new (containerId: string, dataSource: string | object, options?: any) => void;
     };
   }
 }
