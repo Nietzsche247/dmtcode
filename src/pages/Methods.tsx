@@ -100,12 +100,22 @@ const Methods = () => {
               FAQ on experimental design for replicating the 650 nm laser protocol with rigorous controls and blinding procedures
             </p>
 
-            <div className="border rounded-lg p-6 bg-muted/30 mb-12">
-              <h2 className="text-xl font-semibold mb-3">Draft research framework. Not the original protocol, and not yet validated.</h2>
-              <p className="text-base text-muted-foreground">
-                This page describes a controlled study design that has not been run, has not been reviewed by an ethics board, and has not been validated. It is not a description of the originally reported protocol, and it is not instructions for personal use. Laser exposure and psychedelic exposure both carry real risk. Any replication needs qualified laser safety review and institutional ethics approval before it involves a human being.
+            <div className="border border-gold/30 rounded-lg p-6 bg-gold/5 mb-6">
+              <h2 className="text-xl font-semibold mb-3">Help us figure this out</h2>
+              <p className="text-base text-muted-foreground mb-4">
+                Nobody has answered this yet. It gets answered faster with more first hand accounts, recorded carefully, by people who were not told in advance what they were supposed to see. So describe what you saw before you look at anyone else's, read what has already been collected, come to an event, and join a trial when one opens.
               </p>
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                <a href="/capture" className="text-gold hover:underline font-medium">Submit what you saw →</a>
+                <a href="/evidence-map" className="text-gold hover:underline font-medium">Read the evidence →</a>
+                <a href="/events" className="text-gold hover:underline font-medium">Events →</a>
+                <a href="/trials" className="text-gold hover:underline font-medium">Trials →</a>
+              </div>
             </div>
+
+            <p className="text-sm text-muted-foreground mb-12">
+              A note on what follows: it is a draft study design, not the original protocol and not a validated result. Anyone running it with human participants needs qualified laser safety review and ethics approval first.
+            </p>
 
 
             <Accordion type="single" collapsible className="space-y-4">
