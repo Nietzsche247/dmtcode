@@ -189,8 +189,8 @@ export const ConvergenceHero = () => {
       <div className="max-w-5xl mx-auto mt-24 md:mt-32 grid md:grid-cols-3 gap-8 md:gap-12 border-t border-border/50 pt-14">
         {[
           { n: '01', h: 'Observe', d: 'Notice a discrete visual form during an N,N-DMT experience.' },
-          { n: '02', h: 'Draw or Confirm', d: 'Reconstruct it on the canvas — or confirm one already reported.' },
-          { n: '03', h: 'It joins the open record', d: 'Peer-reviewed, CC-BY-4.0, downloadable as data.' },
+          { n: '02', h: 'Draw or Respond', d: 'Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.' },
+          { n: '03', h: 'It joins the open record', d: 'Openly licensed CC-BY-4.0 and downloadable as data.' },
         ].map((step) => (
           <div key={step.n} className="space-y-3">
             <p className="label-data text-xs text-primary">{step.n}</p>
