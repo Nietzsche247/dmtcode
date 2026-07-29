@@ -32,7 +32,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: 'Who is behind this and why should I trust it?',
-        a: 'Trust the method, not us. The reason to take this seriously is that it is open, it is falsifiable, and the confirmations are public, not that anyone here says so. We keep a neutral position, we never seed or fake a count, and we publish the parts that would let you prove us wrong.',
+        a: 'Trust the method, not us. The reason to take this seriously is that it is open, it is falsifiable, and the counts are public, not that anyone here says so. We keep a neutral position, we never seed or fake a count, and we publish the parts that would let you prove us wrong.',
       },
     ],
   },
@@ -62,7 +62,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: 'What actually counts as a match?',
-        a: 'A symbol is not called a match because it looks vaguely similar. People compare specific forms, and a confirmation is recorded when someone recognizes a form they saw independently. Every symbol shows how many people have recognized it, so you can weigh each one yourself.',
+        a: 'A symbol is not called a match because it looks vaguely similar. People compare specific forms, and a response is recorded when a reader says a form echoes something they saw. Because that reader has already viewed the form in this catalogue, the response measures recognition after exposure rather than an independent match. Every symbol shows its count, so you can weigh each one yourself.',
       },
       {
         q: 'Can I see the raw data?',

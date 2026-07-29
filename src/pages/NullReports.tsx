@@ -133,13 +133,13 @@ const NullReports = () => {
               <p>
                 A null report is a record from someone who ran the observation carefully and saw
                 nothing structured, or nothing that matched anything already in the catalogue. It is
-                the negative counterpart to a confirmation.
+                the negative counterpart to a recognition.
               </p>
               <p>
                 We publish null reports for a simple reason: a dataset that cannot record failure
                 cannot be trusted about success. Null results are the credibility asset of this
-                project, not an embarrassment to it. They are the reason a confirmation count means
-                what it says.
+                project, not an embarrassment to it. They are the reason any claim of convergence
+                here can be checked rather than taken on trust.
               </p>
               <p className="text-muted-foreground">
                 If the counts below are zero or near zero, that is an honest empty state and we are
