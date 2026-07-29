@@ -165,8 +165,7 @@ export const SubmissionPreview = ({
       {/* Submission Notice */}
       <div className="bg-secondary/30 border border-border rounded-lg p-4 text-center">
         <p className="text-sm text-muted-foreground">
-          By submitting, you agree that your symbol and metadata will be added to the 
-          public registry under CC-BY-4.0 license for research purposes.
+          By submitting, your symbol and metadata are added to the public registry under the CC-BY-4.0 license for research purposes. It publishes immediately. There is no queue in front of it. An administrator has 72 hours to review it and deny it.
         </p>
       </div>
 
