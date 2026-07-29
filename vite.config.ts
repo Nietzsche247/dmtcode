@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.png', 'data.json'],
+      includeAssets: ['favicon.png'],
       manifest: {
         name: 'DMT Code Visual Symbol Catalogue',
         short_name: 'DMT Code',
@@ -51,6 +51,11 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB limit
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
+        // data.json must never be precached. It is generated from the database at
+        // request time by the data-json edge function, and a precache route would
+        // be matched ahead of the network, serving every returning visitor a stale
+        // build-time copy of the corpus instead of the live one.
+        globIgnores: ['**/data.json'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -79,10 +84,14 @@ export default defineConfig(({ mode }) => ({
             }
           },
           {
+            // NetworkFirst, not StaleWhileRevalidate. This endpoint is the corpus
+            // other people cite, so a stale cached copy must never be preferred
+            // over the live one. Cache is a fallback for offline only.
             urlPattern: /\/data\.json$/,
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'data-json-cache',
+              networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 5,
                 maxAgeSeconds: 60 * 60
