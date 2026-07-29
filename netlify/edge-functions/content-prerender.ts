@@ -119,6 +119,12 @@ export default async (request: Request, context: Context) => {
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context);
     }
+    if (kind === "timeline" && seg.length === 1) {
+      return await renderTimelineIndex(context, request);
+    }
+    if (kind === "timeline" && seg.length === 2 && seg[1]) {
+      return await renderTimelineEntry(context, request, seg[1]);
+    }
     if (kind === "faq" && seg.length === 1) {
       return await renderFaq(context);
     }
@@ -805,7 +811,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   const canonical = `${SITE}/evidence-map`;
   const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
   const metaDesc = clip(
-    "A balanced evidence timeline with peer reviewed citations and stance scored milestones from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
+    "A balanced evidence timeline with peer reviewed citations and resolved DOIs from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
     160,
   );
 
@@ -881,10 +887,10 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
       },
       {
         "@type": "Question",
-        name: "Where is the primary peer reviewed reference?",
+        name: "Where is the reference for the 650 nm laser protocol?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.",
+          text: "Goler D. 2025, Detailing a Pilot Study: The 'Code of Reality' Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness. IPI Letters, pages N1 to N5, DOI 10.59973/ipil.158. It is a pilot report in a letters venue rather than a controlled trial. The dated chronology at /timeline labels it that way and lists the peer reviewed DMT literature separately.",
         },
       },
     ],
@@ -899,15 +905,19 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   </section>
   <section>
     <h2>What the open data shows</h2>
-    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. The bibliography carries stance-scored entries from skeptical to supportive so the distribution can be inspected directly.</p>
+    <p>Every symbol in the <a href="${SITE}/registry">visual symbol registry</a> shows its independent confirmation count. The full corpus, including bibliography and clinical trials, is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0. Null results are tracked at <a href="${SITE}/null-reports">/null-reports</a>. Part of the bibliography carries a stance score from skeptical to supportive, so that part of the distribution can be inspected directly.</p>
   </section>
   <section>
     <h2>How to judge it</h2>
     <p>Read the bibliography with the stance filter set to skeptical first. Then load the registry and sort by confirmation count. Then read the null-reports dashboard. If the confirmations are real, they should be reproducible under blinded conditions; if they are not, that failure should also be visible in the same record. The dataset is designed to be able to fail.</p>
   </section>
   <section>
-    <h2>Primary reference</h2>
-    <p>Goler D. 2025, first pilot study of the 650 nm laser paradigm for eliciting discrete visual symbols during DMT administration. DOI 10.59973/ipil.158.</p>
+    <h2>Primary reference for the laser protocol</h2>
+    <p>Goler D. 2025, Detailing a Pilot Study: The 'Code of Reality' Protocol, A Phenomenon of N,N-DMT Induced States of Consciousness. IPI Letters, pages N1 to N5, DOI <a href="https://doi.org/10.59973/ipil.158">10.59973/ipil.158</a>. It is a pilot report in a letters venue rather than a controlled trial, and the chronology labels it that way. The peer reviewed literature on DMT phenomenology is separate and is listed in the same chronology.</p>
+  </section>
+  <section>
+    <h2>The dated record</h2>
+    <p>Every source on this timeline also exists as a dated record with its own address at <a href="${SITE}/timeline">/timeline</a>, where the same set can be sorted by date, person, place or kind of evidence and filtered by tag. The underlying data is <a href="${SITE}/timeline.json">/timeline.json</a> and the schema for adding a paper is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>.</p>
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
@@ -923,6 +933,382 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
   const html = renderShell(await shellRes.text(), head, body);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
+// ---------- Chronology prerender ----------
+
+type TlDate = { year: number; month?: number; day?: number; precision: string; sort_key: string };
+type TlPerson = { name: string; sort: string };
+type TlPlace = { label: string; country: string };
+type TlSource = {
+  kind: string;
+  title?: string;
+  authors?: string[];
+  container?: string;
+  volume?: string;
+  pages?: string;
+  publisher?: string;
+  year?: number;
+  doi?: string;
+  isbn?: string;
+  url?: string;
+  citation?: string;
+  note?: string;
+};
+type TlEntry = {
+  id: string;
+  date: TlDate;
+  headline: string;
+  summary: string;
+  people?: TlPerson[];
+  place?: TlPlace;
+  tags: string[];
+  evidence_class: string;
+  source: TlSource;
+};
+type TlFile = {
+  schema_version: string;
+  schema_url?: string;
+  provenance: { verified_on: string; verified_against: string; rule: string };
+  title: { headline: string; text: string };
+  evidence_classes: Record<string, string>;
+  entries: TlEntry[];
+};
+
+const TL_MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+const TL_LABEL: Record<string, string> = {
+  peer_reviewed: "Peer reviewed",
+  book: "Book",
+  legal: "Legal",
+  letters: "Letters",
+  journalism: "Journalism",
+  commentary: "Commentary",
+  platform_record: "Platform record",
+  community_report: "Community report",
+};
+
+function tlDate(d: TlDate): string {
+  if (d.precision === "day" && d.month && d.day) {
+    return `${d.day} ${TL_MONTHS[d.month - 1]} ${d.year}`;
+  }
+  if (d.precision === "month" && d.month) {
+    return `${TL_MONTHS[d.month - 1]} ${d.year}`;
+  }
+  return String(d.year);
+}
+
+function tlLink(s: TlSource): string {
+  if (s.doi) return `https://doi.org/${s.doi}`;
+  if (s.url) return s.url;
+  return "";
+}
+
+// public/timeline.json is a static asset. It is deliberately NOT mapped to this
+// edge function in netlify.toml, so fetching it here cannot re-enter this
+// handler. Never hardcode a copy of this data: the file is the single source of
+// truth and a second copy would drift out of sync with it.
+async function tlLoad(request: Request): Promise<TlFile | null> {
+  try {
+    const res = await fetch(new URL("/timeline.json", request.url).toString(), {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return null;
+    const file = (await res.json()) as TlFile;
+    if (!file || !Array.isArray(file.entries) || file.entries.length === 0) return null;
+    return file;
+  } catch (_e) {
+    return null;
+  }
+}
+
+function tlSorted(file: TlFile): TlEntry[] {
+  return [...file.entries].sort((a, b) => a.date.sort_key.localeCompare(b.date.sort_key));
+}
+
+async function renderTimelineIndex(context: Context, request: Request): Promise<Response> {
+  const shellRes = await context.next();
+  const shellHtml = await shellRes.text();
+  const canonical = `${SITE}/timeline`;
+  const file = await tlLoad(request);
+
+  if (!file) {
+    const head = buildHead({
+      title: "Chronology | DMT Code",
+      description: "A dated record of the published research, legal decisions and community claims behind the DMT code question.",
+      canonical,
+    });
+    const body = `<article data-prerender="timeline">
+  <h1>Chronology</h1>
+  <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
+</article>`;
+    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  }
+
+  const entries = tlSorted(file);
+  const firstYear = entries[0].date.year;
+  const lastYear = entries[entries.length - 1].date.year;
+  const title = `Chronology of the DMT code question, ${firstYear} to ${lastYear} | DMT Code`;
+  const metaDesc = clip(
+    `${entries.length} dated records from ${firstYear} to ${lastYear}. Each one states what kind of evidence it is, and every DOI has been resolved against Crossref.`,
+    160,
+  );
+
+  const classCounts = new Map<string, number>();
+  for (const e of entries) {
+    classCounts.set(e.evidence_class, (classCounts.get(e.evidence_class) ?? 0) + 1);
+  }
+  const classList = Object.keys(file.evidence_classes)
+    .filter((k) => classCounts.has(k))
+    .map((k) => `<div><dt>${esc(TL_LABEL[k] ?? k)} (${classCounts.get(k)})</dt><dd>${esc(file.evidence_classes[k])}</dd></div>`)
+    .join("");
+
+  const tagCounts = new Map<string, number>();
+  for (const e of entries) {
+    for (const t of e.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+  }
+  const tagList = [...tagCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([t, n]) => `<li><a href="${SITE}/timeline?tag=${encodeURIComponent(t)}">${esc(t)}</a> (${n})</li>`)
+    .join("");
+
+  const items = entries
+    .map((e) => {
+      const href = tlLink(e.source);
+      const kind = TL_LABEL[e.evidence_class] ?? e.evidence_class;
+      const who = (e.people ?? []).map((p) => esc(p.name)).join(", ");
+      const where = e.place ? esc(e.place.label) : "";
+      const cite = [
+        e.source.title ? esc(e.source.title) : "",
+        e.source.container ? esc(e.source.container) : "",
+        e.source.publisher ? esc(e.source.publisher) : "",
+        e.source.year ? String(e.source.year) : "",
+      ].filter(Boolean).join(". ");
+      return `<li>
+  <h3><a href="${SITE}/timeline/${esc(e.id)}">${esc(e.headline)}</a></h3>
+  <p><time>${esc(tlDate(e.date))}</time>. ${esc(kind)}${who ? `. ${who}` : ""}${where ? `. ${where}` : ""}</p>
+  <p>${esc(e.summary)}</p>
+  ${cite ? `<p>${cite}</p>` : ""}
+  ${e.source.citation ? `<p>${esc(e.source.citation)}</p>` : ""}
+  ${e.source.note ? `<p>${esc(e.source.note)}</p>` : ""}
+  ${href ? `<p><a href="${esc(href)}">${esc(href)}</a></p>` : ""}
+</li>`;
+    })
+    .join("\n");
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Chronology", item: canonical },
+    ],
+  };
+  const collectionLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": canonical,
+    name: file.title.headline,
+    description: metaDesc,
+    url: canonical,
+    license: LICENSE,
+    publisher: { "@id": `${SITE}#org` },
+    isBasedOn: `${SITE}/timeline.json`,
+  };
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${canonical}#list`,
+    name: file.title.headline,
+    numberOfItems: entries.length,
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    itemListElement: entries.map((e, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE}/timeline/${e.id}`,
+      name: e.headline,
+    })),
+  };
+
+  const body = `<article data-prerender="timeline">
+  <h1>${esc(file.title.headline)}</h1>
+  <p>${esc(file.title.text)}</p>
+  <p>${entries.length} dated records, ${firstYear} to ${lastYear}. The interactive version of the same set is at <a href="${SITE}/evidence-map">/evidence-map</a>.</p>
+  <section>
+    <h2>How the records are labelled</h2>
+    <dl>${classList}</dl>
+  </section>
+  <section>
+    <h2>The chronology</h2>
+    <ol>
+${items}
+    </ol>
+  </section>
+  <section>
+    <h2>Tags</h2>
+    <ul>${tagList}</ul>
+  </section>
+  <section>
+    <h2>Provenance</h2>
+    <p>Citations checked on ${esc(file.provenance.verified_on)} against ${esc(file.provenance.verified_against)}. ${esc(file.provenance.rule)}</p>
+    <p>The data is <a href="${SITE}/timeline.json">/timeline.json</a>. The schema for adding a paper or article is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>. Append one object to entries that validates against the entry definition and it appears here.</p>
+  </section>
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+</article>`;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [organizationLd, breadcrumbLd, collectionLd, itemListLd],
+  });
+
+  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderTimelineEntry(context: Context, request: Request, rawId: string): Promise<Response> {
+  const shellRes = await context.next();
+  const shellHtml = await shellRes.text();
+  const id = decodeURIComponent(rawId).toLowerCase();
+  const file = await tlLoad(request);
+
+  // If the data cannot be read we must not 404 a record that may well exist.
+  // Serve the shell and let the client render it, marked noindex.
+  if (!file) {
+    const head = buildHead({
+      title: "Chronology record | DMT Code",
+      canonical: `${SITE}/timeline/${id}`,
+      robots: "noindex, follow",
+    });
+    const body = `<article data-prerender="timeline-entry">
+  <h1>Chronology record</h1>
+  <p>The chronology is at <a href="${SITE}/timeline">/timeline</a>.</p>
+</article>`;
+    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  }
+
+  const entries = tlSorted(file);
+  const idx = entries.findIndex((e) => e.id === id);
+  if (idx === -1) {
+    return notFound404(shellHtml, {
+      title: "Record not found | DMT Code",
+      heading: "Record not found",
+      text: `Nothing in the chronology has the identifier ${id}. Record addresses never change once published, so this is either a typo or a link to something that was never here.`,
+      canonical: `${SITE}/timeline`,
+      backHref: "/timeline",
+      backLabel: "Back to the chronology",
+      marker: "timeline-entry",
+    });
+  }
+
+  const e = entries[idx];
+  const prev = entries[idx - 1];
+  const next = entries[idx + 1];
+  const href = tlLink(e.source);
+  const kind = TL_LABEL[e.evidence_class] ?? e.evidence_class;
+  const classNote = file.evidence_classes[e.evidence_class] ?? "";
+  const canonical = `${SITE}/timeline/${e.id}`;
+  const title = `${e.headline} | DMT Code`;
+  const metaDesc = clip(e.summary, 160);
+
+  const dl = rowsToDl([
+    ["Title", e.source.title],
+    ["Authors", (e.source.authors ?? []).join(", ")],
+    ["Published in", e.source.container],
+    ["Volume", e.source.volume],
+    ["Pages", e.source.pages],
+    ["Publisher", e.source.publisher],
+    ["Year", e.source.year],
+    ["DOI", e.source.doi],
+    ["ISBN", e.source.isbn],
+    ["Citation", e.source.citation],
+  ]);
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Chronology", item: `${SITE}/timeline` },
+      { "@type": "ListItem", position: 3, name: e.headline, item: canonical },
+    ],
+  };
+  // Structured data is emitted for the underlying work ONLY when a resolved
+  // identifier exists. Never emit a citation without one.
+  const workLd = (e.source.doi || e.source.isbn)
+    ? {
+        "@context": "https://schema.org",
+        "@type": e.evidence_class === "book" ? "Book" : "ScholarlyArticle",
+        "@id": `${canonical}#work`,
+        name: e.source.title ?? e.headline,
+        url: canonical,
+        ...(e.source.authors ? { author: e.source.authors.map((a) => ({ "@type": "Person", name: a })) } : {}),
+        ...(e.source.container ? { isPartOf: e.source.container } : {}),
+        ...(e.source.publisher ? { publisher: e.source.publisher } : {}),
+        ...(e.source.year ? { datePublished: String(e.source.year) } : {}),
+        ...(e.source.doi
+          ? {
+              identifier: { "@type": "PropertyValue", propertyID: "DOI", value: e.source.doi },
+              sameAs: `https://doi.org/${e.source.doi}`,
+            }
+          : {}),
+        ...(e.source.isbn ? { isbn: e.source.isbn } : {}),
+      }
+    : null;
+
+  const body = `<article data-prerender="timeline-entry">
+  <p><a href="${SITE}/timeline">Chronology</a></p>
+  <h1>${esc(e.headline)}</h1>
+  <p><time>${esc(tlDate(e.date))}</time>. ${esc(kind)}.</p>
+  ${classNote ? `<p>${esc(classNote)}</p>` : ""}
+  <p>${esc(e.summary)}</p>
+  ${(e.people ?? []).length ? `<p>People: ${(e.people ?? []).map((p) => esc(p.name)).join(", ")}</p>` : ""}
+  ${e.place ? `<p>Place: ${esc(e.place.label)}</p>` : ""}
+  <p>Tags: ${e.tags.map((t) => `<a href="${SITE}/timeline?tag=${encodeURIComponent(t)}">${esc(t)}</a>`).join(", ")}</p>
+  <section>
+    <h2>The source</h2>
+    ${dl}
+    ${e.source.note ? `<p>${esc(e.source.note)}</p>` : ""}
+    ${href ? `<p><a href="${esc(href)}">Read the source at ${esc(href)}</a></p>` : ""}
+  </section>
+  <nav>
+    ${prev ? `<p>Earlier: <a href="${SITE}/timeline/${esc(prev.id)}">${esc(prev.headline)}</a></p>` : ""}
+    ${next ? `<p>Later: <a href="${SITE}/timeline/${esc(next.id)}">${esc(next.headline)}</a></p>` : ""}
+  </nav>
+  <p>This record is one of ${entries.length} in the chronology at <a href="${SITE}/timeline">/timeline</a>. The underlying data is <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+</article>`;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [organizationLd, breadcrumbLd, workLd],
+  });
+
+  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
 
 const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }> }> = [
   {
@@ -1131,7 +1517,7 @@ const PROTOCOL_GUIDE_FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Where does the actual data live?",
-    a: "The symbol registry at /registry, the stance-scored research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
+    a: "The symbol registry at /registry, the research library at /bibliography, DMT-related clinical trials at /trials, the evidence map at /evidence-map, and negative results at /null-reports. The machine-readable corpus is at /data.json. All CC-BY-4.0.",
   },
 ];
 
@@ -1811,6 +2197,8 @@ export const config: Config = {
     "/protocol-guide",
     "/prepare",
     "/evidence-map",
+    "/timeline",
+    "/timeline/*",
     "/faq",
     "/events",
     "/events/*",
