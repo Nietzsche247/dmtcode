@@ -71,6 +71,11 @@ interface UnifiedItem {
   stance_score?: number;
   people: string[];
   status?: string;
+  visibility_status?: string;
+  moderation_status?: string;
+  evidence_status?: string;
+  review_overdue?: boolean;
+  is_curated_example?: boolean;
   verification?: string;
   phase?: string;
   source_date?: string;
@@ -78,9 +83,22 @@ interface UnifiedItem {
   counts_toward_evidence?: boolean;
 }
 
-// Curated starter symbols are identified purely by their image_url prefix.
+// Curated examples are flagged by the is_curated_example column on
+// symbol_submissions. The image_url prefix check is kept as a fallback so the
+// five original starter rows stay classified correctly even if the column is
+// ever unavailable to this key.
 const isCuratedStarter = (imageUrl: unknown): boolean =>
   typeof imageUrl === "string" && imageUrl.startsWith("/placeholder-symbol-");
+
+const isCurated = (r: Record<string, unknown>): boolean =>
+  r.is_curated_example === true || isCuratedStarter(r.image_url);
+
+// Overdue is never stored. It is derived at request time from moderation_status
+// and review_due_at, so it can never go stale.
+const isReviewOverdue = (r: Record<string, unknown>): boolean =>
+  String(r.moderation_status ?? "") === "unreviewed" &&
+  typeof r.review_due_at === "string" &&
+  new Date(r.review_due_at as string).getTime() < Date.now();
 
 function compact<T extends Record<string, unknown>>(obj: T): T {
   const out: Record<string, unknown> = {};
@@ -158,6 +176,8 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   const authority = params.get("authority_type");
   const person = params.get("person");
   const status = params.get("status");
+  const evidenceStatus = params.get("evidence_status");
+  const moderationStatus = params.get("moderation_status");
   const verification = params.get("verification");
   const phase = params.get("phase");
   const stanceMin = params.get("stance_min");
@@ -177,6 +197,10 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   if (person)
     out = out.filter((i) => i.people.some((p) => p.toLowerCase().includes(person.toLowerCase())));
   if (status) out = out.filter((i) => (i.status || "").toLowerCase() === status.toLowerCase());
+  if (evidenceStatus)
+    out = out.filter((i) => (i.evidence_status || "").toLowerCase() === evidenceStatus.toLowerCase());
+  if (moderationStatus)
+    out = out.filter((i) => (i.moderation_status || "").toLowerCase() === moderationStatus.toLowerCase());
   if (verification)
     out = out.filter((i) => (i.verification || "").toLowerCase() === verification.toLowerCase());
   if (phase)
@@ -190,6 +214,36 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
       `${i.title} ${i.people.join(" ")} ${i.topic.join(" ")}`.toLowerCase().includes(q)
     );
   return out.slice(offset, offset + limit);
+}
+
+// Reaction counts come from symbol_votes, which is publicly readable. Returns
+// null when the table cannot be read, so the caller omits the key rather than
+// publishing a zero it cannot stand behind.
+async function fetchVoteCounts(): Promise<Record<string, Record<string, number>> | null> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/symbol_votes?select=symbol_id,vote_type&limit=10000`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+      },
+    );
+    if (!res.ok) return null;
+    const rows = (await res.json()) as Record<string, unknown>[];
+    const out: Record<string, Record<string, number>> = {};
+    for (const r of rows) {
+      const k = String(r.symbol_id);
+      const t = String(r.vote_type);
+      out[k] = out[k] ?? {};
+      out[k][t] = (out[k][t] ?? 0) + 1;
+    }
+    return out;
+  } catch (_e) {
+    return null;
+  }
 }
 
 export default async (req: Request): Promise<Response> => {
