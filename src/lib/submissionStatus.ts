@@ -8,22 +8,11 @@
 
 export interface SubmissionStatusRow {
   image_url?: string | null;
-  is_curated_example?: boolean | null;
   visibility_status?: string | null;
   moderation_status?: string | null;
   evidence_status?: string | null;
   review_due_at?: string | null;
 }
-
-/**
- * Reference symbols are flagged by the is_curated_example column and by nothing
- * else. Where an image happens to be hosted says nothing about who made it, so
- * no image_url heuristic may classify a contributor's upload.
- */
-export const isCuratedExample = (r: SubmissionStatusRow | null | undefined): boolean => {
-  if (!r) return false;
-  return r.is_curated_example === true;
-};
 
 /**
  * Overdue is never stored. It is derived at read time from moderation_status
@@ -36,10 +25,6 @@ export const isReviewOverdue = (r: SubmissionStatusRow | null | undefined): bool
   if (!r.review_due_at) return false;
   return new Date(r.review_due_at).getTime() < Date.now();
 };
-
-/** The notice that must appear wherever a reference symbol is shown to a reader. */
-export const CURATED_EXAMPLE_NOTICE =
-  'Reference symbol. Not an observer submission. Excluded from evidence and convergence totals.';
 
 export type StatusTone = 'neutral' | 'positive' | 'caution' | 'negative';
 

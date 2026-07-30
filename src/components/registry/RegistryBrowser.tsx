@@ -7,7 +7,6 @@ import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
-import { isCuratedExample } from '@/lib/submissionStatus';
 
 const RESONANCE_MIN_RESPONSES = 5;
 
@@ -19,7 +18,6 @@ interface SymbolSubmission {
   upvotes: number;
   downvotes: number;
   status: 'pending' | 'approved' | 'rejected';
-  is_curated_example: boolean;
   source_method: string | null;
   created_at: string;
   user_id: string;
@@ -73,7 +71,7 @@ export const RegistryBrowser = () => {
     // Load approved submissions
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, description, tags, upvotes, downvotes, status, is_curated_example, source_method, created_at, user_id')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, created_at, user_id')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
@@ -191,36 +189,12 @@ export const RegistryBrowser = () => {
     return filtered;
   }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
 
-  // Observer submissions and reference symbols are rendered in two separate
-  // sections and are never mixed into one grid. A reference symbol is an
-  // illustration added by the site operator, not a report from a person who saw
-  // something, and a reader must be able to tell which is which at a glance.
-  const observerSymbols = useMemo(
-    () =>
-      filteredSymbols.filter(
-        (s) => !isCuratedExample({ is_curated_example: s.is_curated_example })
-      ),
-    [filteredSymbols]
-  );
-
-  const curatedSymbols = useMemo(
-    () =>
-      filteredSymbols.filter((s) =>
-        isCuratedExample({ is_curated_example: s.is_curated_example })
-      ),
-    [filteredSymbols]
-  );
-
-  // A count of zero renders as nothing at all, never as a printed zero.
+  // One library, one list. Nothing is segregated by how a symbol entered the
+  // record; the sort the reader chose is the only thing that orders it.
   const resultSegments: string[] = [];
-  if (observerSymbols.length > 0) {
+  if (filteredSymbols.length > 0) {
     resultSegments.push(
-      `${observerSymbols.length} observer submission${observerSymbols.length === 1 ? '' : 's'}`
-    );
-  }
-  if (curatedSymbols.length > 0) {
-    resultSegments.push(
-      `${curatedSymbols.length} reference symbol${curatedSymbols.length === 1 ? '' : 's'}`
+      `${filteredSymbols.length} symbol${filteredSymbols.length === 1 ? '' : 's'}`
     );
   }
 
@@ -244,7 +218,7 @@ export const RegistryBrowser = () => {
             Browse Registry
           </h2>
           <p className="text-muted-foreground text-center md:text-left">
-            Observer submissions and reference symbols, listed separately and never mixed
+            Every symbol in the record, in one list
           </p>
         </div>
         <Button 
@@ -332,16 +306,16 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
-      {/* Observer submissions */}
-      {!loading && observerSymbols.length > 0 && (
+      {/* Symbol library */}
+      {!loading && filteredSymbols.length > 0 && (
         <div>
-          <h3 className="text-xl md:text-2xl font-bold mb-2">Observer submissions</h3>
+          <h3 className="text-xl md:text-2xl font-bold mb-2">Symbols</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-3xl leading-relaxed">
             Forms submitted by people reporting what they saw. Each one publishes the moment it is
             submitted. Publication here is not review and it is not approval.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {observerSymbols.map((symbol) => (
+            {filteredSymbols.map((symbol) => (
               <SymbolCard
                 key={symbol.id}
                 id={symbol.id}
@@ -351,7 +325,6 @@ export const RegistryBrowser = () => {
                 upvotes={symbol.upvotes}
                 validationCount={validationCounts[symbol.id] || 0}
                 status={symbol.status}
-                curated={symbol.is_curated_example}
                 contributor={profiles[symbol.user_id] ? {
                   id: profiles[symbol.user_id].id,
                   displayName: profiles[symbol.user_id].display_name,
@@ -366,41 +339,6 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
-      {/* Reference symbols */}
-      {!loading && curatedSymbols.length > 0 && (
-        <div className="mt-16 pt-12 border-t border-border/50">
-          <h3 className="text-xl md:text-2xl font-bold mb-2">Reference symbols</h3>
-          <p className="text-sm text-muted-foreground mb-6 max-w-3xl leading-relaxed">
-            These were added by the site operator in November 2025 from public imagery so the
-            registry would not open empty. They are not observer submissions. Nobody reported
-            seeing them, and they are excluded from every evidence and convergence total on this
-            site.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {curatedSymbols.map((symbol) => (
-              <SymbolCard
-                key={symbol.id}
-                id={symbol.id}
-                imageUrl={symbol.image_url}
-                description={symbol.description}
-                tags={symbol.tags}
-                upvotes={symbol.upvotes}
-                validationCount={validationCounts[symbol.id] || 0}
-                status={symbol.status}
-                curated={symbol.is_curated_example}
-                contributor={profiles[symbol.user_id] ? {
-                  id: profiles[symbol.user_id].id,
-                  displayName: profiles[symbol.user_id].display_name,
-                  avatarUrl: profiles[symbol.user_id].avatar_url,
-                } : null}
-                createdAt={symbol.created_at}
-                submitterId={symbol.user_id}
-                highlightTerms={highlightTerms}
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 };

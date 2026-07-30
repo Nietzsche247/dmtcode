@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { promptSignIn } from '@/lib/signInPrompt';
 
 declare global {
   interface Window {
@@ -108,7 +109,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
 
   const vote = useCallback(async (voteType: VoteType) => {
     if (!userId) {
-      toast.error('Please log in to vote');
+      promptSignIn('record your recognition');
       return false;
     }
 

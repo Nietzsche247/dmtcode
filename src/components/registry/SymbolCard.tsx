@@ -5,7 +5,6 @@ import { Eye } from 'lucide-react';
 import { SeenItButton } from './SeenItButton';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
-import { isCuratedExample, CURATED_EXAMPLE_NOTICE } from '@/lib/submissionStatus';
 
 interface SymbolCardProps {
   id: string;
@@ -15,7 +14,6 @@ interface SymbolCardProps {
   upvotes: number;
   validationCount: number;
   status?: 'pending' | 'approved' | 'rejected';
-  curated?: boolean | null;
   contributor?: {
     id: string;
     displayName: string;
@@ -34,7 +32,6 @@ export const SymbolCard = ({
   upvotes,
   validationCount,
   status,
-  curated,
   contributor,
   createdAt,
   submitterId,
@@ -52,9 +49,6 @@ export const SymbolCard = ({
         : part
     );
   };
-
-  // The is_curated_example column is the only input to this classification.
-  const isCurated = isCuratedExample({ is_curated_example: curated });
 
   const getInitials = (name: string) => {
     return name
@@ -88,15 +82,6 @@ export const SymbolCard = ({
 
       {/* Content */}
       <div className="space-y-3">
-        {isCurated && (
-          <div className="space-y-1">
-            <Badge variant="secondary" className="text-xs">Reference symbol</Badge>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {CURATED_EXAMPLE_NOTICE}
-            </p>
-          </div>
-        )}
-
         {/* Description */}
 
         {description && (

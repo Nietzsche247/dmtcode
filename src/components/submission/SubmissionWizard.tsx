@@ -70,9 +70,16 @@ export const SubmissionWizard = () => {
     setIsSubmitting(true);
 
     try {
-      // Contributor identity is optional. A signed out visitor may draw and
-      // submit; the row is then stored with no account attached.
+      // Submitting requires an account. Every submission is credited to a
+      // public avatar profile name, so there is no anonymous write path.
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('An account is needed to submit a symbol', {
+          description: 'Sign in and your drawing is credited to your profile.',
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
       // Convert base64 to blob
       const response = await fetch(imageData);
@@ -80,7 +87,7 @@ export const SubmissionWizard = () => {
 
       // Generate unique filename
       const timestamp = Date.now();
-      const filename = `${user ? user.id : 'anonymous'}/${timestamp}-${Math.random().toString(36).slice(2, 10)}.png`;
+      const filename = `${user.id}/${timestamp}-${Math.random().toString(36).slice(2, 10)}.png`;
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
@@ -123,7 +130,7 @@ export const SubmissionWizard = () => {
       const { data: submission, error: insertError } = await supabase
         .from('symbol_submissions')
         .insert({
-          user_id: user?.id ?? null,
+          user_id: user.id,
           image_url: publicUrl,
           status: 'approved',
           description: metadata.description,

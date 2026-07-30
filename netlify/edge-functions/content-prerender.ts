@@ -1676,7 +1676,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   registry: {
     title: "Visual Symbol Registry | DMT Code",
-    description: "Open catalogue of visual forms reported in connection with N,N-DMT experiences. Observer submissions and curated examples are listed separately, with machine readable data under CC-BY-4.0.",
+    description: "Open catalogue of visual forms reported in connection with N,N-DMT experiences, with machine readable data under CC-BY-4.0.",
     heading: "Visual Symbol Registry",
     paragraphs: [
       "The registry catalogues discrete visual forms that observers have reported. Each entry records the form, its contextual metadata, and how many readers said it echoed their own memory after seeing it here. That is recognition after exposure, not independent convergence.",

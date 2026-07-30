@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, ThumbsUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { promptSignIn } from '@/lib/signInPrompt';
 
 interface Tag {
   id: string;
@@ -65,7 +66,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
 
   const addTag = async () => {
     if (!userId) {
-      toast.error('Please log in to add tags');
+      promptSignIn('add a tag');
       return;
     }
 
@@ -101,7 +102,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
 
   const toggleVote = async (tagId: string) => {
     if (!userId) {
-      toast.error('Please log in to vote on tags');
+      promptSignIn('vote on a tag');
       return;
     }
 
