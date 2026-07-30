@@ -122,9 +122,9 @@ export const BundleUpsell = ({ onClose }: BundleUpsellProps) => {
     
     if (upsellType === 'journal') {
       // Navigate to tools page filtered to journals
-      navigate('/tools?search=journal');
+      navigate('/prepare');
     } else {
-      navigate('/bundles/starter');
+      navigate('/prepare');
     }
     onClose?.();
   };

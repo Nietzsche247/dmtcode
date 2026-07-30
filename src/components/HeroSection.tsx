@@ -145,7 +145,7 @@ export const HeroSection = () => {
           style={{ animationFillMode: 'forwards' }}
         >
           <button 
-            onClick={() => navigate('/tools')}
+            onClick={() => navigate('/prepare')}
             className="text-sm text-muted-foreground hover:text-primary transition-colors font-light inline-flex items-center gap-2 group"
           >
             View equipment catalogue

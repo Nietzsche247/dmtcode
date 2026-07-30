@@ -154,7 +154,7 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
           return (
             <Link
               key={item.sku}
-              to={`/tools/${slug}?from=${bundleId}`}
+              to="/prepare"
               className="group relative block min-h-[44px]"
               onClick={() => handleItemClick(item.sku, item.name)}
             >
@@ -191,7 +191,7 @@ export const RelatedBundleProducts = ({ bundleId, currentProductSlug }: RelatedB
       
       <div className="mt-4 pt-4 border-t border-border/50">
         <Link
-          to={`/bundles/${bundleId}`}
+          to="/prepare"
           className="text-sm text-primary hover:underline inline-flex items-center gap-1"
           onClick={handleViewBundleClick}
         >
@@ -280,7 +280,7 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
           return (
             <Link
               key={item.sku}
-              to={`/tools/${slug}?from=${suggestedBundle.id}`}
+              to="/prepare"
               className="group relative block min-h-[44px]"
               onClick={() => handleItemClick(item.sku, item.name)}
             >
@@ -316,7 +316,7 @@ export const CompleteBundleUpsell = ({ currentProductSlug }: CompleteBundleUpsel
         <div />
         
         <Button asChild className="group" onClick={handleViewBundleClick}>
-          <Link to={`/bundles/${suggestedBundle.id}`}>
+          <Link to="/prepare">
             View Bundle
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>

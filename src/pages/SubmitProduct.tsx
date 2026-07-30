@@ -107,7 +107,7 @@ const SubmitProduct = () => {
       if (error) throw error;
 
       toast.success("Product submitted for review! You'll be notified when it's approved.");
-      navigate("/tools");
+      navigate("/prepare");
     } catch (error: any) {
       console.error("Error submitting product:", error);
       toast.error(error.message || "Failed to submit product");
@@ -131,7 +131,7 @@ const SubmitProduct = () => {
         <div className="max-w-3xl mx-auto space-y-8">
           <Button
             variant="ghost"
-            onClick={() => navigate("/tools")}
+            onClick={() => navigate("/prepare")}
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />

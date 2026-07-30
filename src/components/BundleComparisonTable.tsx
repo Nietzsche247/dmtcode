@@ -114,7 +114,7 @@ export const BundleComparisonTable = () => {
                   size="sm"
                   variant={bundle.popular ? 'default' : 'outline'}
                   className="rounded-full text-xs"
-                  onClick={() => navigate(`/bundles/${bundle.id}`)}
+                  onClick={() => navigate('/prepare')}
                 >
                   View Bundle
                 </Button>
