@@ -207,6 +207,14 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/tools/*"
+  to = "/prepare"
+  status = 301
+  force = true
+
+
+
 # SPA fallback for every other route.
 [[redirects]]
   from = "/*"

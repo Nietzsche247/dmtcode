@@ -1,4 +1,5 @@
 /tools    /prepare    301!
+/tools/*    /prepare    301!
 /bundles    /prepare    301!
 /bundles/*    /prepare    301!
 /*    /index.html   200
