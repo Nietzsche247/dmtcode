@@ -83,15 +83,12 @@ interface UnifiedItem {
   counts_toward_evidence?: boolean;
 }
 
-// Curated examples are flagged by the is_curated_example column on
-// symbol_submissions. The image_url prefix check is kept as a fallback so the
-// five original starter rows stay classified correctly even if the column is
-// ever unavailable to this key.
-const isCuratedStarter = (imageUrl: unknown): boolean =>
-  typeof imageUrl === "string" && imageUrl.startsWith("/placeholder-symbol-");
-
+// Reference symbols are flagged by the is_curated_example column on
+// symbol_submissions and by nothing else. Where an image happens to be hosted
+// says nothing about who made it, so no image_url heuristic may classify a
+// contributor's upload as an operator example.
 const isCurated = (r: Record<string, unknown>): boolean =>
-  r.is_curated_example === true || isCuratedStarter(r.image_url);
+  r.is_curated_example === true;
 
 // Overdue is never stored. It is derived at request time from moderation_status
 // and review_due_at, so it can never go stale.
