@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { supabase } from '@/integrations/supabase/client';
 import { SymbolCanvas } from '@/components/registry/SymbolCanvas';
@@ -32,7 +31,6 @@ export const SubmissionWizard = () => {
   const [symmetryMode, setSymmetryMode] = useState(false);
   const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   
-  const navigate = useNavigate();
   const { trackStepCompleted, trackSubmissionSubmitted, trackSubmissionAbandoned } = useSubmissionTracking();
   const { trackDrawingSaved } = useCanvasTracking();
   const { trackSymbolDrawn, trackSymbolSubmitted } = useUgcTracking();
