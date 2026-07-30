@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Eye, PencilLine } from 'lucide-react';
-import { isCuratedExample, CURATED_EXAMPLE_NOTICE } from '@/lib/submissionStatus';
 
 interface TopSymbol {
   id: string;
@@ -13,22 +12,19 @@ interface TopSymbol {
   dose_level: string | null;
   surface_type: string | null;
   upvotes: number;
-  is_curated_example?: boolean | null;
 }
 
 interface TopStrip {
   id: string;
   image_url: string;
   upvotes: number;
-  is_curated_example?: boolean | null;
 }
 
 export const ConvergenceHero = () => {
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
   const [confirmCount, setConfirmCount] = useState<number>(0);
-  const [observerCount, setObserverCount] = useState<number>(0);
-  const [curatedCount, setCuratedCount] = useState<number>(0);
+  const [libraryCount, setLibraryCount] = useState<number>(0);
   const [verifiedCount, setVerifiedCount] = useState<number>(0);
   const [strip, setStrip] = useState<TopStrip[]>([]);
 
@@ -38,9 +34,8 @@ export const ConvergenceHero = () => {
       try {
         const { data: top } = await supabase
           .from('symbol_submissions')
-          .select('id,image_url,tags,wavelength,dose_level,surface_type,upvotes,is_curated_example')
+          .select('id,image_url,tags,wavelength,dose_level,surface_type,upvotes')
           .eq('status', 'approved')
-          .order('is_curated_example', { ascending: true })
           .order('upvotes', { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -55,37 +50,25 @@ export const ConvergenceHero = () => {
           setConfirmCount(count ?? top.upvotes ?? 0);
         }
 
-        // Observer submissions and reference symbols are counted separately and
-        // are never merged into one total. A reference symbol is an illustration
-        // added by the site operator, not a report from a person who saw
-        // something, and it must never inflate a count of observer reports.
-        const { count: observers } = await supabase
+        // One library, one count. Every published symbol is counted the same
+        // way; nothing is segregated by how it entered the record.
+        const { count: total } = await supabase
           .from('symbol_submissions')
           .select('*', { count: 'exact', head: true })
-          .eq('status', 'approved')
-          .eq('is_curated_example', false);
-        if (!cancelled) setObserverCount(observers ?? 0);
-
-        const { count: curated } = await supabase
-          .from('symbol_submissions')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'approved')
-          .eq('is_curated_example', true);
-        if (!cancelled) setCuratedCount(curated ?? 0);
+          .eq('status', 'approved');
+        if (!cancelled) setLibraryCount(total ?? 0);
 
         const { count: verified } = await supabase
           .from('symbol_submissions')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'approved')
-          .eq('is_curated_example', false)
           .gte('upvotes', 3);
         if (!cancelled) setVerifiedCount(verified ?? 0);
 
         const { data: stripData } = await supabase
           .from('symbol_submissions')
-          .select('id,image_url,upvotes,is_curated_example')
+          .select('id,image_url,upvotes')
           .eq('status', 'approved')
-          .order('is_curated_example', { ascending: true })
           .order('upvotes', { ascending: false })
           .limit(6);
         if (!cancelled && stripData) setStrip(stripData as TopStrip[]);
@@ -108,15 +91,11 @@ export const ConvergenceHero = () => {
   const displayCount = confirmCount || specimen.upvotes || 0;
   const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
   const specimenHref = featured ? `/registry/${featured.id}` : '/registry';
-  const specimenIsCurated = isCuratedExample(specimen);
 
   // A count of zero renders as nothing at all, never as a printed zero.
   const countSegments: string[] = [];
-  if (observerCount > 0) {
-    countSegments.push(`${observerCount} OBSERVER REPORT${observerCount === 1 ? '' : 'S'}`);
-  }
-  if (curatedCount > 0) {
-    countSegments.push(`${curatedCount} REFERENCE SYMBOL${curatedCount === 1 ? '' : 'S'}`);
+  if (libraryCount > 0) {
+    countSegments.push(`${libraryCount} SYMBOL${libraryCount === 1 ? '' : 'S'} IN THE RECORD`);
   }
   if (verifiedCount > 0) {
     countSegments.push(`${verifiedCount} RECOGNIZED BY 3 OR MORE READERS`);
@@ -191,12 +170,6 @@ export const ConvergenceHero = () => {
                 onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
               />
             </div>
-
-            {specimenIsCurated && (
-              <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
-                {CURATED_EXAMPLE_NOTICE}
-              </p>
-            )}
 
             {displayCount > 0 && (
               <div className="mt-6 text-center">
@@ -273,11 +246,6 @@ export const ConvergenceHero = () => {
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
                   />
                 </div>
-                {isCuratedExample(s) && (
-                  <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
-                    REFERENCE SYMBOL
-                  </p>
-                )}
                 {s.upvotes > 0 && (
                   <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
                     {s.upvotes} RECOGNIZED
