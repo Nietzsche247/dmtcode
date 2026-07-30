@@ -28,7 +28,7 @@ export const ShareConvergence = ({ symbolId, seenItCount }: ShareConvergenceProp
   const shareText =
     seenItCount > 0
       ? `1 of ${seenItCount.toLocaleString()} recognized this symbol on dmtcode.com`
-      : 'Be the first to recognize this symbol on dmtcode.com';
+      : 'Recognize this symbol on dmtcode.com';
 
   const handleCopy = async () => {
     try {

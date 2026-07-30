@@ -138,7 +138,7 @@ export const SeenItButton = ({
           <div className="p-6">
             <DialogHeader className="text-left space-y-3">
               <DialogTitle className="font-display text-2xl leading-tight">
-                {count > 0 ? 'You are not the only one.' : 'You may be the first to recognize this.'}
+                {count > 0 ? 'You are not the only one.' : 'Recognize this shape? Mark it.'}
               </DialogTitle>
               <DialogDescription className="text-base text-muted-foreground">
                 {count > 0

@@ -343,7 +343,7 @@ const SymbolDetail = () => {
 
                 {isCuratedExample(symbol) && (
                   <div className="space-y-2">
-                    <Badge variant="secondary">Curated example</Badge>
+                    <Badge variant="secondary">Reference symbol</Badge>
                     <p className="text-sm text-muted-foreground">
                       {CURATED_EXAMPLE_NOTICE}
                     </p>
@@ -565,7 +565,7 @@ const SymbolDetail = () => {
                         </div>
                         {isCuratedExample(related) && (
                           <p className="text-[10px] text-muted-foreground mb-1">
-                            Curated example
+                            Reference symbol
                           </p>
                         )}
                         <div className="flex items-center justify-between text-xs text-muted-foreground">

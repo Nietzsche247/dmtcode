@@ -53,10 +53,8 @@ export const SymbolCard = ({
     );
   };
 
-  // The is_curated_example column is authoritative. The image_url prefix is a
-  // fallback so the original starter rows stay labelled even where the caller
-  // has not passed the column through.
-  const isCurated = isCuratedExample({ image_url: imageUrl, is_curated_example: curated });
+  // The is_curated_example column is the only input to this classification.
+  const isCurated = isCuratedExample({ is_curated_example: curated });
 
   const getInitials = (name: string) => {
     return name
@@ -92,7 +90,7 @@ export const SymbolCard = ({
       <div className="space-y-3">
         {isCurated && (
           <div className="space-y-1">
-            <Badge variant="secondary" className="text-xs">Curated example</Badge>
+            <Badge variant="secondary" className="text-xs">Reference symbol</Badge>
             <p className="text-xs text-muted-foreground leading-relaxed">
               {CURATED_EXAMPLE_NOTICE}
             </p>
