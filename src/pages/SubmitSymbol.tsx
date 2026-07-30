@@ -1,20 +1,44 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { SubmissionWizard } from '@/components/submission/SubmissionWizard';
+import { SignInToContribute } from '@/components/SignInToContribute';
+import { supabase } from '@/integrations/supabase/client';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 /**
- * The drawing tool is open to anyone. No sign in, no account, no email is
- * required to draw a symbol and submit it. A signed in contributor still has
- * the submission attached to their account; a signed out visitor submits with
- * no contributor identity at all.
+ * Reading is open to everyone. Writing is not. Submitting a symbol requires an
+ * account, because every submission carries a public avatar profile name, keeps
+ * the contributor's email hidden, and feeds the leaderboard. An anonymous
+ * submission could do none of those things.
  */
 const SubmitSymbol = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (cancelled) return;
+      setUserId(data.user?.id ?? null);
+      setChecking(false);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
+
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (searchParams.get('authenticated') === '1') {
@@ -30,7 +54,7 @@ const SubmitSymbol = () => {
     <>
       <Helmet>
         <title>Submit Symbol | DMT Code</title>
-        <meta name="description" content="Draw and submit a visual symbol to the DMT Code registry. The drawing tool is open to anyone, with no account required." />
+        <meta name="description" content="Draw and submit a visual symbol to the DMT Code registry. Browsing is open to everyone; submitting requires a free account so your work is credited to your profile." />
         <link rel="canonical" href="https://dmtcode.com/submit-symbol" />
         <meta name="robots" content="noindex, follow" />
       </Helmet>
@@ -40,7 +64,18 @@ const SubmitSymbol = () => {
 
       <main id="main-content" role="main" className="min-h-screen pt-8 pb-16">
         <div className="max-w-4xl mx-auto px-4">
-          <SubmissionWizard />
+          {checking ? (
+            <div className="flex justify-center py-24">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : userId ? (
+            <SubmissionWizard />
+          ) : (
+            <SignInToContribute
+              title="An account is needed to submit a symbol"
+              body="Browsing the whole library is open to everyone. Submitting requires a free account: your email stays hidden, you get a public avatar profile name, and everything you contribute is credited to you and counted on the leaderboard."
+            />
+          )}
         </div>
       </main>
 
