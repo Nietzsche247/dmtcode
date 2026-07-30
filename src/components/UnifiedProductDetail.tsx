@@ -289,7 +289,7 @@ export const UnifiedProductDetail = ({
               {relatedItems.map(related => (
                 <Link
                   key={related.slug}
-                  to={`${relatedBasePath}/${related.slug}`}
+                  to={isResearch ? "/prepare" : `${relatedBasePath}/${related.slug}`}
                   className="group relative rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300"
                 >
                   <div className="absolute inset-x-0 bottom-0 h-[1px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
