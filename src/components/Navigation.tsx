@@ -103,7 +103,6 @@ export const Navigation = () => {
   const explorerItems = [
     { path: '/events', label: 'Events & Retreats' },
     { path: '/retreats', label: 'Retreat centers' },
-    { path: '/tools', label: 'Tools & Equipment' },
     { path: '/leaderboard', label: 'Community' },
     { path: '/co-witnesses', label: 'Co-witness wall' },
   ];

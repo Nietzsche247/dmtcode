@@ -114,7 +114,7 @@ const Woo = () => {
               Explore Jewish mysticism symbols and protective amulets. Each item represents the power of characters, symbols, and sacred letters in faith traditions.
             </p>
             <Button 
-              onClick={() => navigate('/tools')}
+              onClick={() => navigate('/prepare')}
               variant="outline"
               size="lg"
               className="text-primary border-primary hover:bg-primary/10"
@@ -218,7 +218,7 @@ const Woo = () => {
               Explore our research-grade lasers and lenses for 650nm laser protocol experiments.
             </p>
             <Button 
-              onClick={() => navigate('/tools')}
+              onClick={() => navigate('/prepare')}
               size="lg"
               className="text-lg px-8"
             >

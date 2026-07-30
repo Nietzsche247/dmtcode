@@ -2363,7 +2363,13 @@ async function sbGetRows(
       Accept: "application/json",
     },
   });
-  if (!res.ok) return [];
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    console.error(
+      `sbGetRows failed: table=${table} status=${res.status} body=${body}`,
+    );
+    return [];
+  }
   return (await res.json()) as Array<Record<string, unknown>>;
 }
 
