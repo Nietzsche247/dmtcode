@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { promptSignIn } from '@/lib/signInPrompt';
 import { useDashboardTracking } from './useDashboardTracking';
 
 export const useSaveSymbol = (symbolId: string) => {
