@@ -52,7 +52,7 @@ export const UnifiedProductDetail = ({
   const { addItem } = useCartStore();
   const isResearch = mode === 'research';
   
-  const backLink = isResearch ? '/tools' : '/community/woo';
+  const backLink = isResearch ? '/prepare' : '/community/woo';
   const backLabel = isResearch ? 'Back to Tools' : 'Back to Mysticism Store';
   const pageTitle = isResearch ? 'DMT Code Project Tools' : 'DMT Code Mysticism Store';
   const specsTitle = isResearch ? 'Specifications' : 'Details';
@@ -91,7 +91,7 @@ export const UnifiedProductDetail = ({
 
 
   const containingBundles = bundles.filter(bundle => bundle.items.includes(item.slug));
-  const relatedBasePath = isResearch ? '/tools' : '/community/woo';
+  const relatedBasePath = isResearch ? '/prepare' : '/community/woo';
 
   return (
     <div className="min-h-screen bg-background">
@@ -242,7 +242,7 @@ export const UnifiedProductDetail = ({
               {containingBundles.map(bundle => (
                 <Link
                   key={bundle.id}
-                  to={`/bundles/${bundle.id}`}
+                  to="/prepare"
                   className="group relative p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-300"
                 >
                   <div className="absolute inset-x-0 bottom-0 h-[1px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -269,7 +269,7 @@ export const UnifiedProductDetail = ({
                   Explore calibrated 650nm lasers and optical equipment for the Goler protocol.
                 </p>
               </div>
-              <Link to="/tools">
+              <Link to="/prepare">
                 <Button variant="outline" size="lg">
                   View Research Tools →
                 </Button>
@@ -289,7 +289,7 @@ export const UnifiedProductDetail = ({
               {relatedItems.map(related => (
                 <Link
                   key={related.slug}
-                  to={`${relatedBasePath}/${related.slug}`}
+                  to={isResearch ? "/prepare" : `${relatedBasePath}/${related.slug}`}
                   className="group relative rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300"
                 >
                   <div className="absolute inset-x-0 bottom-0 h-[1px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />

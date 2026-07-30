@@ -387,7 +387,7 @@ const ProductDetail = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground">Product not found</p>
-          <Button onClick={() => navigate("/tools")}>Back to Tools</Button>
+          <Button onClick={() => navigate("/prepare")}>Back to Tools</Button>
         </div>
       </div>
     );
@@ -470,7 +470,7 @@ const ProductDetail = () => {
           {/* Back to Bundle link when coming from bundle context */}
           {fromBundle && (
             <Link 
-              to={`/bundles/${fromBundle}`}
+              to="/prepare"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -494,7 +494,7 @@ const ProductDetail = () => {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/bundles/${fromBundle}`}>
+                    <BreadcrumbLink href="/prepare">
                       {fromBundle === 'starter' ? 'Starter Kit' : 
                        fromBundle === 'gateway' ? 'Gateway Kit' :
                        fromBundle === 'complete' ? 'Complete Kit' :
@@ -781,7 +781,7 @@ const ProductDetail = () => {
                 <p className="text-muted-foreground mb-4">
                   Get everything you need for the 650nm protocol in one bundle. Includes laser, diffraction grating, and documentation tools.
                 </p>
-                <Button onClick={() => navigate('/tools')} variant="outline" className="border-primary/50">
+                <Button onClick={() => navigate('/prepare')} variant="outline" className="border-primary/50">
                   View Bundles →
                 </Button>
               </Card>
