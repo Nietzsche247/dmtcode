@@ -348,7 +348,7 @@ const SymbolDetail = () => {
                       {CURATED_EXAMPLE_NOTICE}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Curated by the project from public imagery in November 2025 as part of the registry's starting corpus.
+                      Added by the project from public imagery in November 2025 as part of the registry's starting corpus.
                     </p>
                   </div>
                 )}
