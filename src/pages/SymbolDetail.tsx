@@ -30,13 +30,11 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
-  isCuratedExample,
   isReviewOverdue,
   visibilityLabel,
   moderationLabel,
   evidenceLabel,
   moderationTone,
-  CURATED_EXAMPLE_NOTICE,
 } from '@/lib/submissionStatus';
 
 interface SymbolData {
@@ -51,7 +49,6 @@ interface SymbolData {
   visibility_status?: string | null;
   moderation_status?: string | null;
   evidence_status?: string | null;
-  is_curated_example?: boolean | null;
   published_at?: string | null;
   review_due_at?: string | null;
   source_method: string | null;
@@ -78,7 +75,6 @@ interface RelatedSymbol {
   image_url: string;
   tags: string[] | null;
   upvotes: number;
-  is_curated_example?: boolean | null;
 }
 
 interface Validator {
@@ -205,7 +201,7 @@ const SymbolDetail = () => {
     if (symbolData.tags && symbolData.tags.length > 0) {
       const { data: related } = await supabase
         .from('symbol_submissions')
-        .select('id, image_url, tags, upvotes, is_curated_example')
+        .select('id, image_url, tags, upvotes')
         .eq('status', 'approved')
         .neq('id', symbolId)
         .contains('tags', [symbolData.tags[0]])
@@ -340,18 +336,6 @@ const SymbolDetail = () => {
                     />
                   )}
                 </Card>
-
-                {isCuratedExample(symbol) && (
-                  <div className="space-y-2">
-                    <Badge variant="secondary">Reference symbol</Badge>
-                    <p className="text-sm text-muted-foreground">
-                      {CURATED_EXAMPLE_NOTICE}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Added by the project from public imagery in November 2025 as part of the registry's starting corpus.
-                    </p>
-                  </div>
-                )}
 
 
                 <div className="flex justify-center">
@@ -563,11 +547,6 @@ const SymbolDetail = () => {
                             loading="lazy"
                           />
                         </div>
-                        {isCuratedExample(related) && (
-                          <p className="text-[10px] text-muted-foreground mb-1">
-                            Reference symbol
-                          </p>
-                        )}
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           {related.upvotes > 0 ? (
                             <span className="flex items-center gap-1">
