@@ -2006,7 +2006,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   "submit-symbol": {
     title: "Submit a symbol to the registry | DMT Code",
-    description: "The account holder tool for drawing a symbol and adding it to the DMT Code visual registry with its observation metadata.",
+    description: "The drawing tool for adding a symbol to the DMT Code visual registry with its observation metadata. Open to anyone, with no account required.",
     heading: "Submit a symbol to the registry",
     robots: "noindex, follow",
     paragraphs: [
