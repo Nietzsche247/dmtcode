@@ -109,20 +109,20 @@ const Registry = () => {
     <>
       <Helmet>
         <title>DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)</title>
-        <meta name="description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences. Observer submissions and curated examples are listed separately, with structured metadata and free CC-BY-4.0 data." />
+        <meta name="description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
         <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0, null reports, baseline data" />
         <link rel="canonical" href="https://dmtcode.com/registry" />
         
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
-        <meta property="og:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences. Observer submissions and curated examples are listed separately, with structured metadata and free CC-BY-4.0 data." />
+        <meta property="og:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
         <meta property="og:url" content="https://dmtcode.com/registry" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/registry" />
         <meta name="twitter:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
-        <meta name="twitter:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences. Observer submissions and curated examples are listed separately, with structured metadata and free CC-BY-4.0 data." />
+        <meta name="twitter:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
         <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -132,7 +132,7 @@ const Registry = () => {
                 "@type": "Dataset",
                 "@id": "https://dmtcode.com/registry",
                 "name": "DMT Code Visual Symbol Registry",
-                "description": "Open catalogue of discrete visual forms reported in connection with N,N-DMT experiences, together with curated examples added by the site operator and labelled as such.",
+                "description": "Open catalogue of discrete visual forms reported in connection with N,N-DMT experiences.",
                 "url": "https://dmtcode.com/registry",
                 "license": "https://creativecommons.org/licenses/by/4.0/",
                 "creator": { "@type": "Organization", "name": "DMT Code" },
