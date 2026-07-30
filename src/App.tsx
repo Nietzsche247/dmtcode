@@ -44,12 +44,9 @@ import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
 import SubmitProduct from "./pages/SubmitProduct";
 import SubmitSymbol from "./pages/SubmitSymbol";
-import Bundles from "./pages/Bundles";
 import Dataset from "./pages/Dataset";
 import Trials from "./pages/Trials";
 import TrialDetail from "./pages/TrialDetail";
-// Lazy load BundleDetail
-const BundleDetail = lazy(() => import("./pages/BundleDetail"));
 // Lazy load Analysis page
 const Analysis = lazy(() => import("./pages/Analysis"));
 // Lazy load API symbols page
@@ -85,10 +82,6 @@ const GA4Tracker = () => {
   return null;
 };
 
-// Lazy load Tools page to isolate potential crashes
-const Tools = lazy(() => import("./pages/Tools"));
-// Lazy load BundleItemDetail page
-const BundleItemDetail = lazy(() => import("./pages/BundleItemDetail"));
 // Lazy load WooProductDetail page
 const WooProductDetail = lazy(() => import("./pages/WooProductDetail"));
 
@@ -133,20 +126,6 @@ const App = () => (
           <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
-          <Route path="/tools" element={
-            <ErrorBoundary>
-              <Suspense fallback={<CalibratingLasersLoader />}>
-                <Tools />
-              </Suspense>
-            </ErrorBoundary>
-          } />
-          <Route path="/tools/:slug" element={
-            <ErrorBoundary>
-              <Suspense fallback={<CalibratingLasersLoader />}>
-                <BundleItemDetail />
-              </Suspense>
-            </ErrorBoundary>
-          } />
           {/* /woo redirects to /community/woo */}
           <Route path="/woo" element={<Navigate to="/community/woo" replace />} />
           <Route path="/community/woo" element={<Woo />} />
@@ -222,14 +201,6 @@ const App = () => (
           <Route path="/dataset" element={<Dataset />} />
           <Route path="/trials" element={<Trials />} />
           <Route path="/trials/:id" element={<TrialDetail />} />
-          <Route path="/bundles" element={<Bundles />} />
-          <Route path="/bundles/:bundleId" element={
-            <ErrorBoundary>
-              <Suspense fallback={<CalibratingLasersLoader />}>
-                <BundleDetail />
-              </Suspense>
-            </ErrorBoundary>
-          } />
           <Route path="/analysis" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>

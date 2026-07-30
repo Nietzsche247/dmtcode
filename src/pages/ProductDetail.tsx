@@ -490,7 +490,7 @@ const ProductDetail = () => {
               {fromBundle ? (
                 <>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/bundles">Bundles</BreadcrumbLink>
+                    <BreadcrumbLink href="/prepare">Bundles</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
@@ -504,7 +504,7 @@ const ProductDetail = () => {
                 </>
               ) : (
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/tools">Tools</BreadcrumbLink>
+                  <BreadcrumbLink href="/prepare">Tools</BreadcrumbLink>
                 </BreadcrumbItem>
               )}
               <BreadcrumbSeparator />
