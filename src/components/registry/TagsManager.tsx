@@ -65,7 +65,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
 
   const addTag = async () => {
     if (!userId) {
-      toast.error('Please log in to add tags');
+      promptSignIn('add a tag');
       return;
     }
 
@@ -101,7 +101,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
 
   const toggleVote = async (tagId: string) => {
     if (!userId) {
-      toast.error('Please log in to vote on tags');
+      promptSignIn('vote on a tag');
       return;
     }
 

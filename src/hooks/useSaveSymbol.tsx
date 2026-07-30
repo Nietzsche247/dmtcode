@@ -39,7 +39,7 @@ export const useSaveSymbol = (symbolId: string) => {
 
   const toggleSave = useCallback(async () => {
     if (!userId) {
-      toast.error('Please log in to save symbols');
+      promptSignIn('save a symbol');
       return false;
     }
 
