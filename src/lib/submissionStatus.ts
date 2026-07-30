@@ -16,14 +16,13 @@ export interface SubmissionStatusRow {
 }
 
 /**
- * Curated examples are flagged by the is_curated_example column. The image_url
- * prefix check is kept as a fallback so the five original starter rows stay
- * classified correctly even where that column has not been selected.
+ * Reference symbols are flagged by the is_curated_example column and by nothing
+ * else. Where an image happens to be hosted says nothing about who made it, so
+ * no image_url heuristic may classify a contributor's upload.
  */
 export const isCuratedExample = (r: SubmissionStatusRow | null | undefined): boolean => {
   if (!r) return false;
-  if (r.is_curated_example === true) return true;
-  return typeof r.image_url === 'string' && r.image_url.startsWith('/placeholder-symbol-');
+  return r.is_curated_example === true;
 };
 
 /**
@@ -38,9 +37,9 @@ export const isReviewOverdue = (r: SubmissionStatusRow | null | undefined): bool
   return new Date(r.review_due_at).getTime() < Date.now();
 };
 
-/** The notice that must appear wherever a curated example is shown to a reader. */
+/** The notice that must appear wherever a reference symbol is shown to a reader. */
 export const CURATED_EXAMPLE_NOTICE =
-  'Curated example. Not an observer submission. Excluded from evidence and convergence totals.';
+  'Reference symbol. Not an observer submission. Excluded from evidence and convergence totals.';
 
 export type StatusTone = 'neutral' | 'positive' | 'caution' | 'negative';
 

@@ -191,14 +191,14 @@ export const RegistryBrowser = () => {
     return filtered;
   }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
 
-  // Observer submissions and curated examples are rendered in two separate
-  // sections and are never mixed into one grid. A curated example is an
+  // Observer submissions and reference symbols are rendered in two separate
+  // sections and are never mixed into one grid. A reference symbol is an
   // illustration added by the site operator, not a report from a person who saw
   // something, and a reader must be able to tell which is which at a glance.
   const observerSymbols = useMemo(
     () =>
       filteredSymbols.filter(
-        (s) => !isCuratedExample({ image_url: s.image_url, is_curated_example: s.is_curated_example })
+        (s) => !isCuratedExample({ is_curated_example: s.is_curated_example })
       ),
     [filteredSymbols]
   );
@@ -206,7 +206,7 @@ export const RegistryBrowser = () => {
   const curatedSymbols = useMemo(
     () =>
       filteredSymbols.filter((s) =>
-        isCuratedExample({ image_url: s.image_url, is_curated_example: s.is_curated_example })
+        isCuratedExample({ is_curated_example: s.is_curated_example })
       ),
     [filteredSymbols]
   );
@@ -220,7 +220,7 @@ export const RegistryBrowser = () => {
   }
   if (curatedSymbols.length > 0) {
     resultSegments.push(
-      `${curatedSymbols.length} curated example${curatedSymbols.length === 1 ? '' : 's'}`
+      `${curatedSymbols.length} reference symbol${curatedSymbols.length === 1 ? '' : 's'}`
     );
   }
 
@@ -244,7 +244,7 @@ export const RegistryBrowser = () => {
             Browse Registry
           </h2>
           <p className="text-muted-foreground text-center md:text-left">
-            Observer submissions and curated examples, listed separately and never mixed
+            Observer submissions and reference symbols, listed separately and never mixed
           </p>
         </div>
         <Button 
@@ -366,10 +366,10 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
-      {/* Curated examples */}
+      {/* Reference symbols */}
       {!loading && curatedSymbols.length > 0 && (
         <div className="mt-16 pt-12 border-t border-border/50">
-          <h3 className="text-xl md:text-2xl font-bold mb-2">Curated examples</h3>
+          <h3 className="text-xl md:text-2xl font-bold mb-2">Reference symbols</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-3xl leading-relaxed">
             These were added by the site operator in November 2025 from public imagery so the
             registry would not open empty. They are not observer submissions. Nobody reported

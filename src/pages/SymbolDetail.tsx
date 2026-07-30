@@ -343,12 +343,12 @@ const SymbolDetail = () => {
 
                 {isCuratedExample(symbol) && (
                   <div className="space-y-2">
-                    <Badge variant="secondary">Curated example</Badge>
+                    <Badge variant="secondary">Reference symbol</Badge>
                     <p className="text-sm text-muted-foreground">
                       {CURATED_EXAMPLE_NOTICE}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Curated by the project from public imagery in November 2025 as part of the registry's starting corpus.
+                      Added by the project from public imagery in November 2025 as part of the registry's starting corpus.
                     </p>
                   </div>
                 )}
@@ -565,7 +565,7 @@ const SymbolDetail = () => {
                         </div>
                         {isCuratedExample(related) && (
                           <p className="text-[10px] text-muted-foreground mb-1">
-                            Curated example
+                            Reference symbol
                           </p>
                         )}
                         <div className="flex items-center justify-between text-xs text-muted-foreground">

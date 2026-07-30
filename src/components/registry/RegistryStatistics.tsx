@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
  *
  * Two rules govern this component.
  *
- * 1. Curated examples never count as observer submissions. The forms added by
+ * 1. Reference symbols never count as observer submissions. The forms added by
  *    the site operator in November 2025 are illustrations, not reports from
  *    people who saw something, and folding them into a contributor total would
  *    overstate participation.
@@ -97,7 +97,7 @@ export const RegistryStatistics = () => {
     <section className="container mx-auto px-4 py-12">
       <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">Live Statistics</h2>
       <p className="text-center text-sm text-muted-foreground mb-8 max-w-3xl mx-auto">
-        Counted live from the database. Curated examples added by the site operator are counted
+        Counted live from the database. Reference symbols added by the site operator are counted
         separately and are never folded into the observer total. Anonymous captures made through
         the drawing tool are held in a different table and are not counted here.
       </p>
@@ -137,7 +137,7 @@ export const RegistryStatistics = () => {
           <div className="text-3xl md:text-4xl font-bold text-gold mb-2">
             {stats.curatedExamples}
           </div>
-          <div className="text-sm text-muted-foreground">Curated Examples</div>
+          <div className="text-sm text-muted-foreground">Reference Symbols</div>
           <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
             Added by the site operator, excluded from every evidence total
           </p>

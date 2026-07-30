@@ -1830,7 +1830,7 @@ export type Database = {
           tags: string[] | null
           updated_at: string
           upvotes: number
-          user_id: string
+          user_id: string | null
           vector_json: Json | null
           visibility_status: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength: string | null
@@ -1861,7 +1861,7 @@ export type Database = {
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
-          user_id: string
+          user_id?: string | null
           vector_json?: Json | null
           visibility_status?: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength?: string | null
@@ -1892,7 +1892,7 @@ export type Database = {
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
-          user_id?: string
+          user_id?: string | null
           vector_json?: Json | null
           visibility_status?: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength?: string | null

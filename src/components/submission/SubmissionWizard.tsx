@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { supabase } from '@/integrations/supabase/client';
 import { SymbolCanvas } from '@/components/registry/SymbolCanvas';
@@ -32,7 +31,6 @@ export const SubmissionWizard = () => {
   const [symmetryMode, setSymmetryMode] = useState(false);
   const fabricCanvasRef = useRef<FabricCanvas | null>(null);
   
-  const navigate = useNavigate();
   const { trackStepCompleted, trackSubmissionSubmitted, trackSubmissionAbandoned } = useSubmissionTracking();
   const { trackDrawingSaved } = useCanvasTracking();
   const { trackSymbolDrawn, trackSymbolSubmitted } = useUgcTracking();
@@ -72,13 +70,9 @@ export const SubmissionWizard = () => {
     setIsSubmitting(true);
 
     try {
-      // Get current user
+      // Contributor identity is optional. A signed out visitor may draw and
+      // submit; the row is then stored with no account attached.
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please sign in to submit');
-        navigate('/auth?returnTo=/submit-symbol');
-        return;
-      }
 
       // Convert base64 to blob
       const response = await fetch(imageData);
@@ -86,7 +80,7 @@ export const SubmissionWizard = () => {
 
       // Generate unique filename
       const timestamp = Date.now();
-      const filename = `${user.id}/${timestamp}.png`;
+      const filename = `${user ? user.id : 'anonymous'}/${timestamp}-${Math.random().toString(36).slice(2, 10)}.png`;
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
@@ -129,7 +123,7 @@ export const SubmissionWizard = () => {
       const { data: submission, error: insertError } = await supabase
         .from('symbol_submissions')
         .insert({
-          user_id: user.id,
+          user_id: user?.id ?? null,
           image_url: publicUrl,
           status: 'approved',
           description: metadata.description,

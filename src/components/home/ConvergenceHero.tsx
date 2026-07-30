@@ -55,8 +55,8 @@ export const ConvergenceHero = () => {
           setConfirmCount(count ?? top.upvotes ?? 0);
         }
 
-        // Observer submissions and curated examples are counted separately and
-        // are never merged into one total. A curated example is an illustration
+        // Observer submissions and reference symbols are counted separately and
+        // are never merged into one total. A reference symbol is an illustration
         // added by the site operator, not a report from a person who saw
         // something, and it must never inflate a count of observer reports.
         const { count: observers } = await supabase
@@ -116,7 +116,7 @@ export const ConvergenceHero = () => {
     countSegments.push(`${observerCount} OBSERVER REPORT${observerCount === 1 ? '' : 'S'}`);
   }
   if (curatedCount > 0) {
-    countSegments.push(`${curatedCount} CURATED EXAMPLE${curatedCount === 1 ? '' : 'S'}`);
+    countSegments.push(`${curatedCount} REFERENCE SYMBOL${curatedCount === 1 ? '' : 'S'}`);
   }
   if (verifiedCount > 0) {
     countSegments.push(`${verifiedCount} RECOGNIZED BY 3 OR MORE READERS`);
@@ -275,7 +275,7 @@ export const ConvergenceHero = () => {
                 </div>
                 {isCuratedExample(s) && (
                   <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
-                    CURATED EXAMPLE
+                    REFERENCE SYMBOL
                   </p>
                 )}
                 {s.upvotes > 0 && (
