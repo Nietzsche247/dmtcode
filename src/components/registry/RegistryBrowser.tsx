@@ -100,16 +100,38 @@ export const RegistryBrowser = () => {
       if (symbolIds.length > 0) {
         const { data: votes } = await supabase
           .from('symbol_votes')
-          .select('symbol_id')
-          .in('symbol_id', symbolIds)
-          .eq('vote_type', 'seen_it');
-        
+          .select('symbol_id, vote_type')
+          .in('symbol_id', symbolIds);
+
         if (votes) {
           const counts: Record<string, number> = {};
+          const similar: Record<string, number> = {};
           votes.forEach(v => {
-            counts[v.symbol_id] = (counts[v.symbol_id] || 0) + 1;
+            if (v.vote_type === 'seen_it') {
+              counts[v.symbol_id] = (counts[v.symbol_id] || 0) + 1;
+            } else if ((v.vote_type as string) === 'similar') {
+              similar[v.symbol_id] = (similar[v.symbol_id] || 0) + 1;
+            }
           });
           setValidationCounts(counts);
+          setSimilarCounts(similar);
+        }
+
+        const { data: tagRows } = await supabase
+          .from('symbol_tags')
+          .select('symbol_id, tag_name, upvotes')
+          .in('symbol_id', symbolIds);
+
+        if (tagRows) {
+          const grouped: Record<string, { name: string; count: number }[]> = {};
+          tagRows.forEach(t => {
+            if (!t.symbol_id) return;
+            (grouped[t.symbol_id] ||= []).push({ name: t.tag_name, count: t.upvotes || 0 });
+          });
+          Object.keys(grouped).forEach(k => {
+            grouped[k] = grouped[k].sort((a, b) => b.count - a.count).slice(0, 5);
+          });
+          setCommunityTagsMap(grouped);
         }
       }
     }
