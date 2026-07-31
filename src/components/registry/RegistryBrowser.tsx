@@ -266,9 +266,9 @@ export const RegistryBrowser = () => {
 
       {/* Loading state */}
       {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-[360px] rounded-lg" />
+            <Skeleton key={i} className="h-[320px] rounded-lg" />
           ))}
         </div>
       )}
@@ -315,7 +315,7 @@ export const RegistryBrowser = () => {
             Forms submitted by people reporting what they saw. Each one publishes the moment it is
             submitted. Publication here is not review and it is not approval.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredSymbols.map((symbol) => (
               <SymbolCard
                 key={symbol.id}
