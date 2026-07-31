@@ -1805,6 +1805,7 @@ export type Database = {
       }
       symbol_submissions: {
         Row: {
+          confidence_rating: number | null
           context_note: string | null
           created_at: string
           description: string | null
@@ -1819,14 +1820,18 @@ export type Database = {
           moderated_at: string | null
           moderated_by: string | null
           moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
+          privacy_level: string | null
+          publication_consent: boolean
           published_at: string | null
           recurrence: string | null
+          registry_glyph_id: string | null
           rejection_reason: string | null
           review_due_at: string | null
           source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
           surface_type: string | null
           svg_data: string | null
+          symmetry: string | null
           tags: string[] | null
           updated_at: string
           upvotes: number
@@ -1836,6 +1841,7 @@ export type Database = {
           wavelength: string | null
         }
         Insert: {
+          confidence_rating?: number | null
           context_note?: string | null
           created_at?: string
           description?: string | null
@@ -1850,14 +1856,18 @@ export type Database = {
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          privacy_level?: string | null
+          publication_consent?: boolean
           published_at?: string | null
           recurrence?: string | null
+          registry_glyph_id?: string | null
           rejection_reason?: string | null
           review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
           svg_data?: string | null
+          symmetry?: string | null
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
@@ -1867,6 +1877,7 @@ export type Database = {
           wavelength?: string | null
         }
         Update: {
+          confidence_rating?: number | null
           context_note?: string | null
           created_at?: string
           description?: string | null
@@ -1881,14 +1892,18 @@ export type Database = {
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          privacy_level?: string | null
+          publication_consent?: boolean
           published_at?: string | null
           recurrence?: string | null
+          registry_glyph_id?: string | null
           rejection_reason?: string | null
           review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
           surface_type?: string | null
           svg_data?: string | null
+          symmetry?: string | null
           tags?: string[] | null
           updated_at?: string
           upvotes?: number
@@ -1897,7 +1912,15 @@ export type Database = {
           visibility_status?: Database["public"]["Enums"]["symbol_visibility_status"]
           wavelength?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "symbol_submissions_registry_glyph_id_fkey"
+            columns: ["registry_glyph_id"]
+            isOneToOne: true
+            referencedRelation: "registry_glyphs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       symbol_tag_votes: {
         Row: {
