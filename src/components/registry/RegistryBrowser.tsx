@@ -37,6 +37,8 @@ export const RegistryBrowser = () => {
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
+  const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
+  const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,16 +100,38 @@ export const RegistryBrowser = () => {
       if (symbolIds.length > 0) {
         const { data: votes } = await supabase
           .from('symbol_votes')
-          .select('symbol_id')
-          .in('symbol_id', symbolIds)
-          .eq('vote_type', 'seen_it');
-        
+          .select('symbol_id, vote_type')
+          .in('symbol_id', symbolIds);
+
         if (votes) {
           const counts: Record<string, number> = {};
+          const similar: Record<string, number> = {};
           votes.forEach(v => {
-            counts[v.symbol_id] = (counts[v.symbol_id] || 0) + 1;
+            if (v.vote_type === 'seen_it') {
+              counts[v.symbol_id] = (counts[v.symbol_id] || 0) + 1;
+            } else if ((v.vote_type as string) === 'similar') {
+              similar[v.symbol_id] = (similar[v.symbol_id] || 0) + 1;
+            }
           });
           setValidationCounts(counts);
+          setSimilarCounts(similar);
+        }
+
+        const { data: tagRows } = await supabase
+          .from('symbol_tags')
+          .select('symbol_id, tag_name, upvotes')
+          .in('symbol_id', symbolIds);
+
+        if (tagRows) {
+          const grouped: Record<string, { name: string; count: number }[]> = {};
+          tagRows.forEach(t => {
+            if (!t.symbol_id) return;
+            (grouped[t.symbol_id] ||= []).push({ name: t.tag_name, count: t.upvotes || 0 });
+          });
+          Object.keys(grouped).forEach(k => {
+            grouped[k] = grouped[k].sort((a, b) => b.count - a.count).slice(0, 5);
+          });
+          setCommunityTagsMap(grouped);
         }
       }
     }
@@ -266,7 +290,7 @@ export const RegistryBrowser = () => {
 
       {/* Loading state */}
       {loading && (
-        <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {[...Array(6)].map((_, i) => (
             <Skeleton key={i} className="h-[320px] rounded-lg" />
           ))}
@@ -315,7 +339,7 @@ export const RegistryBrowser = () => {
             Forms submitted by people reporting what they saw. Each one publishes the moment it is
             submitted. Publication here is not review and it is not approval.
           </p>
-          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredSymbols.map((symbol) => (
               <SymbolCard
                 key={symbol.id}
@@ -334,6 +358,8 @@ export const RegistryBrowser = () => {
                 createdAt={symbol.created_at}
                 submitterId={symbol.user_id}
                 highlightTerms={highlightTerms}
+                similarCount={similarCounts[symbol.id] || 0}
+                communityTags={communityTagsMap[symbol.id] || []}
               />
             ))}
           </div>
