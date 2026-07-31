@@ -37,6 +37,8 @@ export const RegistryBrowser = () => {
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
+  const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
+  const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
   
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
