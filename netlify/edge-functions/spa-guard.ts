@@ -26,6 +26,8 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "manifest.json", "timeline.json", "favicon.svg",
 ]);
 
+const ASSET_RE = /\.[a-z0-9]{2,5}$/i;
+
 // Prefixes served by another edge function or static asset the SPA fallback
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
@@ -45,9 +47,24 @@ export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  // Root and every path with a file extension pass through (assets, images).
-  if (path === "/" || /\.[a-z0-9]{2,5}$/i.test(path)) {
+  if (path === "/") {
     return context.next();
+  }
+
+  // Asset-shaped request. Let it through, then check what actually came back.
+  // If the SPA fallback answered an asset request with the HTML shell, the file
+  // does not exist and the honest answer is 404, not a 200 that looks like a
+  // page. .html paths are excluded because HTML is their correct content type.
+  if (ASSET_RE.test(path)) {
+    const res = await context.next();
+    if (
+      res.status === 200 &&
+      !/\.html?$/i.test(path) &&
+      (res.headers.get("content-type") || "").toLowerCase().includes("text/html")
+    ) {
+      return notFound();
+    }
+    return res;
   }
 
   const segs = path.replace(/^\/+/, "").split("/");
