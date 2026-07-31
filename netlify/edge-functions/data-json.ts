@@ -261,10 +261,12 @@ export default async (req: Request): Promise<Response> => {
     // policy on this table is expressed in terms of the legacy status column.
     // A database trigger keeps status and visibility_status in sync, so this is
     // the same set of rows as visibility_status=eq.public.
+    // publication_consent gates the CC BY export. Display consent (privacy_level)
+    // and export consent are different grants; this file must honour the second.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at",
-      "status=eq.approved"
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent",
+      "status=eq.approved&publication_consent=eq.true"
     ),
     fetchAll(
       "theories",
