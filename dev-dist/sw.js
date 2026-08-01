@@ -82,7 +82,7 @@ define(['./workbox-15ec2ecc'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "/index.html",
-    "revision": "0.76qscbs1ot"
+    "revision": "0.6om63v7mi18"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/index.html"), {
@@ -106,8 +106,9 @@ define(['./workbox-15ec2ecc'], (function (workbox) { 'use strict';
       maxAgeSeconds: 300
     })]
   }), 'GET');
-  workbox.registerRoute(/\/data\.json$/, new workbox.StaleWhileRevalidate({
+  workbox.registerRoute(/\/data\.json$/, new workbox.NetworkFirst({
     "cacheName": "data-json-cache",
+    "networkTimeoutSeconds": 10,
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 5,
       maxAgeSeconds: 3600
