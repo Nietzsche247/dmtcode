@@ -53,10 +53,6 @@ export const SymbolCard = ({
     return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   })();
 
-  const tagLine = tags && tags.length > 0
-    ? tags.slice(0, 5).map(t => t.toLowerCase()).join(', ')
-    : null;
-
   const communityTagLine = communityTags.length > 0
     ? communityTags.slice(0, 5).map(t => `${t.name} ${t.count}`).join('  ')
     : null;
@@ -85,20 +81,6 @@ export const SymbolCard = ({
           {captureDate ? <span className="ml-3">{captureDate}</span> : null}
         </p>
 
-        {description && (
-          <p className="text-[13px] text-muted-foreground line-clamp-2">
-            {highlightText(description)}
-          </p>
-        )}
-
-        {tagLine && (
-          <p
-            className="font-mono text-[11px] lowercase text-muted-foreground/80"
-            title="Tags chosen by the submitter"
-          >
-            {highlightTerms.length ? highlightText(tagLine) : tagLine}
-          </p>
-        )}
 
         {communityTagLine && (
           <p
