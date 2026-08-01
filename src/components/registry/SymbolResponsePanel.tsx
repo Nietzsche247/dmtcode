@@ -211,6 +211,12 @@ export const SymbolResponsePanel = ({
           className="w-full justify-center"
           imageUrl={imageUrl}
         />
+        <SimilarButton
+          symbolId={targetId}
+          submitterId={submitterId}
+          size="lg"
+          className="w-full justify-center"
+        />
         <DidNotMatchButton
           symbolId={targetId}
           submitterId={submitterId}
