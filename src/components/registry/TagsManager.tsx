@@ -159,13 +159,29 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
           className="flex-1"
         />
         <Button
-          onClick={addTag}
+          onClick={() => addTag()}
           disabled={loading || !newTag.trim()}
           size="sm"
         >
           <Plus className="w-4 h-4" />
         </Button>
       </div>
+
+      {suggestions.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {suggestions.map(({ tag, count }) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => addTag(tag)}
+              disabled={loading}
+              className="px-2 py-1 text-xs rounded-full border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+            >
+              {tag} ({count})
+            </button>
+          ))}
+        </div>
+      )}
 
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
