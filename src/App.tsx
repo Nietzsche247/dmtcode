@@ -141,7 +141,7 @@ const App = () => (
           <Route path="/registry/tag/:tag" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
-                {(() => { const TagHub = lazy(() => import("./pages/TagHub")); return <TagHub />; })()}
+                <TagHub />
               </Suspense>
             </ErrorBoundary>
           } />
