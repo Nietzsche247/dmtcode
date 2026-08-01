@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { SeenItButton } from './SeenItButton';
+import { SimilarButton } from './SimilarButton';
 import { DidNotMatchButton } from './DidNotMatchButton';
 import { formatSealedAt } from '@/lib/sealFormat';
 
