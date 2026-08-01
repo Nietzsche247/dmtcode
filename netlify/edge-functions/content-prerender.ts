@@ -2601,6 +2601,19 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
   });
 
   const count = rows.length;
+
+  if (count === 0) {
+    return notFound404(await shellRes.text(), {
+      title: "Tag not found | DMT Code",
+      heading: "Tag not found",
+      text: "No symbol in the registry carries this tag. Browse the registry index or the tag hubs linked from symbol pages.",
+      canonical: `${SITE}/registry`,
+      backHref: `${SITE}/registry`,
+      backLabel: "Visual symbol registry",
+      marker: "tag-hub-not-found",
+    });
+  }
+
   const title = `Symbols tagged ${tag} — DMT Code Registry`;
   const metaDesc = clip(
     `Visual symbols in the DMT Code open registry tagged "${tag}". ${count} records with community recognition counts.`,
