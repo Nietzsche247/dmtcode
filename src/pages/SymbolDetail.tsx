@@ -289,10 +289,17 @@ const SymbolDetail = () => {
     return null;
   }
 
+  const short = symbol.id.slice(0, 8);
+  const titlePhrase = symbolTitlePhrase(symbol.tags || [], communityTags);
+  const pageTitle = titlePhrase
+    ? `${titlePhrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+    : `Symbol ${short} | DMT Code Registry`;
+  const seoKeywords = [...new Set([...(symbol.tags || []), ...communityTags.map((t) => t.name)])];
+
   return (
     <>
       <Helmet>
-        <title>{`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`}</title>
+        <title>{pageTitle}</title>
         <meta
           name="description"
           content={symbol.description || 'View symbol details, metadata, and community validations'}
