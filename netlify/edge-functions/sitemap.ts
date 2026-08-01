@@ -180,7 +180,7 @@ export default async (request: Request) => {
         })
       : null;
     const communityRows = (communityRes && communityRes.ok ? await communityRes.json() : []) as any[];
-    const seenPair = new Set<string>();
+
     for (const r of communityRows) {
       const t = r.tag_name as string;
       if (!t || !r.symbol_id) continue;
