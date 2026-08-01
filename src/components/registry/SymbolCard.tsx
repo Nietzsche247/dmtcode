@@ -53,9 +53,6 @@ export const SymbolCard = ({
     return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   })();
 
-  const communityTagLine = communityTags.length > 0
-    ? communityTags.slice(0, 5).map(t => `${t.name} ${t.count}`).join('  ')
-    : null;
 
   return (
     <Card className="group flex h-full flex-col gap-2 rounded-lg border border-border bg-card p-2 transition-all duration-200 hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10 motion-safe:hover:-translate-y-px">
@@ -76,18 +73,20 @@ export const SymbolCard = ({
 
       {/* Specimen metadata */}
       <div className="space-y-2">
-        <p className="font-mono text-[11px] text-muted-foreground">
+        <p className="-mt-1 font-mono text-[9px] font-bold text-muted-foreground tracking-wide">
           {specimenId}
           {captureDate ? <span className="ml-3">{captureDate}</span> : null}
         </p>
 
 
-        {communityTagLine && (
+        {communityTags.length > 0 && (
           <p
-            className="font-mono text-[11px] lowercase text-foreground/70"
+            className="font-mono text-[10px] lowercase leading-relaxed text-foreground/70"
             title="Tags added by readers after publication, ranked by agreement"
           >
-            {communityTagLine}
+            {communityTags.slice(0, 5).map(t => (
+              <span key={t.name} className="mr-2.5 whitespace-nowrap">{t.name}<sup className="ml-px text-[8px] font-bold text-muted-foreground">{t.count}</sup></span>
+            ))}
           </p>
         )}
       </div>
