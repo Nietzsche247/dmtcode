@@ -77,6 +77,40 @@ async function getRow(
   return rows[0] ?? null;
 }
 
+// This logic is duplicated verbatim in src/pages/SymbolDetail.tsx
+// Tags that describe study conditions, not the symbol. Excluded from display
+// phrases; retained in keywords.
+const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
+
+function symbolTitlePhrase(submitterTags: string[], communityTags: Array<{name: string; count: number}>): string {
+  const community = communityTags.filter(t => !CONTEXT_TAG_RE.test(t.name)).sort((a,b) => b.count - a.count).map(t => t.name);
+  const submitter = (submitterTags || []).filter(t => t && !CONTEXT_TAG_RE.test(t));
+  const pool = community.length >= 2 ? community : [...community, ...submitter.filter(t => !community.includes(t))];
+  const words = pool.slice(0, 3).map(t => t.toLowerCase().replace(/_/g, ' '));
+  if (words.length === 0) return '';
+  const phrase = words.join(' ');
+  return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
+
+async function getCommunityTags(id: string): Promise<Array<{name: string; count: number}>> {
+  try {
+    const api = `${SUPABASE_URL}/rest/v1/symbol_tags?symbol_id=eq.${id}&select=tag_name,upvotes`;
+    const res = await fetch(api, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) return [];
+    const rows = (await res.json()) as Array<Record<string, unknown>>;
+    return rows.map((t) => ({ name: String(t.tag_name), count: Number(t.upvotes ?? 0) }));
+  } catch {
+    return [];
+  }
+}
+
+
 function rowsToDl(pairs: Array<[string, unknown]>): string {
   const kept = pairs.filter(
     ([, v]) => v !== null && v !== undefined && String(v).trim() !== ""
@@ -193,9 +227,11 @@ export default async (request: Request, context: Context) => {
       const f =
         "id,description,image_url,tags,dose_level,wavelength,surface_type," +
         "emotional_valence,recurrence,source_method,duration_seconds," +
-        "upvotes,created_at,updated_at";
+        "upvotes,publication_consent,created_at,updated_at";
       const r = await getRow("symbol_submissions", id, "status=eq.approved", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Symbol not found | DMT Code", heading: "Symbol not found", text: "This symbol is not currently indexed or the link is out of date.", canonical: `${SITE}/registry`, backHref: `${SITE}/registry`, backLabel: "Visual symbol registry", marker: "registry-not-found" });
+
+      const communityTags = await getCommunityTags(String(r.id));
 
       const short = String(r.id).slice(0, 8);
       const tags = Array.isArray(r.tags) ? (r.tags as string[]) : [];
@@ -204,9 +240,12 @@ export default async (request: Request, context: Context) => {
         (r.description && String(r.description).trim()) ||
         `A visual symbol reported during N,N-DMT experiences${
           tagStr ? `, tagged ${tagStr}` : ""
-        }. Part of the open DMT Code catalogue (CC-BY-4.0).`;
+        }. Part of the open DMT Code catalogue.`;
 
-      title = `Symbol ${short} | DMT Code Visual Registry`;
+      const phrase = symbolTitlePhrase(tags, communityTags);
+      title = phrase
+        ? `${phrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+        : `Symbol ${short} | DMT Code Visual Registry`;
       metaDesc = clip(desc, 160);
       canonical = `${SITE}/registry/${r.id}`;
       ogImage = `${SITE}/card/${r.id}.png`;
@@ -231,8 +270,8 @@ export default async (request: Request, context: Context) => {
         url: canonical,
         dateCreated: r.created_at,
         dateModified: r.updated_at,
-        keywords: tags,
-        license: LICENSE,
+        keywords: [...new Set([...tags, ...communityTags.map((t) => t.name)])],
+        ...(r.publication_consent === true ? { license: LICENSE } : {}),
         publisher: { "@id": `${SITE}#org` },
         creator: { "@id": `${SITE}#org` },
         isPartOf: {
@@ -261,7 +300,7 @@ export default async (request: Request, context: Context) => {
       };
 
       body = `<article data-prerender="symbol">
-  <h1>DMT Code Symbol ${esc(short)}</h1>
+  <h1>${esc(phrase ? `${phrase} — DMT Code symbol #${short.toUpperCase()}` : `DMT Code Symbol ${short}`)}</h1>
   ${r.image_url ? `<img src="${esc(String(r.image_url))}" alt="${esc(metaDesc)}" />` : ""}
   <p>${esc(desc)}</p>
   ${rowsToDl(pairs)}
@@ -274,13 +313,21 @@ export default async (request: Request, context: Context) => {
       : ""
   }
   ${
+    communityTags.length
+      ? `<section><h2>Community context</h2><ul>${[...communityTags]
+          .sort((a, b) => b.count - a.count)
+          .map((t) => `<li>${esc(t.name)} (${t.count})</li>`)
+          .join("")}</ul><p>Context tags added by readers after publication, ranked by agreement.</p></section>`
+      : ""
+  }
+  ${
     Number(r.upvotes ?? 0) > 0
       ? `<p>${Number(r.upvotes ?? 0)} community ${
           Number(r.upvotes ?? 0) === 1 ? "member has" : "members have"
         } marked this symbol as echoing their own memory after it was published here. That is recognition after exposure to the catalogue, not an independent record made before seeing it.</p>`
       : ""
   }
-  <p>Part of the <a href="${SITE}/registry">DMT Code Visual Symbol Registry</a>, an open dataset (CC-BY-4.0) of visual phenomena reported during N,N-DMT experiences.</p>
+  <p>Part of the <a href="${SITE}/registry">DMT Code Visual Symbol Registry</a>, an open registry of visual phenomena reported during N,N-DMT experiences. Records whose contributors consented to open licensing are published under CC-BY-4.0 in the dataset export.</p>
 </article>`;
     } else if (kind === "trials") {
       const f =

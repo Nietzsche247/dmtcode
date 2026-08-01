@@ -60,6 +60,7 @@ interface SymbolData {
   recurrence: string | null;
   emotional_valence: string | null;
   created_at: string;
+  publication_consent?: boolean | null;
   user_id: string;
 }
 
@@ -83,6 +84,22 @@ interface Validator {
   avatar_url: string | null;
 }
 
+// This logic is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+// Tags that describe study conditions, not the symbol. Excluded from display
+// phrases; retained in keywords.
+const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
+
+function symbolTitlePhrase(submitterTags: string[], communityTags: Array<{name: string; count: number}>): string {
+  const community = communityTags.filter(t => !CONTEXT_TAG_RE.test(t.name)).sort((a,b) => b.count - a.count).map(t => t.name);
+  const submitter = (submitterTags || []).filter(t => t && !CONTEXT_TAG_RE.test(t));
+  const pool = community.length >= 2 ? community : [...community, ...submitter.filter(t => !community.includes(t))];
+  const words = pool.slice(0, 3).map(t => t.toLowerCase().replace(/_/g, ' '));
+  if (words.length === 0) return '';
+  const phrase = words.join(' ');
+  return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
+
+
 const SymbolDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -90,6 +107,7 @@ const SymbolDetail = () => {
   const { trackSymbolDetailViewed } = useRegistryTracking();
   
   const [symbol, setSymbol] = useState<SymbolData | null>(null);
+  const [communityTags, setCommunityTags] = useState<Array<{ name: string; count: number }>>([]);
   const [contributor, setContributor] = useState<ContributorData | null>(null);
   const [validators, setValidators] = useState<Validator[]>([]);
   const [relatedSymbols, setRelatedSymbols] = useState<RelatedSymbol[]>([]);
@@ -144,6 +162,18 @@ const SymbolDetail = () => {
     }
 
     setSymbol(symbolData as SymbolData);
+
+    // Load community tags (machine layer only)
+    const { data: tagRows } = await supabase
+      .from('symbol_tags')
+      .select('tag_name, upvotes')
+      .eq('symbol_id', symbolId);
+
+    setCommunityTags(
+      (tagRows || []).map((t) => ({ name: String(t.tag_name), count: Number(t.upvotes ?? 0) }))
+    );
+
+
 
     // Load contributor profile
     const { data: profileData } = await supabase
@@ -259,10 +289,17 @@ const SymbolDetail = () => {
     return null;
   }
 
+  const short = symbol.id.slice(0, 8);
+  const titlePhrase = symbolTitlePhrase(symbol.tags || [], communityTags);
+  const pageTitle = titlePhrase
+    ? `${titlePhrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+    : `Symbol ${short} | DMT Code Registry`;
+  const seoKeywords = [...new Set([...(symbol.tags || []), ...communityTags.map((t) => t.name)])];
+
   return (
     <>
       <Helmet>
-        <title>{`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`}</title>
+        <title>{pageTitle}</title>
         <meta
           name="description"
           content={symbol.description || 'View symbol details, metadata, and community validations'}
@@ -293,7 +330,10 @@ const SymbolDetail = () => {
             "description": symbol.description,
             "contentUrl": symbol.image_url,
             "datePublished": symbol.created_at,
-            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "keywords": seoKeywords,
+            ...(symbol.publication_consent === true
+              ? { "license": "https://creativecommons.org/licenses/by/4.0/" }
+              : {}),
             "creator": contributor ? {
               "@type": "Person",
               "name": contributor.display_name
