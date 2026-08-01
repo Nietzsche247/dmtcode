@@ -27,6 +27,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [votedTags, setVotedTags] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const { vocabulary } = useTagVocabulary();
 
   useEffect(() => {
     checkUser();
