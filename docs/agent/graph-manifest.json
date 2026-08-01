@@ -1,0 +1,138 @@
+{
+  "siteName": "DMTCode",
+  "siteUrl": "https://dmtcode.com",
+  "repo": "dmtcode",
+  "branch": "main",
+  "commit": "6043cac6672fcb832671c848bbf97d22b2156309",
+  "generatedAt": "2026-08-01T17:37:38.667810+00:00",
+  "graphs": {
+    "GRAPH_REPORT.md": {
+      "bytes": 39161,
+      "source": "graphify-out\\GRAPH_REPORT.md"
+    },
+    "graphify-graph.json": {
+      "bytes": 3590218,
+      "source": "graphify-out\\graph.json"
+    },
+    "understand-knowledge-graph.json": {
+      "bytes": 836095,
+      "source": ".ua\\knowledge-graph.json"
+    },
+    "understand-meta.json": {
+      "bytes": 379,
+      "source": ".ua\\meta.json"
+    }
+  },
+  "graphHealth": {
+    "freshness": "fresh",
+    "checks": {
+      "graphifyReport": {
+        "path": "graphify-out\\GRAPH_REPORT.md",
+        "exists": true,
+        "bytes": 39161
+      },
+      "graphifyGraph": {
+        "path": "graphify-out\\graph.json",
+        "exists": true,
+        "bytes": 3590218,
+        "nodes": 3115,
+        "edges": 0,
+        "parseable": true
+      },
+      "graphifyHtml": {
+        "path": "graphify-out\\graph.html",
+        "exists": true,
+        "bytes": 2890385,
+        "nonempty": true
+      },
+      "understandGraph": {
+        "path": ".ua\\knowledge-graph.json",
+        "exists": true,
+        "bytes": 836095,
+        "nodes": 1228,
+        "edges": 1048,
+        "parseable": true
+      },
+      "understandMeta": {
+        "path": ".ua\\meta.json",
+        "exists": true,
+        "bytes": 379,
+        "nodes": 0,
+        "edges": 0,
+        "parseable": true,
+        "gitCommitHash": "6043cac6672fcb832671c848bbf97d22b2156309",
+        "matchesCurrentCommit": true
+      }
+    }
+  },
+  "previewHtml": true,
+  "auditLog": [
+    {
+      "stage": "graph-health",
+      "status": "ok",
+      "message": "graph status: fresh",
+      "freshness": "fresh"
+    },
+    {
+      "stage": "blocked-file-scan",
+      "status": "ok",
+      "message": "no blocked filenames found"
+    },
+    {
+      "stage": "secret-scan",
+      "status": "ok",
+      "message": "no obvious secret patterns found"
+    },
+    {
+      "stage": "repo-pointers",
+      "status": "ok",
+      "message": "installed 12 repo pointer files",
+      "files": [
+        "AGENTS.md",
+        "docs/agent/README.md",
+        "docs\\agent\\GRAPH_REPORT.md",
+        "docs\\agent\\OTIS_PROMPT.md",
+        "docs\\agent\\graph-manifest.json",
+        "public/llms.txt",
+        "public/robots.txt",
+        "public\\agent\\GRAPH_REPORT.md",
+        "public\\agent\\OTIS_PROMPT.md",
+        "public\\agent\\graph-manifest.json",
+        "public\\agent\\graph.html",
+        "public\\agent\\index.html"
+      ]
+    }
+  ],
+  "publicArtifacts": [
+    "index.html",
+    "graph.html",
+    "GRAPH_REPORT.md",
+    "graph-manifest.json",
+    "OTIS_PROMPT.md"
+  ],
+  "privateArtifacts": [
+    "repo-map/graphify-graph.json",
+    "repo-map/understand-knowledge-graph.json"
+  ],
+  "sourceCounts": {
+    "src": 379,
+    "public": 40,
+    "supabase": 104,
+    "netlify": 9,
+    "docs": 3
+  },
+  "repoPointerFiles": [
+    "AGENTS.md",
+    "docs/agent/README.md",
+    "docs\\agent\\GRAPH_REPORT.md",
+    "docs\\agent\\OTIS_PROMPT.md",
+    "docs\\agent\\graph-manifest.json",
+    "public/llms.txt",
+    "public/robots.txt",
+    "public\\agent\\GRAPH_REPORT.md",
+    "public\\agent\\OTIS_PROMPT.md",
+    "public\\agent\\graph-manifest.json",
+    "public\\agent\\graph.html",
+    "public\\agent\\index.html"
+  ]
+}
