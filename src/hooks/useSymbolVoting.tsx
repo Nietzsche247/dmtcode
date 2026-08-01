@@ -207,9 +207,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     loading,
     isOwnSubmission,
     vote,
-    upvote: () => vote('upvote'),
     downvote: () => vote('downvote'),
     seenIt: () => vote('seen_it'),
+    similar: () => vote('similar'),
     // Records an honest "reviewed, no opinion" for the daily streak.
     markReviewed: () => logReviewActivity('reviewed_no_opinion'),
   };
