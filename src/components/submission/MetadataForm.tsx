@@ -268,6 +268,21 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
               </Button>
             </div>
 
+            {tagSuggestions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {tagSuggestions.map(({ tag, count }) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => addTagValue(tag)}
+                    className="px-2 py-1 text-xs rounded-full border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+                  >
+                    {tag} ({count})
+                  </button>
+                ))}
+              </div>
+            )}
+
             {form.formState.errors.root && (
               <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
             )}
