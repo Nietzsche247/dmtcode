@@ -95,6 +95,7 @@ interface MetadataFormProps {
 export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
   const [customTagInput, setCustomTagInput] = useState('');
+  const { vocabulary } = useTagVocabulary();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
