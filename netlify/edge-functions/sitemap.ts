@@ -145,6 +145,36 @@ export default async (request: Request) => {
   try {
     addById("/registry", (await page("symbol_submissions", "status=eq.approved")) as any);
   } catch (_e) { /* skip */ }
+  // Tag hubs: only tags carried by 2+ symbols. Context tags are excluded.
+  try {
+    const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
+    const tagRows = (await page("symbol_submissions", "status=eq.approved", "id,tags")) as any[];
+    const counts = new Map<string, number>();
+    for (const r of tagRows) {
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      for (const t of [...new Set(tags.filter(Boolean))] as string[]) {
+        counts.set(t, (counts.get(t) || 0) + 1);
+      }
+    }
+    const communityRows = (await page("symbol_tags", "", "symbol_id,tag_name")) as any[];
+    const seenPair = new Set<string>();
+    for (const r of communityRows) {
+      const t = r.tag_name as string;
+      if (!t || !r.symbol_id) continue;
+      const key = `${r.symbol_id}::${t}`;
+      if (seenPair.has(key)) continue;
+      seenPair.add(key);
+      counts.set(t, (counts.get(t) || 0) + 1);
+    }
+    for (const [tag, n] of counts) {
+      if (n < 2 || CONTEXT_TAG_RE.test(tag)) continue;
+      urls.push(
+        `  <url><loc>${SITE}/registry/tag/${xesc(encodeURIComponent(tag))}</loc>` +
+          `<changefreq>weekly</changefreq><priority>0.6</priority></url>`
+      );
+    }
+  } catch (_e) { /* skip */ }
+
   try {
     // Match /data.json: enumerate every approved trial, not only registered.
     addById("/trials", (await page("clinical_trials", "is_approved=is.true")) as any);
