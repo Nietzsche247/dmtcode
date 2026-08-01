@@ -64,13 +64,14 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
     }
   };
 
-  const addTag = async () => {
+  const addTag = async (rawValue?: string) => {
     if (!userId) {
       promptSignIn('add a tag');
       return;
     }
 
-    if (!newTag.trim()) {
+    const tagName = normalizeTag(rawValue ?? newTag);
+    if (!tagName) {
       toast.error('Please enter a tag');
       return;
     }
@@ -82,7 +83,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
       symbol_id?: string;
       glyph_id?: string;
     } = {
-      tag_name: newTag.trim().toLowerCase(),
+      tag_name: tagName,
       user_id: userId,
     };
     if (symbolId) payload.symbol_id = symbolId;
@@ -99,6 +100,16 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
     }
     setLoading(false);
   };
+
+  const suggestions = (() => {
+    const query = normalizeTag(newTag);
+    if (query.length < 2) return [];
+    const existing = new Set(tags.map((t) => normalizeTag(t.tag_name)));
+    return vocabulary
+      .filter((v) => v.tag.includes(query) && !existing.has(normalizeTag(v.tag)))
+      .slice(0, 6);
+  })();
+
 
   const toggleVote = async (tagId: string) => {
     if (!userId) {
