@@ -69,18 +69,32 @@ export const GeoAeoInsights = () => {
       setHits((current.data || []) as CrawlerHit[]);
       setPriorCount(prior.count ?? 0);
 
+      type LooseQuery = {
+        eq: (column: string, value: unknown) => LooseQuery;
+        then: Promise<{ data: unknown; count: number | null; error: { message: string } | null }>['then'];
+      };
+      const db = supabase as unknown as {
+        from: (t: string) => {
+          select: (cols: string, opts?: { count?: 'exact'; head?: boolean }) => {
+            order: (c: string, o: { ascending: boolean }) => { limit: (n: number) => LooseQuery };
+            lt: (c: string, v: string) => LooseQuery;
+            eq: (c: string, v: unknown) => LooseQuery;
+          } & LooseQuery;
+        };
+      };
+
       const fresh = await Promise.all(
         FRESHNESS_SOURCES.map(async (src) => {
-          let latestQ = supabase
+          let latestQ: LooseQuery = db
             .from(src.table)
             .select('updated_at')
             .order('updated_at', { ascending: false })
             .limit(1);
-          let staleQ = supabase
+          let staleQ: LooseQuery = db
             .from(src.table)
             .select('id', { count: 'exact', head: true })
             .lt('updated_at', stale);
-          let totalQ = supabase.from(src.table).select('id', { count: 'exact', head: true });
+          let totalQ: LooseQuery = db.from(src.table).select('id', { count: 'exact', head: true });
 
           if (src.filter) {
             latestQ = latestQ.eq(src.filter.column, src.filter.value);
@@ -89,9 +103,10 @@ export const GeoAeoInsights = () => {
           }
 
           const [latestRes, staleRes, totalRes] = await Promise.all([latestQ, staleQ, totalQ]);
-          if (latestRes.error) throw latestRes.error;
-          if (staleRes.error) throw staleRes.error;
-          if (totalRes.error) throw totalRes.error;
+          if (latestRes.error) throw new Error(latestRes.error.message);
+          if (staleRes.error) throw new Error(staleRes.error.message);
+          if (totalRes.error) throw new Error(totalRes.error.message);
+
 
           const latestRow = (latestRes.data || [])[0] as { updated_at?: string } | undefined;
           return {
