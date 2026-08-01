@@ -161,9 +161,11 @@ export default async (request: Request) => {
     const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
     const tagRows = (await page("symbol_submissions", "status=eq.approved", "id,tags")) as any[];
     const counts = new Map<string, number>();
+    const seenPair = new Set<string>();
     for (const r of tagRows) {
       const tags = Array.isArray(r.tags) ? r.tags : [];
       for (const t of [...new Set(tags.filter(Boolean))] as string[]) {
+        seenPair.add(`${r.id}::${t}`);
         counts.set(t, (counts.get(t) || 0) + 1);
       }
     }
@@ -178,7 +180,7 @@ export default async (request: Request) => {
         })
       : null;
     const communityRows = (communityRes && communityRes.ok ? await communityRes.json() : []) as any[];
-    const seenPair = new Set<string>();
+
     for (const r of communityRows) {
       const t = r.tag_name as string;
       if (!t || !r.symbol_id) continue;
