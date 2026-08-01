@@ -154,6 +154,10 @@ export default async (request: Request) => {
   } catch (_e) { /* skip */ }
   // Tag hubs: only tags carried by 2+ symbols. Context tags are excluded.
   try {
+    // This regex is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+    // and src/pages/SymbolDetail.tsx. Edge functions run in Deno and cannot import
+    // from src/. If you change it, change all three copies, or the sitemap and the
+    // pages will disagree about which tags are indexable.
     const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
     const tagRows = (await page("symbol_submissions", "status=eq.approved", "id,tags")) as any[];
     const counts = new Map<string, number>();
