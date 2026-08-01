@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, ThumbsUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { promptSignIn } from '@/lib/signInPrompt';
+import { normalizeTag } from '@/lib/tags';
+import { useTagVocabulary } from '@/hooks/useTagVocabulary';
 
 interface Tag {
   id: string;
