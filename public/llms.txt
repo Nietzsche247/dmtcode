@@ -32,6 +32,7 @@ Every symbol carries three independent status dimensions. They are separate on p
 - visibility_status: private, public, hidden. Who can see the row. hidden means withdrawn from public view, never deleted.
 - moderation_status: unreviewed, reviewed, denied, reported. What a human moderator has actually done. There is no stored overdue value. review_overdue is derived at request time from moderation_status and review_due_at so it can never go stale.
 - evidence_status: raw, eligible, ineligible, candidate_match, reviewed_convergence, controlled_replication. How the row may be used as evidence. Being published does not change this field.
+- publication_consent: whether the contributor granted consent for the record to be redistributed in the CC-BY-4.0 dataset export at /data.json. Display and export are separate grants. A symbol can be fully visible on this site while absent from /data.json because this consent was not given. publication_consent gates the export only. It never gates page visibility, and it is independent of the three status dimensions above.
 - published_at: when the row first became publicly visible. review_due_at: published_at plus 72 hours, the deadline by which a moderator was meant to look at it.
 - is_curated_example: true for illustrative examples added by the site operator. Not observer submissions, and excluded from every evidence and convergence total.
 
@@ -50,7 +51,7 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 
 ## Machine endpoints
 
-- /data.json: unified JSON of every bibliography row, every clinical trial, and every published symbol, with the facets above. Accepts filter query params: content_type, compound, topic, authority_type, person, status, verification, phase, evidence_status, moderation_status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline, and the top level "field_definitions" object defines every symbol status and count field in plain language. CC-BY-4.0.
+- /data.json: unified JSON of every bibliography row, every clinical trial, and every published symbol whose contributor granted publication_consent, with the facets above. The symbols array is therefore a consented subset of the registry, not the full registry: the registry pages at /registry show every approved symbol, and the difference in counts is by design, not an error. Accepts filter query params: content_type, compound, topic, authority_type, person, status, verification, phase, evidence_status, moderation_status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline, and the top level "field_definitions" object defines every symbol status and count field in plain language. CC-BY-4.0.
 - /shop.json: kits and group bundles from the /prepare page (slug, name, kind, tier, people, price_usd, parts_sum_usd, ships_status, wave, is_best, items[]). CC-BY-4.0.
 - /articles.json: full published article corpus in one document. Each article carries slug, title, dek, full body, author, published_at, updated_at, topic_tags, compounds, and a citations array of URLs on dmtcode.com that the article rests on. CC-BY-4.0.
 - /articles/feed.xml: RSS 2.0 feed of published articles, newest first, with the full body in content:encoded.
@@ -61,6 +62,7 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 - /trials: HTML index of clinical trials.
 - /trials/:id: HTML detail. Head emits schema.org MedicalStudy with sponsor, phase, status, and application URL.
 - /registry: HTML index of community submitted symbols. Per symbol pages at /registry/:id are server prerendered with CreativeWork JSON-LD.
+- /registry/tag/{tag}: HTML hub page for one tag, listing every approved symbol that carries it, whether the tag came from the submitter or was added by readers after publication. Server prerendered with CollectionPage and BreadcrumbList JSON-LD. Hubs carried by fewer than two symbols are marked noindex. A shared tag is a starting point for comparison, not evidence of a shared source.
 - /guides: HTML index of canonical answer pages. Per guide pages at /guides/:slug are server prerendered.
 - /theories: HTML index of attributed explanatory theories for the reported DMT code phenomenon. Curated from the public record (published, attributed positions) plus moderated community submissions. Theories are candidate hypotheses, not evidence. Head emits an ItemList of CreativeWork entries. Also mirrored into /data.json under the top-level "theories" array.
 - /events: HTML timeline of community reported events and DMT related clinical trial milestones. Every event now has a permanent detail page at /events/:id with long-form details, Schema.org Event JSON-LD, and a BreadcrumbList. The events array is also mirrored into /data.json under the top-level "events" array.
@@ -105,7 +107,7 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 
 ## Data
 
-- [Unified corpus JSON](/data.json): Every bibliography row, trial, and approved symbol in one document with a shared facet set. CC-BY-4.0.
+- [Unified corpus JSON](/data.json): Every bibliography row, trial, and consented approved symbol (publication_consent, documented above) in one document with a shared facet set. CC-BY-4.0.
 - [Chronology JSON](/timeline.json): Every dated record with its citation, evidence_class and stable id. CC-BY-4.0.
 - [Chronology schema](/timeline.schema.json): The JSON Schema the chronology is authored against.
 
