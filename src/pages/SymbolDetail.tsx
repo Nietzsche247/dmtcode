@@ -330,7 +330,10 @@ const SymbolDetail = () => {
             "description": symbol.description,
             "contentUrl": symbol.image_url,
             "datePublished": symbol.created_at,
-            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "keywords": seoKeywords,
+            ...(symbol.publication_consent === true
+              ? { "license": "https://creativecommons.org/licenses/by/4.0/" }
+              : {}),
             "creator": contributor ? {
               "@type": "Person",
               "name": contributor.display_name
