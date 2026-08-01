@@ -123,6 +123,30 @@ const Auth = () => {
   const handleOAuthLogin = async (provider: 'google' | 'apple') => {
     setIsLoading(true);
     try {
+      // The Lovable OAuth broker (/~oauth/*) is only intercepted on Lovable-hosted
+      // origins. Production is served from Netlify (dmtcode.com), where the broker
+      // path 404s and Google returns redirect_uri_mismatch. On any non-Lovable
+      // origin, go straight to Supabase's own /auth/v1/callback instead.
+      const host = window.location.hostname;
+      const isLovableHost =
+        host.endsWith('.lovable.app') ||
+        host.endsWith('.lovableproject.com') ||
+        host === 'localhost' ||
+        host === '127.0.0.1';
+
+      if (!isLovableHost) {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: { redirectTo: `${window.location.origin}${returnTo}` },
+        });
+        if (error) {
+          toast.error(`Could not continue with ${provider}`, {
+            description: error.message,
+          });
+        }
+        return;
+      }
+
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: `${window.location.origin}${returnTo}`,
       });
@@ -144,6 +168,7 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
 
   return (
     <>
