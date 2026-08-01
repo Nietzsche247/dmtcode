@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, ThumbsUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { promptSignIn } from '@/lib/signInPrompt';
+import { normalizeTag } from '@/lib/tags';
+import { useTagVocabulary } from '@/hooks/useTagVocabulary';
 
 interface Tag {
   id: string;
@@ -25,6 +27,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [votedTags, setVotedTags] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const { vocabulary } = useTagVocabulary();
 
   useEffect(() => {
     checkUser();
@@ -64,13 +67,14 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
     }
   };
 
-  const addTag = async () => {
+  const addTag = async (rawValue?: string) => {
     if (!userId) {
       promptSignIn('add a tag');
       return;
     }
 
-    if (!newTag.trim()) {
+    const tagName = normalizeTag(rawValue ?? newTag);
+    if (!tagName) {
       toast.error('Please enter a tag');
       return;
     }
@@ -82,7 +86,7 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
       symbol_id?: string;
       glyph_id?: string;
     } = {
-      tag_name: newTag.trim().toLowerCase(),
+      tag_name: tagName,
       user_id: userId,
     };
     if (symbolId) payload.symbol_id = symbolId;
@@ -99,6 +103,16 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
     }
     setLoading(false);
   };
+
+  const suggestions = (() => {
+    const query = normalizeTag(newTag);
+    if (query.length < 2) return [];
+    const existing = new Set(tags.map((t) => normalizeTag(t.tag_name)));
+    return vocabulary
+      .filter((v) => v.tag.includes(query) && !existing.has(normalizeTag(v.tag)))
+      .slice(0, 6);
+  })();
+
 
   const toggleVote = async (tagId: string) => {
     if (!userId) {
@@ -145,13 +159,29 @@ export const TagsManager = ({ glyphId, symbolId }: TagsManagerProps) => {
           className="flex-1"
         />
         <Button
-          onClick={addTag}
+          onClick={() => addTag()}
           disabled={loading || !newTag.trim()}
           size="sm"
         >
           <Plus className="w-4 h-4" />
         </Button>
       </div>
+
+      {suggestions.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {suggestions.map(({ tag, count }) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => addTag(tag)}
+              disabled={loading}
+              className="px-2 py-1 text-xs rounded-full border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+            >
+              {tag} ({count})
+            </button>
+          ))}
+        </div>
+      )}
 
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">

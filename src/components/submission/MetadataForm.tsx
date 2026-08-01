@@ -18,6 +18,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { ArrowLeft, ArrowRight, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ContextTermPicker } from '@/components/context/ContextTermPicker';
+import { normalizeTag } from '@/lib/tags';
+import { useTagVocabulary } from '@/hooks/useTagVocabulary';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
@@ -93,6 +95,7 @@ interface MetadataFormProps {
 export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
   const [customTagInput, setCustomTagInput] = useState('');
+  const { vocabulary } = useTagVocabulary();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,20 +113,35 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
   });
 
   const handleTagToggle = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    const normalized = normalizeTag(tag);
+    setSelectedTags(prev =>
+      prev.some(t => normalizeTag(t) === normalized)
+        ? prev.filter(t => normalizeTag(t) !== normalized)
+        : [...prev, normalized]
     );
   };
 
-  const handleAddCustomTag = () => {
-    const tag = customTagInput.trim().toLowerCase();
-    if (tag && !selectedTags.includes(tag)) {
+  const addTagValue = (raw: string) => {
+    const tag = normalizeTag(raw);
+    if (tag && !selectedTags.some(t => normalizeTag(t) === tag)) {
       setSelectedTags(prev => [...prev, tag]);
-      setCustomTagInput('');
     }
+    setCustomTagInput('');
   };
+
+  const handleAddCustomTag = () => {
+    addTagValue(customTagInput);
+  };
+
+  const tagSuggestions = (() => {
+    const query = normalizeTag(customTagInput);
+    if (query.length < 2) return [];
+    const selected = new Set(selectedTags.map(normalizeTag));
+    return vocabulary
+      .filter(v => v.tag.includes(query) && !selected.has(normalizeTag(v.tag)))
+      .slice(0, 6);
+  })();
+
 
   const handleRemoveTag = (tag: string) => {
     setSelectedTags(prev => prev.filter(t => t !== tag));
@@ -219,7 +237,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
                   onClick={() => handleTagToggle(tag)}
                   className={cn(
                     "px-3 py-1.5 text-sm rounded-full border transition-all min-h-[36px]",
-                    selectedTags.includes(tag)
+                    selectedTags.some(t => normalizeTag(t) === normalizeTag(tag))
                       ? "bg-primary text-primary-foreground border-primary"
                       : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
                   )}
@@ -249,6 +267,21 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
+
+            {tagSuggestions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {tagSuggestions.map(({ tag, count }) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => addTagValue(tag)}
+                    className="px-2 py-1 text-xs rounded-full border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+                  >
+                    {tag} ({count})
+                  </button>
+                ))}
+              </div>
+            )}
 
             {form.formState.errors.root && (
               <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
