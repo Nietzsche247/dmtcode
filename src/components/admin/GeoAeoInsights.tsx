@@ -108,7 +108,7 @@ export const GeoAeoInsights = () => {
           if (totalRes.error) throw new Error(totalRes.error.message);
 
 
-          const latestRow = (latestRes.data || [])[0] as { updated_at?: string } | undefined;
+          const latestRow = ((latestRes.data || []) as Array<{ updated_at?: string }>)[0];
           return {
             table: src.table,
             latest: latestRow?.updated_at ?? null,
