@@ -9,31 +9,33 @@ declare global {
   }
 }
 
-type VoteType = 'upvote' | 'downvote' | 'seen_it';
+type VoteType = 'seen_it' | 'similar' | 'downvote';
+
+const ALL_VOTE_TYPES: VoteType[] = ['seen_it', 'similar', 'downvote'];
 
 interface VoteCounts {
-  upvotes: number;
   downvotes: number;
   seenItCount: number;
+  similarCount: number;
 }
 
 interface UserVotes {
-  hasUpvoted: boolean;
   hasDownvoted: boolean;
   hasSeenIt: boolean;
+  hasSimilar: boolean;
 }
 
 export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userVotes, setUserVotes] = useState<UserVotes>({
-    hasUpvoted: false,
     hasDownvoted: false,
     hasSeenIt: false,
+    hasSimilar: false,
   });
   const [voteCounts, setVoteCounts] = useState<VoteCounts>({
-    upvotes: 0,
     downvotes: 0,
     seenItCount: 0,
+    similarCount: 0,
   });
   const [loading, setLoading] = useState(false);
   const [isOwnSubmission, setIsOwnSubmission] = useState(false);
