@@ -1,9 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GeoAeoInsights } from './GeoAeoInsights';
 import { ContentAuditor } from './ContentAuditor';
-import { CompetitorSpy } from './CompetitorSpy';
 import { SeoInsights } from './SeoInsights';
-import { OnPageAuditor } from './OnPageAuditor';
 import { ConversionFunnel } from './ConversionFunnel';
 import { SymbolModeration } from './SymbolModeration';
 import { SymbolSubmissionModeration } from './SymbolSubmissionModeration';
@@ -55,9 +53,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="funnel">🪜 Engagement</TabsTrigger>
             <TabsTrigger value="geo">GEO/AEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="competitor">Competitors</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="audit">Audit</TabsTrigger>
           </TabsList>
 
           <TabsContent value="articles" className="space-y-4">
@@ -141,16 +137,8 @@ export const AdminDashboard = () => {
             <ContentAuditor />
           </TabsContent>
 
-          <TabsContent value="competitor" className="space-y-4">
-            <CompetitorSpy />
-          </TabsContent>
-
           <TabsContent value="seo" className="space-y-4">
             <SeoInsights />
-          </TabsContent>
-
-          <TabsContent value="audit" className="space-y-4">
-            <OnPageAuditor />
           </TabsContent>
         </Tabs>
       </div>
