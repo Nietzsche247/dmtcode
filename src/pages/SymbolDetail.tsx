@@ -106,6 +106,7 @@ const SymbolDetail = () => {
   const { trackSymbolDetailViewed } = useRegistryTracking();
   
   const [symbol, setSymbol] = useState<SymbolData | null>(null);
+  const [communityTags, setCommunityTags] = useState<Array<{ name: string; count: number }>>([]);
   const [contributor, setContributor] = useState<ContributorData | null>(null);
   const [validators, setValidators] = useState<Validator[]>([]);
   const [relatedSymbols, setRelatedSymbols] = useState<RelatedSymbol[]>([]);
