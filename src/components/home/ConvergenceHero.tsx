@@ -123,23 +123,27 @@ export const ConvergenceHero = () => {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               size="lg"
-              onClick={() => navigate('/registry')}
+              onClick={() => navigate('/capture')}
               className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial"
+            >
+              <PencilLine className="w-4 h-4 mr-2" />
+              Record what you saw
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate('/registry')}
+              className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial border-foreground/20 hover:border-foreground/40"
             >
               <Eye className="w-4 h-4 mr-2" />
               Browse the record
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate('/submit-symbol')}
-              className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial border-foreground/20 hover:border-foreground/40"
-            >
-              <PencilLine className="w-4 h-4 mr-2" />
-              Record what you saw
-            </Button>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            Recording first keeps your memory unshaped by the catalogue. No account needed.
+          </p>
 
           <p className="label-data text-xs text-muted-foreground pt-4">
             {countSegments.length > 0

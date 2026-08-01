@@ -26,6 +26,7 @@ import {
   ClipboardCheck,
   TrendingUp,
   History,
+  PencilLine,
 } from "lucide-react";
 
 interface NavItem {
@@ -48,6 +49,7 @@ const researchItems: NavItem[] = [
 ];
 
 const explorerItems: NavItem[] = [
+  { title: "Capture", href: "/capture", description: "Record what you saw before you browse anything else", icon: PencilLine },
   { title: "Events & Retreats", href: "/events", description: "Conferences, workshops, and retreat centers", icon: Calendar },
   { title: "Retreat centers", href: "/retreats", description: "Centers that operate openly and publish who they are", icon: Users },
   { title: "Tools & Equipment", href: "/prepare", description: "Lasers, lenses, and research equipment", icon: Wrench },
