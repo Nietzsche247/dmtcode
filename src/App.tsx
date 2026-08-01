@@ -68,6 +68,7 @@ const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 const Retreats = lazy(() => import("./pages/Retreats"));
 const Articles = lazy(() => import("./pages/Articles"));
 const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
+const TagHub = lazy(() => import("./pages/TagHub"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Capture = lazy(() => import("./pages/Capture"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
@@ -140,7 +141,7 @@ const App = () => (
           <Route path="/registry/tag/:tag" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
-                {(() => { const TagHub = lazy(() => import("./pages/TagHub")); return <TagHub />; })()}
+                <TagHub />
               </Suspense>
             </ErrorBoundary>
           } />
