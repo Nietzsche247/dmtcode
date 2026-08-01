@@ -115,7 +115,7 @@ export const MegaMenu = () => {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {explorerItems
-                .filter((item) => mode === 'explorer' || item.href === '/prepare' || item.href === '/events')
+                .filter((item) => mode === 'explorer' || item.href === '/prepare' || item.href === '/events' || item.href === '/capture')
                 .map((item) => renderItem(item, isActive(item.href)))}
             </ul>
           </NavigationMenuContent>
