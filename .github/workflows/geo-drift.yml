@@ -1,0 +1,321 @@
+# GEO Drift Audit — detect-and-report loop for dmtcode.com machine surfaces.
+#
+# WHAT THIS DOES
+#   1. prod-checks : asserts production invariants (llms.txt contract, sitemap/corpus
+#                    count direction, tag-hub 404 guard, /agent/* noindex headers).
+#   2. repo-drift  : asserts shadow-coupling contracts inside the repo (duplicated
+#                    CONTEXT_TAG_RE / symbolTitlePhrase / theorySlug copies identical,
+#                    consent-filter placement, no fabricated admin metrics).
+#   3. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
+#                    graph, repackages ONLY the generated agent-map artifacts and
+#                    commits them. Degrades to verify-only if graphify cannot run.
+#   4. report      : merges everything into drift-report.md + a Lovable-ready
+#                    fix-prompt.md (artifacts), and maintains ONE rolling issue
+#                    labeled geo-drift. Fix prompts are never auto-sent.
+#
+# WHAT THIS NEVER DOES
+#   - Never commits source or product changes. The ONLY paths job 3 may commit are
+#     listed in ALLOWED_COMMIT_PATHS below; anything else staged aborts the commit.
+#   - Never touches .ua/, graphify-out/ (scratch outputs stay untracked), env files,
+#     or secrets. No secrets are used beyond the default GITHUB_TOKEN.
+
+name: GEO Drift Audit
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 9 * * *'   # nightly, off the :00 mark
+  workflow_dispatch:
+
+# Default: read-only. Jobs elevate individually.
+permissions:
+  contents: read
+
+concurrency:
+  group: geo-drift
+  cancel-in-progress: false
+
+env:
+  SITE: https://dmtcode.com
+  GOOD_TAG: geometric            # known-good tag hub probe; update if retagged
+  GRAPHIFY_PIN: graphifyy==0.9.31
+
+jobs:
+  prod-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Netlify deploy (push events race the build)
+        if: github.event_name == 'push'
+        run: sleep 240
+      - name: Run production checks
+        run: |
+          python3 - <<'EOF'
+          import json, re, urllib.request, sys, os
+          SITE = os.environ.get("SITE", "https://dmtcode.com")
+          GOOD = os.environ.get("GOOD_TAG", "geometric")
+          results = []
+          def fetch(path):
+              req = urllib.request.Request(SITE + path, headers={"Cache-Control": "no-cache", "User-Agent": "geo-drift-audit"})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      return r.status, dict(r.headers), r.read().decode("utf-8", "replace")
+              except urllib.error.HTTPError as e:
+                  return e.code, dict(e.headers), e.read().decode("utf-8", "replace")
+              except Exception as e:
+                  return None, {}, str(e)
+          def check(name, ok, detail):
+              results.append({"check": name, "ok": bool(ok), "detail": str(detail)[:300]})
+          s, h, llms = fetch("/llms.txt")
+          check("llms.txt 200", s == 200, s)
+          check("llms.txt documents publication_consent", "publication_consent" in llms, "contract string")
+          check("llms.txt documents /registry/tag/{tag}", "/registry/tag/{tag}" in llms, "contract string")
+          s, h, robots = fetch("/robots.txt")
+          check("robots.txt 200 with Sitemap line", s == 200 and re.search(r"(?im)^\s*Sitemap:", robots), s)
+          s, h, sm = fetch("/sitemap.xml")
+          locs = sm.count("<loc>")
+          sym_urls = len(re.findall(r"<loc>%s/registry/(?!tag/)" % re.escape(SITE), sm))
+          check("sitemap.xml 200 with locs", s == 200 and locs > 0, f"locs={locs}")
+          s, h, dj = fetch("/data.json")
+          parsed, symbols = None, None
+          try:
+              parsed = json.loads(dj)
+              symbols = (parsed.get("counts") or {}).get("symbols")
+          except Exception:
+              pass
+          check("data.json 200 and parses", s == 200 and parsed is not None, s)
+          check("data.json is not the fallback stub", parsed is not None and parsed.get("status") != "fallback",
+                (parsed or {}).get("status", "unparsed"))
+          check("data.json exposes counts.symbols", isinstance(symbols, int), symbols)
+          if isinstance(symbols, int):
+              check("sitemap symbol URLs >= data.json symbols (consent direction)",
+                    sym_urls >= symbols, f"sitemap={sym_urls} corpus={symbols}")
+          s, h, _ = fetch(f"/registry/tag/{GOOD}")
+          check(f"known-good tag hub /{GOOD} is 200", s == 200, s)
+          s, h, _ = fetch("/registry/tag/zzz-geo-drift-probe")
+          check("nonexistent tag hub returns 404", s == 404, s)
+          for p in ("/agent/", "/agent/graph.html"):
+              s, h, _ = fetch(p)
+              tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip()
+              check(f"{p} 200 + X-Robots-Tag noindex", s == 200 and tag == "noindex, follow", f"{s} / {tag!r}")
+          s, h, _ = fetch("/zzz-geo-drift-route-probe")
+          check("unknown route returns 404 (spa-guard alive)", s == 404, s)
+          fails = [r for r in results if not r["ok"]]
+          json.dump({"job": "prod-checks", "results": results}, open("prod_report.json", "w"), indent=1)
+          print(f"{len(results)} checks, {len(fails)} failed")
+          sys.exit(1 if fails else 0)
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: prod-report, path: prod_report.json }
+
+  repo-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shadow-coupling contracts
+        run: |
+          python3 - <<'EOF'
+          import json, re, sys, glob
+          results = []
+          def check(name, ok, detail=""):
+              results.append({"check": name, "ok": bool(ok), "detail": str(detail)[:300]})
+          def read(p): return open(p, encoding="utf-8").read()
+          def fn_body(src, name):
+              m = re.search(r"(?:export )?function %s\b[\s\S]*?\n}" % name, src)
+              return re.sub(r"\s+", " ", m.group(0).replace("export ", "")) if m else None
+          cp = read("netlify/edge-functions/content-prerender.ts")
+          sm = read("netlify/edge-functions/sitemap.ts")
+          dj = read("netlify/edge-functions/data-json.ts")
+          sd = read("src/pages/SymbolDetail.tsx")
+          ts = read("src/lib/theorySlug.ts")
+          regexes = set()
+          for src in (cp, sm, sd):
+              m = re.search(r"const CONTEXT_TAG_RE = .*;", src)
+              regexes.add(m.group(0) if m else "MISSING")
+          check("CONTEXT_TAG_RE identical across 3 copies", len(regexes) == 1, f"{len(regexes)} variants")
+          bodies = {fn_body(cp, "symbolTitlePhrase"), fn_body(sd, "symbolTitlePhrase")}
+          check("symbolTitlePhrase identical across 2 copies", len(bodies) == 1 and None not in bodies, len(bodies))
+          slugs = {fn_body(s, "theorySlug") for s in (cp, sm, dj, ts)}
+          check("theorySlug identical across 4 copies", len(slugs) == 1 and None not in slugs, len(slugs))
+          check("sitemap.ts has NO publication_consent filter", "publication_consent" not in sm.replace("// filters publication_consent", ""),
+                "the consent filter belongs to data.json only")
+          check("data-json.ts keeps publication_consent=eq.true", "publication_consent=eq.true" in dj, "")
+          banned = ["AI Citations", "Share of Voice", "45 citations"]
+          hits = []
+          for f in glob.glob("src/components/admin/*.tsx"):
+              c = read(f)
+              hits += [f"{f}:{b}" for b in banned if b in c]
+          check("no fabricated admin metric strings", not hits, "; ".join(hits))
+          fails = [r for r in results if not r["ok"]]
+          json.dump({"job": "repo-drift", "results": results}, open("repo_report.json", "w"), indent=1)
+          print(f"{len(results)} checks, {len(fails)} failed")
+          sys.exit(1 if fails else 0)
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: repo-report, path: repo_report.json }
+
+  graph-refresh:
+    # Nightly/manual only. Never on push: refresh follows content, it doesn't gate it.
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write            # the ONLY elevated job; scope guarded below
+    env:
+      ALLOWED_COMMIT_PATHS: |
+        docs/agent/GRAPH_REPORT.md
+        docs/agent/graph-manifest.json
+        public/agent/GRAPH_REPORT.md
+        public/agent/graph-manifest.json
+        public/agent/graph.html
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install graphify (CI-install; degrade on failure)
+        id: install
+        continue-on-error: true
+        run: pip install --quiet "$GRAPHIFY_PIN" && graphify --version
+      - name: Rebuild graph
+        id: build
+        if: steps.install.outcome == 'success'
+        continue-on-error: true
+        run: graphify update .
+      - name: Package and commit generated artifacts only
+        if: steps.build.outcome == 'success'
+        run: |
+          python3 - <<'EOF'
+          import json, os, shutil, subprocess, datetime
+          head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+          g = json.load(open("graphify-out/graph.json"))
+          built = g.get("built_at_commit", "")
+          nodes, edges = len(g.get("nodes", [])), len(g.get("links", []))
+          shutil.copy("graphify-out/GRAPH_REPORT.md", "docs/agent/GRAPH_REPORT.md")
+          shutil.copy("graphify-out/GRAPH_REPORT.md", "public/agent/GRAPH_REPORT.md")
+          shutil.copy("graphify-out/graph.html", "public/agent/graph.html")
+          for mp in ("docs/agent/graph-manifest.json", "public/agent/graph-manifest.json"):
+              m = json.load(open(mp))
+              m["commit"] = head
+              m["generatedAt"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+              gg = m["graphHealth"]["checks"]["graphifyGraph"]
+              gg.update({"nodes": nodes, "edges": edges, "edgeFormat": "links",
+                         "bytes": os.path.getsize("graphify-out/graph.json"), "parseable": True})
+              # Freshness is judged against the commit CI checked out — which IS
+              # origin/main here, closing the local-HEAD loophole.
+              m["graphHealth"]["freshness"] = "fresh" if built == head else "stale"
+              m.setdefault("auditLog", []).append({
+                  "stage": "ci-refresh", "status": "ok",
+                  "message": "graphify refreshed in CI; Understand graphs are NOT refreshed in CI and their fields reflect the last manual run on NIETZSCHE2025"})
+              json.dump(m, open(mp, "w"), indent=2)
+          print(f"packaged: {nodes} nodes / {edges} edges @ {head[:7]}")
+          EOF
+          # --- allowlist-guarded commit ---
+          readarray -t ALLOW <<< "$ALLOWED_COMMIT_PATHS"
+          for p in "${ALLOW[@]}"; do [ -n "$p" ] && git add -- "$p"; done
+          STAGED=$(git diff --cached --name-only)
+          [ -z "$STAGED" ] && { echo "No artifact changes — nothing to commit."; exit 0; }
+          while IFS= read -r f; do
+            ok=0; for p in "${ALLOW[@]}"; do [ "$f" = "$p" ] && ok=1; done
+            [ "$ok" = "1" ] || { echo "ABORT: unexpected staged file: $f"; git reset; exit 1; }
+          done <<< "$STAGED"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(agent-map): refresh graph artifacts [skip ci]"
+          git push
+          echo '{"job":"graph-refresh","results":[{"check":"graph refreshed and packaged in CI","ok":true,"detail":"committed"}]}' > graph_report.json
+      - name: Verify-only fallback (graphify unavailable in CI)
+        if: steps.install.outcome != 'success' || steps.build.outcome != 'success'
+        run: |
+          python3 - <<'EOF'
+          import json, subprocess
+          head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+          m = json.load(open("docs/agent/graph-manifest.json"))
+          pinned = m.get("commit", "")
+          ok = pinned == head
+          json.dump({"job": "graph-refresh", "degraded": True, "results": [{
+              "check": "DEGRADED: graphify could not run in CI; verify-only mode",
+              "ok": ok,
+              "detail": f"manifest pins {pinned[:7]}, HEAD is {head[:7]}. "
+                        "Graph refresh/package must be run manually on NIETZSCHE2025 until CI install is fixed."}]},
+              open("graph_report.json", "w"), indent=1)
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: graph-report, path: graph_report.json }
+
+  report:
+    needs: [prod-checks, repo-drift, graph-refresh]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: reports }
+      - name: Build drift report + Lovable fix prompt
+        id: agg
+        run: |
+          python3 - <<'EOF'
+          import json, glob, os, datetime
+          allr, fails = [], []
+          for p in glob.glob("reports/**/*.json", recursive=True):
+              d = json.load(open(p))
+              for r in d.get("results", []):
+                  r["job"] = d.get("job", "?")
+                  allr.append(r)
+                  if not r["ok"]:
+                      fails.append(r)
+          now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+          sha = os.environ.get("GITHUB_SHA", "")[:7]
+          lines = [f"# GEO Drift Report — {now} @ {sha}", "",
+                   f"**{len(allr)} checks, {len(fails)} failed.**", ""]
+          for r in allr:
+              lines.append(f"- {'PASS' if r['ok'] else '**FAIL**'} · `{r['job']}` · {r['check']} — {r['detail']}")
+          open("drift-report.md", "w").write("\n".join(lines))
+          if fails:
+              fp = ["Fix drift found by the automated GEO audit. Address ONLY the failures listed;",
+                    "change nothing else. Do not alter any Supabase predicate, the graph-handoff",
+                    "generated blocks, or spa-guard beyond what a listed failure requires.", "",
+                    "[WHERE] Determined per failure below.", "", "[WHAT — failing checks]"]
+              fp += [f"- ({r['job']}) {r['check']}: {r['detail']}" for r in fails]
+              fp += ["", "[DON'T TOUCH] Everything not implicated above. Predicates",
+                     "(status=eq.approved, publication_consent=eq.true, is_published, is_approved)",
+                     "must remain byte-identical unless a failure names them.", "",
+                     "[VERIFY] Re-state each failing check and how your change makes it pass.",
+                     "The CI audit re-runs on push and must go green."]
+              open("fix-prompt.md", "w").write("\n".join(fp))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"fails={len(fails)}\n")
+          EOF
+      - uses: actions/upload-artifact@v4
+        with: { name: drift-report, path: "*.md" }
+      - name: Rolling issue (create/update on drift, close on clean)
+        uses: actions/github-script@v7
+        env:
+          FAILS: ${{ steps.agg.outputs.fails }}
+        with:
+          script: |
+            const fs = require('fs');
+            const fails = parseInt(process.env.FAILS || '0', 10);
+            const label = 'geo-drift';
+            try { await github.rest.issues.getLabel({...context.repo, name: label}); }
+            catch { await github.rest.issues.createLabel({...context.repo, name: label, color: 'b60205'}); }
+            const open = (await github.rest.issues.listForRepo({...context.repo, labels: label, state: 'open'})).data;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = fs.readFileSync('drift-report.md', 'utf8') + `\n\n[Workflow run (artifacts incl. fix-prompt.md)](${runUrl})`;
+            if (fails > 0) {
+              if (open.length) {
+                await github.rest.issues.update({...context.repo, issue_number: open[0].number, body});
+                await github.rest.issues.createComment({...context.repo, issue_number: open[0].number,
+                  body: `Drift still present: ${fails} failing check(s). [Run](${runUrl})`});
+              } else {
+                await github.rest.issues.create({...context.repo, title: 'GEO drift detected',
+                  labels: [label], body});
+              }
+            } else if (open.length) {
+              await github.rest.issues.createComment({...context.repo, issue_number: open[0].number,
+                body: `Audit clean at ${context.sha.slice(0,7)}. Closing. [Run](${runUrl})`});
+              await github.rest.issues.update({...context.repo, issue_number: open[0].number, state: 'closed'});
+            }
+      - name: Fail the workflow on drift
+        if: steps.agg.outputs.fails != '0'
+        run: exit 1
