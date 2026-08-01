@@ -141,12 +141,23 @@ export default async (request: Request) => {
     }
   };
 
-  // Predicates below MUST match /data.json exactly so counts reconcile.
+  // Symbols: this sitemap deliberately enumerates ALL approved symbols
+  // (status=eq.approved), NOT the /data.json corpus. /data.json additionally
+  // filters publication_consent=eq.true, which gates the CC-BY dataset export
+  // only — it does not gate page visibility. Counts are expected to differ
+  // (sitemap >= data.json). Do NOT add the consent filter here: that would
+  // silently drop live, indexable pages from the sitemap.
+  // The per-entity predicates below (theories, articles, guides, trials,
+  // bibliography) DO still mirror /data.json exactly.
   try {
     addById("/registry", (await page("symbol_submissions", "status=eq.approved")) as any);
   } catch (_e) { /* skip */ }
   // Tag hubs: only tags carried by 2+ symbols. Context tags are excluded.
   try {
+    // This regex is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+    // and src/pages/SymbolDetail.tsx. Edge functions run in Deno and cannot import
+    // from src/. If you change it, change all three copies, or the sitemap and the
+    // pages will disagree about which tags are indexable.
     const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
     const tagRows = (await page("symbol_submissions", "status=eq.approved", "id,tags")) as any[];
     const counts = new Map<string, number>();
