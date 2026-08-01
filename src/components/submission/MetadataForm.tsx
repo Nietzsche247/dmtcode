@@ -18,6 +18,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { ArrowLeft, ArrowRight, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ContextTermPicker } from '@/components/context/ContextTermPicker';
+import { normalizeTag } from '@/lib/tags';
+import { useTagVocabulary } from '@/hooks/useTagVocabulary';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
