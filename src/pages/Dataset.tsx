@@ -49,6 +49,9 @@ const Dataset = () => {
             "@type": "Dataset",
             "name": "DMT Code Visual Symbol Catalogue v1.0",
             "description": "Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
+            "url": "https://dmtcode.com/dataset",
+            "isAccessibleForFree": true,
+            "keywords": ["DMT", "N,N-DMT", "visual phenomena", "symbol registry", "psychedelic research", "650nm laser", "open dataset"],
             "license": "https://creativecommons.org/licenses/by/4.0/",
             "creator": {
               "@type": "Organization",
