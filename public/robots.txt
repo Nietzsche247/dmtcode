@@ -26,4 +26,6 @@ Sitemap: https://dmtcode.com/sitemap.xml
 # Agent-readable project map:
 # https://dmtcode.com/agent/
 # https://dmtcode.com/agent/GRAPH_REPORT.md
+# https://dmtcode.com/agent/OTIS_PROMPT.md
 # graph-handoff:end
+

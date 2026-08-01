@@ -4,7 +4,9 @@ You are working inside the `DMTCode` GitHub/Lovable website repo for https://dmt
 
 Use repo-native pointers first when you have repo access. Use the zip/package only as a backup or private deep handoff.
 
-Commit snapshot: `6043cac6672fcb832671c848bbf97d22b2156309`
+Graph generation commit: `192c9b04bb45fe38976db1a7074f3f452c4dda36`
+
+This commit is a graph freshness marker, not an instruction to stay on that commit. If the branch has moved, compare `docs/agent/graph-manifest.json` to current `git rev-parse HEAD` and refresh graphs if needed.
 Public-safe graph preview: `https://dmtcode.com/agent/`
 
 ## Start Here
@@ -27,6 +29,10 @@ If you only have the zip/package, start with `README_FOR_AGENT.md`, then `OTIS_P
 3. Before recommending or changing code, report the likely blast radius.
 4. Treat graph files as navigation maps, not ground truth.
 5. Keep public/private boundaries intact: publish only public-safe graph previews, reports, manifests, and prompts unless raw graph/source exposure is explicitly approved.
+
+## Known Graph Blind Spots
+
+Graphs can under-report runtime coupling that is created outside normal imports. Manually verify deployment and crawler surfaces even when the graph shows few or no dependents, especially: `netlify/edge-functions/`, `public/_headers`, `public/_redirects`, `public/robots.txt`, `public/llms.txt`, sitemap generation, public JSON/API exports, SPA fallback guards, and admin audit pages.
 
 ## First Audit Task
 

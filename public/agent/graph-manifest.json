@@ -3,15 +3,15 @@
   "siteUrl": "https://dmtcode.com",
   "repo": "dmtcode",
   "branch": "main",
-  "commit": "6043cac6672fcb832671c848bbf97d22b2156309",
-  "generatedAt": "2026-08-01T17:37:38.667810+00:00",
+  "commit": "192c9b04bb45fe38976db1a7074f3f452c4dda36",
+  "generatedAt": "2026-08-01T18:02:37.175443+00:00",
   "graphs": {
     "GRAPH_REPORT.md": {
-      "bytes": 39161,
+      "bytes": 40233,
       "source": "graphify-out\\GRAPH_REPORT.md"
     },
     "graphify-graph.json": {
-      "bytes": 3590218,
+      "bytes": 3602773,
       "source": "graphify-out\\graph.json"
     },
     "understand-knowledge-graph.json": {
@@ -29,20 +29,21 @@
       "graphifyReport": {
         "path": "graphify-out\\GRAPH_REPORT.md",
         "exists": true,
-        "bytes": 39161
+        "bytes": 40233
       },
       "graphifyGraph": {
         "path": "graphify-out\\graph.json",
         "exists": true,
-        "bytes": 3590218,
-        "nodes": 3115,
-        "edges": 0,
+        "bytes": 3602773,
+        "nodes": 3133,
+        "edges": 6317,
+        "edgeFormat": "links",
         "parseable": true
       },
       "graphifyHtml": {
         "path": "graphify-out\\graph.html",
         "exists": true,
-        "bytes": 2890385,
+        "bytes": 2902481,
         "nonempty": true
       },
       "understandGraph": {
@@ -51,6 +52,7 @@
         "bytes": 836095,
         "nodes": 1228,
         "edges": 1048,
+        "edgeFormat": "edges",
         "parseable": true
       },
       "understandMeta": {
@@ -59,8 +61,9 @@
         "bytes": 379,
         "nodes": 0,
         "edges": 0,
+        "edgeFormat": "edges",
         "parseable": true,
-        "gitCommitHash": "6043cac6672fcb832671c848bbf97d22b2156309",
+        "gitCommitHash": "192c9b04bb45fe38976db1a7074f3f452c4dda36",
         "matchesCurrentCommit": true
       }
     }
@@ -86,13 +89,14 @@
     {
       "stage": "repo-pointers",
       "status": "ok",
-      "message": "installed 12 repo pointer files",
+      "message": "installed 13 repo pointer files",
       "files": [
         "AGENTS.md",
         "docs/agent/README.md",
         "docs\\agent\\GRAPH_REPORT.md",
         "docs\\agent\\OTIS_PROMPT.md",
         "docs\\agent\\graph-manifest.json",
+        "public/_headers",
         "public/llms.txt",
         "public/robots.txt",
         "public\\agent\\GRAPH_REPORT.md",
@@ -116,10 +120,10 @@
   ],
   "sourceCounts": {
     "src": 379,
-    "public": 40,
+    "public": 41,
     "supabase": 104,
     "netlify": 9,
-    "docs": 3
+    "docs": 4
   },
   "repoPointerFiles": [
     "AGENTS.md",
@@ -127,6 +131,7 @@
     "docs\\agent\\GRAPH_REPORT.md",
     "docs\\agent\\OTIS_PROMPT.md",
     "docs\\agent\\graph-manifest.json",
+    "public/_headers",
     "public/llms.txt",
     "public/robots.txt",
     "public\\agent\\GRAPH_REPORT.md",

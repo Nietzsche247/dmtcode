@@ -126,6 +126,8 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 - Graph preview: https://dmtcode.com/agent/
 - Graph report: https://dmtcode.com/agent/GRAPH_REPORT.md
 - Graph manifest: https://dmtcode.com/agent/graph-manifest.json
+- Otis/Lovable prompt: https://dmtcode.com/agent/OTIS_PROMPT.md
 
 Use these as maps; verify source before relying on them.
 <!-- graph-handoff:end -->
+
