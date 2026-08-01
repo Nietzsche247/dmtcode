@@ -110,20 +110,35 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
   });
 
   const handleTagToggle = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    const normalized = normalizeTag(tag);
+    setSelectedTags(prev =>
+      prev.some(t => normalizeTag(t) === normalized)
+        ? prev.filter(t => normalizeTag(t) !== normalized)
+        : [...prev, normalized]
     );
   };
 
-  const handleAddCustomTag = () => {
-    const tag = customTagInput.trim().toLowerCase();
-    if (tag && !selectedTags.includes(tag)) {
+  const addTagValue = (raw: string) => {
+    const tag = normalizeTag(raw);
+    if (tag && !selectedTags.some(t => normalizeTag(t) === tag)) {
       setSelectedTags(prev => [...prev, tag]);
-      setCustomTagInput('');
     }
+    setCustomTagInput('');
   };
+
+  const handleAddCustomTag = () => {
+    addTagValue(customTagInput);
+  };
+
+  const tagSuggestions = (() => {
+    const query = normalizeTag(customTagInput);
+    if (query.length < 2) return [];
+    const selected = new Set(selectedTags.map(normalizeTag));
+    return vocabulary
+      .filter(v => v.tag.includes(query) && !selected.has(normalizeTag(v.tag)))
+      .slice(0, 6);
+  })();
+
 
   const handleRemoveTag = (tag: string) => {
     setSelectedTags(prev => prev.filter(t => t !== tag));
