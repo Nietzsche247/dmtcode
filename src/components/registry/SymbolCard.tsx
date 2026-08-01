@@ -27,30 +27,15 @@ export const SymbolCard = ({
   id,
   imageUrl,
   description,
-  tags,
   upvotes,
   validationCount,
   status,
   contributor,
   createdAt,
   submitterId,
-  highlightTerms = [],
   similarCount = 0,
   communityTags = [],
 }: SymbolCardProps) => {
-  const highlightText = (text: string) => {
-    if (!highlightTerms.length || !text) return text;
-
-    const regex = new RegExp(`(${highlightTerms.join('|')})`, 'gi');
-    const parts = text.split(regex);
-
-    return parts.map((part, i) =>
-      highlightTerms.some(term => part.toLowerCase() === term.toLowerCase())
-        ? <mark key={i} className="bg-primary/30 text-foreground rounded px-0.5">{part}</mark>
-        : part
-    );
-  };
-
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -67,10 +52,6 @@ export const SymbolCard = ({
     if (Number.isNaN(d.getTime())) return '';
     return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   })();
-
-  const tagLine = tags && tags.length > 0
-    ? tags.slice(0, 5).map(t => t.toLowerCase()).join(', ')
-    : null;
 
   const communityTagLine = communityTags.length > 0
     ? communityTags.slice(0, 5).map(t => `${t.name} ${t.count}`).join('  ')
@@ -100,20 +81,6 @@ export const SymbolCard = ({
           {captureDate ? <span className="ml-3">{captureDate}</span> : null}
         </p>
 
-        {description && (
-          <p className="text-[13px] text-muted-foreground line-clamp-2">
-            {highlightText(description)}
-          </p>
-        )}
-
-        {tagLine && (
-          <p
-            className="font-mono text-[11px] lowercase text-muted-foreground/80"
-            title="Tags chosen by the submitter"
-          >
-            {highlightTerms.length ? highlightText(tagLine) : tagLine}
-          </p>
-        )}
 
         {communityTagLine && (
           <p
