@@ -156,7 +156,17 @@ export default async (request: Request) => {
         counts.set(t, (counts.get(t) || 0) + 1);
       }
     }
-    const communityRows = (await page("symbol_tags", "", "symbol_id,tag_name")) as any[];
+    // symbol_tags has no updated_at column, so page() cannot be reused here.
+    const communityRes = SUPABASE_URL && SUPABASE_KEY
+      ? await fetch(`${SUPABASE_URL}/rest/v1/symbol_tags?select=symbol_id,tag_name`, {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            Accept: "application/json",
+          },
+        })
+      : null;
+    const communityRows = (communityRes && communityRes.ok ? await communityRes.json() : []) as any[];
     const seenPair = new Set<string>();
     for (const r of communityRows) {
       const t = r.tag_name as string;
