@@ -237,7 +237,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
                   onClick={() => handleTagToggle(tag)}
                   className={cn(
                     "px-3 py-1.5 text-sm rounded-full border transition-all min-h-[36px]",
-                    selectedTags.includes(tag)
+                    selectedTags.some(t => normalizeTag(t) === normalizeTag(tag))
                       ? "bg-primary text-primary-foreground border-primary"
                       : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
                   )}
