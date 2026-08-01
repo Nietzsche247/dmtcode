@@ -163,6 +163,18 @@ const SymbolDetail = () => {
 
     setSymbol(symbolData as SymbolData);
 
+    // Load community tags (machine layer only)
+    const { data: tagRows } = await supabase
+      .from('symbol_tags')
+      .select('tag_name, upvotes')
+      .eq('symbol_id', symbolId);
+
+    setCommunityTags(
+      (tagRows || []).map((t) => ({ name: String(t.tag_name), count: Number(t.upvotes ?? 0) }))
+    );
+
+
+
     // Load contributor profile
     const { data: profileData } = await supabase
       .from('profiles')
