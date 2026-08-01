@@ -27,30 +27,15 @@ export const SymbolCard = ({
   id,
   imageUrl,
   description,
-  tags,
   upvotes,
   validationCount,
   status,
   contributor,
   createdAt,
   submitterId,
-  highlightTerms = [],
   similarCount = 0,
   communityTags = [],
 }: SymbolCardProps) => {
-  const highlightText = (text: string) => {
-    if (!highlightTerms.length || !text) return text;
-
-    const regex = new RegExp(`(${highlightTerms.join('|')})`, 'gi');
-    const parts = text.split(regex);
-
-    return parts.map((part, i) =>
-      highlightTerms.some(term => part.toLowerCase() === term.toLowerCase())
-        ? <mark key={i} className="bg-primary/30 text-foreground rounded px-0.5">{part}</mark>
-        : part
-    );
-  };
-
   const getInitials = (name: string) => {
     return name
       .split(' ')
