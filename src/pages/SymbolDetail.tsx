@@ -84,7 +84,10 @@ interface Validator {
   avatar_url: string | null;
 }
 
-// This logic is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+// CONTEXT_TAG_RE is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+// and netlify/edge-functions/sitemap.ts (three copies). symbolTitlePhrase below is
+// duplicated in content-prerender.ts (two copies). Edge functions cannot import from
+// src/. If you change either, change every copy.
 // Tags that describe study conditions, not the symbol. Excluded from display
 // phrases; retained in keywords.
 const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
