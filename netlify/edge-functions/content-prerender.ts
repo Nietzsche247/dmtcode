@@ -199,6 +199,12 @@ export default async (request: Request, context: Context) => {
       return context.next();
     }
 
+    // Tag hub: /registry/tag/:tag must be matched before the uuid detail branch.
+    if (kind === "registry" && seg.length === 3 && seg[1] === "tag" && seg[2]) {
+      return await renderTagHub(context, decodeURIComponent(seg[2]));
+    }
+
+
     // Handled kinds only: extra path segments are not real pages.
     if (HANDLED_DETAIL_KINDS.has(kind) && seg.length >= 3) {
       return await notFoundPrerender(context);
