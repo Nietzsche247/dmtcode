@@ -77,6 +77,40 @@ async function getRow(
   return rows[0] ?? null;
 }
 
+// This logic is duplicated verbatim in src/pages/SymbolDetail.tsx
+// Tags that describe study conditions, not the symbol. Excluded from display
+// phrases; retained in keywords.
+const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
+
+function symbolTitlePhrase(submitterTags: string[], communityTags: Array<{name: string; count: number}>): string {
+  const community = communityTags.filter(t => !CONTEXT_TAG_RE.test(t.name)).sort((a,b) => b.count - a.count).map(t => t.name);
+  const submitter = (submitterTags || []).filter(t => t && !CONTEXT_TAG_RE.test(t));
+  const pool = community.length >= 2 ? community : [...community, ...submitter.filter(t => !community.includes(t))];
+  const words = pool.slice(0, 3).map(t => t.toLowerCase().replace(/_/g, ' '));
+  if (words.length === 0) return '';
+  const phrase = words.join(' ');
+  return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
+
+async function getCommunityTags(id: string): Promise<Array<{name: string; count: number}>> {
+  try {
+    const api = `${SUPABASE_URL}/rest/v1/symbol_tags?symbol_id=eq.${id}&select=tag_name,upvotes`;
+    const res = await fetch(api, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) return [];
+    const rows = (await res.json()) as Array<Record<string, unknown>>;
+    return rows.map((t) => ({ name: String(t.tag_name), count: Number(t.upvotes ?? 0) }));
+  } catch {
+    return [];
+  }
+}
+
+
 function rowsToDl(pairs: Array<[string, unknown]>): string {
   const kept = pairs.filter(
     ([, v]) => v !== null && v !== undefined && String(v).trim() !== ""
