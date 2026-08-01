@@ -21,3 +21,9 @@ User-agent: CCBot
 Allow: /
 
 Sitemap: https://dmtcode.com/sitemap.xml
+
+# graph-handoff:start
+# Agent-readable project map:
+# https://dmtcode.com/agent/
+# https://dmtcode.com/agent/GRAPH_REPORT.md
+# graph-handoff:end
