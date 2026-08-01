@@ -83,6 +83,22 @@ interface Validator {
   avatar_url: string | null;
 }
 
+// This logic is duplicated verbatim in netlify/edge-functions/content-prerender.ts
+// Tags that describe study conditions, not the symbol. Excluded from display
+// phrases; retained in keywords.
+const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
+
+function symbolTitlePhrase(submitterTags: string[], communityTags: Array<{name: string; count: number}>): string {
+  const community = communityTags.filter(t => !CONTEXT_TAG_RE.test(t.name)).sort((a,b) => b.count - a.count).map(t => t.name);
+  const submitter = (submitterTags || []).filter(t => t && !CONTEXT_TAG_RE.test(t));
+  const pool = community.length >= 2 ? community : [...community, ...submitter.filter(t => !community.includes(t))];
+  const words = pool.slice(0, 3).map(t => t.toLowerCase().replace(/_/g, ' '));
+  if (words.length === 0) return '';
+  const phrase = words.join(' ');
+  return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
+
+
 const SymbolDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
