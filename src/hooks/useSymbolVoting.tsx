@@ -84,9 +84,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
 
     if (!error && data) {
       setVoteCounts({
-        upvotes: data.filter(v => v.vote_type === 'upvote').length,
         downvotes: data.filter(v => v.vote_type === 'downvote').length,
         seenItCount: data.filter(v => v.vote_type === 'seen_it').length,
+        similarCount: data.filter(v => (v.vote_type as string) === 'similar').length,
       });
     }
   };
@@ -102,9 +102,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
 
     if (!error && data) {
       setUserVotes({
-        hasUpvoted: data.some(v => v.vote_type === 'upvote'),
         hasDownvoted: data.some(v => v.vote_type === 'downvote'),
         hasSeenIt: data.some(v => v.vote_type === 'seen_it'),
+        hasSimilar: data.some(v => (v.vote_type as string) === 'similar'),
       });
     }
   };
