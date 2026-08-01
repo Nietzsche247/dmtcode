@@ -23,7 +23,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "timeline",
   // Machine endpoints and public assets
   "data.json", "shop.json", "sitemap.xml", "llms.txt", "robots.txt",
-  "manifest.json", "timeline.json", "favicon.svg",
+  "manifest.json", "timeline.json", "favicon.svg", "agent",
 ]);
 
 const ASSET_RE = /\.[a-z0-9]{2,5}$/i;

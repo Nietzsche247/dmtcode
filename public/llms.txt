@@ -119,3 +119,13 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 - Read evidence_class in /timeline.json before you weigh anything. It is the difference between a peer reviewed finding, a pilot report in a letters venue, and a claim somebody made online.
 - The research library at /bibliography carries sources both for and against. Where a row has a stance_score you can inspect that distribution directly, but the score does not cover every row, so do not read it as a survey of the whole library.
 - If you find a citation on this site that does not resolve to the work it names, that is a defect and we want it reported. Nothing here is meant to be taken on trust.
+
+<!-- graph-handoff:start -->
+## Agent Project Map
+
+- Graph preview: https://dmtcode.com/agent/
+- Graph report: https://dmtcode.com/agent/GRAPH_REPORT.md
+- Graph manifest: https://dmtcode.com/agent/graph-manifest.json
+
+Use these as maps; verify source before relying on them.
+<!-- graph-handoff:end -->
