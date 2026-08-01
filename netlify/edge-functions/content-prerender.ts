@@ -2565,6 +2565,88 @@ async function renderTheories(context: Context): Promise<Response> {
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
+async function renderTagHub(context: Context, tag: string): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/registry/tag/${encodeURIComponent(tag)}`;
+
+  const byTagColumn = await sbGetRows(
+    "symbol_submissions",
+    `status=eq.approved&tags=cs.${encodeURIComponent(`{"${tag}"}`)}&select=id,description,tags,created_at`,
+  );
+  const communityRows = await sbGetRows(
+    "symbol_tags",
+    `tag_name=eq.${encodeURIComponent(tag)}&select=symbol_id`,
+  );
+  const extraIds = communityRows
+    .map((r) => String(r.symbol_id ?? ""))
+    .filter((sid) => sid && !byTagColumn.some((r) => String(r.id) === sid));
+  const extraRows = extraIds.length
+    ? await sbGetRows(
+        "symbol_submissions",
+        `status=eq.approved&id=in.(${extraIds.join(",")})&select=id,description,tags,created_at`,
+      )
+    : [];
+
+  const seen = new Set<string>();
+  const rows = [...byTagColumn, ...extraRows].filter((r) => {
+    const rid = String(r.id);
+    if (seen.has(rid)) return false;
+    seen.add(rid);
+    return true;
+  });
+
+  const count = rows.length;
+  const title = `Symbols tagged ${tag} — DMT Code Registry`;
+  const metaDesc = clip(
+    `Visual symbols in the DMT Code open registry tagged "${tag}". ${count} records with community recognition counts.`,
+    160,
+  );
+
+  const collectionLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `Symbols tagged ${tag}`,
+    url: canonical,
+    isPartOf: { "@id": `${SITE}/registry#dataset` },
+    about: tag,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Registry", item: `${SITE}/registry` },
+      { "@type": "ListItem", position: 3, name: tag, item: canonical },
+    ],
+  };
+
+  const items = rows
+    .map((r) => {
+      const rid = String(r.id);
+      const label = String(r.description || "").trim()
+        ? clip(String(r.description), 80)
+        : `Symbol ${rid.slice(0, 8)}`;
+      return `<li><a href="${SITE}/registry/${esc(rid)}">${esc(label)}</a></li>`;
+    })
+    .join("");
+
+  const body = `<article data-prerender="tag-hub"><h1>Symbols tagged ${esc(tag)}</h1><p>${count} records in the open registry carry this tag.</p><p>Tags are added by submitters and by readers after publication. A shared tag is a starting point for comparison, not evidence of a shared source.</p><ul>${items}</ul></article>`;
+
+  const head = buildHead({
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    robots: count < 2 ? "noindex, follow" : "index, follow",
+    jsonLd: [collectionLd, breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+
+
 async function renderEventDetail(context: Context, id: string): Promise<Response> {
   const shellRes = await context.next();
   const rows = await sbGetRows(
