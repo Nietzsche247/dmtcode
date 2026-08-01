@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { SeenItButton } from './SeenItButton';
+import { SimilarButton } from './SimilarButton';
 import { DidNotMatchButton } from './DidNotMatchButton';
 import { formatSealedAt } from '@/lib/sealFormat';
 
@@ -210,6 +211,12 @@ export const SymbolResponsePanel = ({
           size="lg"
           className="w-full justify-center"
           imageUrl={imageUrl}
+        />
+        <SimilarButton
+          symbolId={targetId}
+          submitterId={submitterId}
+          size="lg"
+          className="w-full justify-center"
         />
         <DidNotMatchButton
           symbolId={targetId}

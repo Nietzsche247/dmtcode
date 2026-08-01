@@ -2616,7 +2616,7 @@ export type Database = {
         | "denied"
         | "reported"
       symbol_visibility_status: "private" | "public" | "hidden"
-      symbol_vote_type: "upvote" | "downvote" | "seen_it"
+      symbol_vote_type: "upvote" | "downvote" | "seen_it" | "similar"
       tag_kind: "context" | "general"
     }
     CompositeTypes: {
@@ -2763,7 +2763,7 @@ export const Constants = {
         "reported",
       ],
       symbol_visibility_status: ["private", "public", "hidden"],
-      symbol_vote_type: ["upvote", "downvote", "seen_it"],
+      symbol_vote_type: ["upvote", "downvote", "seen_it", "similar"],
       tag_kind: ["context", "general"],
     },
   },

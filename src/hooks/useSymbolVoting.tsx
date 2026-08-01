@@ -9,31 +9,33 @@ declare global {
   }
 }
 
-type VoteType = 'upvote' | 'downvote' | 'seen_it';
+type VoteType = 'seen_it' | 'similar' | 'downvote';
+
+const ALL_VOTE_TYPES: VoteType[] = ['seen_it', 'similar', 'downvote'];
 
 interface VoteCounts {
-  upvotes: number;
   downvotes: number;
   seenItCount: number;
+  similarCount: number;
 }
 
 interface UserVotes {
-  hasUpvoted: boolean;
   hasDownvoted: boolean;
   hasSeenIt: boolean;
+  hasSimilar: boolean;
 }
 
 export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userVotes, setUserVotes] = useState<UserVotes>({
-    hasUpvoted: false,
     hasDownvoted: false,
     hasSeenIt: false,
+    hasSimilar: false,
   });
   const [voteCounts, setVoteCounts] = useState<VoteCounts>({
-    upvotes: 0,
     downvotes: 0,
     seenItCount: 0,
+    similarCount: 0,
   });
   const [loading, setLoading] = useState(false);
   const [isOwnSubmission, setIsOwnSubmission] = useState(false);
@@ -82,9 +84,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
 
     if (!error && data) {
       setVoteCounts({
-        upvotes: data.filter(v => v.vote_type === 'upvote').length,
         downvotes: data.filter(v => v.vote_type === 'downvote').length,
         seenItCount: data.filter(v => v.vote_type === 'seen_it').length,
+        similarCount: data.filter(v => (v.vote_type as string) === 'similar').length,
       });
     }
   };
@@ -100,9 +102,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
 
     if (!error && data) {
       setUserVotes({
-        hasUpvoted: data.some(v => v.vote_type === 'upvote'),
         hasDownvoted: data.some(v => v.vote_type === 'downvote'),
         hasSeenIt: data.some(v => v.vote_type === 'seen_it'),
+        hasSimilar: data.some(v => (v.vote_type as string) === 'similar'),
       });
     }
   };
@@ -121,10 +123,12 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     setLoading(true);
 
     try {
-      const currentVote = 
-        voteType === 'upvote' ? userVotes.hasUpvoted :
-        voteType === 'downvote' ? userVotes.hasDownvoted :
-        userVotes.hasSeenIt;
+      const held = (t: VoteType) =>
+        t === 'downvote' ? userVotes.hasDownvoted :
+        t === 'seen_it' ? userVotes.hasSeenIt :
+        userVotes.hasSimilar;
+
+      const currentVote = held(voteType);
 
       if (currentVote) {
         // Remove the vote
@@ -133,7 +137,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
           .delete()
           .eq('symbol_id', symbolId)
           .eq('user_id', userId)
-          .eq('vote_type', voteType);
+          .eq('vote_type', voteType as any);
 
         if (error) throw error;
 
@@ -144,28 +148,17 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         
         toast.success('Vote removed');
       } else {
-        // Recognition and non-recognition are mutually exclusive.
-        // seen_it and upvote both mean "yes". downvote means "no".
-        const conflicting: VoteType[] =
-          voteType === 'downvote'
-            ? ['upvote', 'seen_it']
-            : voteType === 'upvote' || voteType === 'seen_it'
-              ? ['downvote']
-              : [];
+        // One stance per user per symbol: seen_it, similar and downvote are
+        // fully mutually exclusive.
+        const conflicting = ALL_VOTE_TYPES.filter((t) => t !== voteType && held(t));
 
-        const held = conflicting.filter((t) =>
-          t === 'upvote' ? userVotes.hasUpvoted :
-          t === 'downvote' ? userVotes.hasDownvoted :
-          userVotes.hasSeenIt
-        );
-
-        if (held.length > 0) {
+        if (conflicting.length > 0) {
           await supabase
             .from('symbol_votes')
             .delete()
             .eq('symbol_id', symbolId)
             .eq('user_id', userId)
-            .in('vote_type', held);
+            .in('vote_type', conflicting as any);
         }
 
         // Insert new vote
@@ -174,23 +167,24 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
           .insert({
             symbol_id: symbolId,
             user_id: userId,
-            vote_type: voteType,
+            vote_type: voteType as any,
           });
 
         if (error) throw error;
 
         const eventName = 
-          voteType === 'upvote' ? 'symbol_upvoted' :
           voteType === 'downvote' ? 'symbol_downvoted' :
+          voteType === 'similar' ? 'symbol_marked_similar' :
           'symbol_validated';
 
         window.posthog?.capture(eventName, { symbol_id: symbolId });
         
         toast.success(
-          voteType === 'seen_it' ? 'Validation recorded' : 'Vote recorded'
+          voteType === 'seen_it' ? 'Validation recorded' :
+          voteType === 'similar' ? 'Recorded.' : 'Vote recorded'
         );
 
-        // Log engagement activity (upvote/downvote/seen_it all count as a review).
+        // Log engagement activity (all stances count as a review).
         await logReviewActivity(voteType);
       }
 
@@ -213,9 +207,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     loading,
     isOwnSubmission,
     vote,
-    upvote: () => vote('upvote'),
     downvote: () => vote('downvote'),
     seenIt: () => vote('seen_it'),
+    similar: () => vote('similar'),
     // Records an honest "reviewed, no opinion" for the daily streak.
     markReviewed: () => logReviewActivity('reviewed_no_opinion'),
   };
