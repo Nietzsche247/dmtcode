@@ -62,12 +62,13 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/16950a40-5556-4478-bf86-208bb4c1ba01) and click on Share -> Publish.
+Production is hosted on **Netlify**, building from the `main` branch of this repo. Merging a change to `main` triggers a Netlify build, and that build is what goes live.
 
-## Can I connect a custom domain to my Lovable project?
+The Lovable **Publish** button is **not** the production path for this site — publishing there does not update the live domain.
 
-Yes, you can!
+Supabase migrations and edge functions deploy separately, on the Supabase side, independently of the Netlify build.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Custom domain
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+The custom domain is managed at the **Netlify** level (Netlify's domain settings), not through Lovable's domain settings.
+
