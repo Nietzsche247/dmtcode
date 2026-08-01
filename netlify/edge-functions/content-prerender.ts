@@ -77,7 +77,12 @@ async function getRow(
   return rows[0] ?? null;
 }
 
-// This logic is duplicated verbatim in src/pages/SymbolDetail.tsx
+// CONTEXT_TAG_RE is duplicated verbatim in netlify/edge-functions/sitemap.ts and
+// src/pages/SymbolDetail.tsx (three copies). symbolTitlePhrase below is duplicated
+// in src/pages/SymbolDetail.tsx (two copies). Edge functions run in Deno and cannot
+// import from src/. If you change either, change every copy, or crawlers and humans
+// will see different titles for the same symbol and the sitemap will disagree with
+// the pages about which tags are indexable.
 // Tags that describe study conditions, not the symbol. Excluded from display
 // phrases; retained in keywords.
 const CONTEXT_TAG_RE = /^(priming_|wavelength_|laser_|650nm|indoor$|outdoor$|closed_eyes$|open_eyes$)/i;
