@@ -1,4 +1,4 @@
-import { ChevronUp, ChevronDown, Eye, Ban, Check } from 'lucide-react';
+import { Layers, ChevronUp, ChevronDown, Eye, Ban, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ export const VotingButtons = ({
     voteCounts,
     loading,
     isOwnSubmission,
-    upvote,
+    similar,
     downvote,
     seenIt,
     markReviewed,
@@ -36,7 +36,7 @@ export const VotingButtons = ({
   const { trackSelfVoteAttempted } = useUgcTracking();
 
   // Handle self-vote attempt with feedback
-  const handleSelfVoteAttempt = (voteType: 'upvote' | 'downvote' | 'seen_it') => {
+  const handleSelfVoteAttempt = (voteType: 'similar' | 'downvote' | 'seen_it') => {
     trackSelfVoteAttempted({ symbol_id: symbolId, vote_type: voteType });
     toast.error("Can't vote on your own submission", {
       description: "Community validation requires votes from other users.",
@@ -105,12 +105,12 @@ export const VotingButtons = ({
     return (
       <div className={cn('flex items-center gap-1', className)}>
         <VoteButton
-          onClick={isOwnSubmission ? () => handleSelfVoteAttempt('upvote') : upvote}
-          isActive={userVotes.hasUpvoted}
+          onClick={isOwnSubmission ? () => handleSelfVoteAttempt('similar') : similar}
+          isActive={userVotes.hasSimilar}
           disabled={!userId}
-          icon={ChevronUp}
-          count={voteCounts.upvotes}
-          label={isOwnSubmission ? "Can't vote on own submission" : "Upvote"}
+          icon={Layers}
+          count={voteCounts.similarCount}
+          label={isOwnSubmission ? "Can't vote on own submission" : "I've seen something similar"}
           activeClass="text-green-500 bg-green-500/10"
         />
         <VoteButton
@@ -157,22 +157,22 @@ export const VotingButtons = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  variant={userVotes.hasUpvoted ? 'default' : 'outline'}
+                  variant={userVotes.hasSimilar ? 'default' : 'outline'}
                   size="lg"
-                  onClick={isOwnSubmission ? () => handleSelfVoteAttempt('upvote') : upvote}
+                  onClick={isOwnSubmission ? () => handleSelfVoteAttempt('similar') : similar}
                   disabled={!userId || loading}
                   className={cn(
                     'rounded-full w-14 h-14 p-0 transition-all duration-200',
-                    userVotes.hasUpvoted && 'bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30',
+                    userVotes.hasSimilar && 'bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30',
                     !userId && 'opacity-50',
                     isOwnSubmission && 'opacity-60 cursor-not-allowed',
                     !isOwnSubmission && userId && 'hover:scale-110'
                   )}
-                  aria-label={isOwnSubmission ? "Can't vote on own submission" : "Upvote symbol"}
+                  aria-label={isOwnSubmission ? "Can't vote on own submission" : "I've seen something similar"}
                 >
-                  <ChevronUp className={cn(
+                  <Layers className={cn(
                     'w-8 h-8',
-                    userVotes.hasUpvoted && 'fill-current'
+                    userVotes.hasSimilar && 'fill-current'
                   )} />
                 </Button>
               </TooltipTrigger>
@@ -181,8 +181,8 @@ export const VotingButtons = ({
               )}
             </Tooltip>
           </TooltipProvider>
-          <span className="text-lg font-bold mt-1">{voteCounts.upvotes}</span>
-          <span className="text-xs text-muted-foreground">upvotes</span>
+          <span className="text-lg font-bold mt-1">{voteCounts.similarCount}</span>
+          <span className="text-xs text-muted-foreground">similar</span>
         </div>
 
         <div className="flex flex-col items-center">
