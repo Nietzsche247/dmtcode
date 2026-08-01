@@ -137,6 +137,13 @@ const App = () => (
             </ErrorBoundary>
           } />
           <Route path="/registry" element={<Registry />} />
+          <Route path="/registry/tag/:tag" element={
+            <ErrorBoundary>
+              <Suspense fallback={<CalibratingLasersLoader />}>
+                {(() => { const TagHub = lazy(() => import("./pages/TagHub")); return <TagHub />; })()}
+              </Suspense>
+            </ErrorBoundary>
+          } />
           <Route path="/registry/:id" element={
             <ErrorBoundary>
               <Suspense fallback={<CalibratingLasersLoader />}>
