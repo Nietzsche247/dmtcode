@@ -60,6 +60,7 @@ interface SymbolData {
   recurrence: string | null;
   emotional_valence: string | null;
   created_at: string;
+  publication_consent?: boolean | null;
   user_id: string;
 }
 
