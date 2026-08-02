@@ -242,6 +242,7 @@ export type Database = {
           full_text: string | null
           id: string
           is_approved: boolean
+          isbn: string | null
           journal: string | null
           pmid: string | null
           publication_date: string | null
@@ -268,6 +269,7 @@ export type Database = {
           full_text?: string | null
           id?: string
           is_approved?: boolean
+          isbn?: string | null
           journal?: string | null
           pmid?: string | null
           publication_date?: string | null
@@ -294,6 +296,7 @@ export type Database = {
           full_text?: string | null
           id?: string
           is_approved?: boolean
+          isbn?: string | null
           journal?: string | null
           pmid?: string | null
           publication_date?: string | null

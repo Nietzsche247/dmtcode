@@ -447,7 +447,7 @@ export default async (request: Request, context: Context) => {
 </article>`;
     } else if (kind === "bibliography") {
       const f =
-        "id,title,authors,journal,publication_date,doi,pmid,abstract,url," +
+        "id,title,authors,journal,publication_date,doi,pmid,isbn,abstract,url," +
         "compounds,content_type,authority_type,stance_score,tags,summary," +
         "source_date,full_text,transcript,created_at,updated_at";
       const r = await getRow("bibliography", id, "is_approved=eq.true", f);
@@ -468,6 +468,7 @@ export default async (request: Request, context: Context) => {
       if (r.doi) sameAs.push(`https://doi.org/${String(r.doi)}`);
       if (r.pmid) sameAs.push(`https://pubmed.ncbi.nlm.nih.gov/${String(r.pmid)}/`);
       if (r.url) sameAs.push(String(r.url));
+      if (r.isbn) sameAs.push(`https://search.worldcat.org/isbn/${String(r.isbn)}`);
 
       const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
       const compounds = Array.isArray(r.compounds)
@@ -477,6 +478,7 @@ export default async (request: Request, context: Context) => {
       const isScholarly =
         String(r.content_type || "").toLowerCase().includes("paper") ||
         r.doi || r.pmid || r.journal;
+      const isBook = String(r.content_type || "").toLowerCase() === "book";
       const bodyText =
         (r.full_text && String(r.full_text).trim()) ||
         (r.transcript && String(r.transcript).trim()) ||
@@ -489,7 +491,7 @@ export default async (request: Request, context: Context) => {
 
       ld = {
         "@context": "https://schema.org",
-        "@type": isScholarly ? "ScholarlyArticle" : "CreativeWork",
+        "@type": isBook ? "Book" : (isScholarly ? "ScholarlyArticle" : "CreativeWork"),
         "@id": canonical,
         name: r.title,
         headline: r.title,
@@ -499,6 +501,7 @@ export default async (request: Request, context: Context) => {
         datePublished: r.publication_date || r.source_date || undefined,
         dateModified: r.updated_at || undefined,
         identifier: r.doi ? `doi:${String(r.doi)}` : (r.pmid ? `pmid:${String(r.pmid)}` : undefined),
+        isbn: r.isbn ? String(r.isbn) : undefined,
         sameAs: sameAs.length ? sameAs : undefined,
         keywords: [...tags, ...compounds],
         publisher: { "@id": `${SITE}#org` },
@@ -523,6 +526,7 @@ export default async (request: Request, context: Context) => {
         ["Published", r.publication_date || r.source_date],
         ["DOI", r.doi],
         ["PMID", r.pmid],
+        ["ISBN", r.isbn],
         ["Content type", r.content_type],
         ["Authority", r.authority_type],
         ["Stance score", stance],
