@@ -15,10 +15,10 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "open-questions", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats",
   // Client only app routes that must stay 200 for humans
-  "auth", "admin", "submit", "submit-symbol", "submit-product", "join",
-  "co-witnesses", "waitlist", "community", "log", "assess", "leaderboard",
+  "auth", "admin", "submit", "submit-symbol", "join",
+  "co-witnesses", "waitlist", "log", "assess", "leaderboard",
   "correlations", "events", "dashboard", "profile", "my-symbols", "analysis",
-  "tools", "bundles", "products", "api", "contribute", "Elizabeth_Baker",
+  "tools", "bundles", "api", "contribute", "Elizabeth_Baker",
   "card", "articles", "guides", "privacy", "terms", "disclosure", "capture",
   "timeline",
   // Machine endpoints and public assets

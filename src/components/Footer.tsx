@@ -71,6 +71,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/correlations" className="text-muted-foreground hover:text-primary transition-colors">
+                  Correlations
+                </Link>
+              </li>
+              <li>
                 <Link to="/timeline" className="text-muted-foreground hover:text-primary transition-colors">
                   Chronology
                 </Link>

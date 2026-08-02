@@ -52,7 +52,7 @@ export const UnifiedProductDetail = ({
   const { addItem } = useCartStore();
   const isResearch = mode === 'research';
   
-  const backLink = isResearch ? '/prepare' : '/community/woo';
+  const backLink = '/prepare';
   const backLabel = isResearch ? 'Back to Tools' : 'Back to Mysticism Store';
   const pageTitle = isResearch ? 'DMT Code Project Tools' : 'DMT Code Mysticism Store';
   const specsTitle = isResearch ? 'Specifications' : 'Details';
@@ -91,7 +91,7 @@ export const UnifiedProductDetail = ({
 
 
   const containingBundles = bundles.filter(bundle => bundle.items.includes(item.slug));
-  const relatedBasePath = isResearch ? '/prepare' : '/community/woo';
+  const relatedBasePath = '/prepare';
 
   return (
     <div className="min-h-screen bg-background">
