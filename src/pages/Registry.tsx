@@ -166,14 +166,13 @@ const Registry = () => {
           {/* Voice Logger Callout */}
           <section className="container mx-auto px-4 py-8 max-w-4xl">
             <div 
-              className="p-4 md:p-6 rounded-lg border border-primary bg-primary/10"
+              className="p-4 md:p-6 rounded-lg border border-border bg-card"
               role="complementary"
               aria-label="Voice Logger recommendation"
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="relative flex-shrink-0 p-3 rounded-full bg-primary/20">
-                  <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-                  <Mic className="relative h-6 w-6 text-primary" aria-hidden="true" />
+                <div className="flex-shrink-0 p-3 rounded-full bg-muted">
+                  <Mic className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-foreground mb-1">

@@ -178,7 +178,7 @@ export const ConvergenceHero = () => {
             {displayCount > 0 && (
               <div className="mt-6 text-center">
                 <div
-                  className="text-6xl md:text-7xl lg:text-8xl leading-none text-primary tabular-nums"
+                  className="text-5xl md:text-6xl leading-none text-foreground tabular-nums"
                   style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
                 >
                   {displayCount}
