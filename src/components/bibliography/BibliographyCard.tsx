@@ -11,9 +11,9 @@ interface Props {
 const stanceLabel = (row: BibliographyRow) => {
   if (row.stance_unverified) return { label: 'Unverified', className: 'bg-muted text-muted-foreground' };
   if (row.stance_score == null) return null;
-  if (row.stance_score >= 4) return { label: `Supportive (${row.stance_score > 0 ? '+' : ''}${row.stance_score})`, className: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' };
-  if (row.stance_score <= -4) return { label: `Skeptical (${row.stance_score})`, className: 'bg-rose-500/15 text-rose-500 border-rose-500/30' };
-  return { label: `Balanced (${row.stance_score > 0 ? '+' : ''}${row.stance_score})`, className: 'bg-amber-500/15 text-amber-600 border-amber-500/30' };
+  if (row.stance_score >= 4) return { label: `Supportive (${row.stance_score > 0 ? '+' : ''}${row.stance_score})`, className: 'border-stance-supportive/30 bg-stance-supportive/15 text-stance-supportive' };
+  if (row.stance_score <= -4) return { label: `Skeptical (${row.stance_score})`, className: 'border-stance-skeptical/30 bg-stance-skeptical/15 text-stance-skeptical' };
+  return { label: `Balanced (${row.stance_score > 0 ? '+' : ''}${row.stance_score})`, className: 'border-stance-neutral/30 bg-stance-neutral/15 text-stance-neutral' };
 };
 
 const displayDate = (row: BibliographyRow) => {
