@@ -164,7 +164,7 @@ const Bibliography = () => {
                 {featured.length > 0 && (
                   <section className="space-y-4">
                     <div className="flex items-baseline justify-between">
-                      <h2 className="text-2xl font-semibold">Research Timeline</h2>
+                      <h2 className="text-2xl md:text-3xl text-foreground" style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}>Research Timeline</h2>
                       <span className="text-sm text-muted-foreground">{featured.length} featured</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +175,7 @@ const Bibliography = () => {
 
                 <section className="space-y-4">
                   <div className="flex items-baseline justify-between">
-                    <h2 className="text-2xl font-semibold">Full Library</h2>
+                    <h2 className="text-2xl md:text-3xl text-foreground" style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}>Full Library</h2>
                     <span className="text-sm text-muted-foreground">{filteredLibrary.length} of {library.length}</span>
                   </div>
 
