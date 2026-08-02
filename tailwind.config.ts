@@ -61,6 +61,9 @@ export default {
         gold: {
           DEFAULT: "hsl(var(--gold))",
         },
+        "stance-supportive": "hsl(var(--stance-supportive))",
+        "stance-skeptical": "hsl(var(--stance-skeptical))",
+        "stance-neutral": "hsl(var(--stance-neutral))",
         navy: {
           DEFAULT: "hsl(var(--navy))",
         },

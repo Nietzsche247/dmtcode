@@ -43,6 +43,11 @@
     --glow-primary: 350 75% 44%;
     --glow-intensity: 0.08;
     
+    /* Stance diverging scale (colorblind-safe) */
+    --stance-supportive: 175 84% 32%;
+    --stance-skeptical: 32 95% 44%;
+    --stance-neutral: 36 8% 39%;
+
     /* Accents */
     --gold: 41 56% 51%;
     --navy: 224 42% 20%;
@@ -86,6 +91,11 @@
     --glow-primary: 350 75% 44%;
     --glow-intensity: 0.15;
     
+    /* Stance diverging scale (colorblind-safe) */
+    --stance-supportive: 175 82% 35%;
+    --stance-skeptical: 35 91% 42%;
+    --stance-neutral: 39 11% 59%;
+
     /* Accents */
     --gold: 41 56% 51%;
     --navy: 228 33% 31%;
