@@ -201,6 +201,7 @@ const Dataset = () => {
                   <li>Structured metadata (source, dose, observation conditions)</li>
                   <li>Community validation counts</li>
                   <li>Motif tags and classifications</li>
+                  <li>Browse the symbol corpus in your browser at <a href="/api/symbols" className="text-primary hover:underline">/api/symbols</a></li>
                 </ul>
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">License</h4>

@@ -94,7 +94,7 @@ const Correlations = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Network Graph Visualization</h3>
                     <p className="text-sm text-muted-foreground">
-                      Interactive graph with symbols as nodes, shared tags as edges, and upvote counts as edge weights. Identifies symbol clusters (e.g., "toilet bowl sand" = S001-S047 with notable convergence).
+                      Interactive graph with symbols as nodes, shared tags as edges, and upvote counts as edge weights. Identifies symbol clusters.
                     </p>
                   </div>
                 </div>

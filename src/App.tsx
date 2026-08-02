@@ -10,7 +10,6 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Suspense, lazy } from "react";
 import Home from "./pages/Home";
 import Research from "./pages/Research";
-import Woo from "./pages/Woo";
 import Registry from "./pages/Registry";
 import Correlations from "./pages/Correlations";
 import Waitlist from "./pages/Waitlist";
@@ -24,7 +23,6 @@ import Glossary from "./pages/Glossary";
 import ProtocolGuide from "./pages/ProtocolGuide";
 import EvidenceMap from "./pages/EvidenceMap";
 import Methods from "./pages/Methods";
-import ElizabethBaker from "./pages/ElizabethBaker";
 import Critiques from "./pages/Critiques";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
@@ -41,8 +39,6 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 import Leaderboard from "./pages/Leaderboard";
 import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
-import ProductDetail from "./pages/ProductDetail";
-import SubmitProduct from "./pages/SubmitProduct";
 import SubmitSymbol from "./pages/SubmitSymbol";
 import Dataset from "./pages/Dataset";
 import Trials from "./pages/Trials";
@@ -83,8 +79,6 @@ const GA4Tracker = () => {
   return null;
 };
 
-// Lazy load WooProductDetail page
-const WooProductDetail = lazy(() => import("./pages/WooProductDetail"));
 
 const queryClient = new QueryClient();
 
@@ -127,16 +121,6 @@ const App = () => (
           <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
-          {/* /woo redirects to /community/woo */}
-          <Route path="/woo" element={<Navigate to="/community/woo" replace />} />
-          <Route path="/community/woo" element={<Woo />} />
-          <Route path="/community/woo/:slug" element={
-            <ErrorBoundary>
-              <Suspense fallback={<CalibratingLasersLoader />}>
-                <WooProductDetail />
-              </Suspense>
-            </ErrorBoundary>
-          } />
           <Route path="/registry" element={<Registry />} />
           <Route path="/registry/tag/:tag" element={
             <ErrorBoundary>
@@ -183,7 +167,7 @@ const App = () => (
           <Route path="/protocol-guide" element={<ProtocolGuide />} />
           <Route path="/evidence-map" element={<EvidenceMap />} />
           <Route path="/methods" element={<Methods />} />
-          <Route path="/Elizabeth_Baker" element={<ProtectedRoute><ElizabethBaker /></ProtectedRoute>} />
+          <Route path="/Elizabeth_Baker" element={<Navigate to="/about" replace />} />
           <Route path="/critiques" element={<Critiques />} />
           <Route path="/about" element={<About />} />
           <Route path="/open-questions" element={<OpenQuestions />} />
@@ -202,8 +186,6 @@ const App = () => (
           } />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/null-reports" element={<NullReports />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/submit-product" element={<SubmitProduct />} />
           <Route path="/submit-symbol" element={<SubmitSymbol />} />
           <Route path="/submit" element={<Navigate to="/submit-symbol" replace />} />
           <Route path="/dataset" element={<Dataset />} />
