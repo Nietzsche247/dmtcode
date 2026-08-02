@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { FilterGuide } from '@/components/bibliography/FilterGuide';
 import { BibliographyCard } from '@/components/bibliography/BibliographyCard';
 import { BibliographyFilters } from '@/components/bibliography/BibliographyFilters';
+import { StanceDistribution } from '@/components/bibliography/StanceDistribution';
 import { emptyFilters, derivePeople, KNOWN_PEOPLE, type BibliographyRow, type FilterState } from '@/components/bibliography/types';
 
 const sortByDateDesc = (a: BibliographyRow, b: BibliographyRow) => {
