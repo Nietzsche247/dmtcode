@@ -22,8 +22,8 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signup' ? 'signup' : 'login';
-  const rawReturnTo = searchParams.get('returnTo') || '/';
-  const returnTo = rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : '/';
+  const rawReturnTo = searchParams.get('returnTo') || '/registry';
+  const returnTo = rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : '/registry';
   
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
