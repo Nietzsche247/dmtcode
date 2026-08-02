@@ -139,12 +139,19 @@ const Bibliography = () => {
 
           <section className="max-w-6xl mx-auto px-4 py-16 space-y-10">
             <header className="text-center space-y-3">
-              <h1 className="text-4xl md:text-5xl font-bold">Research Library</h1>
+              <h1
+                className="text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em] text-foreground"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 400 }}
+              >
+                Research Library
+              </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 One unified index of the sources behind the Code of Reality phenomenon. Peer reviewed
                 papers, primary data releases, podcasts, and skeptical commentary.
               </p>
             </header>
+
+            {!loading && !error && rows.length > 0 && <StanceDistribution rows={rows} />}
 
             <FilterGuide />
 
