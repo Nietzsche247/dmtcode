@@ -179,9 +179,6 @@ export default async (request: Request, context: Context) => {
     if (kind === "retreats" && seg.length === 1) {
       return await renderRetreats(context);
     }
-    if (kind === "events" && seg.length === 1) {
-      return await renderEventsIndex(context);
-    }
     if (kind === "articles" && seg.length === 1) {
       return await renderArticlesIndex(context);
     }
@@ -2111,14 +2108,14 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       };
       const todayIso = new Date().toISOString().slice(0, 10);
       const [upRes, pastRes, reRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,location,event_type&order=event_date.asc&limit=12`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,location,event_type&order=event_date.desc&limit=12`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/retreats?is_approved=eq.true&select=id,name,description,location,country,website_url&order=created_at.desc&limit=12`, { headers }),
       ]);
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
       const pasts = pastRes.ok ? await pastRes.json() as Array<Record<string, string>> : [];
       const rets = reRes.ok ? await reRes.json() as Array<Record<string, string>> : [];
-      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` — ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const sections: string[] = [];
       if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
@@ -2127,8 +2124,8 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       if (!sections.length) sections.push(`<section><h2>No approved events or retreats yet</h2><p>Nothing has been approved for this timeline yet. Submissions are reviewed before publication.</p></section>`);
       recentList = sections.join("\n") + `\n<p><em>Scholarly reference only. Inclusion does not constitute endorsement.</em></p>`;
       const listItems = [
-        ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
-        ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, url: `${SITE}/events/${r.id}` })),
+        ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, eventStatus: "https://schema.org/EventScheduled", url: `${SITE}/events/${r.id}` })),
+        ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, url: `${SITE}/events/${r.id}` })),
         ...rets.map((r, i) => ({ "@type": "LodgingBusiness", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
       ];
       if (listItems.length) {
@@ -2911,115 +2908,6 @@ async function renderRetreats(context: Context): Promise<Response> {
         if (r.image_url) item.image = String(r.image_url);
         if (r.contact_email) item.email = String(r.contact_email);
         if (tags.length) item.keywords = tags;
-        return { "@type": "ListItem", position: i + 1, item };
-      }),
-    };
-    jsonLdArr.push(itemListLd);
-  }
-
-  const head = buildHead({
-    title,
-    description: metaDesc,
-    canonical,
-    ogType: "website",
-    jsonLd: jsonLdArr,
-  });
-
-  const html = renderShell(await shellRes.text(), head, body);
-  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
-}
-
-async function renderEventsIndex(context: Context): Promise<Response> {
-  const shellRes = await context.next();
-  const canonical = `${SITE}/events`;
-  const title = "Events & gatherings | DMT Code";
-  const metaDesc =
-    "Conferences, workshops, and gatherings relevant to DMT research and the observation protocol. A listing is not an endorsement; verify dates and details with the organizer.";
-
-  const rows = await sbGetRows(
-    "events",
-    "is_approved=is.true&select=id,title,description,details,event_date,event_type,location,organizer,url&order=event_date.asc",
-  );
-
-  const todayISO = new Date().toISOString().slice(0, 10);
-  const upcoming = rows.filter((r) => String(r.event_date || "") >= todayISO);
-  const past = rows.filter((r) => String(r.event_date || "") < todayISO).reverse();
-
-  const para1 =
-    "Conferences, workshops, and gatherings relevant to DMT research and the observation protocol. Each listing has a permanent detail page. Dates and programs change; verify with the organizer before making plans.";
-  const para2 = "A listing is not an endorsement.";
-
-  const block = (r: Record<string, unknown>) => {
-    const id = String(r.id || "");
-    const titleText = String(r.title || "").trim();
-    const readableDate = r.event_date
-      ? new Date(String(r.event_date)).toLocaleDateString("en-US", {
-          year: "numeric", month: "long", day: "numeric",
-        })
-      : "";
-    const description = String(r.description || "").trim();
-    const details = String(r.details || "").trim();
-    return `<article>
-  <h2><a href="${SITE}/events/${esc(id)}">${esc(titleText)}</a></h2>
-  ${readableDate ? `<p><strong>${esc(readableDate)}</strong>${r.event_type ? ` &middot; ${esc(String(r.event_type))}` : ""}</p>` : ""}
-  ${r.location ? `<p>Location: ${esc(String(r.location))}</p>` : ""}
-  ${r.organizer ? `<p>Organizer: ${esc(String(r.organizer))}</p>` : ""}
-  ${description ? `<p>${esc(description)}</p>` : ""}
-  ${details ? paragraphsFromText(details) : ""}
-</article>`;
-  };
-
-  const body = `<article data-prerender="events">
-  <h1>Events &amp; gatherings</h1>
-  <section>
-    <p>${esc(para1)}</p>
-    <p>${esc(para2)}</p>
-  </section>
-  ${upcoming.length ? `<section><h2>Upcoming</h2>${upcoming.map(block).join("\n")}</section>` : ""}
-  ${past.length ? `<section><h2>Past events</h2>${past.map(block).join("\n")}</section>` : ""}
-  <section><h2>Retreat centers</h2><p>Multi-day psychedelic retreat centers are indexed separately at <a href="${SITE}/retreats">retreat centers</a>.</p></section>
-</article>`;
-
-  const organizationLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": `${SITE}#org`,
-    name: "DMT Code",
-    url: SITE,
-    logo: `${SITE}/favicon.svg`,
-  };
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
-      { "@type": "ListItem", position: 2, name: "Events & gatherings", item: canonical },
-    ],
-  };
-
-  const jsonLdArr: unknown[] = [organizationLd, breadcrumbLd];
-  if (rows.length) {
-    const itemListLd = {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "@id": `${canonical}#list`,
-      name: "Events & gatherings",
-      numberOfItems: rows.length,
-      itemListElement: rows.map((r, i) => {
-        const detailUrl = `${SITE}/events/${String(r.id)}`;
-        const item: Record<string, unknown> = {
-          "@type": "Event",
-          "@id": detailUrl,
-          url: detailUrl,
-          name: r.title,
-          startDate: r.event_date,
-        };
-        if (r.description) item.description = String(r.description);
-        if (r.location) item.location = { "@type": "Place", name: String(r.location) };
-        if (r.organizer) item.organizer = { "@type": "Organization", name: String(r.organizer) };
-        if (String(r.event_date || "") >= todayISO) {
-          item.eventStatus = "https://schema.org/EventScheduled";
-        }
         return { "@type": "ListItem", position: i + 1, item };
       }),
     };
