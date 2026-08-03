@@ -1065,6 +1065,92 @@ export type Database = {
         }
         Relationships: []
       }
+      intel_metrics: {
+        Row: {
+          captured_at: string
+          delta_pct: number | null
+          domain: string
+          id: number
+          label: string
+          metric_key: string
+          note: string | null
+          prior_value: number | null
+          quality: string
+          snapshot_id: string | null
+          unit: string | null
+          value: number | null
+        }
+        Insert: {
+          captured_at: string
+          delta_pct?: number | null
+          domain: string
+          id?: number
+          label: string
+          metric_key: string
+          note?: string | null
+          prior_value?: number | null
+          quality?: string
+          snapshot_id?: string | null
+          unit?: string | null
+          value?: number | null
+        }
+        Update: {
+          captured_at?: string
+          delta_pct?: number | null
+          domain?: string
+          id?: number
+          label?: string
+          metric_key?: string
+          note?: string | null
+          prior_value?: number | null
+          quality?: string
+          snapshot_id?: string | null
+          unit?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intel_metrics_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "intel_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intel_snapshots: {
+        Row: {
+          captured_at: string
+          data_health: Json
+          duration_ms: number | null
+          error: string | null
+          id: string
+          payload: Json
+          period_days: number
+          status: string
+        }
+        Insert: {
+          captured_at?: string
+          data_health: Json
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          payload: Json
+          period_days?: number
+          status?: string
+        }
+        Update: {
+          captured_at?: string
+          data_health?: Json
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          payload?: Json
+          period_days?: number
+          status?: string
+        }
+        Relationships: []
+      }
       market_disagreements: {
         Row: {
           created_at: string
