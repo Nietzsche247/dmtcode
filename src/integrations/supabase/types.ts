@@ -668,54 +668,129 @@ export type Database = {
         }
         Relationships: []
       }
+      event_leads: {
+        Row: {
+          created_at: string
+          email: string
+          event_id: string | null
+          id: string
+          message: string | null
+          name: string | null
+          retreat_id: string | null
+          source_path: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_id?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          retreat_id?: string | null
+          source_path?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_id?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          retreat_id?: string | null
+          source_path?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_leads_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_leads_retreat_id_fkey"
+            columns: ["retreat_id"]
+            isOneToOne: false
+            referencedRelation: "retreats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           created_at: string
           description: string | null
           details: string | null
+          end_date: string | null
           erowid_flag: boolean | null
           event_date: string
           event_type: string
           id: string
+          intake_enabled: boolean
           is_approved: boolean
+          jurisdiction_legal_status: string | null
           location: string | null
+          medical_screening: boolean
           organizer: string | null
+          price_band: string | null
+          promo_code: string | null
+          referral_url: string | null
           submitted_by: string | null
           title: string
           updated_at: string
           url: string | null
+          vetting_status: string
         }
         Insert: {
           created_at?: string
           description?: string | null
           details?: string | null
+          end_date?: string | null
           erowid_flag?: boolean | null
           event_date: string
           event_type: string
           id?: string
+          intake_enabled?: boolean
           is_approved?: boolean
+          jurisdiction_legal_status?: string | null
           location?: string | null
+          medical_screening?: boolean
           organizer?: string | null
+          price_band?: string | null
+          promo_code?: string | null
+          referral_url?: string | null
           submitted_by?: string | null
           title: string
           updated_at?: string
           url?: string | null
+          vetting_status?: string
         }
         Update: {
           created_at?: string
           description?: string | null
           details?: string | null
+          end_date?: string | null
           erowid_flag?: boolean | null
           event_date?: string
           event_type?: string
           id?: string
+          intake_enabled?: boolean
           is_approved?: boolean
+          jurisdiction_legal_status?: string | null
           location?: string | null
+          medical_screening?: boolean
           organizer?: string | null
+          price_band?: string | null
+          promo_code?: string | null
+          referral_url?: string | null
           submitted_by?: string | null
           title?: string
           updated_at?: string
           url?: string | null
+          vetting_status?: string
         }
         Relationships: []
       }
@@ -1545,12 +1620,21 @@ export type Database = {
           details: string | null
           id: string
           image_url: string | null
+          intake_enabled: boolean
           is_approved: boolean
+          jurisdiction_legal_status: string | null
           location: string
+          medical_screening: boolean
           name: string
+          next_end_date: string | null
+          next_start_date: string | null
+          price_band: string | null
+          promo_code: string | null
+          referral_url: string | null
           submitted_by: string | null
           tags: string[] | null
           updated_at: string
+          vetting_status: string
           website_url: string | null
         }
         Insert: {
@@ -1561,12 +1645,21 @@ export type Database = {
           details?: string | null
           id?: string
           image_url?: string | null
+          intake_enabled?: boolean
           is_approved?: boolean
+          jurisdiction_legal_status?: string | null
           location: string
+          medical_screening?: boolean
           name: string
+          next_end_date?: string | null
+          next_start_date?: string | null
+          price_band?: string | null
+          promo_code?: string | null
+          referral_url?: string | null
           submitted_by?: string | null
           tags?: string[] | null
           updated_at?: string
+          vetting_status?: string
           website_url?: string | null
         }
         Update: {
@@ -1577,12 +1670,21 @@ export type Database = {
           details?: string | null
           id?: string
           image_url?: string | null
+          intake_enabled?: boolean
           is_approved?: boolean
+          jurisdiction_legal_status?: string | null
           location?: string
+          medical_screening?: boolean
           name?: string
+          next_end_date?: string | null
+          next_start_date?: string | null
+          price_band?: string | null
+          promo_code?: string | null
+          referral_url?: string | null
           submitted_by?: string | null
           tags?: string[] | null
           updated_at?: string
+          vetting_status?: string
           website_url?: string | null
         }
         Relationships: []
