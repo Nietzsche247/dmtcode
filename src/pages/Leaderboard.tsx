@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Star, Upload, Award } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
 
 const Leaderboard = () => {
   // Fetch profiles for reputation and symbol count leaderboard
@@ -16,7 +16,7 @@ const Leaderboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, display_name, avatar_url, reputation_score, symbol_count')
+        .select('id, handle, avatar_seed, reputation_score, symbol_count')
         .order('reputation_score', { ascending: false })
         .limit(50);
       
@@ -166,15 +166,10 @@ const Leaderboard = () => {
                           {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
                           {index > 2 && `#${index + 1}`}
                         </div>
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={profile.avatar_url || undefined} alt={profile.display_name} />
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {profile.display_name?.slice(0, 2).toUpperCase() || '??'}
-                          </AvatarFallback>
-                        </Avatar>
+                        <AvatarGlyph seed={profile.avatar_seed || profile.id} handle={profile.handle || undefined} size={40} />
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold">{profile.display_name}</span>
+                            <span className="font-semibold">{profile.handle || 'Explorer'}</span>
                           </div>
                           <div className="flex gap-4 text-sm text-muted-foreground">
                             <span>{profile.symbol_count || 0} symbols</span>
@@ -216,15 +211,10 @@ const Leaderboard = () => {
                             {index === 2 && <Trophy className="w-6 h-6 text-amber-700" />}
                             {index > 2 && `#${index + 1}`}
                           </div>
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={profile.avatar_url || undefined} alt={profile.display_name} />
-                            <AvatarFallback className="bg-primary/10 text-primary">
-                              {profile.display_name?.slice(0, 2).toUpperCase() || '??'}
-                            </AvatarFallback>
-                          </Avatar>
+                          <AvatarGlyph seed={profile.avatar_seed || profile.id} handle={profile.handle || undefined} size={40} />
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold">{profile.display_name}</span>
+                              <span className="font-semibold">{profile.handle || 'Explorer'}</span>
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {profile.reputation_score || 0} reputation

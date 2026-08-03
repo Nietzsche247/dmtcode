@@ -23,8 +23,8 @@ export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState<string | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userHandle, setUserHandle] = useState<string | null>(null);
+  const [avatarSeed, setAvatarSeed] = useState<string | null>(null);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
   const { mode } = useModeStore();
@@ -55,14 +55,14 @@ export const Navigation = () => {
     if (session?.user) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('display_name, avatar_url')
+        .select('handle, avatar_seed')
         .eq('id', session.user.id)
         .single();
-      setUserName(profile?.display_name || session.user.email?.split('@')[0] || 'User');
-      setAvatarUrl(profile?.avatar_url || session.user.user_metadata?.avatar_url || null);
+      setUserHandle(profile?.handle || 'Explorer');
+      setAvatarSeed(profile?.avatar_seed || session.user.id);
     } else {
-      setUserName(null);
-      setAvatarUrl(null);
+      setUserHandle(null);
+      setAvatarSeed(null);
     }
   };
 
@@ -70,8 +70,8 @@ export const Navigation = () => {
     trackLogout();
     await supabase.auth.signOut();
     setIsAuthenticated(false);
-    setUserName(null);
-    setAvatarUrl(null);
+    setUserHandle(null);
+    setAvatarSeed(null);
     navigate('/');
   };
 
@@ -148,12 +148,12 @@ export const Navigation = () => {
               <CartDrawer />
               {isAuthenticated ? (
                 <UserDropdown 
-                  userName={userName} 
-                  avatarUrl={avatarUrl}
+                  handle={userHandle} 
+                  avatarSeed={avatarSeed}
                   onSignOut={() => {
                     setIsAuthenticated(false);
-                    setUserName(null);
-                    setAvatarUrl(null);
+                    setUserHandle(null);
+                    setAvatarSeed(null);
                   }}
                 />
               ) : (

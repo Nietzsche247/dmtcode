@@ -19,8 +19,8 @@ import { format } from 'date-fns';
 
 interface UserProfile {
   id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
   reputation_score: number;
 }
 
@@ -117,7 +117,7 @@ const Dashboard = () => {
   const loadProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, display_name, avatar_url, reputation_score')
+      .select('id, handle, avatar_seed, reputation_score')
       .eq('id', userId)
       .maybeSingle();
 
@@ -234,12 +234,6 @@ const Dashboard = () => {
     trackDashboardTabViewed(tab);
   };
 
-  const handleNameUpdate = (newName: string) => {
-    if (profile) {
-      setProfile({ ...profile, display_name: newName });
-    }
-  };
-
   const handleRemoveSaved = async (symbolId: string) => {
     if (!profile) return;
 
@@ -295,10 +289,9 @@ const Dashboard = () => {
           <div className="container mx-auto px-4">
             <ProfileHeader
               userId={profile.id}
-              displayName={profile.display_name}
-              avatarUrl={profile.avatar_url}
+              handle={profile.handle}
+              avatarSeed={profile.avatar_seed}
               reputationScore={stats.reputationScore}
-              onNameUpdate={handleNameUpdate}
             />
 
             <StatsSection
@@ -392,17 +385,17 @@ const Dashboard = () => {
                               </div>
                               <div className={`flex items-center gap-1 text-sm ${moodColor}`}>
                                 <MoodIcon className="h-4 w-4" />
-                                {moodDelta !== null ? (moodDelta > 0 ? `+${moodDelta}` : moodDelta) : '—'}
+                                {moodDelta !== null ? (moodDelta > 0 ? `+${moodDelta}` : moodDelta) : '-'}
                               </div>
                             </div>
                             
                             <div className="grid grid-cols-2 gap-2 mb-3">
                               <div className="text-center p-2 rounded bg-muted/50">
-                                <div className="text-lg font-bold">{assessment.phq9_score ?? '—'}</div>
+                                <div className="text-lg font-bold">{assessment.phq9_score ?? '-'}</div>
                                 <div className="text-[10px] text-muted-foreground uppercase">PHQ-9</div>
                               </div>
                               <div className="text-center p-2 rounded bg-muted/50">
-                                <div className="text-lg font-bold">{assessment.gad7_score ?? '—'}</div>
+                                <div className="text-lg font-bold">{assessment.gad7_score ?? '-'}</div>
                                 <div className="text-[10px] text-muted-foreground uppercase">GAD-7</div>
                               </div>
                             </div>

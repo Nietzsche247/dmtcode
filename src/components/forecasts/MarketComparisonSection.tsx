@@ -278,7 +278,7 @@ export function MarketComparisonSection({ events, marketData }: MarketComparison
                         </div>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </td>
                   <td className="p-3 md:p-4 text-center">
@@ -309,7 +309,7 @@ export function MarketComparisonSection({ events, marketData }: MarketComparison
                         )}
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </td>
                   <td className="p-3 md:p-4 text-center">
@@ -324,7 +324,7 @@ export function MarketComparisonSection({ events, marketData }: MarketComparison
                         </span>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </td>
                 </tr>

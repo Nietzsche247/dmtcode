@@ -73,7 +73,7 @@ export const ConvergenceHero = () => {
           .limit(6);
         if (!cancelled && stripData) setStrip(stripData as TopStrip[]);
       } catch (e) {
-        // fail silently — render fallback
+        // fail silently - render fallback
       }
     })();
     return () => { cancelled = true; };

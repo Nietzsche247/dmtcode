@@ -94,7 +94,7 @@ async function searchPicker(kind: PickerKind, q: string): Promise<PickerRow[]> {
     const { data } = await query;
     return (data ?? []).map((r: any) => ({
       id: r.id,
-      label: `Symbol ${String(r.id).slice(0, 8)}${r.context_note ? ` — ${String(r.context_note).slice(0, 40)}` : ""}`.replace(EM_DASH, "-"),
+      label: `Symbol ${String(r.id).slice(0, 8)}${r.context_note ? ` - ${String(r.context_note).slice(0, 40)}` : ""}`.replace(EM_DASH, "-"),
     }));
   }
   // protocols use slug as the stored id

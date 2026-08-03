@@ -76,7 +76,7 @@ export const VolunteersModeration = () => {
           <div key={v.id} className="rounded-md border border-border bg-card p-4 space-y-3">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-medium">{v.handle ?? '—'} <span className="text-muted-foreground text-sm font-normal">({v.email})</span></p>
+                <p className="font-medium">{v.handle ?? '-'} <span className="text-muted-foreground text-sm font-normal">({v.email})</span></p>
                 <p className="text-xs text-muted-foreground">{new Date(v.created_at).toLocaleString()}</p>
               </div>
               <Badge variant={v.status === 'new' ? 'default' : 'secondary'}>{v.status}</Badge>

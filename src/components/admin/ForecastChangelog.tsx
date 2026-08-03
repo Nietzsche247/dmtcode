@@ -404,7 +404,7 @@ export const ForecastChangelog = () => {
                       <TableCell className="font-medium max-w-[150px] truncate">{item.event_name}</TableCell>
                       <TableCell className="max-w-[200px] truncate" title={item.criterion}>{item.criterion}</TableCell>
                       <TableCell className="max-w-[150px] truncate" title={item.consequence}>{item.consequence}</TableCell>
-                      <TableCell className="whitespace-nowrap">{item.deadline || '—'}</TableCell>
+                      <TableCell className="whitespace-nowrap">{item.deadline || '-'}</TableCell>
                       <TableCell>{getStatusBadge(item.status)}</TableCell>
                       <TableCell>
                         <Select value={item.status} onValueChange={(v) => updateFalsificationStatus(item.id, v)}>

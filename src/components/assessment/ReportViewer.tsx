@@ -244,7 +244,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-center">
-              <p className="text-3xl font-bold">{report.mood.pre ?? '—'}</p>
+              <p className="text-3xl font-bold">{report.mood.pre ?? '-'}</p>
               <p className="text-sm text-muted-foreground">Pre-Session</p>
             </div>
             <div className="flex-1 mx-8">
@@ -256,7 +256,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
               </div>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold">{report.mood.post ?? '—'}</p>
+              <p className="text-3xl font-bold">{report.mood.post ?? '-'}</p>
               <p className="text-sm text-muted-foreground">Post-Session</p>
             </div>
           </div>
@@ -277,7 +277,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold text-primary">{report.scores.phq9.score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{report.scores.phq9.score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/27</span>
               </div>
               <Progress value={((report.scores.phq9.score ?? 0) / 27) * 100} className="h-2" />
@@ -297,7 +297,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold text-primary">{report.scores.gad7.score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{report.scores.gad7.score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/21</span>
               </div>
               <Progress value={((report.scores.gad7.score ?? 0) / 21) * 100} className="h-2" />
@@ -317,7 +317,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold text-primary">{report.scores.meq4.score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{report.scores.meq4.score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/20</span>
               </div>
               <Progress value={((report.scores.meq4.score ?? 0) / 20) * 100} className="h-2" />
@@ -337,7 +337,7 @@ export function ReportViewer({ assessmentId }: ReportViewerProps) {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold text-primary">{report.scores.ceq7.score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{report.scores.ceq7.score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/28</span>
               </div>
               <Progress value={((report.scores.ceq7.score ?? 0) / 28) * 100} className="h-2" />

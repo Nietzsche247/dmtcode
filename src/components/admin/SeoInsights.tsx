@@ -107,7 +107,7 @@ export const SeoInsights = () => {
                     <TableCell>{r.hits}</TableCell>
                     <TableCell>{r.bots}</TableCell>
                     <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                      {r.last ? format(new Date(r.last), 'MMM d HH:mm') : '—'}
+                      {r.last ? format(new Date(r.last), 'MMM d HH:mm') : '-'}
                     </TableCell>
                   </TableRow>
                 ))}

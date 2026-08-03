@@ -79,7 +79,7 @@ export const wooProducts: Record<string, WooProduct> = {
   'pomegranate-symbol': {
     slug: 'pomegranate-symbol',
     title: 'Pomegranate Blessing Symbol',
-    description: 'The pomegranate (rimon) contains 613 seeds according to tradition—corresponding to the 613 commandments. Symbol of righteousness, fertility, and the sweetness of Torah knowledge.',
+    description: 'The pomegranate (rimon) contains 613 seeds according to tradition, corresponding to the 613 commandments. Symbol of righteousness, fertility, and the sweetness of Torah knowledge.',
     price: 28,
     image: pomegranateImg,
     category: 'Symbolic Jewelry',
@@ -130,7 +130,7 @@ export const wooProducts: Record<string, WooProduct> = {
   'kabbalah-tree-pendant': {
     slug: 'kabbalah-tree-pendant',
     title: 'Tree of Life Pendant',
-    description: 'The Etz Chaim (Tree of Life) diagram maps the ten sefirot—divine emanations through which Ein Sof (the Infinite) created and sustains reality. Central to Kabbalistic meditation and understanding of cosmic structure.',
+    description: 'The Etz Chaim (Tree of Life) diagram maps the ten sefirot, divine emanations through which Ein Sof (the Infinite) created and sustains reality. Central to Kabbalistic meditation and understanding of cosmic structure.',
     price: 50,
     image: kabbalahTreeImg,
     category: 'Kabbalah',
@@ -147,7 +147,7 @@ export const wooProducts: Record<string, WooProduct> = {
   'sefer-raziel-hamalakh': {
     slug: 'sefer-raziel-hamalakh',
     title: 'Sefer Raziel HaMalakh',
-    description: 'The "Book of Raziel the Angel"—a medieval grimoire of Jewish mysticism containing angel names, magical sigils, and incantations. Traditionally attributed to the angel Raziel who revealed secrets to Adam.',
+    description: 'The "Book of Raziel the Angel", a medieval grimoire of Jewish mysticism containing angel names, magical sigils, and incantations. Traditionally attributed to the angel Raziel who revealed secrets to Adam.',
     price: 35,
     image: seferRazielImg,
     category: 'Kabbalah Books',
@@ -164,7 +164,7 @@ export const wooProducts: Record<string, WooProduct> = {
   'sefer-harazim': {
     slug: 'sefer-harazim',
     title: 'Sefer HaRazim',
-    description: 'The "Book of Mysteries"—an ancient Jewish magical text describing the seven heavens, their angelic inhabitants, and practical magic. Reflects syncretism between Jewish and Greco-Roman magical traditions.',
+    description: 'The "Book of Mysteries", an ancient Jewish magical text describing the seven heavens, their angelic inhabitants, and practical magic. Reflects syncretism between Jewish and Greco-Roman magical traditions.',
     price: 28,
     image: seferHarazimImg,
     category: 'Kabbalah Books',
@@ -181,7 +181,7 @@ export const wooProducts: Record<string, WooProduct> = {
   'treatise-left-emanation': {
     slug: 'treatise-left-emanation',
     title: 'Treatise on the Left Emanation',
-    description: 'Isaac ha-Kohen\'s 13th-century text mapping the sitra achra (other side)—the realm of demonic forces in Kabbalistic cosmology. Essential reading for understanding the shadow side of the sefirot.',
+    description: 'Isaac ha-Kohen\'s 13th-century text mapping the sitra achra (other side), the realm of demonic forces in Kabbalistic cosmology. Essential reading for understanding the shadow side of the sefirot.',
     price: 32,
     image: treatiseImg,
     category: 'Kabbalah Books',

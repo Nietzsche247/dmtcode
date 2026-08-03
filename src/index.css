@@ -153,7 +153,7 @@
     @apply text-muted-foreground;
   }
 
-  /* Specimen/metadata labels — atlas plate style */
+  /* Specimen/metadata labels - atlas plate style */
   .label-data {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
     text-transform: uppercase;
@@ -371,7 +371,7 @@
     }
   }
 
-  /* Glow text — softened to precise accent, no neon halo */
+  /* Glow text - softened to precise accent, no neon halo */
   .glow-text {
     text-shadow: 0 0 1px hsl(var(--glow-primary) / var(--glow-intensity));
   }

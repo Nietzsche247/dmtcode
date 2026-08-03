@@ -22,8 +22,8 @@ interface SymbolSubmission {
 
 interface ProfileData {
   id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
 }
 
 const SELECT =
@@ -89,7 +89,7 @@ const TagHub = () => {
     if (userIds.length > 0) {
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('id, display_name, avatar_url')
+        .select('id, handle, avatar_seed')
         .in('id', userIds);
 
       if (profileData) {
@@ -147,12 +147,12 @@ const TagHub = () => {
   return (
     <>
       <Helmet>
-        <title>{`Symbols tagged ${tag} — DMT Code Registry`}</title>
+        <title>{`Symbols tagged ${tag} - DMT Code Registry`}</title>
         <meta name="description" content={metaDesc} />
         <link rel="canonical" href={canonical} />
         {count < 2 && <meta name="robots" content="noindex, follow" />}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Symbols tagged ${tag} — DMT Code Registry`} />
+        <meta property="og:title" content={`Symbols tagged ${tag} - DMT Code Registry`} />
         <meta property="og:description" content={metaDesc} />
         <meta property="og:url" content={canonical} />
       </Helmet>
@@ -200,8 +200,8 @@ const TagHub = () => {
                     status={symbol.status}
                     contributor={profiles[symbol.user_id] ? {
                       id: profiles[symbol.user_id].id,
-                      displayName: profiles[symbol.user_id].display_name,
-                      avatarUrl: profiles[symbol.user_id].avatar_url,
+                      handle: profiles[symbol.user_id].handle || 'Explorer',
+                      avatarSeed: profiles[symbol.user_id].avatar_seed,
                     } : null}
                     createdAt={symbol.created_at}
                     submitterId={symbol.user_id}

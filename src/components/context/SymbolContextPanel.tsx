@@ -116,7 +116,7 @@ export const SymbolContextPanel = ({
 
   return (
     <div className="space-y-4">
-      {/* Bucket A — Submitter Context */}
+      {/* Bucket A - Submitter Context */}
       <Card className="p-4 bg-card/60 border-primary/20">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-primary" />
@@ -135,7 +135,7 @@ export const SymbolContextPanel = ({
         )}
       </Card>
 
-      {/* Bucket B — Community Context */}
+      {/* Bucket B - Community Context */}
       <Card className="p-4 bg-card/60">
         <div className="flex items-center gap-2 mb-3">
           <Users className="w-4 h-4 text-muted-foreground" />

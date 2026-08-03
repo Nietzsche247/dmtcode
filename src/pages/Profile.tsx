@@ -19,6 +19,7 @@ import { Flame, Snowflake } from 'lucide-react';
 import { WatchedTrials } from '@/components/profile/WatchedTrials';
 import { ActivityThread } from '@/components/profile/ActivityThread';
 import { Following } from '@/components/profile/Following';
+import { BadgeIcon } from '@/components/badges/BadgeIcon';
 
 
 interface UserSymbol {
@@ -55,8 +56,6 @@ interface VoiceLog {
 interface ProfileRecord {
   id: string;
   handle: string;
-  display_name: string;
-  avatar_url: string | null;
   avatar_seed: string;
   created_at: string;
   reputation_score: number;
@@ -109,7 +108,7 @@ const StatCell = ({
           )}
           aria-label={isZero ? `${label}: none yet` : `${label}: ${value}`}
         >
-          {isZero ? '—' : value}
+          {isZero ? '-' : value}
         </div>
         <div className="text-sm text-muted-foreground mb-2">{label}</div>
         {isZero && (
@@ -165,7 +164,7 @@ const Profile = () => {
   const loadProfile = async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, handle, display_name, avatar_url, avatar_seed, created_at, reputation_score')
+      .select('id, handle, avatar_seed, created_at, reputation_score')
       .eq('id', uid)
       .maybeSingle();
     if (data) setProfile(data as ProfileRecord);
@@ -330,7 +329,7 @@ const Profile = () => {
                 )}
                 <div className="flex-1 min-w-0">
                   <h1 className="text-2xl sm:text-3xl font-serif tracking-tight break-words">
-                    {profile?.handle || profile?.display_name || 'Explorer'}
+                    {profile?.handle || 'Explorer'}
                   </h1>
                   {profile?.created_at && (
                     <p className="text-sm text-muted-foreground mt-1">
@@ -429,15 +428,11 @@ const Profile = () => {
                         )}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={cn(
-                              'text-2xl',
-                              earned ? '' : 'grayscale opacity-60'
-                            )}
-                            aria-hidden="true"
-                          >
-                            {b.icon || (earned ? '✶' : '·')}
-                          </span>
+                          <BadgeIcon
+                            name={b.name}
+                            size={24}
+                            className={cn(earned ? 'text-primary' : 'text-muted-foreground opacity-60')}
+                          />
                           {!earned && (
                             <Lock className="w-3 h-3 text-muted-foreground" aria-label="Locked" />
                           )}

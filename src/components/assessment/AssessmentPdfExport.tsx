@@ -108,16 +108,16 @@ export const AssessmentPdfExport = ({ scores, assessmentId }: AssessmentPdfExpor
           <div class="mood-section">
             <div class="mood-box">
               <div class="score-label">Pre-Session</div>
-              <div class="mood-value">${scores.mood_pre ?? '—'}/10</div>
+              <div class="mood-value">${scores.mood_pre ?? '-'}/10</div>
             </div>
             <div class="mood-box">
               <div class="score-label">Post-Session</div>
-              <div class="mood-value">${scores.mood_post ?? '—'}/10</div>
+              <div class="mood-value">${scores.mood_post ?? '-'}/10</div>
             </div>
             <div class="mood-box">
               <div class="score-label">Change</div>
               <div class="mood-value ${moodDelta !== null && moodDelta > 0 ? 'delta-positive' : moodDelta !== null && moodDelta < 0 ? 'delta-negative' : ''}">
-                ${moodDelta !== null ? (moodDelta > 0 ? '+' : '') + moodDelta : '—'}
+                ${moodDelta !== null ? (moodDelta > 0 ? '+' : '') + moodDelta : '-'}
               </div>
             </div>
           </div>
@@ -126,22 +126,22 @@ export const AssessmentPdfExport = ({ scores, assessmentId }: AssessmentPdfExpor
           <div class="score-grid">
             <div class="score-card">
               <div class="score-label">PHQ-9 (Depression)</div>
-              <div class="score-value">${scores.phq9_score ?? '—'}/27</div>
+              <div class="score-value">${scores.phq9_score ?? '-'}/27</div>
               <div class="score-interp">${getPhq9Interpretation(scores.phq9_score)}</div>
             </div>
             <div class="score-card">
               <div class="score-label">GAD-7 (Anxiety)</div>
-              <div class="score-value">${scores.gad7_score ?? '—'}/21</div>
+              <div class="score-value">${scores.gad7_score ?? '-'}/21</div>
               <div class="score-interp">${getGad7Interpretation(scores.gad7_score)}</div>
             </div>
             <div class="score-card">
               <div class="score-label">MEQ-4 (Mystical Experience)</div>
-              <div class="score-value">${scores.meq4_score ?? '—'}/20</div>
+              <div class="score-value">${scores.meq4_score ?? '-'}/20</div>
               <div class="score-interp">${getMeq4Interpretation(scores.meq4_score)}</div>
             </div>
             <div class="score-card">
               <div class="score-label">CEQ-7 (Challenging Experience)</div>
-              <div class="score-value">${scores.ceq7_score ?? '—'}/28</div>
+              <div class="score-value">${scores.ceq7_score ?? '-'}/28</div>
               <div class="score-interp">${getCeq7Interpretation(scores.ceq7_score)}</div>
             </div>
           </div>

@@ -7,7 +7,7 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SymbolResponsePanel } from '@/components/registry/SymbolResponsePanel';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
@@ -66,8 +66,8 @@ interface SymbolData {
 
 interface ContributorData {
   id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
   reputation_score: number;
 }
 
@@ -80,8 +80,8 @@ interface RelatedSymbol {
 
 interface Validator {
   user_id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
 }
 
 // CONTEXT_TAG_RE is duplicated verbatim in netlify/edge-functions/content-prerender.ts
@@ -181,7 +181,7 @@ const SymbolDetail = () => {
     // Load contributor profile
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('id, display_name, avatar_url, reputation_score')
+      .select('id, handle, avatar_seed, reputation_score')
       .eq('id', symbolData.user_id)
       .maybeSingle();
 
@@ -218,14 +218,14 @@ const SymbolDetail = () => {
       const userIds = votes.map(v => v.user_id);
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, display_name, avatar_url')
+        .select('id, handle, avatar_seed')
         .in('id', userIds);
 
       if (profiles) {
         setValidators(profiles.map(p => ({
           user_id: p.id,
-          display_name: p.display_name,
-          avatar_url: p.avatar_url,
+          handle: p.handle,
+          avatar_seed: p.avatar_seed,
         })));
       }
     }
@@ -246,10 +246,6 @@ const SymbolDetail = () => {
     }
 
     setLoading(false);
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const prettify = (value: string) =>
@@ -295,7 +291,7 @@ const SymbolDetail = () => {
   const short = symbol.id.slice(0, 8);
   const titlePhrase = symbolTitlePhrase(symbol.tags || [], communityTags);
   const pageTitle = titlePhrase
-    ? `${titlePhrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+    ? `${titlePhrase} - DMT symbol #${short.toUpperCase()} | DMT Code`
     : `Symbol ${short} | DMT Code Registry`;
   const seoKeywords = [...new Set([...(symbol.tags || []), ...communityTags.map((t) => t.name)])];
 
@@ -339,7 +335,7 @@ const SymbolDetail = () => {
               : {}),
             "creator": contributor ? {
               "@type": "Person",
-              "name": contributor.display_name
+              "name": contributor.handle || 'Explorer'
             } : undefined
           })}
         </script>
@@ -529,14 +525,9 @@ const SymbolDetail = () => {
                   <Card className="p-4 bg-card/50">
                     <h3 className="font-medium mb-3">Contributor</h3>
                     <div className="flex items-center gap-3">
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={contributor.avatar_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {getInitials(contributor.display_name)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <AvatarGlyph seed={contributor.avatar_seed || contributor.id} handle={contributor.handle || undefined} size={40} />
                       <div className="flex-1">
-                        <p className="font-medium">{contributor.display_name}</p>
+                        <p className="font-medium">{contributor.handle || 'Explorer'}</p>
                         {contributor.reputation_score > 0 && (
                           <p className="text-sm text-muted-foreground flex items-center gap-1">
                             <Award className="w-3 h-3" />
@@ -556,12 +547,7 @@ const SymbolDetail = () => {
                     </h3>
                     <div className="flex -space-x-2">
                       {validators.slice(0, 8).map((v, i) => (
-                        <Avatar key={i} className="w-8 h-8 border-2 border-background">
-                          <AvatarImage src={v.avatar_url || undefined} />
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                            {getInitials(v.display_name)}
-                          </AvatarFallback>
-                        </Avatar>
+                        <AvatarGlyph key={i} seed={v.avatar_seed || v.user_id} handle={v.handle || undefined} size={32} className="border-2 border-background" />
                       ))}
                       {validationCount > 8 && (
                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">

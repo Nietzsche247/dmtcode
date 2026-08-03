@@ -39,7 +39,7 @@ export const NicheGeoAudit = () => {
         <CardContent className="flex items-start gap-3 pt-6">
           <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Static guidance — not measured data.</span>{' '}
+            <span className="font-medium text-foreground">Static guidance - not measured data.</span>{' '}
             Nothing on this tab is a live metric. These are target queries and tactics written by the operator. For
             measured crawler data see the GEO/AEO and SEO tabs.
           </p>

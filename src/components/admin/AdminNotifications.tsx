@@ -41,8 +41,8 @@ export const AdminNotifications = () => {
           
           toast.success('New Admin Alert!', {
             description: newNotif.type === 'first_non_red' 
-              ? '🚨 First non-red wavelength submitted!' 
-              : '⚪ New null report submitted',
+              ? 'First non-red wavelength submitted!' 
+              : 'New null report submitted',
           });
         }
       )
@@ -163,7 +163,7 @@ export const AdminNotifications = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant={notif.type === 'first_non_red' ? 'default' : 'outline'}>
-                        {notif.type === 'first_non_red' ? '🚨 First Non-Red' : '⚪ Null Report'}
+                        {notif.type === 'first_non_red' ? 'First Non-Red' : 'Null Report'}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {new Date(notif.created_at).toLocaleString()}

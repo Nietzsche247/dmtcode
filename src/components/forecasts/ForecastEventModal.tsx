@@ -279,7 +279,7 @@ export function ForecastEventModal({
             {event.cascadeEffects.tier_1.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-purple-400 mb-2">
-                  Tier 1 — Immediate Effects
+                  Tier 1 - Immediate Effects
                 </p>
                 <ul className="space-y-1.5">
                   {event.cascadeEffects.tier_1.map((effect, i) => (
@@ -298,7 +298,7 @@ export function ForecastEventModal({
             {event.cascadeEffects.tier_2.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-purple-400/80 mb-2">
-                  Tier 2 — Secondary Effects
+                  Tier 2 - Secondary Effects
                 </p>
                 <ul className="space-y-1.5">
                   {event.cascadeEffects.tier_2.map((effect, i) => (
@@ -317,7 +317,7 @@ export function ForecastEventModal({
             {event.cascadeEffects.tier_3.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-purple-400/60 mb-2">
-                  Tier 3 — Long-term Effects
+                  Tier 3 - Long-term Effects
                 </p>
                 <ul className="space-y-1.5">
                   {event.cascadeEffects.tier_3.map((effect, i) => (

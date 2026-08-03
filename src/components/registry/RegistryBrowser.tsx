@@ -25,8 +25,8 @@ interface SymbolSubmission {
 
 interface ProfileData {
   id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
 }
 
 export const RegistryBrowser = () => {
@@ -85,7 +85,7 @@ export const RegistryBrowser = () => {
       if (userIds.length > 0) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('id, display_name, avatar_url')
+          .select('id, handle, avatar_seed')
           .in('id', userIds);
         
         if (profileData) {
@@ -352,8 +352,8 @@ export const RegistryBrowser = () => {
                 status={symbol.status}
                 contributor={profiles[symbol.user_id] ? {
                   id: profiles[symbol.user_id].id,
-                  displayName: profiles[symbol.user_id].display_name,
-                  avatarUrl: profiles[symbol.user_id].avatar_url,
+                  handle: profiles[symbol.user_id].handle || 'Explorer',
+                  avatarSeed: profiles[symbol.user_id].avatar_seed,
                 } : null}
                 createdAt={symbol.created_at}
                 submitterId={symbol.user_id}

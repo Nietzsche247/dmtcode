@@ -103,7 +103,7 @@ function matchEventName(target: string, events: ForecastEvent[]): ForecastEvent 
 function normalizeEventName(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[()\/\-–—]/g, ' ')  // Remove parens, slashes, dashes
+    .replace(/[()\/\u2010-\u2015-]/g, ' ')  // Remove parens, slashes, dashes
     .replace(/\s+/g, ' ')          // Collapse whitespace
     .trim();
 }

@@ -25,7 +25,7 @@ const STEPS: { title: string; body: React.ReactNode; link?: { href: string; labe
   },
   {
     title: 'Enter the event name',
-    body: <>Paste exactly — names are case-sensitive.</>,
+    body: <>Paste exactly - names are case-sensitive.</>,
     copy: EVENT_NAME,
   },
   {
@@ -34,7 +34,7 @@ const STEPS: { title: string; body: React.ReactNode; link?: { href: string; labe
   },
   {
     title: 'Verify it shows up',
-    body: <>Refresh the Key events page. <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{EVENT_NAME}</code> should now be listed with status <strong>On</strong>. Future fires will be counted as key events (may take up to 24h to appear in standard reports — DebugView is instant).</>,
+    body: <>Refresh the Key events page. <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{EVENT_NAME}</code> should now be listed with status <strong>On</strong>. Future fires will be counted as key events (may take up to 24h to appear in standard reports - DebugView is instant).</>,
   },
 ];
 

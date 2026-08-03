@@ -77,11 +77,11 @@ export const ApiAccessLog = () => {
   };
 
   const formatFilters = (filters: Record<string, unknown> | null) => {
-    if (!filters || Object.keys(filters).length === 0) return '—';
+    if (!filters || Object.keys(filters).length === 0) return '-';
     const activeFilters = Object.entries(filters)
       .filter(([_, v]) => v !== null && v !== undefined)
       .map(([k, v]) => `${k}=${v}`);
-    return activeFilters.length > 0 ? activeFilters.join(', ') : '—';
+    return activeFilters.length > 0 ? activeFilters.join(', ') : '-';
   };
 
   return (
@@ -190,16 +190,16 @@ export const ApiAccessLog = () => {
                     <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {log.accessed_at 
                         ? format(new Date(log.accessed_at), 'MMM d, HH:mm:ss')
-                        : '—'}
+                        : '-'}
                     </TableCell>
                     <TableCell>
                       {getFormatBadge(log.format)}
                     </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">
-                      {log.ip_address || '—'}
+                      {log.ip_address || '-'}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate" title={log.user_agent || undefined}>
-                      {log.user_agent || '—'}
+                      {log.user_agent || '-'}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatFilters(log.filters)}

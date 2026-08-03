@@ -178,7 +178,7 @@ export default function SharedAssessment() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-center">
-                <p className="text-3xl font-bold">{assessment.mood_pre ?? '—'}</p>
+                <p className="text-3xl font-bold">{assessment.mood_pre ?? '-'}</p>
                 <p className="text-sm text-muted-foreground">Pre-Session</p>
               </div>
               <div className="flex-1 mx-8">
@@ -188,7 +188,7 @@ export default function SharedAssessment() {
                 />
               </div>
               <div className="text-center">
-                <p className="text-3xl font-bold">{assessment.mood_post ?? '—'}</p>
+                <p className="text-3xl font-bold">{assessment.mood_post ?? '-'}</p>
                 <p className="text-sm text-muted-foreground">Post-Session</p>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function SharedAssessment() {
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl font-bold text-primary">{assessment.phq9_score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{assessment.phq9_score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/27</span>
               </div>
               <Progress value={((assessment.phq9_score ?? 0) / 27) * 100} className="h-2 mb-2" />
@@ -222,7 +222,7 @@ export default function SharedAssessment() {
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl font-bold text-primary">{assessment.gad7_score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{assessment.gad7_score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/21</span>
               </div>
               <Progress value={((assessment.gad7_score ?? 0) / 21) * 100} className="h-2 mb-2" />
@@ -237,7 +237,7 @@ export default function SharedAssessment() {
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl font-bold text-primary">{assessment.meq4_score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{assessment.meq4_score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/20</span>
               </div>
               <Progress value={((assessment.meq4_score ?? 0) / 20) * 100} className="h-2 mb-2" />
@@ -252,7 +252,7 @@ export default function SharedAssessment() {
             </CardHeader>
             <CardContent>
               <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl font-bold text-primary">{assessment.ceq7_score ?? '—'}</span>
+                <span className="text-4xl font-bold text-primary">{assessment.ceq7_score ?? '-'}</span>
                 <span className="text-muted-foreground mb-1">/28</span>
               </div>
               <Progress value={((assessment.ceq7_score ?? 0) / 28) * 100} className="h-2 mb-2" />

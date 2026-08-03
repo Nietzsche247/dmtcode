@@ -88,7 +88,7 @@ export function RepoCloneButton() {
       } else if (res.status === 404) {
         setVerify({
           status: 'error',
-          message: 'Not found — repo is private or the URL is wrong. (Public repos verify without auth.)',
+          message: 'Not found - repo is private or the URL is wrong. (Public repos verify without auth.)',
         });
       } else if (res.status === 403) {
         setVerify({ status: 'error', message: 'GitHub rate limit reached. Try again in a few minutes.' });

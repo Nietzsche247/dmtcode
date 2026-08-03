@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Check, X, Eye, Loader2, Search, CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, X, Eye, Loader2, Search, CalendarIcon, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
@@ -25,7 +25,7 @@ declare global {
 }
 
 type SymbolSubmission = Tables<'symbol_submissions'> & {
-  profile?: { display_name: string; avatar_url: string | null } | null;
+  profile?: { handle: string | null; avatar_seed: string | null } | null;
 };
 
 type StatusFilter = 'all' | 'new72' | 'pending' | 'approved' | 'rejected';
@@ -168,7 +168,7 @@ export const SymbolSubmissionModeration = () => {
     const userIds = [...new Set((data || []).map(s => s.user_id))];
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, display_name, avatar_url')
+      .select('id, handle, avatar_seed')
       .in('id', userIds);
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
@@ -569,7 +569,7 @@ export const SymbolSubmissionModeration = () => {
                       </p>
                     </td>
                     <td className="p-3">
-                      <span className="text-sm">{submission.profile?.display_name || 'Anonymous'}</span>
+                      <span className="text-sm">{submission.profile?.handle || 'Explorer'}</span>
                     </td>
                     <td className="p-3">
                       <Badge variant={getStatusBadgeVariant(submission.status)}>
@@ -588,7 +588,7 @@ export const SymbolSubmissionModeration = () => {
                     </td>
                     <td className="p-3">
                       <span className="text-sm">
-                        👍 {submission.upvotes} 👎 {submission.downvotes}
+                        <ThumbsUp className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.upvotes} <ThumbsDown className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.downvotes}
                       </span>
                     </td>
                     <td className="p-3">
@@ -719,7 +719,7 @@ export const SymbolSubmissionModeration = () => {
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Submitter</label>
-                  <p>{viewingSubmission.profile?.display_name || 'Anonymous'}</p>
+                  <p>{viewingSubmission.profile?.handle || 'Explorer'}</p>
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Description</label>
@@ -727,7 +727,7 @@ export const SymbolSubmissionModeration = () => {
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Votes</label>
-                  <p>👍 {viewingSubmission.upvotes} / 👎 {viewingSubmission.downvotes}</p>
+                  <p className="flex items-center gap-1.5"><ThumbsUp className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.upvotes} / <ThumbsDown className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.downvotes}</p>
                 </div>
                 {viewingSubmission.tags && viewingSubmission.tags.length > 0 && (
                   <div>

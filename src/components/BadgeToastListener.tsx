@@ -37,7 +37,7 @@ export const BadgeToastListener = () => {
             const label = badgeName
               .replace(/_/g, ' ')
               .replace(/\b\w/g, (l) => l.toUpperCase());
-            toast.success(`${badge?.icon ?? '✶'}  ${label}`, {
+            toast.success(label, {
               description: badge?.description ?? 'A new badge was recorded on your profile.',
               duration: 6000,
             });

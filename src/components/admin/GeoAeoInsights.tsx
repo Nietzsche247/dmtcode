@@ -179,7 +179,7 @@ export const GeoAeoInsights = () => {
             <Bot className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '—' : hits.length}</div>
+            <div className="text-2xl font-bold">{loading ? '-' : hits.length}</div>
             <p className="text-xs text-muted-foreground">{loading ? 'Loading…' : (trend ?? '')}</p>
           </CardContent>
         </Card>
@@ -190,7 +190,7 @@ export const GeoAeoInsights = () => {
             <Fingerprint className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{loading ? '—' : distinctBots}</div>
+            <div className="text-2xl font-bold">{loading ? '-' : distinctBots}</div>
             <p className="text-xs text-muted-foreground">Distinct bot_name values in window</p>
           </CardContent>
         </Card>
@@ -240,10 +240,10 @@ export const GeoAeoInsights = () => {
                 {recent.map((h) => (
                   <TableRow key={h.id}>
                     <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                      {h.ts ? format(new Date(h.ts), 'MMM d HH:mm') : '—'}
+                      {h.ts ? format(new Date(h.ts), 'MMM d HH:mm') : '-'}
                     </TableCell>
-                    <TableCell className="text-sm">{h.bot_name || '—'}</TableCell>
-                    <TableCell className="break-all font-mono text-xs">{h.path || '—'}</TableCell>
+                    <TableCell className="text-sm">{h.bot_name || '-'}</TableCell>
+                    <TableCell className="break-all font-mono text-xs">{h.path || '-'}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 import { AssessmentPdfExport } from './AssessmentPdfExport';
-import { Mic, FileDown } from 'lucide-react';
+import { Mic, FileDown, Check } from 'lucide-react';
 
 interface AssessmentFormProps {
   logId?: string;
@@ -26,7 +26,7 @@ const PHQ9_QUESTIONS = [
   "Trouble falling or staying asleep, or sleeping too much",
   "Feeling tired or having little energy",
   "Poor appetite or overeating",
-  "Feeling bad about yourself — or that you are a failure",
+  "Feeling bad about yourself, or that you are a failure",
   "Trouble concentrating on things",
   "Moving or speaking slowly, or being fidgety or restless",
   "Thoughts that you would be better off dead or of hurting yourself"
@@ -273,11 +273,11 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
         <TabsList className="grid w-full grid-cols-2 bg-muted/50">
           <TabsTrigger value="pre" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Pre-Session Baseline
-            {isPreComplete && <span className="ml-2 text-xs">✓</span>}
+            {isPreComplete && <Check className="ml-2 h-3 w-3" aria-hidden="true" />}
           </TabsTrigger>
           <TabsTrigger value="post" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Post-Session Assessment
-            {isPostComplete && <span className="ml-2 text-xs">✓</span>}
+            {isPostComplete && <Check className="ml-2 h-3 w-3" aria-hidden="true" />}
           </TabsTrigger>
         </TabsList>
 
@@ -562,7 +562,7 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                   {/* PHQ-9 */}
                   <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
                     <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">PHQ-9</div>
-                    <div className="text-3xl font-bold text-center">{phq9Answered === 9 ? phq9Score : '—'}</div>
+                    <div className="text-3xl font-bold text-center">{phq9Answered === 9 ? phq9Score : '-'}</div>
                     {phq9Answered === 9 ? (
                       <>
                         <div className={`text-xs font-medium text-center ${getPhq9Severity(phq9Score).color}`}>
@@ -623,7 +623,7 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                   {/* GAD-7 */}
                   <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
                     <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">GAD-7</div>
-                    <div className="text-3xl font-bold text-center">{gad7Answered === 7 ? gad7Score : '—'}</div>
+                    <div className="text-3xl font-bold text-center">{gad7Answered === 7 ? gad7Score : '-'}</div>
                     {gad7Answered === 7 ? (
                       <>
                         <div className={`text-xs font-medium text-center ${getGad7Severity(gad7Score).color}`}>
@@ -677,7 +677,7 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                   {/* MEQ-4 */}
                   <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
                     <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">MEQ-4</div>
-                    <div className="text-3xl font-bold text-center">{meq4Answered === 4 ? meq4Score : '—'}</div>
+                    <div className="text-3xl font-bold text-center">{meq4Answered === 4 ? meq4Score : '-'}</div>
                     {meq4Answered === 4 ? (
                       <>
                         <div className={`text-xs font-medium text-center ${getMeq4Severity(meq4Score).color}`}>
@@ -731,7 +731,7 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
                   {/* CEQ-7 */}
                   <div className="p-4 rounded-lg bg-background/50 border border-border/50 space-y-2">
                     <div className="text-xs text-muted-foreground uppercase tracking-wide text-center">CEQ-7</div>
-                    <div className="text-3xl font-bold text-center">{ceq7Answered === 7 ? ceq7Score : '—'}</div>
+                    <div className="text-3xl font-bold text-center">{ceq7Answered === 7 ? ceq7Score : '-'}</div>
                     {ceq7Answered === 7 ? (
                       <>
                         <div className={`text-xs font-medium text-center ${getCeq7Severity(ceq7Score).color}`}>

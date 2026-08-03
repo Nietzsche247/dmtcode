@@ -4,7 +4,7 @@ import { toast } from 'sonner';
  * Every write on this site is tied to an account: each contributor gets a
  * public avatar profile name with their email hidden, and their activity feeds
  * the leaderboard. A signed out visitor must never see a bare error when they
- * try to write — they see what an account gives them and a way to get one.
+ * try to write - they see what an account gives them and a way to get one.
  */
 export const promptSignIn = (action = 'record your recognition') => {
   const returnTo =
