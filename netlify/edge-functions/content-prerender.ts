@@ -179,6 +179,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "retreats" && seg.length === 1) {
       return await renderRetreats(context);
     }
+    if (kind === "events" && seg.length === 1) {
+      return await renderEventsIndex(context);
+    }
     if (kind === "articles" && seg.length === 1) {
       return await renderArticlesIndex(context);
     }
