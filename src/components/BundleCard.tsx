@@ -60,6 +60,8 @@ export const BundleCard = ({
         bundle_id: id,
         bundle_name: name,
         label: cta,
+        value: price ?? 0,
+        currency: 'USD',
         send_to: 'G-CWVKJBDG7L',
       });
     }
