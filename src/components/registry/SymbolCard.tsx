@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
 
@@ -13,8 +13,8 @@ interface SymbolCardProps {
   status?: 'pending' | 'approved' | 'rejected';
   contributor?: {
     id: string;
-    displayName: string;
-    avatarUrl?: string | null;
+    handle: string;
+    avatarSeed?: string | null;
   } | null;
   createdAt: string;
   submitterId?: string;
@@ -36,15 +36,6 @@ export const SymbolCard = ({
   similarCount = 0,
   communityTags = [],
 }: SymbolCardProps) => {
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   const specimenId = `#${id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
   const captureDate = (() => {
@@ -95,14 +86,9 @@ export const SymbolCard = ({
         {/* Contributor Info */}
         {contributor && (
           <div className="flex items-center gap-2">
-            <Avatar className="w-5 h-5">
-              <AvatarImage src={contributor.avatarUrl || undefined} />
-              <AvatarFallback className="text-[9px] bg-primary/10 text-primary">
-                {getInitials(contributor.displayName)}
-              </AvatarFallback>
-            </Avatar>
+            <AvatarGlyph seed={contributor.avatarSeed || contributor.id} handle={contributor.handle} size={20} />
             <span className="font-mono text-[11px] text-muted-foreground truncate">
-              {contributor.displayName}
+              {contributor.handle}
             </span>
           </div>
         )}
