@@ -62,9 +62,14 @@ export const AdminDashboard = () => {
             <TabsTrigger value="seo">SEO</TabsTrigger>
           </TabsList>
 
+          <TabsContent value="intel" className="space-y-4">
+            <IntelHub />
+          </TabsContent>
+
           <TabsContent value="articles" className="space-y-4">
             <ArticlesManager />
           </TabsContent>
+
 
 
           <TabsContent value="niche-geo" className="space-y-4">
