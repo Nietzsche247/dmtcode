@@ -55,8 +55,6 @@ interface VoiceLog {
 interface ProfileRecord {
   id: string;
   handle: string;
-  display_name: string;
-  avatar_url: string | null;
   avatar_seed: string;
   created_at: string;
   reputation_score: number;

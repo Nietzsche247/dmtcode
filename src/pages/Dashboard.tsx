@@ -19,8 +19,8 @@ import { format } from 'date-fns';
 
 interface UserProfile {
   id: string;
-  display_name: string;
-  avatar_url: string | null;
+  handle: string | null;
+  avatar_seed: string | null;
   reputation_score: number;
 }
 
@@ -117,7 +117,7 @@ const Dashboard = () => {
   const loadProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, display_name, avatar_url, reputation_score')
+      .select('id, handle, avatar_seed, reputation_score')
       .eq('id', userId)
       .maybeSingle();
 
@@ -234,12 +234,6 @@ const Dashboard = () => {
     trackDashboardTabViewed(tab);
   };
 
-  const handleNameUpdate = (newName: string) => {
-    if (profile) {
-      setProfile({ ...profile, display_name: newName });
-    }
-  };
-
   const handleRemoveSaved = async (symbolId: string) => {
     if (!profile) return;
 
@@ -295,10 +289,9 @@ const Dashboard = () => {
           <div className="container mx-auto px-4">
             <ProfileHeader
               userId={profile.id}
-              displayName={profile.display_name}
-              avatarUrl={profile.avatar_url}
+              handle={profile.handle}
+              avatarSeed={profile.avatar_seed}
               reputationScore={stats.reputationScore}
-              onNameUpdate={handleNameUpdate}
             />
 
             <StatsSection
