@@ -582,7 +582,7 @@ const ProtocolDetail = () => {
                           <ul className="space-y-2">
                             {content.safety.abort_criteria.map((item: string, i: number) => (
                               <li key={i} className="flex items-start gap-2 text-muted-foreground text-sm">
-                                <span className="text-red-500">⚠</span>
+                                <AlertTriangle className="w-4 h-4 text-destructive" aria-hidden="true" />
                                 {item}
                               </li>
                             ))}

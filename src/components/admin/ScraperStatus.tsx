@@ -127,7 +127,7 @@ export const ScraperStatus = () => {
 
   const triggerFirehoseScraper = async () => {
     setRunningFirehose(true);
-    toast.info("🚀 Starting psychedelic data firehose...");
+    toast.info("Starting psychedelic data firehose...");
 
     try {
       const { data, error } = await supabase.functions.invoke("scrape-all", {
@@ -135,7 +135,7 @@ export const ScraperStatus = () => {
       });
 
       if (error) throw error;
-      toast.success(`🎉 Firehose complete: ${data.totalAdded} new items from 5 sources`);
+      toast.success(`Firehose complete: ${data.totalAdded} new items from 5 sources`);
       fetchRuns();
     } catch (error) {
       console.error("Error:", error);

@@ -428,7 +428,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         const { triggerConfetti } = await import('@/utils/confetti');
         triggerConfetti();
         
-        toast.success('🎉 You unlocked Spectrum Hunter badge!', {
+        toast.success('You unlocked Spectrum Hunter badge!', {
           description: 'You submitted the FIRST non-red wavelength symbol!',
           duration: 6000
         });
@@ -754,7 +754,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 onClick={() => setFormData(prev => ({ ...prev, observationMethod: '650nm_laser' }))}
               >
                 <div className="text-center">
-                  <div className="text-3xl mb-2">🔴</div>
+                  <div className="mb-2 flex justify-center"><Circle className="h-7 w-7 text-primary" aria-hidden="true" /></div>
                   <h4 className="font-semibold mb-2">650nm Laser Protocol</h4>
                   <p className="text-xs text-muted-foreground">During laser exposure</p>
                 </div>
@@ -767,7 +767,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 onClick={() => setFormData(prev => ({ ...prev, observationMethod: 'closed_eyes' }))}
               >
                 <div className="text-center">
-                  <div className="text-3xl mb-2">👁️</div>
+                  <div className="mb-2 flex justify-center"><Eye className="h-7 w-7 text-primary" aria-hidden="true" /></div>
                   <h4 className="font-semibold mb-2">Closed Eyes</h4>
                   <p className="text-xs text-muted-foreground">During altered state</p>
                 </div>
@@ -780,7 +780,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 onClick={() => setFormData(prev => ({ ...prev, observationMethod: 'other' }))}
               >
                 <div className="text-center">
-                  <div className="text-3xl mb-2">✨</div>
+                  <div className="mb-2 flex justify-center"><Sparkles className="h-7 w-7 text-primary" aria-hidden="true" /></div>
                   <h4 className="font-semibold mb-2">Other</h4>
                   <p className="text-xs text-muted-foreground">Different method</p>
                 </div>

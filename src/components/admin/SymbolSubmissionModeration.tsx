@@ -588,7 +588,7 @@ export const SymbolSubmissionModeration = () => {
                     </td>
                     <td className="p-3">
                       <span className="text-sm">
-                        👍 {submission.upvotes} 👎 {submission.downvotes}
+                        <ThumbsUp className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.upvotes} <ThumbsDown className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.downvotes}
                       </span>
                     </td>
                     <td className="p-3">
@@ -727,7 +727,7 @@ export const SymbolSubmissionModeration = () => {
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Votes</label>
-                  <p>👍 {viewingSubmission.upvotes} / 👎 {viewingSubmission.downvotes}</p>
+                  <p className="flex items-center gap-1.5"><ThumbsUp className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.upvotes} / <ThumbsDown className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.downvotes}</p>
                 </div>
                 {viewingSubmission.tags && viewingSubmission.tags.length > 0 && (
                   <div>

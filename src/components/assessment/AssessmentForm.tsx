@@ -273,11 +273,11 @@ export function AssessmentForm({ logId, onComplete }: AssessmentFormProps) {
         <TabsList className="grid w-full grid-cols-2 bg-muted/50">
           <TabsTrigger value="pre" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Pre-Session Baseline
-            {isPreComplete && <span className="ml-2 text-xs">✓</span>}
+            {isPreComplete && <Check className="ml-2 h-3 w-3" aria-hidden="true" />}
           </TabsTrigger>
           <TabsTrigger value="post" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Post-Session Assessment
-            {isPostComplete && <span className="ml-2 text-xs">✓</span>}
+            {isPostComplete && <Check className="ml-2 h-3 w-3" aria-hidden="true" />}
           </TabsTrigger>
         </TabsList>
 

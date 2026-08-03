@@ -6,7 +6,7 @@ export const testRateLimitBurst = async (requestsPerSecond = 10, durationSeconds
   const totalRequests = requestsPerSecond * durationSeconds;
   const delayMs = 1000 / requestsPerSecond;
   
-  console.log(`🔥 Starting burst test: ${requestsPerSecond} req/sec for ${durationSeconds}s (${totalRequests} total)`);
+  console.log(`Starting burst test: ${requestsPerSecond} req/sec for ${durationSeconds}s (${totalRequests} total)`);
   
   const startTime = Date.now();
   
@@ -34,9 +34,9 @@ export const testRateLimitBurst = async (requestsPerSecond = 10, durationSeconds
       
       // Rate limit hit
       if (response.status === 429) {
-        console.warn(`⛔ Request ${i + 1}: RATE LIMITED (${data.remaining} remaining, reset in ${data.resetIn}s)`);
+        console.warn(`Request ${i + 1}: RATE LIMITED (${data.remaining} remaining, reset in ${data.resetIn}s)`);
       } else {
-        console.log(`✅ Request ${i + 1}: SUCCESS (${data.remaining} remaining)`);
+        console.log(`Request ${i + 1}: SUCCESS (${data.remaining} remaining)`);
       }
     } catch (error) {
       results.push({
@@ -44,7 +44,7 @@ export const testRateLimitBurst = async (requestsPerSecond = 10, durationSeconds
         status: 0,
         timestamp: Date.now() - startTime
       });
-      console.error(`❌ Request ${i + 1}: ERROR`, error);
+      console.error(`Request ${i + 1}: ERROR`, error);
     }
     
     // Maintain rate by delaying
@@ -60,7 +60,7 @@ export const testRateLimitBurst = async (requestsPerSecond = 10, durationSeconds
   const rateLimited = results.filter(r => r.status === 429).length;
   const actualRPS = (totalRequests / duration) * 1000;
   
-  console.log('\n📊 Burst Test Results:');
+  console.log('\nBurst Test Results:');
   console.log(`Duration: ${duration}ms (${durationSeconds}s target)`);
   console.log(`Total Requests: ${totalRequests}`);
   console.log(`Successful: ${successCount} (${((successCount/totalRequests)*100).toFixed(1)}%)`);
