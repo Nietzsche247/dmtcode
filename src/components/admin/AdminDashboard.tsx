@@ -23,6 +23,8 @@ import { ArticlesManager } from './ArticlesManager';
 import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
 import { GA4Analytics } from './GA4Analytics';
+import { IntelHub } from './IntelHub';
+
 
 export const AdminDashboard = () => {
   return (
