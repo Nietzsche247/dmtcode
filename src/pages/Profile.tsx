@@ -19,6 +19,7 @@ import { Flame, Snowflake } from 'lucide-react';
 import { WatchedTrials } from '@/components/profile/WatchedTrials';
 import { ActivityThread } from '@/components/profile/ActivityThread';
 import { Following } from '@/components/profile/Following';
+import { BadgeIcon } from '@/components/badges/BadgeIcon';
 
 
 interface UserSymbol {
@@ -427,15 +428,11 @@ const Profile = () => {
                         )}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={cn(
-                              'text-2xl',
-                              earned ? '' : 'grayscale opacity-60'
-                            )}
-                            aria-hidden="true"
-                          >
-                            {b.icon || (earned ? '✶' : '·')}
-                          </span>
+                          <BadgeIcon
+                            name={b.name}
+                            size={24}
+                            className={cn(earned ? 'text-primary' : 'text-muted-foreground opacity-60')}
+                          />
                           {!earned && (
                             <Lock className="w-3 h-3 text-muted-foreground" aria-label="Locked" />
                           )}

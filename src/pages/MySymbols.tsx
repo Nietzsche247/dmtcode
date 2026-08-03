@@ -13,6 +13,7 @@ import { Award, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from '@/components/registry/VisualFieldMap';
+import { BadgeIcon } from '@/components/badges/BadgeIcon';
 
 interface UserBadge {
   badge_name: string;
@@ -445,7 +446,7 @@ const MySymbols = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {userBadges.map(badge => (
                     <div key={badge.badge_name} className="text-center p-4 bg-muted/50 rounded-lg">
-                      <div className="text-4xl mb-2">{badge.icon || '🏆'}</div>
+                      <div className="mb-2 flex justify-center text-primary"><BadgeIcon name={badge.badge_name} size={32} /></div>
                       <div className="font-semibold text-sm mb-1">
                         {badge.badge_name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                       </div>
