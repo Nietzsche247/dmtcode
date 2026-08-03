@@ -110,7 +110,7 @@ export const GA4DebugTester = () => {
           <AlertTriangle className="w-4 h-4" /> About one-click key event registration
         </div>
         <p className="text-muted-foreground font-light leading-relaxed">
-          Google does <strong>not</strong> expose a public API to mark an event as a "key event" — the GA4 Admin API
+          Google does <strong>not</strong> expose a public API to mark an event as a "key event" - the GA4 Admin API
           covers properties, streams, and custom dimensions, but key-event toggles are UI-only. So a true one-click
           register is technically impossible without browser-automating the GA4 dashboard against your Google session
           (fragile and against ToS).

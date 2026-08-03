@@ -109,7 +109,7 @@ const StatCell = ({
           )}
           aria-label={isZero ? `${label}: none yet` : `${label}: ${value}`}
         >
-          {isZero ? '—' : value}
+          {isZero ? '-' : value}
         </div>
         <div className="text-sm text-muted-foreground mb-2">{label}</div>
         {isZero && (

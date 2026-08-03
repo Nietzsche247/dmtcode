@@ -17,12 +17,12 @@ export const ParticleBackground = () => {
   const { mode } = useModeStore();
 
   useEffect(() => {
-    // Ambient particle field disabled globally — atlas aesthetic favors
+    // Ambient particle field disabled globally - atlas aesthetic favors
     // still, editorial surfaces. Keep hook wiring intact for future use.
     setParticles([]);
   }, [mode]);
 
-  // Never render ambient particles/glow — replaced by warm paper/void surfaces.
+  // Never render ambient particles/glow - replaced by warm paper/void surfaces.
   return null;
 
   return (

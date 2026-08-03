@@ -392,17 +392,17 @@ const Dashboard = () => {
                               </div>
                               <div className={`flex items-center gap-1 text-sm ${moodColor}`}>
                                 <MoodIcon className="h-4 w-4" />
-                                {moodDelta !== null ? (moodDelta > 0 ? `+${moodDelta}` : moodDelta) : '—'}
+                                {moodDelta !== null ? (moodDelta > 0 ? `+${moodDelta}` : moodDelta) : '-'}
                               </div>
                             </div>
                             
                             <div className="grid grid-cols-2 gap-2 mb-3">
                               <div className="text-center p-2 rounded bg-muted/50">
-                                <div className="text-lg font-bold">{assessment.phq9_score ?? '—'}</div>
+                                <div className="text-lg font-bold">{assessment.phq9_score ?? '-'}</div>
                                 <div className="text-[10px] text-muted-foreground uppercase">PHQ-9</div>
                               </div>
                               <div className="text-center p-2 rounded bg-muted/50">
-                                <div className="text-lg font-bold">{assessment.gad7_score ?? '—'}</div>
+                                <div className="text-lg font-bold">{assessment.gad7_score ?? '-'}</div>
                                 <div className="text-[10px] text-muted-foreground uppercase">GAD-7</div>
                               </div>
                             </div>

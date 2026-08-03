@@ -255,7 +255,7 @@ export default async (request: Request, context: Context) => {
 
       const phrase = symbolTitlePhrase(tags, communityTags);
       title = phrase
-        ? `${phrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+        ? `${phrase} - DMT symbol #${short.toUpperCase()} | DMT Code`
         : `Symbol ${short} | DMT Code Visual Registry`;
       metaDesc = clip(desc, 160);
       canonical = `${SITE}/registry/${r.id}`;
@@ -311,7 +311,7 @@ export default async (request: Request, context: Context) => {
       };
 
       body = `<article data-prerender="symbol">
-  <h1>${esc(phrase ? `${phrase} — DMT Code symbol #${short.toUpperCase()}` : `DMT Code Symbol ${short}`)}</h1>
+  <h1>${esc(phrase ? `${phrase} - DMT Code symbol #${short.toUpperCase()}` : `DMT Code Symbol ${short}`)}</h1>
   ${r.image_url ? `<img src="${esc(String(r.image_url))}" alt="${esc(metaDesc)}" />` : ""}
   <p>${esc(desc)}</p>
   ${rowsToDl(pairs)}
@@ -2115,7 +2115,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
       const pasts = pastRes.ok ? await pastRes.json() as Array<Record<string, string>> : [];
       const rets = reRes.ok ? await reRes.json() as Array<Record<string, string>> : [];
-      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` — ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` - ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const sections: string[] = [];
       if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
@@ -2618,7 +2618,7 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
     });
   }
 
-  const title = `Symbols tagged ${tag} — DMT Code Registry`;
+  const title = `Symbols tagged ${tag} - DMT Code Registry`;
   const metaDesc = clip(
     `Visual symbols in the DMT Code open registry tagged "${tag}". ${count} records with community recognition counts.`,
     160,

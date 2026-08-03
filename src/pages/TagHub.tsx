@@ -147,12 +147,12 @@ const TagHub = () => {
   return (
     <>
       <Helmet>
-        <title>{`Symbols tagged ${tag} — DMT Code Registry`}</title>
+        <title>{`Symbols tagged ${tag} - DMT Code Registry`}</title>
         <meta name="description" content={metaDesc} />
         <link rel="canonical" href={canonical} />
         {count < 2 && <meta name="robots" content="noindex, follow" />}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Symbols tagged ${tag} — DMT Code Registry`} />
+        <meta property="og:title" content={`Symbols tagged ${tag} - DMT Code Registry`} />
         <meta property="og:description" content={metaDesc} />
         <meta property="og:url" content={canonical} />
       </Helmet>

@@ -210,7 +210,7 @@ export const SubmissionWizard = () => {
               </p>
             </div>
             
-            <CanvasErrorBoundary fallbackMessage="Canvas loading failed—please retry">
+            <CanvasErrorBoundary fallbackMessage="Canvas loading failed, please retry">
               <SymbolCanvas 
                 onImageChange={setImageData}
                 onSave={handleCanvasSave}

@@ -295,7 +295,7 @@ const SymbolDetail = () => {
   const short = symbol.id.slice(0, 8);
   const titlePhrase = symbolTitlePhrase(symbol.tags || [], communityTags);
   const pageTitle = titlePhrase
-    ? `${titlePhrase} — DMT symbol #${short.toUpperCase()} | DMT Code`
+    ? `${titlePhrase} - DMT symbol #${short.toUpperCase()} | DMT Code`
     : `Symbol ${short} | DMT Code Registry`;
   const seoKeywords = [...new Set([...(symbol.tags || []), ...communityTags.map((t) => t.name)])];
 
