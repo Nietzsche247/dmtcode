@@ -25,7 +25,7 @@ declare global {
 }
 
 type SymbolSubmission = Tables<'symbol_submissions'> & {
-  profile?: { display_name: string; avatar_url: string | null } | null;
+  profile?: { handle: string | null; avatar_seed: string | null } | null;
 };
 
 type StatusFilter = 'all' | 'new72' | 'pending' | 'approved' | 'rejected';
@@ -168,7 +168,7 @@ export const SymbolSubmissionModeration = () => {
     const userIds = [...new Set((data || []).map(s => s.user_id))];
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, display_name, avatar_url')
+      .select('id, handle, avatar_seed')
       .in('id', userIds);
 
     const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
@@ -569,7 +569,7 @@ export const SymbolSubmissionModeration = () => {
                       </p>
                     </td>
                     <td className="p-3">
-                      <span className="text-sm">{submission.profile?.display_name || 'Anonymous'}</span>
+                      <span className="text-sm">{submission.profile?.handle || 'Explorer'}</span>
                     </td>
                     <td className="p-3">
                       <Badge variant={getStatusBadgeVariant(submission.status)}>
@@ -719,7 +719,7 @@ export const SymbolSubmissionModeration = () => {
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Submitter</label>
-                  <p>{viewingSubmission.profile?.display_name || 'Anonymous'}</p>
+                  <p>{viewingSubmission.profile?.handle || 'Explorer'}</p>
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Description</label>

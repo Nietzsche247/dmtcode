@@ -165,7 +165,7 @@ const Profile = () => {
   const loadProfile = async (uid: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, handle, display_name, avatar_url, avatar_seed, created_at, reputation_score')
+      .select('id, handle, avatar_seed, created_at, reputation_score')
       .eq('id', uid)
       .maybeSingle();
     if (data) setProfile(data as ProfileRecord);
@@ -330,7 +330,7 @@ const Profile = () => {
                 )}
                 <div className="flex-1 min-w-0">
                   <h1 className="text-2xl sm:text-3xl font-serif tracking-tight break-words">
-                    {profile?.handle || profile?.display_name || 'Explorer'}
+                    {profile?.handle || 'Explorer'}
                   </h1>
                   {profile?.created_at && (
                     <p className="text-sm text-muted-foreground mt-1">
