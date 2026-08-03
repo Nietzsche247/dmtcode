@@ -10,7 +10,7 @@ import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { FabricDrawingCanvas } from './FabricCanvas';
-import { ChevronRight, ChevronLeft, Award, WifiOff } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Award, WifiOff, Circle, Eye, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CanvasExport } from './CanvasExport';
 import { usePrimacyCheck } from '@/hooks/usePrimacyCheck';

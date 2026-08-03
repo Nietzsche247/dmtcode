@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { usePostHogTracking } from '@/hooks/usePostHogTracking';
 import { AssessmentPdfExport } from './AssessmentPdfExport';
-import { Mic, FileDown } from 'lucide-react';
+import { Mic, FileDown, Check } from 'lucide-react';
 
 interface AssessmentFormProps {
   logId?: string;
