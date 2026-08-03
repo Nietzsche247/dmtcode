@@ -460,10 +460,38 @@ async function gatherCounts(db: Ctx['db'], curStart: Date) {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  // Machine callers (pg_cron) present the shared secret. Browser callers
+  // ("Run now" in the admin UI) can never hold it, so they present a Supabase
+  // JWT and are checked for the admin role instead.
   const cronSecret = Deno.env.get('INTEL_CRON_SECRET');
-  if (!cronSecret || req.headers.get('x-intel-key') !== cronSecret) {
-    return json({ error: 'Unauthorized' }, 401);
+  const hasCronKey = !!cronSecret && req.headers.get('x-intel-key') === cronSecret;
+  let authorized = hasCronKey;
+
+  if (!authorized) {
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      const userClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const token = authHeader.replace('Bearer ', '');
+      const { data: claimData } = await userClient.auth.getClaims(token);
+      const userId = claimData?.claims?.sub as string | undefined;
+      if (userId) {
+        const admin = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+          { auth: { persistSession: false } },
+        );
+        const { data: isAdmin } = await admin.rpc('has_role', { _user_id: userId, _role: 'admin' });
+        authorized = isAdmin === true;
+      }
+    }
   }
+
+  if (!authorized) return json({ error: 'Unauthorized' }, 401);
+
 
   const started = Date.now();
   const db = createClient(
