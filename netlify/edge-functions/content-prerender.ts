@@ -2729,6 +2729,11 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
       ...(r.url ? { url: String(r.url) } : {}),
     };
   }
+  if (String(r.event_date) >= new Date().toISOString().slice(0, 10)) {
+    eventLd.eventStatus = "https://schema.org/EventScheduled";
+  }
+
+
 
   const body = `<article data-prerender="event">
   <h1>${esc(String(r.title))}</h1>
