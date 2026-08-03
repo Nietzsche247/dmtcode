@@ -207,7 +207,19 @@ Deno.serve(async (req) => {
             403,
           );
         }
+        if (res.status === 404) {
+          return json(
+            {
+              error:
+                `Google returned 404 for property ${propertyId}. The GA4 property ID looks wrong. Use the numeric property ID from GA4 Admin, Property settings (not the measurement ID starting with G-).`,
+              status: 404,
+              details: detail,
+            },
+            404,
+          );
+        }
         return json({ error: `GA4 request "${r.key}" failed (${res.status}).`, status: res.status, details: detail }, res.status);
+
       }
       results[r.key] = await res.json();
     }
