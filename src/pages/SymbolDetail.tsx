@@ -7,7 +7,7 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SymbolResponsePanel } from '@/components/registry/SymbolResponsePanel';
 import { useSymbolVoting } from '@/hooks/useSymbolVoting';
@@ -246,10 +246,6 @@ const SymbolDetail = () => {
     }
 
     setLoading(false);
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const prettify = (value: string) =>

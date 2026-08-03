@@ -152,8 +152,8 @@ export const Navigation = () => {
                   avatarSeed={avatarSeed}
                   onSignOut={() => {
                     setIsAuthenticated(false);
-                    setUserName(null);
-                    setAvatarUrl(null);
+                    setUserHandle(null);
+                    setAvatarSeed(null);
                   }}
                 />
               ) : (
