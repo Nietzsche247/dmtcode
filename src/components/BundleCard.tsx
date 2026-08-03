@@ -29,6 +29,8 @@ interface BundleCardProps {
   borderColor: string;
   badgeColor: string;
   onClick: (bundleId: string) => void;
+  /** Bundle price in USD, used for GA4 revenue attribution on CTA clicks. */
+  price?: number;
   /** Real Shopify availability. When false, show Sold Out + Notify me instead of the buy CTA. */
   available?: boolean;
   availabilityLoading?: boolean;
@@ -48,6 +50,7 @@ export const BundleCard = ({
   borderColor,
   badgeColor,
   onClick,
+  price,
   available = true,
   availabilityLoading = false,
 }: BundleCardProps) => {
