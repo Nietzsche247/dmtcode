@@ -592,7 +592,8 @@ export const SymbolSubmissionModeration = () => {
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {submissions.map((s) => {
-              const tags = (s.tags ?? []) as string[];
+              // Submitted tag arrays can repeat a term, so dedupe before keying.
+              const tags = [...new Set(((s.tags ?? []) as string[]).filter(Boolean))];
               return (
                 <Card key={s.id} className="p-4 flex flex-col gap-3">
                   <div className="flex items-start gap-3">
@@ -776,7 +777,7 @@ export const SymbolSubmissionModeration = () => {
                 <p className="text-sm text-muted-foreground">{viewingSubmission.description}</p>
               )}
               <div className="flex flex-wrap gap-1.5">
-                {((viewingSubmission.tags ?? []) as string[]).map((t) => (
+                {[...new Set(((viewingSubmission.tags ?? []) as string[]).filter(Boolean))].map((t) => (
                   <Badge key={t} variant="secondary" className="font-normal">
                     {t}
                   </Badge>
