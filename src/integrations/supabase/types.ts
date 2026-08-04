@@ -254,6 +254,11 @@ export type Database = {
           tags: string[] | null
           title: string
           transcript: string | null
+          triage_at: string | null
+          triage_confidence: number | null
+          triage_model: string | null
+          triage_reason: string | null
+          triage_status: string | null
           updated_at: string
           url: string | null
         }
@@ -281,6 +286,11 @@ export type Database = {
           tags?: string[] | null
           title: string
           transcript?: string | null
+          triage_at?: string | null
+          triage_confidence?: number | null
+          triage_model?: string | null
+          triage_reason?: string | null
+          triage_status?: string | null
           updated_at?: string
           url?: string | null
         }
@@ -308,6 +318,11 @@ export type Database = {
           tags?: string[] | null
           title?: string
           transcript?: string | null
+          triage_at?: string | null
+          triage_confidence?: number | null
+          triage_model?: string | null
+          triage_reason?: string | null
+          triage_status?: string | null
           updated_at?: string
           url?: string | null
         }
