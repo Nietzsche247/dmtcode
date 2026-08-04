@@ -104,7 +104,7 @@ export const SymbolSubmissionModeration = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [showCurated, setShowCurated] = useState(false);
+  const [corpusFilter, setCorpusFilter] = useState<CorpusFilter>('observer');
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [submitters, setSubmitters] = useState<Profile[]>([]);
   const [anonCount, setAnonCount] = useState(0);
