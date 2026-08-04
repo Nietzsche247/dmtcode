@@ -633,7 +633,7 @@ export const SymbolSubmissionModeration = () => {
             Show every submission
           </Button>
         </Card>
-
+      ) : (
         <>
           <div className="flex items-center gap-2 px-1">
             <Checkbox
