@@ -197,7 +197,7 @@ Deno.serve(async (req) => {
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  console.log('Starting PubMed scraper for terms:', SEARCH_TERMS.join(', '));
+  console.log('Starting PubMed scraper with query:', PUBMED_QUERY);
 
   const { data: runData, error: runError } = await supabase
     .from('scraper_runs')
