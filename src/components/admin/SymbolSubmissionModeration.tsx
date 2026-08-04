@@ -224,7 +224,7 @@ export const SymbolSubmissionModeration = () => {
         .map((id) => byId.get(id) ?? { id, handle: null, avatar_seed: null })
         .sort((a, b) => (a.handle || a.id).localeCompare(b.handle || b.id)),
     );
-  }, [showCurated]);
+  }, [corpusFilter]);
 
   const loadSubmissions = useCallback(async () => {
     setLoading(true);
@@ -238,7 +238,8 @@ export const SymbolSubmissionModeration = () => {
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, to);
-    if (!showCurated) query = query.eq('is_curated_example', false);
+    if (corpusFilter === 'observer') query = query.eq('is_curated_example', false);
+    else if (corpusFilter === 'curated') query = query.eq('is_curated_example', true);
 
     if (reviewFilter === 'overdue') {
       const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
