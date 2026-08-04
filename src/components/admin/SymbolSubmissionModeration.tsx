@@ -66,8 +66,10 @@ export const SymbolSubmissionModeration = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
 
-  // Stats
-  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, today: 0, awaiting72: 0 });
+  // Stats. All derived from moderation_status over observer submissions only
+  // (is_curated_example = false). Curated examples are operator illustrations
+  // and never belong in a community moderation count.
+  const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, today: 0, awaiting72: 0 });
 
   useEffect(() => {
     // Track admin page view
