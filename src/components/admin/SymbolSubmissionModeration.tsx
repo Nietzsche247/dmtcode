@@ -41,7 +41,9 @@ const PAGE_SIZE = 20;
 const shortId = (id: string) => id.slice(0, 8);
 
 const submitterLabel = (row: { user_id: string | null; profile?: Profile | null }) => {
-  if (!row.user_id) return 'no account on record';
+  // Rows with no user_id predate account-gated submission. They are not
+  // anonymous by choice, they were captured before logins existed.
+  if (!row.user_id) return 'Prior to Account Creation';
   return row.profile?.handle?.trim() || `observer ${shortId(row.user_id)}`;
 };
 
@@ -516,7 +518,7 @@ export const SymbolSubmissionModeration = () => {
               </SelectTrigger>
               <SelectContent className="bg-background z-50 max-h-72">
                 <SelectItem value="all">Everyone</SelectItem>
-                {anonCount > 0 && <SelectItem value="anonymous">No account on record</SelectItem>}
+                {anonCount > 0 && <SelectItem value="anonymous">Prior to Account Creation</SelectItem>}
                 {submitterOptions.map((p) => (
                   <SelectItem key={p.id} value={p.id}>
                     <span className="flex items-center gap-2">
