@@ -205,9 +205,9 @@ export const SymbolSubmissionModeration = () => {
     let query = supabase
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
-      .eq('is_curated_example', showCurated)
       .order('created_at', { ascending: false })
       .range(from, to);
+    if (!showCurated) query = query.eq('is_curated_example', false);
 
     if (reviewFilter === 'overdue') {
       const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
