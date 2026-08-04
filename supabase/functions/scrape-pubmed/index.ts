@@ -285,12 +285,14 @@ Deno.serve(async (req) => {
       trials_found: found,
       trials_added: added,
       new_trials_count: added,
+      query_used: PUBMED_QUERY,
     }).eq('id', runId);
 
-    return new Response(JSON.stringify({ success: true, found, added }), {
+    return new Response(JSON.stringify({ success: true, found, added, query: PUBMED_QUERY }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'unknown';
     console.error('PubMed scraper error', error);
