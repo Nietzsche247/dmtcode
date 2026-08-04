@@ -475,6 +475,72 @@ export const SymbolSubmissionModeration = () => {
     else setSelectedIds(new Set(submissions.map((s) => s.id)));
   };
 
+  // Only rows that would actually change are written. Selecting a mix of
+  // curated and observer rows and asking for "mark as observer" must touch the
+  // curated ones only, otherwise the reported count overstates the change.
+  const selectedRows = useMemo(
+    () => submissions.filter((s) => selectedIds.has(s.id)),
+    [submissions, selectedIds],
+  );
+  const curatedSelectedRows = useMemo(
+    () => selectedRows.filter((s) => s.is_curated_example),
+    [selectedRows],
+  );
+  const pendingCuratedRows = useMemo(
+    () => selectedRows.filter((s) => Boolean(s.is_curated_example) !== curatedTarget),
+    [selectedRows, curatedTarget],
+  );
+
+  const openCuratedModal = (target: boolean) => {
+    if (selectedIds.size === 0) {
+      toast.error('No submissions selected');
+      return;
+    }
+    setCuratedTarget(target);
+    setCuratedModalOpen(true);
+  };
+
+  const handleCuratedReclassify = async () => {
+    const ids = pendingCuratedRows.map((s) => s.id);
+    if (ids.length === 0) {
+      toast.error('Every selected row already carries that classification. Nothing to change.');
+      return;
+    }
+    setBulkLoading(true);
+    const ok = await writeModeration(
+      ids,
+      { is_curated_example: curatedTarget },
+      curatedTarget
+        ? 'mark these symbols as curated examples'
+        : 'mark these symbols as observer records',
+    );
+    setBulkLoading(false);
+    if (!ok) return;
+
+    void recordAuditEvents(ids, {
+      event_name: 'symbol_corpus_reclassification',
+      subject_type: 'symbol_submission',
+      properties: {
+        is_curated_example: curatedTarget,
+        bulk: true,
+        batch_size: ids.length,
+        curated_before: corpusCounts.curated,
+        curated_after: curatedTarget
+          ? corpusCounts.curated + ids.length
+          : corpusCounts.curated - ids.length,
+      },
+    });
+    toast.success(
+      curatedTarget
+        ? `${ids.length} moved to curated examples and excluded from evidence counts`
+        : `${ids.length} moved to observer records and included in evidence counts`,
+    );
+    setCuratedModalOpen(false);
+    setSelectedIds(new Set());
+    loadSubmissions();
+    loadStats();
+  };
+
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const submitterOptions = useMemo(() => submitters, [submitters]);
