@@ -40,7 +40,7 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-18">
+          <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 p-1">
             <TabsTrigger value="intel">Intel</TabsTrigger>
             <TabsTrigger value="niche-geo">Niche GEO</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
