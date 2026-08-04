@@ -89,7 +89,9 @@ const visibilityLabel = (s: string | null) => {
 export const SymbolSubmissionModeration = () => {
   const [submissions, setSubmissions] = useState<SymbolSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('unreviewed');
+  // Default to the whole corpus. Defaulting to "unreviewed" made every row
+  // vanish from the queue the moment it was reviewed, which reads as data loss.
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
   const [submitterFilter, setSubmitterFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,11 +123,15 @@ export const SymbolSubmissionModeration = () => {
   const loadStats = useCallback(async () => {
     const cutoff72 = new Date(Date.now() - WINDOW_MS).toISOString();
 
-    const base = () =>
-      supabase
+    // The checkbox ADDS curated examples to the corpus. It used to swap the
+    // corpus, which hid every observer row whenever it was ticked and hid
+    // every curated row whenever it was not.
+    const base = () => {
+      const q = supabase
         .from('symbol_submissions')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_curated_example', showCurated);
+        .select('id', { count: 'exact', head: true });
+      return showCurated ? q : q.eq('is_curated_example', false);
+    };
 
     const [unreviewed, reviewed, denied, overdue, hidden] = await Promise.all([
       base().eq('moderation_status', 'unreviewed'),
@@ -152,11 +158,12 @@ export const SymbolSubmissionModeration = () => {
 
   // Submitter list for the filter. Built from the same corpus the list shows.
   const loadSubmitters = useCallback(async () => {
-    const { data, error } = await supabase
+    let submitterQuery = supabase
       .from('symbol_submissions')
       .select('user_id')
-      .eq('is_curated_example', showCurated)
       .limit(2000);
+    if (!showCurated) submitterQuery = submitterQuery.eq('is_curated_example', false);
+    const { data, error } = await submitterQuery;
 
     if (error) {
       toast.error(`Could not load the submitter list: ${error.message}`);
@@ -198,9 +205,9 @@ export const SymbolSubmissionModeration = () => {
     let query = supabase
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
-      .eq('is_curated_example', showCurated)
       .order('created_at', { ascending: false })
       .range(from, to);
+    if (!showCurated) query = query.eq('is_curated_example', false);
 
     if (reviewFilter === 'overdue') {
       const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
@@ -456,7 +463,9 @@ export const SymbolSubmissionModeration = () => {
         <p className="text-sm text-muted-foreground mt-1">
           One list, every submitter. Review state and visibility are separate dimensions: a
           symbol can be visible to the public and unreviewed at the same time. Counts cover
-          {showCurated ? ' curated operator examples' : ' observer submissions'} only.
+          {showCurated
+            ? ' observer submissions plus curated operator examples.'
+            : ' observer submissions only. Tick "Include curated examples" to add operator rows.'}
         </p>
       </div>
 
@@ -500,11 +509,23 @@ export const SymbolSubmissionModeration = () => {
               Unreviewed
               {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
-            <TabsTrigger value="denied">Rejected</TabsTrigger>
-            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="reviewed">
+              Reviewed
+              {stats.reviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.reviewed}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="denied">
+              Rejected
+              {stats.denied > 0 && <Badge variant="secondary" className="ml-2">{stats.denied}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="all">
+              All
+              <Badge variant="secondary" className="ml-2">
+                {stats.unreviewed + stats.reviewed + stats.denied}
+              </Badge>
+            </TabsTrigger>
           </TabsList>
         </Tabs>
+
 
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="flex items-center gap-2">
@@ -576,7 +597,7 @@ export const SymbolSubmissionModeration = () => {
                 setCurrentPage(1);
               }}
             />
-            Curated examples
+            Include curated examples
           </label>
         </div>
       </Card>
@@ -600,8 +621,24 @@ export const SymbolSubmissionModeration = () => {
           <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       ) : submissions.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
-          Nothing matches these filters.
+        <Card className="p-10 text-center text-muted-foreground space-y-3">
+          <p>
+            No submissions match the current filters. Rows are never deleted by a review
+            decision: a reviewed symbol moves to the Reviewed tab, a rejected one to Rejected.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setReviewFilter('all');
+              setVisibilityFilter('all');
+              setSubmitterFilter('all');
+              setSearchQuery('');
+              setCurrentPage(1);
+            }}
+          >
+            Show every submission
+          </Button>
         </Card>
       ) : (
         <>
@@ -656,6 +693,11 @@ export const SymbolSubmissionModeration = () => {
                   <div className="flex flex-wrap gap-1.5">
                     <Badge variant={reviewVariant(s.moderation_status)}>{reviewLabel(s.moderation_status)}</Badge>
                     <Badge variant="outline">{visibilityLabel(s.visibility_status)}</Badge>
+                    {s.is_curated_example && (
+                      <Badge variant="outline" className="text-muted-foreground">
+                        Curated example
+                      </Badge>
+                    )}
                     {s.moderation_status === 'unreviewed' && (
                       <Badge variant="outline" className="text-muted-foreground">
                         {timeLeftLabel(s.created_at)}
