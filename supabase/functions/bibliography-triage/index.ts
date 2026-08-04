@@ -63,6 +63,9 @@ Return exactly one result object per record, using the record's index. When on_t
 
 interface Row {
   id: string;
+  triage_status?: string | null;
+  triage_confidence?: number | null;
+  triage_reason?: string | null;
   title: string | null;
   abstract: string | null;
   journal: string | null;
@@ -171,6 +174,20 @@ Deno.serve(async (req) => {
     return json({ error: 'Unauthorized' }, 401);
   }
 
+  // Re-audit mode re-reads rows that already carry a verdict and re-scores them
+  // under the current rubric, ignoring the stored triage_status. Approvals that
+  // fail the new rubric are UNWOUND (is_approved back to false) rather than left
+  // live, and the previous verdict is preserved in triage_reason for audit.
+  let reauditOf: string | null = null;
+  if (req.method === 'POST') {
+    try {
+      const body = await req.json();
+      if (typeof body?.reaudit === 'string') reauditOf = body.reaudit;
+    } catch {
+      // No body is the normal cron case.
+    }
+  }
+
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!apiKey) return json({ error: 'LOVABLE_API_KEY is not configured' }, 500);
 
@@ -192,24 +209,33 @@ Deno.serve(async (req) => {
   let approved = 0;
   let rejected = 0;
   let needs_review = 0;
+  let pulled_back = 0;
   let stoppedReason: string | null = null;
   let stoppedStatus: number | null = null;
+  const seen = new Set<string>();
 
   try {
     // Bounded loop: each pass re-reads only rows still NULL, so a partial run
     // is always safe to resume.
     for (let pass = 0; pass < 50; pass++) {
-      const { data, error } = await db
+      let q = db
         .from('bibliography')
-        .select('id, title, abstract, journal, compounds')
-        .eq('is_approved', false)
-        .is('triage_status', null)
+        .select('id, title, abstract, journal, compounds, triage_status, triage_confidence, triage_reason')
         .order('created_at', { ascending: true })
         .limit(BATCH_SIZE);
 
+      q = reauditOf
+        ? q.eq('triage_status', reauditOf)
+        : q.eq('is_approved', false).is('triage_status', null);
+
+      const { data, error } = await q;
+
       if (error) throw new Error(`Could not read bibliography: ${error.message}`);
-      const rows = (data ?? []) as Row[];
+      // In re-audit mode the filter does not shrink as we write, so track ids
+      // we have already scored and stop when a pass yields nothing new.
+      const rows = ((data ?? []) as Row[]).filter((r) => !seen.has(r.id));
       if (!rows.length) break;
+      for (const r of rows) seen.add(r.id);
 
       const verdicts = await classify(rows, apiKey);
       const byIndex = new Map(verdicts.map((v) => [v.index, v]));
@@ -242,6 +268,18 @@ Deno.serve(async (req) => {
           triage_model: MODEL,
         };
         if (is_approved === true) patch.is_approved = true;
+
+        if (reauditOf) {
+          const prior = `[re-audited ${triage_at.slice(0, 10)} under the tightened rubric. Previous verdict: ${row.triage_status ?? 'none'}, confidence ${row.triage_confidence ?? 'n/a'} - ${row.triage_reason ?? 'no reason recorded'}]`;
+          patch.triage_reason = `${patch.triage_reason} ${prior}`.slice(0, 2000);
+          if (triage_status !== 'auto_approved' && row.triage_status === 'auto_approved') {
+            // Unwind the live approval rather than leaving it published.
+            patch.is_approved = false;
+            patch.triage_status = 'needs_review';
+            triage_status = 'needs_review';
+            pulled_back++;
+          }
+        }
 
         const { error: upErr } = await db.from('bibliography').update(patch).eq('id', row.id);
         if (upErr) {
@@ -282,7 +320,9 @@ Deno.serve(async (req) => {
     approved,
     rejected,
     needs_review,
+    pulled_back,
     remaining,
+    mode: reauditOf ? `reaudit:${reauditOf}` : 'pending',
     model: MODEL,
     ...(stoppedReason ? { stopped: true, stopped_status: stoppedStatus, stopped_reason: stoppedReason } : {}),
     note:
