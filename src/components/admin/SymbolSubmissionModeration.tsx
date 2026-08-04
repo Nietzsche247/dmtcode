@@ -890,6 +890,92 @@ export const SymbolSubmissionModeration = () => {
         </>
       )}
 
+      <Dialog open={curatedModalOpen} onOpenChange={setCuratedModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {curatedTarget ? 'Mark as curated examples' : 'Mark as observer records'}
+            </DialogTitle>
+            <DialogDescription>
+              {curatedTarget
+                ? 'Curated examples are operator illustrations. They are excluded from every evidence, convergence and community total on the site.'
+                : 'Observer records are treated as real submissions and are included in evidence, convergence and community totals on the site.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 text-sm">
+            <div>
+              <p>
+                {pendingCuratedRows.length} of {selectedIds.size} selected{' '}
+                {pendingCuratedRows.length === 1 ? 'row' : 'rows'} will change.
+              </p>
+              {selectedIds.size - pendingCuratedRows.length > 0 && (
+                <p className="text-muted-foreground">
+                  {selectedIds.size - pendingCuratedRows.length} already carry this
+                  classification and will be left untouched.
+                </p>
+              )}
+            </div>
+
+            <div className="rounded-md border divide-y">
+              <div className="grid grid-cols-3 px-3 py-2 text-xs uppercase text-muted-foreground">
+                <span>Corpus</span>
+                <span className="text-right">Before</span>
+                <span className="text-right">After</span>
+              </div>
+              <div className="grid grid-cols-3 px-3 py-2">
+                <span>Observer records</span>
+                <span className="text-right tabular-nums">{corpusCounts.observer}</span>
+                <span className="text-right tabular-nums font-medium">
+                  {curatedTarget
+                    ? corpusCounts.observer - pendingCuratedRows.length
+                    : corpusCounts.observer + pendingCuratedRows.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 px-3 py-2">
+                <span>Curated examples</span>
+                <span className="text-right tabular-nums">{corpusCounts.curated}</span>
+                <span className="text-right tabular-nums font-medium">
+                  {curatedTarget
+                    ? corpusCounts.curated + pendingCuratedRows.length
+                    : corpusCounts.curated - pendingCuratedRows.length}
+                </span>
+              </div>
+            </div>
+
+            {pendingCuratedRows.length > 0 && (
+              <div className="max-h-40 overflow-y-auto rounded-md border p-3 space-y-1">
+                {pendingCuratedRows.map((s) => (
+                  <div key={s.id} className="flex items-center gap-2 text-xs">
+                    <span className="font-mono text-muted-foreground">{shortId(s.id)}</span>
+                    <span className="truncate">{submitterLabel(s)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <p className="text-muted-foreground">
+              This changes what the row counts as, not whether it is public and not whether it
+              has been reviewed. Review state and visibility are unaffected.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCuratedModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCuratedReclassify}
+              disabled={bulkLoading || pendingCuratedRows.length === 0}
+            >
+              {bulkLoading && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              Change {pendingCuratedRows.length}{' '}
+              {pendingCuratedRows.length === 1 ? 'row' : 'rows'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent>
           <DialogHeader>
