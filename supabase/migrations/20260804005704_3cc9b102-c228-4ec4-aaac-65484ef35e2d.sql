@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Background jobs can record audit events" ON public.audit_events;
