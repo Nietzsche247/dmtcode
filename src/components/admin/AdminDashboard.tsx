@@ -23,6 +23,8 @@ import { ArticlesManager } from './ArticlesManager';
 import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
 import { GA4Analytics } from './GA4Analytics';
+import { IntelHub } from './IntelHub';
+
 
 export const AdminDashboard = () => {
   return (
@@ -38,10 +40,12 @@ export const AdminDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-17">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-18">
+            <TabsTrigger value="intel">Intel</TabsTrigger>
             <TabsTrigger value="niche-geo">Niche GEO</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
+
             <TabsTrigger value="forecasts">Forecasts</TabsTrigger>
             <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
             <TabsTrigger value="articles">Articles</TabsTrigger>
@@ -58,9 +62,14 @@ export const AdminDashboard = () => {
             <TabsTrigger value="seo">SEO</TabsTrigger>
           </TabsList>
 
+          <TabsContent value="intel" className="space-y-4">
+            <IntelHub />
+          </TabsContent>
+
           <TabsContent value="articles" className="space-y-4">
             <ArticlesManager />
           </TabsContent>
+
 
 
           <TabsContent value="niche-geo" className="space-y-4">
