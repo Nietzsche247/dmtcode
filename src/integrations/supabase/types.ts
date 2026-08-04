@@ -1851,6 +1851,7 @@ export type Database = {
           id: string
           last_run_at: string
           new_trials_count: number | null
+          query_used: string | null
           scraper_name: string
           source: string | null
           status: string
@@ -1864,6 +1865,7 @@ export type Database = {
           id?: string
           last_run_at?: string
           new_trials_count?: number | null
+          query_used?: string | null
           scraper_name: string
           source?: string | null
           status: string
@@ -1877,6 +1879,7 @@ export type Database = {
           id?: string
           last_run_at?: string
           new_trials_count?: number | null
+          query_used?: string | null
           scraper_name?: string
           source?: string | null
           status?: string
