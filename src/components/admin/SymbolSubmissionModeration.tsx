@@ -115,6 +115,15 @@ export const SymbolSubmissionModeration = () => {
   // examples are excluded unless the operator explicitly switches to them.
   const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, overdue: 0, hidden: 0 });
 
+  // Table-wide split between operator illustrations and observer records.
+  const [corpusCounts, setCorpusCounts] = useState({ curated: 0, observer: 0 });
+
+  // Bulk reclassification of is_curated_example. This flag decides whether a
+  // row counts as evidence, so the change is always confirmed against explicit
+  // before/after figures rather than applied straight from a button press.
+  const [curatedModalOpen, setCuratedModalOpen] = useState(false);
+  const [curatedTarget, setCuratedTarget] = useState<boolean>(false);
+
   useEffect(() => {
     window.posthog?.capture('admin_page_viewed');
     supabase.auth.getUser().then(({ data: { user } }) => setCurrentUserId(user?.id ?? null));
@@ -133,15 +142,28 @@ export const SymbolSubmissionModeration = () => {
       return showCurated ? q : q.eq('is_curated_example', false);
     };
 
-    const [unreviewed, reviewed, denied, overdue, hidden] = await Promise.all([
+    const [unreviewed, reviewed, denied, overdue, hidden, curated, observer] = await Promise.all([
       base().eq('moderation_status', 'unreviewed'),
       base().eq('moderation_status', 'reviewed'),
       base().eq('moderation_status', 'denied'),
       base().eq('moderation_status', 'unreviewed').lt('created_at', cutoff72),
       base().eq('visibility_status', 'hidden'),
+      // Corpus classification counts are always table-wide, never filtered by
+      // the view. They are what the before/after figures on the bulk
+      // reclassification dialog are measured against.
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', true),
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', false),
     ]);
 
-    const firstError = [unreviewed, reviewed, denied, overdue, hidden].find((r) => r.error)?.error;
+    const firstError = [unreviewed, reviewed, denied, overdue, hidden, curated, observer].find(
+      (r) => r.error,
+    )?.error;
     if (firstError) {
       toast.error(`Could not read the moderation counts: ${firstError.message}`);
       return;
@@ -154,6 +176,7 @@ export const SymbolSubmissionModeration = () => {
       overdue: overdue.count || 0,
       hidden: hidden.count || 0,
     });
+    setCorpusCounts({ curated: curated.count || 0, observer: observer.count || 0 });
   }, [showCurated]);
 
   // Submitter list for the filter. Built from the same corpus the list shows.
@@ -452,6 +475,72 @@ export const SymbolSubmissionModeration = () => {
     else setSelectedIds(new Set(submissions.map((s) => s.id)));
   };
 
+  // Only rows that would actually change are written. Selecting a mix of
+  // curated and observer rows and asking for "mark as observer" must touch the
+  // curated ones only, otherwise the reported count overstates the change.
+  const selectedRows = useMemo(
+    () => submissions.filter((s) => selectedIds.has(s.id)),
+    [submissions, selectedIds],
+  );
+  const curatedSelectedRows = useMemo(
+    () => selectedRows.filter((s) => s.is_curated_example),
+    [selectedRows],
+  );
+  const pendingCuratedRows = useMemo(
+    () => selectedRows.filter((s) => Boolean(s.is_curated_example) !== curatedTarget),
+    [selectedRows, curatedTarget],
+  );
+
+  const openCuratedModal = (target: boolean) => {
+    if (selectedIds.size === 0) {
+      toast.error('No submissions selected');
+      return;
+    }
+    setCuratedTarget(target);
+    setCuratedModalOpen(true);
+  };
+
+  const handleCuratedReclassify = async () => {
+    const ids = pendingCuratedRows.map((s) => s.id);
+    if (ids.length === 0) {
+      toast.error('Every selected row already carries that classification. Nothing to change.');
+      return;
+    }
+    setBulkLoading(true);
+    const ok = await writeModeration(
+      ids,
+      { is_curated_example: curatedTarget },
+      curatedTarget
+        ? 'mark these symbols as curated examples'
+        : 'mark these symbols as observer records',
+    );
+    setBulkLoading(false);
+    if (!ok) return;
+
+    void recordAuditEvents(ids, {
+      event_name: 'symbol_corpus_reclassification',
+      subject_type: 'symbol_submission',
+      properties: {
+        is_curated_example: curatedTarget,
+        bulk: true,
+        batch_size: ids.length,
+        curated_before: corpusCounts.curated,
+        curated_after: curatedTarget
+          ? corpusCounts.curated + ids.length
+          : corpusCounts.curated - ids.length,
+      },
+    });
+    toast.success(
+      curatedTarget
+        ? `${ids.length} moved to curated examples and excluded from evidence counts`
+        : `${ids.length} moved to observer records and included in evidence counts`,
+    );
+    setCuratedModalOpen(false);
+    setSelectedIds(new Set());
+    loadSubmissions();
+    loadStats();
+  };
+
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const submitterOptions = useMemo(() => submitters, [submitters]);
@@ -603,16 +692,47 @@ export const SymbolSubmissionModeration = () => {
       </Card>
 
       {selectedIds.size > 0 && (
-        <Card className="p-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm">{selectedIds.size} selected</span>
-          <Button size="sm" onClick={handleBulkApprove} disabled={bulkLoading}>
-            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
-            Mark reviewed
-          </Button>
-          <Button size="sm" variant="destructive" onClick={openBulkRejectModal} disabled={bulkLoading}>
-            <X className="w-4 h-4 mr-1" />
-            Reject and hide
-          </Button>
+        <Card className="p-4 space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm">
+              {selectedIds.size} selected
+              {curatedSelectedRows.length > 0 && (
+                <span className="text-muted-foreground">
+                  {' '}
+                  ({curatedSelectedRows.length} curated,{' '}
+                  {selectedIds.size - curatedSelectedRows.length} observer)
+                </span>
+              )}
+            </span>
+            <Button size="sm" onClick={handleBulkApprove} disabled={bulkLoading}>
+              {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
+              Mark reviewed
+            </Button>
+            <Button size="sm" variant="destructive" onClick={openBulkRejectModal} disabled={bulkLoading}>
+              <X className="w-4 h-4 mr-1" />
+              Reject and hide
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 border-t pt-3">
+            <span className="text-sm text-muted-foreground">Corpus classification:</span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openCuratedModal(false)}
+              disabled={bulkLoading}
+            >
+              Mark as observer records
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openCuratedModal(true)}
+              disabled={bulkLoading}
+            >
+              Mark as curated examples
+            </Button>
+          </div>
         </Card>
       )}
 
@@ -769,6 +889,92 @@ export const SymbolSubmissionModeration = () => {
           )}
         </>
       )}
+
+      <Dialog open={curatedModalOpen} onOpenChange={setCuratedModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {curatedTarget ? 'Mark as curated examples' : 'Mark as observer records'}
+            </DialogTitle>
+            <DialogDescription>
+              {curatedTarget
+                ? 'Curated examples are operator illustrations. They are excluded from every evidence, convergence and community total on the site.'
+                : 'Observer records are treated as real submissions and are included in evidence, convergence and community totals on the site.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 text-sm">
+            <div>
+              <p>
+                {pendingCuratedRows.length} of {selectedIds.size} selected{' '}
+                {pendingCuratedRows.length === 1 ? 'row' : 'rows'} will change.
+              </p>
+              {selectedIds.size - pendingCuratedRows.length > 0 && (
+                <p className="text-muted-foreground">
+                  {selectedIds.size - pendingCuratedRows.length} already carry this
+                  classification and will be left untouched.
+                </p>
+              )}
+            </div>
+
+            <div className="rounded-md border divide-y">
+              <div className="grid grid-cols-3 px-3 py-2 text-xs uppercase text-muted-foreground">
+                <span>Corpus</span>
+                <span className="text-right">Before</span>
+                <span className="text-right">After</span>
+              </div>
+              <div className="grid grid-cols-3 px-3 py-2">
+                <span>Observer records</span>
+                <span className="text-right tabular-nums">{corpusCounts.observer}</span>
+                <span className="text-right tabular-nums font-medium">
+                  {curatedTarget
+                    ? corpusCounts.observer - pendingCuratedRows.length
+                    : corpusCounts.observer + pendingCuratedRows.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 px-3 py-2">
+                <span>Curated examples</span>
+                <span className="text-right tabular-nums">{corpusCounts.curated}</span>
+                <span className="text-right tabular-nums font-medium">
+                  {curatedTarget
+                    ? corpusCounts.curated + pendingCuratedRows.length
+                    : corpusCounts.curated - pendingCuratedRows.length}
+                </span>
+              </div>
+            </div>
+
+            {pendingCuratedRows.length > 0 && (
+              <div className="max-h-40 overflow-y-auto rounded-md border p-3 space-y-1">
+                {pendingCuratedRows.map((s) => (
+                  <div key={s.id} className="flex items-center gap-2 text-xs">
+                    <span className="font-mono text-muted-foreground">{shortId(s.id)}</span>
+                    <span className="truncate">{submitterLabel(s)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <p className="text-muted-foreground">
+              This changes what the row counts as, not whether it is public and not whether it
+              has been reviewed. Review state and visibility are unaffected.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCuratedModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCuratedReclassify}
+              disabled={bulkLoading || pendingCuratedRows.length === 0}
+            >
+              {bulkLoading && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              Change {pendingCuratedRows.length}{' '}
+              {pendingCuratedRows.length === 1 ? 'row' : 'rows'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent>
