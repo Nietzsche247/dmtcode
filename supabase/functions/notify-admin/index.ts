@@ -212,13 +212,25 @@ const handler = async (req: Request): Promise<Response> => {
     // Handle legacy notification types
     console.log(`[Admin Alert] ${type?.toUpperCase()} - Symbol: ${symbolId}`);
 
-    let message = '';
-    
+    // A caller may supply its own message (pipeline alerts do). Otherwise the
+    // legacy symbol types build one.
+    let message = typeof (body as { message?: unknown }).message === 'string'
+      ? String((body as { message?: string }).message)
+      : '';
+
     if (type === 'first_non_red') {
-      message = `🚨 FIRST NON-RED WAVELENGTH SUBMISSION!\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nTimestamp: ${new Date().toISOString()}\n\nView at: https://dmtcode.com/registry`;
+      message = `FIRST NON-RED WAVELENGTH SUBMISSION\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nTimestamp: ${new Date().toISOString()}\n\nView at: https://dmtcode.com/registry`;
     } else if (type === 'null_report') {
-      message = `⚪ NULL REPORT SUBMITTED\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nSurface: ${surface}\nTimestamp: ${new Date().toISOString()}\n\nView null dashboard: https://dmtcode.com/admin`;
+      message = `NULL REPORT SUBMITTED\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nSurface: ${surface}\nTimestamp: ${new Date().toISOString()}\n\nView null dashboard: https://dmtcode.com/admin`;
     }
+
+    if (!message) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'No message to send' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
 
     console.log(message);
 
