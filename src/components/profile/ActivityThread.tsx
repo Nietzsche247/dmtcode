@@ -29,7 +29,7 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
       const [subsRes, savedRes, watchRes] = await Promise.all([
         supabase
           .from('symbol_submissions')
-          .select('id, description, status, created_at')
+          .select('id, description, visibility_status, created_at')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(30),
