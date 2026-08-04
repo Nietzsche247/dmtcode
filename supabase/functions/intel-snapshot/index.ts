@@ -69,7 +69,10 @@ interface Ctx {
     curGap: boolean;
     priorGap: boolean;
     statusCodeCoverage: number;
+    coverageStart: string | null;
+    coverageEnd: string | null;
   };
+
   counts: Record<string, { value: number | null; prior: number | null; error?: string }>;
 }
 
