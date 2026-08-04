@@ -103,23 +103,29 @@ export const SymbolSubmissionModeration = () => {
   }, [statusFilter, searchQuery, currentPage, dateRange]);
 
   const loadStats = async () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Current UTC day, not local midnight.
+    const now = new Date();
+    const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const cutoff72 = new Date(Date.now() - WINDOW_MS).toISOString();
 
-    const cutoff72 = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+    const base = () =>
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', showCurated);
 
-    const [pending, approved, rejected, todayCount, awaiting72] = await Promise.all([
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString()),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', cutoff72).is('moderated_at', null),
+    const [unreviewed, reviewed, denied, todayCount, awaiting72] = await Promise.all([
+      base().eq('moderation_status', 'unreviewed'),
+      base().eq('moderation_status', 'reviewed'),
+      base().eq('moderation_status', 'denied'),
+      base().gte('created_at', todayUtc.toISOString()),
+      base().eq('moderation_status', 'unreviewed').lt('created_at', cutoff72),
     ]);
 
     setStats({
-      pending: pending.count || 0,
-      approved: approved.count || 0,
-      rejected: rejected.count || 0,
+      unreviewed: unreviewed.count || 0,
+      reviewed: reviewed.count || 0,
+      denied: denied.count || 0,
       today: todayCount.count || 0,
       awaiting72: awaiting72.count || 0,
     });
@@ -135,14 +141,16 @@ export const SymbolSubmissionModeration = () => {
     let query = supabase
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
+      .eq('is_curated_example', showCurated)
       .order('created_at', { ascending: statusFilter === 'new72' })
       .range(from, to);
 
     if (statusFilter === 'new72') {
-      const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
-      query = query.gte('created_at', cutoff).is('moderated_at', null);
+      // Past the 72 hour window and still nobody has looked at it.
+      const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
+      query = query.eq('moderation_status', 'unreviewed').lt('created_at', cutoff);
     } else if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter);
+      query = query.eq('moderation_status', statusFilter);
     }
 
     if (searchQuery.trim()) {
