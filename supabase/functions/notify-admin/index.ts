@@ -69,6 +69,17 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
+      // Rows captured before submission was account-gated carry a null user_id.
+      // getUserById throws on a non-UUID, which used to surface in the admin UI
+      // as a 500 on an approval that had in fact already been written.
+      if (!submissionData.user_id) {
+        console.log('Submission predates account creation, no submitter to notify');
+        return new Response(
+          JSON.stringify({ success: true, message: 'No submitter account on record' }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
       // Get user email from auth.users (requires service role)
       const { data: userData } = await supabase.auth.admin.getUserById(submissionData.user_id);
       const userEmail = userData?.user?.email;
@@ -140,14 +151,16 @@ const handler = async (req: Request): Promise<Response> => {
     if (submission) {
       console.log(`[Admin Alert] NEW_SYMBOL_SUBMISSION - Symbol: ${submission.id}`);
 
-      // Get user profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('display_name')
-        .eq('id', submission.user_id)
-        .single();
+      // Get user profile (submissions predating account gating have no user_id)
+      const { data: profile } = submission.user_id
+        ? await supabase
+            .from('profiles')
+            .select('display_name')
+            .eq('id', submission.user_id)
+            .single()
+        : { data: null };
 
-      const userName = profile?.display_name || 'Anonymous User';
+      const userName = profile?.display_name || 'Prior to Account Creation';
       const message = `📝 NEW SYMBOL SUBMISSION\n\nUser: ${userName}\nSource: ${submission.source_method || 'Not specified'}\nTags: ${submission.tags?.join(', ') || 'None'}\nDescription: ${submission.description?.substring(0, 100) || 'None'}\n\nView: https://dmtcode.com/admin`;
 
       // Store notification
