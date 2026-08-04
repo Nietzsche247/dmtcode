@@ -35,6 +35,11 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
 // maintained by a database trigger. The admin UI never writes it.
 type ReviewFilter = 'all' | 'overdue' | 'unreviewed' | 'reviewed' | 'denied';
 type VisibilityFilter = 'all' | 'public' | 'hidden';
+// Corpus classification is a third independent dimension. "observer" is the
+// evidence-bearing corpus, "curated" is operator illustration, "both" is the
+// whole table. Filtering to one of them is what makes the bulk toggle safe:
+// the operator can see exactly which class they are about to move.
+type CorpusFilter = 'observer' | 'curated' | 'both';
 
 const WINDOW_MS = 72 * 60 * 60 * 1000;
 const PAGE_SIZE = 20;
