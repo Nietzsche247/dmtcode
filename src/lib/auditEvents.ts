@@ -24,14 +24,16 @@ export async function recordAuditEvent(event: AuditEvent): Promise<void> {
     const actorId = auth?.user?.id;
     if (!actorId) return;
 
-    const { error } = await supabase.from('audit_events').insert({
-      event_name: event.event_name,
-      actor_id: actorId,
-      actor_kind: 'admin',
-      subject_type: event.subject_type,
-      subject_id: event.subject_id ?? null,
-      properties: event.properties ?? {},
-    });
+    const { error } = await supabase.from('audit_events').insert([
+      {
+        event_name: event.event_name,
+        actor_id: actorId,
+        actor_kind: 'admin',
+        subject_type: event.subject_type,
+        subject_id: event.subject_id ?? undefined,
+        properties: (event.properties ?? {}) as never,
+      },
+    ]);
     if (error) console.error('audit event not recorded:', event.event_name, error.message);
   } catch (e) {
     console.error('audit event not recorded:', event.event_name, e);
