@@ -287,6 +287,31 @@ Deno.serve(async (req) => {
           continue;
         }
 
+        // Durable audit row per decision. This is what makes classifier drift
+        // measurable: the model, its confidence, and the specific element it
+        // claimed to find are all recoverable later, per record, over SQL.
+        const { error: auditErr } = await db.from('audit_events').insert({
+          event_name: 'bibliography_triage_decision',
+          actor_kind: 'classifier',
+          subject_type: 'bibliography',
+          subject_id: row.id,
+          properties: {
+            triage_status: patch.triage_status ?? triage_status,
+            triage_confidence: v ? v.confidence : null,
+            phenomenological_element: v?.element || null,
+            on_topic: v ? v.on_topic : null,
+            triage_model: MODEL,
+            triage_reason: patch.triage_reason,
+            is_approved: patch.is_approved ?? null,
+            mode: reauditOf ? 'reaudit' : 'backlog',
+            prior_triage_status: reauditOf ? row.triage_status ?? null : null,
+            prior_triage_confidence: reauditOf ? row.triage_confidence ?? null : null,
+            pulled_back: Boolean(reauditOf && patch.is_approved === false),
+            title: row.title,
+          },
+        });
+        if (auditErr) console.error('triage audit insert failed', row.id, auditErr.message);
+
         processed++;
         if (triage_status === 'auto_approved') approved++;
         else if (triage_status === 'auto_rejected') rejected++;
