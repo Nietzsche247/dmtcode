@@ -2781,6 +2781,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      intel_crawler_health: {
+        Args: { _days?: number; _window_days?: number }
+        Returns: Json
+      }
+      intel_crawler_window: {
+        Args: { _from: string; _to: string }
+        Returns: Json
+      }
       registry_glyph_content: {
         Args: { rec: Database["public"]["Tables"]["registry_glyphs"]["Row"] }
         Returns: Json

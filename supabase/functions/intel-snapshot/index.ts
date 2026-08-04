@@ -69,7 +69,10 @@ interface Ctx {
     curGap: boolean;
     priorGap: boolean;
     statusCodeCoverage: number;
+    coverageStart: string | null;
+    coverageEnd: string | null;
   };
+
   counts: Record<string, { value: number | null; prior: number | null; error?: string }>;
 }
 
@@ -199,16 +202,28 @@ function ga4Metric(c: Ctx, key: string, scale = 1): MetricResult {
 
 function crawlerMetric(c: Ctx, cur: number | null, prior: number | null): MetricResult {
   if (!c.crawlers.ok) return unavailable(c.crawlers.error);
+
+  // The prior window predates the first row the table ever recorded, so there is
+  // no comparable period. That is missing history, not a broken pipeline.
+  if (c.crawlers.coverageStart && dayKey(c.priorStart) < c.crawlers.coverageStart) {
+    return {
+      value: cur,
+      prior_value: null,
+      quality: 'degraded',
+      note: `Crawler logging began on ${c.crawlers.coverageStart}, so the preceding period is not covered and no comparison is reported.`,
+    };
+  }
   if (c.crawlers.curGap || c.crawlers.priorGap) {
     return {
       value: cur,
       prior_value: null,
       quality: 'degraded',
-      note: gapNote(c.crawlers.gapDays),
+      note: gapNote([...c.crawlers.gapDays].filter((d) => d >= dayKey(c.priorStart))),
     };
   }
   return { value: cur, prior_value: prior };
 }
+
 
 // ---------------------------------------------------------------- gathering
 
@@ -236,86 +251,65 @@ async function cumulativePair(
   return { value: now.value, prior: before.value };
 }
 
-const ANSWER_BOTS = new Set([
-  'ChatGPT-User', 'OAI-SearchBot', 'Claude-User', 'Claude-SearchBot', 'Perplexity-User', 'PerplexityBot',
-]);
-
+// Every crawler number is aggregated inside Postgres. Fetching rows and counting
+// them in Deno silently truncates at the PostgREST row cap, which is how an
+// earlier snapshot recorded exactly 1000 hits against a true 3738.
 async function gatherCrawlers(db: Ctx['db'], now: Date, curStart: Date, priorStart: Date) {
   const out: Ctx['crawlers'] = {
     ok: false, error: null, curTotal: 0, priorTotal: 0, uniqueBots: 0, priorUniqueBots: 0,
     answerHits: 0, priorAnswerHits: 0, sections: 0, priorSections: 0, silentBots: 0,
     gapDays: [], curGap: false, priorGap: false, statusCodeCoverage: 0,
+    coverageStart: null, coverageEnd: null,
   };
 
-  const since30 = new Date(now.getTime() - 30 * 86400_000);
-  const { data, error } = await db
-    .from('crawler_hits')
-    .select('ts,path,bot_name,bot_class')
-    .gte('ts', iso(since30))
-    .order('ts', { ascending: false })
-    .limit(50000);
+  const periodDays = Math.round((now.getTime() - curStart.getTime()) / 86400_000) || 7;
 
-  if (error) {
-    out.error = `Could not read crawler_hits: ${error.message}`;
+  const [cur, prior, health] = await Promise.all([
+    db.rpc('intel_crawler_window', { _from: iso(curStart), _to: iso(now) }),
+    db.rpc('intel_crawler_window', { _from: iso(priorStart), _to: iso(curStart) }),
+    db.rpc('intel_crawler_health', { _days: 30, _window_days: periodDays }),
+  ]);
+
+  const failure = cur.error ?? prior.error ?? health.error;
+  if (failure) {
+    out.error = `Could not read crawler_hits: ${failure.message}`;
     return out;
   }
   out.ok = true;
 
-  const rows = (data ?? []) as Array<{ ts: string; path: string | null; bot_name: string | null; bot_class: string | null }>;
-
-  const inRange = (r: { ts: string }, from: Date, to: Date) => {
-    const t = new Date(r.ts).getTime();
-    return t >= from.getTime() && t < to.getTime();
+  const c = (cur.data ?? {}) as Record<string, number>;
+  const p = (prior.data ?? {}) as Record<string, number>;
+  const h = (health.data ?? {}) as {
+    coverage_start: string | null;
+    coverage_end: string | null;
+    gap_days: string[] | null;
+    silent_bots: number;
+    status_code_coverage: number;
   };
-  const cur = rows.filter((r) => inRange(r, curStart, now));
-  const prior = rows.filter((r) => inRange(r, priorStart, curStart));
 
-  const section = (p: string | null) => (p ? '/' + p.split('/').filter(Boolean)[0] ?? '/' : '/');
+  out.curTotal = Number(c.total ?? 0);
+  out.priorTotal = Number(p.total ?? 0);
+  out.uniqueBots = Number(c.unique_bots ?? 0);
+  out.priorUniqueBots = Number(p.unique_bots ?? 0);
+  out.answerHits = Number(c.answer_hits ?? 0);
+  out.priorAnswerHits = Number(p.answer_hits ?? 0);
+  out.sections = Number(c.sections ?? 0);
+  out.priorSections = Number(p.sections ?? 0);
 
-  out.curTotal = cur.length;
-  out.priorTotal = prior.length;
-  out.uniqueBots = new Set(cur.map((r) => r.bot_name)).size;
-  out.priorUniqueBots = new Set(prior.map((r) => r.bot_name)).size;
-  out.answerHits = cur.filter((r) => r.bot_class === 'answer' || ANSWER_BOTS.has(r.bot_name ?? '')).length;
-  out.priorAnswerHits = prior.filter((r) => r.bot_class === 'answer' || ANSWER_BOTS.has(r.bot_name ?? '')).length;
-  out.sections = new Set(cur.map((r) => section(r.path))).size;
-  out.priorSections = new Set(prior.map((r) => section(r.path))).size;
+  out.silentBots = Number(h.silent_bots ?? 0);
+  out.statusCodeCoverage = Number(h.status_code_coverage ?? 0);
+  out.coverageStart = h.coverage_start ?? null;
+  out.coverageEnd = h.coverage_end ?? null;
 
-  const seenEver = new Set(rows.map((r) => r.bot_name).filter(Boolean) as string[]);
-  const seenNow = new Set(cur.map((r) => r.bot_name).filter(Boolean) as string[]);
-  out.silentBots = [...seenEver].filter((b) => !seenNow.has(b)).length;
-
-  // Gap detection across the last 30 days.
-  const present = new Set(rows.map((r) => dayKey(r.ts)));
-  for (let i = 1; i <= 30; i++) {
-    const d = new Date(now.getTime() - i * 86400_000);
-    const k = dayKey(d);
-    if (!present.has(k)) out.gapDays.push(k);
-  }
-  out.gapDays.sort();
-  const curGapDays = out.gapDays.filter((d) => d >= dayKey(curStart));
-  const priorGapDays = out.gapDays.filter((d) => d >= dayKey(priorStart) && d < dayKey(curStart));
-  out.curGap = curGapDays.length > 0;
-  out.priorGap = priorGapDays.length > 0;
-
-  // status_code coverage: the column does not exist yet. Report 0 honestly.
-  const probe = await db.from('crawler_hits').select('status_code').limit(1);
-  if (probe.error) {
-    out.statusCodeCoverage = 0;
-  } else {
-    const last7 = await db
-      .from('crawler_hits')
-      .select('status_code')
-      .gte('ts', iso(curStart))
-      .limit(50000);
-    const r7 = (last7.data ?? []) as Array<{ status_code: number | null }>;
-    out.statusCodeCoverage = r7.length
-      ? Math.round((r7.filter((x) => x.status_code != null).length / r7.length) * 100)
-      : 0;
-  }
+  // Gaps are already clamped to the covered window by intel_crawler_health:
+  // a day before coverage_start is missing history, not a logging failure.
+  out.gapDays = (h.gap_days ?? []).slice().sort();
+  out.curGap = out.gapDays.some((d) => d >= dayKey(curStart));
+  out.priorGap = out.gapDays.some((d) => d >= dayKey(priorStart) && d < dayKey(curStart));
 
   return out;
 }
+
 
 async function gatherGa4(periodDays: number) {
   const res: Ctx['ga4'] = { reachable: false, error: null, cur: {}, prior: {}, payload: {} };
@@ -528,12 +522,14 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
     const lastSuccessful = (prevSnap.data as { captured_at: string } | null)?.captured_at ?? null;
-    const stale = lastSuccessful ? Date.now() - new Date(lastSuccessful).getTime() > 48 * 3600_000 : true;
+    // A first snapshot is not stale. Staleness only means "the schedule stopped".
+    const isFirst = !lastSuccessful;
+    const stale = isFirst ? false : Date.now() - new Date(lastSuccessful!).getTime() > 48 * 3600_000;
 
     const warnings: string[] = [];
     if (crawlers.gapDays.length) {
       warnings.push(
-        `Crawler logging has ${crawlers.gapDays.length} day(s) with zero rows in the last 30 days (${crawlers.gapDays.join(', ')}). Period-over-period crawler comparisons spanning those days are suppressed.`,
+        `Crawler logging has ${crawlers.gapDays.length} day(s) with zero rows inside its covered window, which begins ${crawlers.coverageStart} (${crawlers.gapDays.join(', ')}). Period-over-period crawler comparisons spanning those days are suppressed.`,
       );
     }
     if (crawlers.statusCodeCoverage === 0) {
@@ -547,19 +543,23 @@ Deno.serve(async (req) => {
     warnings.push(
       'posthog-js is absent from package.json; bundle_purchased, bundle_checkout_started and upsell events fire into a no-op.',
     );
-    if (stale) {
+    if (isFirst) {
+      warnings.push('This is the first snapshot, so there is no history to compare against yet.');
+    } else if (stale) {
       warnings.push(
-        lastSuccessful
-          ? `The previous successful snapshot is older than 48 hours (${lastSuccessful}). The scheduled job may not be running.`
-          : 'This is the first snapshot, so there is no history to compare against yet.',
+        `The previous successful snapshot is older than 48 hours (${lastSuccessful}). The scheduled job may not be running.`,
       );
     }
     const failedCounts = Object.entries(counts).filter(([, v]) => v.value === null);
     for (const [k, v] of failedCounts) warnings.push(`${k} is unavailable: ${v.error}`);
 
+
     const data_health = {
+      crawler_coverage_start: crawlers.coverageStart,
+      crawler_coverage_end: crawlers.coverageEnd,
       crawler_gap_days: crawlers.gapDays,
       crawler_status_code_coverage: crawlers.statusCodeCoverage,
+
       ga4_reachable: ga4.reachable,
       ga4_error: ga4.reachable ? null : ga4.error,
       posthog_installed: false,
@@ -605,6 +605,21 @@ Deno.serve(async (req) => {
           ? Number((((value - prior) / prior) * 100).toFixed(2))
           : null;
 
+      // Generic implausibility guard, applied to every percent metric present and
+      // future. A percent that swings this hard almost always means the prior
+      // reading is an artifact, not that the world changed that much.
+      let quality = r.quality ?? 'ok';
+      let note = r.note ?? null;
+      if (def.unit === 'percent' && value != null && prior != null) {
+        const wild = delta != null && Math.abs(delta) > 500;
+        const fromNearZero = prior < 5 && value > 20;
+        if ((wild || fromNearZero) && quality === 'ok') {
+          quality = 'degraded';
+          note =
+            'Implausible period-over-period change; the prior value is likely an artifact rather than a real reading. Verify against the source before acting on this.';
+        }
+      }
+
       rows.push({
         snapshot_id: snapshotId,
         captured_at: capturedAt,
@@ -615,10 +630,11 @@ Deno.serve(async (req) => {
         prior_value: prior,
         delta_pct: delta,
         unit: def.unit,
-        quality: r.quality ?? 'ok',
-        note: r.note ?? null,
+        quality,
+        note,
       });
     }
+
 
     const { error: metricErr } = await db.from('intel_metrics').insert(rows);
     if (metricErr) throw new Error(`Could not write intel_metrics: ${metricErr.message}`);
