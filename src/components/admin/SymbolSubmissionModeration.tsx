@@ -255,7 +255,8 @@ export const SymbolSubmissionModeration = () => {
     else if (submitterFilter !== 'all') query = query.eq('user_id', submitterFilter);
 
     if (searchQuery.trim()) {
-      query = query.ilike('description', `%${searchQuery.trim()}%`);
+      const q = searchQuery.trim().replace(/[,()]/g, ' ');
+      query = query.or(`description.ilike.%${q}%,context_note.ilike.%${q}%`);
     }
 
     const { data, error, count } = await query;
@@ -283,7 +284,7 @@ export const SymbolSubmissionModeration = () => {
       (data ?? []).map((s) => ({ ...s, profile: s.user_id ? profileMap.get(s.user_id) ?? null : null })),
     );
     setLoading(false);
-  }, [currentPage, showCurated, reviewFilter, visibilityFilter, submitterFilter, searchQuery]);
+  }, [currentPage, corpusFilter, reviewFilter, visibilityFilter, submitterFilter, searchQuery]);
 
   useEffect(() => {
     loadSubmissions();
