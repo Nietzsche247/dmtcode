@@ -251,86 +251,65 @@ async function cumulativePair(
   return { value: now.value, prior: before.value };
 }
 
-const ANSWER_BOTS = new Set([
-  'ChatGPT-User', 'OAI-SearchBot', 'Claude-User', 'Claude-SearchBot', 'Perplexity-User', 'PerplexityBot',
-]);
-
+// Every crawler number is aggregated inside Postgres. Fetching rows and counting
+// them in Deno silently truncates at the PostgREST row cap, which is how an
+// earlier snapshot recorded exactly 1000 hits against a true 3738.
 async function gatherCrawlers(db: Ctx['db'], now: Date, curStart: Date, priorStart: Date) {
   const out: Ctx['crawlers'] = {
     ok: false, error: null, curTotal: 0, priorTotal: 0, uniqueBots: 0, priorUniqueBots: 0,
     answerHits: 0, priorAnswerHits: 0, sections: 0, priorSections: 0, silentBots: 0,
     gapDays: [], curGap: false, priorGap: false, statusCodeCoverage: 0,
+    coverageStart: null, coverageEnd: null,
   };
 
-  const since30 = new Date(now.getTime() - 30 * 86400_000);
-  const { data, error } = await db
-    .from('crawler_hits')
-    .select('ts,path,bot_name,bot_class')
-    .gte('ts', iso(since30))
-    .order('ts', { ascending: false })
-    .limit(50000);
+  const periodDays = Math.round((now.getTime() - curStart.getTime()) / 86400_000) || 7;
 
-  if (error) {
-    out.error = `Could not read crawler_hits: ${error.message}`;
+  const [cur, prior, health] = await Promise.all([
+    db.rpc('intel_crawler_window', { _from: iso(curStart), _to: iso(now) }),
+    db.rpc('intel_crawler_window', { _from: iso(priorStart), _to: iso(curStart) }),
+    db.rpc('intel_crawler_health', { _days: 30, _window_days: periodDays }),
+  ]);
+
+  const failure = cur.error ?? prior.error ?? health.error;
+  if (failure) {
+    out.error = `Could not read crawler_hits: ${failure.message}`;
     return out;
   }
   out.ok = true;
 
-  const rows = (data ?? []) as Array<{ ts: string; path: string | null; bot_name: string | null; bot_class: string | null }>;
-
-  const inRange = (r: { ts: string }, from: Date, to: Date) => {
-    const t = new Date(r.ts).getTime();
-    return t >= from.getTime() && t < to.getTime();
+  const c = (cur.data ?? {}) as Record<string, number>;
+  const p = (prior.data ?? {}) as Record<string, number>;
+  const h = (health.data ?? {}) as {
+    coverage_start: string | null;
+    coverage_end: string | null;
+    gap_days: string[] | null;
+    silent_bots: number;
+    status_code_coverage: number;
   };
-  const cur = rows.filter((r) => inRange(r, curStart, now));
-  const prior = rows.filter((r) => inRange(r, priorStart, curStart));
 
-  const section = (p: string | null) => (p ? '/' + p.split('/').filter(Boolean)[0] ?? '/' : '/');
+  out.curTotal = Number(c.total ?? 0);
+  out.priorTotal = Number(p.total ?? 0);
+  out.uniqueBots = Number(c.unique_bots ?? 0);
+  out.priorUniqueBots = Number(p.unique_bots ?? 0);
+  out.answerHits = Number(c.answer_hits ?? 0);
+  out.priorAnswerHits = Number(p.answer_hits ?? 0);
+  out.sections = Number(c.sections ?? 0);
+  out.priorSections = Number(p.sections ?? 0);
 
-  out.curTotal = cur.length;
-  out.priorTotal = prior.length;
-  out.uniqueBots = new Set(cur.map((r) => r.bot_name)).size;
-  out.priorUniqueBots = new Set(prior.map((r) => r.bot_name)).size;
-  out.answerHits = cur.filter((r) => r.bot_class === 'answer' || ANSWER_BOTS.has(r.bot_name ?? '')).length;
-  out.priorAnswerHits = prior.filter((r) => r.bot_class === 'answer' || ANSWER_BOTS.has(r.bot_name ?? '')).length;
-  out.sections = new Set(cur.map((r) => section(r.path))).size;
-  out.priorSections = new Set(prior.map((r) => section(r.path))).size;
+  out.silentBots = Number(h.silent_bots ?? 0);
+  out.statusCodeCoverage = Number(h.status_code_coverage ?? 0);
+  out.coverageStart = h.coverage_start ?? null;
+  out.coverageEnd = h.coverage_end ?? null;
 
-  const seenEver = new Set(rows.map((r) => r.bot_name).filter(Boolean) as string[]);
-  const seenNow = new Set(cur.map((r) => r.bot_name).filter(Boolean) as string[]);
-  out.silentBots = [...seenEver].filter((b) => !seenNow.has(b)).length;
-
-  // Gap detection across the last 30 days.
-  const present = new Set(rows.map((r) => dayKey(r.ts)));
-  for (let i = 1; i <= 30; i++) {
-    const d = new Date(now.getTime() - i * 86400_000);
-    const k = dayKey(d);
-    if (!present.has(k)) out.gapDays.push(k);
-  }
-  out.gapDays.sort();
-  const curGapDays = out.gapDays.filter((d) => d >= dayKey(curStart));
-  const priorGapDays = out.gapDays.filter((d) => d >= dayKey(priorStart) && d < dayKey(curStart));
-  out.curGap = curGapDays.length > 0;
-  out.priorGap = priorGapDays.length > 0;
-
-  // status_code coverage: the column does not exist yet. Report 0 honestly.
-  const probe = await db.from('crawler_hits').select('status_code').limit(1);
-  if (probe.error) {
-    out.statusCodeCoverage = 0;
-  } else {
-    const last7 = await db
-      .from('crawler_hits')
-      .select('status_code')
-      .gte('ts', iso(curStart))
-      .limit(50000);
-    const r7 = (last7.data ?? []) as Array<{ status_code: number | null }>;
-    out.statusCodeCoverage = r7.length
-      ? Math.round((r7.filter((x) => x.status_code != null).length / r7.length) * 100)
-      : 0;
-  }
+  // Gaps are already clamped to the covered window by intel_crawler_health:
+  // a day before coverage_start is missing history, not a logging failure.
+  out.gapDays = (h.gap_days ?? []).slice().sort();
+  out.curGap = out.gapDays.some((d) => d >= dayKey(curStart));
+  out.priorGap = out.gapDays.some((d) => d >= dayKey(priorStart) && d < dayKey(curStart));
 
   return out;
 }
+
 
 async function gatherGa4(periodDays: number) {
   const res: Ctx['ga4'] = { reachable: false, error: null, cur: {}, prior: {}, payload: {} };
