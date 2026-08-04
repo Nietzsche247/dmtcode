@@ -522,12 +522,14 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
     const lastSuccessful = (prevSnap.data as { captured_at: string } | null)?.captured_at ?? null;
-    const stale = lastSuccessful ? Date.now() - new Date(lastSuccessful).getTime() > 48 * 3600_000 : true;
+    // A first snapshot is not stale. Staleness only means "the schedule stopped".
+    const isFirst = !lastSuccessful;
+    const stale = isFirst ? false : Date.now() - new Date(lastSuccessful!).getTime() > 48 * 3600_000;
 
     const warnings: string[] = [];
     if (crawlers.gapDays.length) {
       warnings.push(
-        `Crawler logging has ${crawlers.gapDays.length} day(s) with zero rows in the last 30 days (${crawlers.gapDays.join(', ')}). Period-over-period crawler comparisons spanning those days are suppressed.`,
+        `Crawler logging has ${crawlers.gapDays.length} day(s) with zero rows inside its covered window, which begins ${crawlers.coverageStart} (${crawlers.gapDays.join(', ')}). Period-over-period crawler comparisons spanning those days are suppressed.`,
       );
     }
     if (crawlers.statusCodeCoverage === 0) {
@@ -541,15 +543,16 @@ Deno.serve(async (req) => {
     warnings.push(
       'posthog-js is absent from package.json; bundle_purchased, bundle_checkout_started and upsell events fire into a no-op.',
     );
-    if (stale) {
+    if (isFirst) {
+      warnings.push('This is the first snapshot, so there is no history to compare against yet.');
+    } else if (stale) {
       warnings.push(
-        lastSuccessful
-          ? `The previous successful snapshot is older than 48 hours (${lastSuccessful}). The scheduled job may not be running.`
-          : 'This is the first snapshot, so there is no history to compare against yet.',
+        `The previous successful snapshot is older than 48 hours (${lastSuccessful}). The scheduled job may not be running.`,
       );
     }
     const failedCounts = Object.entries(counts).filter(([, v]) => v.value === null);
     for (const [k, v] of failedCounts) warnings.push(`${k} is unavailable: ${v.error}`);
+
 
     const data_health = {
       crawler_gap_days: crawlers.gapDays,
