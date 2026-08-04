@@ -184,7 +184,7 @@ export const SymbolSubmissionModeration = () => {
       hidden: hidden.count || 0,
     });
     setCorpusCounts({ curated: curated.count || 0, observer: observer.count || 0 });
-  }, [showCurated]);
+  }, [corpusFilter]);
 
   // Submitter list for the filter. Built from the same corpus the list shows.
   const loadSubmitters = useCallback(async () => {
@@ -192,7 +192,8 @@ export const SymbolSubmissionModeration = () => {
       .from('symbol_submissions')
       .select('user_id')
       .limit(2000);
-    if (!showCurated) submitterQuery = submitterQuery.eq('is_curated_example', false);
+    if (corpusFilter === 'observer') submitterQuery = submitterQuery.eq('is_curated_example', false);
+    else if (corpusFilter === 'curated') submitterQuery = submitterQuery.eq('is_curated_example', true);
     const { data, error } = await submitterQuery;
 
     if (error) {
