@@ -27,7 +27,8 @@ interface UserProfile {
 interface SymbolSubmission {
   id: string;
   image_url: string;
-  status: 'pending' | 'approved' | 'rejected';
+  moderation_status: 'unreviewed' | 'reviewed' | 'denied' | 'reported';
+  visibility_status: 'private' | 'public' | 'hidden';
   upvotes: number;
   downvotes: number;
   description: string | null;
@@ -129,7 +130,7 @@ const Dashboard = () => {
   const loadMySubmissions = async (userId: string) => {
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, status, upvotes, downvotes, description, tags, created_at')
+      .select('id, image_url, moderation_status, visibility_status, upvotes, downvotes, description, tags, created_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
