@@ -562,11 +562,14 @@ export const SymbolSubmissionModeration = () => {
         <p className="text-sm text-muted-foreground mt-1">
           One list, every submitter. Review state and visibility are separate dimensions: a
           symbol can be visible to the public and unreviewed at the same time. Counts cover
-          {showCurated
-            ? ' observer submissions plus curated operator examples.'
-            : ' observer submissions only. Tick "Include curated examples" to add operator rows.'}
+          {corpusFilter === 'observer'
+            ? ' observer submissions only, the rows that count as evidence.'
+            : corpusFilter === 'curated'
+              ? ' curated operator examples only, which are excluded from every evidence count.'
+              : ' observer submissions and curated operator examples together.'}
         </p>
       </div>
+
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card className="p-4 text-center">
