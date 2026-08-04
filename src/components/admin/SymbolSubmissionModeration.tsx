@@ -35,6 +35,11 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
 // maintained by a database trigger. The admin UI never writes it.
 type ReviewFilter = 'all' | 'overdue' | 'unreviewed' | 'reviewed' | 'denied';
 type VisibilityFilter = 'all' | 'public' | 'hidden';
+// Corpus classification is a third independent dimension. "observer" is the
+// evidence-bearing corpus, "curated" is operator illustration, "both" is the
+// whole table. Filtering to one of them is what makes the bulk toggle safe:
+// the operator can see exactly which class they are about to move.
+type CorpusFilter = 'observer' | 'curated' | 'both';
 
 const WINDOW_MS = 72 * 60 * 60 * 1000;
 const PAGE_SIZE = 20;
@@ -99,7 +104,7 @@ export const SymbolSubmissionModeration = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [showCurated, setShowCurated] = useState(false);
+  const [corpusFilter, setCorpusFilter] = useState<CorpusFilter>('observer');
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [submitters, setSubmitters] = useState<Profile[]>([]);
   const [anonCount, setAnonCount] = useState(0);
@@ -139,7 +144,9 @@ export const SymbolSubmissionModeration = () => {
       const q = supabase
         .from('symbol_submissions')
         .select('id', { count: 'exact', head: true });
-      return showCurated ? q : q.eq('is_curated_example', false);
+      if (corpusFilter === 'observer') return q.eq('is_curated_example', false);
+      if (corpusFilter === 'curated') return q.eq('is_curated_example', true);
+      return q;
     };
 
     const [unreviewed, reviewed, denied, overdue, hidden, curated, observer] = await Promise.all([
@@ -177,7 +184,7 @@ export const SymbolSubmissionModeration = () => {
       hidden: hidden.count || 0,
     });
     setCorpusCounts({ curated: curated.count || 0, observer: observer.count || 0 });
-  }, [showCurated]);
+  }, [corpusFilter]);
 
   // Submitter list for the filter. Built from the same corpus the list shows.
   const loadSubmitters = useCallback(async () => {
@@ -185,7 +192,8 @@ export const SymbolSubmissionModeration = () => {
       .from('symbol_submissions')
       .select('user_id')
       .limit(2000);
-    if (!showCurated) submitterQuery = submitterQuery.eq('is_curated_example', false);
+    if (corpusFilter === 'observer') submitterQuery = submitterQuery.eq('is_curated_example', false);
+    else if (corpusFilter === 'curated') submitterQuery = submitterQuery.eq('is_curated_example', true);
     const { data, error } = await submitterQuery;
 
     if (error) {
@@ -216,7 +224,7 @@ export const SymbolSubmissionModeration = () => {
         .map((id) => byId.get(id) ?? { id, handle: null, avatar_seed: null })
         .sort((a, b) => (a.handle || a.id).localeCompare(b.handle || b.id)),
     );
-  }, [showCurated]);
+  }, [corpusFilter]);
 
   const loadSubmissions = useCallback(async () => {
     setLoading(true);
@@ -230,7 +238,8 @@ export const SymbolSubmissionModeration = () => {
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, to);
-    if (!showCurated) query = query.eq('is_curated_example', false);
+    if (corpusFilter === 'observer') query = query.eq('is_curated_example', false);
+    else if (corpusFilter === 'curated') query = query.eq('is_curated_example', true);
 
     if (reviewFilter === 'overdue') {
       const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
@@ -246,7 +255,8 @@ export const SymbolSubmissionModeration = () => {
     else if (submitterFilter !== 'all') query = query.eq('user_id', submitterFilter);
 
     if (searchQuery.trim()) {
-      query = query.ilike('description', `%${searchQuery.trim()}%`);
+      const q = searchQuery.trim().replace(/[,()]/g, ' ');
+      query = query.or(`description.ilike.%${q}%,context_note.ilike.%${q}%`);
     }
 
     const { data, error, count } = await query;
@@ -274,7 +284,7 @@ export const SymbolSubmissionModeration = () => {
       (data ?? []).map((s) => ({ ...s, profile: s.user_id ? profileMap.get(s.user_id) ?? null : null })),
     );
     setLoading(false);
-  }, [currentPage, showCurated, reviewFilter, visibilityFilter, submitterFilter, searchQuery]);
+  }, [currentPage, corpusFilter, reviewFilter, visibilityFilter, submitterFilter, searchQuery]);
 
   useEffect(() => {
     loadSubmissions();
@@ -552,11 +562,14 @@ export const SymbolSubmissionModeration = () => {
         <p className="text-sm text-muted-foreground mt-1">
           One list, every submitter. Review state and visibility are separate dimensions: a
           symbol can be visible to the public and unreviewed at the same time. Counts cover
-          {showCurated
-            ? ' observer submissions plus curated operator examples.'
-            : ' observer submissions only. Tick "Include curated examples" to add operator rows.'}
+          {corpusFilter === 'observer'
+            ? ' observer submissions only, the rows that count as evidence.'
+            : corpusFilter === 'curated'
+              ? ' curated operator examples only, which are excluded from every evidence count.'
+              : ' observer submissions and curated operator examples together.'}
         </p>
       </div>
+
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card className="p-4 text-center">
@@ -667,7 +680,7 @@ export const SymbolSubmissionModeration = () => {
           <div className="relative flex-1 min-w-[180px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search descriptions..."
+              placeholder="Search description or context note..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -676,19 +689,39 @@ export const SymbolSubmissionModeration = () => {
               className="pl-9"
             />
           </div>
+        </div>
 
-          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-            <Checkbox
-              checked={showCurated}
-              onCheckedChange={(c) => {
-                setShowCurated(c === true);
+        {/* Corpus classification quick filter. Narrowing to one class before a
+            bulk toggle is what stops a mixed selection being reclassified. */}
+        <div className="flex flex-wrap items-center gap-2 border-t pt-3">
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Corpus</span>
+          {([
+            { key: 'observer' as const, label: 'Observer records', count: corpusCounts.observer },
+            { key: 'curated' as const, label: 'Curated examples', count: corpusCounts.curated },
+            { key: 'both' as const, label: 'Both', count: corpusCounts.observer + corpusCounts.curated },
+          ]).map((opt) => (
+            <Button
+              key={opt.key}
+              size="sm"
+              variant={corpusFilter === opt.key ? 'default' : 'outline'}
+              onClick={() => {
+                setCorpusFilter(opt.key);
                 setSubmitterFilter('all');
+                setSelectedIds(new Set());
                 setCurrentPage(1);
               }}
-            />
-            Include curated examples
-          </label>
+            >
+              {opt.label}
+              <Badge variant="secondary" className="ml-2">{opt.count}</Badge>
+            </Button>
+          ))}
+          {corpusFilter === 'both' && (
+            <span className="text-xs text-muted-foreground">
+              This view mixes both classes. Narrow to one before a bulk reclassification.
+            </span>
+          )}
         </div>
+
       </Card>
 
       {selectedIds.size > 0 && (
@@ -753,6 +786,7 @@ export const SymbolSubmissionModeration = () => {
               setReviewFilter('all');
               setVisibilityFilter('all');
               setSubmitterFilter('all');
+              setCorpusFilter('both');
               setSearchQuery('');
               setCurrentPage(1);
             }}
