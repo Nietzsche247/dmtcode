@@ -448,6 +448,10 @@ async function gatherCounts(db: Ctx['db'], curStart: Date) {
   out.moderation_symbols_unreviewed = await cumulativePair(db, 'symbol_submissions', curStart, (q) =>
     q.eq('moderation_status', 'unreviewed').eq('is_curated_example', false));
   out.moderation_bibliography_unapproved = await cumulativePair(db, 'bibliography', curStart, (q) => q.eq('is_approved', false));
+  out.bibliography_needs_review = await cumulativePair(db, 'bibliography', curStart, (q) => q.eq('triage_status', 'needs_review'));
+  out.bibliography_auto_approved = await cumulativePair(db, 'bibliography', curStart, (q) => q.eq('triage_status', 'auto_approved'));
+  out.bibliography_auto_rejected = await cumulativePair(db, 'bibliography', curStart, (q) => q.eq('triage_status', 'auto_rejected'));
+
 
   out.research_trials_total = await cumulativePair(db, 'clinical_trials', curStart);
   out.research_trials_approved = await cumulativePair(db, 'clinical_trials', curStart, (q) => q.eq('is_approved', true));
