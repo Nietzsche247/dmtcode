@@ -223,17 +223,16 @@ Deno.serve(async (req) => {
 
   try {
     const allIds = new Set<string>();
-    for (const term of SEARCH_TERMS) {
-      try {
-        const ids = await esearch(term, 50);
-        ids.forEach((i) => allIds.add(i));
-      } catch (e) {
-        console.error('esearch failed for', term, e);
-      }
+    try {
+      const ids = await esearch(PUBMED_QUERY, 100);
+      ids.forEach((i) => allIds.add(i));
+    } catch (e) {
+      console.error('esearch failed for phenomenology query', e);
     }
     const idList = Array.from(allIds);
     found = idList.length;
     console.log(`PubMed returned ${found} unique pmids`);
+
 
     const CHUNK = 50;
     const records: PubmedRecord[] = [];
