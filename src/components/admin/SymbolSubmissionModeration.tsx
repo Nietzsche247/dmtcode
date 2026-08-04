@@ -786,6 +786,7 @@ export const SymbolSubmissionModeration = () => {
               setReviewFilter('all');
               setVisibilityFilter('all');
               setSubmitterFilter('all');
+              setCorpusFilter('both');
               setSearchQuery('');
               setCurrentPage(1);
             }}
