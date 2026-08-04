@@ -680,7 +680,7 @@ export const SymbolSubmissionModeration = () => {
           <div className="relative flex-1 min-w-[180px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search descriptions..."
+              placeholder="Search description or context note..."
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -689,19 +689,39 @@ export const SymbolSubmissionModeration = () => {
               className="pl-9"
             />
           </div>
+        </div>
 
-          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-            <Checkbox
-              checked={showCurated}
-              onCheckedChange={(c) => {
-                setShowCurated(c === true);
+        {/* Corpus classification quick filter. Narrowing to one class before a
+            bulk toggle is what stops a mixed selection being reclassified. */}
+        <div className="flex flex-wrap items-center gap-2 border-t pt-3">
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Corpus</span>
+          {([
+            { key: 'observer' as const, label: 'Observer records', count: corpusCounts.observer },
+            { key: 'curated' as const, label: 'Curated examples', count: corpusCounts.curated },
+            { key: 'both' as const, label: 'Both', count: corpusCounts.observer + corpusCounts.curated },
+          ]).map((opt) => (
+            <Button
+              key={opt.key}
+              size="sm"
+              variant={corpusFilter === opt.key ? 'default' : 'outline'}
+              onClick={() => {
+                setCorpusFilter(opt.key);
                 setSubmitterFilter('all');
+                setSelectedIds(new Set());
                 setCurrentPage(1);
               }}
-            />
-            Include curated examples
-          </label>
+            >
+              {opt.label}
+              <Badge variant="secondary" className="ml-2">{opt.count}</Badge>
+            </Button>
+          ))}
+          {corpusFilter === 'both' && (
+            <span className="text-xs text-muted-foreground">
+              This view mixes both classes. Narrow to one before a bulk reclassification.
+            </span>
+          )}
         </div>
+
       </Card>
 
       {selectedIds.size > 0 && (
