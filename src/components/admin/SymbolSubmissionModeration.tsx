@@ -614,10 +614,26 @@ export const SymbolSubmissionModeration = () => {
           <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       ) : submissions.length === 0 ? (
-        <Card className="p-10 text-center text-muted-foreground">
-          Nothing matches these filters.
+        <Card className="p-10 text-center text-muted-foreground space-y-3">
+          <p>
+            No submissions match the current filters. Rows are never deleted by a review
+            decision: a reviewed symbol moves to the Reviewed tab, a rejected one to Rejected.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setReviewFilter('all');
+              setVisibilityFilter('all');
+              setSubmitterFilter('all');
+              setSearchQuery('');
+              setCurrentPage(1);
+            }}
+          >
+            Show every submission
+          </Button>
         </Card>
-      ) : (
+
         <>
           <div className="flex items-center gap-2 px-1">
             <Checkbox
