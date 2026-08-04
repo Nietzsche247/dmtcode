@@ -26,31 +26,40 @@ const json = (body: unknown, status = 200) =>
 
 const MODEL = 'google/gemini-2.5-flash';
 const BATCH_SIZE = 20;
-const CONFIDENCE_THRESHOLD = 0.8;
+// Asymmetric on purpose. A wrongly parked paper costs a queue slot. A wrongly
+// approved paper is published and gets cited by AI crawlers as something this
+// site vouches for.
+const APPROVE_THRESHOLD = 0.9;
+const REJECT_THRESHOLD = 0.8;
 
 const SYSTEM_PROMPT = `You classify bibliography records for a research library that studies ONE question: the perception of a structured, possibly-decodable other reality.
 
-For each record decide: does this record describe, study, or bear directly on the perception of a structured, possibly-decodable other reality?
+The test is POSITIVE and NARROW. A record is ON TOPIC only if it describes, studies, or bears directly on at least one of:
+1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery phenomenology.
+2. Entity encounters or contact experiences.
+3. The phenomenology of altered or non-ordinary states as experienced, including sober perception of the same.
+4. First-person or experiential accounts of perceiving another reality that presents as structured or decodable.
+5. Theory of consciousness, insofar as it addresses that perceptual content.
 
-IN SCOPE:
-- Phenomenology, consciousness studies, entity encounters
-- First-person and experiential reports
-- Structure of visual forms, geometry, hallucination form-constants
-- The whole tryptamine and psychedelic family: N,N-DMT, 5-MeO-DMT, ayahuasca, ibogaine, psilocybin, LSD and related compounds
-- Sober perception of the same phenomena, with no substance involved
+OUT OF SCOPE regardless of which substance is studied:
+- Efficacy and safety trials
+- Mechanism-of-action pharmacology
+- Clinical outcomes of any condition, including depression, PTSD, eating disorders, bipolar disorder and pain
+- Therapy protocols and integration protocols
+- Epidemiology, adverse events, harm reduction, drug policy
+- Animal behavioural models, including nociception and locomotion
+- Social cognition or emotional cognition studies that do not address perceptual content
+- Acronym collisions: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1" meaning the lysine-specific demethylase enzyme
 
-OUT OF SCOPE (these are acronym and keyword collisions, not topic matches):
-- Multiple sclerosis "DMT" meaning disease-modifying therapy
-- "LSD-1" or LSD1 meaning lysine-specific demethylase, the cancer enzyme
-- Psychiatry or pharmacology trials with no perceptual or phenomenological content
-- Orthopedics, oncology, cardiology, general neurology unrelated to perceptual structure
-- Adverse-event or safety reports that merely use the word "consciousness"
+CRITICAL. A paper that mentions DMT, psilocybin, LSD, ayahuasca, ketamine, MDMA or any other psychedelic is NOT thereby on topic. The substance is not the criterion. The described experience is the criterion. "A psychedelic was administered and an outcome was measured" is OFF TOPIC. "What the experience looked like, felt like, or contained" is ON TOPIC.
 
-You are judging TOPIC FIT ONLY. You are not judging whether the work is true, rigorous, or credible. A speculative first-person trip report is on topic. A rigorous oncology RCT is off topic.
+If you cannot name the specific phenomenological element the record addresses, it is NOT on topic. Say so rather than approving.
+
+You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. A rigorous oncology or psychiatry trial is off topic.
 
 Return strict JSON only:
-{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"reason":"<one sentence>"}]}
-Return exactly one result object per record, using the record's index. confidence is your certainty in the on_topic call. Keep each reason to one sentence.`;
+{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>"}]}
+Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual or phenomenological content found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
 
 interface Row {
   id: string;
@@ -64,6 +73,7 @@ interface Verdict {
   index: number;
   on_topic: boolean;
   confidence: number;
+  element: string;
   reason: string;
 }
 
@@ -146,6 +156,7 @@ async function classify(rows: Row[], apiKey: string): Promise<Verdict[]> {
       index,
       on_topic: item?.on_topic === true,
       confidence: Number.isFinite(confidence) ? Math.min(1, Math.max(0, confidence)) : 0,
+      element: String(item?.phenomenological_element ?? '').trim().slice(0, 300),
       reason: String(item?.reason ?? '').slice(0, 500) || 'No reason returned by the model.',
     });
   }
@@ -214,10 +225,10 @@ Deno.serve(async (req) => {
         if (!v) {
           // A missing verdict is never treated as a rejection.
           triage_status = 'needs_review';
-        } else if (v.on_topic && v.confidence >= CONFIDENCE_THRESHOLD) {
+        } else if (v.on_topic && v.confidence >= APPROVE_THRESHOLD && v.element.length > 0) {
           triage_status = 'auto_approved';
           is_approved = true;
-        } else if (!v.on_topic && v.confidence >= CONFIDENCE_THRESHOLD) {
+        } else if (!v.on_topic && v.confidence >= REJECT_THRESHOLD) {
           triage_status = 'auto_rejected';
         } else {
           triage_status = 'needs_review';
@@ -226,7 +237,7 @@ Deno.serve(async (req) => {
         const patch: Record<string, unknown> = {
           triage_status,
           triage_confidence: v ? v.confidence : null,
-          triage_reason: v ? v.reason : 'The model returned no verdict for this record, so it needs a human read.',
+          triage_reason: v ? (v.element ? `${v.reason} [element: ${v.element}]` : v.reason) : 'The model returned no verdict for this record, so it needs a human read.',
           triage_at,
           triage_model: MODEL,
         };
