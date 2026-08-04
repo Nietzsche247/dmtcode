@@ -555,8 +555,11 @@ Deno.serve(async (req) => {
 
 
     const data_health = {
+      crawler_coverage_start: crawlers.coverageStart,
+      crawler_coverage_end: crawlers.coverageEnd,
       crawler_gap_days: crawlers.gapDays,
       crawler_status_code_coverage: crawlers.statusCodeCoverage,
+
       ga4_reachable: ga4.reachable,
       ga4_error: ga4.reachable ? null : ga4.error,
       posthog_installed: false,
