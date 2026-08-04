@@ -202,16 +202,28 @@ function ga4Metric(c: Ctx, key: string, scale = 1): MetricResult {
 
 function crawlerMetric(c: Ctx, cur: number | null, prior: number | null): MetricResult {
   if (!c.crawlers.ok) return unavailable(c.crawlers.error);
+
+  // The prior window predates the first row the table ever recorded, so there is
+  // no comparable period. That is missing history, not a broken pipeline.
+  if (c.crawlers.coverageStart && dayKey(c.priorStart) < c.crawlers.coverageStart) {
+    return {
+      value: cur,
+      prior_value: null,
+      quality: 'degraded',
+      note: `Crawler logging began on ${c.crawlers.coverageStart}, so the preceding period is not covered and no comparison is reported.`,
+    };
+  }
   if (c.crawlers.curGap || c.crawlers.priorGap) {
     return {
       value: cur,
       prior_value: null,
       quality: 'degraded',
-      note: gapNote(c.crawlers.gapDays),
+      note: gapNote([...c.crawlers.gapDays].filter((d) => d >= dayKey(c.priorStart))),
     };
   }
   return { value: cur, prior_value: prior };
 }
+
 
 // ---------------------------------------------------------------- gathering
 
