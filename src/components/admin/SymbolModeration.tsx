@@ -77,18 +77,32 @@ export const SymbolModeration = () => {
     setLoading(false);
   };
 
-  const handleApprove = async (symbolId: string) => {
-    const { error } = await supabase
+  // A write filtered out by a row-level permission rule comes back as success
+  // with an empty array. Zero rows changed is a FAILURE, never a success.
+  const writeGlyph = async (symbolId: string, patch: Record<string, unknown>, verb: string) => {
+    const { data, error } = await supabase
       .from('registry_glyphs')
-      .update({ is_unique: true })
-      .eq('id', symbolId);
+      .update(patch)
+      .eq('id', symbolId)
+      .select('id');
 
     if (error) {
-      toast.error('Failed to approve symbol');
-    } else {
-      toast.success('Symbol approved');
-      loadSymbols();
+      toast.error(`Could not ${verb}: ${error.message}`);
+      return false;
     }
+    if (!data || data.length === 0) {
+      toast.error(
+        `Could not ${verb}. The database changed zero rows, which means the write was blocked by a permission rule. Nothing was saved.`,
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleApprove = async (symbolId: string) => {
+    if (!(await writeGlyph(symbolId, { is_unique: true }, 'approve this symbol'))) return;
+    toast.success('Symbol approved');
+    loadSymbols();
   };
 
   // There is deliberately no delete handler in this component. registry_glyphs
@@ -96,17 +110,9 @@ export const SymbolModeration = () => {
   // admin screen. Hiding is the strongest action available here.
 
   const handleHide = async (symbolId: string) => {
-    const { error } = await supabase
-      .from('registry_glyphs')
-      .update({ is_unique: false })
-      .eq('id', symbolId);
-
-    if (error) {
-      toast.error('Failed to hide symbol');
-    } else {
-      toast.success('Symbol hidden from gallery');
-      loadSymbols();
-    }
+    if (!(await writeGlyph(symbolId, { is_unique: false }, 'hide this symbol'))) return;
+    toast.success('Symbol hidden from gallery');
+    loadSymbols();
   };
 
   if (loading) {
