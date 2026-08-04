@@ -693,6 +693,11 @@ export const SymbolSubmissionModeration = () => {
                   <div className="flex flex-wrap gap-1.5">
                     <Badge variant={reviewVariant(s.moderation_status)}>{reviewLabel(s.moderation_status)}</Badge>
                     <Badge variant="outline">{visibilityLabel(s.visibility_status)}</Badge>
+                    {s.is_curated_example && (
+                      <Badge variant="outline" className="text-muted-foreground">
+                        Curated example
+                      </Badge>
+                    )}
                     {s.moderation_status === 'unreviewed' && (
                       <Badge variant="outline" className="text-muted-foreground">
                         {timeLeftLabel(s.created_at)}
