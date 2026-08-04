@@ -144,7 +144,9 @@ export const SymbolSubmissionModeration = () => {
       const q = supabase
         .from('symbol_submissions')
         .select('id', { count: 'exact', head: true });
-      return showCurated ? q : q.eq('is_curated_example', false);
+      if (corpusFilter === 'observer') return q.eq('is_curated_example', false);
+      if (corpusFilter === 'curated') return q.eq('is_curated_example', true);
+      return q;
     };
 
     const [unreviewed, reviewed, denied, overdue, hidden, curated, observer] = await Promise.all([
