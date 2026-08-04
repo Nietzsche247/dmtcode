@@ -28,7 +28,9 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
   profile?: { handle: string | null; avatar_seed: string | null } | null;
 };
 
-type StatusFilter = 'all' | 'new72' | 'pending' | 'approved' | 'rejected';
+// Review state is moderation_status ONLY. The legacy `status` column is
+// 'approved' on every published row and carries no review meaning.
+type StatusFilter = 'all' | 'new72' | 'unreviewed' | 'reviewed' | 'denied';
 
 const WINDOW_MS = 72 * 60 * 60 * 1000;
 
