@@ -89,7 +89,9 @@ const visibilityLabel = (s: string | null) => {
 export const SymbolSubmissionModeration = () => {
   const [submissions, setSubmissions] = useState<SymbolSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('unreviewed');
+  // Default to the whole corpus. Defaulting to "unreviewed" made every row
+  // vanish from the queue the moment it was reviewed, which reads as data loss.
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
   const [submitterFilter, setSubmitterFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
