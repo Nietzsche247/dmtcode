@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,14 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { toast } from 'sonner';
-import { Check, X, Eye, Loader2, Search, CalendarIcon, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { Check, X, Eye, Loader2, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
-import { formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 
 declare global {
   interface Window {
@@ -24,41 +21,84 @@ declare global {
   }
 }
 
+type Profile = { id: string; handle: string | null; avatar_seed: string | null };
+
 type SymbolSubmission = Tables<'symbol_submissions'> & {
-  profile?: { handle: string | null; avatar_seed: string | null } | null;
+  profile?: Profile | null;
 };
 
-// Review state is moderation_status ONLY. The legacy `status` column is
-// 'approved' on every published row and carries no review meaning.
-type StatusFilter = 'all' | 'new72' | 'unreviewed' | 'reviewed' | 'denied';
+// Two independent dimensions, never merged.
+//   moderation_status -> review state   (unreviewed | reviewed | denied | reported)
+//   visibility_status -> public surface (public | hidden | private)
+// The legacy `status` column is authoritative for PUBLIC VISIBILITY only and is
+// maintained by a database trigger. The admin UI never writes it.
+type ReviewFilter = 'all' | 'overdue' | 'unreviewed' | 'reviewed' | 'denied';
+type VisibilityFilter = 'all' | 'public' | 'hidden';
 
 const WINDOW_MS = 72 * 60 * 60 * 1000;
+const PAGE_SIZE = 20;
+
+const shortId = (id: string) => id.slice(0, 8);
+
+const submitterLabel = (row: { user_id: string | null; profile?: Profile | null }) => {
+  if (!row.user_id) return 'no account on record';
+  return row.profile?.handle?.trim() || `observer ${shortId(row.user_id)}`;
+};
+
+const submitterSeed = (row: { user_id: string | null; profile?: Profile | null }) =>
+  row.profile?.avatar_seed || row.user_id || 'anon';
 
 const timeLeftLabel = (createdAt: string) => {
   const remaining = new Date(createdAt).getTime() + WINDOW_MS - Date.now();
-  if (remaining <= 0) return 'window closed';
+  if (remaining <= 0) return 'review window closed';
   const hours = Math.floor(remaining / (60 * 60 * 1000));
   if (hours >= 1) return `${hours} ${hours === 1 ? 'hour' : 'hours'} left`;
   const minutes = Math.max(1, Math.floor(remaining / (60 * 1000)));
   return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} left`;
 };
 
-const PAGE_SIZE = 20;
+const reviewLabel = (s: string | null) => {
+  switch (s) {
+    case 'reviewed': return 'reviewed';
+    case 'denied': return 'rejected';
+    case 'reported': return 'reported';
+    default: return 'unreviewed';
+  }
+};
+
+const reviewVariant = (s: string | null): 'default' | 'destructive' | 'secondary' => {
+  switch (s) {
+    case 'reviewed': return 'default';
+    case 'denied':
+    case 'reported': return 'destructive';
+    default: return 'secondary';
+  }
+};
+
+const visibilityLabel = (s: string | null) => {
+  switch (s) {
+    case 'public': return 'visible';
+    case 'hidden': return 'hidden';
+    default: return 'not published';
+  }
+};
 
 export const SymbolSubmissionModeration = () => {
   const [submissions, setSubmissions] = useState<SymbolSubmission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('new72');
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('unreviewed');
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
+  const [submitterFilter, setSubmitterFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showCurated, setShowCurated] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  
-  // Modal states
+  const [submitters, setSubmitters] = useState<Profile[]>([]);
+  const [anonCount, setAnonCount] = useState(0);
+
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectingBulk, setRejectingBulk] = useState(false);
@@ -66,46 +106,16 @@ export const SymbolSubmissionModeration = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
 
-  // Stats. All derived from moderation_status over observer submissions only
-  // (is_curated_example = false). Curated examples are operator illustrations
-  // and never belong in a community moderation count.
-  const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, today: 0, awaiting72: 0 });
+  // All counts are over the currently selected corpus. Curated operator
+  // examples are excluded unless the operator explicitly switches to them.
+  const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, overdue: 0, hidden: 0 });
 
   useEffect(() => {
-    // Track admin page view
     window.posthog?.capture('admin_page_viewed');
-    
-    // Get current user
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setCurrentUserId(user?.id ?? null);
-    });
+    supabase.auth.getUser().then(({ data: { user } }) => setCurrentUserId(user?.id ?? null));
   }, []);
 
-  useEffect(() => {
-    loadSubmissions();
-    loadStats();
-
-    const channel = supabase
-      .channel('symbol-submission-moderation')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'symbol_submissions'
-      }, () => {
-        loadSubmissions();
-        loadStats();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [statusFilter, searchQuery, currentPage, dateRange, showCurated]);
-
-  const loadStats = async () => {
-    // Current UTC day, not local midnight.
-    const now = new Date();
-    const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const loadStats = useCallback(async () => {
     const cutoff72 = new Date(Date.now() - WINDOW_MS).toISOString();
 
     const base = () =>
@@ -114,24 +124,68 @@ export const SymbolSubmissionModeration = () => {
         .select('id', { count: 'exact', head: true })
         .eq('is_curated_example', showCurated);
 
-    const [unreviewed, reviewed, denied, todayCount, awaiting72] = await Promise.all([
+    const [unreviewed, reviewed, denied, overdue, hidden] = await Promise.all([
       base().eq('moderation_status', 'unreviewed'),
       base().eq('moderation_status', 'reviewed'),
       base().eq('moderation_status', 'denied'),
-      base().gte('created_at', todayUtc.toISOString()),
       base().eq('moderation_status', 'unreviewed').lt('created_at', cutoff72),
+      base().eq('visibility_status', 'hidden'),
     ]);
+
+    const firstError = [unreviewed, reviewed, denied, overdue, hidden].find((r) => r.error)?.error;
+    if (firstError) {
+      toast.error(`Could not read the moderation counts: ${firstError.message}`);
+      return;
+    }
 
     setStats({
       unreviewed: unreviewed.count || 0,
       reviewed: reviewed.count || 0,
       denied: denied.count || 0,
-      today: todayCount.count || 0,
-      awaiting72: awaiting72.count || 0,
+      overdue: overdue.count || 0,
+      hidden: hidden.count || 0,
     });
-  };
+  }, [showCurated]);
 
-  const loadSubmissions = async () => {
+  // Submitter list for the filter. Built from the same corpus the list shows.
+  const loadSubmitters = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('symbol_submissions')
+      .select('user_id')
+      .eq('is_curated_example', showCurated)
+      .limit(2000);
+
+    if (error) {
+      toast.error(`Could not load the submitter list: ${error.message}`);
+      return;
+    }
+
+    const ids = [...new Set((data ?? []).map((r) => r.user_id).filter(Boolean))] as string[];
+    setAnonCount((data ?? []).filter((r) => !r.user_id).length);
+
+    if (!ids.length) {
+      setSubmitters([]);
+      return;
+    }
+
+    const { data: profiles, error: pErr } = await supabase
+      .from('profiles')
+      .select('id, handle, avatar_seed')
+      .in('id', ids);
+
+    if (pErr) {
+      toast.error(`Could not load submitter aliases: ${pErr.message}`);
+    }
+
+    const byId = new Map((profiles ?? []).map((p) => [p.id, p as Profile]));
+    setSubmitters(
+      ids
+        .map((id) => byId.get(id) ?? { id, handle: null, avatar_seed: null })
+        .sort((a, b) => (a.handle || a.id).localeCompare(b.handle || b.id)),
+    );
+  }, [showCurated]);
+
+  const loadSubmissions = useCallback(async () => {
     setLoading(true);
     setSelectedIds(new Set());
 
@@ -142,34 +196,30 @@ export const SymbolSubmissionModeration = () => {
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
       .eq('is_curated_example', showCurated)
-      .order('created_at', { ascending: statusFilter === 'new72' })
+      .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (statusFilter === 'new72') {
-      // Past the 72 hour window and still nobody has looked at it.
+    if (reviewFilter === 'overdue') {
       const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
       query = query.eq('moderation_status', 'unreviewed').lt('created_at', cutoff);
-    } else if (statusFilter !== 'all') {
-      query = query.eq('moderation_status', statusFilter);
+    } else if (reviewFilter !== 'all') {
+      query = query.eq('moderation_status', reviewFilter);
     }
+
+    if (visibilityFilter === 'public') query = query.eq('visibility_status', 'public');
+    else if (visibilityFilter === 'hidden') query = query.eq('visibility_status', 'hidden');
+
+    if (submitterFilter === 'anonymous') query = query.is('user_id', null);
+    else if (submitterFilter !== 'all') query = query.eq('user_id', submitterFilter);
 
     if (searchQuery.trim()) {
       query = query.ilike('description', `%${searchQuery.trim()}%`);
     }
 
-    if (dateRange.from) {
-      query = query.gte('created_at', dateRange.from.toISOString());
-    }
-    if (dateRange.to) {
-      const endOfDay = new Date(dateRange.to);
-      endOfDay.setHours(23, 59, 59, 999);
-      query = query.lte('created_at', endOfDay.toISOString());
-    }
-
     const { data, error, count } = await query;
 
     if (error) {
-      toast.error('Failed to load submissions');
+      toast.error(`Could not load submissions: ${error.message}`);
       console.error(error);
       setLoading(false);
       return;
@@ -177,48 +227,126 @@ export const SymbolSubmissionModeration = () => {
 
     setTotalCount(count || 0);
 
-    // Fetch profiles separately
-    const userIds = [...new Set((data || []).map(s => s.user_id))];
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, handle, avatar_seed')
-      .in('id', userIds);
+    const userIds = [...new Set((data ?? []).map((s) => s.user_id).filter(Boolean))] as string[];
+    let profileMap = new Map<string, Profile>();
+    if (userIds.length) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, handle, avatar_seed')
+        .in('id', userIds);
+      profileMap = new Map((profiles ?? []).map((p) => [p.id, p as Profile]));
+    }
 
-    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
-    
-    const submissionsWithProfiles = (data || []).map(s => ({
-      ...s,
-      profile: profileMap.get(s.user_id) || null
-    }));
-
-    setSubmissions(submissionsWithProfiles);
+    setSubmissions(
+      (data ?? []).map((s) => ({ ...s, profile: s.user_id ? profileMap.get(s.user_id) ?? null : null })),
+    );
     setLoading(false);
+  }, [currentPage, showCurated, reviewFilter, visibilityFilter, submitterFilter, searchQuery]);
+
+  useEffect(() => {
+    loadSubmissions();
+    loadStats();
+    loadSubmitters();
+
+    const channel = supabase
+      .channel('symbol-submission-moderation')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'symbol_submissions' }, () => {
+        loadSubmissions();
+        loadStats();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [loadSubmissions, loadStats, loadSubmitters]);
+
+  // Every moderation write goes through here. PostgREST returns 200 with an
+  // empty array when RLS filters the rows out, so a zero-row result is a
+  // FAILURE, not a success. Never toast success on a write that changed nothing.
+  const writeModeration = async (
+    ids: string[],
+    patch: Record<string, unknown>,
+    verb: string,
+  ): Promise<boolean> => {
+    const { data, error } = await supabase
+      .from('symbol_submissions')
+      .update(patch)
+      .in('id', ids)
+      .select('id, moderation_status, visibility_status');
+
+    if (error) {
+      toast.error(`Could not ${verb}: ${error.message}`);
+      return false;
+    }
+
+    const changed = data ?? [];
+    if (changed.length === 0) {
+      toast.error(
+        `Could not ${verb}. The database accepted the request but changed zero rows, which means the write was blocked by a permission rule. Nothing was saved.`,
+      );
+      return false;
+    }
+    if (changed.length < ids.length) {
+      toast.error(
+        `Only ${changed.length} of ${ids.length} rows were saved. The rest were blocked by a permission rule.`,
+      );
+      return false;
+    }
+
+    // Confirm the row really carries the new state before reporting success.
+    const expected = patch.moderation_status as string | undefined;
+    if (expected && changed.some((r) => r.moderation_status !== expected)) {
+      toast.error(`The write returned rows that do not carry the new review state. Nothing is confirmed.`);
+      return false;
+    }
+
+    return true;
   };
 
   const handleApprove = async (id: string) => {
-    const { error } = await supabase
-      .from('symbol_submissions')
-      .update({ 
+    const ok = await writeModeration(
+      [id],
+      {
         moderation_status: 'reviewed',
         moderated_by: currentUserId,
-        moderated_at: new Date().toISOString()
-      })
-      .eq('id', id);
+        moderated_at: new Date().toISOString(),
+      },
+      'mark this symbol reviewed',
+    );
+    if (!ok) return;
 
-    if (error) {
-      toast.error('Failed to approve submission');
-    } else {
-      window.posthog?.capture('admin_submission_approved', { symbol_id: id });
-      toast.success('Symbol approved');
-      
-      // Trigger notification (fire and forget)
-      supabase.functions.invoke('notify-admin', {
-        body: { submissionId: id, action: 'approved' }
-      }).catch(console.error);
-      
-      loadSubmissions();
-      loadStats();
+    window.posthog?.capture('admin_submission_approved', { symbol_id: id });
+    toast.success('Marked reviewed');
+    supabase.functions.invoke('notify-admin', { body: { submissionId: id, action: 'approved' } }).catch(console.error);
+    loadSubmissions();
+    loadStats();
+  };
+
+  const handleBulkApprove = async () => {
+    if (selectedIds.size === 0) {
+      toast.error('No submissions selected');
+      return;
     }
+    setBulkLoading(true);
+    const ids = Array.from(selectedIds);
+    const ok = await writeModeration(
+      ids,
+      {
+        moderation_status: 'reviewed',
+        moderated_by: currentUserId,
+        moderated_at: new Date().toISOString(),
+      },
+      'mark these symbols reviewed',
+    );
+    setBulkLoading(false);
+    if (!ok) return;
+
+    window.posthog?.capture('admin_bulk_action', { action_type: 'approve', count: ids.length });
+    toast.success(`${ids.length} marked reviewed`);
+    setSelectedIds(new Set());
+    loadSubmissions();
+    loadStats();
   };
 
   const openRejectModal = (id: string) => {
@@ -240,163 +368,81 @@ export const SymbolSubmissionModeration = () => {
 
   const handleRejectConfirm = async () => {
     if (rejectionReason.trim().length < 10) {
-      toast.error('Rejection reason must be at least 10 characters');
+      toast.error('The reason must be at least 10 characters');
       return;
     }
 
+    const ids = rejectingBulk ? Array.from(selectedIds) : rejectingId ? [rejectingId] : [];
+    if (!ids.length) return;
+
     setBulkLoading(true);
+    const ok = await writeModeration(
+      ids,
+      {
+        moderation_status: 'denied',
+        visibility_status: 'hidden',
+        rejection_reason: rejectionReason.trim(),
+        moderated_by: currentUserId,
+        moderated_at: new Date().toISOString(),
+      },
+      ids.length > 1 ? 'reject these symbols' : 'reject this symbol',
+    );
+    setBulkLoading(false);
 
-    if (rejectingBulk) {
-      const { error } = await supabase
-        .from('symbol_submissions')
-        .update({ 
-          moderation_status: 'denied',
-          rejection_reason: rejectionReason.trim(),
-          moderated_by: currentUserId,
-          moderated_at: new Date().toISOString()
-        })
-        .in('id', Array.from(selectedIds));
-
-      if (error) {
-        toast.error('Failed to reject submissions');
-      } else {
-        window.posthog?.capture('admin_bulk_action', { 
-          action_type: 'reject', 
-          count: selectedIds.size 
-        });
-        toast.success(`${selectedIds.size} submissions rejected`);
-        setSelectedIds(new Set());
+    if (ok) {
+      window.posthog?.capture(
+        rejectingBulk ? 'admin_bulk_action' : 'admin_submission_rejected',
+        rejectingBulk ? { action_type: 'reject', count: ids.length } : { symbol_id: ids[0] },
+      );
+      toast.success(ids.length > 1 ? `${ids.length} rejected and hidden` : 'Rejected and hidden');
+      if (!rejectingBulk) {
+        supabase.functions
+          .invoke('notify-admin', { body: { submissionId: ids[0], action: 'rejected', reason: rejectionReason.trim() } })
+          .catch(console.error);
       }
-    } else if (rejectingId) {
-      const { error } = await supabase
-        .from('symbol_submissions')
-        .update({ 
-          moderation_status: 'denied',
-          rejection_reason: rejectionReason.trim(),
-          moderated_by: currentUserId,
-          moderated_at: new Date().toISOString()
-        })
-        .eq('id', rejectingId);
-
-      if (error) {
-        toast.error('Failed to reject submission');
-      } else {
-        window.posthog?.capture('admin_submission_rejected', { 
-          symbol_id: rejectingId,
-          reason_length: rejectionReason.trim().length
-        });
-        toast.success('Symbol rejected');
-        
-        // Trigger notification
-        supabase.functions.invoke('notify-admin', {
-          body: { submissionId: rejectingId, action: 'rejected', reason: rejectionReason.trim() }
-        }).catch(console.error);
-      }
+      setSelectedIds(new Set());
+      setRejectModalOpen(false);
+      setRejectingId(null);
     }
 
-    setBulkLoading(false);
-    setRejectModalOpen(false);
-    setRejectingId(null);
     loadSubmissions();
     loadStats();
   };
 
-  const handleBulkApprove = async () => {
-    if (selectedIds.size === 0) {
-      toast.error('No submissions selected');
-      return;
-    }
-
-    setBulkLoading(true);
-
-    const { error } = await supabase
-      .from('symbol_submissions')
-      .update({ 
-        moderation_status: 'reviewed',
-        moderated_by: currentUserId,
-        moderated_at: new Date().toISOString()
-      })
-      .in('id', Array.from(selectedIds));
-
-    setBulkLoading(false);
-
-    if (error) {
-      toast.error('Failed to approve submissions');
-    } else {
-      window.posthog?.capture('admin_bulk_action', { 
-        action_type: 'approve', 
-        count: selectedIds.size 
-      });
-      toast.success(`${selectedIds.size} submissions approved`);
-      setSelectedIds(new Set());
-      loadSubmissions();
-      loadStats();
-    }
-  };
-
   const toggleSelect = (id: string) => {
-    const newSelected = new Set(selectedIds);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedIds(newSelected);
+    const next = new Set(selectedIds);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setSelectedIds(next);
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === submissions.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(submissions.map(s => s.id)));
-    }
+    if (selectedIds.size === submissions.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(submissions.map((s) => s.id)));
   };
 
-  const getStatusBadgeVariant = (moderationStatus: string) => {
-    switch (moderationStatus) {
-      case 'reviewed': return 'default';
-      case 'denied': return 'destructive';
-      case 'reported': return 'destructive';
-      default: return 'secondary';
-    }
-  };
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-  const moderationLabel = (moderationStatus: string) => {
-    switch (moderationStatus) {
-      case 'reviewed': return 'reviewed';
-      case 'denied': return 'denied';
-      case 'reported': return 'reported';
-      default: return 'unreviewed';
-    }
-  };
-
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  const submitterOptions = useMemo(() => submitters, [submitters]);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">Symbol Submissions</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Review state is moderation_status only. Publication is not review: every published
-          row can still be unreviewed. Counts cover
+          One list, every submitter. Review state and visibility are separate dimensions: a
+          symbol can be visible to the public and unreviewed at the same time. Counts cover
           {showCurated ? ' curated operator examples' : ' observer submissions'} only.
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-orange-500">{stats.awaiting72}</div>
-          <div className="text-sm text-muted-foreground">Awaiting review (72h)</div>
+          <div className="text-3xl font-bold text-orange-500">{stats.overdue}</div>
+          <div className="text-sm text-muted-foreground">Overdue (72h)</div>
         </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-yellow-500">{stats.unreviewed}</div>
           <div className="text-sm text-muted-foreground">Unreviewed</div>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-blue-500">{stats.today}</div>
-          <div className="text-sm text-muted-foreground">Today (UTC)</div>
         </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-green-500">{stats.reviewed}</div>
@@ -406,409 +452,341 @@ export const SymbolSubmissionModeration = () => {
           <div className="text-3xl font-bold text-destructive">{stats.denied}</div>
           <div className="text-sm text-muted-foreground">Rejected</div>
         </Card>
+        <Card className="p-4 text-center">
+          <div className="text-3xl font-bold text-muted-foreground">{stats.hidden}</div>
+          <div className="text-sm text-muted-foreground">Hidden from public</div>
+        </Card>
       </div>
 
-      {/* Filters */}
-      <Card className="p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilter); setCurrentPage(1); }} className="flex-1">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="new72">
-                Overdue (72h)
-                {stats.awaiting72 > 0 && <Badge variant="secondary" className="ml-2">{stats.awaiting72}</Badge>}
-              </TabsTrigger>
-              <TabsTrigger value="unreviewed">
-                Unreviewed
-                {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
-              </TabsTrigger>
-              <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
-              <TabsTrigger value="denied">Rejected</TabsTrigger>
-              <TabsTrigger value="all">All</TabsTrigger>
-            </TabsList>
-          </Tabs>
+      <Card className="p-4 space-y-4">
+        <Tabs
+          value={reviewFilter}
+          onValueChange={(v) => {
+            setReviewFilter(v as ReviewFilter);
+            setCurrentPage(1);
+          }}
+        >
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overdue">
+              Overdue (72h)
+              {stats.overdue > 0 && <Badge variant="secondary" className="ml-2">{stats.overdue}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="unreviewed">
+              Unreviewed
+              {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
+            <TabsTrigger value="denied">Rejected</TabsTrigger>
+            <TabsTrigger value="all">All</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-            <Checkbox
-              checked={showCurated}
-              onCheckedChange={(c) => { setShowCurated(c === true); setCurrentPage(1); }}
-            />
-            Curated examples
-          </label>
+        <div className="flex flex-col md:flex-row gap-3 md:items-center">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Visibility</span>
+            <Select
+              value={visibilityFilter}
+              onValueChange={(v) => {
+                setVisibilityFilter(v as VisibilityFilter);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                <SelectItem value="all">Any</SelectItem>
+                <SelectItem value="public">Visible</SelectItem>
+                <SelectItem value="hidden">Hidden</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          
-          <div className="relative w-full md:w-64">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Submitter</span>
+            <Select
+              value={submitterFilter}
+              onValueChange={(v) => {
+                setSubmitterFilter(v);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[240px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50 max-h-72">
+                <SelectItem value="all">Everyone</SelectItem>
+                {anonCount > 0 && <SelectItem value="anonymous">No account on record</SelectItem>}
+                {submitterOptions.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    <span className="flex items-center gap-2">
+                      <AvatarGlyph seed={p.avatar_seed || p.id} handle={p.handle ?? undefined} size={18} />
+                      {p.handle?.trim() || `observer ${shortId(p.id)}`}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="relative flex-1 min-w-[180px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search descriptions..."
               value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="pl-9"
             />
           </div>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full md:w-[280px] justify-start text-left font-normal",
-                  !dateRange.from && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateRange.from ? (
-                  dateRange.to ? (
-                    <>
-                      {format(dateRange.from, "MMM d, yyyy")} - {format(dateRange.to, "MMM d, yyyy")}
-                    </>
-                  ) : (
-                    format(dateRange.from, "MMM d, yyyy")
-                  )
-                ) : (
-                  <span>Filter by date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={dateRange.from}
-                selected={{ from: dateRange.from, to: dateRange.to }}
-                onSelect={(range) => {
-                  setDateRange({ from: range?.from, to: range?.to });
-                  setCurrentPage(1);
-                }}
-                numberOfMonths={2}
-                className="pointer-events-auto"
-              />
-              {(dateRange.from || dateRange.to) && (
-                <div className="p-3 border-t">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => {
-                      setDateRange({ from: undefined, to: undefined });
-                      setCurrentPage(1);
-                    }}
-                  >
-                    Clear dates
-                  </Button>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
+          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            <Checkbox
+              checked={showCurated}
+              onCheckedChange={(c) => {
+                setShowCurated(c === true);
+                setSubmitterFilter('all');
+                setCurrentPage(1);
+              }}
+            />
+            Curated examples
+          </label>
         </div>
       </Card>
 
-      {/* Bulk Actions */}
-      {submissions.length > 0 && (
-        <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/30">
-          <div className="flex items-center gap-3">
-            <Checkbox
-              checked={selectedIds.size === submissions.length && submissions.length > 0}
-              onCheckedChange={toggleSelectAll}
-              aria-label="Select all"
-            />
-            <span className="text-sm text-muted-foreground">
-              {selectedIds.size} of {submissions.length} selected
-            </span>
-          </div>
-
-          <div className="flex gap-2 ml-auto">
-            <Button
-              size="sm"
-              variant="default"
-              onClick={handleBulkApprove}
-              disabled={selectedIds.size === 0 || bulkLoading}
-            >
-              {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Check className="w-4 h-4 mr-1" />}
-              Approve Selected
-            </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={openBulkRejectModal}
-              disabled={selectedIds.size === 0 || bulkLoading}
-            >
-              <X className="w-4 h-4 mr-1" />
-              Reject Selected
-            </Button>
-          </div>
+      {selectedIds.size > 0 && (
+        <Card className="p-4 flex flex-wrap items-center gap-3">
+          <span className="text-sm">{selectedIds.size} selected</span>
+          <Button size="sm" onClick={handleBulkApprove} disabled={bulkLoading}>
+            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
+            Mark reviewed
+          </Button>
+          <Button size="sm" variant="destructive" onClick={openBulkRejectModal} disabled={bulkLoading}>
+            <X className="w-4 h-4 mr-1" />
+            Reject and hide
+          </Button>
         </Card>
       )}
 
-      {/* Loading */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex justify-center py-16">
           <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Loading submissions...</span>
         </div>
       ) : submissions.length === 0 ? (
-        <Card className="p-12 text-center">
-          <p className="text-muted-foreground">No submissions found</p>
+        <Card className="p-10 text-center text-muted-foreground">
+          Nothing matches these filters.
         </Card>
       ) : (
         <>
-          {/* Submissions Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="p-3 text-left w-12">
-                    <Checkbox
-                      checked={selectedIds.size === submissions.length}
-                      onCheckedChange={toggleSelectAll}
-                    />
-                  </th>
-                  <th className="p-3 text-left w-20">Image</th>
-                  <th className="p-3 text-left">Description</th>
-                  <th className="p-3 text-left">Submitter</th>
-                  <th className="p-3 text-left w-24">Status</th>
-                  <th className="p-3 text-left w-32">Date</th>
-                  <th className="p-3 text-left w-20">Votes</th>
-                  <th className="p-3 text-left w-32">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.map((submission) => (
-                  <tr 
-                    key={submission.id} 
-                    className={`border-b border-border hover:bg-muted/30 transition-colors ${
-                      selectedIds.has(submission.id) ? 'bg-primary/5' : ''
-                    }`}
-                  >
-                    <td className="p-3">
-                      <Checkbox
-                        checked={selectedIds.has(submission.id)}
-                        onCheckedChange={() => toggleSelect(submission.id)}
-                      />
-                    </td>
-                    <td className="p-3">
-                      <button
-                        onClick={() => { setViewingSubmission(submission); setViewModalOpen(true); }}
-                        className="block w-16 h-16 bg-white rounded border overflow-hidden hover:ring-2 ring-primary transition-all"
-                      >
-                        <img
-                          src={submission.image_url}
-                          alt="Symbol"
-                          className="w-full h-full object-contain"
-                        />
-                      </button>
-                    </td>
-                    <td className="p-3">
-                      <p className="text-sm line-clamp-2 max-w-xs" title={submission.description || ''}>
-                        {submission.description || <span className="text-muted-foreground italic">No description</span>}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <span className="text-sm">{submission.profile?.handle || 'Explorer'}</span>
-                    </td>
-                    <td className="p-3">
-                      <Badge variant={getStatusBadgeVariant(submission.moderation_status)}>
-                        {moderationLabel(submission.moderation_status)}
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <span className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(submission.created_at), { addSuffix: true })}
-                      </span>
-                      {statusFilter === 'new72' && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {timeLeftLabel(submission.created_at)}
-                        </div>
-                      )}
-                    </td>
-                    <td className="p-3">
-                      <span className="text-sm">
-                        <ThumbsUp className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.upvotes} <ThumbsDown className="inline h-3.5 w-3.5" aria-hidden="true" /> {submission.downvotes}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      <div className="flex gap-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => { setViewingSubmission(submission); setViewModalOpen(true); }}
-                          title="View details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleApprove(submission.id)}
-                          disabled={submission.moderation_status === 'reviewed'}
-                          className="text-green-500 hover:text-green-600"
-                          title="Approve"
-                        >
-                          <Check className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => openRejectModal(submission.id)}
-                          disabled={submission.moderation_status === 'denied'}
-                          className="text-destructive hover:text-destructive"
-                          title="Reject"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex items-center gap-2 px-1">
+            <Checkbox
+              checked={selectedIds.size === submissions.length && submissions.length > 0}
+              onCheckedChange={toggleSelectAll}
+            />
+            <span className="text-sm text-muted-foreground">
+              Select all on this page ({submissions.length} of {totalCount})
+            </span>
           </div>
 
-          {/* Pagination */}
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {submissions.map((s) => {
+              const tags = (s.tags ?? []) as string[];
+              return (
+                <Card key={s.id} className="p-4 flex flex-col gap-3">
+                  <div className="flex items-start gap-3">
+                    <Checkbox checked={selectedIds.has(s.id)} onCheckedChange={() => toggleSelect(s.id)} />
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <AvatarGlyph
+                        seed={submitterSeed(s)}
+                        handle={submitterLabel(s)}
+                        size={28}
+                      />
+                      <span className="text-sm truncate">{submitterLabel(s)}</span>
+                    </div>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => {
+                        setViewingSubmission(s);
+                        setViewModalOpen(true);
+                      }}
+                      aria-label="View full submission"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  <div className="bg-muted rounded-md overflow-hidden aspect-square flex items-center justify-center">
+                    <img
+                      src={s.image_url}
+                      alt={s.description || 'Submitted symbol'}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge variant={reviewVariant(s.moderation_status)}>{reviewLabel(s.moderation_status)}</Badge>
+                    <Badge variant="outline">{visibilityLabel(s.visibility_status)}</Badge>
+                    {s.moderation_status === 'unreviewed' && (
+                      <Badge variant="outline" className="text-muted-foreground">
+                        {timeLeftLabel(s.created_at)}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {s.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-3">{s.description}</p>
+                  )}
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {tags.length > 0 ? (
+                      tags.map((t) => (
+                        <Badge key={t} variant="secondary" className="font-normal">
+                          {t}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-xs text-muted-foreground">no keywords recorded</span>
+                    )}
+                  </div>
+
+                  {s.rejection_reason && (
+                    <p className="text-xs text-destructive">Reason on file: {s.rejection_reason}</p>
+                  )}
+
+                  <div className="flex gap-2 mt-auto pt-1">
+                    <Button size="sm" className="flex-1" onClick={() => handleApprove(s.id)}>
+                      <Check className="w-4 h-4 mr-1" />
+                      Mark reviewed
+                    </Button>
+                    <Button size="sm" variant="destructive" className="flex-1" onClick={() => openRejectModal(s.id)}>
+                      <X className="w-4 h-4 mr-1" />
+                      Reject and hide
+                    </Button>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground border-t border-border pt-2">
+                    Submitted {format(new Date(s.created_at), 'd MMMM yyyy, HH:mm')} UTC
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
           {totalPages > 1 && (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
               <span className="text-sm text-muted-foreground">
-                Showing {(currentPage - 1) * PAGE_SIZE + 1}-{Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount}
+                Page {currentPage} of {totalPages}
               </span>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <span className="flex items-center px-3 text-sm">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
           )}
         </>
       )}
 
-      {/* Reject Modal */}
       <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Submission{rejectingBulk ? 's' : ''}</DialogTitle>
+            <DialogTitle>Reject and hide</DialogTitle>
             <DialogDescription>
-              {rejectingBulk 
-                ? `Provide a reason for rejecting ${selectedIds.size} submissions.`
-                : 'Provide a reason for rejecting this submission.'}
+              This sets the review state to rejected and removes the symbol from public view. The
+              reason is stored on the row.
             </DialogDescription>
           </DialogHeader>
           <Textarea
-            placeholder="Enter rejection reason (minimum 10 characters)..."
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Why is this being rejected? At least 10 characters."
             rows={4}
           />
-          <p className="text-xs text-muted-foreground">
-            {rejectionReason.length}/10 characters minimum
-          </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectModalOpen(false)}>
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleRejectConfirm}
-              disabled={rejectionReason.trim().length < 10 || bulkLoading}
-            >
-              {bulkLoading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              Reject
+            <Button variant="destructive" onClick={handleRejectConfirm} disabled={bulkLoading}>
+              {bulkLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Reject and hide
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* View Modal */}
       <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Submission Details</DialogTitle>
+            <DialogTitle>Submission detail</DialogTitle>
+            <DialogDescription>
+              {viewingSubmission ? `Row ${shortId(viewingSubmission.id)}` : ''}
+            </DialogDescription>
           </DialogHeader>
           {viewingSubmission && (
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg p-4">
+            <div className="space-y-4">
+              <div className="bg-muted rounded-md p-4 flex justify-center">
                 <img
                   src={viewingSubmission.image_url}
-                  alt="Symbol"
-                  className="w-full aspect-square object-contain"
+                  alt={viewingSubmission.description || 'Submitted symbol'}
+                  className="max-h-[50vh] object-contain"
                 />
               </div>
-              <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <AvatarGlyph
+                  seed={submitterSeed(viewingSubmission)}
+                  handle={submitterLabel(viewingSubmission)}
+                  size={28}
+                />
+                <span className="text-sm">{submitterLabel(viewingSubmission)}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <label className="text-sm text-muted-foreground">Review state</label>
-                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.moderation_status)}>{moderationLabel(viewingSubmission.moderation_status)}</Badge></div>
+                  <div className="text-muted-foreground">Review state</div>
+                  <div>{reviewLabel(viewingSubmission.moderation_status)}</div>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Submitter</label>
-                  <p>{viewingSubmission.profile?.handle || 'Explorer'}</p>
+                  <div className="text-muted-foreground">Visibility</div>
+                  <div>{visibilityLabel(viewingSubmission.visibility_status)}</div>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Description</label>
-                  <p className="text-sm">{viewingSubmission.description || 'No description'}</p>
+                  <div className="text-muted-foreground">Surface</div>
+                  <div>{viewingSubmission.surface_type || 'not recorded'}</div>
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Votes</label>
-                  <p className="flex items-center gap-1.5"><ThumbsUp className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.upvotes} / <ThumbsDown className="h-4 w-4" aria-hidden="true" /> {viewingSubmission.downvotes}</p>
+                  <div className="text-muted-foreground">Source</div>
+                  <div>{viewingSubmission.source_method || 'not recorded'}</div>
                 </div>
-                {viewingSubmission.tags && viewingSubmission.tags.length > 0 && (
-                  <div>
-                    <label className="text-sm text-muted-foreground">Tags</label>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {viewingSubmission.tags.map((tag, i) => (
-                        <Badge key={i} variant="secondary">{tag}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {viewingSubmission.source_method && (
-                  <div>
-                    <label className="text-sm text-muted-foreground">Source Method</label>
-                    <p>{viewingSubmission.source_method}</p>
-                  </div>
-                )}
-                <div>
-                  <label className="text-sm text-muted-foreground">Submitted</label>
-                  <p>{new Date(viewingSubmission.created_at).toLocaleString()}</p>
-                </div>
+              </div>
+              {viewingSubmission.description && (
+                <p className="text-sm text-muted-foreground">{viewingSubmission.description}</p>
+              )}
+              <div className="flex flex-wrap gap-1.5">
+                {((viewingSubmission.tags ?? []) as string[]).map((t) => (
+                  <Badge key={t} variant="secondary" className="font-normal">
+                    {t}
+                  </Badge>
+                ))}
+              </div>
+              <div className="text-xs text-muted-foreground border-t border-border pt-2">
+                Submitted {format(new Date(viewingSubmission.created_at), 'd MMMM yyyy, HH:mm')} UTC
               </div>
             </div>
           )}
-          <DialogFooter>
-            {viewingSubmission?.moderation_status === 'unreviewed' && (
-              <>
-                <Button 
-                  variant="default" 
-                  onClick={() => { handleApprove(viewingSubmission.id); setViewModalOpen(false); }}
-                >
-                  <Check className="w-4 h-4 mr-2" />
-                  Approve
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  onClick={() => { openRejectModal(viewingSubmission.id); setViewModalOpen(false); }}
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Reject
-                </Button>
-              </>
-            )}
-            <Button variant="outline" onClick={() => setViewModalOpen(false)}>
-              Close
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
