@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { recordAuditEvent, recordAuditEvents } from '@/lib/auditEvents';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +42,9 @@ const PAGE_SIZE = 20;
 const shortId = (id: string) => id.slice(0, 8);
 
 const submitterLabel = (row: { user_id: string | null; profile?: Profile | null }) => {
-  if (!row.user_id) return 'no account on record';
+  // Rows with no user_id predate account-gated submission. They are not
+  // anonymous by choice, they were captured before logins existed.
+  if (!row.user_id) return 'Prior to Account Creation';
   return row.profile?.handle?.trim() || `observer ${shortId(row.user_id)}`;
 };
 
@@ -316,7 +319,18 @@ export const SymbolSubmissionModeration = () => {
     );
     if (!ok) return;
 
-    window.posthog?.capture('admin_submission_approved', { symbol_id: id });
+    void recordAuditEvent({
+      event_name: 'symbol_moderation_decision',
+      subject_type: 'symbol_submission',
+      subject_id: id,
+      properties: {
+        decision: 'reviewed',
+        bulk: false,
+        // Pre-account rows carry no submitter. Recorded so the trail can
+        // separate legacy captures from account-gated ones later.
+        submitter_present: Boolean(submissions.find((s) => s.id === id)?.user_id),
+      },
+    });
     toast.success('Marked reviewed');
     supabase.functions.invoke('notify-admin', { body: { submissionId: id, action: 'approved' } }).catch(console.error);
     loadSubmissions();
@@ -342,7 +356,11 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
     if (!ok) return;
 
-    window.posthog?.capture('admin_bulk_action', { action_type: 'approve', count: ids.length });
+    void recordAuditEvents(ids, {
+      event_name: 'symbol_moderation_decision',
+      subject_type: 'symbol_submission',
+      properties: { decision: 'reviewed', bulk: true, batch_size: ids.length },
+    });
     toast.success(`${ids.length} marked reviewed`);
     setSelectedIds(new Set());
     loadSubmissions();
@@ -390,10 +408,17 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
 
     if (ok) {
-      window.posthog?.capture(
-        rejectingBulk ? 'admin_bulk_action' : 'admin_submission_rejected',
-        rejectingBulk ? { action_type: 'reject', count: ids.length } : { symbol_id: ids[0] },
-      );
+      void recordAuditEvents(ids, {
+        event_name: 'symbol_moderation_decision',
+        subject_type: 'symbol_submission',
+        properties: {
+          decision: 'denied',
+          visibility_after: 'hidden',
+          rejection_reason: rejectionReason.trim(),
+          bulk: rejectingBulk,
+          batch_size: ids.length,
+        },
+      });
       toast.success(ids.length > 1 ? `${ids.length} rejected and hidden` : 'Rejected and hidden');
       if (!rejectingBulk) {
         supabase.functions
@@ -516,7 +541,7 @@ export const SymbolSubmissionModeration = () => {
               </SelectTrigger>
               <SelectContent className="bg-background z-50 max-h-72">
                 <SelectItem value="all">Everyone</SelectItem>
-                {anonCount > 0 && <SelectItem value="anonymous">No account on record</SelectItem>}
+                {anonCount > 0 && <SelectItem value="anonymous">Prior to Account Creation</SelectItem>}
                 {submitterOptions.map((p) => (
                   <SelectItem key={p.id} value={p.id}>
                     <span className="flex items-center gap-2">

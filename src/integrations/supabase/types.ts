@@ -199,6 +199,39 @@ export type Database = {
           },
         ]
       }
+      audit_events: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string
+          created_at: string
+          event_name: string
+          id: string
+          properties: Json
+          subject_id: string | null
+          subject_type: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind?: string
+          created_at?: string
+          event_name: string
+          id?: string
+          properties?: Json
+          subject_id?: string | null
+          subject_type: string
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string
+          created_at?: string
+          event_name?: string
+          id?: string
+          properties?: Json
+          subject_id?: string | null
+          subject_type?: string
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           category: string
