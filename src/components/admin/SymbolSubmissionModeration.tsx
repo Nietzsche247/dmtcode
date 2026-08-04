@@ -115,6 +115,15 @@ export const SymbolSubmissionModeration = () => {
   // examples are excluded unless the operator explicitly switches to them.
   const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, overdue: 0, hidden: 0 });
 
+  // Table-wide split between operator illustrations and observer records.
+  const [corpusCounts, setCorpusCounts] = useState({ curated: 0, observer: 0 });
+
+  // Bulk reclassification of is_curated_example. This flag decides whether a
+  // row counts as evidence, so the change is always confirmed against explicit
+  // before/after figures rather than applied straight from a button press.
+  const [curatedModalOpen, setCuratedModalOpen] = useState(false);
+  const [curatedTarget, setCuratedTarget] = useState<boolean>(false);
+
   useEffect(() => {
     window.posthog?.capture('admin_page_viewed');
     supabase.auth.getUser().then(({ data: { user } }) => setCurrentUserId(user?.id ?? null));
