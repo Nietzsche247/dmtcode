@@ -605,6 +605,21 @@ Deno.serve(async (req) => {
           ? Number((((value - prior) / prior) * 100).toFixed(2))
           : null;
 
+      // Generic implausibility guard, applied to every percent metric present and
+      // future. A percent that swings this hard almost always means the prior
+      // reading is an artifact, not that the world changed that much.
+      let quality = r.quality ?? 'ok';
+      let note = r.note ?? null;
+      if (def.unit === 'percent' && value != null && prior != null) {
+        const wild = delta != null && Math.abs(delta) > 500;
+        const fromNearZero = prior < 5 && value > 20;
+        if ((wild || fromNearZero) && quality === 'ok') {
+          quality = 'degraded';
+          note =
+            'Implausible period-over-period change; the prior value is likely an artifact rather than a real reading. Verify against the source before acting on this.';
+        }
+      }
+
       rows.push({
         snapshot_id: snapshotId,
         captured_at: capturedAt,
@@ -615,10 +630,11 @@ Deno.serve(async (req) => {
         prior_value: prior,
         delta_pct: delta,
         unit: def.unit,
-        quality: r.quality ?? 'ok',
-        note: r.note ?? null,
+        quality,
+        note,
       });
     }
+
 
     const { error: metricErr } = await db.from('intel_metrics').insert(rows);
     if (metricErr) throw new Error(`Could not write intel_metrics: ${metricErr.message}`);
