@@ -100,7 +100,7 @@ export const SymbolSubmissionModeration = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter, searchQuery, currentPage, dateRange]);
+  }, [statusFilter, searchQuery, currentPage, dateRange, showCurated]);
 
   const loadStats = async () => {
     // Current UTC day, not local midnight.
@@ -199,7 +199,7 @@ export const SymbolSubmissionModeration = () => {
     const { error } = await supabase
       .from('symbol_submissions')
       .update({ 
-        status: 'approved',
+        moderation_status: 'reviewed',
         moderated_by: currentUserId,
         moderated_at: new Date().toISOString()
       })
@@ -250,7 +250,7 @@ export const SymbolSubmissionModeration = () => {
       const { error } = await supabase
         .from('symbol_submissions')
         .update({ 
-          status: 'rejected',
+          moderation_status: 'denied',
           rejection_reason: rejectionReason.trim(),
           moderated_by: currentUserId,
           moderated_at: new Date().toISOString()
@@ -271,7 +271,7 @@ export const SymbolSubmissionModeration = () => {
       const { error } = await supabase
         .from('symbol_submissions')
         .update({ 
-          status: 'rejected',
+          moderation_status: 'denied',
           rejection_reason: rejectionReason.trim(),
           moderated_by: currentUserId,
           moderated_at: new Date().toISOString()
@@ -312,7 +312,7 @@ export const SymbolSubmissionModeration = () => {
     const { error } = await supabase
       .from('symbol_submissions')
       .update({ 
-        status: 'approved',
+        moderation_status: 'reviewed',
         moderated_by: currentUserId,
         moderated_at: new Date().toISOString()
       })
