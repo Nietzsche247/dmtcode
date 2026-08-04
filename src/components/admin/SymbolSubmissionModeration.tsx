@@ -597,7 +597,7 @@ export const SymbolSubmissionModeration = () => {
                 setCurrentPage(1);
               }}
             />
-            Curated examples
+            Include curated examples
           </label>
         </div>
       </Card>
