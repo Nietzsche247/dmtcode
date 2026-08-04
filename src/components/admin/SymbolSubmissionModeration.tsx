@@ -606,8 +606,8 @@ export const SymbolSubmissionModeration = () => {
                       <span className="text-sm">{submission.profile?.handle || 'Explorer'}</span>
                     </td>
                     <td className="p-3">
-                      <Badge variant={getStatusBadgeVariant(submission.status)}>
-                        {submission.status}
+                      <Badge variant={getStatusBadgeVariant(submission.moderation_status)}>
+                        {moderationLabel(submission.moderation_status)}
                       </Badge>
                     </td>
                     <td className="p-3">
@@ -639,7 +639,7 @@ export const SymbolSubmissionModeration = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleApprove(submission.id)}
-                          disabled={submission.status === 'approved'}
+                          disabled={submission.moderation_status === 'reviewed'}
                           className="text-green-500 hover:text-green-600"
                           title="Approve"
                         >
@@ -649,7 +649,7 @@ export const SymbolSubmissionModeration = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => openRejectModal(submission.id)}
-                          disabled={submission.status === 'rejected'}
+                          disabled={submission.moderation_status === 'denied'}
                           className="text-destructive hover:text-destructive"
                           title="Reject"
                         >
@@ -748,8 +748,8 @@ export const SymbolSubmissionModeration = () => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Status</label>
-                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.status)}>{viewingSubmission.status}</Badge></div>
+                  <label className="text-sm text-muted-foreground">Review state</label>
+                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.moderation_status)}>{moderationLabel(viewingSubmission.moderation_status)}</Badge></div>
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Submitter</label>
@@ -787,7 +787,7 @@ export const SymbolSubmissionModeration = () => {
             </div>
           )}
           <DialogFooter>
-            {viewingSubmission?.status === 'pending' && (
+            {viewingSubmission?.moderation_status === 'unreviewed' && (
               <>
                 <Button 
                   variant="default" 
