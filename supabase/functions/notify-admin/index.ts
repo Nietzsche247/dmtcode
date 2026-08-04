@@ -248,7 +248,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (resendKey && type === 'first_non_red') {
+    if (resendKey && (type === 'first_non_red' || type === 'pipeline_stale')) {
       try {
         const emailResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -259,10 +259,13 @@ const handler = async (req: Request): Promise<Response> => {
           body: JSON.stringify({
             from: 'DMT Code Alerts <alerts@dmtcode.com>',
             to: ['admin@dmtcode.com'],
-            subject: '🚨 First Non-Red Wavelength Submission!',
+            subject: type === 'pipeline_stale'
+              ? 'Intel snapshot pipeline is stale'
+              : 'First non-red wavelength submission',
             text: message,
           }),
         });
+
 
         if (!emailResponse.ok) {
           console.error('Failed to send email:', await emailResponse.text());
