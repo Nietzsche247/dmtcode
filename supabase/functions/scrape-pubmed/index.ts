@@ -301,10 +301,12 @@ Deno.serve(async (req) => {
       trials_found: found,
       trials_added: added,
       error_message: msg,
+      query_used: PUBMED_QUERY,
     }).eq('id', runId);
-    return new Response(JSON.stringify({ success: false, error: msg }), {
+    return new Response(JSON.stringify({ success: false, error: msg, query: PUBMED_QUERY }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   }
 });
