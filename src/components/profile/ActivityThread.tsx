@@ -29,7 +29,7 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
       const [subsRes, savedRes, watchRes] = await Promise.all([
         supabase
           .from('symbol_submissions')
-          .select('id, description, status, created_at')
+          .select('id, description, visibility_status, created_at')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(30),
@@ -49,14 +49,15 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
       const merged: Entry[] = [];
 
       for (const s of subsRes.data || []) {
-        const approved = s.status === 'approved';
+        // Visibility, not review. A public symbol may still be unreviewed.
+        const isPublic = s.visibility_status === 'public';
         merged.push({
           key: `sub-${s.id}`,
           label: 'Submitted a symbol',
           text: firstWords(s.description) || 'Symbol report',
           created_at: s.created_at,
-          to: approved ? `/registry/${s.id}` : undefined,
-          note: approved ? undefined : 'pending review',
+          to: isPublic ? `/registry/${s.id}` : undefined,
+          note: isPublic ? undefined : 'not published',
         });
       }
 

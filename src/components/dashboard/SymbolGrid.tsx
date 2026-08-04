@@ -6,7 +6,9 @@ import { ChevronUp, Eye, Trash2 } from 'lucide-react';
 interface SymbolData {
   id: string;
   image_url: string;
-  status?: 'pending' | 'approved' | 'rejected';
+  // Review state is moderation_status. The legacy `status` column is not a review signal.
+  moderation_status?: 'unreviewed' | 'reviewed' | 'denied' | 'reported' | null;
+  visibility_status?: 'private' | 'public' | 'hidden' | null;
   upvotes?: number;
   downvotes?: number;
   description?: string | null;
@@ -57,15 +59,28 @@ export const SymbolGrid = ({
     );
   }
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'approved':
+  const getStatusColor = (moderationStatus?: string | null) => {
+    switch (moderationStatus) {
+      case 'reviewed':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'rejected':
+      case 'denied':
+      case 'reported':
         return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'pending':
       default:
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+    }
+  };
+
+  const statusLabel = (moderationStatus?: string | null) => {
+    switch (moderationStatus) {
+      case 'reviewed':
+        return 'reviewed';
+      case 'denied':
+        return 'denied';
+      case 'reported':
+        return 'reported';
+      default:
+        return 'not yet reviewed';
     }
   };
 
@@ -80,11 +95,11 @@ export const SymbolGrid = ({
               className="w-[180px] h-[180px] border border-border rounded object-contain bg-white"
               loading="lazy"
             />
-            {showStatus && symbol.status && (
+            {showStatus && (
               <Badge 
-                className={`absolute top-2 right-2 ${getStatusColor(symbol.status)}`}
+                className={`absolute top-2 right-2 ${getStatusColor(symbol.moderation_status)}`}
               >
-                {symbol.status}
+                {statusLabel(symbol.moderation_status)}
               </Badge>
             )}
           </div>

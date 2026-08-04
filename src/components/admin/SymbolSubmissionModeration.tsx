@@ -28,7 +28,9 @@ type SymbolSubmission = Tables<'symbol_submissions'> & {
   profile?: { handle: string | null; avatar_seed: string | null } | null;
 };
 
-type StatusFilter = 'all' | 'new72' | 'pending' | 'approved' | 'rejected';
+// Review state is moderation_status ONLY. The legacy `status` column is
+// 'approved' on every published row and carries no review meaning.
+type StatusFilter = 'all' | 'new72' | 'unreviewed' | 'reviewed' | 'denied';
 
 const WINDOW_MS = 72 * 60 * 60 * 1000;
 
@@ -53,6 +55,7 @@ export const SymbolSubmissionModeration = () => {
   const [bulkLoading, setBulkLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [showCurated, setShowCurated] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   
   // Modal states
@@ -63,8 +66,10 @@ export const SymbolSubmissionModeration = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
 
-  // Stats
-  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, today: 0, awaiting72: 0 });
+  // Stats. All derived from moderation_status over observer submissions only
+  // (is_curated_example = false). Curated examples are operator illustrations
+  // and never belong in a community moderation count.
+  const [stats, setStats] = useState({ unreviewed: 0, reviewed: 0, denied: 0, today: 0, awaiting72: 0 });
 
   useEffect(() => {
     // Track admin page view
@@ -95,26 +100,32 @@ export const SymbolSubmissionModeration = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter, searchQuery, currentPage, dateRange]);
+  }, [statusFilter, searchQuery, currentPage, dateRange, showCurated]);
 
   const loadStats = async () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Current UTC day, not local midnight.
+    const now = new Date();
+    const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const cutoff72 = new Date(Date.now() - WINDOW_MS).toISOString();
 
-    const cutoff72 = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+    const base = () =>
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', showCurated);
 
-    const [pending, approved, rejected, todayCount, awaiting72] = await Promise.all([
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', today.toISOString()),
-      supabase.from('symbol_submissions').select('id', { count: 'exact', head: true }).gte('created_at', cutoff72).is('moderated_at', null),
+    const [unreviewed, reviewed, denied, todayCount, awaiting72] = await Promise.all([
+      base().eq('moderation_status', 'unreviewed'),
+      base().eq('moderation_status', 'reviewed'),
+      base().eq('moderation_status', 'denied'),
+      base().gte('created_at', todayUtc.toISOString()),
+      base().eq('moderation_status', 'unreviewed').lt('created_at', cutoff72),
     ]);
 
     setStats({
-      pending: pending.count || 0,
-      approved: approved.count || 0,
-      rejected: rejected.count || 0,
+      unreviewed: unreviewed.count || 0,
+      reviewed: reviewed.count || 0,
+      denied: denied.count || 0,
       today: todayCount.count || 0,
       awaiting72: awaiting72.count || 0,
     });
@@ -130,14 +141,16 @@ export const SymbolSubmissionModeration = () => {
     let query = supabase
       .from('symbol_submissions')
       .select('*', { count: 'exact' })
+      .eq('is_curated_example', showCurated)
       .order('created_at', { ascending: statusFilter === 'new72' })
       .range(from, to);
 
     if (statusFilter === 'new72') {
-      const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
-      query = query.gte('created_at', cutoff).is('moderated_at', null);
+      // Past the 72 hour window and still nobody has looked at it.
+      const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
+      query = query.eq('moderation_status', 'unreviewed').lt('created_at', cutoff);
     } else if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter);
+      query = query.eq('moderation_status', statusFilter);
     }
 
     if (searchQuery.trim()) {
@@ -186,7 +199,7 @@ export const SymbolSubmissionModeration = () => {
     const { error } = await supabase
       .from('symbol_submissions')
       .update({ 
-        status: 'approved',
+        moderation_status: 'reviewed',
         moderated_by: currentUserId,
         moderated_at: new Date().toISOString()
       })
@@ -237,7 +250,7 @@ export const SymbolSubmissionModeration = () => {
       const { error } = await supabase
         .from('symbol_submissions')
         .update({ 
-          status: 'rejected',
+          moderation_status: 'denied',
           rejection_reason: rejectionReason.trim(),
           moderated_by: currentUserId,
           moderated_at: new Date().toISOString()
@@ -258,7 +271,7 @@ export const SymbolSubmissionModeration = () => {
       const { error } = await supabase
         .from('symbol_submissions')
         .update({ 
-          status: 'rejected',
+          moderation_status: 'denied',
           rejection_reason: rejectionReason.trim(),
           moderated_by: currentUserId,
           moderated_at: new Date().toISOString()
@@ -299,7 +312,7 @@ export const SymbolSubmissionModeration = () => {
     const { error } = await supabase
       .from('symbol_submissions')
       .update({ 
-        status: 'approved',
+        moderation_status: 'reviewed',
         moderated_by: currentUserId,
         moderated_at: new Date().toISOString()
       })
@@ -339,11 +352,21 @@ export const SymbolSubmissionModeration = () => {
     }
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'approved': return 'default';
-      case 'rejected': return 'destructive';
+  const getStatusBadgeVariant = (moderationStatus: string) => {
+    switch (moderationStatus) {
+      case 'reviewed': return 'default';
+      case 'denied': return 'destructive';
+      case 'reported': return 'destructive';
       default: return 'secondary';
+    }
+  };
+
+  const moderationLabel = (moderationStatus: string) => {
+    switch (moderationStatus) {
+      case 'reviewed': return 'reviewed';
+      case 'denied': return 'denied';
+      case 'reported': return 'reported';
+      default: return 'unreviewed';
     }
   };
 
@@ -355,7 +378,9 @@ export const SymbolSubmissionModeration = () => {
       <div>
         <h2 className="text-2xl font-bold">Symbol Submissions</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Review and moderate user-submitted symbols
+          Review state is moderation_status only. Publication is not review: every published
+          row can still be unreviewed. Counts cover
+          {showCurated ? ' curated operator examples' : ' observer submissions'} only.
         </p>
       </div>
 
@@ -366,19 +391,19 @@ export const SymbolSubmissionModeration = () => {
           <div className="text-sm text-muted-foreground">Awaiting review (72h)</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-yellow-500">{stats.pending}</div>
-          <div className="text-sm text-muted-foreground">Pending</div>
+          <div className="text-3xl font-bold text-yellow-500">{stats.unreviewed}</div>
+          <div className="text-sm text-muted-foreground">Unreviewed</div>
         </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-blue-500">{stats.today}</div>
-          <div className="text-sm text-muted-foreground">Today</div>
+          <div className="text-sm text-muted-foreground">Today (UTC)</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-green-500">{stats.approved}</div>
-          <div className="text-sm text-muted-foreground">Approved</div>
+          <div className="text-3xl font-bold text-green-500">{stats.reviewed}</div>
+          <div className="text-sm text-muted-foreground">Reviewed</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-destructive">{stats.rejected}</div>
+          <div className="text-3xl font-bold text-destructive">{stats.denied}</div>
           <div className="text-sm text-muted-foreground">Rejected</div>
         </Card>
       </div>
@@ -389,18 +414,27 @@ export const SymbolSubmissionModeration = () => {
           <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilter); setCurrentPage(1); }} className="flex-1">
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="new72">
-                New (72h)
+                Overdue (72h)
                 {stats.awaiting72 > 0 && <Badge variant="secondary" className="ml-2">{stats.awaiting72}</Badge>}
               </TabsTrigger>
-              <TabsTrigger value="pending">
-                Pending
-                {stats.pending > 0 && <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>}
+              <TabsTrigger value="unreviewed">
+                Unreviewed
+                {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
               </TabsTrigger>
-              <TabsTrigger value="approved">Approved</TabsTrigger>
-              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
+              <TabsTrigger value="denied">Rejected</TabsTrigger>
               <TabsTrigger value="all">All</TabsTrigger>
             </TabsList>
           </Tabs>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            <Checkbox
+              checked={showCurated}
+              onCheckedChange={(c) => { setShowCurated(c === true); setCurrentPage(1); }}
+            />
+            Curated examples
+          </label>
+
           
           <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -572,8 +606,8 @@ export const SymbolSubmissionModeration = () => {
                       <span className="text-sm">{submission.profile?.handle || 'Explorer'}</span>
                     </td>
                     <td className="p-3">
-                      <Badge variant={getStatusBadgeVariant(submission.status)}>
-                        {submission.status}
+                      <Badge variant={getStatusBadgeVariant(submission.moderation_status)}>
+                        {moderationLabel(submission.moderation_status)}
                       </Badge>
                     </td>
                     <td className="p-3">
@@ -605,7 +639,7 @@ export const SymbolSubmissionModeration = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleApprove(submission.id)}
-                          disabled={submission.status === 'approved'}
+                          disabled={submission.moderation_status === 'reviewed'}
                           className="text-green-500 hover:text-green-600"
                           title="Approve"
                         >
@@ -615,7 +649,7 @@ export const SymbolSubmissionModeration = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => openRejectModal(submission.id)}
-                          disabled={submission.status === 'rejected'}
+                          disabled={submission.moderation_status === 'denied'}
                           className="text-destructive hover:text-destructive"
                           title="Reject"
                         >
@@ -714,8 +748,8 @@ export const SymbolSubmissionModeration = () => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Status</label>
-                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.status)}>{viewingSubmission.status}</Badge></div>
+                  <label className="text-sm text-muted-foreground">Review state</label>
+                  <div><Badge variant={getStatusBadgeVariant(viewingSubmission.moderation_status)}>{moderationLabel(viewingSubmission.moderation_status)}</Badge></div>
                 </div>
                 <div>
                   <label className="text-sm text-muted-foreground">Submitter</label>
@@ -753,7 +787,7 @@ export const SymbolSubmissionModeration = () => {
             </div>
           )}
           <DialogFooter>
-            {viewingSubmission?.status === 'pending' && (
+            {viewingSubmission?.moderation_status === 'unreviewed' && (
               <>
                 <Button 
                   variant="default" 

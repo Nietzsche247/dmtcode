@@ -26,34 +26,46 @@ const json = (body: unknown, status = 200) =>
 
 const MODEL = 'google/gemini-2.5-flash';
 const BATCH_SIZE = 20;
-const CONFIDENCE_THRESHOLD = 0.8;
+// Asymmetric on purpose. A wrongly parked paper costs a queue slot. A wrongly
+// approved paper is published and gets cited by AI crawlers as something this
+// site vouches for.
+const APPROVE_THRESHOLD = 0.9;
+const REJECT_THRESHOLD = 0.8;
 
 const SYSTEM_PROMPT = `You classify bibliography records for a research library that studies ONE question: the perception of a structured, possibly-decodable other reality.
 
-For each record decide: does this record describe, study, or bear directly on the perception of a structured, possibly-decodable other reality?
+The test is POSITIVE and NARROW. A record is ON TOPIC only if it describes, studies, or bears directly on at least one of:
+1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery phenomenology.
+2. Entity encounters or contact experiences.
+3. The phenomenology of altered or non-ordinary states as experienced, including sober perception of the same.
+4. First-person or experiential accounts of perceiving another reality that presents as structured or decodable.
+5. Theory of consciousness, insofar as it addresses that perceptual content.
 
-IN SCOPE:
-- Phenomenology, consciousness studies, entity encounters
-- First-person and experiential reports
-- Structure of visual forms, geometry, hallucination form-constants
-- The whole tryptamine and psychedelic family: N,N-DMT, 5-MeO-DMT, ayahuasca, ibogaine, psilocybin, LSD and related compounds
-- Sober perception of the same phenomena, with no substance involved
+OUT OF SCOPE regardless of which substance is studied:
+- Efficacy and safety trials
+- Mechanism-of-action pharmacology
+- Clinical outcomes of any condition, including depression, PTSD, eating disorders, bipolar disorder and pain
+- Therapy protocols and integration protocols
+- Epidemiology, adverse events, harm reduction, drug policy
+- Animal behavioural models, including nociception and locomotion
+- Social cognition or emotional cognition studies that do not address perceptual content
+- Acronym collisions: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1" meaning the lysine-specific demethylase enzyme
 
-OUT OF SCOPE (these are acronym and keyword collisions, not topic matches):
-- Multiple sclerosis "DMT" meaning disease-modifying therapy
-- "LSD-1" or LSD1 meaning lysine-specific demethylase, the cancer enzyme
-- Psychiatry or pharmacology trials with no perceptual or phenomenological content
-- Orthopedics, oncology, cardiology, general neurology unrelated to perceptual structure
-- Adverse-event or safety reports that merely use the word "consciousness"
+CRITICAL. A paper that mentions DMT, psilocybin, LSD, ayahuasca, ketamine, MDMA or any other psychedelic is NOT thereby on topic. The substance is not the criterion. The described experience is the criterion. "A psychedelic was administered and an outcome was measured" is OFF TOPIC. "What the experience looked like, felt like, or contained" is ON TOPIC.
 
-You are judging TOPIC FIT ONLY. You are not judging whether the work is true, rigorous, or credible. A speculative first-person trip report is on topic. A rigorous oncology RCT is off topic.
+If you cannot name the specific phenomenological element the record addresses, it is NOT on topic. Say so rather than approving.
+
+You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. A rigorous oncology or psychiatry trial is off topic.
 
 Return strict JSON only:
-{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"reason":"<one sentence>"}]}
-Return exactly one result object per record, using the record's index. confidence is your certainty in the on_topic call. Keep each reason to one sentence.`;
+{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>"}]}
+Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual or phenomenological content found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
 
 interface Row {
   id: string;
+  triage_status?: string | null;
+  triage_confidence?: number | null;
+  triage_reason?: string | null;
   title: string | null;
   abstract: string | null;
   journal: string | null;
@@ -64,6 +76,7 @@ interface Verdict {
   index: number;
   on_topic: boolean;
   confidence: number;
+  element: string;
   reason: string;
 }
 
@@ -146,6 +159,7 @@ async function classify(rows: Row[], apiKey: string): Promise<Verdict[]> {
       index,
       on_topic: item?.on_topic === true,
       confidence: Number.isFinite(confidence) ? Math.min(1, Math.max(0, confidence)) : 0,
+      element: String(item?.phenomenological_element ?? '').trim().slice(0, 300),
       reason: String(item?.reason ?? '').slice(0, 500) || 'No reason returned by the model.',
     });
   }
@@ -158,6 +172,20 @@ Deno.serve(async (req) => {
   const cronSecret = Deno.env.get('INTEL_CRON_SECRET');
   if (!cronSecret || req.headers.get('x-intel-key') !== cronSecret) {
     return json({ error: 'Unauthorized' }, 401);
+  }
+
+  // Re-audit mode re-reads rows that already carry a verdict and re-scores them
+  // under the current rubric, ignoring the stored triage_status. Approvals that
+  // fail the new rubric are UNWOUND (is_approved back to false) rather than left
+  // live, and the previous verdict is preserved in triage_reason for audit.
+  let reauditOf: string | null = null;
+  if (req.method === 'POST') {
+    try {
+      const body = await req.json();
+      if (typeof body?.reaudit === 'string') reauditOf = body.reaudit;
+    } catch {
+      // No body is the normal cron case.
+    }
   }
 
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
@@ -181,24 +209,33 @@ Deno.serve(async (req) => {
   let approved = 0;
   let rejected = 0;
   let needs_review = 0;
+  let pulled_back = 0;
   let stoppedReason: string | null = null;
   let stoppedStatus: number | null = null;
+  const seen = new Set<string>();
 
   try {
     // Bounded loop: each pass re-reads only rows still NULL, so a partial run
     // is always safe to resume.
     for (let pass = 0; pass < 50; pass++) {
-      const { data, error } = await db
+      let q = db
         .from('bibliography')
-        .select('id, title, abstract, journal, compounds')
-        .eq('is_approved', false)
-        .is('triage_status', null)
+        .select('id, title, abstract, journal, compounds, triage_status, triage_confidence, triage_reason')
         .order('created_at', { ascending: true })
         .limit(BATCH_SIZE);
 
+      q = reauditOf
+        ? q.eq('triage_status', reauditOf)
+        : q.eq('is_approved', false).is('triage_status', null);
+
+      const { data, error } = await q;
+
       if (error) throw new Error(`Could not read bibliography: ${error.message}`);
-      const rows = (data ?? []) as Row[];
+      // In re-audit mode the filter does not shrink as we write, so track ids
+      // we have already scored and stop when a pass yields nothing new.
+      const rows = ((data ?? []) as Row[]).filter((r) => !seen.has(r.id));
       if (!rows.length) break;
+      for (const r of rows) seen.add(r.id);
 
       const verdicts = await classify(rows, apiKey);
       const byIndex = new Map(verdicts.map((v) => [v.index, v]));
@@ -214,10 +251,10 @@ Deno.serve(async (req) => {
         if (!v) {
           // A missing verdict is never treated as a rejection.
           triage_status = 'needs_review';
-        } else if (v.on_topic && v.confidence >= CONFIDENCE_THRESHOLD) {
+        } else if (v.on_topic && v.confidence >= APPROVE_THRESHOLD && v.element.length > 0) {
           triage_status = 'auto_approved';
           is_approved = true;
-        } else if (!v.on_topic && v.confidence >= CONFIDENCE_THRESHOLD) {
+        } else if (!v.on_topic && v.confidence >= REJECT_THRESHOLD) {
           triage_status = 'auto_rejected';
         } else {
           triage_status = 'needs_review';
@@ -226,11 +263,23 @@ Deno.serve(async (req) => {
         const patch: Record<string, unknown> = {
           triage_status,
           triage_confidence: v ? v.confidence : null,
-          triage_reason: v ? v.reason : 'The model returned no verdict for this record, so it needs a human read.',
+          triage_reason: v ? (v.element ? `${v.reason} [element: ${v.element}]` : v.reason) : 'The model returned no verdict for this record, so it needs a human read.',
           triage_at,
           triage_model: MODEL,
         };
         if (is_approved === true) patch.is_approved = true;
+
+        if (reauditOf) {
+          const prior = `[re-audited ${triage_at.slice(0, 10)} under the tightened rubric. Previous verdict: ${row.triage_status ?? 'none'}, confidence ${row.triage_confidence ?? 'n/a'} - ${row.triage_reason ?? 'no reason recorded'}]`;
+          patch.triage_reason = `${patch.triage_reason} ${prior}`.slice(0, 2000);
+          if (triage_status !== 'auto_approved' && row.triage_status === 'auto_approved') {
+            // Unwind the live approval rather than leaving it published.
+            patch.is_approved = false;
+            patch.triage_status = 'needs_review';
+            triage_status = 'needs_review';
+            pulled_back++;
+          }
+        }
 
         const { error: upErr } = await db.from('bibliography').update(patch).eq('id', row.id);
         if (upErr) {
@@ -271,7 +320,9 @@ Deno.serve(async (req) => {
     approved,
     rejected,
     needs_review,
+    pulled_back,
     remaining,
+    mode: reauditOf ? `reaudit:${reauditOf}` : 'pending',
     model: MODEL,
     ...(stoppedReason ? { stopped: true, stopped_status: stoppedStatus, stopped_reason: stoppedReason } : {}),
     note:
