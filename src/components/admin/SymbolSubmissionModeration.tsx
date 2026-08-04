@@ -133,15 +133,28 @@ export const SymbolSubmissionModeration = () => {
       return showCurated ? q : q.eq('is_curated_example', false);
     };
 
-    const [unreviewed, reviewed, denied, overdue, hidden] = await Promise.all([
+    const [unreviewed, reviewed, denied, overdue, hidden, curated, observer] = await Promise.all([
       base().eq('moderation_status', 'unreviewed'),
       base().eq('moderation_status', 'reviewed'),
       base().eq('moderation_status', 'denied'),
       base().eq('moderation_status', 'unreviewed').lt('created_at', cutoff72),
       base().eq('visibility_status', 'hidden'),
+      // Corpus classification counts are always table-wide, never filtered by
+      // the view. They are what the before/after figures on the bulk
+      // reclassification dialog are measured against.
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', true),
+      supabase
+        .from('symbol_submissions')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_curated_example', false),
     ]);
 
-    const firstError = [unreviewed, reviewed, denied, overdue, hidden].find((r) => r.error)?.error;
+    const firstError = [unreviewed, reviewed, denied, overdue, hidden, curated, observer].find(
+      (r) => r.error,
+    )?.error;
     if (firstError) {
       toast.error(`Could not read the moderation counts: ${firstError.message}`);
       return;
@@ -154,6 +167,7 @@ export const SymbolSubmissionModeration = () => {
       overdue: overdue.count || 0,
       hidden: hidden.count || 0,
     });
+    setCorpusCounts({ curated: curated.count || 0, observer: observer.count || 0 });
   }, [showCurated]);
 
   // Submitter list for the filter. Built from the same corpus the list shows.
