@@ -158,11 +158,12 @@ export const SymbolSubmissionModeration = () => {
 
   // Submitter list for the filter. Built from the same corpus the list shows.
   const loadSubmitters = useCallback(async () => {
-    const { data, error } = await supabase
+    let submitterQuery = supabase
       .from('symbol_submissions')
       .select('user_id')
-      .eq('is_curated_example', showCurated)
       .limit(2000);
+    if (!showCurated) submitterQuery = submitterQuery.eq('is_curated_example', false);
+    const { data, error } = await submitterQuery;
 
     if (error) {
       toast.error(`Could not load the submitter list: ${error.message}`);
