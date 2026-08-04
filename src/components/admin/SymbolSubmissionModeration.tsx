@@ -352,11 +352,21 @@ export const SymbolSubmissionModeration = () => {
     }
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'approved': return 'default';
-      case 'rejected': return 'destructive';
+  const getStatusBadgeVariant = (moderationStatus: string) => {
+    switch (moderationStatus) {
+      case 'reviewed': return 'default';
+      case 'denied': return 'destructive';
+      case 'reported': return 'destructive';
       default: return 'secondary';
+    }
+  };
+
+  const moderationLabel = (moderationStatus: string) => {
+    switch (moderationStatus) {
+      case 'reviewed': return 'reviewed';
+      case 'denied': return 'denied';
+      case 'reported': return 'reported';
+      default: return 'unreviewed';
     }
   };
 
@@ -368,7 +378,9 @@ export const SymbolSubmissionModeration = () => {
       <div>
         <h2 className="text-2xl font-bold">Symbol Submissions</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Review and moderate user-submitted symbols
+          Review state is moderation_status only. Publication is not review: every published
+          row can still be unreviewed. Counts cover
+          {showCurated ? ' curated operator examples' : ' observer submissions'} only.
         </p>
       </div>
 
@@ -379,19 +391,19 @@ export const SymbolSubmissionModeration = () => {
           <div className="text-sm text-muted-foreground">Awaiting review (72h)</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-yellow-500">{stats.pending}</div>
-          <div className="text-sm text-muted-foreground">Pending</div>
+          <div className="text-3xl font-bold text-yellow-500">{stats.unreviewed}</div>
+          <div className="text-sm text-muted-foreground">Unreviewed</div>
         </Card>
         <Card className="p-4 text-center">
           <div className="text-3xl font-bold text-blue-500">{stats.today}</div>
-          <div className="text-sm text-muted-foreground">Today</div>
+          <div className="text-sm text-muted-foreground">Today (UTC)</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-green-500">{stats.approved}</div>
-          <div className="text-sm text-muted-foreground">Approved</div>
+          <div className="text-3xl font-bold text-green-500">{stats.reviewed}</div>
+          <div className="text-sm text-muted-foreground">Reviewed</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-3xl font-bold text-destructive">{stats.rejected}</div>
+          <div className="text-3xl font-bold text-destructive">{stats.denied}</div>
           <div className="text-sm text-muted-foreground">Rejected</div>
         </Card>
       </div>
@@ -402,18 +414,27 @@ export const SymbolSubmissionModeration = () => {
           <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilter); setCurrentPage(1); }} className="flex-1">
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="new72">
-                New (72h)
+                Overdue (72h)
                 {stats.awaiting72 > 0 && <Badge variant="secondary" className="ml-2">{stats.awaiting72}</Badge>}
               </TabsTrigger>
-              <TabsTrigger value="pending">
-                Pending
-                {stats.pending > 0 && <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>}
+              <TabsTrigger value="unreviewed">
+                Unreviewed
+                {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
               </TabsTrigger>
-              <TabsTrigger value="approved">Approved</TabsTrigger>
-              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
+              <TabsTrigger value="denied">Rejected</TabsTrigger>
               <TabsTrigger value="all">All</TabsTrigger>
             </TabsList>
           </Tabs>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            <Checkbox
+              checked={showCurated}
+              onCheckedChange={(c) => { setShowCurated(c === true); setCurrentPage(1); }}
+            />
+            Curated examples
+          </label>
+
           
           <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
