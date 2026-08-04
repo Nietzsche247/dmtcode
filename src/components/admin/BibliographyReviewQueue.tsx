@@ -15,26 +15,54 @@ interface Row {
   source: string | null;
   abstract: string | null;
   url: string | null;
+  triage_status: string | null;
+  triage_confidence: number | null;
+  triage_reason: string | null;
 }
+
+type Filter = 'all' | 'needs_review' | 'untriaged' | 'auto_rejected';
+
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: 'all', label: 'All unapproved' },
+  { key: 'needs_review', label: 'Needs review' },
+  { key: 'untriaged', label: 'Not yet triaged' },
+  { key: 'auto_rejected', label: 'Auto-rejected' },
+];
 
 export const BibliographyReviewQueue = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [hiddenInSession, setHiddenInSession] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<Filter>('all');
+  const [autoApprovedCount, setAutoApprovedCount] = useState<number | null>(null);
+  const [autoRejectedCount, setAutoRejectedCount] = useState<number | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('bibliography')
-      .select('id, title, journal, publication_date, content_type, source, abstract, url')
-      .eq('is_approved', false)
-      .order('created_at', { ascending: false });
-    if (error) {
-      toast({ title: 'Failed to load queue', description: error.message, variant: 'destructive' });
+    const [queue, approvedCount, rejectedCount] = await Promise.all([
+      supabase
+        .from('bibliography')
+        .select('id, title, journal, publication_date, content_type, source, abstract, url, triage_status, triage_confidence, triage_reason')
+        .eq('is_approved', false)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('bibliography')
+        .select('id', { count: 'exact', head: true })
+        .eq('triage_status', 'auto_approved'),
+      supabase
+        .from('bibliography')
+        .select('id', { count: 'exact', head: true })
+        .eq('triage_status', 'auto_rejected'),
+    ]);
+
+    if (queue.error) {
+      toast({ title: 'Failed to load queue', description: queue.error.message, variant: 'destructive' });
     } else {
-      setRows((data ?? []) as Row[]);
+      setRows((queue.data ?? []) as Row[]);
     }
+    setAutoApprovedCount(approvedCount.count ?? null);
+    setAutoRejectedCount(rejectedCount.count ?? null);
     setLoading(false);
   };
 
@@ -50,12 +78,34 @@ export const BibliographyReviewQueue = () => {
     toast({ title: 'Approved', description: 'Record is now public.' });
   };
 
+  const reject = async (id: string) => {
+    const { error } = await supabase
+      .from('bibliography')
+      .update({ triage_status: 'auto_rejected', triage_reason: 'Rejected by a human reviewer.' })
+      .eq('id', id);
+    if (error) {
+      toast({ title: 'Reject failed', description: error.message, variant: 'destructive' });
+      return;
+    }
+    setRows((r) => r.map((x) => (x.id === id ? { ...x, triage_status: 'auto_rejected' } : x)));
+    setAutoRejectedCount((c) => (c == null ? c : c + 1));
+    toast({ title: 'Marked off topic', description: 'Record stays unpublished.' });
+  };
+
   const keepHidden = (id: string) => {
     setHiddenInSession((s) => new Set(s).add(id));
   };
 
-  const visible = rows.filter((r) => !hiddenInSession.has(r.id));
+  const matchesFilter = (r: Row) => {
+    if (filter === 'all') return true;
+    if (filter === 'untriaged') return r.triage_status === null;
+    return r.triage_status === filter;
+  };
+
+  const notHidden = rows.filter((r) => !hiddenInSession.has(r.id));
+  const visible = notHidden.filter(matchesFilter);
   const count = visible.length;
+  const needsReviewCount = notHidden.filter((r) => r.triage_status === 'needs_review').length;
 
   if (loading) {
     return <Card><CardContent className="py-6 text-sm text-muted-foreground">Loading review queue...</CardContent></Card>;
@@ -63,15 +113,39 @@ export const BibliographyReviewQueue = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          Bibliography review queue
-          {count > 0 && <Badge variant="secondary">{count}</Badge>}
-        </CardTitle>
-        <Button variant="outline" size="sm" onClick={load}>Refresh</Button>
+      <CardHeader className="space-y-3">
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            Bibliography review queue
+            {count > 0 && <Badge variant="secondary">{count}</Badge>}
+          </CardTitle>
+          <Button variant="outline" size="sm" onClick={load}>Refresh</Button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {FILTERS.map((f) => (
+            <Button
+              key={f.key}
+              size="sm"
+              variant={filter === f.key ? 'default' : 'outline'}
+              onClick={() => setFilter(f.key)}
+            >
+              {f.label}
+              {f.key === 'needs_review' && needsReviewCount > 0 && (
+                <span className="ml-2 text-xs opacity-80">{needsReviewCount}</span>
+              )}
+            </Button>
+          ))}
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          Automated triage to date: {autoApprovedCount ?? '-'} auto-approved, {autoRejectedCount ?? '-'} auto-rejected.
+          Auto-approval means the record is on topic for this library. It is not a claim that the record is
+          verified, endorsed, or scientifically sound.
+        </p>
       </CardHeader>
       <CardContent className="space-y-3">
-        {count === 0 && <p className="text-sm text-muted-foreground">No pending records.</p>}
+        {count === 0 && <p className="text-sm text-muted-foreground">No records in this view.</p>}
         {visible.map((r) => {
           const open = expanded[r.id];
           return (
@@ -86,10 +160,22 @@ export const BibliographyReviewQueue = () => {
                     {r.publication_date && <span>{r.publication_date}</span>}
                     {r.content_type && <Badge variant="outline" className="text-[10px]">{r.content_type}</Badge>}
                     {r.source && <span className="uppercase tracking-wide">{r.source}</span>}
+                    {r.triage_status && (
+                      <Badge variant="outline" className="text-[10px]">
+                        {r.triage_status.replace('_', ' ')}
+                        {r.triage_confidence != null && ` ${Math.round(r.triage_confidence * 100)}%`}
+                      </Badge>
+                    )}
                   </div>
+                  {r.triage_reason && (
+                    <p className="mt-2 text-xs text-muted-foreground italic">
+                      Triage note: {r.triage_reason}
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <Button size="sm" onClick={() => approve(r.id)}>Approve</Button>
+                  <Button size="sm" variant="outline" onClick={() => reject(r.id)}>Reject</Button>
                   <Button size="sm" variant="ghost" onClick={() => keepHidden(r.id)}>Keep hidden</Button>
                 </div>
               </div>

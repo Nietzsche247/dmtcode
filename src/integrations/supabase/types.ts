@@ -254,6 +254,11 @@ export type Database = {
           tags: string[] | null
           title: string
           transcript: string | null
+          triage_at: string | null
+          triage_confidence: number | null
+          triage_model: string | null
+          triage_reason: string | null
+          triage_status: string | null
           updated_at: string
           url: string | null
         }
@@ -281,6 +286,11 @@ export type Database = {
           tags?: string[] | null
           title: string
           transcript?: string | null
+          triage_at?: string | null
+          triage_confidence?: number | null
+          triage_model?: string | null
+          triage_reason?: string | null
+          triage_status?: string | null
           updated_at?: string
           url?: string | null
         }
@@ -308,6 +318,11 @@ export type Database = {
           tags?: string[] | null
           title?: string
           transcript?: string | null
+          triage_at?: string | null
+          triage_confidence?: number | null
+          triage_model?: string | null
+          triage_reason?: string | null
+          triage_status?: string | null
           updated_at?: string
           url?: string | null
         }
@@ -1836,6 +1851,7 @@ export type Database = {
           id: string
           last_run_at: string
           new_trials_count: number | null
+          query_used: string | null
           scraper_name: string
           source: string | null
           status: string
@@ -1849,6 +1865,7 @@ export type Database = {
           id?: string
           last_run_at?: string
           new_trials_count?: number | null
+          query_used?: string | null
           scraper_name: string
           source?: string | null
           status: string
@@ -1862,6 +1879,7 @@ export type Database = {
           id?: string
           last_run_at?: string
           new_trials_count?: number | null
+          query_used?: string | null
           scraper_name?: string
           source?: string | null
           status?: string

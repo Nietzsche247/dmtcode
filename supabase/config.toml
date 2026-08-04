@@ -69,3 +69,6 @@ verify_jwt = true
 [functions.intel-snapshot]
 verify_jwt = false
 
+
+[functions.bibliography-triage]
+verify_jwt = false

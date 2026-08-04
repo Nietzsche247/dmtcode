@@ -5,14 +5,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SEARCH_TERMS = [
-  'N,N-DMT',
-  'dimethyltryptamine',
-  'ayahuasca',
-  '5-MeO-DMT',
-  'psilocybin',
-  'psychedelic phenomenology',
+// PubMed's clinical index is the wrong instrument for a phenomenology library.
+// Querying bare substance names pulls in acronym collisions (multiple-sclerosis
+// "DMT" = disease-modifying therapy, "LSD-1" = lysine-specific demethylase) and
+// unrelated clinical trials. So the query REQUIRES a perceptual/experiential
+// term to co-occur with a substance or sober-perception term, and explicitly
+// excludes the known collisions.
+
+const PERCEPTUAL_TERMS = [
+  'phenomenology', 'phenomenological', 'hallucination', 'hallucinations',
+  'hallucinogenic experience', 'visual imagery', 'visual hallucination',
+  'altered state of consciousness', 'altered states of consciousness',
+  'consciousness', 'entity encounter', 'entity experience',
+  'mystical experience', 'ego dissolution', 'form constant', 'form constants',
+  'subjective experience', 'first-person report', 'visionary',
 ];
+
+const SUBSTANCE_OR_SOBER_TERMS = [
+  'dimethyltryptamine', 'N,N-DMT', '5-MeO-DMT', 'ayahuasca', 'ibogaine',
+  'psilocybin', 'lysergic acid diethylamide', 'psychedelic', 'psychedelics',
+  'tryptamine', 'tryptamines', 'serotonergic hallucinogen',
+  // sober perception of the same phenomena
+  'meditation', 'sensory deprivation', 'near-death experience',
+  'hypnagogic', 'closed-eye visual',
+];
+
+const EXCLUSIONS = [
+  'disease-modifying therapy', 'disease modifying therapy',
+  'disease-modifying therapies', 'disease modifying therapies',
+  'multiple sclerosis', 'LSD1', 'LSD-1',
+  'lysine-specific demethylase', 'lysine specific demethylase',
+  'KDM1A',
+];
+
+const orGroup = (terms: string[]) =>
+  `(${terms.map((t) => `"${t}"[tiab]`).join(' OR ')})`;
+
+// Exported shape is a single auditable query string, logged with every run.
+const PUBMED_QUERY =
+  `(${orGroup(PERCEPTUAL_TERMS)} AND ${orGroup(SUBSTANCE_OR_SOBER_TERMS)})` +
+  ` NOT ${orGroup(EXCLUSIONS)}`;
+
 
 const EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
 
@@ -164,7 +197,7 @@ Deno.serve(async (req) => {
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  console.log('Starting PubMed scraper for terms:', SEARCH_TERMS.join(', '));
+  console.log('Starting PubMed scraper with query:', PUBMED_QUERY);
 
   const { data: runData, error: runError } = await supabase
     .from('scraper_runs')
@@ -190,17 +223,16 @@ Deno.serve(async (req) => {
 
   try {
     const allIds = new Set<string>();
-    for (const term of SEARCH_TERMS) {
-      try {
-        const ids = await esearch(term, 50);
-        ids.forEach((i) => allIds.add(i));
-      } catch (e) {
-        console.error('esearch failed for', term, e);
-      }
+    try {
+      const ids = await esearch(PUBMED_QUERY, 100);
+      ids.forEach((i) => allIds.add(i));
+    } catch (e) {
+      console.error('esearch failed for phenomenology query', e);
     }
     const idList = Array.from(allIds);
     found = idList.length;
     console.log(`PubMed returned ${found} unique pmids`);
+
 
     const CHUNK = 50;
     const records: PubmedRecord[] = [];
@@ -253,12 +285,14 @@ Deno.serve(async (req) => {
       trials_found: found,
       trials_added: added,
       new_trials_count: added,
+      query_used: PUBMED_QUERY,
     }).eq('id', runId);
 
-    return new Response(JSON.stringify({ success: true, found, added }), {
+    return new Response(JSON.stringify({ success: true, found, added, query: PUBMED_QUERY }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'unknown';
     console.error('PubMed scraper error', error);
@@ -267,10 +301,12 @@ Deno.serve(async (req) => {
       trials_found: found,
       trials_added: added,
       error_message: msg,
+      query_used: PUBMED_QUERY,
     }).eq('id', runId);
-    return new Response(JSON.stringify({ success: false, error: msg }), {
+    return new Response(JSON.stringify({ success: false, error: msg, query: PUBMED_QUERY }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   }
 });

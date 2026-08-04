@@ -7,7 +7,9 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission';
+  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale';
+  message?: string;
+
   symbolId?: string;
   wavelength?: string;
   surface?: string;
@@ -212,13 +214,25 @@ const handler = async (req: Request): Promise<Response> => {
     // Handle legacy notification types
     console.log(`[Admin Alert] ${type?.toUpperCase()} - Symbol: ${symbolId}`);
 
-    let message = '';
-    
+    // A caller may supply its own message (pipeline alerts do). Otherwise the
+    // legacy symbol types build one.
+    let message = typeof (body as { message?: unknown }).message === 'string'
+      ? String((body as { message?: string }).message)
+      : '';
+
     if (type === 'first_non_red') {
-      message = `🚨 FIRST NON-RED WAVELENGTH SUBMISSION!\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nTimestamp: ${new Date().toISOString()}\n\nView at: https://dmtcode.com/registry`;
+      message = `FIRST NON-RED WAVELENGTH SUBMISSION\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nTimestamp: ${new Date().toISOString()}\n\nView at: https://dmtcode.com/registry`;
     } else if (type === 'null_report') {
-      message = `⚪ NULL REPORT SUBMITTED\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nSurface: ${surface}\nTimestamp: ${new Date().toISOString()}\n\nView null dashboard: https://dmtcode.com/admin`;
+      message = `NULL REPORT SUBMITTED\n\nSymbol ID: DLC-2025-${symbolId}\nWavelength: ${wavelength}\nSurface: ${surface}\nTimestamp: ${new Date().toISOString()}\n\nView null dashboard: https://dmtcode.com/admin`;
     }
+
+    if (!message) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'No message to send' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
 
     console.log(message);
 
@@ -236,7 +250,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const resendKey = Deno.env.get('RESEND_API_KEY');
-    if (resendKey && type === 'first_non_red') {
+    if (resendKey && (type === 'first_non_red' || type === 'pipeline_stale')) {
       try {
         const emailResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -247,10 +261,13 @@ const handler = async (req: Request): Promise<Response> => {
           body: JSON.stringify({
             from: 'DMT Code Alerts <alerts@dmtcode.com>',
             to: ['admin@dmtcode.com'],
-            subject: '🚨 First Non-Red Wavelength Submission!',
+            subject: type === 'pipeline_stale'
+              ? 'Intel snapshot pipeline is stale'
+              : 'First non-red wavelength submission',
             text: message,
           }),
         });
+
 
         if (!emailResponse.ok) {
           console.error('Failed to send email:', await emailResponse.text());
