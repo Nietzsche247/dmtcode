@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { recordAuditEvent, recordAuditEvents } from '@/lib/auditEvents';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -318,7 +319,12 @@ export const SymbolSubmissionModeration = () => {
     );
     if (!ok) return;
 
-    window.posthog?.capture('admin_submission_approved', { symbol_id: id });
+    void recordAuditEvent({
+      event_name: 'symbol_moderation_decision',
+      subject_type: 'symbol_submission',
+      subject_id: id,
+      properties: { decision: 'reviewed', bulk: false, submitter_present: true },
+    });
     toast.success('Marked reviewed');
     supabase.functions.invoke('notify-admin', { body: { submissionId: id, action: 'approved' } }).catch(console.error);
     loadSubmissions();
@@ -344,7 +350,11 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
     if (!ok) return;
 
-    window.posthog?.capture('admin_bulk_action', { action_type: 'approve', count: ids.length });
+    void recordAuditEvents(ids, {
+      event_name: 'symbol_moderation_decision',
+      subject_type: 'symbol_submission',
+      properties: { decision: 'reviewed', bulk: true, batch_size: ids.length },
+    });
     toast.success(`${ids.length} marked reviewed`);
     setSelectedIds(new Set());
     loadSubmissions();
@@ -392,10 +402,17 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
 
     if (ok) {
-      window.posthog?.capture(
-        rejectingBulk ? 'admin_bulk_action' : 'admin_submission_rejected',
-        rejectingBulk ? { action_type: 'reject', count: ids.length } : { symbol_id: ids[0] },
-      );
+      void recordAuditEvents(ids, {
+        event_name: 'symbol_moderation_decision',
+        subject_type: 'symbol_submission',
+        properties: {
+          decision: 'denied',
+          visibility_after: 'hidden',
+          rejection_reason: rejectionReason.trim(),
+          bulk: rejectingBulk,
+          batch_size: ids.length,
+        },
+      });
       toast.success(ids.length > 1 ? `${ids.length} rejected and hidden` : 'Rejected and hidden');
       if (!rejectingBulk) {
         supabase.functions
