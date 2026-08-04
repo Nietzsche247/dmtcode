@@ -502,11 +502,23 @@ export const SymbolSubmissionModeration = () => {
               Unreviewed
               {stats.unreviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.unreviewed}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
-            <TabsTrigger value="denied">Rejected</TabsTrigger>
-            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="reviewed">
+              Reviewed
+              {stats.reviewed > 0 && <Badge variant="secondary" className="ml-2">{stats.reviewed}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="denied">
+              Rejected
+              {stats.denied > 0 && <Badge variant="secondary" className="ml-2">{stats.denied}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="all">
+              All
+              <Badge variant="secondary" className="ml-2">
+                {stats.unreviewed + stats.reviewed + stats.denied}
+              </Badge>
+            </TabsTrigger>
           </TabsList>
         </Tabs>
+
 
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="flex items-center gap-2">
