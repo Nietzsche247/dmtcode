@@ -323,7 +323,13 @@ export const SymbolSubmissionModeration = () => {
       event_name: 'symbol_moderation_decision',
       subject_type: 'symbol_submission',
       subject_id: id,
-      properties: { decision: 'reviewed', bulk: false, submitter_present: true },
+      properties: {
+        decision: 'reviewed',
+        bulk: false,
+        // Pre-account rows carry no submitter. Recorded so the trail can
+        // separate legacy captures from account-gated ones later.
+        submitter_present: Boolean(submissions.find((s) => s.id === id)?.user_id),
+      },
     });
     toast.success('Marked reviewed');
     supabase.functions.invoke('notify-admin', { body: { submissionId: id, action: 'approved' } }).catch(console.error);
