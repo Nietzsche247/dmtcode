@@ -692,16 +692,47 @@ export const SymbolSubmissionModeration = () => {
       </Card>
 
       {selectedIds.size > 0 && (
-        <Card className="p-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm">{selectedIds.size} selected</span>
-          <Button size="sm" onClick={handleBulkApprove} disabled={bulkLoading}>
-            {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
-            Mark reviewed
-          </Button>
-          <Button size="sm" variant="destructive" onClick={openBulkRejectModal} disabled={bulkLoading}>
-            <X className="w-4 h-4 mr-1" />
-            Reject and hide
-          </Button>
+        <Card className="p-4 space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm">
+              {selectedIds.size} selected
+              {curatedSelectedRows.length > 0 && (
+                <span className="text-muted-foreground">
+                  {' '}
+                  ({curatedSelectedRows.length} curated,{' '}
+                  {selectedIds.size - curatedSelectedRows.length} observer)
+                </span>
+              )}
+            </span>
+            <Button size="sm" onClick={handleBulkApprove} disabled={bulkLoading}>
+              {bulkLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4 mr-1" />}
+              Mark reviewed
+            </Button>
+            <Button size="sm" variant="destructive" onClick={openBulkRejectModal} disabled={bulkLoading}>
+              <X className="w-4 h-4 mr-1" />
+              Reject and hide
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 border-t pt-3">
+            <span className="text-sm text-muted-foreground">Corpus classification:</span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openCuratedModal(false)}
+              disabled={bulkLoading}
+            >
+              Mark as observer records
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openCuratedModal(true)}
+              disabled={bulkLoading}
+            >
+              Mark as curated examples
+            </Button>
+          </div>
         </Card>
       )}
 
