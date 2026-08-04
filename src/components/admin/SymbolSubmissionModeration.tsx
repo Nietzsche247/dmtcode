@@ -123,11 +123,15 @@ export const SymbolSubmissionModeration = () => {
   const loadStats = useCallback(async () => {
     const cutoff72 = new Date(Date.now() - WINDOW_MS).toISOString();
 
-    const base = () =>
-      supabase
+    // The checkbox ADDS curated examples to the corpus. It used to swap the
+    // corpus, which hid every observer row whenever it was ticked and hid
+    // every curated row whenever it was not.
+    const base = () => {
+      const q = supabase
         .from('symbol_submissions')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_curated_example', showCurated);
+        .select('id', { count: 'exact', head: true });
+      return showCurated ? q : q.eq('is_curated_example', false);
+    };
 
     const [unreviewed, reviewed, denied, overdue, hidden] = await Promise.all([
       base().eq('moderation_status', 'unreviewed'),
