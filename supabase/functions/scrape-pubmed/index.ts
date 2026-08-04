@@ -5,14 +5,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SEARCH_TERMS = [
-  'N,N-DMT',
-  'dimethyltryptamine',
-  'ayahuasca',
-  '5-MeO-DMT',
-  'psilocybin',
-  'psychedelic phenomenology',
+// PubMed's clinical index is the wrong instrument for a phenomenology library.
+// Querying bare substance names pulls in acronym collisions (multiple-sclerosis
+// "DMT" = disease-modifying therapy, "LSD-1" = lysine-specific demethylase) and
+// unrelated clinical trials. So the query REQUIRES a perceptual/experiential
+// term to co-occur with a substance or sober-perception term, and explicitly
+// excludes the known collisions.
+
+const PERCEPTUAL_TERMS = [
+  'phenomenology', 'phenomenological', 'hallucination', 'hallucinations',
+  'hallucinogenic experience', 'visual imagery', 'visual hallucination',
+  'altered state of consciousness', 'altered states of consciousness',
+  'consciousness', 'entity encounter', 'entity experience',
+  'mystical experience', 'ego dissolution', 'form constant', 'form constants',
+  'subjective experience', 'first-person report', 'visionary',
 ];
+
+const SUBSTANCE_OR_SOBER_TERMS = [
+  'dimethyltryptamine', 'N,N-DMT', '5-MeO-DMT', 'ayahuasca', 'ibogaine',
+  'psilocybin', 'lysergic acid diethylamide', 'psychedelic', 'psychedelics',
+  'tryptamine', 'tryptamines', 'serotonergic hallucinogen',
+  // sober perception of the same phenomena
+  'meditation', 'sensory deprivation', 'near-death experience',
+  'hypnagogic', 'closed-eye visual',
+];
+
+const EXCLUSIONS = [
+  'disease-modifying therapy', 'disease modifying therapy',
+  'disease-modifying therapies', 'disease modifying therapies',
+  'multiple sclerosis', 'LSD1', 'LSD-1',
+  'lysine-specific demethylase', 'lysine specific demethylase',
+  'KDM1A',
+];
+
+const orGroup = (terms: string[]) =>
+  `(${terms.map((t) => `"${t}"[tiab]`).join(' OR ')})`;
+
+// Exported shape is a single auditable query string, logged with every run.
+const PUBMED_QUERY =
+  `(${orGroup(PERCEPTUAL_TERMS)} AND ${orGroup(SUBSTANCE_OR_SOBER_TERMS)})` +
+  ` NOT ${orGroup(EXCLUSIONS)}`;
+
 
 const EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
 
