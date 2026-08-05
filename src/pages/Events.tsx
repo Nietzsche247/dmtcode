@@ -67,6 +67,8 @@ const Events = () => {
   const jsonLd = useMemo(() => {
     const items = allEvents
       .filter(e => e.event_date && e.title)
+      .slice()
+      .sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime())
       .map((e, idx) => {
         const ev: Record<string, unknown> = {
           "@type": "Event",
