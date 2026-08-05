@@ -35,7 +35,37 @@ function iso(y: number, mo: number, d: number): string | null {
   return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
-interface Found { start: string; end: string; confidence: string; }
+interface JsonLdExtras {
+  image_url: string | null;
+  event_status: string | null;
+  geo_lat: number | null;
+  geo_lng: number | null;
+  ticket_price: number | null;
+  ticket_currency: string | null;
+  ticket_url: string | null;
+  ticket_availability: string | null;
+  lineup: string[] | null;
+}
+
+interface Found { start: string; end: string; confidence: string; extras?: JsonLdExtras | null; }
+
+const stripSchema = (v: unknown): string | null => {
+  if (typeof v !== "string" || !v.trim()) return null;
+  return v.replace(/^https?:\/\/schema\.org\//i, "").trim() || null;
+};
+const num = (v: unknown): number | null => {
+  if (v === null || v === undefined || v === "") return null;
+  const n = typeof v === "number" ? v : parseFloat(String(v).replace(/[^0-9.\-]/g, ""));
+  return Number.isFinite(n) ? n : null;
+};
+const first = (v: unknown): any => (Array.isArray(v) ? v[0] : v);
+
+const STATUS_MAP: Record<string, string> = {
+  eventscheduled: "scheduled",
+  eventcancelled: "cancelled",
+  eventpostponed: "postponed",
+  eventmovedonline: "moved_online",
+};
 
 function plausible(f: Found): boolean {
   const now = Date.now();
@@ -65,13 +95,64 @@ function fromJsonLd(html: string): Found | null {
     const k = Object.keys(n).find((x) => x.toLowerCase() === key.toLowerCase());
     return k ? n[k] : undefined;
   };
+  const extrasOf = (n: any): JsonLdExtras => {
+    let image_url: string | null = null;
+    try {
+      const img = first(pick(n, "image"));
+      if (typeof img === "string") image_url = img || null;
+      else if (img && typeof img === "object") image_url = (pick(img, "url") as string) ?? null;
+    } catch { /* null-safe */ }
+
+    let event_status: string | null = null;
+    try {
+      const s = stripSchema(pick(n, "eventStatus"));
+      event_status = s ? (STATUS_MAP[s.toLowerCase()] ?? null) : null;
+    } catch { /* null-safe */ }
+
+    let geo_lat: number | null = null, geo_lng: number | null = null;
+    try {
+      const loc = first(pick(n, "location"));
+      const geo = loc && typeof loc === "object" ? first(pick(loc, "geo")) : null;
+      if (geo && typeof geo === "object") {
+        geo_lat = num(pick(geo, "latitude"));
+        geo_lng = num(pick(geo, "longitude"));
+      }
+    } catch { /* null-safe */ }
+
+    let ticket_price: number | null = null, ticket_currency: string | null = null;
+    let ticket_url: string | null = null, ticket_availability: string | null = null;
+    try {
+      const off = first(pick(n, "offers"));
+      if (off && typeof off === "object") {
+        ticket_price = num(pick(off, "price"));
+        const cur = pick(off, "priceCurrency");
+        ticket_currency = typeof cur === "string" && cur ? cur : null;
+        const u = pick(off, "url");
+        ticket_url = typeof u === "string" && u ? u : null;
+        ticket_availability = stripSchema(pick(off, "availability"));
+      }
+    } catch { /* null-safe */ }
+
+    let lineup: string[] | null = null;
+    try {
+      const p = pick(n, "performer");
+      const arr = p === undefined || p === null ? [] : (Array.isArray(p) ? p : [p]);
+      const names = arr
+        .map((x: any) => (typeof x === "string" ? x : (x && typeof x === "object" ? (pick(x, "name") as string) : null)))
+        .filter((x: any) => typeof x === "string" && x.trim().length > 0);
+      lineup = names.length ? names : null;
+    } catch { /* null-safe */ }
+
+    return { image_url, event_status, geo_lat, geo_lng, ticket_price, ticket_currency, ticket_url, ticket_availability, lineup };
+  };
+
   for (const n of nodes) {
     const t = ([] as unknown[]).concat((pick(n, "@type") as unknown) ?? []).map(String);
     if (!t.some((x) => /event|festival/i.test(x))) continue;
     const startDate = pick(n, "startDate");
     const endDate = pick(n, "endDate");
     if (!startDate) continue;
-    const f = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld" };
+    const f: Found = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld", extras: extrasOf(n) };
     if (plausible(f)) cands.push(f);
   }
   cands.sort((a, b) => a.start.localeCompare(b.start));
@@ -151,7 +232,7 @@ Deno.serve(async (_req) => {
           const body = await res2.text();
           const f2 = fromJsonLd(body) ?? fromText(body);
           if (f2) {
-            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex" };
+            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex", extras: f2.extras ?? null };
             via = "rendered";
             fetchError = "";
           }
@@ -170,6 +251,22 @@ Deno.serve(async (_req) => {
         const startMs = Date.parse(found.start);
         const match = (existing ?? []).find((e) => Math.abs(Date.parse(e.event_date) - startMs) <= 90 * 86400000);
 
+        // Additive enrichment columns, derived from the JSON-LD already parsed above.
+        const ex = found.extras ?? null;
+        const enrich = {
+          festival_id: w.id,
+          edition_year: Number.isFinite(parseInt(found.start.slice(0, 4), 10)) ? parseInt(found.start.slice(0, 4), 10) : null,
+          image_url: ex?.image_url ?? null,
+          event_status: ex?.event_status ?? null,
+          geo_lat: ex?.geo_lat ?? null,
+          geo_lng: ex?.geo_lng ?? null,
+          ticket_price: ex?.ticket_price ?? null,
+          ticket_currency: ex?.ticket_currency ?? null,
+          ticket_url: ex?.ticket_url ?? null,
+          ticket_availability: ex?.ticket_availability ?? null,
+          lineup: ex?.lineup ?? null,
+        };
+
         if (match && match.is_approved) {
           stats.skipped++;
           result = `already_approved:${match.title}|${via}`;
@@ -180,10 +277,16 @@ Deno.serve(async (_req) => {
               end_date: found.end,
               scrape_confidence: found.confidence,
               last_scraped_at: new Date().toISOString(),
+              ...enrich,
             }).eq("id", match.id);
             stats.updated++;
             result = `updated_dates:${found.start}|${via}`;
           } else {
+            // Dates unchanged: still backfill the enrichment columns on the existing row.
+            await supabase.from("events").update({
+              last_scraped_at: new Date().toISOString(),
+              ...enrich,
+            }).eq("id", match.id);
             stats.skipped++;
             result = `unchanged|${via}`;
           }
@@ -208,6 +311,7 @@ Deno.serve(async (_req) => {
               scraped_from: w.source_url,
               scrape_confidence: found.confidence,
               last_scraped_at: new Date().toISOString(),
+              ...enrich,
             });
             if (iErr) throw new Error(iErr.message);
             stats.inserted++;
