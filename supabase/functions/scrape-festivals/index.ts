@@ -18,7 +18,13 @@ const DASH = "(?:[-\\u2010-\\u2015\\u2022\\u00b7/]{1,3}|to|until|through|thru|au
 const ORD = "(?:st|nd|rd|th)?";
 const WD = "(?:\\s*(?:mon|tues?|wednes|thurs?|fri|satur|sun)day,?)?";
 const DE = "(?:de\\s+|of\\s+)?";
-const UA = "Mozilla/5.0 (compatible; dmtcode-festival-scraper/2.0; +https://dmtcode.com)";
+const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36";
+const BROWSER_HEADERS: Record<string, string> = {
+  "User-Agent": UA,
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Upgrade-Insecure-Requests": "1",
+};
 
 function m(name: string): number {
   const k = name.toLowerCase().replace(/\.$/, "");
