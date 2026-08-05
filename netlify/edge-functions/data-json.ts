@@ -602,6 +602,7 @@ export default async (req: Request): Promise<Response> => {
     articles: articlesFeed,
     registry_glyphs: registryGlyphsFeed,
     guides: guidesFeed,
+    retreats: retreatsFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
     symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
