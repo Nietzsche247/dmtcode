@@ -2108,8 +2108,8 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       };
       const todayIso = new Date().toISOString().slice(0, 10);
       const [upRes, pastRes, reRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/retreats?is_approved=eq.true&select=id,name,description,location,country,website_url&order=created_at.desc&limit=12`, { headers }),
       ]);
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
