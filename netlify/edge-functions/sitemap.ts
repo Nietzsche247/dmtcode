@@ -103,7 +103,6 @@ async function page(
 }
 
 type Loc = "en" | "es" | "de";
-const LOCALES: Loc[] = ["en", "es", "de"];
 
 type Entry = {
   path: string;
