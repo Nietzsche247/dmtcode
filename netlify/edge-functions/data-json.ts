@@ -293,6 +293,11 @@ export default async (req: Request): Promise<Response> => {
       "slug,question,short_answer,evidence_grade,what_supports,what_weakens,what_is_unknown,what_would_change,related_paths,last_reviewed,updated_at,sort_order",
       "is_published=eq.true"
     ),
+    fetchAll(
+      "retreats",
+      "id,name,description,details,location,country,website_url,tags,next_start_date,next_end_date",
+      "is_approved=eq.true"
+    ),
   ]);
 
   const voteCounts = await fetchVoteCounts();
