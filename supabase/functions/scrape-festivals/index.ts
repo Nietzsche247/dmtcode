@@ -130,8 +130,9 @@ Deno.serve(async (_req) => {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(w.source_url, { signal: ctrl.signal, redirect: "follow", headers: { "User-Agent": UA } });
+      const res = await fetch(w.source_url, { signal: ctrl.signal, redirect: "follow", headers: BROWSER_HEADERS });
       clearTimeout(timer);
+      // 401/403/429 are bot-blocks, not real failures: fall through to the rendered path.
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       found = fromJsonLd(html) ?? fromText(html);
@@ -140,15 +141,20 @@ Deno.serve(async (_req) => {
     }
 
     if (!found) {
-      // Headless-render fallback for JS-built SPA sites via the Jina Reader proxy.
+      // Headless-render fallback for JS-built SPA sites and bot-blocked hosts, via the Jina Reader proxy.
       try {
         const ctrl2 = new AbortController();
         const timer2 = setTimeout(() => ctrl2.abort(), 25000);
         const res2 = await fetch(`https://r.jina.ai/${w.source_url}`, { signal: ctrl2.signal, redirect: "follow", headers: { Accept: "text/plain", "User-Agent": UA } });
         clearTimeout(timer2);
         if (res2.ok) {
-          const f2 = fromText(await res2.text());
-          if (f2) { found = { start: f2.start, end: f2.end, confidence: "render-regex" }; via = "rendered"; }
+          const body = await res2.text();
+          const f2 = fromJsonLd(body) ?? fromText(body);
+          if (f2) {
+            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex" };
+            via = "rendered";
+            fetchError = "";
+          }
         }
       } catch { /* rendering fallback is best-effort */ }
     }
