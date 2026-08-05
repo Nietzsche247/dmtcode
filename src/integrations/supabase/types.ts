@@ -780,12 +780,15 @@ export type Database = {
           intake_enabled: boolean
           is_approved: boolean
           jurisdiction_legal_status: string | null
+          last_scraped_at: string | null
           location: string | null
           medical_screening: boolean
           organizer: string | null
           price_band: string | null
           promo_code: string | null
           referral_url: string | null
+          scrape_confidence: string | null
+          scraped_from: string | null
           submitted_by: string | null
           title: string
           updated_at: string
@@ -804,12 +807,15 @@ export type Database = {
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
+          last_scraped_at?: string | null
           location?: string | null
           medical_screening?: boolean
           organizer?: string | null
           price_band?: string | null
           promo_code?: string | null
           referral_url?: string | null
+          scrape_confidence?: string | null
+          scraped_from?: string | null
           submitted_by?: string | null
           title: string
           updated_at?: string
@@ -828,12 +834,15 @@ export type Database = {
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
+          last_scraped_at?: string | null
           location?: string | null
           medical_screening?: boolean
           organizer?: string | null
           price_band?: string | null
           promo_code?: string | null
           referral_url?: string | null
+          scrape_confidence?: string | null
+          scraped_from?: string | null
           submitted_by?: string | null
           title?: string
           updated_at?: string
@@ -872,6 +881,84 @@ export type Database = {
           id?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      festival_scrape_log: {
+        Row: {
+          checked: number | null
+          detail: Json | null
+          errors: number | null
+          found: number | null
+          id: string
+          inserted: number | null
+          run_at: string | null
+          skipped: number | null
+          updated: number | null
+        }
+        Insert: {
+          checked?: number | null
+          detail?: Json | null
+          errors?: number | null
+          found?: number | null
+          id?: string
+          inserted?: number | null
+          run_at?: string | null
+          skipped?: number | null
+          updated?: number | null
+        }
+        Update: {
+          checked?: number | null
+          detail?: Json | null
+          errors?: number | null
+          found?: number | null
+          id?: string
+          inserted?: number | null
+          run_at?: string | null
+          skipped?: number | null
+          updated?: number | null
+        }
+        Relationships: []
+      }
+      festival_watchlist: {
+        Row: {
+          active: boolean | null
+          cadence: string | null
+          created_at: string | null
+          festival_name: string
+          id: string
+          last_checked_at: string | null
+          last_result: string | null
+          official_url: string | null
+          region: string | null
+          relevance: string
+          source_url: string
+        }
+        Insert: {
+          active?: boolean | null
+          cadence?: string | null
+          created_at?: string | null
+          festival_name: string
+          id?: string
+          last_checked_at?: string | null
+          last_result?: string | null
+          official_url?: string | null
+          region?: string | null
+          relevance: string
+          source_url: string
+        }
+        Update: {
+          active?: boolean | null
+          cadence?: string | null
+          created_at?: string | null
+          festival_name?: string
+          id?: string
+          last_checked_at?: string | null
+          last_result?: string | null
+          official_url?: string | null
+          region?: string | null
+          relevance?: string
+          source_url?: string
         }
         Relationships: []
       }
