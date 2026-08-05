@@ -43,8 +43,7 @@ const orGroup = (terms: string[]) =>
 
 // Exported shape is a single auditable query string, logged with every run.
 const PUBMED_QUERY =
-  `(${orGroup(PERCEPTUAL_TERMS)} AND ${orGroup(SUBSTANCE_OR_SOBER_TERMS)})` +
-  ` NOT ${orGroup(EXCLUSIONS)}`;
+  `("N,N-dimethyltryptamine"[tiab] OR "dimethyltryptamine"[tiab] OR "N,N-DMT"[tiab] OR ayahuasca[tiab] OR "Banisteriopsis"[tiab] OR harmine[tiab] OR harmaline[tiab] OR psilocybin[tiab] OR psilocin[tiab] OR "Psilocybe"[tiab] OR "5-MeO-DMT"[tiab] OR "5-methoxy-N,N-dimethyltryptamine"[tiab] OR bufotenin[tiab] OR "lysergic acid diethylamide"[tiab] OR mescaline[tiab] OR ibogaine[tiab] OR "serotonergic psychedelic"[tiab] OR "classic psychedelic"[tiab] OR entheogen[tiab]) NOT ("disease-modifying"[tiab] OR "lumpy skin"[tiab] OR dimethoate[tiab] OR "syndesmotic"[tiab] OR "lysosomal storage disease"[tiab] OR "histone demethylase"[tiab] OR "Direct Mass"[tiab])`;
 
 
 const EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
