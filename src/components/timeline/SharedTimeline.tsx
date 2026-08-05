@@ -108,6 +108,22 @@ export default function SharedTimeline({
                     {item.subtitle}
                   </p>
                 )}
+                {item.body && (
+                  <div className="mt-3 space-y-2">
+                    {item.body
+                      .split(/\n\s*\n/)
+                      .map((p) => p.trim())
+                      .filter(Boolean)
+                      .map((p, i) => (
+                        <p
+                          key={i}
+                          className="text-sm text-muted-foreground leading-relaxed"
+                        >
+                          {p}
+                        </p>
+                      ))}
+                  </div>
+                )}
                 {item.meta && <div className="mt-2">{item.meta}</div>}
               </Wrapper>
             </Card>
