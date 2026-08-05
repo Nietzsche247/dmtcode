@@ -194,6 +194,9 @@ export default async (request: Request, context: Context) => {
   try {
     const url = new URL(request.url);
     const seg = url.pathname.split("/").filter(Boolean);
+    // Strip a leading locale segment. Machine endpoints are checked against the
+    // FULL original pathname below and are English-only.
+    const locale: Loc = LOCALES.has(seg[0] ?? "") ? (seg.shift() as Loc) : "en";
     const kind = seg[0];
     const id = seg[1] ?? "";
 
@@ -210,50 +213,50 @@ export default async (request: Request, context: Context) => {
 
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
-      return await renderPrepare(context);
+      return await renderPrepare(context, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
-      return await renderEvidenceMap(context);
+      return await renderEvidenceMap(context, locale);
     }
     if (kind === "timeline" && seg.length === 1) {
-      return await renderTimelineIndex(context, request);
+      return await renderTimelineIndex(context, request, locale);
     }
     if (kind === "timeline" && seg.length === 2 && seg[1]) {
-      return await renderTimelineEntry(context, request, seg[1]);
+      return await renderTimelineEntry(context, request, seg[1], locale);
     }
     if (kind === "faq" && seg.length === 1) {
-      return await renderFaq(context);
+      return await renderFaq(context, locale);
     }
     if (seg.length === 0) {
-      return await renderStatic(context, "home");
+      return await renderStatic(context, "home", locale);
     }
     if (seg.length === 1 && STATIC_PAGES[kind]) {
-      return await renderStatic(context, kind);
+      return await renderStatic(context, kind, locale);
     }
     if (kind === "theories" && seg.length === 1) {
-      return await renderTheories(context);
+      return await renderTheories(context, locale);
     }
     if (kind === "retreats" && seg.length === 1) {
-      return await renderRetreats(context);
+      return await renderRetreats(context, locale);
     }
     if (kind === "articles" && seg.length === 1) {
-      return await renderArticlesIndex(context);
+      return await renderArticlesIndex(context, locale);
     }
     if (kind === "articles" && seg.length === 2 && seg[1]) {
-      return await renderArticleDetail(context, seg[1]);
+      return await renderArticleDetail(context, seg[1], locale);
     }
-    if (kind === "guides" && seg.length === 1) { return await renderGuidesIndex(context); }
-    if (kind === "guides" && seg.length === 2 && seg[1]) { return await renderGuideDetail(context, seg[1]); }
-    if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
+    if (kind === "guides" && seg.length === 1) { return await renderGuidesIndex(context, locale); }
+    if (kind === "guides" && seg.length === 2 && seg[1]) { return await renderGuideDetail(context, seg[1], locale); }
+    if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1], locale); }
 
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
-      return await renderEventDetail(context, id);
+      return await renderEventDetail(context, id, locale);
     }
     if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
-      return await renderRetreatDetail(context, id);
+      return await renderRetreatDetail(context, id, locale);
     }
     if (kind === "protocols" && seg.length === 2 && seg[1]) {
-      return await renderProtocolDetail(context, seg[1]);
+      return await renderProtocolDetail(context, seg[1], locale);
     }
 
     // Fail open: without backend credentials nothing is prerendered and nothing 404s.
@@ -263,7 +266,7 @@ export default async (request: Request, context: Context) => {
 
     // Tag hub: /registry/tag/:tag must be matched before the uuid detail branch.
     if (kind === "registry" && seg.length === 3 && seg[1] === "tag" && seg[2]) {
-      return await renderTagHub(context, decodeURIComponent(seg[2]));
+      return await renderTagHub(context, decodeURIComponent(seg[2]), locale);
     }
 
 
