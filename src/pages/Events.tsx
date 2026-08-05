@@ -7,6 +7,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import EventsTimeline from "@/components/events/EventsTimeline";
 import TrialsTimeline from "@/components/events/TrialsTimeline";
 import RetreatColumnList from "@/components/events/RetreatColumnList";
+import FestivalsList from "@/components/events/FestivalsList";
 import UpcomingEventsList from "@/components/events/UpcomingEventsList";
 import ActiveTrialsList from "@/components/events/ActiveTrialsList";
 import EventSubmissionModal from "@/components/events/EventSubmissionModal";
@@ -50,7 +51,7 @@ const Events = () => {
       const rows = (data || []) as EventRow[];
       setAllEvents(rows);
       const distinct = Array.from(
-        new Set(rows.map(r => r.event_type).filter((v): v is string => !!v))
+        new Set(rows.map(r => r.event_type).filter((v): v is string => !!v && v !== "festival"))
       ).sort();
       setAvailableTypes(distinct);
     })();
@@ -208,7 +209,7 @@ const Events = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Soonest first. Past events are kept at the bottom of this page for the record.
               </p>
-              <EventsTimeline filter="upcoming" types={typeFilters} emptyLabel="No upcoming events yet." />
+              <EventsTimeline filter="upcoming" types={typeFilters} excludeTypes={["festival"]} emptyLabel="No upcoming events yet." />
             </section>
 
             <section>
@@ -251,6 +252,16 @@ const Events = () => {
               </p>
             </section>
 
+            <section>
+              <h2 className="text-2xl font-semibold mb-1">Festivals</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Psychedelic-culture festivals worldwide. A listing is not an endorsement.
+              </p>
+              <FestivalsList />
+            </section>
+
+
+
             <div className="border border-border rounded-lg p-4 bg-card">
               <h3 className="text-lg font-semibold mb-3 text-foreground">Next 10 Events</h3>
               <UpcomingEventsList />
@@ -265,7 +276,7 @@ const Events = () => {
         <section className="mb-12">
           <h2 className="text-lg font-semibold mb-1 text-muted-foreground">Past events</h2>
           <p className="text-xs text-muted-foreground mb-3">Past events, kept for the record.</p>
-          <EventsTimeline filter="past" types={typeFilters} muted emptyLabel="No past events on record." />
+          <EventsTimeline filter="past" types={typeFilters} excludeTypes={["festival"]} muted emptyLabel="No past events on record." />
         </section>
 
 
