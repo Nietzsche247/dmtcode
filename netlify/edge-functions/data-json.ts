@@ -450,6 +450,21 @@ export default async (req: Request): Promise<Response> => {
     external_url: (r.url as string) || undefined,
   }));
 
+  const retreatsFeed = retreats.map((r) => compact({
+    id: String(r.id),
+    url: `${SITE}/retreats/${r.id}`,
+    name: (r.name as string) || undefined,
+    description: (r.description as string) || undefined,
+    details: (r.details as string) || undefined,
+    location: (r.location as string) || undefined,
+    country: (r.country as string) || undefined,
+    website_url: (r.website_url as string) || undefined,
+    tags: (r.tags as string[]) || [],
+    next_start_date: (r.next_start_date as string) || undefined,
+    next_end_date: (r.next_end_date as string) || undefined,
+  }));
+
+
   const articlesFeed = articles.map((r) => {
     const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
     const bibRefs = ((r.related_bibliography as string[]) || []).filter((x) => bibIdSet.has(String(x)));
