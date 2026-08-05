@@ -2333,6 +2333,12 @@ type HeadOpts = {
   title: string;
   description?: string;
   canonical: string;
+  // Locale-agnostic path (e.g. "/faq"). When present (or derivable from
+  // `canonical`), the canonical URL is rewritten for the active locale and the
+  // full hreflang alternate set is emitted. Never set for machine endpoints or
+  // /agent, which are English-only infrastructure.
+  canonicalPath?: string;
+  locale?: Loc;
   ogType?: "website" | "article";
   ogImage?: string;
   // Width and height are emitted only when BOTH are known. Never guess them.
@@ -2345,6 +2351,28 @@ type HeadOpts = {
 function buildHead(o: HeadOpts): string {
   const desc = (o.description || "").trim();
   const img = (o.ogImage || "").trim() || DEFAULT_OG_IMAGE;
+  const locale: Loc = o.locale || "en";
+  // Derive the locale-agnostic path when the caller passed a full canonical URL
+  // on this site and no explicit canonicalPath.
+  let path = o.canonicalPath || "";
+  if (!path && o.canonical && o.canonical.startsWith(SITE)) {
+    const p = o.canonical.slice(SITE.length) || "/";
+    const m = p.match(/^\/(es|de)(\/.*)?$/);
+    path = m ? (m[2] || "/") : p;
+  }
+  // /agent is English-only infrastructure: no locale mirrors, no alternates.
+  const localizable = !!path && !path.startsWith("/agent");
+  const canonical = localizable
+    ? `${SITE}${locale !== "en" ? "/" + locale : ""}${path === "/" ? "/" : path}`
+    : o.canonical;
+  const alternates = localizable
+    ? [
+        `<link rel="alternate" hreflang="en" href="${esc(SITE + path)}" />`,
+        `<link rel="alternate" hreflang="es" href="${esc(SITE + "/es" + (path === "/" ? "" : path))}" />`,
+        `<link rel="alternate" hreflang="de" href="${esc(SITE + "/de" + (path === "/" ? "" : path))}" />`,
+        `<link rel="alternate" hreflang="x-default" href="${esc(SITE + path)}" />`,
+      ]
+    : [];
   const dims =
     o.ogImageWidth && o.ogImageHeight
       ? [
@@ -2355,12 +2383,13 @@ function buildHead(o: HeadOpts): string {
   return [
     `<title>${esc(o.title)}</title>`,
     desc ? `<meta name="description" content="${esc(desc)}" />` : "",
-    `<link rel="canonical" href="${esc(o.canonical)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    ...alternates,
     `<meta property="og:site_name" content="${esc(SITE_NAME)}" />`,
     `<meta property="og:type" content="${o.ogType || "website"}" />`,
     `<meta property="og:title" content="${esc(o.title)}" />`,
     desc ? `<meta property="og:description" content="${esc(desc)}" />` : "",
-    `<meta property="og:url" content="${esc(o.canonical)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
     `<meta property="og:image" content="${esc(img)}" />`,
     ...dims,
     `<meta name="twitter:card" content="summary_large_image" />`,
@@ -2380,6 +2409,7 @@ function renderShell(
   html: string,
   head: string,
   body: string,
+  locale: Loc = "en",
 ): string {
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/gi, "")
@@ -2388,6 +2418,10 @@ function renderShell(
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
+  out = out.replace(/<html([^>]*)>/i, (_m, attrs: string) => {
+    const cleaned = String(attrs).replace(/\s+lang=["'][^"']*["']/gi, "");
+    return `<html lang="${locale || "en"}"${cleaned}>`;
+  });
   out = out.replace(/<\/head>/i, `${head}\n</head>`);
   if (/<div id="root">\s*<\/div>/i.test(out)) {
     out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
@@ -2396,6 +2430,7 @@ function renderShell(
   }
   return out;
 }
+
 
 const PRERENDER_RESP_HEADERS = {
   "content-type": "text/html; charset=utf-8",
