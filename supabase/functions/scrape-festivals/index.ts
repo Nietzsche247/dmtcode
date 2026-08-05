@@ -59,11 +59,19 @@ function fromJsonLd(html: string): Found | null {
     } catch { /* tolerate malformed blocks */ }
   }
   const cands: Found[] = [];
+  // Key lookup is case-insensitive: musicfestivalwizard.com emits lowercase startdate/enddate.
+  const pick = (n: any, key: string): unknown => {
+    if (!n || typeof n !== "object") return undefined;
+    const k = Object.keys(n).find((x) => x.toLowerCase() === key.toLowerCase());
+    return k ? n[k] : undefined;
+  };
   for (const n of nodes) {
-    const t = ([] as unknown[]).concat(n?.["@type"] ?? []).map(String);
+    const t = ([] as unknown[]).concat((pick(n, "@type") as unknown) ?? []).map(String);
     if (!t.some((x) => /event|festival/i.test(x))) continue;
-    if (!n.startDate) continue;
-    const f = { start: String(n.startDate).slice(0, 10), end: String(n.endDate ?? n.startDate).slice(0, 10), confidence: "jsonld" };
+    const startDate = pick(n, "startDate");
+    const endDate = pick(n, "endDate");
+    if (!startDate) continue;
+    const f = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld" };
     if (plausible(f)) cands.push(f);
   }
   cands.sort((a, b) => a.start.localeCompare(b.start));
