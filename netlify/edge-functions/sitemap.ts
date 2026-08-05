@@ -102,12 +102,79 @@ async function page(
   return out;
 }
 
-export default async (request: Request) => {
-  const urls = STATIC.map(
-    ([p, pr, cf]) =>
-      `  <url><loc>${SITE}${p}</loc>` +
-      `<changefreq>${cf}</changefreq><priority>${pr}</priority></url>`
+type Loc = "en" | "es" | "de";
+
+type Entry = {
+  path: string;
+  lastmod?: string;
+  changefreq: string;
+  priority: string;
+  // /agent is English-only infrastructure: no locale mirrors, no alternates.
+  localized: boolean;
+};
+
+function renderUrlset(entries: Entry[], locale: Loc): string {
+  const rows: string[] = [];
+  for (const e of entries) {
+    if (!e.localized && locale !== "en") continue;
+    const prefix = e.localized && locale !== "en" ? `/${locale}` : "";
+    const alts = e.localized
+      ? [
+          `<xhtml:link rel="alternate" hreflang="en" href="${SITE}${e.path}"/>`,
+          `<xhtml:link rel="alternate" hreflang="es" href="${SITE}/es${e.path}"/>`,
+          `<xhtml:link rel="alternate" hreflang="de" href="${SITE}/de${e.path}"/>`,
+          `<xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${e.path}"/>`,
+        ].join("")
+      : "";
+    rows.push(
+      `  <url><loc>${SITE}${prefix}${e.path}</loc>` +
+        (e.lastmod ? `<lastmod>${e.lastmod}</lastmod>` : "") +
+        `<changefreq>${e.changefreq}</changefreq>` +
+        `<priority>${e.priority}</priority>${alts}</url>`
+    );
+  }
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ` +
+    `xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    rows.join("\n") +
+    `\n</urlset>`
   );
+}
+
+function renderIndex(): string {
+  const rows = ["/sitemap.xml", "/sitemap-es.xml", "/sitemap-de.xml"].map(
+    (p) => `  <sitemap><loc>${SITE}${p}</loc></sitemap>`
+  );
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    rows.join("\n") +
+    `\n</sitemapindex>`
+  );
+}
+
+export default async (request: Request) => {
+  const reqPath = new URL(request.url).pathname;
+  if (reqPath === "/sitemap-index.xml") {
+    return new Response(renderIndex(), {
+      headers: {
+        "content-type": "application/xml; charset=utf-8",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "netlify-cdn-cache-control":
+          "public, s-maxage=3600, stale-while-revalidate=86400, durable",
+      },
+    });
+  }
+  const locale: Loc =
+    reqPath === "/sitemap-es.xml" ? "es" : reqPath === "/sitemap-de.xml" ? "de" : "en";
+
+  const entries: Entry[] = STATIC.map(([p, pr, cf]) => ({
+    path: p,
+    changefreq: cf,
+    priority: pr,
+    localized: !p.startsWith("/agent"),
+  }));
 
   const addById = (
     prefix: string,
@@ -116,12 +183,13 @@ export default async (request: Request) => {
   ) => {
     for (const r of rows) {
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}${prefix}/${xesc(r.id)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>${priority}</priority></url>`
-      );
+      entries.push({
+        path: `${prefix}/${xesc(r.id)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority,
+        localized: true,
+      });
     }
   };
 
@@ -133,12 +201,13 @@ export default async (request: Request) => {
     for (const r of rows) {
       if (!r.slug) continue;
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}${prefix}/${xesc(r.slug)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>${priority}</priority></url>`
-      );
+      entries.push({
+        path: `${prefix}/${xesc(r.slug)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority,
+        localized: true,
+      });
     }
   };
 
@@ -192,10 +261,12 @@ export default async (request: Request) => {
     }
     for (const [tag, n] of counts) {
       if (n < 2 || CONTEXT_TAG_RE.test(tag)) continue;
-      urls.push(
-        `  <url><loc>${SITE}/registry/tag/${xesc(encodeURIComponent(tag))}</loc>` +
-          `<changefreq>weekly</changefreq><priority>0.6</priority></url>`
-      );
+      entries.push({
+        path: `/registry/tag/${xesc(encodeURIComponent(tag))}`,
+        changefreq: "weekly",
+        priority: "0.6",
+        localized: true,
+      });
     }
   } catch (_e) { /* skip */ }
 
@@ -230,12 +301,13 @@ export default async (request: Request) => {
       const slug = theorySlug(r.title || "");
       if (!slug) continue;
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}/theories/${xesc(slug)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>0.6</priority></url>`
-      );
+      entries.push({
+        path: `/theories/${xesc(slug)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority: "0.6",
+        localized: true,
+      });
     }
   } catch (_e) { /* skip */ }
 
@@ -273,16 +345,16 @@ export default async (request: Request) => {
         entries?: Array<{ id?: string }>;
       };
       const verifiedOn = tlFile?.provenance?.verified_on ?? "";
-      const tlLastmod = /^\d{4}-\d{2}-\d{2}$/.test(verifiedOn)
-        ? `<lastmod>${verifiedOn}</lastmod>`
-        : "";
+      const tlLastmod = /^\d{4}-\d{2}-\d{2}$/.test(verifiedOn) ? verifiedOn : undefined;
       for (const e of tlFile?.entries ?? []) {
         if (!e || !e.id) continue;
-        urls.push(
-          `  <url><loc>${SITE}/timeline/${xesc(e.id)}</loc>` +
-            `${tlLastmod}<changefreq>monthly</changefreq>` +
-            `<priority>0.6</priority></url>`
-        );
+        entries.push({
+          path: `/timeline/${xesc(e.id)}`,
+          lastmod: tlLastmod,
+          changefreq: "monthly",
+          priority: "0.6",
+          localized: true,
+        });
       }
     }
   } catch (_e) { /* skip */ }
@@ -290,13 +362,7 @@ export default async (request: Request) => {
 
 
 
-  const xml =
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    urls.join("\n") +
-    `\n</urlset>`;
-
-  return new Response(xml, {
+  return new Response(renderUrlset(entries, locale), {
     headers: {
       "content-type": "application/xml; charset=utf-8",
       "cache-control": "public, max-age=0, must-revalidate",
@@ -306,4 +372,6 @@ export default async (request: Request) => {
   });
 };
 
-export const config: Config = { path: "/sitemap.xml" };
+export const config: Config = {
+  path: ["/sitemap.xml", "/sitemap-es.xml", "/sitemap-de.xml", "/sitemap-index.xml"],
+};

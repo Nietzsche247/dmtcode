@@ -1,0 +1,52 @@
+{
+  "nav": {
+    "home": "Home",
+    "registry": "Registry",
+    "capture": "Capture",
+    "evidenceMap": "Evidence map",
+    "timeline": "Chronology",
+    "trials": "Trials",
+    "bibliography": "Research library",
+    "theories": "Open theories",
+    "articles": "Articles",
+    "guides": "Guides",
+    "protocols": "Protocols",
+    "events": "Events",
+    "retreats": "Retreats",
+    "forecasts": "Forecasts",
+    "glossary": "Glossary",
+    "methods": "Methods",
+    "critiques": "Critiques",
+    "openQuestions": "Open questions",
+    "nullReports": "Null reports",
+    "faq": "Questions and answers",
+    "about": "About",
+    "prepare": "Prepare",
+    "join": "Join"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "disclosure": "Disclosure",
+    "dataset": "Dataset",
+    "rights": "Open research. Cite the row."
+  },
+  "actions": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "search": "Search",
+    "filter": "Filter",
+    "readMore": "Read more",
+    "back": "Back",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "labels": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "notFound": "Not found",
+    "results": "Results",
+    "noResults": "No results"
+  }
+}

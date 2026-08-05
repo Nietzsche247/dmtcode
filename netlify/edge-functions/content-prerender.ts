@@ -133,10 +133,70 @@ function rowsToDl(pairs: Array<[string, unknown]>): string {
   );
 }
 
+// Path-based locale mirrors. English is the default and lives at unprefixed
+// paths; /es/* and /de/* mirror the same routes.
+type Loc = "en" | "es" | "de";
+const LOCALES = new Set(["es", "de"]);
+
+// Field-level translations for a single record. Returns {} for English, for a
+// missing table, or on any failure: a missing translation must NEVER blank the
+// source value.
+async function getTranslations(
+  table: string,
+  recordId: string,
+  locale: string,
+): Promise<Record<string, string>> {
+  if (locale === "en" || !locale || !recordId) return {};
+  if (!SUPABASE_URL || !SUPABASE_KEY) return {};
+  try {
+    const api =
+      `${SUPABASE_URL}/rest/v1/content_translations` +
+      `?table_name=eq.${encodeURIComponent(table)}` +
+      `&record_id=eq.${encodeURIComponent(recordId)}` +
+      `&locale=eq.${encodeURIComponent(locale)}` +
+      `&select=field,translated_text`;
+    const res = await fetch(api, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) return {};
+    const rows = (await res.json()) as Array<Record<string, unknown>>;
+    const out: Record<string, string> = {};
+    for (const r of rows) {
+      const f = String(r.field ?? "");
+      const t = String(r.translated_text ?? "");
+      if (f && t.trim()) out[f] = t;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+// Overlay translated fields onto a source row in place. Only non-empty
+// translations are applied, and only for the allowed fields when given.
+function overlay(
+  row: Record<string, unknown>,
+  tr: Record<string, string>,
+  only?: string[],
+): void {
+  for (const [k, v] of Object.entries(tr)) {
+    if (only && !only.includes(k)) continue;
+    if (v && v.trim()) row[k] = v;
+  }
+}
+
+
 export default async (request: Request, context: Context) => {
   try {
     const url = new URL(request.url);
     const seg = url.pathname.split("/").filter(Boolean);
+    // Strip a leading locale segment. Machine endpoints are checked against the
+    // FULL original pathname below and are English-only.
+    const locale: Loc = LOCALES.has(seg[0] ?? "") ? (seg.shift() as Loc) : "en";
     const kind = seg[0];
     const id = seg[1] ?? "";
 
@@ -153,50 +213,50 @@ export default async (request: Request, context: Context) => {
 
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
-      return await renderPrepare(context);
+      return await renderPrepare(context, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
-      return await renderEvidenceMap(context);
+      return await renderEvidenceMap(context, locale);
     }
     if (kind === "timeline" && seg.length === 1) {
-      return await renderTimelineIndex(context, request);
+      return await renderTimelineIndex(context, request, locale);
     }
     if (kind === "timeline" && seg.length === 2 && seg[1]) {
-      return await renderTimelineEntry(context, request, seg[1]);
+      return await renderTimelineEntry(context, request, seg[1], locale);
     }
     if (kind === "faq" && seg.length === 1) {
-      return await renderFaq(context);
+      return await renderFaq(context, locale);
     }
     if (seg.length === 0) {
-      return await renderStatic(context, "home");
+      return await renderStatic(context, "home", locale);
     }
     if (seg.length === 1 && STATIC_PAGES[kind]) {
-      return await renderStatic(context, kind);
+      return await renderStatic(context, kind, locale);
     }
     if (kind === "theories" && seg.length === 1) {
-      return await renderTheories(context);
+      return await renderTheories(context, locale);
     }
     if (kind === "retreats" && seg.length === 1) {
-      return await renderRetreats(context);
+      return await renderRetreats(context, locale);
     }
     if (kind === "articles" && seg.length === 1) {
-      return await renderArticlesIndex(context);
+      return await renderArticlesIndex(context, locale);
     }
     if (kind === "articles" && seg.length === 2 && seg[1]) {
-      return await renderArticleDetail(context, seg[1]);
+      return await renderArticleDetail(context, seg[1], locale);
     }
-    if (kind === "guides" && seg.length === 1) { return await renderGuidesIndex(context); }
-    if (kind === "guides" && seg.length === 2 && seg[1]) { return await renderGuideDetail(context, seg[1]); }
-    if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1]); }
+    if (kind === "guides" && seg.length === 1) { return await renderGuidesIndex(context, locale); }
+    if (kind === "guides" && seg.length === 2 && seg[1]) { return await renderGuideDetail(context, seg[1], locale); }
+    if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1], locale); }
 
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
-      return await renderEventDetail(context, id);
+      return await renderEventDetail(context, id, locale);
     }
     if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
-      return await renderRetreatDetail(context, id);
+      return await renderRetreatDetail(context, id, locale);
     }
     if (kind === "protocols" && seg.length === 2 && seg[1]) {
-      return await renderProtocolDetail(context, seg[1]);
+      return await renderProtocolDetail(context, seg[1], locale);
     }
 
     // Fail open: without backend credentials nothing is prerendered and nothing 404s.
@@ -206,7 +266,7 @@ export default async (request: Request, context: Context) => {
 
     // Tag hub: /registry/tag/:tag must be matched before the uuid detail branch.
     if (kind === "registry" && seg.length === 3 && seg[1] === "tag" && seg[2]) {
-      return await renderTagHub(context, decodeURIComponent(seg[2]));
+      return await renderTagHub(context, decodeURIComponent(seg[2]), locale);
     }
 
 
@@ -241,6 +301,8 @@ export default async (request: Request, context: Context) => {
         "upvotes,publication_consent,created_at,updated_at";
       const r = await getRow("symbol_submissions", id, "status=eq.approved", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Symbol not found | DMT Code", heading: "Symbol not found", text: "This symbol is not currently indexed or the link is out of date.", canonical: `${SITE}/registry`, backHref: `${SITE}/registry`, backLabel: "Visual symbol registry", marker: "registry-not-found" });
+
+      overlay(r, await getTranslations("symbol_submissions", String(r.id), locale));
 
       const communityTags = await getCommunityTags(String(r.id));
 
@@ -346,6 +408,7 @@ export default async (request: Request, context: Context) => {
         "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Trial not found | DMT Code", heading: "Trial not found", text: "This trial is not currently indexed or the link is out of date.", canonical: `${SITE}/trials`, backHref: `${SITE}/trials`, backLabel: "Clinical trials", marker: "trial-not-found" });
+      overlay(r, await getTranslations("clinical_trials", String(r.id), locale));
       const isRegisteredTrial =
         r.record_type === "registered_trial" ||
         (typeof r.trial_registry_id === "string" &&
@@ -452,6 +515,11 @@ export default async (request: Request, context: Context) => {
         "source_date,full_text,transcript,created_at,updated_at";
       const r = await getRow("bibliography", id, "is_approved=eq.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
+
+      // Bibliography overlays translate ONLY `summary`. Title, authors,
+      // journal, doi, abstract, tags and compounds stay as the source record:
+      // they are the citation glossary and must not be rewritten.
+      overlay(r, await getTranslations("bibliography", String(r.id), locale), ["summary"]);
 
       const desc =
         (r.summary && String(r.summary).trim()) ||
@@ -618,6 +686,7 @@ export default async (request: Request, context: Context) => {
       : null;
 
     const head = buildHead({
+    locale,
       title,
       description: metaDesc,
       canonical,
@@ -629,14 +698,14 @@ export default async (request: Request, context: Context) => {
       jsonLd: [ld, breadcrumbLd],
     });
 
-    const html = renderShell(await shellRes.text(), head, body);
+    const html = renderShell(await shellRes.text(), head, body, locale);
     return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
   } catch (_e) {
     return context.next();
   }
 };
 
-async function renderPrepare(context: Context): Promise<Response> {
+async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   if (!SUPABASE_URL || !SUPABASE_KEY) return shellRes;
 
@@ -887,6 +956,7 @@ async function renderPrepare(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -894,11 +964,11 @@ async function renderPrepare(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, datasetLd, faqLd, itemListLd, ...productLds],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderEvidenceMap(context: Context): Promise<Response> {
+async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/evidence-map`;
   const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
@@ -1015,6 +1085,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1022,7 +1093,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, articleLd, datasetLd, faqLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -1120,7 +1191,7 @@ function tlSorted(file: TlFile): TlEntry[] {
   return [...file.entries].sort((a, b) => a.date.sort_key.localeCompare(b.date.sort_key));
 }
 
-async function renderTimelineIndex(context: Context, request: Request): Promise<Response> {
+async function renderTimelineIndex(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const shellHtml = await shellRes.text();
   const canonical = `${SITE}/timeline`;
@@ -1128,6 +1199,7 @@ async function renderTimelineIndex(context: Context, request: Request): Promise<
 
   if (!file) {
     const head = buildHead({
+    locale,
       title: "Chronology | DMT Code",
       description: "A dated record of the published research, legal decisions and community claims behind the DMT code question.",
       canonical,
@@ -1136,7 +1208,7 @@ async function renderTimelineIndex(context: Context, request: Request): Promise<
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
 </article>`;
-    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+    return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
 
   const entries = tlSorted(file);
@@ -1259,6 +1331,7 @@ ${items}
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1266,10 +1339,10 @@ ${items}
     jsonLd: [organizationLd, breadcrumbLd, collectionLd, itemListLd],
   });
 
-  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderTimelineEntry(context: Context, request: Request, rawId: string): Promise<Response> {
+async function renderTimelineEntry(context: Context, request: Request, rawId: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const shellHtml = await shellRes.text();
   const id = decodeURIComponent(rawId).toLowerCase();
@@ -1279,6 +1352,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
   // Serve the shell and let the client render it, marked noindex.
   if (!file) {
     const head = buildHead({
+    locale,
       title: "Chronology record | DMT Code",
       canonical: `${SITE}/timeline/${id}`,
       robots: "noindex, follow",
@@ -1287,7 +1361,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
   <h1>Chronology record</h1>
   <p>The chronology is at <a href="${SITE}/timeline">/timeline</a>.</p>
 </article>`;
-    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+    return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
 
   const entries = tlSorted(file);
@@ -1391,6 +1465,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1398,7 +1473,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
     jsonLd: [organizationLd, breadcrumbLd, workLd],
   });
 
-  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 
@@ -1503,7 +1578,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
 
 const FAQ_ITEMS: Array<{ q: string; a: string }> = FAQ_GROUPS.flatMap((g) => g.items);
 
-async function renderFaq(context: Context): Promise<Response> {
+async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/faq`;
   const title = "Questions about the DMT Code project and preparing to observe | DMT Code";
@@ -1559,6 +1634,7 @@ async function renderFaq(context: Context): Promise<Response> {
 
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1566,7 +1642,7 @@ async function renderFaq(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, faqLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -2111,7 +2187,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 };
 
 
-async function renderStatic(context: Context, key: string): Promise<Response> {
+async function renderStatic(context: Context, key: string, locale: Loc = "en"): Promise<Response> {
   const page = STATIC_PAGES[key];
   const shellRes = await context.next();
   if (!page) return shellRes;
@@ -2250,6 +2326,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       };
 
   const head = buildHead({
+    locale,
     title: page.title,
     description: page.description,
     canonical,
@@ -2258,7 +2335,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -2324,6 +2401,12 @@ type HeadOpts = {
   title: string;
   description?: string;
   canonical: string;
+  // Locale-agnostic path (e.g. "/faq"). When present (or derivable from
+  // `canonical`), the canonical URL is rewritten for the active locale and the
+  // full hreflang alternate set is emitted. Never set for machine endpoints or
+  // /agent, which are English-only infrastructure.
+  canonicalPath?: string;
+  locale?: Loc;
   ogType?: "website" | "article";
   ogImage?: string;
   // Width and height are emitted only when BOTH are known. Never guess them.
@@ -2336,6 +2419,28 @@ type HeadOpts = {
 function buildHead(o: HeadOpts): string {
   const desc = (o.description || "").trim();
   const img = (o.ogImage || "").trim() || DEFAULT_OG_IMAGE;
+  const locale: Loc = o.locale || "en";
+  // Derive the locale-agnostic path when the caller passed a full canonical URL
+  // on this site and no explicit canonicalPath.
+  let path = o.canonicalPath || "";
+  if (!path && o.canonical && o.canonical.startsWith(SITE)) {
+    const p = o.canonical.slice(SITE.length) || "/";
+    const m = p.match(/^\/(es|de)(\/.*)?$/);
+    path = m ? (m[2] || "/") : p;
+  }
+  // /agent is English-only infrastructure: no locale mirrors, no alternates.
+  const localizable = !!path && !path.startsWith("/agent");
+  const canonical = localizable
+    ? `${SITE}${locale !== "en" ? "/" + locale : ""}${path === "/" ? "/" : path}`
+    : o.canonical;
+  const alternates = localizable
+    ? [
+        `<link rel="alternate" hreflang="en" href="${esc(SITE + path)}" />`,
+        `<link rel="alternate" hreflang="es" href="${esc(SITE + "/es" + (path === "/" ? "" : path))}" />`,
+        `<link rel="alternate" hreflang="de" href="${esc(SITE + "/de" + (path === "/" ? "" : path))}" />`,
+        `<link rel="alternate" hreflang="x-default" href="${esc(SITE + path)}" />`,
+      ]
+    : [];
   const dims =
     o.ogImageWidth && o.ogImageHeight
       ? [
@@ -2346,12 +2451,13 @@ function buildHead(o: HeadOpts): string {
   return [
     `<title>${esc(o.title)}</title>`,
     desc ? `<meta name="description" content="${esc(desc)}" />` : "",
-    `<link rel="canonical" href="${esc(o.canonical)}" />`,
+    `<link rel="canonical" href="${esc(canonical)}" />`,
+    ...alternates,
     `<meta property="og:site_name" content="${esc(SITE_NAME)}" />`,
     `<meta property="og:type" content="${o.ogType || "website"}" />`,
     `<meta property="og:title" content="${esc(o.title)}" />`,
     desc ? `<meta property="og:description" content="${esc(desc)}" />` : "",
-    `<meta property="og:url" content="${esc(o.canonical)}" />`,
+    `<meta property="og:url" content="${esc(canonical)}" />`,
     `<meta property="og:image" content="${esc(img)}" />`,
     ...dims,
     `<meta name="twitter:card" content="summary_large_image" />`,
@@ -2371,6 +2477,7 @@ function renderShell(
   html: string,
   head: string,
   body: string,
+  locale: Loc = "en",
 ): string {
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/gi, "")
@@ -2379,6 +2486,10 @@ function renderShell(
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
+  out = out.replace(/<html([^>]*)>/i, (_m, attrs: string) => {
+    const cleaned = String(attrs).replace(/\s+lang=["'][^"']*["']/gi, "");
+    return `<html lang="${locale || "en"}"${cleaned}>`;
+  });
   out = out.replace(/<\/head>/i, `${head}\n</head>`);
   if (/<div id="root">\s*<\/div>/i.test(out)) {
     out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
@@ -2387,6 +2498,7 @@ function renderShell(
   }
   return out;
 }
+
 
 const PRERENDER_RESP_HEADERS = {
   "content-type": "text/html; charset=utf-8",
@@ -2476,7 +2588,7 @@ function paragraphsFromText(text: string): string {
     .join("");
 }
 
-async function renderTheories(context: Context): Promise<Response> {
+async function renderTheories(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/theories`;
   const title = "Open theories: what could the DMT code be? | DMT Code";
@@ -2586,6 +2698,7 @@ async function renderTheories(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2593,11 +2706,11 @@ async function renderTheories(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderTagHub(context: Context, tag: string): Promise<Response> {
+async function renderTagHub(context: Context, tag: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/registry/tag/${encodeURIComponent(tag)}`;
 
@@ -2678,6 +2791,7 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
   const body = `<article data-prerender="tag-hub"><h1>Symbols tagged ${esc(tag)}</h1><p>${count} records in the open registry carry this tag.</p><p>Tags are added by submitters and by readers after publication. A shared tag is a starting point for comparison, not evidence of a shared source.</p><ul>${items}</ul></article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2686,13 +2800,13 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
     jsonLd: [collectionLd, breadcrumbLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 
 
-async function renderEventDetail(context: Context, id: string): Promise<Response> {
+async function renderEventDetail(context: Context, id: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "events",
@@ -2700,6 +2814,8 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Event not found | DMT Code", heading: "Event not found", text: "This event is not currently indexed or the link is out of date.", canonical: `${SITE}/events`, backHref: `${SITE}/events`, backLabel: "Events timeline", marker: "event-not-found" });
+
+  overlay(r, await getTranslations("events", id, locale));
 
   const canonical = `${SITE}/events/${id}`;
   const shortDesc = String(r.description || "").trim();
@@ -2769,6 +2885,7 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2776,11 +2893,11 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
     jsonLd: [organizationLd, breadcrumbLd, eventLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderRetreatDetail(context: Context, id: string): Promise<Response> {
+async function renderRetreatDetail(context: Context, id: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "retreats",
@@ -2788,6 +2905,8 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Retreat not found | DMT Code", heading: "Retreat not found", text: "This retreat is not currently indexed or the link is out of date.", canonical: `${SITE}/retreats`, backHref: `${SITE}/retreats`, backLabel: "Retreats", marker: "retreat-not-found" });
+
+  overlay(r, await getTranslations("retreats", id, locale));
 
   const canonical = `${SITE}/retreats/${id}`;
   const shortDesc = String(r.description || "").trim();
@@ -2843,6 +2962,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2851,11 +2971,11 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     jsonLd: [organizationLd, breadcrumbLd, lodgingLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderRetreats(context: Context): Promise<Response> {
+async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/retreats`;
   const title = "Retreat centers | DMT Code";
@@ -2941,6 +3061,7 @@ async function renderRetreats(context: Context): Promise<Response> {
   }
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2948,7 +3069,7 @@ async function renderRetreats(context: Context): Promise<Response> {
     jsonLd: jsonLdArr,
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3002,7 +3123,7 @@ function renderJsonNode(node: unknown, depth: number): string {
   return "";
 }
 
-async function renderProtocolDetail(context: Context, slug: string): Promise<Response> {
+async function renderProtocolDetail(context: Context, slug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9_-]/g, "");
   if (!cleanSlug) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
@@ -3013,6 +3134,8 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
+
+  overlay(r, await getTranslations("protocols", String(r.slug ?? cleanSlug), locale));
 
   const canonical = `${SITE}/protocols/${cleanSlug}`;
   const title = `${String(r.title)} protocol | DMT Code`;
@@ -3067,6 +3190,7 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3074,7 +3198,7 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
     jsonLd: [organizationLd, breadcrumbLd, medicalLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3094,7 +3218,7 @@ function theorySlug(title: string): string {
     .replace(/-+$/g, "");
 }
 
-async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
 
@@ -3130,6 +3254,8 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
     });
   }
 
+
+  overlay(match as Record<string, unknown>, await getTranslations("theories", String(match.id), locale));
 
   const canonicalSlug = theorySlug(String(match.title || ""));
   const canonical = `${SITE}/theories/${canonicalSlug}`;
@@ -3200,6 +3326,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3207,7 +3334,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
     jsonLd: [organizationLd, breadcrumbLd, creativeWorkLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3373,7 +3500,7 @@ async function fetchInList(
   return (await res.json()) as Array<Record<string, unknown>>;
 }
 
-async function renderArticlesIndex(context: Context): Promise<Response> {
+async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/articles`;
   const title = "Articles | DMT Code";
@@ -3449,6 +3576,7 @@ async function renderArticlesIndex(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3457,11 +3585,11 @@ async function renderArticlesIndex(context: Context): Promise<Response> {
     jsonLd: [organizationLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderArticleDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderArticleDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
   const rows = await sbGetRows(
@@ -3473,6 +3601,8 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
+
+  overlay(r, await getTranslations("articles", String(r.slug), locale));
 
   const canonical = `${SITE}/articles/${String(r.slug)}`;
   const title = `${String(r.title)} | DMT Code`;
@@ -3665,6 +3795,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   };
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3673,7 +3804,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     jsonLd: [graphLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3754,7 +3885,7 @@ function guideDate(v: unknown): string {
 const GUIDES_SUBLINE =
   "Direct answers to the questions people actually ask, each one graded by how strong the evidence behind it really is.";
 
-async function renderGuidesIndex(context: Context): Promise<Response> {
+async function renderGuidesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/guides`;
   const title = "Guides | DMT Code";
@@ -3827,6 +3958,7 @@ async function renderGuidesIndex(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3835,11 +3967,11 @@ async function renderGuidesIndex(context: Context): Promise<Response> {
     jsonLd: [organizationLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderGuideDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderGuideDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
   const rows = await sbGetRows(
@@ -3858,6 +3990,8 @@ async function renderGuideDetail(context: Context, rawSlug: string): Promise<Res
       marker: "guide-not-found",
     });
   }
+
+  overlay(r, await getTranslations("guides", String(r.slug ?? ""), locale));
 
   const question = gText(r.question);
   const shortAnswer = gText(r.short_answer);
@@ -3968,6 +4102,7 @@ async function renderGuideDetail(context: Context, rawSlug: string): Promise<Res
   if (citation.length) articleLd.citation = citation;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3976,6 +4111,6 @@ async function renderGuideDetail(context: Context, rawSlug: string): Promise<Res
     jsonLd: [organizationLd, breadcrumbLd, faqLd, articleLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
