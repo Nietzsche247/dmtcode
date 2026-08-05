@@ -85,14 +85,26 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
     onClick: () => navigate(`/events/${e.id}`),
   }));
 
+  const emptyText = emptyLabel || "No events yet. Submit one to get started.";
+  const accent = muted ? "bg-muted-foreground" : "bg-primary";
+
   return (
     <div className={muted ? "opacity-70" : ""}>
-      <SharedTimeline
-        items={items}
-        sortDirection={filter === "upcoming" ? "asc" : "desc"}
-        emptyLabel={emptyLabel || "No events yet. Submit one to get started."}
-        accentClassName={muted ? "bg-muted-foreground" : "bg-primary"}
-      />
+      {filter === "upcoming" ? (
+        <SharedTimeline
+          items={items}
+          sortDirection="asc"
+          emptyLabel={emptyText}
+          accentClassName={accent}
+        />
+      ) : (
+        <SharedTimeline
+          items={items}
+          sortDirection="desc"
+          emptyLabel={emptyText}
+          accentClassName={accent}
+        />
+      )}
     </div>
   );
 };
