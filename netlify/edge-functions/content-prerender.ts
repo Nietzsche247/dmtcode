@@ -2108,8 +2108,8 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       };
       const todayIso = new Date().toISOString().slice(0, 10);
       const [upRes, pastRes, reRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/retreats?is_approved=eq.true&select=id,name,description,location,country,website_url&order=created_at.desc&limit=12`, { headers }),
       ]);
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
@@ -2124,8 +2124,8 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       if (!sections.length) sections.push(`<section><h2>No approved events or retreats yet</h2><p>Nothing has been approved for this timeline yet. Submissions are reviewed before publication.</p></section>`);
       recentList = sections.join("\n") + `\n<p><em>Scholarly reference only. Inclusion does not constitute endorsement.</em></p>`;
       const listItems = [
-        ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, eventStatus: "https://schema.org/EventScheduled", url: `${SITE}/events/${r.id}` })),
-        ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, url: `${SITE}/events/${r.id}` })),
+        ...ups.map((r, i) => ({ "@type": "Event", position: i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, eventStatus: "https://schema.org/EventScheduled", url: `${SITE}/events/${r.id}` })),
+        ...pasts.map((r, i) => ({ "@type": "Event", position: ups.length + i + 1, name: String(r.title || ""), startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, url: `${SITE}/events/${r.id}` })),
         ...rets.map((r, i) => ({ "@type": "LodgingBusiness", position: ups.length + pasts.length + i + 1, name: String(r.name || ""), location: [r.location, r.country].filter(Boolean).join(", ") || undefined, url: `${SITE}/retreats/${r.id}` })),
       ];
       if (listItems.length) {
@@ -2673,7 +2673,7 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "events",
-    `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,event_type,location,organizer,url`,
+    `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,end_date,event_type,location,organizer,url`,
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Event not found | DMT Code", heading: "Event not found", text: "This event is not currently indexed or the link is out of date.", canonical: `${SITE}/events`, backHref: `${SITE}/events`, backLabel: "Events timeline", marker: "event-not-found" });
@@ -2716,6 +2716,9 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
     description: shortDesc || undefined,
     url: r.url || canonical,
   };
+  if (r.end_date) {
+    eventLd.endDate = String(r.end_date);
+  }
   if (r.location) {
     eventLd.location = { "@type": "Place", name: String(r.location) };
   }

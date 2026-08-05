@@ -246,7 +246,7 @@ async function fetchVoteCounts(): Promise<Record<string, Record<string, number>>
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides, retreats] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
@@ -292,6 +292,11 @@ export default async (req: Request): Promise<Response> => {
       "guides",
       "slug,question,short_answer,evidence_grade,what_supports,what_weakens,what_is_unknown,what_would_change,related_paths,last_reviewed,updated_at,sort_order",
       "is_published=eq.true"
+    ),
+    fetchAll(
+      "retreats",
+      "id,name,description,details,location,country,website_url,tags,next_start_date,next_end_date",
+      "is_approved=eq.true"
     ),
   ]);
 
@@ -445,6 +450,21 @@ export default async (req: Request): Promise<Response> => {
     external_url: (r.url as string) || undefined,
   }));
 
+  const retreatsFeed = retreats.map((r) => compact({
+    id: String(r.id),
+    url: `${SITE}/retreats/${r.id}`,
+    name: (r.name as string) || undefined,
+    description: (r.description as string) || undefined,
+    details: (r.details as string) || undefined,
+    location: (r.location as string) || undefined,
+    country: (r.country as string) || undefined,
+    website_url: (r.website_url as string) || undefined,
+    tags: (r.tags as string[]) || [],
+    next_start_date: (r.next_start_date as string) || undefined,
+    next_end_date: (r.next_end_date as string) || undefined,
+  }));
+
+
   const articlesFeed = articles.map((r) => {
     const trialIds = ((r.related_trials as string[]) || []).filter((x) => trialIdSet.has(String(x)));
     const bibRefs = ((r.related_bibliography as string[]) || []).filter((x) => bibIdSet.has(String(x)));
@@ -573,6 +593,7 @@ export default async (req: Request): Promise<Response> => {
       articles: articlesFeed.length,
       registry_glyphs: registryGlyphsFeed.length,
       guides: guidesFeed.length,
+      retreats: retreatsFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
@@ -581,6 +602,7 @@ export default async (req: Request): Promise<Response> => {
     articles: articlesFeed,
     registry_glyphs: registryGlyphsFeed,
     guides: guidesFeed,
+    retreats: retreatsFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
     symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
