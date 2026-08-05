@@ -35,7 +35,37 @@ function iso(y: number, mo: number, d: number): string | null {
   return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
-interface Found { start: string; end: string; confidence: string; }
+interface JsonLdExtras {
+  image_url: string | null;
+  event_status: string | null;
+  geo_lat: number | null;
+  geo_lng: number | null;
+  ticket_price: number | null;
+  ticket_currency: string | null;
+  ticket_url: string | null;
+  ticket_availability: string | null;
+  lineup: string[] | null;
+}
+
+interface Found { start: string; end: string; confidence: string; extras?: JsonLdExtras | null; }
+
+const stripSchema = (v: unknown): string | null => {
+  if (typeof v !== "string" || !v.trim()) return null;
+  return v.replace(/^https?:\/\/schema\.org\//i, "").trim() || null;
+};
+const num = (v: unknown): number | null => {
+  if (v === null || v === undefined || v === "") return null;
+  const n = typeof v === "number" ? v : parseFloat(String(v).replace(/[^0-9.\-]/g, ""));
+  return Number.isFinite(n) ? n : null;
+};
+const first = (v: unknown): any => (Array.isArray(v) ? v[0] : v);
+
+const STATUS_MAP: Record<string, string> = {
+  eventscheduled: "scheduled",
+  eventcancelled: "cancelled",
+  eventpostponed: "postponed",
+  eventmovedonline: "moved_online",
+};
 
 function plausible(f: Found): boolean {
   const now = Date.now();
