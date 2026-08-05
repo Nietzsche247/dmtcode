@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     let token: string;
     try { token = await editToken(sa); } catch (e) { return json({ step: 'token', error: String(e) }, 500); }
     const base = `https://analyticsadmin.googleapis.com/v1beta/properties/${propertyId}/keyEvents`;
-    const events = ['bundle_cta_click', 'form_start', 'purchase'];
+    const events = ['bundle_cta_click', 'form_start', 'purchase', 'prepare_notify_signup'];
     const created: unknown[] = [];
     for (const eventName of events) {
       const r = await fetch(base, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ eventName }) });
