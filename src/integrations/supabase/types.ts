@@ -686,6 +686,45 @@ export type Database = {
         }
         Relationships: []
       }
+      content_translations: {
+        Row: {
+          created_at: string
+          field: string
+          id: string
+          locale: string
+          record_id: string
+          reviewed: boolean
+          source_hash: string
+          table_name: string
+          translated_at: string
+          translated_text: string | null
+        }
+        Insert: {
+          created_at?: string
+          field: string
+          id?: string
+          locale: string
+          record_id: string
+          reviewed?: boolean
+          source_hash: string
+          table_name: string
+          translated_at?: string
+          translated_text?: string | null
+        }
+        Update: {
+          created_at?: string
+          field?: string
+          id?: string
+          locale?: string
+          record_id?: string
+          reviewed?: boolean
+          source_hash?: string
+          table_name?: string
+          translated_at?: string
+          translated_text?: string | null
+        }
+        Relationships: []
+      }
       crawler_hits: {
         Row: {
           bot_class: string | null
