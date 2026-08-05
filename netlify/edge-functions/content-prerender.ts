@@ -302,6 +302,8 @@ export default async (request: Request, context: Context) => {
       const r = await getRow("symbol_submissions", id, "status=eq.approved", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Symbol not found | DMT Code", heading: "Symbol not found", text: "This symbol is not currently indexed or the link is out of date.", canonical: `${SITE}/registry`, backHref: `${SITE}/registry`, backLabel: "Visual symbol registry", marker: "registry-not-found" });
 
+      overlay(r, await getTranslations("symbol_submissions", String(r.id), locale));
+
       const communityTags = await getCommunityTags(String(r.id));
 
       const short = String(r.id).slice(0, 8);
@@ -406,6 +408,7 @@ export default async (request: Request, context: Context) => {
         "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Trial not found | DMT Code", heading: "Trial not found", text: "This trial is not currently indexed or the link is out of date.", canonical: `${SITE}/trials`, backHref: `${SITE}/trials`, backLabel: "Clinical trials", marker: "trial-not-found" });
+      overlay(r, await getTranslations("clinical_trials", String(r.id), locale));
       const isRegisteredTrial =
         r.record_type === "registered_trial" ||
         (typeof r.trial_registry_id === "string" &&
@@ -512,6 +515,11 @@ export default async (request: Request, context: Context) => {
         "source_date,full_text,transcript,created_at,updated_at";
       const r = await getRow("bibliography", id, "is_approved=eq.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
+
+      // Bibliography overlays translate ONLY `summary`. Title, authors,
+      // journal, doi, abstract, tags and compounds stay as the source record:
+      // they are the citation glossary and must not be rewritten.
+      overlay(r, await getTranslations("bibliography", String(r.id), locale), ["summary"]);
 
       const desc =
         (r.summary && String(r.summary).trim()) ||
