@@ -2386,6 +2386,13 @@ export const config: Config = {
     "/capture",
     "/join",
     "/submit-symbol",
+    // Locale mirrors. Netlify honours this in-file config over netlify.toml,
+    // so the /es and /de trees must be listed here or the function never runs
+    // for them. Additive only: English entries above are unchanged.
+    "/es",
+    "/es/*",
+    "/de",
+    "/de/*",
   ],
 };
 
