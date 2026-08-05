@@ -95,13 +95,64 @@ function fromJsonLd(html: string): Found | null {
     const k = Object.keys(n).find((x) => x.toLowerCase() === key.toLowerCase());
     return k ? n[k] : undefined;
   };
+  const extrasOf = (n: any): JsonLdExtras => {
+    let image_url: string | null = null;
+    try {
+      const img = first(pick(n, "image"));
+      if (typeof img === "string") image_url = img || null;
+      else if (img && typeof img === "object") image_url = (pick(img, "url") as string) ?? null;
+    } catch { /* null-safe */ }
+
+    let event_status: string | null = null;
+    try {
+      const s = stripSchema(pick(n, "eventStatus"));
+      event_status = s ? (STATUS_MAP[s.toLowerCase()] ?? null) : null;
+    } catch { /* null-safe */ }
+
+    let geo_lat: number | null = null, geo_lng: number | null = null;
+    try {
+      const loc = first(pick(n, "location"));
+      const geo = loc && typeof loc === "object" ? first(pick(loc, "geo")) : null;
+      if (geo && typeof geo === "object") {
+        geo_lat = num(pick(geo, "latitude"));
+        geo_lng = num(pick(geo, "longitude"));
+      }
+    } catch { /* null-safe */ }
+
+    let ticket_price: number | null = null, ticket_currency: string | null = null;
+    let ticket_url: string | null = null, ticket_availability: string | null = null;
+    try {
+      const off = first(pick(n, "offers"));
+      if (off && typeof off === "object") {
+        ticket_price = num(pick(off, "price"));
+        const cur = pick(off, "priceCurrency");
+        ticket_currency = typeof cur === "string" && cur ? cur : null;
+        const u = pick(off, "url");
+        ticket_url = typeof u === "string" && u ? u : null;
+        ticket_availability = stripSchema(pick(off, "availability"));
+      }
+    } catch { /* null-safe */ }
+
+    let lineup: string[] | null = null;
+    try {
+      const p = pick(n, "performer");
+      const arr = p === undefined || p === null ? [] : (Array.isArray(p) ? p : [p]);
+      const names = arr
+        .map((x: any) => (typeof x === "string" ? x : (x && typeof x === "object" ? (pick(x, "name") as string) : null)))
+        .filter((x: any) => typeof x === "string" && x.trim().length > 0);
+      lineup = names.length ? names : null;
+    } catch { /* null-safe */ }
+
+    return { image_url, event_status, geo_lat, geo_lng, ticket_price, ticket_currency, ticket_url, ticket_availability, lineup };
+  };
+
   for (const n of nodes) {
     const t = ([] as unknown[]).concat((pick(n, "@type") as unknown) ?? []).map(String);
     if (!t.some((x) => /event|festival/i.test(x))) continue;
     const startDate = pick(n, "startDate");
     const endDate = pick(n, "endDate");
     if (!startDate) continue;
-    const f = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld" };
+    const f: Found = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld", extras: extrasOf(n) };
     if (plausible(f)) cands.push(f);
   }
   cands.sort((a, b) => a.start.localeCompare(b.start));
