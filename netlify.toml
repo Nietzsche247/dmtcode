@@ -195,6 +195,28 @@
   function = "content-prerender"
 
 
+[[edge_functions]]
+  path = "/sitemap-es.xml"
+  function = "sitemap"
+
+[[edge_functions]]
+  path = "/sitemap-de.xml"
+  function = "sitemap"
+
+[[edge_functions]]
+  path = "/sitemap-index.xml"
+  function = "sitemap"
+
+# Locale mirrors: /es/* and /de/* prerender the same routes as English. These
+# run AFTER the machine endpoints (which are English-only) and BEFORE spa-guard.
+[[edge_functions]]
+  path = "/es/*"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/de/*"
+  function = "content-prerender"
+
 # 404 guard MUST run last: it whitelists known routes and 404s the rest.
 [[edge_functions]]
   path = "/*"
