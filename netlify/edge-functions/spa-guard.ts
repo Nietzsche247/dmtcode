@@ -20,7 +20,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "correlations", "events", "dashboard", "profile", "my-symbols", "analysis",
   "tools", "bundles", "api", "contribute", "Elizabeth_Baker",
   "card", "articles", "guides", "privacy", "terms", "disclosure", "capture",
-  "timeline",
+  "timeline", "people",
   // Machine endpoints and public assets
   "data.json", "shop.json", "sitemap.xml", "llms.txt", "robots.txt",
   "manifest.json", "timeline.json", "favicon.svg", "agent",
@@ -37,6 +37,9 @@ function isDetailPatternValid(path: string): boolean {
   // /registry/:uuid, /trials/:uuid, /bibliography/:uuid, /events/:uuid, /retreats/:uuid
   const m = path.match(/^\/(registry|trials|bibliography|events|retreats)\/([^/]+)$/i);
   if (m) return UUID_RE.test(m[2]);
+  // /people/:slug is a static profile set, not a table
+  const pe = path.match(/^\/people\/([^/]+)$/i);
+  if (pe) return pe[1].toLowerCase() === "danny-goler";
   // /card/:uuid.png
   const c = path.match(/^\/card\/([^/]+)\.png$/i);
   if (c) return UUID_RE.test(c[1]);

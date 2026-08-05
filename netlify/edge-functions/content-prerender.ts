@@ -227,6 +227,15 @@ export default async (request: Request, context: Context) => {
     if (kind === "faq" && seg.length === 1) {
       return await renderFaq(context, locale);
     }
+    if (kind === "people" && seg.length === 1) {
+      return await renderPeopleIndex(context, locale);
+    }
+    if (kind === "people" && seg.length === 2 && seg[1] === "danny-goler") {
+      return await renderPersonPage(context, locale);
+    }
+    if (kind === "people" && seg.length >= 2) {
+      return await notFoundPrerender(context);
+    }
     if (seg.length === 0) {
       return await renderStatic(context, "home", locale);
     }
@@ -2369,6 +2378,8 @@ export const config: Config = {
     "/timeline",
     "/timeline/*",
     "/faq",
+    "/people",
+    "/people/*",
     "/events",
     "/events/*",
     "/retreats",

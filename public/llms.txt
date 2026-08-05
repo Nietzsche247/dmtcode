@@ -97,6 +97,10 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 - [About](/about): Project history and licensing.
 - [Join](/join): Volunteer to help build the record.
 
+## People: entity profiles
+
+- [People](/people): Entity profiles. [Danny Goler](/people/danny-goler) first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.
+
 ## Articles
 
 Long form articles that answer specific questions using the DMT Code corpus. Each article names every trial, paper, symbol, and protocol it rests on so readers and language models can verify the source directly. Published under CC-BY-4.0.
