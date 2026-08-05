@@ -3255,6 +3255,8 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
   }
 
 
+  overlay(match as Record<string, unknown>, await getTranslations("theories", String(match.id), locale));
+
   const canonicalSlug = theorySlug(String(match.title || ""));
   const canonical = `${SITE}/theories/${canonicalSlug}`;
   const title = `${String(match.title)} | DMT Code`;
@@ -3599,6 +3601,8 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
+
+  overlay(r, await getTranslations("articles", String(r.slug), locale));
 
   const canonical = `${SITE}/articles/${String(r.slug)}`;
   const title = `${String(r.title)} | DMT Code`;
@@ -3986,6 +3990,8 @@ async function renderGuideDetail(context: Context, rawSlug: string, locale: Loc 
       marker: "guide-not-found",
     });
   }
+
+  overlay(r, await getTranslations("guides", String(r.slug ?? ""), locale));
 
   const question = gText(r.question);
   const shortAnswer = gText(r.short_answer);
