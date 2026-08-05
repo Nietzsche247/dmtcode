@@ -72,3 +72,7 @@ verify_jwt = false
 
 [functions.bibliography-triage]
 verify_jwt = false
+
+[functions.scrape-festivals]
+verify_jwt = false
+
