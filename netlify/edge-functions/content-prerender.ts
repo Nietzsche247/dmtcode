@@ -2815,6 +2815,8 @@ async function renderEventDetail(context: Context, id: string, locale: Loc = "en
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Event not found | DMT Code", heading: "Event not found", text: "This event is not currently indexed or the link is out of date.", canonical: `${SITE}/events`, backHref: `${SITE}/events`, backLabel: "Events timeline", marker: "event-not-found" });
 
+  overlay(r, await getTranslations("events", id, locale));
+
   const canonical = `${SITE}/events/${id}`;
   const shortDesc = String(r.description || "").trim();
   const detailsText = String(r.details || r.description || "").trim();
@@ -2903,6 +2905,8 @@ async function renderRetreatDetail(context: Context, id: string, locale: Loc = "
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Retreat not found | DMT Code", heading: "Retreat not found", text: "This retreat is not currently indexed or the link is out of date.", canonical: `${SITE}/retreats`, backHref: `${SITE}/retreats`, backLabel: "Retreats", marker: "retreat-not-found" });
+
+  overlay(r, await getTranslations("retreats", id, locale));
 
   const canonical = `${SITE}/retreats/${id}`;
   const shortDesc = String(r.description || "").trim();
@@ -3130,6 +3134,8 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
+
+  overlay(r, await getTranslations("protocols", String(r.slug ?? cleanSlug), locale));
 
   const canonical = `${SITE}/protocols/${cleanSlug}`;
   const title = `${String(r.title)} protocol | DMT Code`;
