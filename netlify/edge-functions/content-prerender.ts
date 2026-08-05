@@ -537,6 +537,29 @@ export default async (request: Request, context: Context) => {
   <p>${esc(desc)}</p>
   ${rowsToDl(pairs)}
   ${
+    (r.abstract || r.summary)
+      ? `<section><h2>Abstract</h2><p>${esc(String(r.abstract || r.summary))}</p></section>`
+      : ""
+  }
+  ${
+    (tags.length || compounds.length)
+      ? `<section><h2>Topics</h2><ul>${[...tags, ...compounds]
+          .map((t) => `<li>${esc(String(t))}</li>`)
+          .join("")}</ul></section>`
+      : ""
+  }
+  <section><h2>Citation</h2><p>${esc(
+    [
+      r.authors ? String(r.authors) : null,
+      (r.publication_date || r.source_date) ? `(${String(r.publication_date || r.source_date).slice(0,4)})` : null,
+      r.title ? `${String(r.title)}.` : null,
+      r.journal ? `${String(r.journal)}.` : null,
+      (r.content_type && !r.journal) ? `${String(r.content_type)}.` : null,
+    ].filter(Boolean).join(" ")
+  )}${
+    r.doi ? ` <a href="https://doi.org/${esc(String(r.doi))}" rel="noopener">doi:${esc(String(r.doi))}</a>` : ""
+  }</p></section>
+  ${
     r.url
       ? `<p><a href="${esc(r.url)}" rel="noopener">View source</a></p>`
       : ""

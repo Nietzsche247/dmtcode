@@ -44,6 +44,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/privacy", "0.3", "yearly"],
   ["/terms", "0.3", "yearly"],
   ["/disclosure", "0.4", "yearly"],
+  ["/agent/", "0.4", "monthly"],
 ];
 
 // This function is duplicated verbatim in src/lib/theorySlug.ts,
