@@ -30,36 +30,104 @@ const BATCH_SIZE = 20;
 // approved paper is published and gets cited by AI crawlers as something this
 // site vouches for.
 const APPROVE_THRESHOLD = 0.9;
+// Retained for audit. No longer gates rejection: see the two-axis rubric above.
 const REJECT_THRESHOLD = 0.8;
 
-const SYSTEM_PROMPT = `You classify bibliography records for a research library that studies ONE question: the perception of a structured, possibly-decodable other reality.
+// ---- Rubric v2 + Issue-1 AND-gate (Workstream C, 2026-08-05) ---------------
+// Two SEPARATE axes; do not collapse them.
+//   REJECTION: only genuinely off-domain records may ever be auto_rejected, and
+//              only when NO psychedelic term appears anywhere in the record.
+//   APPROVAL : the Issue-1 perceptual AND-gate. Eligible for auto_approved only
+//              if a DMT-family term appears (UNGATED) or a non-DMT psychedelic
+//              term appears AND a perceptual term appears.
+// Everything else -> needs_review, so a human reads it.
+// ANTI-SUBTRACTION: no path here removes a row or clears is_approved=true.
 
-The test is POSITIVE and NARROW. A record is ON TOPIC only if it describes, studies, or bears directly on at least one of:
-1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery phenomenology.
-2. Entity encounters or contact experiences.
-3. The phenomenology of altered or non-ordinary states as experienced, including sober perception of the same.
+const DMT_TERMS = [
+  'dimethyltryptamine', 'n,n-dmt', 'nn-dmt', '5-meo-dmt',
+  '5-methoxy-n,n-dimethyltryptamine', 'ayahuasca', 'banisteriopsis',
+  'psychotria viridis', 'harmine', 'harmaline', 'harmala', 'bufotenin',
+  'bufotenine', 'changa', 'yage', 'yagé', 'incilius alvarius', 'bufo alvarius',
+];
+
+const NON_DMT_PSYCHEDELIC_TERMS = [
+  'psilocybin', 'psilocin', 'psilocybe', 'lysergic', 'lsd-25', 'mescaline',
+  'peyote', 'lophophora', 'san pedro', 'ibogaine', 'iboga', 'tabernanthe',
+  'ketamine', 'mdma', 'salvinorin', 'salvia divinorum', '2c-b',
+  'serotonergic psychedelic', 'classic psychedelic', 'psychedelic',
+  'entheogen', 'hallucinogen', 'tryptamine', 'phenethylamine', '5-ht2a',
+];
+
+const PERCEPTUAL_TERMS = [
+  'visual', 'vision', 'geometr', 'hallucinat', 'phosphene', 'entoptic',
+  'perception', 'perceptual', 'imagery', 'phenomenolog', 'form constant',
+  'entity', 'ego dissolution', 'mystical experience', 'altered state',
+  'non-ordinary state', 'subjective experience', 'first-person', 'closed-eye',
+  'hypnagogic', 'near-death', 'consciousness', 'dream', 'synesthesia',
+  'synaesthesia', 'apparition', 'presence',
+];
+
+const OFF_DOMAIN_TERMS = [
+  'multiple sclerosis', 'diroximel fumarate', 'direct mass technology',
+  'transthyretin', 'dimethoate', 'lumpy skin disease', 'histone demethylase',
+  'lysine-specific demethylase', 'lysine specific demethylase', 'kdm1a',
+  'lsd1', 'lsd-1', 'syndesmotic', 'lysosomal storage', 'migraine',
+  'lumateperone', 'crown morphology', 'malpighiaceae', 'elastin', 'monkeypox',
+  'feral cat', 'canine blood', 'disease-modifying therap',
+  'disease modifying therap', 'long-acting injectable', 'orthopedic surgery',
+  'opioid-free anesthesia', 'buprenorphine/naloxone', 'mog antibody',
+];
+
+const haystack = (r: Row) =>
+  [r.title, r.abstract, r.journal, (r.compounds ?? []).join(' ')]
+    .filter(Boolean).join(' ').toLowerCase();
+
+const anyHit = (h: string, terms: string[]) => terms.some((t) => h.includes(t));
+
+interface Gate {
+  hasDmt: boolean; hasOther: boolean; hasPerceptual: boolean;
+  offDomain: boolean; approvable: boolean; rejectable: boolean;
+}
+
+function evaluateGate(r: Row): Gate {
+  const h = haystack(r);
+  const hasDmt = anyHit(h, DMT_TERMS);
+  const hasOther = anyHit(h, NON_DMT_PSYCHEDELIC_TERMS);
+  const hasPerceptual = anyHit(h, PERCEPTUAL_TERMS);
+  const offDomain = anyHit(h, OFF_DOMAIN_TERMS) && !hasDmt && !hasOther;
+  return {
+    hasDmt, hasOther, hasPerceptual, offDomain,
+    approvable: hasDmt || (hasOther && hasPerceptual),
+    rejectable: offDomain,
+  };
+}
+
+const SYSTEM_PROMPT = `You classify bibliography records for a research library studying ONE question: the perception of a structured, possibly-decodable other reality - its visual and experiential phenomenology.
+
+You judge RELEVANCE TO THAT SUBJECT. You never judge rigour, methodology, sample size, credibility, or whether the findings are true. A weak, speculative or preliminary paper that is about the subject IS on topic and should be marked on topic with lower confidence. That is deliberate: this library presents the literature and lets the reader decide.
+
+A record is ON TOPIC if it bears on any of:
+1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery, phosphenes, entoptic phenomena, synesthesia.
+2. Entity encounters, perceived presences, or contact experiences.
+3. The phenomenology of altered or non-ordinary states, including sober routes to the same phenomena: meditation, sensory deprivation, hypnagogia, near-death experience, dreaming.
 4. First-person or experiential accounts of perceiving another reality that presents as structured or decodable.
-5. Theory of consciousness, insofar as it addresses that perceptual content.
+5. Theory of consciousness or perception insofar as it addresses that content.
+6. Neuroscience, pharmacology or mechanism work on DMT-family compounds, or on other psychedelics where perceptual or experiential effects are part of what is studied or reported. Mechanism that plausibly explains the perceptual content counts.
+7. The cultural, historical, legal, indigenous or ethical context of the substances and practices that produce these experiences.
 
-OUT OF SCOPE regardless of which substance is studied:
-- Efficacy and safety trials
-- Mechanism-of-action pharmacology
-- Clinical outcomes of any condition, including depression, PTSD, eating disorders, bipolar disorder and pain
-- Therapy protocols and integration protocols
-- Epidemiology, adverse events, harm reduction, drug policy
-- Animal behavioural models, including nociception and locomotion
-- Social cognition or emotional cognition studies that do not address perceptual content
-- Acronym collisions: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1" meaning the lysine-specific demethylase enzyme
+DMT-family material - N,N-DMT, dimethyltryptamine, 5-MeO-DMT, ayahuasca, Banisteriopsis, harmine, harmaline, bufotenin - is ALWAYS on topic. There is no additional test for it. Never mark a DMT-family record off topic.
 
-CRITICAL. A paper that mentions DMT, psilocybin, LSD, ayahuasca, ketamine, MDMA or any other psychedelic is NOT thereby on topic. The substance is not the criterion. The described experience is the criterion. "A psychedelic was administered and an outcome was measured" is OFF TOPIC. "What the experience looked like, felt like, or contained" is ON TOPIC.
+For non-DMT psychedelics (psilocybin, LSD, mescaline, ibogaine, ketamine, MDMA and the rest), the record is on topic when the perceptual or experiential dimension is present in the work. A pure dosing-safety or non-perceptual clinical-outcome study with no experiential dimension is not on topic, but it is NOT junk either - say so plainly and let it go to human review rather than condemning it.
 
-If you cannot name the specific phenomenological element the record addresses, it is NOT on topic. Say so rather than approving.
+OFF TOPIC means genuinely unrelated material only. Almost always an acronym collision or a different field entirely: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1"/KDM1A the lysine-specific demethylase, lumpy skin disease, dimethoate the pesticide, lysosomal storage disease, Direct Mass Technology, syndesmotic/ankle radiology, unrelated veterinary, botany, orthopedics or forensics.
 
-You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. A rigorous oncology or psychiatry trial is off topic.
+When you are unsure, say on_topic true with low confidence, or on_topic false with low confidence. Low confidence sends the record to a human. Only assert high confidence on an off-topic call when the record is unmistakably from another field.
+
+You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. An ankle-radiograph paper is not.
 
 Return strict JSON only:
 {"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>"}]}
-Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual or phenomenological content found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
+Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual, experiential or subject-matter element found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
 
 interface Row {
   id: string;
@@ -179,10 +247,13 @@ Deno.serve(async (req) => {
   // fail the new rubric are UNWOUND (is_approved back to false) rather than left
   // live, and the previous verdict is preserved in triage_reason for audit.
   let reauditOf: string | null = null;
+  let allowUnwind = false;
   if (req.method === 'POST') {
     try {
       const body = await req.json();
       if (typeof body?.reaudit === 'string') reauditOf = body.reaudit;
+      // ANTI-SUBTRACTION: demotion of a live approval is opt-in only.
+      allowUnwind = body?.allow_unwind === true;
     } catch {
       // No body is the normal cron case.
     }
@@ -210,6 +281,7 @@ Deno.serve(async (req) => {
   let rejected = 0;
   let needs_review = 0;
   let pulled_back = 0;
+  let would_pull_back = 0;
   let stoppedReason: string | null = null;
   let stoppedStatus: number | null = null;
   const seen = new Set<string>();
@@ -248,15 +320,19 @@ Deno.serve(async (req) => {
         let triage_status: 'auto_approved' | 'auto_rejected' | 'needs_review';
         let is_approved: boolean | undefined;
 
-        if (!v) {
-          // A missing verdict is never treated as a rejection.
+        const g = evaluateGate(row);
+
+        if (g.rejectable && (!v || !v.on_topic)) {
+          // Off-domain AND no psychedelic term anywhere. The only rejection path.
+          triage_status = 'auto_rejected';
+        } else if (!v) {
           triage_status = 'needs_review';
-        } else if (v.on_topic && v.confidence >= APPROVE_THRESHOLD && v.element.length > 0) {
+        } else if (g.approvable && v.on_topic && v.confidence >= APPROVE_THRESHOLD && v.element.length > 0) {
           triage_status = 'auto_approved';
           is_approved = true;
-        } else if (!v.on_topic && v.confidence >= REJECT_THRESHOLD) {
-          triage_status = 'auto_rejected';
         } else {
+          // Includes: on-topic but AND-gate not met, and low-confidence calls.
+          // A human reads it. It is never binned.
           triage_status = 'needs_review';
         }
 
@@ -273,11 +349,19 @@ Deno.serve(async (req) => {
           const prior = `[re-audited ${triage_at.slice(0, 10)} under the tightened rubric. Previous verdict: ${row.triage_status ?? 'none'}, confidence ${row.triage_confidence ?? 'n/a'} - ${row.triage_reason ?? 'no reason recorded'}]`;
           patch.triage_reason = `${patch.triage_reason} ${prior}`.slice(0, 2000);
           if (triage_status !== 'auto_approved' && row.triage_status === 'auto_approved') {
-            // Unwind the live approval rather than leaving it published.
-            patch.is_approved = false;
-            patch.triage_status = 'needs_review';
-            triage_status = 'needs_review';
-            pulled_back++;
+            if (allowUnwind) {
+              patch.is_approved = false;
+              patch.triage_status = 'needs_review';
+              triage_status = 'needs_review';
+              pulled_back++;
+            } else {
+              // ANTI-SUBTRACTION DEFAULT: never demote a live approval
+              // automatically. Record the intent, change nothing.
+              patch.triage_status = 'auto_approved';
+              triage_status = 'auto_approved';
+              delete patch.is_approved;
+              would_pull_back++;
+            }
           }
         }
 
@@ -307,6 +391,13 @@ Deno.serve(async (req) => {
             prior_triage_status: reauditOf ? row.triage_status ?? null : null,
             prior_triage_confidence: reauditOf ? row.triage_confidence ?? null : null,
             pulled_back: Boolean(reauditOf && patch.is_approved === false),
+            would_have_pulled_back: Boolean(reauditOf && !allowUnwind && row.triage_status === 'auto_approved' && triage_status !== 'auto_approved'),
+            gate_has_dmt: g.hasDmt,
+            gate_has_non_dmt_psychedelic: g.hasOther,
+            gate_has_perceptual: g.hasPerceptual,
+            gate_off_domain: g.offDomain,
+            gate_approvable: g.approvable,
+            rubric: 'rubric-v2-two-axis+issue1-and-gate',
             title: row.title,
           },
         });
@@ -346,6 +437,7 @@ Deno.serve(async (req) => {
     rejected,
     needs_review,
     pulled_back,
+    would_pull_back,
     remaining,
     mode: reauditOf ? `reaudit:${reauditOf}` : 'pending',
     model: MODEL,

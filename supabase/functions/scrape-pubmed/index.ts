@@ -12,30 +12,39 @@ const corsHeaders = {
 // term to co-occur with a substance or sober-perception term, and explicitly
 // excludes the known collisions.
 
-const PERCEPTUAL_TERMS = [
-  'phenomenology', 'phenomenological', 'hallucination', 'hallucinations',
-  'hallucinogenic experience', 'visual imagery', 'visual hallucination',
-  'altered state of consciousness', 'altered states of consciousness',
-  'consciousness', 'entity encounter', 'entity experience',
-  'mystical experience', 'ego dissolution', 'form constant', 'form constants',
-  'subjective experience', 'first-person report', 'visionary',
+// Two-axis composition, mirroring the bibliography-triage rubric:
+//   (DMT family, UNGATED) OR (other psychedelic AND perceptual term) NOT (collisions)
+// The DMT family is always in scope with no additional test. Non-DMT
+// psychedelics only enter the corpus when a perceptual or experiential term
+// co-occurs, which is what keeps pure dosing/outcome trials out. The NOT guard
+// removes the known acronym collisions ("DMT" = disease-modifying therapy,
+// "LSD-1" = the demethylase, lumpy skin disease, dimethoate and friends).
+
+// UNGATED: no perceptual term required.
+const DMT_TERMS = [
+  'N,N-dimethyltryptamine', 'dimethyltryptamine', 'N,N-DMT', 'ayahuasca',
+  'Banisteriopsis', 'harmine', 'harmaline', '5-MeO-DMT',
+  '5-methoxy-N,N-dimethyltryptamine', 'bufotenin',
 ];
 
-const SUBSTANCE_OR_SOBER_TERMS = [
-  'dimethyltryptamine', 'N,N-DMT', '5-MeO-DMT', 'ayahuasca', 'ibogaine',
-  'psilocybin', 'lysergic acid diethylamide', 'psychedelic', 'psychedelics',
-  'tryptamine', 'tryptamines', 'serotonergic hallucinogen',
-  // sober perception of the same phenomena
-  'meditation', 'sensory deprivation', 'near-death experience',
-  'hypnagogic', 'closed-eye visual',
+// GATED: must co-occur with a PERCEPTUAL_TERMS hit.
+const NON_DMT_TERMS = [
+  'psilocybin', 'psilocin', 'Psilocybe', 'lysergic acid diethylamide',
+  'mescaline', 'ibogaine', 'serotonergic psychedelic', 'classic psychedelic',
+  'entheogen',
+];
+
+const PERCEPTUAL_TERMS = [
+  'visual', 'vision', 'geometric', 'hallucination', 'hallucinations',
+  'hallucinogenic', 'phosphene', 'entoptic', 'perception', 'perceptual',
+  'imagery', 'phenomenology', 'phenomenological', 'form constant',
+  'ego dissolution', 'mystical experience', 'altered state',
+  'subjective experience', 'consciousness',
 ];
 
 const EXCLUSIONS = [
-  'disease-modifying therapy', 'disease modifying therapy',
-  'disease-modifying therapies', 'disease modifying therapies',
-  'multiple sclerosis', 'LSD1', 'LSD-1',
-  'lysine-specific demethylase', 'lysine specific demethylase',
-  'KDM1A',
+  'disease-modifying', 'lumpy skin', 'dimethoate', 'syndesmotic',
+  'lysosomal storage disease', 'histone demethylase', 'Direct Mass',
 ];
 
 const orGroup = (terms: string[]) =>
@@ -43,7 +52,9 @@ const orGroup = (terms: string[]) =>
 
 // Exported shape is a single auditable query string, logged with every run.
 const PUBMED_QUERY =
-  `("N,N-dimethyltryptamine"[tiab] OR "dimethyltryptamine"[tiab] OR "N,N-DMT"[tiab] OR ayahuasca[tiab] OR "Banisteriopsis"[tiab] OR harmine[tiab] OR harmaline[tiab] OR psilocybin[tiab] OR psilocin[tiab] OR "Psilocybe"[tiab] OR "5-MeO-DMT"[tiab] OR "5-methoxy-N,N-dimethyltryptamine"[tiab] OR bufotenin[tiab] OR "lysergic acid diethylamide"[tiab] OR mescaline[tiab] OR ibogaine[tiab] OR "serotonergic psychedelic"[tiab] OR "classic psychedelic"[tiab] OR entheogen[tiab]) NOT ("disease-modifying"[tiab] OR "lumpy skin"[tiab] OR dimethoate[tiab] OR "syndesmotic"[tiab] OR "lysosomal storage disease"[tiab] OR "histone demethylase"[tiab] OR "Direct Mass"[tiab])`;
+  `(${orGroup(DMT_TERMS)} OR (${orGroup(NON_DMT_TERMS)} AND ${orGroup(PERCEPTUAL_TERMS)}))` +
+  ` NOT ${orGroup(EXCLUSIONS)}`;
+
 
 
 const EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
