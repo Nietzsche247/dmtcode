@@ -18,7 +18,13 @@ const DASH = "(?:[-\\u2010-\\u2015\\u2022\\u00b7/]{1,3}|to|until|through|thru|au
 const ORD = "(?:st|nd|rd|th)?";
 const WD = "(?:\\s*(?:mon|tues?|wednes|thurs?|fri|satur|sun)day,?)?";
 const DE = "(?:de\\s+|of\\s+)?";
-const UA = "Mozilla/5.0 (compatible; dmtcode-festival-scraper/2.0; +https://dmtcode.com)";
+const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36";
+const BROWSER_HEADERS: Record<string, string> = {
+  "User-Agent": UA,
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Upgrade-Insecure-Requests": "1",
+};
 
 function m(name: string): number {
   const k = name.toLowerCase().replace(/\.$/, "");
@@ -53,11 +59,19 @@ function fromJsonLd(html: string): Found | null {
     } catch { /* tolerate malformed blocks */ }
   }
   const cands: Found[] = [];
+  // Key lookup is case-insensitive: musicfestivalwizard.com emits lowercase startdate/enddate.
+  const pick = (n: any, key: string): unknown => {
+    if (!n || typeof n !== "object") return undefined;
+    const k = Object.keys(n).find((x) => x.toLowerCase() === key.toLowerCase());
+    return k ? n[k] : undefined;
+  };
   for (const n of nodes) {
-    const t = ([] as unknown[]).concat(n?.["@type"] ?? []).map(String);
+    const t = ([] as unknown[]).concat((pick(n, "@type") as unknown) ?? []).map(String);
     if (!t.some((x) => /event|festival/i.test(x))) continue;
-    if (!n.startDate) continue;
-    const f = { start: String(n.startDate).slice(0, 10), end: String(n.endDate ?? n.startDate).slice(0, 10), confidence: "jsonld" };
+    const startDate = pick(n, "startDate");
+    const endDate = pick(n, "endDate");
+    if (!startDate) continue;
+    const f = { start: String(startDate).slice(0, 10), end: String(endDate ?? startDate).slice(0, 10), confidence: "jsonld" };
     if (plausible(f)) cands.push(f);
   }
   cands.sort((a, b) => a.start.localeCompare(b.start));
@@ -116,8 +130,9 @@ Deno.serve(async (_req) => {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(w.source_url, { signal: ctrl.signal, redirect: "follow", headers: { "User-Agent": UA } });
+      const res = await fetch(w.source_url, { signal: ctrl.signal, redirect: "follow", headers: BROWSER_HEADERS });
       clearTimeout(timer);
+      // 401/403/429 are bot-blocks, not real failures: fall through to the rendered path.
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       found = fromJsonLd(html) ?? fromText(html);
@@ -126,15 +141,20 @@ Deno.serve(async (_req) => {
     }
 
     if (!found) {
-      // Headless-render fallback for JS-built SPA sites via the Jina Reader proxy.
+      // Headless-render fallback for JS-built SPA sites and bot-blocked hosts, via the Jina Reader proxy.
       try {
         const ctrl2 = new AbortController();
         const timer2 = setTimeout(() => ctrl2.abort(), 25000);
         const res2 = await fetch(`https://r.jina.ai/${w.source_url}`, { signal: ctrl2.signal, redirect: "follow", headers: { Accept: "text/plain", "User-Agent": UA } });
         clearTimeout(timer2);
         if (res2.ok) {
-          const f2 = fromText(await res2.text());
-          if (f2) { found = { start: f2.start, end: f2.end, confidence: "render-regex" }; via = "rendered"; }
+          const body = await res2.text();
+          const f2 = fromJsonLd(body) ?? fromText(body);
+          if (f2) {
+            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex" };
+            via = "rendered";
+            fetchError = "";
+          }
         }
       } catch { /* rendering fallback is best-effort */ }
     }
