@@ -176,11 +176,6 @@ export default async (request: Request) => {
     priority: pr,
     localized: !p.startsWith("/agent"),
   }));
-  const urls = {
-    push(_s: string) {
-      /* replaced by entries below */
-    },
-  };
 
   const addById = (
     prefix: string,
@@ -189,12 +184,13 @@ export default async (request: Request) => {
   ) => {
     for (const r of rows) {
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}${prefix}/${xesc(r.id)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>${priority}</priority></url>`
-      );
+      entries.push({
+        path: `${prefix}/${xesc(r.id)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority,
+        localized: true,
+      });
     }
   };
 
@@ -206,12 +202,13 @@ export default async (request: Request) => {
     for (const r of rows) {
       if (!r.slug) continue;
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}${prefix}/${xesc(r.slug)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>${priority}</priority></url>`
-      );
+      entries.push({
+        path: `${prefix}/${xesc(r.slug)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority,
+        localized: true,
+      });
     }
   };
 
@@ -265,10 +262,12 @@ export default async (request: Request) => {
     }
     for (const [tag, n] of counts) {
       if (n < 2 || CONTEXT_TAG_RE.test(tag)) continue;
-      urls.push(
-        `  <url><loc>${SITE}/registry/tag/${xesc(encodeURIComponent(tag))}</loc>` +
-          `<changefreq>weekly</changefreq><priority>0.6</priority></url>`
-      );
+      entries.push({
+        path: `/registry/tag/${xesc(encodeURIComponent(tag))}`,
+        changefreq: "weekly",
+        priority: "0.6",
+        localized: true,
+      });
     }
   } catch (_e) { /* skip */ }
 
@@ -303,12 +302,13 @@ export default async (request: Request) => {
       const slug = theorySlug(r.title || "");
       if (!slug) continue;
       const lastmod = (r.updated_at || "").slice(0, 10);
-      const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
-      urls.push(
-        `  <url><loc>${SITE}/theories/${xesc(slug)}</loc>` +
-          `${lastmodTag}<changefreq>monthly</changefreq>` +
-          `<priority>0.6</priority></url>`
-      );
+      entries.push({
+        path: `/theories/${xesc(slug)}`,
+        lastmod: lastmod || undefined,
+        changefreq: "monthly",
+        priority: "0.6",
+        localized: true,
+      });
     }
   } catch (_e) { /* skip */ }
 
@@ -346,16 +346,16 @@ export default async (request: Request) => {
         entries?: Array<{ id?: string }>;
       };
       const verifiedOn = tlFile?.provenance?.verified_on ?? "";
-      const tlLastmod = /^\d{4}-\d{2}-\d{2}$/.test(verifiedOn)
-        ? `<lastmod>${verifiedOn}</lastmod>`
-        : "";
+      const tlLastmod = /^\d{4}-\d{2}-\d{2}$/.test(verifiedOn) ? verifiedOn : undefined;
       for (const e of tlFile?.entries ?? []) {
         if (!e || !e.id) continue;
-        urls.push(
-          `  <url><loc>${SITE}/timeline/${xesc(e.id)}</loc>` +
-            `${tlLastmod}<changefreq>monthly</changefreq>` +
-            `<priority>0.6</priority></url>`
-        );
+        entries.push({
+          path: `/timeline/${xesc(e.id)}`,
+          lastmod: tlLastmod,
+          changefreq: "monthly",
+          priority: "0.6",
+          localized: true,
+        });
       }
     }
   } catch (_e) { /* skip */ }
@@ -363,13 +363,7 @@ export default async (request: Request) => {
 
 
 
-  const xml =
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    urls.join("\n") +
-    `\n</urlset>`;
-
-  return new Response(xml, {
+  return new Response(renderUrlset(entries, locale), {
     headers: {
       "content-type": "application/xml; charset=utf-8",
       "cache-control": "public, max-age=0, must-revalidate",
@@ -379,4 +373,6 @@ export default async (request: Request) => {
   });
 };
 
-export const config: Config = { path: "/sitemap.xml" };
+export const config: Config = {
+  path: ["/sitemap.xml", "/sitemap-es.xml", "/sitemap-de.xml", "/sitemap-index.xml"],
+};
