@@ -246,7 +246,7 @@ async function fetchVoteCounts(): Promise<Record<string, Record<string, number>>
 export default async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
-  const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides] = await Promise.all([
+  const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides, retreats] = await Promise.all([
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
