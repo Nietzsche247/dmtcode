@@ -31,6 +31,8 @@ const STATIC: Array<[string, string, string]> = [
   ["/about", "0.6", "monthly"],
   ["/methods", "0.6", "monthly"],
   ["/critiques", "0.6", "monthly"],
+  ["/people", "0.5", "monthly"],
+  ["/people/danny-goler", "0.7", "monthly"],
   ["/open-questions", "0.6", "weekly"],
   ["/null-reports", "0.5", "weekly"],
   ["/research", "0.6", "weekly"],

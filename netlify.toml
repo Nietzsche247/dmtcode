@@ -112,6 +112,14 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/people"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/people/*"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/bibliography/*"
   function = "content-prerender"
 
