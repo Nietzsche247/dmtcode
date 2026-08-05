@@ -133,6 +133,63 @@ function rowsToDl(pairs: Array<[string, unknown]>): string {
   );
 }
 
+// Path-based locale mirrors. English is the default and lives at unprefixed
+// paths; /es/* and /de/* mirror the same routes.
+type Loc = "en" | "es" | "de";
+const LOCALES = new Set(["es", "de"]);
+
+// Field-level translations for a single record. Returns {} for English, for a
+// missing table, or on any failure: a missing translation must NEVER blank the
+// source value.
+async function getTranslations(
+  table: string,
+  recordId: string,
+  locale: string,
+): Promise<Record<string, string>> {
+  if (locale === "en" || !locale || !recordId) return {};
+  if (!SUPABASE_URL || !SUPABASE_KEY) return {};
+  try {
+    const api =
+      `${SUPABASE_URL}/rest/v1/content_translations` +
+      `?table_name=eq.${encodeURIComponent(table)}` +
+      `&record_id=eq.${encodeURIComponent(recordId)}` +
+      `&locale=eq.${encodeURIComponent(locale)}` +
+      `&select=field,translated_text`;
+    const res = await fetch(api, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) return {};
+    const rows = (await res.json()) as Array<Record<string, unknown>>;
+    const out: Record<string, string> = {};
+    for (const r of rows) {
+      const f = String(r.field ?? "");
+      const t = String(r.translated_text ?? "");
+      if (f && t.trim()) out[f] = t;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+// Overlay translated fields onto a source row in place. Only non-empty
+// translations are applied, and only for the allowed fields when given.
+function overlay(
+  row: Record<string, unknown>,
+  tr: Record<string, string>,
+  only?: string[],
+): void {
+  for (const [k, v] of Object.entries(tr)) {
+    if (only && !only.includes(k)) continue;
+    if (v && v.trim()) row[k] = v;
+  }
+}
+
+
 export default async (request: Request, context: Context) => {
   try {
     const url = new URL(request.url);
