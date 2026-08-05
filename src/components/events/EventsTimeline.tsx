@@ -8,7 +8,9 @@ interface Event {
   id: string;
   title: string;
   description: string | null;
+  details: string | null;
   event_date: string;
+  end_date: string | null;
   event_type: string;
   location: string | null;
   organizer: string | null;
@@ -21,6 +23,27 @@ interface Props {
   emptyLabel?: string;
   types?: string[];
 }
+
+const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => {
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? iso : d.toLocaleDateString("en-US", opts);
+};
+
+const formatRange = (start: string, end: string | null): string => {
+  const s = new Date(start);
+  if (isNaN(s.getTime())) return start;
+  const base: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+  if (!end) return fmt(start, base);
+  const e = new Date(end);
+  if (isNaN(e.getTime()) || e.getTime() === s.getTime()) return fmt(start, base);
+  if (s.getFullYear() === e.getFullYear() && s.getMonth() === e.getMonth()) {
+    return `${fmt(start, { month: "short", day: "numeric" })} \u2013 ${fmt(end, base)}`;
+  }
+  if (s.getFullYear() === e.getFullYear()) {
+    return `${fmt(start, { month: "short", day: "numeric" })} \u2013 ${fmt(end, base)}`;
+  }
+  return `${fmt(start, base)} \u2013 ${fmt(end, base)}`;
+};
 
 const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Props) => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -44,7 +67,7 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
       }
       const { data, error } = await query;
       if (error) console.error("Error fetching events:", error);
-      else setEvents(data || []);
+      else setEvents((data as Event[]) || []);
       setLoading(false);
     })();
   }, [filter, typesKey]);
@@ -54,8 +77,10 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
   const items: TimelineItem[] = events.map((e) => ({
     id: e.id,
     date: e.event_date,
+    dateLabel: formatRange(e.event_date, e.end_date),
     title: e.title,
-    subtitle: [e.location, e.organizer].filter(Boolean).join(" · ") || undefined,
+    subtitle: [e.location, e.organizer].filter(Boolean).join(" \u00b7 ") || undefined,
+    body: [e.description, e.details].filter(Boolean).join("\n\n") || undefined,
     badge: e.event_type,
     onClick: () => navigate(`/events/${e.id}`),
   }));
@@ -64,6 +89,7 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
     <div className={muted ? "opacity-70" : ""}>
       <SharedTimeline
         items={items}
+        sortDirection={filter === "upcoming" ? "asc" : "desc"}
         emptyLabel={emptyLabel || "No events yet. Submit one to get started."}
         accentClassName={muted ? "bg-muted-foreground" : "bg-primary"}
       />
