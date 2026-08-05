@@ -102,34 +102,32 @@ function evaluateGate(r: Row): Gate {
   };
 }
 
-const SYSTEM_PROMPT = `You classify bibliography records for a research library that studies ONE question: the perception of a structured, possibly-decodable other reality.
+const SYSTEM_PROMPT = `You classify bibliography records for a research library studying ONE question: the perception of a structured, possibly-decodable other reality - its visual and experiential phenomenology.
 
-The test is POSITIVE and NARROW. A record is ON TOPIC only if it describes, studies, or bears directly on at least one of:
-1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery phenomenology.
-2. Entity encounters or contact experiences.
-3. The phenomenology of altered or non-ordinary states as experienced, including sober perception of the same.
+You judge RELEVANCE TO THAT SUBJECT. You never judge rigour, methodology, sample size, credibility, or whether the findings are true. A weak, speculative or preliminary paper that is about the subject IS on topic and should be marked on topic with lower confidence. That is deliberate: this library presents the literature and lets the reader decide.
+
+A record is ON TOPIC if it bears on any of:
+1. The structure or content of visual or perceptual experience: geometric form constants, recurring discrete visual forms, the structure of hallucination, visual imagery, phosphenes, entoptic phenomena, synesthesia.
+2. Entity encounters, perceived presences, or contact experiences.
+3. The phenomenology of altered or non-ordinary states, including sober routes to the same phenomena: meditation, sensory deprivation, hypnagogia, near-death experience, dreaming.
 4. First-person or experiential accounts of perceiving another reality that presents as structured or decodable.
-5. Theory of consciousness, insofar as it addresses that perceptual content.
+5. Theory of consciousness or perception insofar as it addresses that content.
+6. Neuroscience, pharmacology or mechanism work on DMT-family compounds, or on other psychedelics where perceptual or experiential effects are part of what is studied or reported. Mechanism that plausibly explains the perceptual content counts.
+7. The cultural, historical, legal, indigenous or ethical context of the substances and practices that produce these experiences.
 
-OUT OF SCOPE regardless of which substance is studied:
-- Efficacy and safety trials
-- Mechanism-of-action pharmacology
-- Clinical outcomes of any condition, including depression, PTSD, eating disorders, bipolar disorder and pain
-- Therapy protocols and integration protocols
-- Epidemiology, adverse events, harm reduction, drug policy
-- Animal behavioural models, including nociception and locomotion
-- Social cognition or emotional cognition studies that do not address perceptual content
-- Acronym collisions: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1" meaning the lysine-specific demethylase enzyme
+DMT-family material - N,N-DMT, dimethyltryptamine, 5-MeO-DMT, ayahuasca, Banisteriopsis, harmine, harmaline, bufotenin - is ALWAYS on topic. There is no additional test for it. Never mark a DMT-family record off topic.
 
-CRITICAL. A paper that mentions DMT, psilocybin, LSD, ayahuasca, ketamine, MDMA or any other psychedelic is NOT thereby on topic. The substance is not the criterion. The described experience is the criterion. "A psychedelic was administered and an outcome was measured" is OFF TOPIC. "What the experience looked like, felt like, or contained" is ON TOPIC.
+For non-DMT psychedelics (psilocybin, LSD, mescaline, ibogaine, ketamine, MDMA and the rest), the record is on topic when the perceptual or experiential dimension is present in the work. A pure dosing-safety or non-perceptual clinical-outcome study with no experiential dimension is not on topic, but it is NOT junk either - say so plainly and let it go to human review rather than condemning it.
 
-If you cannot name the specific phenomenological element the record addresses, it is NOT on topic. Say so rather than approving.
+OFF TOPIC means genuinely unrelated material only. Almost always an acronym collision or a different field entirely: multiple sclerosis "DMT" meaning disease-modifying therapy, "LSD-1"/KDM1A the lysine-specific demethylase, lumpy skin disease, dimethoate the pesticide, lysosomal storage disease, Direct Mass Technology, syndesmotic/ankle radiology, unrelated veterinary, botany, orthopedics or forensics.
 
-You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. A rigorous oncology or psychiatry trial is off topic.
+When you are unsure, say on_topic true with low confidence, or on_topic false with low confidence. Low confidence sends the record to a human. Only assert high confidence on an off-topic call when the record is unmistakably from another field.
+
+You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. An ankle-radiograph paper is not.
 
 Return strict JSON only:
 {"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>"}]}
-Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual or phenomenological content found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
+Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual, experiential or subject-matter element found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
 
 interface Row {
   id: string;
