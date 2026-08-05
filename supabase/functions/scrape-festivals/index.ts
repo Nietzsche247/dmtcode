@@ -251,6 +251,22 @@ Deno.serve(async (_req) => {
         const startMs = Date.parse(found.start);
         const match = (existing ?? []).find((e) => Math.abs(Date.parse(e.event_date) - startMs) <= 90 * 86400000);
 
+        // Additive enrichment columns, derived from the JSON-LD already parsed above.
+        const ex = found.extras ?? null;
+        const enrich = {
+          festival_id: w.id,
+          edition_year: Number.isFinite(parseInt(found.start.slice(0, 4), 10)) ? parseInt(found.start.slice(0, 4), 10) : null,
+          image_url: ex?.image_url ?? null,
+          event_status: ex?.event_status ?? null,
+          geo_lat: ex?.geo_lat ?? null,
+          geo_lng: ex?.geo_lng ?? null,
+          ticket_price: ex?.ticket_price ?? null,
+          ticket_currency: ex?.ticket_currency ?? null,
+          ticket_url: ex?.ticket_url ?? null,
+          ticket_availability: ex?.ticket_availability ?? null,
+          lineup: ex?.lineup ?? null,
+        };
+
         if (match && match.is_approved) {
           stats.skipped++;
           result = `already_approved:${match.title}|${via}`;
@@ -261,10 +277,16 @@ Deno.serve(async (_req) => {
               end_date: found.end,
               scrape_confidence: found.confidence,
               last_scraped_at: new Date().toISOString(),
+              ...enrich,
             }).eq("id", match.id);
             stats.updated++;
             result = `updated_dates:${found.start}|${via}`;
           } else {
+            // Dates unchanged: still backfill the enrichment columns on the existing row.
+            await supabase.from("events").update({
+              last_scraped_at: new Date().toISOString(),
+              ...enrich,
+            }).eq("id", match.id);
             stats.skipped++;
             result = `unchanged|${via}`;
           }
@@ -289,6 +311,7 @@ Deno.serve(async (_req) => {
               scraped_from: w.source_url,
               scrape_confidence: found.confidence,
               last_scraped_at: new Date().toISOString(),
+              ...enrich,
             });
             if (iErr) throw new Error(iErr.message);
             stats.inserted++;
