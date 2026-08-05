@@ -4132,3 +4132,137 @@ async function renderGuideDetail(context: Context, rawSlug: string, locale: Loc 
   const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
+// ---------- People: static entity profiles ----------
+// There is no people table. These pages are static content plus prerender.
+
+const PERSON_LD_DANNY_GOLER = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": `${SITE}/people/danny-goler#person`,
+  name: "Danny Goler",
+  url: `${SITE}/people/danny-goler`,
+  description:
+    "Danny Goler first described the 650 nm laser DMT observation in August 2020 and published the pilot study in IPI Letters in 2025.",
+  sameAs: ["https://codeofreality.org", "https://x.com/GolerDanny"],
+  knowsAbout: [
+    "N,N-DMT",
+    "650 nm laser diffraction",
+    "visual geometry",
+    "Code of Reality protocol",
+  ],
+  subjectOf: {
+    "@type": "ScholarlyArticle",
+    name: "Detailing a Pilot Study: The Code of Reality Protocol",
+    author: "Danny Goler",
+    datePublished: "2025-01-08",
+    identifier: "10.59973/ipil.158",
+    sameAs: "https://doi.org/10.59973/ipil.158",
+    isPartOf: { "@type": "Periodical", name: "IPI Letters" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE}/people/danny-goler` },
+};
+
+const BREADCRUMB_LD_DANNY_GOLER = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+    { "@type": "ListItem", position: 2, name: "People", item: `${SITE}/people` },
+    { "@type": "ListItem", position: 3, name: "Danny Goler", item: `${SITE}/people/danny-goler` },
+  ],
+};
+
+async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/people/danny-goler`;
+
+  const body = `<article data-prerender="person-danny-goler">
+  <h1>Danny Goler</h1>
+  <p>Danny Goler is the person who first described the observation this project exists to record. In August 2020 he reported that a specific optical setup, a 650 nm laser passed through a diffraction grating and viewed under N,N-DMT, produced a repeating geometric pattern that he and others came to call the code of reality. In January 2025 he published the first written account of the method as a pilot study in the journal IPI Letters. Everything on this site is downstream of that description.</p>
+  <p>This page credits that origination and links to his own work. It does not speak for him, and it does not decide whether the phenomenon is real. That question is held open here on purpose.</p>
+  <h2>What he described</h2>
+  <p>The observation is a method. A red 650 nm laser is directed through a fine diffraction grating so that it casts a lattice of points, and an observer under N,N-DMT reports what they see in that field. Goler's account is that the lattice resolves into consistent, recurring forms across different people. The method itself is written up on the <a href="/protocol-guide">protocol guide</a>. The forms people report, including the ones that do not match anyone else's, accumulate in the <a href="/registry">visual symbol registry</a>.</p>
+  <h2>The pilot study</h2>
+  <p>The first peer-visible account is the paper "Detailing a Pilot Study: The Code of Reality Protocol," by Danny Goler, published in IPI Letters on 8 January 2025, DOI <a href="https://doi.org/10.59973/ipil.158" rel="noopener">10.59973/ipil.158</a>. It is catalogued in this site's <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the paper</a>, where it carries a stance score alongside every source that argues the other way. The paper describes the protocol and reports the author's observations. It is a pilot study, and it says so.</p>
+  <h2>His work beyond the paper</h2>
+  <p>Goler runs the non-profit research effort at <a href="https://codeofreality.org" rel="noopener">codeofreality.org</a> and is the subject of the documentary The Discovery. He has described the protocol at length in long-form interviews, including the Danny Jones Podcast and the Shawn Ryan Show, the second of which is catalogued here as <a href="/bibliography/a99cc4aa-8fc0-45fb-a1a1-6b90f16a5c8e">Shawn Ryan Show #320</a>. Those appearances are where most people first hear about the observation. His account of it is his own, and the links above go to it directly.</p>
+  <h2>His relationship to this project</h2>
+  <p>Goler is listed among the founders of DMT Code on the <a href="/about">about page</a>. We state that plainly rather than leave it to be inferred. The relationship does not change how this site treats his claim. His paper is scored on the same scale as the papers that dispute it. His protocol sits next to the null results people file against it. Nothing here is written to shield the origination story from a test.</p>
+  <h2>Where his claim stands today</h2>
+  <p>Four explanations for the reported forms are actively defended. Goler's reading, that the pattern is a structured feature of reality rather than of the visual system, is stated here first because it is the originator's position. The competing readings, from retinal and cortical optics to expectation and suggestion, are set out on the <a href="/critiques">critiques page</a> and in the <a href="/open-questions">open questions</a>. Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. That is a fact about the state of the field, not a charge against anyone. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it.</p>
+  <h2>Follow the record</h2>
+  <ul>
+    <li>The full <a href="/timeline">chronology, 1926 to 2025</a></li>
+    <li>The <a href="/registry">visual symbol registry</a> where reported forms accumulate</li>
+    <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
+    <li>The <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the pilot study</a></li>
+  </ul>
+  <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
+  <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
+</article>`;
+
+  const head = buildHead({
+    locale,
+    title: "Danny Goler, who described the DMT laser observation | DMT Code",
+    description:
+      "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
+    canonical,
+    canonicalPath: "/people/danny-goler",
+    ogType: "profile",
+    jsonLd: [PERSON_LD_DANNY_GOLER, BREADCRUMB_LD_DANNY_GOLER],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/people`;
+
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "People",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Danny Goler",
+        url: `${SITE}/people/danny-goler`,
+      },
+    ],
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+      { "@type": "ListItem", position: 2, name: "People", item: canonical },
+    ],
+  };
+
+  const body = `<article data-prerender="people">
+  <h1>People</h1>
+  <p>Entity profiles for the people whose work this record is built on.</p>
+  <ul>
+    <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
+  </ul>
+  <script type="application/ld+json">${jsonLd(itemListLd)}</script>
+  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
+</article>`;
+
+  const head = buildHead({
+    locale,
+    title: "People | DMT Code",
+    description: "Entity profiles for the people whose work this record is built on.",
+    canonical,
+    canonicalPath: "/people",
+    ogType: "website",
+    jsonLd: [itemListLd, breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
