@@ -316,7 +316,7 @@ export const SymbolSubmissionModeration = () => {
       .from('symbol_submissions')
       .update(patch)
       .in('id', ids)
-      .select('id, moderation_status, visibility_status');
+      .select('id, moderation_status, visibility_status, is_curated_example');
 
     if (error) {
       toast.error(`Could not ${verb}: ${error.message}`);
@@ -359,7 +359,7 @@ export const SymbolSubmissionModeration = () => {
     );
     if (!ok) return;
 
-    void recordAuditEvent({
+    await recordAuditEvent({
       event_name: 'symbol_moderation_decision',
       subject_type: 'symbol_submission',
       subject_id: id,
@@ -396,7 +396,7 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
     if (!ok) return;
 
-    void recordAuditEvents(ids, {
+    await recordAuditEvents(ids, {
       event_name: 'symbol_moderation_decision',
       subject_type: 'symbol_submission',
       properties: { decision: 'reviewed', bulk: true, batch_size: ids.length },
@@ -448,7 +448,7 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
 
     if (ok) {
-      void recordAuditEvents(ids, {
+      await recordAuditEvents(ids, {
         event_name: 'symbol_moderation_decision',
         subject_type: 'symbol_submission',
         properties: {
@@ -527,7 +527,7 @@ export const SymbolSubmissionModeration = () => {
     setBulkLoading(false);
     if (!ok) return;
 
-    void recordAuditEvents(ids, {
+    await recordAuditEvents(ids, {
       event_name: 'symbol_corpus_reclassification',
       subject_type: 'symbol_submission',
       properties: {
@@ -747,24 +747,11 @@ export const SymbolSubmissionModeration = () => {
             </Button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 border-t pt-3">
-            <span className="text-sm text-muted-foreground">Corpus classification:</span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => openCuratedModal(false)}
-              disabled={bulkLoading}
-            >
-              Mark as observer records
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => openCuratedModal(true)}
-              disabled={bulkLoading}
-            >
-              Mark as curated examples
-            </Button>
+          <div className="border-t pt-3">
+            <p className="text-sm text-muted-foreground">
+              All submissions count toward every total; provenance is preserved by the
+              submitter's account, not a corpus flag.
+            </p>
           </div>
         </Card>
       )}
@@ -931,9 +918,8 @@ export const SymbolSubmissionModeration = () => {
               {curatedTarget ? 'Mark as curated examples' : 'Mark as observer records'}
             </DialogTitle>
             <DialogDescription>
-              {curatedTarget
-                ? 'Curated examples are operator illustrations. They are excluded from every evidence, convergence and community total on the site.'
-                : 'Observer records are treated as real submissions and are included in evidence, convergence and community totals on the site.'}
+              All submissions count toward every total; provenance is preserved by the
+              submitter's account, not a corpus flag.
             </DialogDescription>
           </DialogHeader>
 
