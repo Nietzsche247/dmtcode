@@ -811,15 +811,22 @@ export type Database = {
           created_at: string
           description: string | null
           details: string | null
+          edition_year: number | null
           end_date: string | null
           erowid_flag: boolean | null
           event_date: string
+          event_status: string | null
           event_type: string
+          festival_id: string | null
+          geo_lat: number | null
+          geo_lng: number | null
           id: string
+          image_url: string | null
           intake_enabled: boolean
           is_approved: boolean
           jurisdiction_legal_status: string | null
           last_scraped_at: string | null
+          lineup: Json | null
           location: string | null
           medical_screening: boolean
           organizer: string | null
@@ -829,6 +836,10 @@ export type Database = {
           scrape_confidence: string | null
           scraped_from: string | null
           submitted_by: string | null
+          ticket_availability: string | null
+          ticket_currency: string | null
+          ticket_price: number | null
+          ticket_url: string | null
           title: string
           updated_at: string
           url: string | null
@@ -838,15 +849,22 @@ export type Database = {
           created_at?: string
           description?: string | null
           details?: string | null
+          edition_year?: number | null
           end_date?: string | null
           erowid_flag?: boolean | null
           event_date: string
+          event_status?: string | null
           event_type: string
+          festival_id?: string | null
+          geo_lat?: number | null
+          geo_lng?: number | null
           id?: string
+          image_url?: string | null
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
           last_scraped_at?: string | null
+          lineup?: Json | null
           location?: string | null
           medical_screening?: boolean
           organizer?: string | null
@@ -856,6 +874,10 @@ export type Database = {
           scrape_confidence?: string | null
           scraped_from?: string | null
           submitted_by?: string | null
+          ticket_availability?: string | null
+          ticket_currency?: string | null
+          ticket_price?: number | null
+          ticket_url?: string | null
           title: string
           updated_at?: string
           url?: string | null
@@ -865,15 +887,22 @@ export type Database = {
           created_at?: string
           description?: string | null
           details?: string | null
+          edition_year?: number | null
           end_date?: string | null
           erowid_flag?: boolean | null
           event_date?: string
+          event_status?: string | null
           event_type?: string
+          festival_id?: string | null
+          geo_lat?: number | null
+          geo_lng?: number | null
           id?: string
+          image_url?: string | null
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
           last_scraped_at?: string | null
+          lineup?: Json | null
           location?: string | null
           medical_screening?: boolean
           organizer?: string | null
@@ -883,12 +912,24 @@ export type Database = {
           scrape_confidence?: string | null
           scraped_from?: string | null
           submitted_by?: string | null
+          ticket_availability?: string | null
+          ticket_currency?: string | null
+          ticket_price?: number | null
+          ticket_url?: string | null
           title?: string
           updated_at?: string
           url?: string | null
           vetting_status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_festival_id_fkey"
+            columns: ["festival_id"]
+            isOneToOne: false
+            referencedRelation: "festival_watchlist"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       falsification_criteria: {
         Row: {
