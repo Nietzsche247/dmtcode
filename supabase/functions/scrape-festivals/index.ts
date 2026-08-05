@@ -6,7 +6,9 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const MONTHS: Record<string, number> = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
 const MONTH_RE = "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)";
-const DASH = "(?:[-\\u2010-\\u2015]{1,3}|to|until|through)";
+const DASH = "(?:[-\\u2010-\\u2015\\u2022\\u00b7/]{1,3}|to|until|through|thru)";
+const ORD = "(?:st|nd|rd|th)?";
+const WD = "(?:\\s*(?:mon|tues?|wednes|thurs?|fri|satur|sun)day,?)?";
 
 function m(name: string): number { return MONTHS[name.slice(0, 3).toLowerCase()]; }
 function iso(y: number, mo: number, d: number): string | null {
@@ -58,23 +60,23 @@ function fromText(html: string): Found | null {
     .replace(/\s+/g, " ");
   const cands: Found[] = [];
   // "3 - 9 August 2026" (day-first, same month)
-  for (const x of text.matchAll(new RegExp(`(\\d{1,2})\\s*${DASH}\\s*(\\d{1,2})\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
+  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
     const s = iso(+x[4], m(x[3]), +x[1]), e = iso(+x[4], m(x[3]), +x[2]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
   }
   // "August 27 - 30, 2026" (month-first, same month)
-  for (const x of text.matchAll(new RegExp(`${MONTH_RE}\\.?\\s+(\\d{1,2})\\s*${DASH}\\s*(\\d{1,2}),?\\s*(\\d{4})`, "gi"))) {
+  for (const x of text.matchAll(new RegExp(`${MONTH_RE}\\.?\\s+(\\d{1,2})${ORD}\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD},?\\s*(\\d{4})`, "gi"))) {
     const s = iso(+x[4], m(x[1]), +x[2]), e = iso(+x[4], m(x[1]), +x[3]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
   }
   // "27 December 2026 - 4 January 2027" (day-first, cross-month; first year optional)
-  for (const x of text.matchAll(new RegExp(`(\\d{1,2})\\s+${MONTH_RE}\\.?\\s*(\\d{4})?\\s*${DASH}\\s*(\\d{1,2})\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
+  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s*(\\d{4})?\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
     const y2 = +x[6]; const y1 = x[3] ? +x[3] : (m(x[2]) > m(x[5]) ? y2 - 1 : y2);
     const s = iso(y1, m(x[2]), +x[1]), e = iso(y2, m(x[5]), +x[4]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
   }
   // "February 23 - March 2, 2026" (month-first, cross-month; first year optional)
-  for (const x of text.matchAll(new RegExp(`${MONTH_RE}\\.?\\s+(\\d{1,2}),?\\s*(\\d{4})?\\s*${DASH}\\s*${MONTH_RE}\\.?\\s+(\\d{1,2}),?\\s*(\\d{4})`, "gi"))) {
+  for (const x of text.matchAll(new RegExp(`${MONTH_RE}\\.?\\s+(\\d{1,2})${ORD},?\\s*(\\d{4})?\\s*${DASH}${WD}\\s*${MONTH_RE}\\.?\\s+(\\d{1,2})${ORD},?\\s*(\\d{4})`, "gi"))) {
     const y2 = +x[6]; const y1 = x[3] ? +x[3] : (m(x[1]) > m(x[4]) ? y2 - 1 : y2);
     const s = iso(y1, m(x[1]), +x[2]), e = iso(y2, m(x[4]), +x[5]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
