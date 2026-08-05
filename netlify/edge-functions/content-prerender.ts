@@ -2716,6 +2716,9 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
     description: shortDesc || undefined,
     url: r.url || canonical,
   };
+  if (r.end_date) {
+    eventLd.endDate = String(r.end_date);
+  }
   if (r.location) {
     eventLd.location = { "@type": "Place", name: String(r.location) };
   }
