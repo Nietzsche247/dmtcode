@@ -4,8 +4,10 @@ import { Card } from "@/components/ui/card";
 export interface TimelineItem {
   id: string;
   date: string; // ISO date
+  dateLabel?: string; // optional pre-formatted label (e.g. date range)
   title: string;
   subtitle?: string;
+  body?: string; // prose paragraphs separated by blank lines
   badge?: string;
   badgeColor?: string; // hex or css var
   onClick?: () => void;
@@ -17,6 +19,7 @@ interface SharedTimelineProps {
   items: TimelineItem[];
   emptyLabel?: string;
   accentClassName?: string; // tailwind bg-* for rail
+  sortDirection?: "asc" | "desc";
 }
 
 /**
@@ -28,6 +31,7 @@ export default function SharedTimeline({
   items,
   emptyLabel = "Nothing to show yet.",
   accentClassName = "bg-primary",
+  sortDirection = "desc",
 }: SharedTimelineProps) {
   if (!items.length) {
     return (
@@ -37,21 +41,24 @@ export default function SharedTimeline({
     );
   }
 
+  const dir = sortDirection === "asc" ? 1 : -1;
   const sorted = [...items].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => dir * (new Date(a.date).getTime() - new Date(b.date).getTime()),
   );
 
   return (
     <ol className="relative border-s border-border ps-6 space-y-4">
       {sorted.map((item) => {
         const d = new Date(item.date);
-        const dateLabel = isNaN(d.getTime())
-          ? item.date
-          : d.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            });
+        const dateLabel =
+          item.dateLabel ??
+          (isNaN(d.getTime())
+            ? item.date
+            : d.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }));
         const Wrapper: any = item.href ? "a" : "div";
         const wrapperProps: Record<string, unknown> = item.href
           ? { href: item.href }
@@ -100,6 +107,22 @@ export default function SharedTimeline({
                   <p className="mt-1 text-sm text-muted-foreground">
                     {item.subtitle}
                   </p>
+                )}
+                {item.body && (
+                  <div className="mt-3 space-y-2">
+                    {item.body
+                      .split(/\n\s*\n/)
+                      .map((p) => p.trim())
+                      .filter(Boolean)
+                      .map((p, i) => (
+                        <p
+                          key={i}
+                          className="text-sm text-muted-foreground leading-relaxed"
+                        >
+                          {p}
+                        </p>
+                      ))}
+                  </div>
                 )}
                 {item.meta && <div className="mt-2">{item.meta}</div>}
               </Wrapper>

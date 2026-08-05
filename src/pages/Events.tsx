@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import EventsTimeline from "@/components/events/EventsTimeline";
 import TrialsTimeline from "@/components/events/TrialsTimeline";
-import RetreatGrid from "@/components/events/RetreatGrid";
+import RetreatColumnList from "@/components/events/RetreatColumnList";
 import UpcomingEventsList from "@/components/events/UpcomingEventsList";
 import ActiveTrialsList from "@/components/events/ActiveTrialsList";
 import EventSubmissionModal from "@/components/events/EventSubmissionModal";
@@ -67,6 +67,8 @@ const Events = () => {
   const jsonLd = useMemo(() => {
     const items = allEvents
       .filter(e => e.event_date && e.title)
+      .slice()
+      .sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime())
       .map((e, idx) => {
         const ev: Record<string, unknown> = {
           "@type": "Event",
@@ -161,14 +163,6 @@ const Events = () => {
               <Plus className="w-4 h-4 mr-2" />
               Add Event
             </Button>
-            <Button onClick={() => setTrialModalOpen(true)} variant="outline" className="rounded-full btn-lickable">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Clinical Trial
-            </Button>
-            <Button onClick={() => setRetreatModalOpen(true)} variant="outline" className="rounded-full btn-lickable">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Retreat
-            </Button>
           </div>
 
           {showTypeFilter && (
@@ -207,47 +201,73 @@ const Events = () => {
           )}
         </div>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Events Timeline</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Upcoming events and clinical trials. Past events are kept below for the record.
-          </p>
-          <div className="flex gap-8">
-            <div className="flex-1 space-y-10">
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Upcoming</h3>
-                <EventsTimeline filter="upcoming" types={typeFilters} emptyLabel="No upcoming events yet." />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12 items-start">
+          <div className="lg:col-span-2 space-y-10">
+            <section>
+              <h2 className="text-2xl font-semibold mb-1">Upcoming events</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Soonest first. Past events are kept at the bottom of this page for the record.
+              </p>
+              <EventsTimeline filter="upcoming" types={typeFilters} emptyLabel="No upcoming events yet." />
+            </section>
+
+            <section>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h3 className="text-lg font-semibold">Clinical trials</h3>
+                <Button
+                  onClick={() => setTrialModalOpen(true)}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full btn-lickable"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Clinical Trial
+                </Button>
               </div>
               <TrialsTimeline />
-              <div>
-                <h3 className="text-lg font-semibold mb-1 text-muted-foreground">Past events</h3>
-                <p className="text-xs text-muted-foreground mb-3">Past events, kept for the record.</p>
-                <EventsTimeline filter="past" types={typeFilters} muted emptyLabel="No past events on record." />
-              </div>
-            </div>
-            <div className="hidden lg:flex flex-col gap-6 w-80 flex-shrink-0">
-              <div className="border border-border rounded-lg p-4 bg-card sticky top-24">
-                <h3 className="text-lg font-semibold mb-3 text-foreground">Next 10 Events</h3>
-                <UpcomingEventsList />
-              </div>
-              <div className="border border-border rounded-lg p-4 bg-card sticky top-96">
-                <h3 className="text-lg font-semibold mb-3 text-foreground">Active & Recruiting Trials</h3>
-                <ActiveTrialsList />
-              </div>
-            </div>
+            </section>
           </div>
-        </section>
+
+          <aside className="lg:col-span-1 space-y-6">
+            <section>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <h2 className="text-2xl font-semibold">Retreat centers</h2>
+                <Button
+                  onClick={() => setRetreatModalOpen(true)}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full btn-lickable"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Retreat
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Centers that operate openly and publish who they are and where. A listing here is not an endorsement. Verify legal status, medical screening and staff credentials directly with the center before booking.
+              </p>
+              <RetreatColumnList />
+              <p className="mt-4 text-sm">
+                <Link to="/retreats" className="underline underline-offset-4 hover:text-primary">All retreat centers</Link>
+              </p>
+            </section>
+
+            <div className="border border-border rounded-lg p-4 bg-card">
+              <h3 className="text-lg font-semibold mb-3 text-foreground">Next 10 Events</h3>
+              <UpcomingEventsList />
+            </div>
+            <div className="border border-border rounded-lg p-4 bg-card">
+              <h3 className="text-lg font-semibold mb-3 text-foreground">Active &amp; Recruiting Trials</h3>
+              <ActiveTrialsList />
+            </div>
+          </aside>
+        </div>
 
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Retreat centers</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Centers that operate openly and publish who they are and where. A listing here is not an endorsement. Verify legal status, medical screening and staff credentials directly with the center before booking.
-          </p>
-          <RetreatGrid />
-          <p className="mt-4 text-sm">
-            <Link to="/retreats" className="underline underline-offset-4 hover:text-primary">All retreat centers</Link>
-          </p>
+          <h2 className="text-lg font-semibold mb-1 text-muted-foreground">Past events</h2>
+          <p className="text-xs text-muted-foreground mb-3">Past events, kept for the record.</p>
+          <EventsTimeline filter="past" types={typeFilters} muted emptyLabel="No past events on record." />
         </section>
+
 
         <Alert className="mt-12 border-muted">
           <AlertDescription className="text-xs text-muted-foreground">
