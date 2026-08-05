@@ -593,6 +593,7 @@ export default async (req: Request): Promise<Response> => {
       articles: articlesFeed.length,
       registry_glyphs: registryGlyphsFeed.length,
       guides: guidesFeed.length,
+      retreats: retreatsFeed.length,
     },
     items: filtered,
     symbols: symbolsFeed,
