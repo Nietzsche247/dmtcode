@@ -31,6 +31,7 @@ export default function SharedTimeline({
   items,
   emptyLabel = "Nothing to show yet.",
   accentClassName = "bg-primary",
+  sortDirection = "desc",
 }: SharedTimelineProps) {
   if (!items.length) {
     return (
@@ -40,21 +41,24 @@ export default function SharedTimeline({
     );
   }
 
+  const dir = sortDirection === "asc" ? 1 : -1;
   const sorted = [...items].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => dir * (new Date(a.date).getTime() - new Date(b.date).getTime()),
   );
 
   return (
     <ol className="relative border-s border-border ps-6 space-y-4">
       {sorted.map((item) => {
         const d = new Date(item.date);
-        const dateLabel = isNaN(d.getTime())
-          ? item.date
-          : d.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            });
+        const dateLabel =
+          item.dateLabel ??
+          (isNaN(d.getTime())
+            ? item.date
+            : d.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }));
         const Wrapper: any = item.href ? "a" : "div";
         const wrapperProps: Record<string, unknown> = item.href
           ? { href: item.href }
