@@ -22,6 +22,7 @@ interface Props {
   muted?: boolean;
   emptyLabel?: string;
   types?: string[];
+  excludeTypes?: string[];
 }
 
 const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => {
@@ -45,11 +46,12 @@ const formatRange = (start: string, end: string | null): string => {
   return `${fmt(start, base)} \u2013 ${fmt(end, base)}`;
 };
 
-const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Props) => {
+const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types, excludeTypes }: Props) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const typesKey = (types ?? []).slice().sort().join("|");
+  const excludeKey = (excludeTypes ?? []).slice().sort().join("|");
 
   useEffect(() => {
     (async () => {
@@ -57,6 +59,9 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
       let query = supabase.from("events").select("*").eq("is_approved", true);
       if (types && types.length > 0) {
         query = query.in("event_type", types);
+      }
+      if (excludeTypes && excludeTypes.length > 0) {
+        query = query.not("event_type", "in", `(${excludeTypes.join(",")})`);
       }
       if (filter === "upcoming") {
         query = query.gte("event_date", today).order("event_date", { ascending: true });
@@ -70,7 +75,8 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types }: Pr
       else setEvents((data as Event[]) || []);
       setLoading(false);
     })();
-  }, [filter, typesKey]);
+  }, [filter, typesKey, excludeKey]);
+
 
   if (loading) return <Skeleton className="w-full h-32" />;
 
