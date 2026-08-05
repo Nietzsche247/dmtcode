@@ -1,16 +1,29 @@
-// SCRAPE_FESTIVALS_V1 — dmtcode.com festival watchlist scraper
+// SCRAPE_FESTIVALS_V2 — dmtcode.com festival watchlist scraper
 // Polls curated festival sources weekly, extracts upcoming edition dates
-// (JSON-LD Event first, text regex fallback), and inserts NEW editions into
-// events with is_approved=false for moderation. Never writes approved rows.
+// (JSON-LD Event first, text regex fallback, then a headless-render fallback
+// through the Jina Reader proxy for JS-built SPA sites). Inserts NEW editions
+// into events with is_approved=false for moderation. Never writes approved rows.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const MONTHS: Record<string, number> = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12 };
-const MONTH_RE = "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)";
-const DASH = "(?:[-\\u2010-\\u2015\\u2022\\u00b7/]{1,3}|to|until|through|thru)";
+const MONTH_MAP: Record<string, number> = {
+  january:1, february:2, march:3, april:4, may:5, june:6, july:7, august:8, september:9, october:10, november:11, december:12,
+  jan:1, feb:2, mar:3, apr:4, jun:6, jul:7, aug:8, sep:9, sept:9, oct:10, nov:11, dec:12,
+  janvier:1, "février":2, fevrier:2, mars:3, avril:4, mai:5, juin:6, juillet:7, "août":8, aout:8, septembre:9, octobre:10, novembre:11, "décembre":12, decembre:12,
+  januar:1, februar:2, "märz":3, maerz:3, juni:6, juli:7, oktober:10, dezember:12,
+  janeiro:1, fevereiro:2, "março":3, marco:3, abril:4, maio:5, junho:6, julho:7, agosto:8, setembro:9, outubro:10, novembro:11, dezembro:12,
+  enero:1, febrero:2, marzo:3, mayo:5, junio:6, julio:7, septiembre:9, octubre:10, noviembre:11, diciembre:12,
+};
+const MONTH_RE = "(" + Object.keys(MONTH_MAP).sort((a, b) => b.length - a.length).join("|") + ")";
+const DASH = "(?:[-\\u2010-\\u2015\\u2022\\u00b7/]{1,3}|to|until|through|thru|au|bis|até|ate|hasta|al|a)";
 const ORD = "(?:st|nd|rd|th)?";
 const WD = "(?:\\s*(?:mon|tues?|wednes|thurs?|fri|satur|sun)day,?)?";
+const DE = "(?:de\\s+|of\\s+)?";
+const UA = "Mozilla/5.0 (compatible; dmtcode-festival-scraper/2.0; +https://dmtcode.com)";
 
-function m(name: string): number { return MONTHS[name.slice(0, 3).toLowerCase()]; }
+function m(name: string): number {
+  const k = name.toLowerCase().replace(/\.$/, "");
+  return MONTH_MAP[k] ?? 0;
+}
 function iso(y: number, mo: number, d: number): string | null {
   if (!y || !mo || !d || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
   return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
@@ -51,16 +64,16 @@ function fromJsonLd(html: string): Found | null {
   return cands[0] ?? null;
 }
 
-function fromText(html: string): Found | null {
-  const text = html
+function fromText(input: string): Found | null {
+  const text = input
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;|&ndash;|&mdash;|&#8211;|&#8212;/g, " ")
     .replace(/\s+/g, " ");
   const cands: Found[] = [];
-  // "3 - 9 August 2026" (day-first, same month)
-  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
+  // "3 - 9 August 2026" / "27 au 30 août 2026" (day-first, same month)
+  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${DE}${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
     const s = iso(+x[4], m(x[3]), +x[1]), e = iso(+x[4], m(x[3]), +x[2]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
   }
@@ -70,7 +83,7 @@ function fromText(html: string): Found | null {
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
   }
   // "27 December 2026 - 4 January 2027" (day-first, cross-month; first year optional)
-  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s*(\\d{4})?\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
+  for (const x of text.matchAll(new RegExp(`(\\d{1,2})${ORD}\\s+${DE}${MONTH_RE}\\.?\\s*(\\d{4})?\\s*${DASH}${WD}\\s*(\\d{1,2})${ORD}\\s+${DE}${MONTH_RE}\\.?\\s+(\\d{4})`, "gi"))) {
     const y2 = +x[6]; const y1 = x[3] ? +x[3] : (m(x[2]) > m(x[5]) ? y2 - 1 : y2);
     const s = iso(y1, m(x[2]), +x[1]), e = iso(y2, m(x[5]), +x[4]);
     if (s && e) cands.push({ start: s, end: e, confidence: "regex" });
@@ -96,19 +109,37 @@ Deno.serve(async (_req) => {
   for (const w of watchlist ?? []) {
     stats.checked++;
     let result = "no_dates_found";
+    let found: Found | null = null;
+    let via = "direct";
+    let fetchError = "";
+
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 12000);
-      const res = await fetch(w.source_url, {
-        signal: ctrl.signal,
-        redirect: "follow",
-        headers: { "User-Agent": "Mozilla/5.0 (compatible; dmtcode-festival-scraper/1.0; +https://dmtcode.com)" },
-      });
+      const res = await fetch(w.source_url, { signal: ctrl.signal, redirect: "follow", headers: { "User-Agent": UA } });
       clearTimeout(timer);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
-      const found = fromJsonLd(html) ?? fromText(html);
+      found = fromJsonLd(html) ?? fromText(html);
+    } catch (e) {
+      fetchError = (e as Error).message.slice(0, 100);
+    }
 
+    if (!found) {
+      // Headless-render fallback for JS-built SPA sites via the Jina Reader proxy.
+      try {
+        const ctrl2 = new AbortController();
+        const timer2 = setTimeout(() => ctrl2.abort(), 25000);
+        const res2 = await fetch(`https://r.jina.ai/${w.source_url}`, { signal: ctrl2.signal, redirect: "follow", headers: { Accept: "text/plain", "User-Agent": UA } });
+        clearTimeout(timer2);
+        if (res2.ok) {
+          const f2 = fromText(await res2.text());
+          if (f2) { found = { start: f2.start, end: f2.end, confidence: "render-regex" }; via = "rendered"; }
+        }
+      } catch { /* rendering fallback is best-effort */ }
+    }
+
+    try {
       if (found) {
         stats.found++;
         const { data: existing } = await supabase
@@ -121,7 +152,7 @@ Deno.serve(async (_req) => {
 
         if (match && match.is_approved) {
           stats.skipped++;
-          result = `already_approved:${match.title}`;
+          result = `already_approved:${match.title}|${via}`;
         } else if (match && !match.is_approved) {
           if (match.event_date !== found.start || match.end_date !== found.end) {
             await supabase.from("events").update({
@@ -131,10 +162,10 @@ Deno.serve(async (_req) => {
               last_scraped_at: new Date().toISOString(),
             }).eq("id", match.id);
             stats.updated++;
-            result = `updated_dates:${found.start}`;
+            result = `updated_dates:${found.start}|${via}`;
           } else {
             stats.skipped++;
-            result = "unchanged";
+            result = `unchanged|${via}`;
           }
         } else {
           const y1 = found.start.slice(0, 4), y2 = found.end.slice(0, 4);
@@ -142,11 +173,11 @@ Deno.serve(async (_req) => {
           const { data: dupe } = await supabase.from("events").select("id").eq("title", title).maybeSingle();
           if (dupe) {
             stats.skipped++;
-            result = "title_exists";
+            result = `title_exists|${via}`;
           } else {
             const { error: iErr } = await supabase.from("events").insert({
               title,
-              description: `[Auto-discovered] Upcoming edition of ${w.festival_name} detected from ${w.source_url} (confidence: ${found.confidence}). Dates require editorial verification before approval; summary to be written at review. Relevance: ${w.relevance}.`,
+              description: `[Auto-discovered] Upcoming edition of ${w.festival_name} detected from ${w.source_url} via ${via} fetch (confidence: ${found.confidence}). Dates require editorial verification before approval; summary to be written at review. Relevance: ${w.relevance}.`,
               event_date: found.start,
               end_date: found.end,
               event_type: "festival",
@@ -160,14 +191,18 @@ Deno.serve(async (_req) => {
             });
             if (iErr) throw new Error(iErr.message);
             stats.inserted++;
-            result = `inserted:${title} ${found.start}..${found.end}`;
+            result = `inserted:${title} ${found.start}..${found.end}|${via}`;
           }
         }
+      } else if (fetchError) {
+        stats.errors++;
+        result = `error:${fetchError}`;
       }
     } catch (e) {
       stats.errors++;
       result = `error:${(e as Error).message.slice(0, 120)}`;
     }
+
     await supabase.from("festival_watchlist").update({ last_checked_at: new Date().toISOString(), last_result: result }).eq("id", w.id);
     detail.push({ festival: w.festival_name, result });
   }
