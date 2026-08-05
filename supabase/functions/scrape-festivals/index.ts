@@ -232,7 +232,7 @@ Deno.serve(async (_req) => {
           const body = await res2.text();
           const f2 = fromJsonLd(body) ?? fromText(body);
           if (f2) {
-            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex" };
+            found = { start: f2.start, end: f2.end, confidence: f2.confidence === "jsonld" ? "render-jsonld" : "render-regex", extras: f2.extras ?? null };
             via = "rendered";
             fetchError = "";
           }
