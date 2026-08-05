@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import EventsTimeline from "@/components/events/EventsTimeline";
 import TrialsTimeline from "@/components/events/TrialsTimeline";
-import RetreatGrid from "@/components/events/RetreatGrid";
+import RetreatColumnList from "@/components/events/RetreatColumnList";
 import UpcomingEventsList from "@/components/events/UpcomingEventsList";
 import ActiveTrialsList from "@/components/events/ActiveTrialsList";
 import EventSubmissionModal from "@/components/events/EventSubmissionModal";
