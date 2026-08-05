@@ -45,7 +45,16 @@ function isDetailPatternValid(path: string): boolean {
 
 export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
-  const path = url.pathname;
+  let path = url.pathname;
+
+  // Path-based locale mirrors: /es/* and /de/* serve the same route tree as
+  // English. Strip the locale segment and validate the residual path only.
+  let locale = "";
+  const locMatch = path.match(/^\/(es|de)(\/.*)?$/i);
+  if (locMatch) {
+    locale = locMatch[1].toLowerCase();
+    path = locMatch[2] || "/";
+  }
 
   if (path === "/") {
     return context.next();
@@ -62,7 +71,7 @@ export default async (request: Request, context: Context) => {
       !/\.html?$/i.test(path) &&
       (res.headers.get("content-type") || "").toLowerCase().includes("text/html")
     ) {
-      return notFound();
+      return notFound(locale);
     }
     return res;
   }
@@ -72,16 +81,16 @@ export default async (request: Request, context: Context) => {
 
   const validFirst = VALID_FIRST_SEGMENT.has(first);
   if (!validFirst) {
-    return notFound();
+    return notFound(locale);
   }
   if (!isDetailPatternValid(path)) {
-    return notFound();
+    return notFound(locale);
   }
   return context.next();
 };
 
-async function notFound(): Promise<Response> {
-  const html = `<!doctype html><html lang="en"><head>
+async function notFound(locale = ""): Promise<Response> {
+  const html = `<!doctype html><html lang="${locale || "en"}"><head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="robots" content="noindex,follow" />
@@ -102,5 +111,6 @@ async function notFound(): Promise<Response> {
     },
   });
 }
+
 
 export const config: Config = { path: "/*" };
