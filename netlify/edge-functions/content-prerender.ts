@@ -618,6 +618,7 @@ export default async (request: Request, context: Context) => {
       : null;
 
     const head = buildHead({
+    locale,
       title,
       description: metaDesc,
       canonical,
@@ -629,14 +630,14 @@ export default async (request: Request, context: Context) => {
       jsonLd: [ld, breadcrumbLd],
     });
 
-    const html = renderShell(await shellRes.text(), head, body);
+    const html = renderShell(await shellRes.text(), head, body, locale);
     return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
   } catch (_e) {
     return context.next();
   }
 };
 
-async function renderPrepare(context: Context): Promise<Response> {
+async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   if (!SUPABASE_URL || !SUPABASE_KEY) return shellRes;
 
@@ -887,6 +888,7 @@ async function renderPrepare(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -894,11 +896,11 @@ async function renderPrepare(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, datasetLd, faqLd, itemListLd, ...productLds],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderEvidenceMap(context: Context): Promise<Response> {
+async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/evidence-map`;
   const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
@@ -1015,6 +1017,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1022,7 +1025,7 @@ async function renderEvidenceMap(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, articleLd, datasetLd, faqLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -1120,7 +1123,7 @@ function tlSorted(file: TlFile): TlEntry[] {
   return [...file.entries].sort((a, b) => a.date.sort_key.localeCompare(b.date.sort_key));
 }
 
-async function renderTimelineIndex(context: Context, request: Request): Promise<Response> {
+async function renderTimelineIndex(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const shellHtml = await shellRes.text();
   const canonical = `${SITE}/timeline`;
@@ -1128,6 +1131,7 @@ async function renderTimelineIndex(context: Context, request: Request): Promise<
 
   if (!file) {
     const head = buildHead({
+    locale,
       title: "Chronology | DMT Code",
       description: "A dated record of the published research, legal decisions and community claims behind the DMT code question.",
       canonical,
@@ -1136,7 +1140,7 @@ async function renderTimelineIndex(context: Context, request: Request): Promise<
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
 </article>`;
-    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+    return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
 
   const entries = tlSorted(file);
@@ -1259,6 +1263,7 @@ ${items}
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1266,10 +1271,10 @@ ${items}
     jsonLd: [organizationLd, breadcrumbLd, collectionLd, itemListLd],
   });
 
-  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderTimelineEntry(context: Context, request: Request, rawId: string): Promise<Response> {
+async function renderTimelineEntry(context: Context, request: Request, rawId: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const shellHtml = await shellRes.text();
   const id = decodeURIComponent(rawId).toLowerCase();
@@ -1279,6 +1284,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
   // Serve the shell and let the client render it, marked noindex.
   if (!file) {
     const head = buildHead({
+    locale,
       title: "Chronology record | DMT Code",
       canonical: `${SITE}/timeline/${id}`,
       robots: "noindex, follow",
@@ -1287,7 +1293,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
   <h1>Chronology record</h1>
   <p>The chronology is at <a href="${SITE}/timeline">/timeline</a>.</p>
 </article>`;
-    return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+    return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
 
   const entries = tlSorted(file);
@@ -1391,6 +1397,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1398,7 +1405,7 @@ async function renderTimelineEntry(context: Context, request: Request, rawId: st
     jsonLd: [organizationLd, breadcrumbLd, workLd],
   });
 
-  return new Response(renderShell(shellHtml, head, body), { status: 200, headers: PRERENDER_RESP_HEADERS });
+  return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 
@@ -1503,7 +1510,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
 
 const FAQ_ITEMS: Array<{ q: string; a: string }> = FAQ_GROUPS.flatMap((g) => g.items);
 
-async function renderFaq(context: Context): Promise<Response> {
+async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/faq`;
   const title = "Questions about the DMT Code project and preparing to observe | DMT Code";
@@ -1559,6 +1566,7 @@ async function renderFaq(context: Context): Promise<Response> {
 
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -1566,7 +1574,7 @@ async function renderFaq(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, faqLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -2111,7 +2119,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 };
 
 
-async function renderStatic(context: Context, key: string): Promise<Response> {
+async function renderStatic(context: Context, key: string, locale: Loc = "en"): Promise<Response> {
   const page = STATIC_PAGES[key];
   const shellRes = await context.next();
   if (!page) return shellRes;
@@ -2250,6 +2258,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
       };
 
   const head = buildHead({
+    locale,
     title: page.title,
     description: page.description,
     canonical,
@@ -2258,7 +2267,7 @@ async function renderStatic(context: Context, key: string): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -2476,7 +2485,7 @@ function paragraphsFromText(text: string): string {
     .join("");
 }
 
-async function renderTheories(context: Context): Promise<Response> {
+async function renderTheories(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/theories`;
   const title = "Open theories: what could the DMT code be? | DMT Code";
@@ -2586,6 +2595,7 @@ async function renderTheories(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2593,11 +2603,11 @@ async function renderTheories(context: Context): Promise<Response> {
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderTagHub(context: Context, tag: string): Promise<Response> {
+async function renderTagHub(context: Context, tag: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/registry/tag/${encodeURIComponent(tag)}`;
 
@@ -2678,6 +2688,7 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
   const body = `<article data-prerender="tag-hub"><h1>Symbols tagged ${esc(tag)}</h1><p>${count} records in the open registry carry this tag.</p><p>Tags are added by submitters and by readers after publication. A shared tag is a starting point for comparison, not evidence of a shared source.</p><ul>${items}</ul></article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2686,13 +2697,13 @@ async function renderTagHub(context: Context, tag: string): Promise<Response> {
     jsonLd: [collectionLd, breadcrumbLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 
 
-async function renderEventDetail(context: Context, id: string): Promise<Response> {
+async function renderEventDetail(context: Context, id: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "events",
@@ -2769,6 +2780,7 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2776,11 +2788,11 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
     jsonLd: [organizationLd, breadcrumbLd, eventLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderRetreatDetail(context: Context, id: string): Promise<Response> {
+async function renderRetreatDetail(context: Context, id: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "retreats",
@@ -2843,6 +2855,7 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2851,11 +2864,11 @@ async function renderRetreatDetail(context: Context, id: string): Promise<Respon
     jsonLd: [organizationLd, breadcrumbLd, lodgingLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderRetreats(context: Context): Promise<Response> {
+async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/retreats`;
   const title = "Retreat centers | DMT Code";
@@ -2941,6 +2954,7 @@ async function renderRetreats(context: Context): Promise<Response> {
   }
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -2948,7 +2962,7 @@ async function renderRetreats(context: Context): Promise<Response> {
     jsonLd: jsonLdArr,
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3002,7 +3016,7 @@ function renderJsonNode(node: unknown, depth: number): string {
   return "";
 }
 
-async function renderProtocolDetail(context: Context, slug: string): Promise<Response> {
+async function renderProtocolDetail(context: Context, slug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9_-]/g, "");
   if (!cleanSlug) return notFound404(await shellRes.text(), { title: "Protocol not found | DMT Code", heading: "Protocol not found", text: "This protocol is not currently indexed or the link is out of date.", canonical: `${SITE}/protocols`, backHref: `${SITE}/protocols`, backLabel: "Protocols", marker: "protocol-not-found" });
@@ -3067,6 +3081,7 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3074,7 +3089,7 @@ async function renderProtocolDetail(context: Context, slug: string): Promise<Res
     jsonLd: [organizationLd, breadcrumbLd, medicalLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3094,7 +3109,7 @@ function theorySlug(title: string): string {
     .replace(/-+$/g, "");
 }
 
-async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
 
@@ -3200,6 +3215,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3207,7 +3223,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string): Promise<Re
     jsonLd: [organizationLd, breadcrumbLd, creativeWorkLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3373,7 +3389,7 @@ async function fetchInList(
   return (await res.json()) as Array<Record<string, unknown>>;
 }
 
-async function renderArticlesIndex(context: Context): Promise<Response> {
+async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/articles`;
   const title = "Articles | DMT Code";
@@ -3449,6 +3465,7 @@ async function renderArticlesIndex(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3457,11 +3474,11 @@ async function renderArticlesIndex(context: Context): Promise<Response> {
     jsonLd: [organizationLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderArticleDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderArticleDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
   const rows = await sbGetRows(
@@ -3665,6 +3682,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
   };
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3673,7 +3691,7 @@ async function renderArticleDetail(context: Context, rawSlug: string): Promise<R
     jsonLd: [graphLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3754,7 +3772,7 @@ function guideDate(v: unknown): string {
 const GUIDES_SUBLINE =
   "Direct answers to the questions people actually ask, each one graded by how strong the evidence behind it really is.";
 
-async function renderGuidesIndex(context: Context): Promise<Response> {
+async function renderGuidesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/guides`;
   const title = "Guides | DMT Code";
@@ -3827,6 +3845,7 @@ async function renderGuidesIndex(context: Context): Promise<Response> {
 </article>`;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3835,11 +3854,11 @@ async function renderGuidesIndex(context: Context): Promise<Response> {
     jsonLd: [organizationLd, breadcrumbLd, itemListLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-async function renderGuideDetail(context: Context, rawSlug: string): Promise<Response> {
+async function renderGuideDetail(context: Context, rawSlug: string, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const slug = String(rawSlug || "").toLowerCase();
   const rows = await sbGetRows(
@@ -3968,6 +3987,7 @@ async function renderGuideDetail(context: Context, rawSlug: string): Promise<Res
   if (citation.length) articleLd.citation = citation;
 
   const head = buildHead({
+    locale,
     title,
     description: metaDesc,
     canonical,
@@ -3976,6 +3996,6 @@ async function renderGuideDetail(context: Context, rawSlug: string): Promise<Res
     jsonLd: [organizationLd, breadcrumbLd, faqLd, articleLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body);
+  const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
