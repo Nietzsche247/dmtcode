@@ -7,6 +7,5 @@
   Content-Security-Policy: upgrade-insecure-requests
 
 # graph-handoff-headers:start
-/agent/*
-  X-Robots-Tag: noindex, follow
+# /agent/* is intentionally indexable: no X-Robots-Tag noindex here.
 # graph-handoff-headers:end

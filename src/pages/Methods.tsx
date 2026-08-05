@@ -273,6 +273,9 @@ const Methods = () => {
                 <a href="/protocol-guide" className="text-gold hover:underline font-medium">
                   Protocol Guide →
                 </a>
+                <a href="/agent/" className="text-gold hover:underline font-medium">
+                  Agent map →
+                </a>
               </div>
             </div>
           </section>
