@@ -2673,7 +2673,7 @@ async function renderEventDetail(context: Context, id: string): Promise<Response
   const shellRes = await context.next();
   const rows = await sbGetRows(
     "events",
-    `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,event_type,location,organizer,url`,
+    `id=eq.${id}&is_approved=is.true&select=id,title,description,details,event_date,end_date,event_type,location,organizer,url`,
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Event not found | DMT Code", heading: "Event not found", text: "This event is not currently indexed or the link is out of date.", canonical: `${SITE}/events`, backHref: `${SITE}/events`, backLabel: "Events timeline", marker: "event-not-found" });
