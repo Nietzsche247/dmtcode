@@ -4,8 +4,10 @@ import { Card } from "@/components/ui/card";
 export interface TimelineItem {
   id: string;
   date: string; // ISO date
+  dateLabel?: string; // optional pre-formatted label (e.g. date range)
   title: string;
   subtitle?: string;
+  body?: string; // prose paragraphs separated by blank lines
   badge?: string;
   badgeColor?: string; // hex or css var
   onClick?: () => void;
@@ -17,6 +19,7 @@ interface SharedTimelineProps {
   items: TimelineItem[];
   emptyLabel?: string;
   accentClassName?: string; // tailwind bg-* for rail
+  sortDirection?: "asc" | "desc";
 }
 
 /**
