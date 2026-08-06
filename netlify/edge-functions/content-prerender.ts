@@ -185,8 +185,21 @@ function overlay(
 ): void {
   for (const [k, v] of Object.entries(tr)) {
     if (only && !only.includes(k)) continue;
-    if (v && v.trim()) row[k] = v;
+    if (!v || !v.trim()) continue;
+    const current = row[k];
+    if (current !== null && typeof current === "object") {
+      // jsonb field: the translation is stored as a JSON string. Parse it, and
+      // on any failure keep the original source value rather than corrupting it.
+      try {
+        row[k] = JSON.parse(v);
+      } catch {
+        // keep original
+      }
+      continue;
+    }
+    row[k] = v;
   }
+
 }
 
 
