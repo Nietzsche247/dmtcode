@@ -38,18 +38,25 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
     + `Return ONLY the translation, no preamble, no quotes.`;
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { "Lovable-API-Key": LOVABLE_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "google/gemini-3.6-flash",
-      temperature: 0.2,
-      messages: [{ role: "system", content: sys }, { role: "user", content: text }],
-    }),
-  });
-  if (!res.ok) throw new Error(`gateway ${res.status}: ${await res.text()}`);
-  const j = await res.json();
-  return String(j.choices?.[0]?.message?.content ?? "").trim();
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 45_000);
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Lovable-API-Key": LOVABLE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-3.6-flash",
+        temperature: 0.2,
+        messages: [{ role: "system", content: sys }, { role: "user", content: text }],
+      }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const j = await res.json();
+    return String(j.choices?.[0]?.message?.content ?? "").trim();
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function translateJson(v: unknown, locale: "es" | "de"): Promise<unknown> {
