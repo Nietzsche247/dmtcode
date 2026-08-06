@@ -1,5 +1,7 @@
 // GA4 Data API reader for the admin Analytics tab.
 // Auth/token/query logic lives in ../_shared/ga4.ts and is shared with `intel-snapshot`.
+// PATCHED 2026-08-05 (Workstream B): + keyEvents metric (totals + events), + byCountry report.
+// Additive only — no existing field removed.
 
 import { parseServiceAccount, getAccessToken, runReport, num } from '../_shared/ga4.ts';
 
@@ -39,7 +41,8 @@ Deno.serve(async (req) => {
     try {
       body = await req.json();
     } catch { /* empty body is fine */ }
-    const rangeKey = RANGES[body.dateRange ?? '28d'] ? (body.dateRange as string) : '28d';
+    // F3 fix (2026-08-05): omitted dateRange previously yielded rangeKey=undefined -> startDate=undefined -> GA4 400.
+    const rangeKey = body.dateRange && RANGES[body.dateRange] ? body.dateRange : '28d';
     const startDate = RANGES[rangeKey];
 
     let token: string;
@@ -62,6 +65,7 @@ Deno.serve(async (req) => {
             { name: 'screenPageViews' },
             { name: 'averageSessionDuration' },
             { name: 'bounceRate' },
+            { name: 'keyEvents' },
           ],
         },
       },
@@ -100,9 +104,19 @@ Deno.serve(async (req) => {
         payload: {
           dateRanges,
           dimensions: [{ name: 'eventName' }],
-          metrics: [{ name: 'eventCount' }],
+          metrics: [{ name: 'eventCount' }, { name: 'keyEvents' }],
           orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
-          limit: 20,
+          limit: 30,
+        },
+      },
+      {
+        key: 'byCountry',
+        payload: {
+          dateRanges,
+          dimensions: [{ name: 'country' }],
+          metrics: [{ name: 'sessions' }, { name: 'activeUsers' }, { name: 'keyEvents' }],
+          orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+          limit: 40,
         },
       },
     ];
@@ -152,6 +166,7 @@ Deno.serve(async (req) => {
         screenPageViews: num(totalsRow[2]?.value),
         averageSessionDuration: num(totalsRow[3]?.value),
         bounceRate: num(totalsRow[4]?.value),
+        keyEvents: num(totalsRow[5]?.value),
       },
       byDate: (results.byDate?.rows ?? []).map((row: any) => {
         const d = String(row.dimensionValues?.[0]?.value ?? '');
@@ -173,6 +188,13 @@ Deno.serve(async (req) => {
       events: (results.events?.rows ?? []).map((row: any) => ({
         eventName: String(row.dimensionValues?.[0]?.value ?? ''),
         eventCount: num(row.metricValues?.[0]?.value),
+        keyEvents: num(row.metricValues?.[1]?.value),
+      })),
+      byCountry: (results.byCountry?.rows ?? []).map((row: any) => ({
+        country: String(row.dimensionValues?.[0]?.value ?? ''),
+        sessions: num(row.metricValues?.[0]?.value),
+        activeUsers: num(row.metricValues?.[1]?.value),
+        keyEvents: num(row.metricValues?.[2]?.value),
       })),
     };
 
