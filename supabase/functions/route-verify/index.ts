@@ -146,6 +146,29 @@ async function runPool<T>(
   await Promise.all(runners);
 }
 
+// PostgREST silently caps unpaginated reads at db-max-rows. A client-side
+// .limit() can only lower that cap, never raise it, so page explicitly.
+const PAGE_SIZE = 1000;
+
+async function pageAll<T>(
+  // deno-lint-ignore no-explicit-any
+  makeQuery: (from: number, to: number) => any,
+  ceiling = Infinity,
+): Promise<T[]> {
+  const out: T[] = [];
+  let from = 0;
+  while (out.length < ceiling) {
+    const size = Math.min(PAGE_SIZE, ceiling - out.length);
+    const { data, error } = await makeQuery(from, from + size - 1);
+    if (error || !data) break;
+    out.push(...(data as T[]));
+    if (data.length < size) break;
+    from += size;
+  }
+  return out;
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
