@@ -76,8 +76,13 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }:
   const createSymmetricPaths = useCallback((canvas: FabricCanvas, originalPath: Path) => {
     const pathData = originalPath.path;
     const center = canvasSize / 2;
+    const origin = originalPath.getCenterPoint();
+    const dx = origin.x - center;
+    const dy = origin.y - center;
 
     for (let rotation = 1; rotation <= 3; rotation++) {
+      const deg = rotation * 90;
+      const rad = (deg * Math.PI) / 180;
       const clonedPath = new Path(pathData, {
         stroke: originalPath.stroke,
         strokeWidth: originalPath.strokeWidth,
@@ -86,13 +91,17 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }:
         evented: false,
       });
 
+      // Rotate the stroke about the canvas centre, keeping its offset, so the
+      // copies form a mandala instead of stacking on the middle point.
       clonedPath.set({
         originX: 'center',
         originY: 'center',
-        left: center,
-        top: center,
-        angle: rotation * 90,
+        left: center + (dx * Math.cos(rad) - dy * Math.sin(rad)),
+        top: center + (dx * Math.sin(rad) + dy * Math.cos(rad)),
+        angle: deg,
       });
+      clonedPath.setCoords();
+
 
       canvas.add(clonedPath);
     }
