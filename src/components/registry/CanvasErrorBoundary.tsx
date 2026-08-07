@@ -11,21 +11,22 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
+  resetKey: number;
 }
 
 export class CanvasErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, resetKey: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Canvas error:', error, errorInfo);
-    
+
     // Track error in PostHog
     if (typeof window !== 'undefined' && (window as any).posthog) {
       (window as any).posthog.capture('canvas_error', {
@@ -36,8 +37,10 @@ export class CanvasErrorBoundary extends Component<Props, State> {
     }
   }
 
+  // Bumping the key forces a full remount of the canvas subtree, so retry is a
+  // genuine re-attempt rather than a re-render of the same broken instance.
   handleRetry = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState(prev => ({ hasError: false, error: undefined, resetKey: prev.resetKey + 1 }));
   };
 
   render() {
@@ -53,19 +56,20 @@ export class CanvasErrorBoundary extends Component<Props, State> {
                 {this.props.fallbackMessage || 'Canvas loading failed'}
               </h3>
               <p className="text-sm text-muted-foreground max-w-md">
-                There was an issue loading the drawing canvas. This might be due to browser 
+                There was an issue loading the drawing canvas. This might be due to browser
                 compatibility or memory constraints. Please try again.
               </p>
             </div>
-            <Button onClick={this.handleRetry} variant="outline" className="gap-2">
+            <Button onClick={this.handleRetry} variant="outline" className="gap-2 min-h-[44px]">
               <RefreshCw className="h-4 w-4" />
-              Retry Loading Canvas
+              Retry loading canvas
             </Button>
           </div>
         </Card>
       );
     }
 
-    return this.props.children;
+    return <Fragment key={this.state.resetKey}>{this.props.children}</Fragment>;
   }
 }
+
