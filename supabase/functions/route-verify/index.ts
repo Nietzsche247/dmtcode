@@ -184,11 +184,19 @@ Deno.serve(async (req) => {
     // ---- 1. build the work list -------------------------------------------
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5).toISOString();
 
-    const { data: recent } = await supabase
-      .from("route_health")
-      .select("path")
-      .gte("checked_at", sevenDaysAgo);
-    const recentlyChecked = new Set((recent ?? []).map((r) => r.path as string));
+    const recent = await pageAll<{ path: string }>((from, to) =>
+      supabase
+        .from("route_health")
+        .select("path")
+        .gte("checked_at", sevenDaysAgo)
+        .order("checked_at", { ascending: false })
+        .range(from, to)
+    );
+    const recentlyChecked = new Set(recent.map((r) => r.path));
+    console.log(
+      `[route-verify] recentlyChecked: ${recent.length} rows paged, ${recentlyChecked.size} distinct paths`,
+    );
+
 
     const work: WorkItem[] = [];
     const seen = new Set<string>();
