@@ -57,20 +57,27 @@ export const BundleCard = ({
   badgeColor,
   onClick,
   price,
+  callSite,
   available = true,
   availabilityLoading = false,
 }: BundleCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    const hasPrice = typeof price === 'number' && Number.isFinite(price);
+    if (!hasPrice) {
+      // Never send value: undefined to GA4. Name the render site instead.
+      console.warn(
+        `BundleCard: no price available for bundle "${id}" rendered at ${callSite ?? 'unknown call site'}. bundle_cta_click sent without a value.`,
+      );
+    }
     // GA4 conversion event for bundle CTA clicks
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       window.gtag('event', 'bundle_cta_click', {
         bundle_id: id,
         bundle_name: name,
         label: cta,
-        value: price ?? 0,
-        currency: 'USD',
+        ...(hasPrice ? { value: price, currency: 'USD' } : {}),
         send_to: 'G-CWVKJBDG7L',
       });
     }
