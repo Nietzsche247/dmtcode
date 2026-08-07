@@ -146,6 +146,29 @@ async function runPool<T>(
   await Promise.all(runners);
 }
 
+// PostgREST silently caps unpaginated reads at db-max-rows. A client-side
+// .limit() can only lower that cap, never raise it, so page explicitly.
+const PAGE_SIZE = 1000;
+
+async function pageAll<T>(
+  // deno-lint-ignore no-explicit-any
+  makeQuery: (from: number, to: number) => any,
+  ceiling = Infinity,
+): Promise<T[]> {
+  const out: T[] = [];
+  let from = 0;
+  while (out.length < ceiling) {
+    const size = Math.min(PAGE_SIZE, ceiling - out.length);
+    const { data, error } = await makeQuery(from, from + size - 1);
+    if (error || !data) break;
+    out.push(...(data as T[]));
+    if (data.length < size) break;
+    from += size;
+  }
+  return out;
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -161,11 +184,19 @@ Deno.serve(async (req) => {
     // ---- 1. build the work list -------------------------------------------
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5).toISOString();
 
-    const { data: recent } = await supabase
-      .from("route_health")
-      .select("path")
-      .gte("checked_at", sevenDaysAgo);
-    const recentlyChecked = new Set((recent ?? []).map((r) => r.path as string));
+    const recent = await pageAll<{ path: string }>((from, to) =>
+      supabase
+        .from("route_health")
+        .select("path")
+        .gte("checked_at", sevenDaysAgo)
+        .order("checked_at", { ascending: false })
+        .range(from, to)
+    );
+    const recentlyChecked = new Set(recent.map((r) => r.path));
+    console.log(
+      `[route-verify] recentlyChecked: ${recent.length} rows paged, ${recentlyChecked.size} distinct paths`,
+    );
+
 
     const work: WorkItem[] = [];
     const seen = new Set<string>();
@@ -211,16 +242,21 @@ Deno.serve(async (req) => {
       for (const p of await parseSitemap(sm)) sitemapPaths.add(p);
     }
 
-    const { data: lastChecks } = await supabase
-      .from("route_health")
-      .select("path, checked_at")
-      .order("checked_at", { ascending: false })
-      .limit(5000);
+    const lastChecks = await pageAll<{ path: string; checked_at: string }>(
+      (from, to) =>
+        supabase
+          .from("route_health")
+          .select("path, checked_at")
+          .order("checked_at", { ascending: false })
+          .range(from, to),
+      20000,
+    );
     const lastSeen = new Map<string, string>();
-    for (const r of lastChecks ?? []) {
-      const p = r.path as string;
-      if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at as string);
+    for (const r of lastChecks) {
+      const p = r.path;
+      if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at);
     }
+
     const sitemapCandidates: WorkItem[] = [...sitemapPaths]
       .sort((a, b) => {
         const ta = lastSeen.get(a) ?? ""; // never-checked sorts first
