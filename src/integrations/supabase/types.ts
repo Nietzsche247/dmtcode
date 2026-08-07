@@ -2023,6 +2023,45 @@ export type Database = {
         }
         Relationships: []
       }
+      route_health: {
+        Row: {
+          alternates_broken: string[] | null
+          bot_name: string | null
+          canonical_href: string | null
+          canonical_status: number | null
+          checked_at: string
+          id: string
+          issue: string | null
+          path: string
+          source: string
+          status_code: number | null
+        }
+        Insert: {
+          alternates_broken?: string[] | null
+          bot_name?: string | null
+          canonical_href?: string | null
+          canonical_status?: number | null
+          checked_at?: string
+          id?: string
+          issue?: string | null
+          path: string
+          source: string
+          status_code?: number | null
+        }
+        Update: {
+          alternates_broken?: string[] | null
+          bot_name?: string | null
+          canonical_href?: string | null
+          canonical_status?: number | null
+          checked_at?: string
+          id?: string
+          issue?: string | null
+          path?: string
+          source?: string
+          status_code?: number | null
+        }
+        Relationships: []
+      }
       saved_symbols: {
         Row: {
           created_at: string
