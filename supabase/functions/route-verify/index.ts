@@ -170,12 +170,20 @@ Deno.serve(async (req) => {
     const work: WorkItem[] = [];
     const seen = new Set<string>();
 
-    const push = (item: WorkItem) => {
-      if (work.length >= MAX_PATHS) return;
-      if (item.path.startsWith("/agent")) return; // English-only infra, no alternates
-      if (seen.has(item.path)) return;
-      seen.add(item.path);
-      work.push(item);
+    // fixed per-run quotas; unused quota spills over to the other source
+    const CRAWLER_QUOTA = 80;
+    const SITEMAP_QUOTA = 40;
+
+    const collect = (candidates: WorkItem[], quota: number) => {
+      let taken = 0;
+      for (const item of candidates) {
+        if (taken >= quota || work.length >= MAX_PATHS) break;
+        if (item.path.startsWith("/agent")) continue; // English-only infra, no alternates
+        if (seen.has(item.path)) continue;
+        seen.add(item.path);
+        work.push(item);
+        taken++;
+      }
     };
 
     // a. crawler_hits, newest first, not checked in the last 7 days
@@ -185,10 +193,11 @@ Deno.serve(async (req) => {
       .order("ts", { ascending: false })
       .limit(2000);
 
+    const crawlerCandidates: WorkItem[] = [];
     for (const h of hits ?? []) {
       const p = normalizePath(String((h as Record<string, unknown>).path ?? ""));
       if (!p || recentlyChecked.has(p)) continue;
-      push({
+      crawlerCandidates.push({
         path: p,
         source: "crawler_hits",
         bot_name: ((h as Record<string, unknown>).bot_name as string) ?? null,
@@ -196,36 +205,45 @@ Deno.serve(async (req) => {
       });
     }
 
-    // b. fill the remainder from the sitemaps, least recently checked first
+    // b. sitemap surface, least recently checked first (never-checked first)
     const sitemapPaths = new Set<string>();
     for (const sm of SITEMAPS) {
       for (const p of await parseSitemap(sm)) sitemapPaths.add(p);
     }
 
-    if (work.length < MAX_PATHS) {
-      const { data: lastChecks } = await supabase
-        .from("route_health")
-        .select("path, checked_at")
-        .order("checked_at", { ascending: false })
-        .limit(5000);
-      const lastSeen = new Map<string, string>();
-      for (const r of lastChecks ?? []) {
-        const p = r.path as string;
-        if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at as string);
-      }
-      const ordered = [...sitemapPaths].sort((a, b) => {
+    const { data: lastChecks } = await supabase
+      .from("route_health")
+      .select("path, checked_at")
+      .order("checked_at", { ascending: false })
+      .limit(5000);
+    const lastSeen = new Map<string, string>();
+    for (const r of lastChecks ?? []) {
+      const p = r.path as string;
+      if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at as string);
+    }
+    const sitemapCandidates: WorkItem[] = [...sitemapPaths]
+      .sort((a, b) => {
         const ta = lastSeen.get(a) ?? ""; // never-checked sorts first
         const tb = lastSeen.get(b) ?? "";
         return ta < tb ? -1 : ta > tb ? 1 : 0;
-      });
-      for (const p of ordered) {
-        push({ path: p, source: "sitemap", bot_name: null, inSitemap: true });
-      }
-    }
+      })
+      .map((p) => ({
+        path: p,
+        source: "sitemap" as const,
+        bot_name: null,
+        inSitemap: true,
+      }));
+
+    // fill each quota, then let each source use whatever the other left behind
+    collect(crawlerCandidates, CRAWLER_QUOTA);
+    collect(sitemapCandidates, SITEMAP_QUOTA);
+    collect(crawlerCandidates, MAX_PATHS);
+    collect(sitemapCandidates, MAX_PATHS);
 
     for (const w of work) {
       if (sitemapPaths.has(w.path)) w.inSitemap = true;
     }
+
 
     // ---- 2-4. check each path ---------------------------------------------
     const rows: Row[] = [];
