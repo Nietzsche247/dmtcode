@@ -29,8 +29,14 @@ interface BundleCardProps {
   borderColor: string;
   badgeColor: string;
   onClick: (bundleId: string) => void;
-  /** Bundle price in USD, used for GA4 revenue attribution on CTA clicks. */
-  price?: number;
+  /**
+   * Bundle price in USD, used for GA4 revenue attribution on CTA clicks.
+   * Required: a missing price silently sent value: undefined to GA4 and made
+   * bundle_cta_click useless for revenue attribution.
+   */
+  price: number;
+  /** Names the render site, used only to make a missing price traceable in logs. */
+  callSite?: string;
   /** Real Shopify availability. When false, show Sold Out + Notify me instead of the buy CTA. */
   available?: boolean;
   availabilityLoading?: boolean;
