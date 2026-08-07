@@ -3286,9 +3286,13 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
   }
 
 
+  // Slugs are resolved above from the SOURCE-language title, so the canonical URL
+  // must be built from that same source title, captured before overlay() replaces it.
+  const sourceTitle = String(match.title || "");
+
   overlay(match as Record<string, unknown>, await getTranslations("theories", String(match.id), locale));
 
-  const canonicalSlug = theorySlug(String(match.title || ""));
+  const canonicalSlug = theorySlug(sourceTitle);
   const canonical = `${SITE}/theories/${canonicalSlug}`;
   const title = `${String(match.title)} | DMT Code`;
   const metaDesc = match.summary ? clip(String(match.summary), 160) : "";
