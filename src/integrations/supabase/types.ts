@@ -730,28 +730,37 @@ export type Database = {
           bot_class: string | null
           bot_name: string | null
           id: string
+          ip_address: string | null
           path: string | null
           referer: string | null
+          status_code: number | null
           ts: string
           user_agent: string | null
+          verified: boolean
         }
         Insert: {
           bot_class?: string | null
           bot_name?: string | null
           id?: string
+          ip_address?: string | null
           path?: string | null
           referer?: string | null
+          status_code?: number | null
           ts?: string
           user_agent?: string | null
+          verified?: boolean
         }
         Update: {
           bot_class?: string | null
           bot_name?: string | null
           id?: string
+          ip_address?: string | null
           path?: string | null
           referer?: string | null
+          status_code?: number | null
           ts?: string
           user_agent?: string | null
+          verified?: boolean
         }
         Relationships: []
       }
