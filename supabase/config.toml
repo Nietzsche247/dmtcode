@@ -79,3 +79,6 @@ verify_jwt = false
 
 [functions.translate-content]
 verify_jwt = false
+
+[functions.route-verify]
+verify_jwt = false
