@@ -22,6 +22,22 @@ declare global {
   }
 }
 
+/**
+ * One row per moderation decision so contributor-activity and streak charts
+ * have real data. activity_date and created_at take their column defaults.
+ * Awaited by every caller: a silent failure is what left this table empty.
+ */
+async function recordReviewActivity(userId: string | null): Promise<void> {
+  if (!userId) return;
+  const { error } = await supabase
+    .from('review_activity')
+    .insert([{ user_id: userId, source: 'reviewed' }]);
+  if (error) {
+    console.error('review_activity insert failed:', error.message);
+    toast.error(`Review activity was not recorded: ${error.message}`);
+  }
+}
+
 type Profile = { id: string; handle: string | null; avatar_seed: string | null };
 
 type SymbolSubmission = Tables<'symbol_submissions'> & {
@@ -371,6 +387,7 @@ export const SymbolSubmissionModeration = () => {
         submitter_present: Boolean(submissions.find((s) => s.id === id)?.user_id),
       },
     });
+    await recordReviewActivity(currentUserId);
     toast.success('Marked reviewed');
     supabase.functions.invoke('notify-admin', { body: { submissionId: id, action: 'approved' } }).catch(console.error);
     loadSubmissions();
@@ -401,6 +418,7 @@ export const SymbolSubmissionModeration = () => {
       subject_type: 'symbol_submission',
       properties: { decision: 'reviewed', bulk: true, batch_size: ids.length },
     });
+    await recordReviewActivity(currentUserId);
     toast.success(`${ids.length} marked reviewed`);
     setSelectedIds(new Set());
     loadSubmissions();
@@ -459,6 +477,7 @@ export const SymbolSubmissionModeration = () => {
           batch_size: ids.length,
         },
       });
+      await recordReviewActivity(currentUserId);
       toast.success(ids.length > 1 ? `${ids.length} rejected and hidden` : 'Rejected and hidden');
       if (!rejectingBulk) {
         supabase.functions

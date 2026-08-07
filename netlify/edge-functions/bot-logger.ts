@@ -42,18 +42,41 @@ function detect(ua: string): { name: string; klass: BotClass } | null {
   return null;
 }
 
+function clientIp(request: Request): string | null {
+  const direct = request.headers.get("x-nf-client-connection-ip");
+  if (direct) return direct.trim().slice(0, 100);
+  const fwd = request.headers.get("x-forwarded-for");
+  if (fwd) {
+    const first = fwd.split(",")[0]?.trim();
+    if (first) return first.slice(0, 100);
+  }
+  return null;
+}
+
 export default async (request: Request, context: Context) => {
+  let ua = "";
+  let path = "";
+  let hit: { name: string; klass: BotClass } | null = null;
+
   try {
-    const ua = request.headers.get("user-agent") || "";
+    ua = request.headers.get("user-agent") || "";
     if (!ua) return context.next();
 
     const url = new URL(request.url);
-    const path = url.pathname;
+    path = url.pathname;
     if (ASSET_EXT.test(path)) return context.next();
 
-    const hit = detect(ua);
-    if (!hit) return context.next();
+    hit = detect(ua);
+  } catch {
+    // fail-open
+  }
 
+  // Always deliver the page. The downstream response is awaited so the logged
+  // status_code is the real value the bot received, not an assumption.
+  const response = await context.next();
+  if (!hit) return response;
+
+  try {
     const referer = request.headers.get("referer");
     const body = JSON.stringify({
       path,
@@ -61,6 +84,13 @@ export default async (request: Request, context: Context) => {
       bot_class: hit.klass,
       user_agent: ua.slice(0, 300),
       referer: referer ? referer.slice(0, 500) : null,
+      status_code: response.status,
+      ip_address: clientIp(request),
+      // Always false for now. Reverse-DNS verification of crawler identity is
+      // deliberately NOT implemented in this build, and nothing is blocked. We
+      // are collecting a week of evidence (status, IP, forged user agents)
+      // first, then deciding on verification.
+      verified: false,
     });
 
     const insert = fetch(`${SUPABASE_URL}/rest/v1/crawler_hits`, {
@@ -72,17 +102,27 @@ export default async (request: Request, context: Context) => {
         prefer: "return=minimal",
       },
       body,
-    }).catch(() => {});
+    })
+      .then(async (r) => {
+        if (!r.ok) {
+          console.error("crawler_hits insert failed", r.status, await r.text().catch(() => ""));
+        }
+      })
+      .catch((e) => {
+        console.error("crawler_hits insert error", e);
+      });
 
     // Non-blocking: hand off to the runtime if available.
     const ctx = context as unknown as { waitUntil?: (p: Promise<unknown>) => void };
     if (typeof ctx.waitUntil === "function") {
       ctx.waitUntil(insert as Promise<unknown>);
     }
-  } catch {
-    // fail-open
+  } catch (e) {
+    // Logging must never break page delivery.
+    console.error("crawler_hits logging error", e);
   }
-  return context.next();
+
+  return response;
 };
 
 export const config: Config = { path: "/*" };
