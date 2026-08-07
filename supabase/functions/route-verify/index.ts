@@ -242,16 +242,21 @@ Deno.serve(async (req) => {
       for (const p of await parseSitemap(sm)) sitemapPaths.add(p);
     }
 
-    const { data: lastChecks } = await supabase
-      .from("route_health")
-      .select("path, checked_at")
-      .order("checked_at", { ascending: false })
-      .limit(5000);
+    const lastChecks = await pageAll<{ path: string; checked_at: string }>(
+      (from, to) =>
+        supabase
+          .from("route_health")
+          .select("path, checked_at")
+          .order("checked_at", { ascending: false })
+          .range(from, to),
+      20000,
+    );
     const lastSeen = new Map<string, string>();
-    for (const r of lastChecks ?? []) {
-      const p = r.path as string;
-      if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at as string);
+    for (const r of lastChecks) {
+      const p = r.path;
+      if (!lastSeen.has(p)) lastSeen.set(p, r.checked_at);
     }
+
     const sitemapCandidates: WorkItem[] = [...sitemapPaths]
       .sort((a, b) => {
         const ta = lastSeen.get(a) ?? ""; // never-checked sorts first
