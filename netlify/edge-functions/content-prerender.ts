@@ -1,4 +1,5 @@
 import type { Config, Context } from "@netlify/edge-functions";
+import { uiCopy } from "../lib/ui-strings.ts";
 
 const SITE = "https://dmtcode.com";
 const SUPABASE_URL =
@@ -763,12 +764,9 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     items.filter((i) => String(i.bundle_id) === bid);
 
   const canonical = `${SITE}/prepare`;
-  const title =
-    "Prepare. Kits and group bundles for careful practice. | DMT Code";
-  const metaDesc = clip(
-    "Kits and group bundles for careful practice. The two kits that ship now are printed material only. Everything with a 650 nm module is preorder.",
-    160,
-  );
+  const prepareCopy = uiCopy("prepare", locale);
+  const title = prepareCopy.title;
+  const metaDesc = clip(prepareCopy.description, 200);
 
   const usd = (cents: unknown) =>
     `$${(Number(cents) / 100).toFixed(0)}`;
@@ -993,11 +991,9 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
 async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/evidence-map`;
-  const title = "Is the DMT code real? Evidence Timeline and Analysis | DMT Code";
-  const metaDesc = clip(
-    "A balanced evidence timeline with peer reviewed citations and resolved DOIs from 1926 to 2025. Verifiability and falsifiability, laid out openly.",
-    160,
-  );
+  const evidenceCopy = uiCopy("evidence-map", locale);
+  const title = evidenceCopy.title;
+  const metaDesc = clip(evidenceCopy.description, 200);
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -1222,8 +1218,8 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   if (!file) {
     const head = buildHead({
     locale,
-      title: "Chronology | DMT Code",
-      description: "A dated record of the published research, legal decisions and community claims behind the DMT code question.",
+      title: uiCopy("timeline-empty", locale).title,
+      description: uiCopy("timeline-empty", locale).description,
       canonical,
     });
     const body = `<article data-prerender="timeline">
@@ -1236,11 +1232,13 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   const entries = tlSorted(file);
   const firstYear = entries[0].date.year;
   const lastYear = entries[entries.length - 1].date.year;
-  const title = `Chronology of the DMT code question, ${firstYear} to ${lastYear} | DMT Code`;
-  const metaDesc = clip(
-    `${entries.length} dated records from ${firstYear} to ${lastYear}. Each one states what kind of evidence it is, and every DOI has been resolved against Crossref.`,
-    160,
-  );
+  const timelineCopy = uiCopy("timeline", locale, {
+    first: firstYear,
+    last: lastYear,
+    n: entries.length,
+  });
+  const title = timelineCopy.title;
+  const metaDesc = clip(timelineCopy.description, 200);
 
   const classCounts = new Map<string, number>();
   for (const e of entries) {
@@ -1603,11 +1601,9 @@ const FAQ_ITEMS: Array<{ q: string; a: string }> = FAQ_GROUPS.flatMap((g) => g.i
 async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/faq`;
-  const title = "Questions about the DMT Code project and preparing to observe | DMT Code";
-  const metaDesc = clip(
-    "Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured.",
-    160,
-  );
+  const faqCopy = uiCopy("faq", locale);
+  const title = faqCopy.title;
+  const metaDesc = clip(faqCopy.description, 200);
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -2347,10 +2343,11 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         ],
       };
 
+  const staticCopy = uiCopy(key, locale);
   const head = buildHead({
     locale,
-    title: page.title,
-    description: page.description,
+    title: staticCopy.title || page.title,
+    description: staticCopy.description || page.description,
     canonical,
     ogType: "website",
     robots: page.robots,
@@ -2622,11 +2619,9 @@ function paragraphsFromText(text: string): string {
 async function renderTheories(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/theories`;
-  const title = "Open theories: what could the DMT code be? | DMT Code";
-  const metaDesc = clip(
-    "Attributed explanatory theories for the reported DMT code phenomenon. Curated from the public record and moderated community submissions. Theories are not evidence.",
-    160,
-  );
+  const theoriesCopy = uiCopy("theories", locale);
+  const title = theoriesCopy.title;
+  const metaDesc = clip(theoriesCopy.description, 200);
 
   const rows = await sbGetRows(
     "theories",
@@ -3009,9 +3004,9 @@ async function renderRetreatDetail(context: Context, id: string, locale: Loc = "
 async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/retreats`;
-  const title = "Retreat centers | DMT Code";
-  const metaDesc =
-    "Psychedelic retreat centers that operate openly and publish who they are and where. A listing is not an endorsement. Verify legal status and medical screening directly with each center.";
+  const retreatsCopy = uiCopy("retreats", locale);
+  const title = retreatsCopy.title;
+  const metaDesc = retreatsCopy.description;
 
   const rows = await sbGetRows(
     "retreats",
@@ -3538,11 +3533,9 @@ async function fetchInList(
 async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/articles`;
-  const title = "Articles | DMT Code";
-  const metaDesc = clip(
-    "Long form articles that answer specific questions using the DMT Code corpus. Every article names the trials, papers, symbols, and protocols it is built on.",
-    160,
-  );
+  const articlesCopy = uiCopy("articles", locale);
+  const title = articlesCopy.title;
+  const metaDesc = clip(articlesCopy.description, 200);
 
   const rows = await sbGetRows(
     "articles",
@@ -3923,8 +3916,9 @@ const GUIDES_SUBLINE =
 async function renderGuidesIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/guides`;
-  const title = "Guides | DMT Code";
-  const metaDesc = GUIDES_SUBLINE;
+  const guidesCopy = uiCopy("guides", locale);
+  const title = guidesCopy.title;
+  const metaDesc = guidesCopy.description;
 
   const rows = await sbGetRows(
     "guides",
@@ -4272,8 +4266,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
 
   const head = buildHead({
     locale,
-    title: "People | DMT Code",
-    description: "Entity profiles for the people whose work this record is built on.",
+    title: uiCopy("people", locale).title,
+    description: uiCopy("people", locale).description,
     canonical,
     canonicalPath: "/people",
     ogType: "website",
