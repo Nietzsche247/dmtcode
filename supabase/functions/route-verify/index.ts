@@ -386,9 +386,15 @@ Deno.serve(async (req) => {
       }
     }
 
+    // any work item that produced no row at all (outer runPool catch) is also dropped
+    const droppedTotal = dropped + Math.max(0, work.length - rows.length);
+
     const body = {
-      checked: rows.length,
+      checked: rows.length - dropped,
+      dropped: droppedTotal,
+      work: work.length,
       clean: rows.filter((r) => !r.issue).length,
+
       issues,
       worst: rows
         .filter((r) => r.issue)
