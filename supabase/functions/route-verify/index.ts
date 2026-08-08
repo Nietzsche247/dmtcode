@@ -283,6 +283,7 @@ Deno.serve(async (req) => {
 
     // ---- 2-4. check each path ---------------------------------------------
     const rows: Row[] = [];
+    let dropped = 0;
 
     await runPool(work, CONCURRENCY, async (item) => {
       const row: Row = {
@@ -296,62 +297,74 @@ Deno.serve(async (req) => {
         bot_name: item.bot_name,
       };
 
-      const res = await fetchWithTimeout(`${SITE}${item.path}`);
-      if (!res) {
-        rows.push(row); // null status, fail soft
-        return;
-      }
-      row.status_code = res.status;
+      try {
+        const res = await fetchWithTimeout(`${SITE}${item.path}`);
+        if (!res) {
+          rows.push(row); // null status, fail soft
+          return;
+        }
+        row.status_code = res.status;
 
-      if (res.status === 404 || res.status === 410) {
-        row.issue = "page_404";
+        if (res.status === 404 || res.status === 410) {
+          row.issue = "page_404";
+          rows.push(row);
+          return;
+        }
+        if (res.status >= 500) {
+          row.issue = "page_5xx";
+          rows.push(row);
+          return;
+        }
+        if (res.status !== 200) {
+          rows.push(row);
+          return;
+        }
+
+        const html = await res.text();
+        const canonicalRaw = extractCanonical(html);
+        const alternates = extractAlternates(html);
+
+        if (canonicalRaw) {
+          const canonicalUrl = absolute(canonicalRaw);
+          row.canonical_href = canonicalUrl;
+          row.canonical_status = await statusOf(canonicalUrl);
+        }
+
+        const broken: string[] = [];
+        for (const a of alternates) {
+          const url = absolute(a);
+          const s = await statusOf(url);
+          if (s !== 200) broken.push(url);
+        }
+        if (broken.length) row.alternates_broken = broken;
+
+        // classification, most severe first
+        if (row.canonical_href && row.canonical_status !== 200) {
+          row.issue = "canonical_404";
+        } else if (broken.length) {
+          row.issue = "alternate_404";
+        } else if (
+          row.canonical_href &&
+          row.canonical_status === 200 &&
+          item.inSitemap &&
+          normalizePath(row.canonical_href) !== item.path
+        ) {
+          row.issue = "canonical_mismatch";
+        }
+
         rows.push(row);
-        return;
-      }
-      if (res.status >= 500) {
-        row.issue = "page_5xx";
+      } catch (e) {
+        // fail soft, but never silently: account for the path and log it
+        const msg = e instanceof Error ? e.message : String(e);
+        const stack = e instanceof Error && e.stack ? `\n${e.stack}` : "";
+        console.error(`[route-verify] worker threw: ${item.path} :: ${msg}${stack}`);
+        dropped++;
+        row.issue = null;
+        row.alternates_broken = [`worker_error: ${msg}`];
         rows.push(row);
-        return;
       }
-      if (res.status !== 200) {
-        rows.push(row);
-        return;
-      }
-
-      const html = await res.text();
-      const canonicalRaw = extractCanonical(html);
-      const alternates = extractAlternates(html);
-
-      if (canonicalRaw) {
-        const canonicalUrl = absolute(canonicalRaw);
-        row.canonical_href = canonicalUrl;
-        row.canonical_status = await statusOf(canonicalUrl);
-      }
-
-      const broken: string[] = [];
-      for (const a of alternates) {
-        const url = absolute(a);
-        const s = await statusOf(url);
-        if (s !== 200) broken.push(url);
-      }
-      if (broken.length) row.alternates_broken = broken;
-
-      // classification, most severe first
-      if (row.canonical_href && row.canonical_status !== 200) {
-        row.issue = "canonical_404";
-      } else if (broken.length) {
-        row.issue = "alternate_404";
-      } else if (
-        row.canonical_href &&
-        row.canonical_status === 200 &&
-        item.inSitemap &&
-        normalizePath(row.canonical_href) !== item.path
-      ) {
-        row.issue = "canonical_mismatch";
-      }
-
-      rows.push(row);
     });
+
 
     // ---- 5. persist --------------------------------------------------------
     if (rows.length) {
@@ -373,9 +386,15 @@ Deno.serve(async (req) => {
       }
     }
 
+    // any work item that produced no row at all (outer runPool catch) is also dropped
+    const droppedTotal = dropped + Math.max(0, work.length - rows.length);
+
     const body = {
-      checked: rows.length,
+      checked: rows.length - dropped,
+      dropped: droppedTotal,
+      work: work.length,
       clean: rows.filter((r) => !r.issue).length,
+
       issues,
       worst: rows
         .filter((r) => r.issue)
