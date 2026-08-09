@@ -21,11 +21,11 @@
 #   5. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
 #                    labeled geo-drift. Fix prompts are never auto-sent.
-
 #
 # WHAT THIS NEVER DOES
-#   - Never commits source or product changes. The ONLY paths job 3 may commit are
-#     listed in ALLOWED_COMMIT_PATHS below; anything else staged aborts the commit.
+#   - Never commits source or product changes. graph-refresh is the only job with
+#     write permission, and the ONLY paths it may commit are listed in
+#     ALLOWED_COMMIT_PATHS below; anything else staged aborts the commit.
 #   - Never touches .ua/, graphify-out/ (scratch outputs stay untracked), env files,
 #     or secrets. The only secret used is the default GITHUB_TOKEN.
 
