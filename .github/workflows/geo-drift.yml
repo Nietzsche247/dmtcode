@@ -94,10 +94,12 @@ jobs:
           check(f"known-good tag hub /{GOOD} is 200", s == 200, s)
           s, h, _ = fetch("/registry/tag/zzz-geo-drift-probe")
           check("nonexistent tag hub returns 404", s == 404, s)
+          # Contract: /agent/* is intentionally indexable. Source of truth is the
+          # graph-handoff-headers block in public/_headers. Do not re-add a noindex assertion.
           for p in ("/agent/", "/agent/graph.html"):
               s, h, _ = fetch(p)
-              tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip()
-              check(f"{p} 200 + X-Robots-Tag noindex", s == 200 and tag == "noindex, follow", f"{s} / {tag!r}")
+              tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip().lower()
+              check(f"{p} 200 + no X-Robots-Tag noindex", s == 200 and "noindex" not in tag, f"{s} / {tag!r}")
           s, h, _ = fetch("/zzz-geo-drift-route-probe")
           check("unknown route returns 404 (spa-guard alive)", s == 404, s)
           fails = [r for r in results if not r["ok"]]
@@ -182,6 +184,8 @@ jobs:
         run: graphify update .
       - name: Package and commit generated artifacts only
         if: steps.build.outcome == 'success'
+        env:
+          NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
         run: |
           python3 - <<'EOF'
           import json, os, shutil, subprocess, datetime
@@ -221,6 +225,16 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(agent-map): refresh graph artifacts [skip ci]"
           git push
+          # This job commits DEPLOYED assets under public/agent/. `[skip ci]` above guards
+          # GitHub Actions against re-triggering this same workflow on its own push, but
+          # Netlify honors the same flag and skips the build — so the refresh would land in
+          # git and never ship. The build hook restores exactly the deploy that flag suppresses.
+          # Only reached when a commit actually happened (the no-changes path exits 0 above).
+          if [ -n "$NETLIFY_BUILD_HOOK" ]; then
+            curl -fsS -X POST -d '{}' "$NETLIFY_BUILD_HOOK" && echo "Netlify build hook triggered."
+          else
+            echo "WARNING: NETLIFY_BUILD_HOOK secret is empty or unset; skipping Netlify build trigger. The refresh commit will not deploy until the next production build."
+          fi
           echo '{"job":"graph-refresh","results":[{"check":"graph refreshed and packaged in CI","ok":true,"detail":"committed"}]}' > graph_report.json
       - name: Verify-only fallback (graphify unavailable in CI)
         if: steps.install.outcome != 'success' || steps.build.outcome != 'success'
