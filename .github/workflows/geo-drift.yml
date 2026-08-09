@@ -189,7 +189,6 @@ jobs:
       - name: Package and commit generated artifacts only
         if: steps.build.outcome == 'success'
         run: |
-        run: |
           python3 - <<'EOF'
           import json, os, shutil, subprocess, datetime
           head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
