@@ -6,15 +6,22 @@
 #   2. repo-drift  : asserts shadow-coupling contracts inside the repo (duplicated
 #                    CONTEXT_TAG_RE / symbolTitlePhrase / theorySlug copies identical,
 #                    consent-filter placement, no fabricated admin metrics).
-#   3. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
+#   3. route-parity : diffs the netlify.toml content-prerender route table against
+#                    the live sitemap in BOTH directions, then asserts status,
+#                    self-referential canonical, html lang, hreflang completeness,
+#                    and locale index-title coverage on live pages. It exists because
+#                    a sitemap-derived work list cannot see routes missing from the
+#                    sitemap (scripts/route_parity.py; FULL sweep off-push).
+#   4. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
 #                    graph, repackages ONLY the generated agent-map artifacts and
 #                    commits them. The commit carries [skip actions], which stops
 #                    GitHub Actions re-triggering this workflow but is NOT recognized
 #                    by Netlify, so the push still deploys the committed public/agent/*
 #                    assets. Degrades to verify-only if graphify cannot run.
-#   4. report      : merges everything into drift-report.md + a Lovable-ready
+#   5. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
 #                    labeled geo-drift. Fix prompts are never auto-sent.
+
 #
 # WHAT THIS NEVER DOES
 #   - Never commits source or product changes. The ONLY paths job 3 may commit are
