@@ -547,7 +547,25 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Mitmachen und prüfen, ob unabhängige Berichte visueller Symbole tatsächlich konvergieren. Erfasser, Übersetzer, Analysten und Entwickler willkommen.",
     },
   },
+  "co-witnesses": {
+    en: {
+      title: "Co-witness wall | DMT Code",
+      description:
+        "Field notes from people who independently reported the same visual form. Opt-in only, shown by handle and avatar, with no personal details.",
+    },
+    es: {
+      title: "Muro de co-testigos | DMT Code",
+      description:
+        "Notas de personas que reportaron de forma independiente la misma forma visual. Solo con consentimiento, por alias y avatar, sin datos personales.",
+    },
+    de: {
+      title: "Mitzeugen-Wand | DMT Code",
+      description:
+        "Notizen von Personen, die unabhängig dieselbe visuelle Form berichteten. Nur mit Zustimmung, per Handle und Avatar, ohne persönliche Daten.",
+    },
+  },
   "submit-symbol": {
+
     en: {
       title: "Submit a symbol to the registry | DMT Code",
       description:
