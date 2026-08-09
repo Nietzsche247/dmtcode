@@ -3,8 +3,8 @@
   "siteUrl": "https://dmtcode.com",
   "repo": "dmtcode",
   "branch": "main",
-  "commit": "4c53f92f8c158f193da824c2ac11040e7bbd867b",
-  "generatedAt": "2026-08-08T09:28:44.766778+00:00",
+  "commit": "e35e816520cace404471a502ec76d7124af69c64",
+  "generatedAt": "2026-08-09T09:29:04.066197+00:00",
   "graphs": {
     "GRAPH_REPORT.md": {
       "bytes": 40233,
@@ -34,9 +34,9 @@
       "graphifyGraph": {
         "path": "graphify-out\\graph.json",
         "exists": true,
-        "bytes": 3421211,
-        "nodes": 3045,
-        "edges": 6325,
+        "bytes": 3442310,
+        "nodes": 3071,
+        "edges": 6351,
         "edgeFormat": "links",
         "parseable": true
       },
@@ -105,6 +105,11 @@
         "public\\agent\\graph.html",
         "public\\agent\\index.html"
       ]
+    },
+    {
+      "stage": "ci-refresh",
+      "status": "ok",
+      "message": "graphify refreshed in CI; Understand graphs are NOT refreshed in CI and their fields reflect the last manual run on NIETZSCHE2025"
     },
     {
       "stage": "ci-refresh",
