@@ -2155,7 +2155,25 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Capture",
   },
+  "co-witnesses": {
+    title: "Co-witness wall | DMT Code",
+    description: "Field notes from people who independently reported the same visual form. Opt-in only, shown by handle and avatar, with no personal details.",
+    heading: "Co-witness wall",
+    paragraphs: [
+      "Short recollections from people who marked that they had seen a symbol in the registry. Only people who opted in to the wall appear here.",
+      "Each note is attached to the symbol it refers to and, where given, to the context in which the form was seen. Contributors are shown by handle and pseudonymous avatar. No personal details are published.",
+      "A recollection written after seeing a symbol here is recognition after exposure, not independent confirmation. The wall records what people say they remember, and leaves the weighing of that to the reader.",
+    ],
+    links: [
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/capture", label: "Capture a memory" },
+      { href: "/methods", label: "Methods" },
+      { href: "/evidence-map", label: "Evidence map" },
+    ],
+    breadcrumbName: "Co-witnesses",
+  },
   join: {
+
     title: "Help build it | DMT Code",
     description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome.",
     heading: "A real experiment with an unknown answer.",
