@@ -2,13 +2,15 @@
 #
 # WHAT THIS DOES
 #   1. prod-checks : asserts production invariants (llms.txt contract, sitemap/corpus
-#                    count direction, tag-hub 404 guard, /agent/* noindex headers).
+#                    count direction, tag-hub 404 guard, /agent/* indexable (no noindex)).
 #   2. repo-drift  : asserts shadow-coupling contracts inside the repo (duplicated
 #                    CONTEXT_TAG_RE / symbolTitlePhrase / theorySlug copies identical,
 #                    consent-filter placement, no fabricated admin metrics).
 #   3. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
 #                    graph, repackages ONLY the generated agent-map artifacts and
-#                    commits them. Degrades to verify-only if graphify cannot run.
+#                    commits them, then triggers the Netlify build hook so the committed
+#                    public/agent/* assets actually deploy (the commit carries [skip ci],
+#                    which Netlify honors too). Degrades to verify-only if graphify cannot run.
 #   4. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
 #                    labeled geo-drift. Fix prompts are never auto-sent.
