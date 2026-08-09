@@ -225,31 +225,15 @@ jobs:
           done <<< "$STAGED"
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(agent-map): refresh graph artifacts [skip ci]"
+          # The keyword must stay `[skip actions]`, not `[skip ci]`. Both keywords stop
+          # GitHub Actions re-triggering this workflow on its own push, but Netlify also
+          # honors `[skip ci]` and would skip the deploy — stranding the committed
+          # public/agent/* assets in git. `[skip actions]` is recognized by GitHub
+          # Actions only, so the loop guard holds and the deploy still runs.
+          git commit -m "chore(agent-map): refresh graph artifacts [skip actions]"
           git push
-          # This job commits DEPLOYED assets under public/agent/. `[skip ci]` above guards
-          # GitHub Actions against re-triggering this same workflow on its own push, but
-          # Netlify honors the same flag and skips the build — so the refresh would land in
-          # git and never ship. The build hook restores exactly the deploy that flag suppresses.
           # Only reached when a commit actually happened (the no-changes path exits 0 above).
-          # A failed hook must NOT fail the job: the commit and push already succeeded.
-          # curl runs as an `if` condition, so its non-zero exit is consumed by the
-          # conditional and never trips `set -e`.
-          if [ -z "$NETLIFY_BUILD_HOOK" ]; then
-            DEPLOY_OK=false
-            DEPLOY_DETAIL="secret missing: NETLIFY_BUILD_HOOK is empty or unset; Netlify build not triggered"
-            echo "WARNING: NETLIFY_BUILD_HOOK secret is empty or unset; skipping Netlify build trigger. Artifacts committed successfully, but production will serve stale /agent/* until the next build."
-          elif curl -fsS -X POST -d '{}' "$NETLIFY_BUILD_HOOK" > /dev/null; then
-            DEPLOY_OK=true
-            DEPLOY_DETAIL="triggered: Netlify build hook accepted the POST"
-            echo "Netlify build hook triggered."
-          else
-            DEPLOY_OK=false
-            DEPLOY_DETAIL="hook call failed: curl returned a non-zero exit (revoked, rotated, rate-limited, or Netlify 5xx)"
-            echo "WARNING: Netlify build hook call FAILED. Artifacts committed and pushed successfully, but the Netlify deploy was not triggered; production will serve stale /agent/* until the next build."
-          fi
-          # Written on every path that reaches here, including both failure states.
-          printf '{"job":"graph-refresh","results":[{"check":"graph refreshed and packaged in CI","ok":true,"detail":"committed"},{"check":"Netlify deploy triggered after commit","ok":%s,"detail":"%s"}]}' "$DEPLOY_OK" "$DEPLOY_DETAIL" > graph_report.json
+          printf '{"job":"graph-refresh","results":[{"check":"graph refreshed and packaged in CI","ok":true,"detail":"committed"}]}' > graph_report.json
       - name: Verify-only fallback (graphify unavailable in CI)
         if: steps.install.outcome != 'success' || steps.build.outcome != 'success'
         run: |
