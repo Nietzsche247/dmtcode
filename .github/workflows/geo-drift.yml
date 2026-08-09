@@ -94,10 +94,12 @@ jobs:
           check(f"known-good tag hub /{GOOD} is 200", s == 200, s)
           s, h, _ = fetch("/registry/tag/zzz-geo-drift-probe")
           check("nonexistent tag hub returns 404", s == 404, s)
+          # Contract: /agent/* is intentionally indexable. Source of truth is the
+          # graph-handoff-headers block in public/_headers. Do not re-add a noindex assertion.
           for p in ("/agent/", "/agent/graph.html"):
               s, h, _ = fetch(p)
-              tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip()
-              check(f"{p} 200 + X-Robots-Tag noindex", s == 200 and tag == "noindex, follow", f"{s} / {tag!r}")
+              tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip().lower()
+              check(f"{p} 200 + no X-Robots-Tag noindex", s == 200 and "noindex" not in tag, f"{s} / {tag!r}")
           s, h, _ = fetch("/zzz-geo-drift-route-probe")
           check("unknown route returns 404 (spa-guard alive)", s == 404, s)
           fails = [r for r in results if not r["ok"]]
