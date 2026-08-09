@@ -8,9 +8,10 @@
 #                    consent-filter placement, no fabricated admin metrics).
 #   3. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
 #                    graph, repackages ONLY the generated agent-map artifacts and
-#                    commits them, then triggers the Netlify build hook so the committed
-#                    public/agent/* assets actually deploy (the commit carries [skip ci],
-#                    which Netlify honors too). Degrades to verify-only if graphify cannot run.
+#                    commits them. The commit carries [skip actions], which stops
+#                    GitHub Actions re-triggering this workflow but is NOT recognized
+#                    by Netlify, so the push still deploys the committed public/agent/*
+#                    assets. Degrades to verify-only if graphify cannot run.
 #   4. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
 #                    labeled geo-drift. Fix prompts are never auto-sent.
@@ -19,8 +20,8 @@
 #   - Never commits source or product changes. The ONLY paths job 3 may commit are
 #     listed in ALLOWED_COMMIT_PATHS below; anything else staged aborts the commit.
 #   - Never touches .ua/, graphify-out/ (scratch outputs stay untracked), env files,
-#     or secrets. The only secrets used are the default GITHUB_TOKEN and the optional
-#     NETLIFY_BUILD_HOOK URL (job 3 only; absent means the deploy trigger is skipped).
+#     or secrets. The only secret used is the default GITHUB_TOKEN.
+
 
 name: GEO Drift Audit
 
