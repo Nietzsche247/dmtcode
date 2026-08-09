@@ -19,7 +19,8 @@
 #   - Never commits source or product changes. The ONLY paths job 3 may commit are
 #     listed in ALLOWED_COMMIT_PATHS below; anything else staged aborts the commit.
 #   - Never touches .ua/, graphify-out/ (scratch outputs stay untracked), env files,
-#     or secrets. No secrets are used beyond the default GITHUB_TOKEN.
+#     or secrets. The only secrets used are the default GITHUB_TOKEN and the optional
+#     NETLIFY_BUILD_HOOK URL (job 3 only; absent means the deploy trigger is skipped).
 
 name: GEO Drift Audit
 
