@@ -188,8 +188,7 @@ jobs:
         run: graphify update .
       - name: Package and commit generated artifacts only
         if: steps.build.outcome == 'success'
-        env:
-          NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
         run: |
           python3 - <<'EOF'
           import json, os, shutil, subprocess, datetime
