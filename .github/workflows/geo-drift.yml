@@ -168,6 +168,22 @@ jobs:
         if: always()
         with: { name: repo-report, path: repo_report.json }
 
+  route-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for Netlify deploy (push events race the build)
+        if: github.event_name == 'push'
+        run: sleep 240
+      - name: Run route parity audit
+        env:
+          PARITY_FULL: ${{ github.event_name != 'push' && '1' || '0' }}
+        run: python3 scripts/route_parity.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: parity-report, path: parity_report.json }
+
+
   graph-refresh:
     # Nightly/manual only. Never on push: refresh follows content, it doesn't gate it.
     if: github.event_name != 'push'
@@ -261,7 +277,7 @@ jobs:
         with: { name: graph-report, path: graph_report.json }
 
   report:
-    needs: [prod-checks, repo-drift, graph-refresh]
+    needs: [prod-checks, repo-drift, route-parity, graph-refresh]
     if: always()
     runs-on: ubuntu-latest
     permissions:
