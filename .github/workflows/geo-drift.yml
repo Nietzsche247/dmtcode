@@ -223,6 +223,16 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(agent-map): refresh graph artifacts [skip ci]"
           git push
+          # This job commits DEPLOYED assets under public/agent/. `[skip ci]` above guards
+          # GitHub Actions against re-triggering this same workflow on its own push, but
+          # Netlify honors the same flag and skips the build — so the refresh would land in
+          # git and never ship. The build hook restores exactly the deploy that flag suppresses.
+          # Only reached when a commit actually happened (the no-changes path exits 0 above).
+          if [ -n "$NETLIFY_BUILD_HOOK" ]; then
+            curl -fsS -X POST -d '{}' "$NETLIFY_BUILD_HOOK" && echo "Netlify build hook triggered."
+          else
+            echo "WARNING: NETLIFY_BUILD_HOOK secret is empty or unset; skipping Netlify build trigger. The refresh commit will not deploy until the next production build."
+          fi
           echo '{"job":"graph-refresh","results":[{"check":"graph refreshed and packaged in CI","ok":true,"detail":"committed"}]}' > graph_report.json
       - name: Verify-only fallback (graphify unavailable in CI)
         if: steps.install.outcome != 'success' || steps.build.outcome != 'success'
