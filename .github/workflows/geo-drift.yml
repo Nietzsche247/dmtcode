@@ -22,7 +22,6 @@
 #   - Never touches .ua/, graphify-out/ (scratch outputs stay untracked), env files,
 #     or secrets. The only secret used is the default GITHUB_TOKEN.
 
-
 name: GEO Drift Audit
 
 on:
