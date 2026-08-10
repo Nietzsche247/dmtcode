@@ -249,11 +249,11 @@ function BundleCard({
             {dollars(bundle.price_cents)}
           </div>
           {perspective === 'group' ? (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
               {dollars(perPersonPrice)} per person
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
               {dollars(bundle.price_cents)}. That is {dollars(Math.abs(diff))}{' '}
               {diff >= 0 ? 'more than' : 'less than'} sourcing the parts yourself.
             </div>
@@ -269,11 +269,11 @@ function BundleCard({
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
               Per person
             </div>
-            <ul className="text-sm space-y-1.5">
+            <ul className="text-sm divide-y divide-border/30">
               {perPerson.map((i) => (
-                <li key={i.id} className="flex justify-between gap-3">
+                <li key={i.id} className="flex justify-between gap-3 py-1.5">
                   <span>{i.component_name}</span>
-                  <span className="text-muted-foreground">x{i.qty}</span>
+                  <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
                 </li>
               ))}
             </ul>
@@ -283,11 +283,11 @@ function BundleCard({
               Shared (amortized)
             </div>
             {shared.length ? (
-              <ul className="text-sm space-y-1.5">
+              <ul className="text-sm divide-y divide-border/30">
                 {shared.map((i) => (
-                  <li key={i.id} className="flex justify-between gap-3">
+                  <li key={i.id} className="flex justify-between gap-3 py-1.5">
                     <span>{i.component_name}</span>
-                    <span className="text-muted-foreground">x{i.qty}</span>
+                    <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
                   </li>
                 ))}
               </ul>
@@ -302,13 +302,13 @@ function BundleCard({
       ) : (
         <div className="mt-6">
           <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            What is inside
+            Bill of materials
           </div>
-          <ul className="text-sm space-y-1.5">
+          <ul className="text-sm divide-y divide-border/30">
             {items.map((i) => (
-              <li key={i.id} className="flex justify-between gap-3">
+              <li key={i.id} className="flex justify-between gap-3 py-1.5">
                 <span>{i.component_name}</span>
-                <span className="text-muted-foreground">x{i.qty}</span>
+                <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
               </li>
             ))}
           </ul>
