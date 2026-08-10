@@ -24,12 +24,12 @@ declare global {
 }
 
 // Bundle SKU prefixes to detect bundle purchases
-const BUNDLE_SKU_PREFIXES = ['BUNDLE-STARTER', 'BUNDLE-GATEWAY', 'BUNDLE-COMPLETE', 'BUNDLE-CEREMONY'];
+const BUNDLE_SKU_PREFIXES = ['KIT-OBSERVER', 'KIT-PRACTITIONER', 'KIT-INSTRUMENT', 'KIT-COMPLETE'];
 const BUNDLE_TYPE_MAP: Record<string, 'starter' | 'gateway' | 'complete' | 'ceremony'> = {
-  'fractal-starter-kit': 'starter',
-  'gateway-research-kit': 'gateway',
-  'complete-symbol-kit': 'complete',
-  'extended-ceremony-package': 'ceremony',
+  'observer-kit': 'starter',
+  'practitioner-kit': 'gateway',
+  'instrument-kit': 'complete',
+  'complete-kit': 'ceremony',
 };
 
 export const CartDrawer = () => {
