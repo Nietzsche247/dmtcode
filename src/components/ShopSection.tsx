@@ -53,6 +53,16 @@ export const ShopSection = () => {
     });
   };
 
+  const rank = (handle: string) => {
+    const i = FEATURED_HANDLE_ORDER.indexOf(handle);
+    return i === -1 ? FEATURED_HANDLE_ORDER.length : i;
+  };
+  const featuredProducts = [...products].sort(
+    (a, b) => rank(a.node.handle) - rank(b.node.handle)
+  );
+
+
+
   return (
     <section id="shop" className="relative py-20 px-4 bg-muted/30">
       <div className="max-w-7xl mx-auto space-y-12">
