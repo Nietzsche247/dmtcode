@@ -7,6 +7,8 @@ import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from 
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
+const FEATURED_HANDLE_ORDER = ['complete-kit', 'instrument-kit', 'practitioner-kit', 'observer-kit', 'multi-wavelength-laser-diffraction-kit-circle', '650nm-laser-diffraction-research-kit-solo', 'quarton-vlm-650-21-lpt-laser-module', 'refraction-tank-laser-system'];
+
 export const ShopSection = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,16 @@ export const ShopSection = () => {
     });
   };
 
+  const rank = (handle: string) => {
+    const i = FEATURED_HANDLE_ORDER.indexOf(handle);
+    return i === -1 ? FEATURED_HANDLE_ORDER.length : i;
+  };
+  const featuredProducts = [...products].sort(
+    (a, b) => rank(a.node.handle) - rank(b.node.handle)
+  );
+
+
+
   return (
     <section id="shop" className="relative py-20 px-4 bg-muted/30">
       <div className="max-w-7xl mx-auto space-y-12">
@@ -59,16 +71,16 @@ export const ShopSection = () => {
             Shop DMT Code Equipment
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ships worldwide in 24-48 hours – Apple Pay, Google Pay, and Amazon Pay available
+            Ships worldwide with tracking – Apple Pay, Google Pay, and Shop Pay at checkout
           </p>
         </div>
 
         {/* Single Items */}
         {products.length > 0 && (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-center">Most Popular Single Items</h3>
+            <h3 className="text-2xl font-bold text-center">Research Kits & Instruments</h3>
             <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.slice(0, 4).map((product) => {
+              {featuredProducts.slice(0, 8).map((product) => {
                 const variant = product.node.variants.edges[0]?.node;
                 const image = product.node.images.edges[0]?.node;
                 
