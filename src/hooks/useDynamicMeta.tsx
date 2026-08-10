@@ -29,7 +29,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: 'Journey Equipment | From Entry-Level to Premium | DMT Code',
-      description: 'Kits and group bundles from $109 to $879. Bills of materials are published in full. There is no checkout yet, only a notify list.',
+      description: 'Kits and group bundles from $109 to $1,090. Bills of materials are published in full. Ship-now kits check out directly; preorders join a notify list.',
     },
   },
   bibliography: {
@@ -65,11 +65,11 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   bundles: {
     research: {
       title: 'Research Kits & Protocol Equipment Bundles | DMT Code',
-      description: 'Equipment bundles for 650nm protocol observation, from $109 to $879. Every bill of materials is published. Component specifications are not yet published.',
+      description: 'Equipment bundles for 650nm protocol observation, from $109 to $1,090. Every bill of materials is published. Component specifications are not yet published.',
     },
     explorer: {
-      title: 'Kits & Group Bundles | $109 to $879 | DMT Code',
-      description: 'Equipment packages for one observer or for groups of two, three, or five. From $109 to $879. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
+      title: 'Kits & Group Bundles | $109 to $1,090 | DMT Code',
+      description: 'Equipment packages for one observer or for groups of two, three, or five. From $109 to $1,090. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
     },
   },
 };
