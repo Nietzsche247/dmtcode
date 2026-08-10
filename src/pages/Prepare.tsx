@@ -318,7 +318,7 @@ function BundleCard({
       {canBuy ? (
         <>
           <Button
-            className="w-full h-11 rounded-lg mt-4 font-black"
+            className="w-full h-11 rounded-lg mt-4 font-black tabular-nums"
             onClick={handleAddToCart}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
