@@ -219,6 +219,17 @@ function BundleCard({
         </Badge>
       )}
 
+      {KIT_IMAGES[bundle.slug] && (
+        <div className="aspect-video rounded-lg overflow-hidden bg-muted/20 mb-6">
+          <img
+            src={KIT_IMAGES[bundle.slug]}
+            alt={`${bundle.name} kit contents`}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -226,12 +237,17 @@ function BundleCard({
             {perspective === 'group' && ` . ${bundle.people} people`}
           </div>
           <h3 className="font-serif text-3xl md:text-4xl mt-1">{bundle.name}</h3>
+          <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
+            {specLine(bundle)}
+          </div>
           {bundle.tagline && (
             <p className="text-sm text-muted-foreground mt-1 max-w-md">{bundle.tagline}</p>
           )}
         </div>
         <div className="text-right">
-          <div className="text-3xl font-black tracking-tight">{dollars(bundle.price_cents)}</div>
+          <div className="text-3xl font-black tracking-tight tabular-nums">
+            {dollars(bundle.price_cents)}
+          </div>
           {perspective === 'group' ? (
             <div className="text-xs text-muted-foreground mt-1">
               {dollars(perPersonPrice)} per person
