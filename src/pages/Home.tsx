@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
 import { ArrowRight, Database, Users, Target, FileText, AlertTriangle, Mic } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { RecentContributions } from '@/components/registry/RecentContributions';
@@ -234,7 +234,52 @@ const Home = () => {
               </div>
             </AnimatedSection>
           </section>
-          
+
+          {/* Instruments Section */}
+          <section className="container mx-auto px-4 py-32 max-w-6xl border-t border-border/30">
+            <AnimatedSection>
+              <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
+                Instruments for careful observation
+              </h2>
+              <p className="text-muted-foreground mb-12">
+                Every kit ships with its full bill of materials published.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {INSTRUMENTS.map((kit) => (
+                  <article
+                    key={kit.slug}
+                    className="rounded-2xl border border-border/60 overflow-hidden bg-card/40 hover:border-primary/50 transition-colors"
+                  >
+                    <div className="aspect-video bg-muted/20 overflow-hidden">
+                      <img
+                        src={kit.image}
+                        alt={`${kit.name} kit contents`}
+                        loading="lazy"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-serif text-2xl text-foreground">{kit.name}</h3>
+                      <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
+                        {kit.spec}
+                      </div>
+                      <div className="text-2xl font-black tracking-tight tabular-nums mt-4">
+                        {kit.price}
+                      </div>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full mt-6 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <Link to={`/prepare#${kit.slug}`}>View bill of materials</Link>
+                      </Button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </AnimatedSection>
+          </section>
+
           <LatestArticle />
           <EmailCapture source="homepage" />
           
