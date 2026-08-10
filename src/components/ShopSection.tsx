@@ -61,16 +61,16 @@ export const ShopSection = () => {
             Shop DMT Code Equipment
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ships worldwide in 24-48 hours – Apple Pay, Google Pay, and Amazon Pay available
+            Ships worldwide with tracking – Apple Pay, Google Pay, and Shop Pay at checkout
           </p>
         </div>
 
         {/* Single Items */}
         {products.length > 0 && (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-center">Most Popular Single Items</h3>
+            <h3 className="text-2xl font-bold text-center">Research Kits & Instruments</h3>
             <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.slice(0, 4).map((product) => {
+              {featuredProducts.slice(0, 8).map((product) => {
                 const variant = product.node.variants.edges[0]?.node;
                 const image = product.node.images.edges[0]?.node;
                 
