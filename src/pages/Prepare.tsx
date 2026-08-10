@@ -137,6 +137,54 @@ function BundleCard({
   const perPerson = items.filter((i) => !i.is_shared);
   const perPersonPrice = Math.round(bundle.price_cents / bundle.people);
 
+  const { data: availability } = useBundleAvailability();
+  const addItem = useCartStore((s) => s.addItem);
+  const shopify = availability?.[bundle.slug];
+  const canBuy =
+    bundle.ships_status === 'now' && !!shopify?.availableForSale && !!shopify?.variantId;
+
+  const handleAddToCart = () => {
+    if (!shopify?.variantId) return;
+    const price = shopify.price ?? {
+      amount: (bundle.price_cents / 100).toFixed(2),
+      currencyCode: 'USD',
+    };
+    addItem({
+      product: {
+        node: {
+          id: bundle.id,
+          title: bundle.name,
+          description: bundle.tagline ?? '',
+          handle: shopify.handle,
+          priceRange: { minVariantPrice: price },
+          images: { edges: [] },
+          variants: {
+            edges: [
+              {
+                node: {
+                  id: shopify.variantId,
+                  title: 'Default Title',
+                  price,
+                  availableForSale: true,
+                  selectedOptions: [],
+                },
+              },
+            ],
+          },
+          options: [],
+        },
+      } as any,
+      variantId: shopify.variantId,
+      variantTitle: 'Default Title',
+      price,
+      quantity: 1,
+      selectedOptions: [],
+    });
+    toast.success('Added to cart', { description: bundle.name });
+  };
+
+
+
   return (
     <Card
       className={`relative p-6 md:p-8 rounded-2xl border transition-all ${
