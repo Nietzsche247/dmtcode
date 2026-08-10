@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Check, ShieldAlert, Users } from 'lucide-react';
+import { Bell, Check, ShieldAlert, Users, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
+import { useBundleAvailability } from '@/hooks/useBundleAvailability';
+import { useCartStore } from '@/stores/cartStore';
 
 type Bundle = {
   id: string;
@@ -53,7 +55,7 @@ const shipLabel = (b: Bundle) =>
     ? 'Ships now'
     : 'Preorder. Opens when a source and date are confirmed.';
 
-function NotifyInline({ slug, name }: { slug: string; name: string }) {
+function NotifyInline({ slug, name, eyebrow }: { slug: string; name: string; eyebrow?: string }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -101,7 +103,7 @@ function NotifyInline({ slug, name }: { slug: string; name: string }) {
     <form onSubmit={submit} className="border-t border-border/40 pt-4 mt-4 space-y-2">
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
         <Bell className="w-3.5 h-3.5" />
-        Notify me when this ships
+        {eyebrow ?? 'Notify me when this ships'}
       </div>
       <div className="flex gap-2">
         <Input
@@ -134,6 +136,54 @@ function BundleCard({
   const shared = items.filter((i) => i.is_shared);
   const perPerson = items.filter((i) => !i.is_shared);
   const perPersonPrice = Math.round(bundle.price_cents / bundle.people);
+
+  const { data: availability } = useBundleAvailability();
+  const addItem = useCartStore((s) => s.addItem);
+  const shopify = availability?.[bundle.slug];
+  const canBuy =
+    bundle.ships_status === 'now' && !!shopify?.availableForSale && !!shopify?.variantId;
+
+  const handleAddToCart = () => {
+    if (!shopify?.variantId) return;
+    const price = shopify.price ?? {
+      amount: (bundle.price_cents / 100).toFixed(2),
+      currencyCode: 'USD',
+    };
+    addItem({
+      product: {
+        node: {
+          id: bundle.id,
+          title: bundle.name,
+          description: bundle.tagline ?? '',
+          handle: shopify.handle,
+          priceRange: { minVariantPrice: price },
+          images: { edges: [] },
+          variants: {
+            edges: [
+              {
+                node: {
+                  id: shopify.variantId,
+                  title: 'Default Title',
+                  price,
+                  availableForSale: true,
+                  selectedOptions: [],
+                },
+              },
+            ],
+          },
+          options: [],
+        },
+      } as any,
+      variantId: shopify.variantId,
+      variantTitle: 'Default Title',
+      price,
+      quantity: 1,
+      selectedOptions: [],
+    });
+    toast.success('Added to cart', { description: bundle.name });
+  };
+
+
 
   return (
     <Card
@@ -229,7 +279,24 @@ function BundleCard({
         </div>
       )}
 
-      <NotifyInline slug={bundle.slug} name={bundle.name} />
+      {canBuy ? (
+        <>
+          <Button
+            className="w-full h-11 rounded-lg mt-4 font-black"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            {`Add to cart — ${dollars(bundle.price_cents)}`}
+          </Button>
+          <NotifyInline
+            slug={bundle.slug}
+            name={bundle.name}
+            eyebrow="Get research updates for this kit"
+          />
+        </>
+      ) : (
+        <NotifyInline slug={bundle.slug} name={bundle.name} />
+      )}
     </Card>
   );
 }
@@ -275,7 +342,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Kits for one observer. Group bundles for two, three, or five. Every bill of materials is listed in full. There is no checkout on this page. The notify form on each card records interest and nothing else."
+            subtitle="Kits for one observer. Group bundles for two, three, or five. Every bill of materials is listed in full. Kits that ship now can be added to your cart and checked out directly. Preorder cards record interest and nothing else."
           />
 
           {/* SAFETY */}
