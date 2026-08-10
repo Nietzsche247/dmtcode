@@ -53,7 +53,7 @@ const shipLabel = (b: Bundle) =>
     ? 'Ships now'
     : 'Preorder. Opens when a source and date are confirmed.';
 
-function NotifyInline({ slug, name }: { slug: string; name: string }) {
+function NotifyInline({ slug, name, eyebrow }: { slug: string; name: string; eyebrow?: string }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
