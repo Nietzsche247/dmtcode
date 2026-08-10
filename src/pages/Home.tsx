@@ -16,6 +16,34 @@ import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
 import { LatestArticle } from '@/components/home/LatestArticle';
 
+// Featured kits. Images are real Shopify CDN assets; purchase lives on /prepare.
+const INSTRUMENTS = [
+  {
+    slug: 'k1-observer',
+    name: 'Observer',
+    spec: '650 nm · 1 observer · Ships now',
+    price: '$109',
+    image:
+      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-observer.jpg?v=1786330859',
+  },
+  {
+    slug: 'k2-practitioner',
+    name: 'Practitioner',
+    spec: '650 nm · 1 observer · Ships now',
+    price: '$159',
+    image:
+      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-practitioner.jpg?v=1786330859',
+  },
+  {
+    slug: 'k4-complete',
+    name: 'Complete',
+    spec: '650 nm · 1 observer · Preorder',
+    price: '$349',
+    image:
+      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-complete.jpg?v=1786330859',
+  },
+];
+
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
