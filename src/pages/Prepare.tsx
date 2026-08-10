@@ -455,9 +455,8 @@ const Prepare = () => {
                   source and no date have been confirmed.
                 </p>
                 <p>
-                  <strong>There is no checkout on this page.</strong> Nothing here can be paid for
-                  yet. The notify form on each card records an email address against that bundle
-                  and does nothing else.
+                  <strong>Checkout is open only for kits marked ships now.</strong> Preorder cards
+                  cannot be paid for; the notify form records interest and nothing else.
                 </p>
                 <p>
                   <strong>The optical specifications are not published.</strong> We have not
