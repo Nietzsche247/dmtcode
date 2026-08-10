@@ -55,6 +55,26 @@ const shipLabel = (b: Bundle) =>
     ? 'Ships now'
     : 'Preorder. Opens when a source and date are confirmed.';
 
+// Real Shopify CDN assets. Slugs absent here render without an image, no placeholder.
+const KIT_IMAGES: Record<string, string> = {
+  'k1-observer':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-observer.jpg?v=1786330859',
+  'k2-practitioner':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-practitioner.jpg?v=1786330859',
+  'k4-complete':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-complete.jpg?v=1786330859',
+  'b5-circle':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg?v=1786330860',
+};
+
+// Datasheet utility line composed from real bundle data.
+const specLine = (b: Bundle) =>
+  [
+    b.kind === 'group' ? 'Multi-wavelength' : '650 nm',
+    `${b.people} ${b.people === 1 ? 'observer' : 'observers'}`,
+    b.ships_status === 'now' ? 'Ships now' : `Preorder · Wave ${b.wave}`,
+  ].join(' · ');
+
 function NotifyInline({ slug, name, eyebrow }: { slug: string; name: string; eyebrow?: string }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
