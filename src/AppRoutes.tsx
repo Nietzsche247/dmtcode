@@ -63,6 +63,7 @@ const TagHub = lazy(() => import("./pages/TagHub"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Capture = lazy(() => import("./pages/Capture"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // "Calibrating lasers..." loading fallback
@@ -305,6 +306,13 @@ export const AppRoutes = () => (
     <Route path="auth" element={<Auth />} />
     <Route path="join" element={<Join />} />
     <Route path="prepare" element={<Prepare />} />
+    <Route path="products/:handle" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <ProductDetail />
+        </Suspense>
+      </ErrorBoundary>
+    } />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
