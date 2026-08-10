@@ -55,6 +55,26 @@ const shipLabel = (b: Bundle) =>
     ? 'Ships now'
     : 'Preorder. Opens when a source and date are confirmed.';
 
+// Real Shopify CDN assets. Slugs absent here render without an image, no placeholder.
+const KIT_IMAGES: Record<string, string> = {
+  'k1-observer':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-observer.jpg?v=1786330859',
+  'k2-practitioner':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-practitioner.jpg?v=1786330859',
+  'k4-complete':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-complete.jpg?v=1786330859',
+  'b5-circle':
+    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg?v=1786330860',
+};
+
+// Datasheet utility line composed from real bundle data.
+const specLine = (b: Bundle) =>
+  [
+    b.kind === 'group' ? 'Multi-wavelength' : '650 nm',
+    `${b.people} ${b.people === 1 ? 'observer' : 'observers'}`,
+    b.ships_status === 'now' ? 'Ships now' : `Preorder · Wave ${b.wave}`,
+  ].join(' · ');
+
 function NotifyInline({ slug, name, eyebrow }: { slug: string; name: string; eyebrow?: string }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
@@ -199,6 +219,17 @@ function BundleCard({
         </Badge>
       )}
 
+      {KIT_IMAGES[bundle.slug] && (
+        <div className="aspect-video rounded-lg overflow-hidden bg-muted/20 mb-6">
+          <img
+            src={KIT_IMAGES[bundle.slug]}
+            alt={`${bundle.name} kit contents`}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -206,18 +237,23 @@ function BundleCard({
             {perspective === 'group' && ` . ${bundle.people} people`}
           </div>
           <h3 className="font-serif text-3xl md:text-4xl mt-1">{bundle.name}</h3>
+          <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
+            {specLine(bundle)}
+          </div>
           {bundle.tagline && (
             <p className="text-sm text-muted-foreground mt-1 max-w-md">{bundle.tagline}</p>
           )}
         </div>
         <div className="text-right">
-          <div className="text-3xl font-black tracking-tight">{dollars(bundle.price_cents)}</div>
+          <div className="text-3xl font-black tracking-tight tabular-nums">
+            {dollars(bundle.price_cents)}
+          </div>
           {perspective === 'group' ? (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
               {dollars(perPersonPrice)} per person
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
               {dollars(bundle.price_cents)}. That is {dollars(Math.abs(diff))}{' '}
               {diff >= 0 ? 'more than' : 'less than'} sourcing the parts yourself.
             </div>
@@ -233,11 +269,11 @@ function BundleCard({
             <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
               Per person
             </div>
-            <ul className="text-sm space-y-1.5">
+            <ul className="text-sm divide-y divide-border/30">
               {perPerson.map((i) => (
-                <li key={i.id} className="flex justify-between gap-3">
+                <li key={i.id} className="flex justify-between gap-3 py-1.5">
                   <span>{i.component_name}</span>
-                  <span className="text-muted-foreground">x{i.qty}</span>
+                  <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
                 </li>
               ))}
             </ul>
@@ -247,11 +283,11 @@ function BundleCard({
               Shared (amortized)
             </div>
             {shared.length ? (
-              <ul className="text-sm space-y-1.5">
+              <ul className="text-sm divide-y divide-border/30">
                 {shared.map((i) => (
-                  <li key={i.id} className="flex justify-between gap-3">
+                  <li key={i.id} className="flex justify-between gap-3 py-1.5">
                     <span>{i.component_name}</span>
-                    <span className="text-muted-foreground">x{i.qty}</span>
+                    <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
                   </li>
                 ))}
               </ul>
@@ -266,13 +302,13 @@ function BundleCard({
       ) : (
         <div className="mt-6">
           <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            What is inside
+            Bill of materials
           </div>
-          <ul className="text-sm space-y-1.5">
+          <ul className="text-sm divide-y divide-border/30">
             {items.map((i) => (
-              <li key={i.id} className="flex justify-between gap-3">
+              <li key={i.id} className="flex justify-between gap-3 py-1.5">
                 <span>{i.component_name}</span>
-                <span className="text-muted-foreground">x{i.qty}</span>
+                <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
               </li>
             ))}
           </ul>
@@ -282,7 +318,7 @@ function BundleCard({
       {canBuy ? (
         <>
           <Button
-            className="w-full h-11 rounded-lg mt-4 font-black"
+            className="w-full h-11 rounded-lg mt-4 font-black tabular-nums"
             onClick={handleAddToCart}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
