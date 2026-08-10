@@ -21,6 +21,7 @@ const INSTRUMENTS = [
   {
     slug: 'k1-observer',
     handle: 'observer-kit',
+    href: '/products/observer-kit',
     name: 'Observer',
     spec: '650 nm · 1 observer · Ships now',
     price: '$109',
@@ -30,6 +31,7 @@ const INSTRUMENTS = [
   {
     slug: 'k2-practitioner',
     handle: 'practitioner-kit',
+    href: '/products/practitioner-kit',
     name: 'Practitioner',
     spec: '650 nm · 1 observer · Ships now',
     price: '$159',
@@ -39,6 +41,7 @@ const INSTRUMENTS = [
   {
     slug: 'k4-complete',
     handle: 'complete-kit',
+    href: '/products/complete-kit',
     name: 'Complete',
     spec: '650 nm · 1 observer · Preorder',
     price: '$349',
@@ -302,7 +305,7 @@ const Home = () => {
                         variant="outline"
                         className="w-full mt-6 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
-                        <Link to={`/products/${kit.handle}`}>View instrument</Link>
+                        <Link to={kit.href}>View instrument</Link>
                       </Button>
                     </div>
                   </article>
