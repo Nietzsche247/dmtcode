@@ -170,13 +170,16 @@ function parseFeed(xml: string, source: string): Item[] {
       if (!isNaN(t)) published_at = new Date(t).toISOString();
     }
     const excerpt = (tag(block, "description") ?? tag(block, "summary") ?? tag(block, "content") ?? "").slice(0, 1200);
-    let outlet = tag(block, "source");
-    if (!outlet) {
-      try { outlet = new URL(link).hostname.replace(/^www\./, ""); } catch { outlet = null; }
+    const resolved = canonicalUrl(link);
+    // Never credit the aggregator. Outlet is the publisher host of the resolved URL.
+    let outlet: string | null = null;
+    try { outlet = new URL(resolved).hostname.replace(/^www\./, ""); } catch { outlet = null; }
+    if (!outlet || /(^|\.)(bing|news\.google|google|r\.jina)\.(com|ai)$/i.test(outlet)) {
+      outlet = tag(block, "source") ?? outlet;
     }
     out.push({
       title,
-      url: canonicalUrl(link),
+      url: resolved,
       excerpt,
       outlet,
       author: tag(block, "dc:creator") ?? tag(block, "author"),
