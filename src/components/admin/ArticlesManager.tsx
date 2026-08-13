@@ -510,8 +510,10 @@ export const ArticlesManager = () => {
       }
     }
     setPublishingLeadId(null);
+    setPreviewOpen(false);
     setEditorOpen(false);
     load();
+
   };
 
   return (
