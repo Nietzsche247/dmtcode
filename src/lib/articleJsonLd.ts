@@ -134,9 +134,6 @@ export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
       name: sourceOutlet,
       url: `https://${sourceOutlet}`,
     };
-    blogPostingLd.citation = Array.isArray(blogPostingLd.citation)
-      ? blogPostingLd.citation
-      : [sourceWork];
   }
 
 
