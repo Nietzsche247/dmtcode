@@ -325,6 +325,7 @@ export const ArticlesManager = () => {
   const openNew = () => {
     setDraft(EMPTY_DRAFT);
     setSlugTouched(false);
+    setPublishingLeadId(null);
     setEditorOpen(true);
   };
 
@@ -348,6 +349,28 @@ export const ArticlesManager = () => {
       published_at: a.published_at,
     });
     setSlugTouched(true);
+    setPublishingLeadId(null);
+    setEditorOpen(true);
+  };
+
+  const openPublishFromLead = (lead: ArticleLead) => {
+    const body = lead.ai_summary || lead.excerpt || "";
+    setDraft({
+      ...EMPTY_DRAFT,
+      slug: slugify(lead.title),
+      title: lead.title,
+      dek: lead.ai_summary && lead.ai_summary.length <= 400
+        ? lead.ai_summary
+        : (lead.excerpt || "").slice(0, 400),
+      body_md: body,
+      topic_tags: (lead.ai_tags?.length ? lead.ai_tags : lead.topic_tags) ?? [],
+      compounds: lead.compounds ?? [],
+      target_query: lead.url,
+      author: lead.author || "DMT Code Project",
+      is_published: true,
+    });
+    setSlugTouched(false);
+    setPublishingLeadId(lead.id);
     setEditorOpen(true);
   };
 
