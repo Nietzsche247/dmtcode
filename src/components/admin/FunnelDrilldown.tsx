@@ -40,6 +40,8 @@ interface Props {
   description?: string;
   since: Date | null;
   sources: DrilldownSource[];
+  /** Dashboard time window this drilldown was opened from, e.g. "Last 7 days". */
+  windowLabel?: string;
 }
 
 interface Group {
