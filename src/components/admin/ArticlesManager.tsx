@@ -33,6 +33,9 @@ type Article = {
   related_protocols: string[];
   author: string;
   reviewed_by: string | null;
+  source_url: string | null;
+  source_outlet: string | null;
+  source_published_at: string | null;
   is_published: boolean;
   published_at: string | null;
   updated_at: string;
@@ -81,6 +84,9 @@ const EMPTY_DRAFT: Draft = {
   related_protocols: [],
   author: "DMT Code Project",
   reviewed_by: "",
+  source_url: "",
+  source_outlet: "",
+  source_published_at: null,
   is_published: false,
 };
 
