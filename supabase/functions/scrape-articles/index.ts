@@ -217,6 +217,103 @@ async function fetchFeed(url: string): Promise<string | null> {
   }
 }
 
+// ============= AI ENRICHMENT =============
+// Every stored lead gets a short summary, key points and normalized tags BEFORE
+// a human reviews it, so the queue shows the full picture at triage time.
+// Enrichment is descriptive only. It never approves, publishes, or scores truth.
+const normalizeTag = (raw: string): string =>
+  raw.trim().toLowerCase().replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+
+async function enrichPending(supabase: ReturnType<typeof createClient>, limit = 40) {
+  const key = Deno.env.get("LOVABLE_API_KEY");
+  if (!key) return { enriched: 0, skipped: "no LOVABLE_API_KEY" };
+
+  const { data: rows } = await supabase
+    .from("article_leads")
+    .select("id,title,excerpt,outlet,url")
+    .is("ai_enriched_at", null)
+    .eq("is_approved", false)
+    .order("relevance_score", { ascending: false })
+    .limit(limit);
+
+  let enriched = 0;
+  for (const row of rows ?? []) {
+    try {
+      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You catalogue article leads for a research library on the phenomenology of structured visual perception (psychedelic and sober). Be sober and precise. Never claim a finding is proven. If the text is thin, say so plainly rather than inventing detail.",
+            },
+            {
+              role: "user",
+              content: `Outlet: ${row.outlet ?? "unknown"}\nURL: ${row.url}\nTitle: ${row.title}\nExcerpt: ${(row.excerpt ?? "").slice(0, 1500)}`,
+            },
+          ],
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: "catalogue_lead",
+                description: "Return descriptive metadata for one article lead.",
+                parameters: {
+                  type: "object",
+                  properties: {
+                    summary: { type: "string", description: "Two sentences max, neutral, no hype." },
+                    key_points: { type: "array", items: { type: "string" }, description: "Up to 3 short factual points." },
+                    tags: { type: "array", items: { type: "string" }, description: "3-8 lowercase topical tags." },
+                  },
+                  required: ["summary", "tags"],
+                  additionalProperties: false,
+                },
+              },
+            },
+          ],
+          tool_choice: { type: "function", function: { name: "catalogue_lead" } },
+        }),
+      });
+
+      if (res.status === 429 || res.status === 402) {
+        console.error(`enrichment halted: gateway ${res.status}`);
+        break;
+      }
+      if (!res.ok) {
+        console.error(`enrichment ${row.id} -> ${res.status}`);
+        continue;
+      }
+
+      const json = await res.json();
+      const args = json?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+      if (!args) continue;
+      const parsed = JSON.parse(args);
+
+      const tags = Array.from(
+        new Set((parsed.tags ?? []).map((t: string) => normalizeTag(String(t))).filter(Boolean)),
+      ).slice(0, 8);
+
+      const { error } = await supabase
+        .from("article_leads")
+        .update({
+          ai_summary: typeof parsed.summary === "string" ? parsed.summary.slice(0, 1200) : null,
+          ai_key_points: (parsed.key_points ?? []).map((p: string) => String(p).slice(0, 300)).slice(0, 3),
+          ai_tags: tags,
+          ai_enriched_at: new Date().toISOString(),
+          ai_model: "google/gemini-2.5-flash",
+        })
+        .eq("id", row.id);
+      if (!error) enriched++;
+    } catch (e) {
+      console.error("enrichment failed", e);
+    }
+  }
+  return { enriched };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
