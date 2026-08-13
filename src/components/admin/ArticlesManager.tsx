@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { ArticlePublishPreview } from "@/components/admin/ArticlePublishPreview";
+
 
 type Article = {
   id: string;
@@ -288,6 +290,8 @@ export const ArticlesManager = () => {
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
   const [publishingLeadId, setPublishingLeadId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
@@ -442,10 +446,16 @@ export const ArticlesManager = () => {
     return { ok: true };
   };
 
-  const save = async () => {
+  const save = async (skipPreview = false) => {
     const v = validate();
     if (!v.ok) return;
     if (v.warn && !confirm(`${v.warn}\n\nSave anyway?`)) return;
+
+    if (draft.is_published && !skipPreview) {
+      setPreviewOpen(true);
+      return;
+    }
+
 
     // Warn on slug change after publish
     if (draft.id) {
@@ -502,8 +512,10 @@ export const ArticlesManager = () => {
       }
     }
     setPublishingLeadId(null);
+    setPreviewOpen(false);
     setEditorOpen(false);
     load();
+
   };
 
   return (
@@ -754,13 +766,40 @@ export const ArticlesManager = () => {
               >
                 Cancel
               </Button>
-              <Button onClick={save} disabled={saving}>
+              <Button onClick={() => save()} disabled={saving}>
                 {saving ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
+
+      <ArticlePublishPreview
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        draft={{
+          id: draft.id || undefined,
+          slug: draft.slug,
+          title: draft.title,
+          dek: draft.dek,
+          topic_tags: draft.topic_tags,
+          published_at: articles.find((a) => a.id === draft.id)?.published_at ?? null,
+        }}
+        siblings={articles
+          .filter((a) => a.is_published && a.id !== draft.id)
+          .slice(0, 2)
+          .map((a) => ({
+            id: a.id,
+            slug: a.slug,
+            title: a.title,
+            dek: a.dek,
+            topic_tags: a.topic_tags || [],
+            published_at: a.published_at,
+          }))}
+        confirming={saving}
+        onConfirm={() => save(true)}
+      />
     </Card>
+
   );
 };
