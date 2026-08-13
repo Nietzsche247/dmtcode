@@ -391,6 +391,19 @@ Deno.serve(async (req) => {
         .maybeSingle();
       if (existing) continue;
 
+      // Same story syndicated through several aggregator locales: same title,
+      // same publisher. One lead is enough.
+      if (scored.outlet) {
+        const { data: sameStory } = await supabase
+          .from("article_leads")
+          .select("id")
+          .eq("outlet", scored.outlet)
+          .ilike("title", scored.title.slice(0, 200))
+          .maybeSingle();
+        if (sameStory) continue;
+      }
+
+
       const { error } = await supabase.from("article_leads").insert({
         url: scored.url,
         title: scored.title.slice(0, 500),
