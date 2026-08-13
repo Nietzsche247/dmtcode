@@ -39,11 +39,20 @@ export const AdminNotifications = () => {
           setNotifications(prev => [newNotif, ...prev]);
           setUnreadCount(prev => prev + 1);
           
-          const isFailure = newNotif.type === 'scraper_failure' || newNotif.type === 'scraper_empty';
+          const isFailure =
+            newNotif.type === 'scraper_failure' ||
+            newNotif.type === 'scraper_empty' ||
+            newNotif.type === 'deploy_failure';
+          const isDeploy = newNotif.type.startsWith('deploy_');
           const notify = isFailure ? toast.error : toast.success;
-          notify(isFailure ? 'Scraper alert' : 'New Admin Alert!', {
-            description: newNotif.message,
-          });
+          notify(
+            isFailure
+              ? (isDeploy ? 'Deploy failed' : 'Scraper alert')
+              : (isDeploy ? 'Deploy published' : 'New Admin Alert!'),
+            {
+              description: newNotif.message,
+            },
+          );
         }
       )
       .subscribe();
@@ -154,7 +163,9 @@ export const AdminNotifications = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 flex-1">
                   <div className="mt-1">
-                    {notif.type === 'scraper_failure' || notif.type === 'scraper_empty' ? (
+                    {notif.type === 'scraper_failure' ||
+                    notif.type === 'scraper_empty' ||
+                    notif.type === 'deploy_failure' ? (
                       <AlertCircle className="w-5 h-5 text-destructive" />
                     ) : notif.type === 'first_non_red' ? (
                       <AlertCircle className="w-5 h-5 text-gold" />
@@ -166,14 +177,20 @@ export const AdminNotifications = () => {
                     <div className="flex items-center gap-2 mb-2">
                       <Badge
                         variant={
-                          notif.type === 'scraper_failure' || notif.type === 'scraper_empty'
+                          notif.type === 'scraper_failure' ||
+                          notif.type === 'scraper_empty' ||
+                          notif.type === 'deploy_failure'
                             ? 'destructive'
                             : notif.type === 'first_non_red'
                               ? 'default'
                               : 'outline'
                         }
                       >
-                        {notif.type === 'scraper_failure'
+                        {notif.type === 'deploy_failure'
+                          ? 'Deploy Failed'
+                          : notif.type === 'deploy_success'
+                          ? 'Deploy Published'
+                          : notif.type === 'scraper_failure'
                           ? 'Scraper Failure'
                           : notif.type === 'scraper_empty'
                             ? 'Scraper Stored Nothing'
@@ -202,6 +219,26 @@ export const AdminNotifications = () => {
                           <Badge variant="outline" className="text-xs">
                             {notif.metadata.items_seen} seen / {notif.metadata.items_stored ?? 0} stored
                           </Badge>
+                        )}
+                        {notif.metadata.state && (
+                          <Badge variant="outline" className="text-xs font-mono">
+                            {notif.metadata.state}
+                          </Badge>
+                        )}
+                        {notif.metadata.branch && (
+                          <Badge variant="outline" className="text-xs font-mono">
+                            {notif.metadata.branch}
+                          </Badge>
+                        )}
+                        {notif.metadata.logs_url && (
+                          <a
+                            href={notif.metadata.logs_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs underline text-muted-foreground"
+                          >
+                            View build log
+                          </a>
                         )}
                         {notif.metadata.surface && (
                           <Badge variant="outline" className="text-xs">
