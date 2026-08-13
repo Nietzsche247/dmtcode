@@ -766,6 +766,33 @@ export const ArticlesManager = () => {
               </div>
             </div>
 
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="src-url">Original publication URL (optional)</Label>
+                <Input
+                  id="src-url"
+                  placeholder="https://publisher.com/story"
+                  value={draft.source_url ?? ""}
+                  onChange={(e) => setDraft({ ...draft, source_url: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Shown on the article as "Sourced from" and emitted in schema.org isBasedOn so
+                  agents cite the original publication.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="src-outlet">Publisher name (optional)</Label>
+                <Input
+                  id="src-outlet"
+                  placeholder="newyorker.com"
+                  value={draft.source_outlet ?? ""}
+                  onChange={(e) => setDraft({ ...draft, source_outlet: e.target.value })}
+                />
+              </div>
+            </div>
+
+
+
             <div className="flex items-center gap-3">
               <Switch
                 id="pub"
