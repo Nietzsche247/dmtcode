@@ -39,10 +39,10 @@ export const AdminNotifications = () => {
           setNotifications(prev => [newNotif, ...prev]);
           setUnreadCount(prev => prev + 1);
           
-          toast.success('New Admin Alert!', {
-            description: newNotif.type === 'first_non_red' 
-              ? 'First non-red wavelength submitted!' 
-              : 'New null report submitted',
+          const isFailure = newNotif.type === 'scraper_failure' || newNotif.type === 'scraper_empty';
+          const notify = isFailure ? toast.error : toast.success;
+          notify(isFailure ? 'Scraper alert' : 'New Admin Alert!', {
+            description: newNotif.message,
           });
         }
       )
@@ -154,7 +154,9 @@ export const AdminNotifications = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 flex-1">
                   <div className="mt-1">
-                    {notif.type === 'first_non_red' ? (
+                    {notif.type === 'scraper_failure' || notif.type === 'scraper_empty' ? (
+                      <AlertCircle className="w-5 h-5 text-destructive" />
+                    ) : notif.type === 'first_non_red' ? (
                       <AlertCircle className="w-5 h-5 text-gold" />
                     ) : (
                       <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -162,8 +164,22 @@ export const AdminNotifications = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant={notif.type === 'first_non_red' ? 'default' : 'outline'}>
-                        {notif.type === 'first_non_red' ? 'First Non-Red' : 'Null Report'}
+                      <Badge
+                        variant={
+                          notif.type === 'scraper_failure' || notif.type === 'scraper_empty'
+                            ? 'destructive'
+                            : notif.type === 'first_non_red'
+                              ? 'default'
+                              : 'outline'
+                        }
+                      >
+                        {notif.type === 'scraper_failure'
+                          ? 'Scraper Failure'
+                          : notif.type === 'scraper_empty'
+                            ? 'Scraper Stored Nothing'
+                            : notif.type === 'first_non_red'
+                              ? 'First Non-Red'
+                              : 'Null Report'}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {new Date(notif.created_at).toLocaleString()}
@@ -175,6 +191,16 @@ export const AdminNotifications = () => {
                         {notif.metadata.wavelength && (
                           <Badge variant="outline" className="text-xs">
                             {notif.metadata.wavelength}
+                          </Badge>
+                        )}
+                        {notif.metadata.scraper_name && (
+                          <Badge variant="outline" className="text-xs font-mono">
+                            {notif.metadata.scraper_name}
+                          </Badge>
+                        )}
+                        {typeof notif.metadata.items_seen === 'number' && (
+                          <Badge variant="outline" className="text-xs">
+                            {notif.metadata.items_seen} seen / {notif.metadata.items_stored ?? 0} stored
                           </Badge>
                         )}
                         {notif.metadata.surface && (
