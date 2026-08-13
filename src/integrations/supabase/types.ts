@@ -2560,6 +2560,57 @@ export type Database = {
           },
         ]
       }
+      symbols: {
+        Row: {
+          article_slug: string | null
+          created_at: string
+          date_note: string | null
+          family: string
+          figure_order: number | null
+          file_path: string
+          id: string
+          phonetic_value: string | null
+          provenance: string | null
+          semantic_value: string | null
+          sources: string | null
+          status: string
+          symbol_id: string
+          title: string
+        }
+        Insert: {
+          article_slug?: string | null
+          created_at?: string
+          date_note?: string | null
+          family: string
+          figure_order?: number | null
+          file_path: string
+          id?: string
+          phonetic_value?: string | null
+          provenance?: string | null
+          semantic_value?: string | null
+          sources?: string | null
+          status: string
+          symbol_id: string
+          title: string
+        }
+        Update: {
+          article_slug?: string | null
+          created_at?: string
+          date_note?: string | null
+          family?: string
+          figure_order?: number | null
+          file_path?: string
+          id?: string
+          phonetic_value?: string | null
+          provenance?: string | null
+          semantic_value?: string | null
+          sources?: string | null
+          status?: string
+          symbol_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       tag_vocabulary: {
         Row: {
           category: string
