@@ -37,6 +37,29 @@ type Article = {
   created_at: string;
 };
 
+type ArticleLead = {
+  id: string;
+  url: string;
+  title: string;
+  excerpt: string | null;
+  outlet: string | null;
+  author: string | null;
+  published_at: string | null;
+  source: string;
+  topic_tags: string[];
+  compounds: string[];
+  relevance_score: number;
+  triage_status: string | null;
+  triage_reason: string | null;
+  is_approved: boolean;
+  created_at: string;
+  updated_at: string;
+  ai_summary: string | null;
+  ai_tags: string[];
+  ai_key_points: string[];
+  ai_enriched_at: string | null;
+};
+
 type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at"> & {
   id?: string;
   published_at?: string | null;
