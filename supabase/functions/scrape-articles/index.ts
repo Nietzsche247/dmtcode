@@ -230,10 +230,13 @@ Deno.serve(async (req) => {
   let found = 0;
   let added = 0;
 
-  const sources: { source: string; url: string }[] = [
+  const sources: { source: string; url: string; fallback?: string }[] = [
     ...NEWS_QUERIES.map((q) => ({
-      source: "google_news",
-      url: `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`,
+      source: "news_search",
+      // Google News RSS returns 503 to datacenter IPs, so Bing News RSS is the
+      // primary query surface and Google is retried through the Jina proxy.
+      url: `https://www.bing.com/news/search?q=${encodeURIComponent(q)}&format=RSS`,
+      fallback: `https://r.jina.ai/https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`,
     })),
     ...CURATED_FEEDS,
   ];
@@ -241,7 +244,8 @@ Deno.serve(async (req) => {
   const seen = new Set<string>();
 
   for (const s of sources) {
-    const xml = await fetchFeed(s.url);
+    let xml = await fetchFeed(s.url);
+    if (!xml && s.fallback) xml = await fetchFeed(s.fallback);
     if (!xml) {
       results.push({ source: s.source, found: 0, added: 0, status: "error", error: "fetch failed" });
       continue;
