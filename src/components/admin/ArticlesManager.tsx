@@ -442,10 +442,16 @@ export const ArticlesManager = () => {
     return { ok: true };
   };
 
-  const save = async () => {
+  const save = async (skipPreview = false) => {
     const v = validate();
     if (!v.ok) return;
     if (v.warn && !confirm(`${v.warn}\n\nSave anyway?`)) return;
+
+    if (draft.is_published && !skipPreview) {
+      setPreviewOpen(true);
+      return;
+    }
+
 
     // Warn on slug change after publish
     if (draft.id) {
