@@ -3436,6 +3436,13 @@ function mdToHtml(src: string, opts?: { allowFigures?: boolean }): string {
     const line = raw;
 
     // Restore fenced blocks placeholder as its own block.
+    const figMatch = line.match(/^\u0000FIG(\d+)\u0000$/);
+    if (figMatch) {
+      flushPara(); closeUL(); closeOL(); closeBQ();
+      out.push(figures[Number(figMatch[1])]);
+      continue;
+    }
+
     const fencedMatch = line.match(/^\u0000CODE(\d+)\u0000$/);
     if (fencedMatch) {
       flushPara(); closeUL(); closeOL(); closeBQ();
@@ -3491,6 +3498,8 @@ function mdToHtml(src: string, opts?: { allowFigures?: boolean }): string {
 function mdToPlain(src: string): string {
   return String(src || "")
     .replace(/```[\s\S]*?```/g, " ")
+    .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
     .replace(/`([^`]+)`/g, "$1")
     .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
@@ -3705,7 +3714,7 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
     ? `<section><h2>What this is based on</h2><ul>${basedParts.join("")}</ul></section>`
     : "";
 
-  const bodyHtml = mdToHtml(String(r.body_md || ""));
+  const bodyHtml = mdToHtml(String(r.body_md || ""), { allowFigures: true });
   const plainBody = mdToPlain(String(r.body_md || ""));
 
   const bylineBits: string[] = [];
