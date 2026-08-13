@@ -606,10 +606,18 @@ export const ArticlesManager = () => {
         )}
       </CardContent>
 
-      <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
+      <Dialog
+        open={editorOpen}
+        onOpenChange={(open) => {
+          setEditorOpen(open);
+          if (!open) setPublishingLeadId(null);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{draft.id ? "Edit article" : "New article"}</DialogTitle>
+            <DialogTitle>
+              {draft.id ? "Edit article" : publishingLeadId ? "Publish lead" : "New article"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
