@@ -225,6 +225,13 @@ export const FunnelDrilldown = ({
             </section>
           );
         })}
+
+        <div className="pt-2 border-t border-border">
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to {windowLabel ?? 'the dashboard'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
