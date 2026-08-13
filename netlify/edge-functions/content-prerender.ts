@@ -3633,7 +3633,7 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
     `slug=eq.${encodeURIComponent(slug)}&is_published=eq.true` +
       `&select=id,slug,title,dek,body_md,topic_tags,compounds,` +
       `related_trials,related_bibliography,related_symbols,related_protocols,` +
-      `author,published_at,updated_at`,
+      `author,published_at,updated_at,source_url,source_outlet,source_published_at`,
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
