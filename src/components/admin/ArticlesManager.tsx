@@ -785,6 +785,21 @@ export const ArticlesManager = () => {
           topic_tags: draft.topic_tags,
           published_at: articles.find((a) => a.id === draft.id)?.published_at ?? null,
         }}
+        seo={{
+          slug: draft.slug,
+          title: draft.title,
+          dek: draft.dek,
+          body_md: draft.body_md,
+          topic_tags: draft.topic_tags,
+          compounds: draft.compounds,
+          author: draft.author || "DMT Code Project",
+          published_at: articles.find((a) => a.id === draft.id)?.published_at ?? null,
+          updated_at: null,
+          related_trials: draft.related_trials,
+          related_bibliography: draft.related_bibliography,
+          related_symbols: draft.related_symbols,
+          related_protocols: draft.related_protocols,
+        }}
         siblings={articles
           .filter((a) => a.is_published && a.id !== draft.id)
           .slice(0, 2)
