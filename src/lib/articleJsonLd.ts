@@ -16,6 +16,9 @@ export type ArticleLdInput = {
   author: string | null;
   published_at?: string | null;
   updated_at?: string | null;
+  source_url?: string | null;
+  source_outlet?: string | null;
+  source_published_at?: string | null;
   related_trials: string[];
   related_bibliography: string[];
   related_symbols: string[];
