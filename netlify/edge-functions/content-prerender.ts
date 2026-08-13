@@ -3547,7 +3547,7 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
   const rows = await sbGetRows(
     "articles",
-    "is_published=eq.true&select=id,slug,title,dek,published_at,updated_at&order=published_at.desc",
+    "is_published=eq.true&select=id,slug,title,dek,published_at,updated_at,source_url,source_outlet,source_published_at&order=published_at.desc",
   );
 
   const organizationLd = {
