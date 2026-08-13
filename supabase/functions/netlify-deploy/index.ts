@@ -19,14 +19,6 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const hook = Deno.env.get('NETLIFY_BUILD_HOOK_URL');
-    if (!hook) {
-      return json(
-        { error: 'NETLIFY_BUILD_HOOK_URL is not set. Add the Netlify build hook URL in Project Settings, Secrets.' },
-        500,
-      );
-    }
-
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader) return json({ error: 'Missing Authorization header.' }, 401);
 
@@ -46,11 +38,21 @@ Deno.serve(async (req) => {
     if (roleErr) return json({ error: `Role check failed: ${roleErr.message}` }, 500);
     if (!isAdmin) return json({ error: 'Admin role required.' }, 403);
 
-    let body: { reason?: string } = {};
+    let body: { reason?: string; target?: string } = {};
     try { body = await req.json(); } catch { /* optional */ }
 
+    const target = body.target === 'staging' ? 'staging' : 'production';
+    const secretName = target === 'staging' ? 'NETLIFY_STAGING_BUILD_HOOK_URL' : 'NETLIFY_BUILD_HOOK_URL';
+    const hook = Deno.env.get(secretName);
+    if (!hook) {
+      return json(
+        { error: `${secretName} is not set. Add the Netlify build hook URL in Project Settings, Secrets.` },
+        500,
+      );
+    }
+
     // Netlify build hooks accept an optional trigger title via query param.
-    const title = encodeURIComponent(body.reason || 'Manual deploy from DMTCode admin');
+    const title = encodeURIComponent(body.reason || `Manual ${target} deploy from DMTCode admin`);
     const url = `${hook}?trigger_title=${title}`;
 
     const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
@@ -65,7 +67,8 @@ Deno.serve(async (req) => {
       triggered_at: new Date().toISOString(),
       triggered_by: userData.user.email ?? userData.user.id,
       netlify_status: res.status,
-      note: 'Netlify is now building from `main`. Deploy usually takes a few minutes.',
+      target,
+      note: `Netlify is now building the ${target} site. Deploy usually takes a few minutes.`,
     });
   } catch (e) {
     return json({ error: (e as Error).message }, 500);
