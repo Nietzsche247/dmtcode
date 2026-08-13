@@ -355,6 +355,9 @@ export const ArticlesManager = () => {
       related_protocols: a.related_protocols ?? [],
       author: a.author,
       reviewed_by: a.reviewed_by ?? "",
+      source_url: a.source_url ?? "",
+      source_outlet: a.source_outlet ?? "",
+      source_published_at: a.source_published_at ?? null,
       is_published: a.is_published,
       published_at: a.published_at,
     });
@@ -377,6 +380,10 @@ export const ArticlesManager = () => {
       compounds: lead.compounds ?? [],
       target_query: lead.url,
       author: lead.author || "DMT Code Project",
+      source_url: lead.url,
+      source_outlet:
+        lead.outlet || lead.url.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0],
+      source_published_at: lead.published_at,
       is_published: true,
     });
     setSlugTouched(false);
