@@ -304,7 +304,7 @@ const WindowSection = ({
   ];
 
   return (
-    <Card>
+    <Card id={anchorId} className="scroll-mt-24">
       <CardHeader>
         <CardTitle>{label}</CardTitle>
         <CardDescription>
