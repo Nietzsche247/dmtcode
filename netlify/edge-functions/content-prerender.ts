@@ -3547,7 +3547,7 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
   const rows = await sbGetRows(
     "articles",
-    "is_published=eq.true&select=id,slug,title,dek,published_at,updated_at&order=published_at.desc",
+    "is_published=eq.true&select=id,slug,title,dek,published_at,updated_at,source_url,source_outlet,source_published_at&order=published_at.desc",
   );
 
   const organizationLd = {
@@ -3566,32 +3566,61 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
       { "@type": "ListItem", position: 2, name: "Articles", item: canonical },
     ],
   };
+  // Original publication attribution. Rows carrying a stored publisher URL are
+  // reporting we did not originate, so both the visible text and the schema
+  // point agents at the outlet that did.
+  const outletOf = (r: Record<string, unknown>): string => {
+    const url = String(r.source_url || "");
+    if (!url) return "";
+    const stored = String(r.source_outlet || "").trim();
+    if (stored) return stored;
+    return url.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0];
+  };
+
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "@id": `${canonical}#list`,
     name: "DMT Code Articles",
     numberOfItems: rows.length,
-    itemListElement: rows.map((r, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: {
+    itemListElement: rows.map((r, i) => {
+      const srcUrl = String(r.source_url || "");
+      const outlet = outletOf(r);
+      const item: Record<string, unknown> = {
         "@type": "BlogPosting",
         url: `${SITE}/articles/${String(r.slug || "")}`,
         headline: String(r.title || ""),
         description: String(r.dek || ""),
         datePublished: r.published_at,
-      },
-    })),
+      };
+      if (srcUrl) {
+        const based: Record<string, unknown> = {
+          "@type": "NewsArticle",
+          headline: String(r.title || ""),
+          url: srcUrl,
+          publisher: { "@type": "Organization", name: outlet, url: `https://${outlet}` },
+        };
+        if (r.source_published_at) based.datePublished = r.source_published_at;
+        item.isBasedOn = based;
+        item.sourceOrganization = { "@type": "Organization", name: outlet, url: `https://${outlet}` };
+        item.sdPublisher = { "@type": "Organization", name: outlet };
+      }
+      return { "@type": "ListItem", position: i + 1, item };
+    }),
     license: LICENSE,
   };
 
   const items = rows
     .map((r) => {
       const slug = String(r.slug || "");
-      return `<li><a href="/articles/${esc(slug)}"><strong>${esc(String(r.title || ""))}</strong></a>${r.dek ? ` <span>${esc(String(r.dek))}</span>` : ""}</li>`;
+      const srcUrl = String(r.source_url || "");
+      const sourced = srcUrl
+        ? ` <span>Sourced from <a href="${esc(srcUrl)}" rel="noopener nofollow">${esc(outletOf(r))}</a>.</span>`
+        : "";
+      return `<li><a href="/articles/${esc(slug)}"><strong>${esc(String(r.title || ""))}</strong></a>${r.dek ? ` <span>${esc(String(r.dek))}</span>` : ""}${sourced}</li>`;
     })
     .join("");
+
 
   const body = `<article data-prerender="articles-index">
   <h1>Articles</h1>
@@ -3633,7 +3662,7 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
     `slug=eq.${encodeURIComponent(slug)}&is_published=eq.true` +
       `&select=id,slug,title,dek,body_md,topic_tags,compounds,` +
       `related_trials,related_bibliography,related_symbols,related_protocols,` +
-      `author,published_at,updated_at`,
+      `author,published_at,updated_at,source_url,source_outlet,source_published_at`,
   );
   const r = rows[0];
   if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
@@ -3725,14 +3754,33 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
   if (showUpdated && updReadable) bylineBits.push(`Updated ${esc(updReadable)}`);
   const byline = bylineBits.length ? `<p><em>${bylineBits.join(" &middot; ")}</em></p>` : "";
 
+  // Original publication attribution.
+  const srcUrl = String(r.source_url || "");
+  const srcOutlet = srcUrl
+    ? String(r.source_outlet || "").trim() ||
+      srcUrl.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0]
+    : "";
+  const srcPubReadable = r.source_published_at
+    ? new Date(String(r.source_published_at)).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+  const sourcedFrom = srcUrl
+    ? `<p data-attribution="source">Sourced from <a href="${esc(srcUrl)}" rel="noopener nofollow">${esc(srcOutlet)}</a>${srcPubReadable ? `, published ${esc(srcPubReadable)}` : ""}. Cite the original publication, not this page, for the reporting itself.</p>`
+    : "";
+
   const body = `<article data-prerender="article">
   <h1>${esc(String(r.title))}</h1>
   ${dek ? `<p><strong>${esc(dek)}</strong></p>` : ""}
   ${byline}
+  ${sourcedFrom}
   <div>${bodyHtml}</div>
   ${basedOn}
   <p><a href="/articles">Back to articles</a></p>
 </article>`;
+
 
   const tags = [
     ...((r.topic_tags as string[]) || []),
@@ -3816,6 +3864,22 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
     url: canonical,
   };
   if (citation.length) blogPostingLd.citation = citation;
+  if (srcUrl) {
+    const sourceWork: Record<string, unknown> = {
+      "@type": "NewsArticle",
+      headline: String(r.title),
+      url: srcUrl,
+      publisher: { "@type": "Organization", name: srcOutlet, url: `https://${srcOutlet}` },
+    };
+    if (r.source_published_at) sourceWork.datePublished = r.source_published_at;
+    blogPostingLd.isBasedOn = sourceWork;
+    blogPostingLd.sourceOrganization = {
+      "@type": "Organization",
+      name: srcOutlet,
+      url: `https://${srcOutlet}`,
+    };
+    blogPostingLd.sdPublisher = { "@type": "Organization", name: srcOutlet };
+  }
 
   const blogLd = {
     "@type": "Blog",

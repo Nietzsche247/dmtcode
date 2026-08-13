@@ -162,6 +162,9 @@ export type Database = {
           related_trials: string[]
           reviewed_by: string | null
           slug: string
+          source_outlet: string | null
+          source_published_at: string | null
+          source_url: string | null
           target_query: string | null
           title: string
           topic_tags: string[]
@@ -182,6 +185,9 @@ export type Database = {
           related_trials?: string[]
           reviewed_by?: string | null
           slug: string
+          source_outlet?: string | null
+          source_published_at?: string | null
+          source_url?: string | null
           target_query?: string | null
           title: string
           topic_tags?: string[]
@@ -202,6 +208,9 @@ export type Database = {
           related_trials?: string[]
           reviewed_by?: string | null
           slug?: string
+          source_outlet?: string | null
+          source_published_at?: string | null
+          source_url?: string | null
           target_query?: string | null
           title?: string
           topic_tags?: string[]

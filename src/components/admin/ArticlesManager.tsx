@@ -33,6 +33,9 @@ type Article = {
   related_protocols: string[];
   author: string;
   reviewed_by: string | null;
+  source_url: string | null;
+  source_outlet: string | null;
+  source_published_at: string | null;
   is_published: boolean;
   published_at: string | null;
   updated_at: string;
@@ -81,6 +84,9 @@ const EMPTY_DRAFT: Draft = {
   related_protocols: [],
   author: "DMT Code Project",
   reviewed_by: "",
+  source_url: "",
+  source_outlet: "",
+  source_published_at: null,
   is_published: false,
 };
 
@@ -349,6 +355,9 @@ export const ArticlesManager = () => {
       related_protocols: a.related_protocols ?? [],
       author: a.author,
       reviewed_by: a.reviewed_by ?? "",
+      source_url: a.source_url ?? "",
+      source_outlet: a.source_outlet ?? "",
+      source_published_at: a.source_published_at ?? null,
       is_published: a.is_published,
       published_at: a.published_at,
     });
@@ -371,6 +380,10 @@ export const ArticlesManager = () => {
       compounds: lead.compounds ?? [],
       target_query: lead.url,
       author: lead.author || "DMT Code Project",
+      source_url: lead.url,
+      source_outlet:
+        lead.outlet || lead.url.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0],
+      source_published_at: lead.published_at,
       is_published: true,
     });
     setSlugTouched(false);
@@ -486,6 +499,13 @@ export const ArticlesManager = () => {
       related_protocols: draft.related_protocols,
       author: draft.author || "DMT Code Project",
       reviewed_by: draft.reviewed_by || null,
+      source_url: draft.source_url?.trim() || null,
+      source_outlet:
+        draft.source_outlet?.trim() ||
+        (draft.source_url?.trim()
+          ? draft.source_url.trim().replace(/^https?:\/\/(www\.)?/i, "").split("/")[0]
+          : null),
+      source_published_at: draft.source_published_at || null,
       is_published: draft.is_published,
     };
 
@@ -746,6 +766,33 @@ export const ArticlesManager = () => {
               </div>
             </div>
 
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="src-url">Original publication URL (optional)</Label>
+                <Input
+                  id="src-url"
+                  placeholder="https://publisher.com/story"
+                  value={draft.source_url ?? ""}
+                  onChange={(e) => setDraft({ ...draft, source_url: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Shown on the article as "Sourced from" and emitted in schema.org isBasedOn so
+                  agents cite the original publication.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="src-outlet">Publisher name (optional)</Label>
+                <Input
+                  id="src-outlet"
+                  placeholder="newyorker.com"
+                  value={draft.source_outlet ?? ""}
+                  onChange={(e) => setDraft({ ...draft, source_outlet: e.target.value })}
+                />
+              </div>
+            </div>
+
+
+
             <div className="flex items-center gap-3">
               <Switch
                 id="pub"
@@ -795,6 +842,9 @@ export const ArticlesManager = () => {
           author: draft.author || "DMT Code Project",
           published_at: articles.find((a) => a.id === draft.id)?.published_at ?? null,
           updated_at: null,
+          source_url: draft.source_url,
+          source_outlet: draft.source_outlet,
+          source_published_at: draft.source_published_at,
           related_trials: draft.related_trials,
           related_bibliography: draft.related_bibliography,
           related_symbols: draft.related_symbols,

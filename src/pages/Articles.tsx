@@ -16,6 +16,16 @@ type ArticleRow = {
   dek: string;
   topic_tags: string[];
   published_at: string | null;
+  source_url: string | null;
+  source_outlet: string | null;
+};
+
+const hostOf = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 };
 
 const formatDate = (iso: string | null) => {
@@ -40,7 +50,7 @@ export default function Articles() {
     (async () => {
       const { data, error } = await supabase
         .from("articles")
-        .select("id, slug, title, dek, topic_tags, published_at")
+        .select("id, slug, title, dek, topic_tags, published_at, source_url, source_outlet")
         .eq("is_published", true)
         .order("published_at", { ascending: false });
       if (!error && data) setArticles(data as ArticleRow[]);
@@ -145,6 +155,19 @@ export default function Articles() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <p className="text-foreground/90">{a.dek}</p>
+                    {a.source_url && (
+                      <p className="text-xs text-muted-foreground">
+                        Sourced from{" "}
+                        <a
+                          href={a.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="underline hover:text-foreground"
+                        >
+                          {a.source_outlet || hostOf(a.source_url)}
+                        </a>
+                      </p>
+                    )}
                     {a.topic_tags?.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {a.topic_tags.map((t) => (
