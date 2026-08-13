@@ -46,8 +46,11 @@ export const ScraperStatus = () => {
   const [runningLegacy, setRunningLegacy] = useState(false);
   const [runningFirehose, setRunningFirehose] = useState(false);
   const [runningMarkets, setRunningMarkets] = useState(false);
+  const [runningArticles, setRunningArticles] = useState(false);
+  const [articleResults, setArticleResults] = useState<{ source: string; found: number; added: number; status: string }[] | null>(null);
   const [marketResults, setMarketResults] = useState<MarketScraperResult[] | null>(null);
   const [lastMarketScrape, setLastMarketScrape] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchRuns();
