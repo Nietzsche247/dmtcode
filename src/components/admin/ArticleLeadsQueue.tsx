@@ -21,6 +21,10 @@ interface Row {
   triage_status: string | null;
   triage_reason: string | null;
   created_at: string;
+  ai_summary: string | null;
+  ai_tags: string[] | null;
+  ai_key_points: string[] | null;
+  ai_enriched_at: string | null;
 }
 
 type Filter = 'all' | 'strong_match' | 'needs_review' | 'auto_rejected';
