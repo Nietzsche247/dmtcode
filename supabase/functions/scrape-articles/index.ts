@@ -389,6 +389,8 @@ Deno.serve(async (req) => {
     results.push({ source: s.source, found: items.length, added: sourceAdded, status: "success" });
   }
 
+  const enrichment = await enrichPending(supabase);
+
   await supabase.from("scraper_runs").insert({
     scraper_name: "article_hunter",
     last_run_at: started,
@@ -399,7 +401,7 @@ Deno.serve(async (req) => {
   });
 
   return new Response(
-    JSON.stringify({ timestamp: started, found, added, results }),
+    JSON.stringify({ timestamp: started, found, added, enrichment, results }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 });
