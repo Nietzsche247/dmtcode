@@ -175,6 +175,38 @@ export const ArticlePublishPreview = ({
                     ))}
                   </ul>
                 </div>
+                <div className="border border-border rounded-md p-3 space-y-2">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Rich results eligibility
+                  </p>
+                  <ul className="space-y-2">
+                    {ld.richResults.map((r) => (
+                      <li key={r.feature} className="text-xs space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge
+                            variant={
+                              r.status === "eligible"
+                                ? "default"
+                                : r.status === "partial"
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                            className="text-[10px] uppercase tracking-wide"
+                          >
+                            {r.status}
+                          </Badge>
+                          <span className="font-medium text-foreground">{r.feature}</span>
+                        </div>
+                        <p className="text-muted-foreground">{r.basis}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-[11px] text-muted-foreground pt-1">
+                    Eligibility means the markup qualifies. Google decides case by case whether to
+                    show any enhanced result.
+                  </p>
+                </div>
+
 
                 {ld.warnings.length > 0 && (
                   <div className="border border-border rounded-md p-3 space-y-1">
