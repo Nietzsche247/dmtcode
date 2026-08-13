@@ -47,7 +47,15 @@ export type ArticleLdResult = {
   emittedTypes: string[];
   notEmitted: Array<{ type: string; reason: string }>;
   warnings: string[];
+  richResults: RichResultNote[];
 };
+
+export type RichResultNote = {
+  feature: string;
+  status: "eligible" | "partial" | "not eligible";
+  basis: string;
+};
+
 
 export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
   const canonical = `${SITE}/articles/${input.slug}`;
