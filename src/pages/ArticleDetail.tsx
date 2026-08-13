@@ -3,6 +3,9 @@ import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import { articleFigureSchema } from "@/lib/articleFigureSchema";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -229,6 +232,7 @@ export default function ArticleDetail() {
           <div className={cn("prose max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline", resolvedTheme === 'dark' && "prose-invert")}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw, [rehypeSanitize, articleFigureSchema]]}
               components={{
                 h1: ({ node, ...props }) => <h2 {...props} />,
               }}
