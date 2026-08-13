@@ -21,6 +21,10 @@ interface Row {
   triage_status: string | null;
   triage_reason: string | null;
   created_at: string;
+  ai_summary: string | null;
+  ai_tags: string[] | null;
+  ai_key_points: string[] | null;
+  ai_enriched_at: string | null;
 }
 
 type Filter = 'all' | 'strong_match' | 'needs_review' | 'auto_rejected';
@@ -224,6 +228,23 @@ export const ArticleLeadsQueue = () => {
                         <Badge key={t} variant="outline" className="text-[10px]">{t}</Badge>
                       ))}
                     </div>
+                  )}
+                  {(r.ai_tags?.length ?? 0) > 0 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                      <span className="text-[10px] uppercase tracking-wide text-muted-foreground">auto tags</span>
+                      {(r.ai_tags ?? []).map((t) => (
+                        <Badge key={t} variant="outline" className="text-[10px]">{t}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  {r.ai_summary && <p className="mt-2 text-sm">{r.ai_summary}</p>}
+                  {(r.ai_key_points?.length ?? 0) > 0 && (
+                    <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+                      {(r.ai_key_points ?? []).map((p, i) => <li key={i}>{p}</li>)}
+                    </ul>
+                  )}
+                  {!r.ai_enriched_at && (
+                    <p className="mt-2 text-xs text-muted-foreground">Auto summary pending. It fills in on the next run.</p>
                   )}
                   {r.triage_reason && (
                     <p className="mt-2 text-xs italic text-muted-foreground">Triage note: {r.triage_reason}</p>
