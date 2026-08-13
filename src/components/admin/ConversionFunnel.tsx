@@ -1,7 +1,77 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { FunnelDrilldown, type DrilldownSource } from './FunnelDrilldown';
+
+type Row = Record<string, unknown>;
+const str = (v: unknown) => (typeof v === 'string' ? v : '');
+
+const SOURCES: Record<string, DrilldownSource[]> = {
+  accounts: [
+    {
+      table: 'profiles',
+      label: 'Accounts created',
+      select: 'id, handle, display_name, symbol_count, created_at',
+      primary: (r: Row) => str(r.handle) || str(r.display_name) || 'Anonymous account',
+      secondary: (r: Row) => `${Number(r.symbol_count ?? 0)} symbols contributed`,
+    },
+  ],
+  emails: [
+    {
+      table: 'waitlist',
+      label: 'General waitlist',
+      select: 'id, email, source, created_at',
+      primary: (r: Row) => str(r.email),
+      secondary: (r: Row) => (str(r.source) ? `source: ${str(r.source)}` : null),
+    },
+    {
+      table: 'product_signups',
+      label: 'Kit signups',
+      select: 'id, email, bundle_slug, notified_at, created_at',
+      primary: (r: Row) => str(r.email),
+      secondary: (r: Row) => `kit: ${str(r.bundle_slug) || 'unspecified'}`,
+    },
+  ],
+  contributions: [
+    {
+      table: 'symbol_submissions',
+      label: 'Symbol submissions',
+      select: 'id, description, moderation_status, visibility_status, created_at',
+      primary: (r: Row) => str(r.description).slice(0, 90) || 'Untitled symbol',
+      secondary: (r: Row) =>
+        `${str(r.moderation_status) || 'unreviewed'}, ${str(r.visibility_status) || 'private'}`,
+      to: (r: Row) => `/registry/${String(r.id)}`,
+    },
+    {
+      table: 'registry_glyphs',
+      label: 'Registry glyphs',
+      select: 'id, source, perceived_surface, free_text_notes, created_at',
+      primary: (r: Row) => str(r.free_text_notes).slice(0, 90) || 'Registry glyph',
+      secondary: (r: Row) =>
+        [str(r.source), str(r.perceived_surface)].filter(Boolean).join(', ') || null,
+    },
+  ],
+  attention: [
+    {
+      table: 'trial_watchlist',
+      label: 'Trials watched',
+      select: 'id, trial_id, email, created_at',
+      primary: (r: Row) => `Trial ${String(r.trial_id).slice(0, 8)}`,
+      secondary: (r: Row) => str(r.email) || null,
+      to: (r: Row) => `/trials/${String(r.trial_id)}`,
+    },
+    {
+      table: 'follows',
+      label: 'Follows',
+      select: 'id, entity_type, entity_id, created_at',
+      primary: (r: Row) => `${str(r.entity_type) || 'entity'} followed`,
+      secondary: (r: Row) => String(r.entity_id),
+    },
+  ],
+};
+
 
 type WindowKey = '7d' | '30d' | 'all';
 
@@ -82,21 +152,31 @@ const StatRow = ({
   label,
   value,
   caption,
+  onClick,
 }: {
   label: string;
   value: number;
   caption?: string;
+  onClick: () => void;
 }) => (
-  <div className="flex items-start justify-between gap-4 p-3 bg-muted rounded-lg">
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full text-left flex items-start justify-between gap-4 p-3 bg-muted rounded-lg hover:bg-muted/70 transition-colors"
+  >
     <div className="space-y-1">
       <p className="text-sm font-medium">{label}</p>
       {caption && <p className="text-xs text-muted-foreground">{caption}</p>}
     </div>
-    <span className="text-lg font-semibold tabular-nums">{value.toLocaleString()}</span>
-  </div>
+    <span className="flex items-center gap-1">
+      <span className="text-lg font-semibold tabular-nums">{value.toLocaleString()}</span>
+      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+    </span>
+  </button>
 );
 
 const WindowSection = ({ label, data }: { label: string; data: WindowData }) => {
+  const [drill, setDrill] = useState<{ title: string; sources: DrilldownSource[] } | null>(null);
   const emails = (data.waitlist ?? 0) + (data.signups ?? 0);
   const emailsReadable = data.waitlist !== null || data.signups !== null;
   const contributions = (data.submissions ?? 0) + (data.glyphs ?? 0);
@@ -105,9 +185,16 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
   const attentionReadable = data.watchlist !== null || data.follows !== null;
   const kitTotal = data.kits.reduce((n, k) => n + k.count, 0);
 
+  const open = (title: string, sources: DrilldownSource[]) => setDrill({ title, sources });
+
   const rows = [
     data.accounts ? (
-      <StatRow key="accounts" label="Accounts created" value={data.accounts} />
+      <StatRow
+        key="accounts"
+        label="Accounts created"
+        value={data.accounts}
+        onClick={() => open('Accounts created', SOURCES.accounts)}
+      />
     ) : null,
     emailsReadable && emails > 0 ? (
       <StatRow
@@ -115,6 +202,7 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
         label="Emails captured"
         value={emails}
         caption={`${data.waitlist ?? 0} general waitlist, ${data.signups ?? 0} kit signups`}
+        onClick={() => open('Emails captured', SOURCES.emails)}
       />
     ) : null,
     contributionsReadable && contributions > 0 ? (
@@ -123,6 +211,7 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
         label="Contributions"
         value={contributions}
         caption={`${data.submissions ?? 0} symbol submissions, ${data.glyphs ?? 0} registry glyphs`}
+        onClick={() => open('Contributions', SOURCES.contributions)}
       />
     ) : null,
     attentionReadable && attention > 0 ? (
@@ -131,11 +220,23 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
         label="Watching and following"
         value={attention}
         caption={`${data.watchlist ?? 0} trials watched, ${data.follows ?? 0} follows`}
+        onClick={() => open('Watching and following', SOURCES.attention)}
       />
     ) : null,
   ].filter(Boolean);
 
   if (rows.length === 0 && kitTotal === 0) return null;
+
+  const kitSource = (slug?: string, name?: string): DrilldownSource[] => [
+    {
+      table: 'product_signups',
+      label: name ? `${name} signups` : 'All kit signups',
+      select: 'id, email, bundle_slug, notified_at, created_at',
+      eq: slug ? { column: 'bundle_slug', value: slug } : undefined,
+      primary: (r) => (typeof r.email === 'string' ? r.email : 'Unknown email'),
+      secondary: (r) => `kit: ${typeof r.bundle_slug === 'string' ? r.bundle_slug : 'unspecified'}`,
+    },
+  ];
 
   return (
     <Card>
@@ -149,25 +250,49 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
       <CardContent className="space-y-4">
         {kitTotal > 0 && (
           <div className="p-4 rounded-lg border-2 border-primary/40 bg-primary/5 space-y-3">
-            <div className="flex items-baseline justify-between">
+            <button
+              type="button"
+              onClick={() => open('Kit interest', kitSource())}
+              className="w-full flex items-baseline justify-between hover:opacity-80 transition-opacity"
+            >
               <p className="text-sm font-semibold uppercase tracking-wide">Kit interest</p>
-              <span className="text-2xl font-bold tabular-nums">{kitTotal.toLocaleString()}</span>
-            </div>
+              <span className="flex items-center gap-1">
+                <span className="text-2xl font-bold tabular-nums">{kitTotal.toLocaleString()}</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </span>
+            </button>
             <div className="space-y-2">
               {data.kits.map((k) => (
-                <div key={k.slug} className="flex items-center justify-between gap-4">
+                <button
+                  key={k.slug}
+                  type="button"
+                  onClick={() => open(`${k.name} signups`, kitSource(k.slug, k.name))}
+                  className="w-full flex items-center justify-between gap-4 rounded-md px-1 py-0.5 hover:bg-primary/10 transition-colors"
+                >
                   <span className="text-sm">{k.name}</span>
                   <Badge variant="secondary">{k.count.toLocaleString()}</Badge>
-                </div>
+                </button>
               ))}
             </div>
           </div>
         )}
         {rows}
       </CardContent>
+
+      <FunnelDrilldown
+        open={drill !== null}
+        onOpenChange={(o) => !o && setDrill(null)}
+        title={drill?.title ?? ''}
+        description={`${label}: records between ${
+          data.start ? fmt(data.start) : 'the first record'
+        } and ${fmt(data.end)}`}
+        since={data.start}
+        sources={drill?.sources ?? []}
+      />
     </Card>
   );
 };
+
 
 export const ConversionFunnel = () => {
   const [data, setData] = useState<Record<WindowKey, WindowData> | null>(null);
