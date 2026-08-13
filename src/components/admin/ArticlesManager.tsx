@@ -762,7 +762,7 @@ export const ArticlesManager = () => {
               >
                 Cancel
               </Button>
-              <Button onClick={save} disabled={saving}>
+              <Button onClick={() => save()} disabled={saving}>
                 {saving ? "Saving..." : "Save"}
               </Button>
             </div>
