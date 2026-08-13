@@ -99,9 +99,37 @@ export const FunnelDrilldown = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+        <DialogHeader className="space-y-3">
+          <nav aria-label="Breadcrumb">
+            <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+              <li>Admin</li>
+              <li aria-hidden="true">/</li>
+              <li>Engagement</li>
+              {windowLabel && (
+                <>
+                  <li aria-hidden="true">/</li>
+                  <li>{windowLabel}</li>
+                </>
+              )}
+              <li aria-hidden="true">/</li>
+              <li className="text-foreground font-medium">{title}</li>
+            </ol>
+          </nav>
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1 text-left">
+              <DialogTitle>{title}</DialogTitle>
+              {description && <DialogDescription>{description}</DialogDescription>}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => onOpenChange(false)}
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
+            </Button>
+          </div>
         </DialogHeader>
 
         {groups === null && (
