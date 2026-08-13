@@ -523,43 +523,85 @@ export const ArticlesManager = () => {
       <CardContent>
         {loading ? (
           <p className="text-muted-foreground">Loading.</p>
-        ) : articles.length === 0 ? (
+        ) : articles.length === 0 && leads.length === 0 ? (
           <p className="text-muted-foreground">No articles yet.</p>
         ) : (
-          <div className="space-y-2">
-            {articles.map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center justify-between gap-3 border border-border rounded-md p-3"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium truncate">{a.title || "(untitled)"}</span>
-                    <Badge variant={a.is_published ? "default" : "outline"}>
-                      {a.is_published ? "Published" : "Draft"}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
-                    {a.is_published ? "Unpublish" : "Publish"}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
-                    <Pencil className="h-3 w-3" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => remove(a)}
-                    aria-label="Delete"
+          <div className="space-y-6">
+            {articles.length > 0 && (
+              <div className="space-y-2">
+                {articles.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between gap-3 border border-border rounded-md p-3"
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium truncate">{a.title || "(untitled)"}</span>
+                        <Badge variant={a.is_published ? "default" : "outline"}>
+                          {a.is_published ? "Published" : "Draft"}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
+                        {a.is_published ? "Unpublish" : "Publish"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
+                        <Pencil className="h-3 w-3" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => remove(a)}
+                        aria-label="Delete"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {leads.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Pending article leads</h3>
+                  <span className="text-xs text-muted-foreground">Top {leads.length} by relevance</span>
+                </div>
+                {leads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className="flex items-start justify-between gap-3 border border-border rounded-md p-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium truncate">{lead.title || "(untitled)"}</span>
+                        <Badge variant="secondary">Lead</Badge>
+                        <span className="text-xs text-muted-foreground">score {lead.relevance_score}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {lead.outlet || lead.source} {lead.url}
+                      </div>
+                      {lead.ai_summary && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{lead.ai_summary}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openPublishFromLead(lead)}
+                      >
+                        Publish
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
