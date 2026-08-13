@@ -345,6 +345,7 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
         } and ${fmt(data.end)}`}
         since={data.start}
         sources={drill?.sources ?? []}
+        windowLabel={label}
       />
     </Card>
   );

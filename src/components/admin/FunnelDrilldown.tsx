@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface DrilldownSource {
@@ -40,6 +41,8 @@ interface Props {
   description?: string;
   since: Date | null;
   sources: DrilldownSource[];
+  /** Dashboard time window this drilldown was opened from, e.g. "Last 7 days". */
+  windowLabel?: string;
 }
 
 interface Group {
@@ -59,6 +62,7 @@ export const FunnelDrilldown = ({
   description,
   since,
   sources,
+  windowLabel,
 }: Props) => {
   const [groups, setGroups] = useState<Group[] | null>(null);
 
@@ -96,9 +100,37 @@ export const FunnelDrilldown = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+        <DialogHeader className="space-y-3">
+          <nav aria-label="Breadcrumb">
+            <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+              <li>Admin</li>
+              <li aria-hidden="true">/</li>
+              <li>Engagement</li>
+              {windowLabel && (
+                <>
+                  <li aria-hidden="true">/</li>
+                  <li>{windowLabel}</li>
+                </>
+              )}
+              <li aria-hidden="true">/</li>
+              <li className="text-foreground font-medium">{title}</li>
+            </ol>
+          </nav>
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1 text-left">
+              <DialogTitle>{title}</DialogTitle>
+              {description && <DialogDescription>{description}</DialogDescription>}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => onOpenChange(false)}
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
+            </Button>
+          </div>
         </DialogHeader>
 
         {groups === null && (
@@ -193,6 +225,13 @@ export const FunnelDrilldown = ({
             </section>
           );
         })}
+
+        <div className="pt-2 border-t border-border">
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to {windowLabel ?? 'the dashboard'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
