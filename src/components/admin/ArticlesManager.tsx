@@ -37,6 +37,29 @@ type Article = {
   created_at: string;
 };
 
+type ArticleLead = {
+  id: string;
+  url: string;
+  title: string;
+  excerpt: string | null;
+  outlet: string | null;
+  author: string | null;
+  published_at: string | null;
+  source: string;
+  topic_tags: string[];
+  compounds: string[];
+  relevance_score: number;
+  triage_status: string | null;
+  triage_reason: string | null;
+  is_approved: boolean;
+  created_at: string;
+  updated_at: string;
+  ai_summary: string | null;
+  ai_tags: string[];
+  ai_key_points: string[];
+  ai_enriched_at: string | null;
+};
+
 type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at"> & {
   id?: string;
   published_at?: string | null;
@@ -258,22 +281,34 @@ function TokenInput({
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [leads, setLeads] = useState<ArticleLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [publishingLeadId, setPublishingLeadId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("articles")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      toast.error(error.message);
+    const [articlesRes, leadsRes] = await Promise.all([
+      supabase.from("articles").select("*").order("created_at", { ascending: false }),
+      supabase
+        .from("article_leads")
+        .select("*")
+        .eq("is_approved", false)
+        .order("relevance_score", { ascending: false })
+        .limit(50),
+    ]);
+    if (articlesRes.error) {
+      toast.error(articlesRes.error.message);
     } else {
-      setArticles((data ?? []) as Article[]);
+      setArticles((articlesRes.data ?? []) as Article[]);
+    }
+    if (leadsRes.error) {
+      toast.error(leadsRes.error.message);
+    } else {
+      setLeads((leadsRes.data ?? []) as ArticleLead[]);
     }
     setLoading(false);
   };
@@ -290,6 +325,7 @@ export const ArticlesManager = () => {
   const openNew = () => {
     setDraft(EMPTY_DRAFT);
     setSlugTouched(false);
+    setPublishingLeadId(null);
     setEditorOpen(true);
   };
 
@@ -313,6 +349,28 @@ export const ArticlesManager = () => {
       published_at: a.published_at,
     });
     setSlugTouched(true);
+    setPublishingLeadId(null);
+    setEditorOpen(true);
+  };
+
+  const openPublishFromLead = (lead: ArticleLead) => {
+    const body = lead.ai_summary || lead.excerpt || "";
+    setDraft({
+      ...EMPTY_DRAFT,
+      slug: slugify(lead.title),
+      title: lead.title,
+      dek: lead.ai_summary && lead.ai_summary.length <= 400
+        ? lead.ai_summary
+        : (lead.excerpt || "").slice(0, 400),
+      body_md: body,
+      topic_tags: (lead.ai_tags?.length ? lead.ai_tags : lead.topic_tags) ?? [],
+      compounds: lead.compounds ?? [],
+      target_query: lead.url,
+      author: lead.author || "DMT Code Project",
+      is_published: true,
+    });
+    setSlugTouched(false);
+    setPublishingLeadId(lead.id);
     setEditorOpen(true);
   };
 
@@ -436,7 +494,14 @@ export const ArticlesManager = () => {
       setSaving(false);
       if (error) return toast.error(error.message);
       toast.success("Article created.");
+      if (publishingLeadId) {
+        await supabase
+          .from("article_leads")
+          .update({ is_approved: true, triage_status: "published" })
+          .eq("id", publishingLeadId);
+      }
     }
+    setPublishingLeadId(null);
     setEditorOpen(false);
     load();
   };
@@ -458,51 +523,101 @@ export const ArticlesManager = () => {
       <CardContent>
         {loading ? (
           <p className="text-muted-foreground">Loading.</p>
-        ) : articles.length === 0 ? (
+        ) : articles.length === 0 && leads.length === 0 ? (
           <p className="text-muted-foreground">No articles yet.</p>
         ) : (
-          <div className="space-y-2">
-            {articles.map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center justify-between gap-3 border border-border rounded-md p-3"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium truncate">{a.title || "(untitled)"}</span>
-                    <Badge variant={a.is_published ? "default" : "outline"}>
-                      {a.is_published ? "Published" : "Draft"}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
-                    {a.is_published ? "Unpublish" : "Publish"}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
-                    <Pencil className="h-3 w-3" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => remove(a)}
-                    aria-label="Delete"
+          <div className="space-y-6">
+            {articles.length > 0 && (
+              <div className="space-y-2">
+                {articles.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between gap-3 border border-border rounded-md p-3"
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium truncate">{a.title || "(untitled)"}</span>
+                        <Badge variant={a.is_published ? "default" : "outline"}>
+                          {a.is_published ? "Published" : "Draft"}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
+                        {a.is_published ? "Unpublish" : "Publish"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
+                        <Pencil className="h-3 w-3" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => remove(a)}
+                        aria-label="Delete"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
+
+            {leads.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Pending article leads</h3>
+                  <span className="text-xs text-muted-foreground">Top {leads.length} by relevance</span>
+                </div>
+                {leads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className="flex items-start justify-between gap-3 border border-border rounded-md p-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium truncate">{lead.title || "(untitled)"}</span>
+                        <Badge variant="secondary">Lead</Badge>
+                        <span className="text-xs text-muted-foreground">score {lead.relevance_score}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {lead.outlet || lead.source} {lead.url}
+                      </div>
+                      {lead.ai_summary && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{lead.ai_summary}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openPublishFromLead(lead)}
+                      >
+                        Publish
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>
 
-      <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
+      <Dialog
+        open={editorOpen}
+        onOpenChange={(open) => {
+          setEditorOpen(open);
+          if (!open) setPublishingLeadId(null);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{draft.id ? "Edit article" : "New article"}</DialogTitle>
+            <DialogTitle>
+              {draft.id ? "Edit article" : publishingLeadId ? "Publish lead" : "New article"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
@@ -629,7 +744,14 @@ export const ArticlesManager = () => {
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setEditorOpen(false)} disabled={saving}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPublishingLeadId(null);
+                  setEditorOpen(false);
+                }}
+                disabled={saving}
+              >
                 Cancel
               </Button>
               <Button onClick={save} disabled={saving}>
