@@ -8,6 +8,7 @@ import { SymbolSubmissionModeration } from './SymbolSubmissionModeration';
 import { NullDashboard } from './NullDashboard';
 import { AdminNotifications } from './AdminNotifications';
 import { ScraperStatus } from './ScraperStatus';
+import { ScraperRunHistory } from './ScraperRunHistory';
 import { TrialsBackfillPanel } from './TrialsBackfillPanel';
 import { ProductModeration } from './ProductModeration';
 import { BundleAnalytics } from './BundleAnalytics';
@@ -126,6 +127,7 @@ export const AdminDashboard = () => {
 
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
+            <ScraperRunHistory />
             <TrialsBackfillPanel />
             <ArticleLeadsQueue />
             <BibliographyReviewQueue />
