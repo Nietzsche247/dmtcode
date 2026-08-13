@@ -435,6 +435,7 @@ export const ArticlesManager = () => {
     const { error } = await supabase.from("articles").update(patch).eq("id", a.id);
     if (error) return toast.error(error.message);
     toast.success(a.is_published ? "Unpublished." : "Published.");
+    if (deployAfterPublish) await triggerProductionDeploy();
     load();
   };
 
@@ -906,7 +907,7 @@ export const ArticlesManager = () => {
             topic_tags: a.topic_tags || [],
             published_at: a.published_at,
           }))}
-        confirming={saving}
+        confirming={saving || deploying}
         onConfirm={() => save(true)}
       />
     </Card>
