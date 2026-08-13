@@ -127,7 +127,11 @@ export const FunnelDrilldown = ({
               <div className="space-y-1">
                 {g.rows.map((row, i) => {
                   const to = source.to?.(row) ?? null;
+                  const href = source.href?.(row) ?? null;
                   const secondary = source.secondary?.(row) ?? null;
+                  const preview = source.preview?.(row) ?? [];
+                  const linkClass =
+                    'block rounded-md hover:opacity-80 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
                   const body = (
                     <div className="flex items-start justify-between gap-4 rounded-md border border-border bg-card p-2.5">
                       <div className="min-w-0 space-y-0.5">
@@ -136,23 +140,51 @@ export const FunnelDrilldown = ({
                           <p className="text-xs text-muted-foreground truncate">{secondary}</p>
                         )}
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0">
+                      <span className="flex items-center gap-1 shrink-0 text-xs text-muted-foreground">
                         {fmtWhen(row.created_at)}
+                        {(to || href) && <ExternalLink className="w-3 h-3" />}
                       </span>
                     </div>
                   );
-                  return to ? (
-                    <Link
-                      key={String(row.id ?? i)}
-                      to={to}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block hover:opacity-80 transition-opacity"
-                    >
+                  const wrapped = to ? (
+                    <Link to={to} target="_blank" rel="noreferrer" className={linkClass}>
                       {body}
                     </Link>
+                  ) : href ? (
+                    <a href={href} target="_blank" rel="noreferrer" className={linkClass}>
+                      {body}
+                    </a>
                   ) : (
-                    <div key={String(row.id ?? i)}>{body}</div>
+                    body
+                  );
+                  return (
+                    <HoverCard key={String(row.id ?? i)} openDelay={120} closeDelay={80}>
+                      <HoverCardTrigger asChild>
+                        <div>{wrapped}</div>
+                      </HoverCardTrigger>
+                      <HoverCardContent align="start" className="w-80 space-y-2">
+                        <p className="text-sm font-medium break-words">{source.primary(row)}</p>
+                        <dl className="space-y-1">
+                          {preview.map((f) => (
+                            <div key={f.label} className="flex justify-between gap-3 text-xs">
+                              <dt className="text-muted-foreground shrink-0">{f.label}</dt>
+                              <dd className="text-right break-words">{f.value}</dd>
+                            </div>
+                          ))}
+                          <div className="flex justify-between gap-3 text-xs">
+                            <dt className="text-muted-foreground shrink-0">recorded</dt>
+                            <dd className="text-right">{fmtWhen(row.created_at) || 'unknown'}</dd>
+                          </div>
+                        </dl>
+                        <p className="text-xs text-muted-foreground">
+                          {to
+                            ? `opens ${to}`
+                            : href
+                              ? `opens ${href}`
+                              : 'no detail page exists for this record'}
+                        </p>
+                      </HoverCardContent>
+                    </HoverCard>
                   );
                 })}
               </div>
