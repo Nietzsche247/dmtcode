@@ -113,11 +113,31 @@ const tag = (block: string, name: string): string | null => {
   return m ? decode(m[1]) : null;
 };
 
+// Aggregators (Bing News, Google News, Jina proxy) hand back redirect URLs.
+// Store the original publisher URL so leads are sourced to the real outlet and
+// the same article from two locales dedupes to one row.
+function unwrapAggregator(raw: string): string {
+  let url = raw.trim();
+  for (let i = 0; i < 3; i++) {
+    url = url.replace(/^https?:\/\/r\.jina\.ai\//i, "");
+    try {
+      const u = new URL(url);
+      const inner = u.searchParams.get("url") ?? u.searchParams.get("u");
+      if (inner && /^https?:\/\//i.test(decodeURIComponent(inner))) {
+        url = decodeURIComponent(inner);
+        continue;
+      }
+    } catch { /* not a URL yet */ }
+    break;
+  }
+  return url;
+}
+
 function canonicalUrl(raw: string): string {
   try {
-    const u = new URL(raw);
+    const u = new URL(unwrapAggregator(raw));
     [...u.searchParams.keys()].forEach((k) => {
-      if (/^utm_|^fbclid$|^gclid$/i.test(k)) u.searchParams.delete(k);
+      if (/^utm_|^fbclid$|^gclid$|^mkt$|^ref$|^ocid$/i.test(k)) u.searchParams.delete(k);
     });
     u.hash = "";
     return u.toString().replace(/\/$/, "");
@@ -125,6 +145,7 @@ function canonicalUrl(raw: string): string {
     return raw.trim();
   }
 }
+
 
 function parseFeed(xml: string, source: string): Item[] {
   const out: Item[] = [];
@@ -149,13 +170,16 @@ function parseFeed(xml: string, source: string): Item[] {
       if (!isNaN(t)) published_at = new Date(t).toISOString();
     }
     const excerpt = (tag(block, "description") ?? tag(block, "summary") ?? tag(block, "content") ?? "").slice(0, 1200);
-    let outlet = tag(block, "source");
-    if (!outlet) {
-      try { outlet = new URL(link).hostname.replace(/^www\./, ""); } catch { outlet = null; }
+    const resolved = canonicalUrl(link);
+    // Never credit the aggregator. Outlet is the publisher host of the resolved URL.
+    let outlet: string | null = null;
+    try { outlet = new URL(resolved).hostname.replace(/^www\./, ""); } catch { outlet = null; }
+    if (!outlet || /(^|\.)(bing|news\.google|google|r\.jina)\.(com|ai)$/i.test(outlet)) {
+      outlet = tag(block, "source") ?? outlet;
     }
     out.push({
       title,
-      url: canonicalUrl(link),
+      url: resolved,
       excerpt,
       outlet,
       author: tag(block, "dc:creator") ?? tag(block, "author"),
@@ -366,6 +390,19 @@ Deno.serve(async (req) => {
         .eq("url", scored.url)
         .maybeSingle();
       if (existing) continue;
+
+      // Same story syndicated through several aggregator locales: same title,
+      // same publisher. One lead is enough.
+      if (scored.outlet) {
+        const { data: sameStory } = await supabase
+          .from("article_leads")
+          .select("id")
+          .eq("outlet", scored.outlet)
+          .ilike("title", scored.title.slice(0, 200))
+          .maybeSingle();
+        if (sameStory) continue;
+      }
+
 
       const { error } = await supabase.from("article_leads").insert({
         url: scored.url,
