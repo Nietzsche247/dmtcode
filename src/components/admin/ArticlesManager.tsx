@@ -288,6 +288,8 @@ export const ArticlesManager = () => {
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
   const [publishingLeadId, setPublishingLeadId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
