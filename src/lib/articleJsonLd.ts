@@ -228,6 +228,20 @@ export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
         "An article without a resolving DOI or ISBN is a community record, so ScholarlyArticle is deliberately withheld.",
     },
   ];
+  richResults.push(
+    sourceUrl
+      ? {
+          feature: "Original publication attribution",
+          status: "eligible",
+          basis: `isBasedOn, sourceOrganization and sdPublisher point at ${sourceOutlet}, so agents and search engines can cite the original publication rather than this page.`,
+        }
+      : {
+          feature: "Original publication attribution",
+          status: "not eligible",
+          basis:
+            "No source URL is set, so no isBasedOn node is emitted. Set one for any piece that reports on someone else's publication.",
+        },
+  );
   if (!hasDek) {
     richResults.push({
       feature: "Snippet control",
