@@ -47,7 +47,15 @@ export type ArticleLdResult = {
   emittedTypes: string[];
   notEmitted: Array<{ type: string; reason: string }>;
   warnings: string[];
+  richResults: RichResultNote[];
 };
+
+export type RichResultNote = {
+  feature: string;
+  status: "eligible" | "partial" | "not eligible";
+  basis: string;
+};
+
 
 export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
   const canonical = `${SITE}/articles/${input.slug}`;
@@ -148,6 +156,62 @@ export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
     },
   ];
 
+  const hasTitle = Boolean(input.title.trim());
+  const hasDek = Boolean(dek.trim());
+  const richResults: RichResultNote[] = [
+    {
+      feature: "Article (headline, date, publisher)",
+      status: hasTitle ? "eligible" : "not eligible",
+      basis: hasTitle
+        ? "BlogPosting is emitted with headline, datePublished, dateModified, author and publisher, which is the full set Google requires for the Article result."
+        : "headline is empty, so the BlogPosting node fails Article validation.",
+    },
+    {
+      feature: "Article image thumbnail",
+      status: "partial",
+      basis:
+        "image resolves to the shared site OG image, not a unique 1200px asset for this piece. Google will accept it but is unlikely to promote a large thumbnail.",
+    },
+    {
+      feature: "Breadcrumb trail in results",
+      status: "eligible",
+      basis:
+        "BreadcrumbList is emitted with three absolute-URL ListItems: Home, Articles, this article.",
+    },
+    {
+      feature: "Sitelinks search box",
+      status: "not eligible",
+      basis:
+        "That feature reads a WebSite node with a SearchAction on the site root. Article pages do not emit WebSite.",
+    },
+    {
+      feature: "Merchant and product results",
+      status: "not eligible",
+      basis:
+        "No Product or Offer node. Commerce markup lives only on /prepare and /products.",
+    },
+    {
+      feature: "FAQ and How-to results",
+      status: "not eligible",
+      basis:
+        "Both features were retired by Google (HowTo in September 2023, FAQ for all sites in May 2026). No amount of markup restores them.",
+    },
+    {
+      feature: "Scholarly and dataset surfaces",
+      status: "not eligible",
+      basis:
+        "An article without a resolving DOI or ISBN is a community record, so ScholarlyArticle is deliberately withheld.",
+    },
+  ];
+  if (!hasDek) {
+    richResults.push({
+      feature: "Snippet control",
+      status: "partial",
+      basis:
+        "description is empty, so Google will synthesise the snippet from body text rather than your dek.",
+    });
+  }
+
   return {
     graph,
     head: {
@@ -160,5 +224,7 @@ export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
     emittedTypes: ["Organization", "Blog", "BlogPosting", "BreadcrumbList"],
     notEmitted,
     warnings,
+    richResults,
   };
+
 }
