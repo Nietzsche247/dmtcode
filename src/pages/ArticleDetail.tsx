@@ -227,6 +227,27 @@ export default function ArticleDetail() {
               {showUpdated && <span>Updated {formatDate(article.updated_at)}</span>}
               {article.reviewed_by && <span>Reviewed by {article.reviewed_by}</span>}
             </div>
+            {article.source_url && (
+              <div className="border border-border rounded-md p-3 text-sm">
+                <span className="text-muted-foreground">Sourced from </span>
+                <a
+                  href={article.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="font-medium underline hover:text-foreground"
+                >
+                  {article.source_outlet || hostOf(article.source_url)}
+                </a>
+                {article.source_published_at && (
+                  <span className="text-muted-foreground">
+                    , published {formatDate(article.source_published_at)}
+                  </span>
+                )}
+                <span className="text-muted-foreground">
+                  . Cite the original publication, not this page, for the reporting itself.
+                </span>
+              </div>
+            )}
             <FollowButton entityType="article" entityId={article.id} />
 
             {article.topic_tags?.length > 0 && (
