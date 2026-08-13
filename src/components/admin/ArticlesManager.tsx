@@ -499,6 +499,13 @@ export const ArticlesManager = () => {
       related_protocols: draft.related_protocols,
       author: draft.author || "DMT Code Project",
       reviewed_by: draft.reviewed_by || null,
+      source_url: draft.source_url?.trim() || null,
+      source_outlet:
+        draft.source_outlet?.trim() ||
+        (draft.source_url?.trim()
+          ? draft.source_url.trim().replace(/^https?:\/\/(www\.)?/i, "").split("/")[0]
+          : null),
+      source_published_at: draft.source_published_at || null,
       is_published: draft.is_published,
     };
 
