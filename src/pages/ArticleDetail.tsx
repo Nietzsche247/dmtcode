@@ -27,10 +27,21 @@ type Article = {
   reviewed_by: string | null;
   published_at: string | null;
   updated_at: string;
+  source_url: string | null;
+  source_outlet: string | null;
+  source_published_at: string | null;
   related_trials: string[];
   related_bibliography: string[];
   related_symbols: string[];
   related_protocols: string[];
+};
+
+const hostOf = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 };
 
 type LinkItem = { href: string; label: string };
