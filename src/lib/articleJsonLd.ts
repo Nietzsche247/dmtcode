@@ -115,6 +115,31 @@ export function buildArticleLd(input: ArticleLdInput): ArticleLdResult {
     blogPostingLd.citation = `${citationCount} linked record${citationCount === 1 ? "" : "s"} resolved at render time`;
   }
 
+  const sourceUrl = (input.source_url || "").trim();
+  const sourceOutlet =
+    (input.source_outlet || "").trim() ||
+    (sourceUrl ? sourceUrl.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0] : "");
+  if (sourceUrl) {
+    const sourceWork: Record<string, unknown> = {
+      "@type": "NewsArticle",
+      headline: input.title,
+      url: sourceUrl,
+      publisher: { "@type": "Organization", name: sourceOutlet, url: `https://${sourceOutlet}` },
+    };
+    if (input.source_published_at) sourceWork.datePublished = input.source_published_at;
+    blogPostingLd.isBasedOn = sourceWork;
+    blogPostingLd.sdPublisher = { "@type": "Organization", name: sourceOutlet };
+    blogPostingLd.sourceOrganization = {
+      "@type": "Organization",
+      name: sourceOutlet,
+      url: `https://${sourceOutlet}`,
+    };
+    blogPostingLd.citation = Array.isArray(blogPostingLd.citation)
+      ? blogPostingLd.citation
+      : [sourceWork];
+  }
+
+
   const breadcrumbLd = {
     "@type": "BreadcrumbList",
     itemListElement: [
