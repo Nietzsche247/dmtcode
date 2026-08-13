@@ -113,11 +113,31 @@ const tag = (block: string, name: string): string | null => {
   return m ? decode(m[1]) : null;
 };
 
+// Aggregators (Bing News, Google News, Jina proxy) hand back redirect URLs.
+// Store the original publisher URL so leads are sourced to the real outlet and
+// the same article from two locales dedupes to one row.
+function unwrapAggregator(raw: string): string {
+  let url = raw.trim();
+  for (let i = 0; i < 3; i++) {
+    url = url.replace(/^https?:\/\/r\.jina\.ai\//i, "");
+    try {
+      const u = new URL(url);
+      const inner = u.searchParams.get("url") ?? u.searchParams.get("u");
+      if (inner && /^https?:\/\//i.test(decodeURIComponent(inner))) {
+        url = decodeURIComponent(inner);
+        continue;
+      }
+    } catch { /* not a URL yet */ }
+    break;
+  }
+  return url;
+}
+
 function canonicalUrl(raw: string): string {
   try {
-    const u = new URL(raw);
+    const u = new URL(unwrapAggregator(raw));
     [...u.searchParams.keys()].forEach((k) => {
-      if (/^utm_|^fbclid$|^gclid$/i.test(k)) u.searchParams.delete(k);
+      if (/^utm_|^fbclid$|^gclid$|^mkt$|^ref$|^ocid$/i.test(k)) u.searchParams.delete(k);
     });
     u.hash = "";
     return u.toString().replace(/\/$/, "");
@@ -125,6 +145,7 @@ function canonicalUrl(raw: string): string {
     return raw.trim();
   }
 }
+
 
 function parseFeed(xml: string, source: string): Item[] {
   const out: Item[] = [];
