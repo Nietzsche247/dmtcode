@@ -3333,6 +3333,8 @@ const FIGURE_ATTRS = new Set([
 function sanitizeFigure(block: string): string {
   return block
     .replace(/<!--[\s\S]*?-->/g, "")
+    // Drop dangerous elements together with their contents before allowlisting.
+    .replace(/<(script|style|iframe|object|embed|foreignObject)[\s\S]*?<\/\1\s*>/gi, "")
     .replace(/<\/?([a-zA-Z][a-zA-Z0-9:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)\/?>/g, (m, rawName: string, rawAttrs: string) => {
       const name = rawName.toLowerCase();
       if (!FIGURE_TAGS.has(name)) return "";
