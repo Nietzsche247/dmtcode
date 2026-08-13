@@ -3778,7 +3778,6 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
   ${sourcedFrom}
   <div>${bodyHtml}</div>
   ${basedOn}
-  ${sourcedFrom}
   <p><a href="/articles">Back to articles</a></p>
 </article>`;
 
@@ -3865,6 +3864,22 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
     url: canonical,
   };
   if (citation.length) blogPostingLd.citation = citation;
+  if (srcUrl) {
+    const sourceWork: Record<string, unknown> = {
+      "@type": "NewsArticle",
+      headline: String(r.title),
+      url: srcUrl,
+      publisher: { "@type": "Organization", name: srcOutlet, url: `https://${srcOutlet}` },
+    };
+    if (r.source_published_at) sourceWork.datePublished = r.source_published_at;
+    blogPostingLd.isBasedOn = sourceWork;
+    blogPostingLd.sourceOrganization = {
+      "@type": "Organization",
+      name: srcOutlet,
+      url: `https://${srcOutlet}`,
+    };
+    blogPostingLd.sdPublisher = { "@type": "Organization", name: srcOutlet };
+  }
 
   const blogLd = {
     "@type": "Blog",
