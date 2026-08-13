@@ -97,14 +97,17 @@ function KitCard({ kit }: { kit: Kit }) {
         Class II laser — do not stare into beam.
       </div>
 
-      <a
-        href={kit.cart}
-        target="_self"
-        onClick={trackClick}
-        className="mt-auto pt-6 inline-flex items-center justify-center w-full h-11 rounded-lg bg-primary text-primary-foreground font-black text-sm hover:opacity-90 transition-opacity"
-      >
-        Buy — secure Shopify checkout
-      </a>
+      <div className="mt-auto pt-6">
+        <a
+          href={kit.cart}
+          target="_self"
+          onClick={trackClick}
+          className="inline-flex items-center justify-center w-full h-11 rounded-lg bg-primary text-primary-foreground font-black text-sm hover:opacity-90 transition-opacity"
+        >
+          Buy — secure Shopify checkout
+        </a>
+      </div>
+
     </Card>
   );
 }
