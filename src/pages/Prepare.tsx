@@ -1,370 +1,122 @@
-import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { PageHero } from '@/components/PageHero';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Bell, Check, ShieldAlert, Users, ShoppingCart } from 'lucide-react';
-import { toast } from 'sonner';
-import { useBundleAvailability } from '@/hooks/useBundleAvailability';
-import { useCartStore } from '@/stores/cartStore';
+import { ShieldAlert } from 'lucide-react';
 
-type Bundle = {
-  id: string;
-  slug: string;
+type Kit = {
+  id: 'solo' | 'triad' | 'circle';
   name: string;
-  tagline: string | null;
-  kind: 'kit' | 'group';
-  tier: 'good' | 'better' | 'best' | 'complete';
-  people: number;
-  price_cents: number;
-  parts_sum_cents: number;
-  wave: number;
-  ships_status: 'now' | 'preorder' | string;
-  is_best: boolean;
-  sort_order: number;
+  price: number;
+  parts: number;
+  image: string | null;
+  cart: string;
+  description: string;
 };
 
-type BundleItem = {
-  id: string;
-  bundle_id: string;
-  component_name: string;
-  qty: number;
-  is_shared: boolean;
-  is_digital: boolean;
-  sort_order: number;
-};
+const KITS: Kit[] = [
+  {
+    id: 'solo',
+    name: '650 nm Laser Diffraction Research Kit — Solo (1 Observer)',
+    price: 289,
+    parts: 219,
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg',
+    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1',
+    description:
+      'Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+  },
+  {
+    id: 'triad',
+    name: 'Multi-Wavelength Laser Diffraction Research Kit — Triad (2–3 Observers)',
+    price: 649,
+    parts: 516,
+    image: null,
+    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1',
+    description:
+      'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+  },
+  {
+    id: 'circle',
+    name: 'Multi-Wavelength Laser Diffraction Research Kit — Circle (6 Observers)',
+    price: 1090,
+    parts: 883,
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg',
+    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1',
+    description:
+      'Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+  },
+];
 
-const TIER_LABEL: Record<string, string> = {
-  good: 'Good',
-  better: 'Better',
-  best: 'Best',
-  complete: 'Complete',
-};
+const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 
-const dollars = (cents: number) =>
-  `$${(cents / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-
-const shipLabel = (b: Bundle) =>
-  b.ships_status === 'now'
-    ? 'Ships now'
-    : 'Preorder. Opens when a source and date are confirmed.';
-
-// Real Shopify CDN assets. Slugs absent here render without an image, no placeholder.
-const KIT_IMAGES: Record<string, string> = {
-  'k1-observer':
-    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-observer.jpg?v=1786330859',
-  'k2-practitioner':
-    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-practitioner.jpg?v=1786330859',
-  'k4-complete':
-    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-complete.jpg?v=1786330859',
-  'b5-circle':
-    'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg?v=1786330860',
-};
-
-// Datasheet utility line composed from real bundle data.
-const specLine = (b: Bundle) =>
-  [
-    b.kind === 'group' ? 'Multi-wavelength' : '650 nm',
-    `${b.people} ${b.people === 1 ? 'observer' : 'observers'}`,
-    b.ships_status === 'now' ? 'Ships now' : `Preorder · Wave ${b.wave}`,
-  ].join(' · ');
-
-function NotifyInline({ slug, name, eyebrow }: { slug: string; name: string; eyebrow?: string }) {
-  const [email, setEmail] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error('Enter a valid email');
-      return;
-    }
-    setBusy(true);
+function KitCard({ kit }: { kit: Kit }) {
+  const trackClick = () => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'prepare_notify_signup', {
-        bundle_slug: slug,
-        bundle_name: name,
-        event_category: 'engagement',
+      (window as any).gtag('event', 'bundle_cta_click', {
+        kit: kit.id,
+        price: kit.price,
       });
     }
-    const { error } = await (supabase as any)
-      .from('product_signups')
-      .insert({ bundle_slug: slug, email });
-    if (error) {
-      toast.error('Could not save your email. Please try again.');
-      setBusy(false);
-      return;
-    }
-    toast.success('You will hear from us before it opens.');
-    setEmail('');
-    setDone(true);
-    setBusy(false);
   };
-
-
-
-  if (done) {
-    return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground border-t border-border/40 pt-4 mt-4">
-        <Check className="w-4 h-4 text-primary" />
-        You are on the list for {name}.
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={submit} className="border-t border-border/40 pt-4 mt-4 space-y-2">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
-        <Bell className="w-3.5 h-3.5" />
-        {eyebrow ?? 'Notify me when this ships'}
-      </div>
-      <div className="flex gap-2">
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          required
-          aria-label={`Notify email for ${name}`}
-          className="h-10 rounded-lg"
-        />
-        <Button type="submit" disabled={busy} className="h-10 rounded-lg">
-          {busy ? '...' : 'Notify me'}
-        </Button>
-      </div>
-    </form>
-  );
-}
-
-function BundleCard({
-  bundle,
-  items,
-  perspective,
-}: {
-  bundle: Bundle;
-  items: BundleItem[];
-  perspective: 'kit' | 'group';
-}) {
-  const diff = bundle.price_cents - bundle.parts_sum_cents;
-  const shared = items.filter((i) => i.is_shared);
-  const perPerson = items.filter((i) => !i.is_shared);
-  const perPersonPrice = Math.round(bundle.price_cents / bundle.people);
-
-  const { data: availability } = useBundleAvailability();
-  const addItem = useCartStore((s) => s.addItem);
-  const shopify = availability?.[bundle.slug];
-  const canBuy =
-    bundle.ships_status === 'now' && !!shopify?.availableForSale && !!shopify?.variantId;
-
-  const handleAddToCart = () => {
-    if (!shopify?.variantId) return;
-    const price = shopify.price ?? {
-      amount: (bundle.price_cents / 100).toFixed(2),
-      currencyCode: 'USD',
-    };
-    addItem({
-      product: {
-        node: {
-          id: bundle.id,
-          title: bundle.name,
-          description: bundle.tagline ?? '',
-          handle: shopify.handle,
-          priceRange: { minVariantPrice: price },
-          images: { edges: [] },
-          variants: {
-            edges: [
-              {
-                node: {
-                  id: shopify.variantId,
-                  title: 'Default Title',
-                  price,
-                  availableForSale: true,
-                  selectedOptions: [],
-                },
-              },
-            ],
-          },
-          options: [],
-        },
-      } as any,
-      variantId: shopify.variantId,
-      variantTitle: 'Default Title',
-      price,
-      quantity: 1,
-      selectedOptions: [],
-    });
-    toast.success('Added to cart', { description: bundle.name });
-  };
-
-
 
   return (
     <Card
-      className={`relative p-6 md:p-8 rounded-2xl border transition-all ${
-        bundle.is_best
-          ? 'border-primary/60 shadow-[0_0_0_1px_hsl(var(--primary)/0.4)]'
-          : 'border-border/60'
-      }`}
+      id={kit.id}
+      className="flex flex-col p-6 md:p-8 rounded-2xl border border-border/60"
     >
-      {bundle.is_best && (
-        <Badge className="absolute -top-3 left-6 rounded-full px-3 py-1 text-[10px] tracking-[0.2em] uppercase">
-          Recommended
-        </Badge>
-      )}
-
-      {KIT_IMAGES[bundle.slug] && (
-        <div className="aspect-video rounded-lg overflow-hidden bg-muted/20 mb-6">
+      <div className="aspect-video rounded-lg overflow-hidden bg-muted/20 mb-6">
+        {kit.image && (
           <img
-            src={KIT_IMAGES[bundle.slug]}
-            alt={`${bundle.name} kit contents`}
+            src={kit.image}
+            alt={`${kit.name} contents`}
             loading="lazy"
             className="w-full h-full object-cover"
           />
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <div>
-          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            {TIER_LABEL[bundle.tier] ?? bundle.tier}
-            {perspective === 'group' && ` . ${bundle.people} people`}
-          </div>
-          <h3 className="font-serif text-3xl md:text-4xl mt-1">{bundle.name}</h3>
-          <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
-            {specLine(bundle)}
-          </div>
-          {bundle.tagline && (
-            <p className="text-sm text-muted-foreground mt-1 max-w-md">{bundle.tagline}</p>
-          )}
-        </div>
-        <div className="text-right">
-          <div className="text-3xl font-black tracking-tight tabular-nums">
-            {dollars(bundle.price_cents)}
-          </div>
-          {perspective === 'group' ? (
-            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
-              {dollars(perPersonPrice)} per person
-            </div>
-          ) : (
-            <div className="text-xs text-muted-foreground mt-1 tabular-nums">
-              {dollars(bundle.price_cents)}. That is {dollars(Math.abs(diff))}{' '}
-              {diff >= 0 ? 'more than' : 'less than'} sourcing the parts yourself.
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
-      <div className="mt-4 text-xs text-muted-foreground">{shipLabel(bundle)}</div>
+      <h3 className="font-serif text-2xl md:text-3xl leading-tight">{kit.name}</h3>
 
-      {perspective === 'group' ? (
-        <div className="mt-6 grid md:grid-cols-2 gap-6">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-              Per person
-            </div>
-            <ul className="text-sm divide-y divide-border/30">
-              {perPerson.map((i) => (
-                <li key={i.id} className="flex justify-between gap-3 py-1.5">
-                  <span>{i.component_name}</span>
-                  <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-              Shared (amortized)
-            </div>
-            {shared.length ? (
-              <ul className="text-sm divide-y divide-border/30">
-                {shared.map((i) => (
-                  <li key={i.id} className="flex justify-between gap-3 py-1.5">
-                    <span>{i.component_name}</span>
-                    <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                No shared items. Facilitator guide and group agreements are not included at this
-                size.
-              </p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="mt-6">
-          <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            Bill of materials
-          </div>
-          <ul className="text-sm divide-y divide-border/30">
-            {items.map((i) => (
-              <li key={i.id} className="flex justify-between gap-3 py-1.5">
-                <span>{i.component_name}</span>
-                <span className="text-muted-foreground tabular-nums">x{i.qty}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="mt-4 text-3xl font-black tracking-tight tabular-nums">
+        {usd(kit.price)}
+      </div>
+      <div className="text-xs text-muted-foreground mt-1 tabular-nums">
+        Sourcing the parts yourself: ≈ {usd(kit.parts)}
+      </div>
 
-      {canBuy ? (
-        <>
-          <Button
-            className="w-full h-11 rounded-lg mt-4 font-black tabular-nums"
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            {`Add to cart — ${dollars(bundle.price_cents)}`}
-          </Button>
-          <NotifyInline
-            slug={bundle.slug}
-            name={bundle.name}
-            eyebrow="Get research updates for this kit"
-          />
-        </>
-      ) : (
-        <NotifyInline slug={bundle.slug} name={bundle.name} />
-      )}
+      <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
+        {kit.description}
+      </p>
+
+      <div className="mt-4 text-xs text-muted-foreground">
+        Ships in 7–10 business days. Free US shipping included. 18+, for research use.
+      </div>
+      <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        Class II laser — do not stare into beam.
+      </div>
+
+      <a
+        href={kit.cart}
+        target="_self"
+        onClick={trackClick}
+        className="mt-6 inline-flex items-center justify-center w-full h-11 rounded-lg bg-primary text-primary-foreground font-black text-sm hover:opacity-90 transition-opacity"
+      >
+        Buy — secure Shopify checkout
+      </a>
     </Card>
   );
 }
 
 const Prepare = () => {
-  const [bundles, setBundles] = useState<Bundle[]>([]);
-  const [items, setItems] = useState<BundleItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      const [{ data: b }, { data: i }] = await Promise.all([
-        (supabase as any).from('bundles').select('*').eq('is_published', true).order('sort_order'),
-        (supabase as any).from('bundle_items').select('*').order('sort_order'),
-      ]);
-      setBundles((b as Bundle[]) ?? []);
-      setItems((i as BundleItem[]) ?? []);
-      setLoading(false);
-    })();
-  }, []);
-
-  const kits = bundles.filter((b) => b.kind === 'kit');
-  const groups = bundles.filter((b) => b.kind === 'group');
-  const itemsFor = (id: string) => items.filter((i) => i.bundle_id === id);
-
   return (
     <>
       <Helmet>
-        <title>Prepare. Kits and group bundles for careful practice.</title>
+        <title>Prepare. Laser diffraction research kits.</title>
         <meta
           name="description"
-          content="Kits and group bundles for careful practice. The two kits that ship now are printed material only. Everything with a 650 nm module is preorder."
+          content="Three laser diffraction research kits for one, three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
         />
         <link rel="canonical" href="https://dmtcode.com/prepare" />
       </Helmet>
@@ -378,7 +130,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Kits for one observer. Group bundles for two, three, or five. Every bill of materials is listed in full. Kits that ship now can be added to your cart and checked out directly. Preorder cards record interest and nothing else."
+            subtitle="Three laser diffraction research kits: one observer, three observers, six observers. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
@@ -403,110 +155,38 @@ const Prepare = () => {
                     who knows your history.
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Every bundle that contains a 650 nm optical module also contains eyewear marked
-                    Safety Eyewear OD2+. We have not published the measured output of that module,
-                    its laser classification, or the optical density curve of that eyewear. Until
-                    we do, do not look into the beam, do not aim it at anyone, and treat every
-                    reflective surface in the room as part of the beam path.
+                    Class II laser. Do not stare into the beam, do not aim it at anyone, and treat
+                    every reflective surface in the room as part of the beam path.
                   </p>
                 </div>
               </div>
             </Card>
           </section>
 
-          {/* KIT LADDER */}
+          {/* KITS */}
           <section className="max-w-6xl mx-auto px-4 mt-20">
             <header className="mb-8">
               <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Kit ladder
+                Catalog
               </div>
-              <h2 className="font-serif text-3xl md:text-4xl mt-2">For one observer</h2>
+              <h2 className="font-serif text-3xl md:text-4xl mt-2">
+                Laser diffraction research kits
+              </h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Four tiers, each a superset of the last. Observer and Practitioner are printed
-                material only. The 650 nm optical module, the diffraction grating set and the
-                OD2+ safety eyewear first appear in the Instrument tier.
+                Three configurations, sized by the number of observers. Each card prints what the
+                same parts cost if you sourced them yourself.
               </p>
             </header>
 
-            {loading ? (
-              <p className="text-sm text-muted-foreground">Loading catalog...</p>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-6">
-                {kits.map((b) => (
-                  <BundleCard key={b.id} bundle={b} items={itemsFor(b.id)} perspective="kit" />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* GROUP LADDER */}
-          <section className="max-w-6xl mx-auto px-4 mt-20">
-            <header className="mb-8">
-              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-                <Users className="w-3.5 h-3.5" />
-                Group ladder
-              </div>
-              <h2 className="font-serif text-3xl md:text-4xl mt-2">Two, three, or five together</h2>
-              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Per person cost falls as the circle grows because shared instruments amortize. The
-                Triad and Circle include a Facilitator Guide and Group Agreements Card. The Pair
-                does not.
-              </p>
-            </header>
-
-            {loading ? (
-              <p className="text-sm text-muted-foreground">Loading catalog...</p>
-            ) : (
-              <div className="grid gap-6">
-                {groups.map((b) => (
-                  <BundleCard key={b.id} bundle={b} items={itemsFor(b.id)} perspective="group" />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* GUARANTEE */}
-          <section className="max-w-4xl mx-auto px-4 mt-24">
-            <Card className="p-8 rounded-2xl border-border/60">
-              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                What we can say today
-              </div>
-              <h2 className="font-serif text-3xl mt-2 mb-6">What is settled and what is not</h2>
-              <div className="space-y-4 text-sm leading-relaxed">
-                <p>
-                  <strong>The bill of materials is the whole bill.</strong> Every component of
-                  every kit is listed on this page with its quantity. Nothing is held back for a
-                  later upsell.
-                </p>
-                <p>
-                  <strong>The price sits above the parts total, not below it.</strong> Every kit
-                  and bundle on this page costs more than sourcing the same parts yourself, and
-                  each kit card prints that difference in dollars. You are paying for assembly and
-                  for the printed material, not for a discount.
-                </p>
-                <p>
-                  <strong>Two kits can be produced now. Five bundles cannot.</strong> Observer and
-                  Practitioner are printed material and are marked as shipping now. Every bundle
-                  that contains a 650 nm optical module is preorder, and preorder here means no
-                  source and no date have been confirmed.
-                </p>
-                <p>
-                  <strong>Checkout is open only for kits marked ships now.</strong> Preorder cards
-                  cannot be paid for; the notify form records interest and nothing else.
-                </p>
-                <p>
-                  <strong>The optical specifications are not published.</strong> We have not
-                  published a manufacturer, a model, a measured wavelength, a measured output, a
-                  laser classification, a grating line density, or an optical density curve for the
-                  eyewear. Until those are published, treat the optical components on this page as
-                  unspecified.
-                </p>
-              </div>
-            </Card>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+              {KITS.map((k) => (
+                <KitCard key={k.id} kit={k} />
+              ))}
+            </div>
           </section>
 
           {/* OPEN DATA */}
-          <section className="max-w-4xl mx-auto px-4 mt-16">
+          <section className="max-w-4xl mx-auto px-4 mt-20">
             <Card className="p-6 md:p-8 rounded-2xl border-border/60">
               <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 The open data behind this
