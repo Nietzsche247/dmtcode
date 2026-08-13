@@ -224,7 +224,7 @@ async function fetchFeed(url: string): Promise<string | null> {
 const normalizeTag = (raw: string): string =>
   raw.trim().toLowerCase().replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
 
-async function enrichPending(supabase: ReturnType<typeof createClient>, limit = 40) {
+async function enrichPending(supabase: ReturnType<typeof createClient>, limit = 120) {
   const key = Deno.env.get("LOVABLE_API_KEY");
   if (!key) return { enriched: 0, skipped: "no LOVABLE_API_KEY" };
 
