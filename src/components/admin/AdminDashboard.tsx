@@ -15,6 +15,8 @@ import { BundleAnalytics } from './BundleAnalytics';
 import { GA4DebugTester } from './GA4DebugTester';
 import { GA4KeyEventChecklist } from './GA4KeyEventChecklist';
 import { RepoCloneButton } from './RepoCloneButton';
+import { DeployButton } from './DeployButton';
+
 import { NicheGeoAudit } from './NicheGeoAudit';
 import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
@@ -115,7 +117,9 @@ export const AdminDashboard = () => {
 
           <TabsContent value="bundles" className="space-y-4">
             <KitSignups />
+            <DeployButton />
             <RepoCloneButton />
+
             <GA4DebugTester />
             <GA4KeyEventChecklist />
             <BundleAnalytics />
