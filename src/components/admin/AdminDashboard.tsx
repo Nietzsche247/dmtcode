@@ -19,6 +19,7 @@ import { ApiAccessLog } from './ApiAccessLog';
 import { ForecastChangelog } from './ForecastChangelog';
 import { VolunteersModeration } from './VolunteersModeration';
 import { BibliographyReviewQueue } from './BibliographyReviewQueue';
+import { ArticleLeadsQueue } from './ArticleLeadsQueue';
 import { ArticlesManager } from './ArticlesManager';
 import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
@@ -126,6 +127,7 @@ export const AdminDashboard = () => {
           <TabsContent value="scraper" className="space-y-4">
             <ScraperStatus />
             <TrialsBackfillPanel />
+            <ArticleLeadsQueue />
             <BibliographyReviewQueue />
           </TabsContent>
 
