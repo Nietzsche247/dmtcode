@@ -494,7 +494,14 @@ export const ArticlesManager = () => {
       setSaving(false);
       if (error) return toast.error(error.message);
       toast.success("Article created.");
+      if (publishingLeadId) {
+        await supabase
+          .from("article_leads")
+          .update({ is_approved: true, triage_status: "published" })
+          .eq("id", publishingLeadId);
+      }
     }
+    setPublishingLeadId(null);
     setEditorOpen(false);
     load();
   };
