@@ -771,6 +771,33 @@ export const ArticlesManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ArticlePublishPreview
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        draft={{
+          id: draft.id || undefined,
+          slug: draft.slug,
+          title: draft.title,
+          dek: draft.dek,
+          topic_tags: draft.topic_tags,
+          published_at: articles.find((a) => a.id === draft.id)?.published_at ?? null,
+        }}
+        siblings={articles
+          .filter((a) => a.is_published && a.id !== draft.id)
+          .slice(0, 2)
+          .map((a) => ({
+            id: a.id,
+            slug: a.slug,
+            title: a.title,
+            dek: a.dek,
+            topic_tags: a.topic_tags || [],
+            published_at: a.published_at,
+          }))}
+        confirming={saving}
+        onConfirm={() => save(true)}
+      />
     </Card>
+
   );
 };
