@@ -43,6 +43,8 @@ interface Props {
   sources: DrilldownSource[];
   /** Dashboard time window this drilldown was opened from, e.g. "Last 7 days". */
   windowLabel?: string;
+  /** Element id of the dashboard card for this window, used by breadcrumb links. */
+  windowAnchorId?: string;
 }
 
 interface Group {
