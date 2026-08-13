@@ -82,3 +82,6 @@ verify_jwt = false
 
 [functions.route-verify]
 verify_jwt = false
+
+[functions.scrape-articles]
+verify_jwt = false

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, Calendar, CheckCircle, XCircle, Clock, Mail, ExternalLink, Database, BookOpen, Zap, Mountain, Leaf, TrendingUp } from "lucide-react";
+import { RefreshCw, Calendar, CheckCircle, XCircle, Clock, Mail, ExternalLink, Database, BookOpen, Zap, Mountain, Leaf, TrendingUp, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 
 interface ScraperRun {
@@ -37,6 +37,7 @@ const SOURCE_BADGES: Record<string, { label: string; icon: React.ReactNode; colo
   psychedelic_alpha: { label: "Psychedelic Alpha", icon: <Zap className="w-3 h-3" />, color: "bg-amber-500" },
   erowid: { label: "Erowid", icon: <Leaf className="w-3 h-3" />, color: "bg-green-500" },
   retreat_guru: { label: "Retreat Guru", icon: <Mountain className="w-3 h-3" />, color: "bg-teal-500" },
+  article_hunter: { label: "Article Hunter", icon: <Newspaper className="w-3 h-3" />, color: "bg-rose-500" },
   all: { label: "All Sources", icon: <RefreshCw className="w-3 h-3" />, color: "bg-primary" },
 };
 
@@ -46,8 +47,11 @@ export const ScraperStatus = () => {
   const [runningLegacy, setRunningLegacy] = useState(false);
   const [runningFirehose, setRunningFirehose] = useState(false);
   const [runningMarkets, setRunningMarkets] = useState(false);
+  const [runningArticles, setRunningArticles] = useState(false);
+  const [articleResults, setArticleResults] = useState<{ source: string; found: number; added: number; status: string }[] | null>(null);
   const [marketResults, setMarketResults] = useState<MarketScraperResult[] | null>(null);
   const [lastMarketScrape, setLastMarketScrape] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchRuns();
@@ -102,6 +106,25 @@ export const ScraperStatus = () => {
       toast.error("Failed to trigger market scraper");
     } finally {
       setRunningMarkets(false);
+    }
+  };
+
+  const triggerArticleScraper = async () => {
+    setRunningArticles(true);
+    setArticleResults(null);
+    toast.info("Hunting for articles across news and research feeds...");
+
+    try {
+      const { data, error } = await supabase.functions.invoke("scrape-articles");
+      if (error) throw error;
+      setArticleResults(data.results || []);
+      toast.success(`Article hunt complete: ${data.added} new leads from ${data.found} items`);
+      fetchRuns();
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to trigger article scraper");
+    } finally {
+      setRunningArticles(false);
     }
   };
 
@@ -182,6 +205,7 @@ export const ScraperStatus = () => {
     );
   };
 
+  const articlesUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-articles`;
   const firehoseUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-all`;
   const legacyUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-clinical-trials`;
   const marketsUrl = `https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/scrape-markets`;
@@ -203,6 +227,7 @@ export const ScraperStatus = () => {
   const legacyRuns = runs.filter(r => r.scraper_name === "clinicaltrials_gov");
   const lastFirehose = firehoseRuns[0];
   const lastLegacy = legacyRuns[0];
+  const lastArticles = runs.find(r => r.scraper_name === "article_hunter");
 
   return (
     <div className="space-y-6">
@@ -297,6 +322,84 @@ export const ScraperStatus = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Article Hunter */}
+      <Card className="border-rose-500/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Newspaper className="w-5 h-5 text-rose-500" />
+            Article Hunter
+            <Badge variant="outline" className="ml-2">News + research feeds</Badge>
+          </CardTitle>
+          <Button onClick={triggerArticleScraper} disabled={runningArticles} size="sm">
+            <RefreshCw className={`w-4 h-4 mr-2 ${runningArticles ? "animate-spin" : ""}`} />
+            {runningArticles ? "Hunting..." : "Run Now"}
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <strong>Schedule:</strong> Daily at 05:00 UTC (via cron-job.org)
+            </div>
+            <div className="text-muted-foreground">
+              <strong>Sources:</strong> Google News queries, Psychedelic Alpha, Chacruna, Lucid News, MAPS,
+              Psychedelic Spotlight, Blossom
+            </div>
+            <div className="text-muted-foreground">
+              <strong>Output:</strong> Scored, deduped leads in the Article leads queue below. Nothing is published
+              automatically.
+            </div>
+          </div>
+
+          <div className="border border-dashed rounded-lg p-3 space-y-2">
+            <p className="text-sm font-medium">Cron Setup (cron-job.org)</p>
+            <div className="bg-background rounded p-2 text-xs font-mono break-all">{articlesUrl}</div>
+            <p className="text-xs text-muted-foreground">
+              Expression: <code className="bg-muted px-1 rounded">0 5 * * *</code>
+            </p>
+          </div>
+
+          {lastArticles && (
+            <div className="border rounded-lg p-4 space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon(lastArticles.status)}
+                  <span className="font-semibold">Last run</span>
+                </div>
+                {getStatusBadge(lastArticles.status)}
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <span className="text-muted-foreground">Time</span>
+                  <p className="font-medium">{new Date(lastArticles.last_run_at).toLocaleString()}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Items seen</span>
+                  <p className="font-medium tabular-nums">{lastArticles.trials_found}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">New leads</span>
+                  <p className="font-medium tabular-nums text-green-600">{lastArticles.trials_added}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {articleResults && articleResults.length > 0 && (
+            <div className="border rounded-lg p-4 space-y-2">
+              {articleResults.map((r, i) => (
+                <div key={i} className="flex items-center justify-between text-xs py-1 border-b last:border-0">
+                  <span className="uppercase tracking-wide text-muted-foreground">{r.source.replace(/_/g, " ")}</span>
+                  <span className="tabular-nums">
+                    {r.found} seen / <span className="text-green-600">{r.added} new</span>
+                  </span>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>

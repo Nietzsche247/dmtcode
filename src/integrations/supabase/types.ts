@@ -74,6 +74,63 @@ export type Database = {
         }
         Relationships: []
       }
+      article_leads: {
+        Row: {
+          author: string | null
+          compounds: string[]
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_approved: boolean
+          outlet: string | null
+          published_at: string | null
+          relevance_score: number
+          source: string
+          title: string
+          topic_tags: string[]
+          triage_reason: string | null
+          triage_status: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          author?: string | null
+          compounds?: string[]
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_approved?: boolean
+          outlet?: string | null
+          published_at?: string | null
+          relevance_score?: number
+          source?: string
+          title: string
+          topic_tags?: string[]
+          triage_reason?: string | null
+          triage_status?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          author?: string | null
+          compounds?: string[]
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_approved?: boolean
+          outlet?: string | null
+          published_at?: string | null
+          relevance_score?: number
+          source?: string
+          title?: string
+          topic_tags?: string[]
+          triage_reason?: string | null
+          triage_status?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
           author: string
