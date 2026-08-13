@@ -61,6 +61,7 @@ export const FunnelDrilldown = ({
   description,
   since,
   sources,
+  windowLabel,
 }: Props) => {
   const [groups, setGroups] = useState<Group[] | null>(null);
 
