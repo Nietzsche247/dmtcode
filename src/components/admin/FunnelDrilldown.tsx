@@ -117,17 +117,39 @@ export const FunnelDrilldown = ({
         <DialogHeader className="space-y-3">
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-              <li>Admin</li>
+              <li>
+                <button type="button" className={crumbClass} onClick={() => goBackTo()}>
+                  Admin
+                </button>
+              </li>
               <li aria-hidden="true">/</li>
-              <li>Engagement</li>
+              <li>
+                <button
+                  type="button"
+                  className={crumbClass}
+                  onClick={() => goBackTo('admin-engagement')}
+                >
+                  Engagement
+                </button>
+              </li>
               {windowLabel && (
                 <>
                   <li aria-hidden="true">/</li>
-                  <li>{windowLabel}</li>
+                  <li>
+                    <button
+                      type="button"
+                      className={crumbClass}
+                      onClick={() => goBackTo(windowAnchorId ?? 'admin-engagement')}
+                    >
+                      {windowLabel}
+                    </button>
+                  </li>
                 </>
               )}
               <li aria-hidden="true">/</li>
-              <li className="text-foreground font-medium">{title}</li>
+              <li className="text-foreground font-medium" aria-current="page">
+                {title}
+              </li>
             </ol>
           </nav>
           <div className="flex items-start justify-between gap-3">
