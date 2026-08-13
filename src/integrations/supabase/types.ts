@@ -76,6 +76,11 @@ export type Database = {
       }
       article_leads: {
         Row: {
+          ai_enriched_at: string | null
+          ai_key_points: string[] | null
+          ai_model: string | null
+          ai_summary: string | null
+          ai_tags: string[] | null
           author: string | null
           compounds: string[]
           created_at: string
@@ -94,6 +99,11 @@ export type Database = {
           url: string
         }
         Insert: {
+          ai_enriched_at?: string | null
+          ai_key_points?: string[] | null
+          ai_model?: string | null
+          ai_summary?: string | null
+          ai_tags?: string[] | null
           author?: string | null
           compounds?: string[]
           created_at?: string
@@ -112,6 +122,11 @@ export type Database = {
           url: string
         }
         Update: {
+          ai_enriched_at?: string | null
+          ai_key_points?: string[] | null
+          ai_model?: string | null
+          ai_summary?: string | null
+          ai_tags?: string[] | null
           author?: string | null
           compounds?: string[]
           created_at?: string
