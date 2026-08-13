@@ -730,98 +730,105 @@ export default async (request: Request, context: Context) => {
 
 async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
-  if (!SUPABASE_URL || !SUPABASE_KEY) return shellRes;
-
-  const [bundlesRes, itemsRes] = await Promise.all([
-    fetch(
-      `${SUPABASE_URL}/rest/v1/bundles?is_published=eq.true&select=id,slug,name,tagline,kind,tier,people,price_cents,parts_sum_cents,wave,ships_status,is_best,sort_order&order=sort_order.asc`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          Accept: "application/json",
-        },
-      },
-    ),
-    fetch(
-      `${SUPABASE_URL}/rest/v1/bundle_items?select=id,bundle_id,component_name,qty,is_shared,is_digital,sort_order&order=sort_order.asc`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          Accept: "application/json",
-        },
-      },
-    ),
-  ]);
-  if (!bundlesRes.ok) return shellRes;
-  const rows = (await bundlesRes.json()) as Array<Record<string, unknown>>;
-  if (!rows.length) return shellRes;
-  const items = itemsRes.ok
-    ? ((await itemsRes.json()) as Array<Record<string, unknown>>)
-    : [];
-  const itemsFor = (bid: string) =>
-    items.filter((i) => String(i.bundle_id) === bid);
 
   const canonical = `${SITE}/prepare`;
   const prepareCopy = uiCopy("prepare", locale);
   const title = prepareCopy.title;
   const metaDesc = clip(prepareCopy.description, 200);
 
-  const usd = (cents: unknown) =>
-    `$${(Number(cents) / 100).toFixed(0)}`;
+  const KITS = [
+    {
+      id: "solo",
+      sku: "KIT-SOLO-650",
+      name: "650 nm Laser Diffraction Research Kit - Solo (1 Observer)",
+      price: 289,
+      parts: 219,
+      image:
+        "https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg",
+      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1",
+      description:
+        "Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
+    },
+    {
+      id: "triad",
+      sku: "KIT-TRIAD-MW",
+      name: "Multi-Wavelength Laser Diffraction Research Kit - Triad (2-3 Observers)",
+      price: 649,
+      parts: 516,
+      image: null as string | null,
+      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1",
+      description:
+        "Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
+    },
+    {
+      id: "circle",
+      sku: "KIT-CIRCLE-MW",
+      name: "Multi-Wavelength Laser Diffraction Research Kit - Circle (6 Observers)",
+      price: 1090,
+      parts: 883,
+      image:
+        "https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg",
+      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1",
+      description:
+        "Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
+    },
+  ];
 
-  const kits = rows.filter((r) => r.kind === "kit");
-  const groups = rows.filter((r) => r.kind === "group");
+  const shippingDetails = {
+    "@type": "OfferShippingDetails",
+    shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "USD" },
+    shippingDestination: { "@type": "DefinedRegion", addressCountry: "US" },
+    deliveryTime: {
+      "@type": "ShippingDeliveryTime",
+      handlingTime: {
+        "@type": "QuantitativeValue",
+        minValue: 1,
+        maxValue: 3,
+        unitCode: "DAY",
+      },
+      transitTime: {
+        "@type": "QuantitativeValue",
+        minValue: 4,
+        maxValue: 7,
+        unitCode: "DAY",
+      },
+    },
+  };
+
+  const productLds = KITS.map((k) => {
+    const ld: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${canonical}#${k.id}`,
+      name: k.name,
+      description: k.description,
+      sku: k.sku,
+      brand: { "@type": "Brand", name: "DMT Code" },
+      offers: {
+        "@type": "Offer",
+        url: canonical,
+        price: k.price,
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        shippingDetails,
+      },
+    };
+    if (k.image) ld.image = k.image;
+    return ld;
+  });
 
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "@id": canonical,
-    name: "DMT Code Kits and Group Bundles",
-    itemListElement: rows.map((r, i) => ({
+    name: "DMT Code Laser Diffraction Research Kits",
+    itemListElement: KITS.map((k, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: String(r.name),
-      url: `${canonical}#${r.slug}`,
+      name: k.name,
+      url: `${canonical}#${k.id}`,
     })),
   };
-
-  const KIT_DESC: Record<string, string> = {
-    "k1-observer": "Observer tier. Printed material only: field guide, observation journal, screening card, reference chart, and reflection workbook. No optical components.",
-    "k2-practitioner": "Practitioner tier. Printed material only. The Observer set plus an integration prompt deck and a music referral card. No optical components.",
-    "k3-instrument": "Instrument tier. The first tier that adds a 650 nm optical module, a diffraction grating set, and OD2+ safety eyewear. Preorder.",
-    "k4-complete": "Complete tier. The Instrument set plus mask, non-metal bottle, grounding object, containment bowl, and a coil-bound journal upgrade. Preorder.",
-  };
-  const sanitize = (s: string) =>
-    s.replace(/\u2014/g, ":").replace(/\u2013/g, "-").trim();
-
-  const productLds = rows
-    .filter((r) => r.kind === "kit")
-    .map((r) => {
-      const slug = String(r.slug);
-      const fallback = sanitize(String(r.tagline ?? ""));
-      const description =
-        KIT_DESC[slug] || fallback || `DMT Code ${String(r.name)} kit.`;
-      return {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "@id": `${canonical}#${r.slug}`,
-        name: `DMT Code ${String(r.name)} Kit`,
-        description,
-        brand: { "@type": "Brand", name: "DMT Code" },
-        offers: {
-          "@type": "Offer",
-          priceCurrency: "USD",
-          price: (Number(r.price_cents) / 100).toFixed(2),
-          availability:
-            r.ships_status === "now"
-              ? "https://schema.org/InStock"
-              : "https://schema.org/PreOrder",
-          url: canonical,
-        },
-      };
-    });
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -850,91 +857,18 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     ],
   };
 
-  const datasetLd = {
-    "@context": "https://schema.org",
-    "@type": "Dataset",
-    "@id": `${SITE}/registry#dataset`,
-    name: "DMT Code Visual Symbol Registry",
-    description:
-      "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
-    license: LICENSE,
-    url: `${SITE}/registry`,
-    identifier: "10.5281/zenodo.17816520",
-    creator: { "@id": `${SITE}#org` },
-    distribution: [
-      {
-        "@type": "DataDownload",
-        encodingFormat: "application/json",
-        contentUrl: `${SITE}/data.json`,
-      },
-      {
-        "@type": "DataDownload",
-        encodingFormat: "application/json",
-        contentUrl: `${SITE}/shop.json`,
-      },
-    ],
-    sameAs: ["https://doi.org/10.5281/zenodo.17816520"],
-  };
-
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "What do I need to prepare to observe the geometry?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "The Observer and Practitioner kits are printed material only and contain no optical components. The Instrument and Complete kits add a 650 nm optical module, a diffraction grating set, and OD2+ safety eyewear. Full bills of materials are listed on the prepare page.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "How do I prepare safely?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Adults 18 and older only. Raise MAOIs, SSRIs, cardiac history, and personal or family history of psychosis with a qualified prescriber before any consideration of practice. We publish no discontinuation windows.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is the data real and verifiable?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "The open registry at /registry and the unified corpus at /data.json are CC-BY-4.0. Every symbol shows contributor counts. Critique it.",
-        },
-      },
-    ],
-  };
-
-  const kitBlocks = kits
-    .map((r) => {
-      const bom = itemsFor(String(r.id))
-        .map((it) => `${esc(it.component_name)} x${Number(it.qty)}`)
-        .join(", ");
-      const diff = Number(r.price_cents) - Number(r.parts_sum_cents);
-      const delta =
-        diff >= 0
-          ? `${usd(Math.abs(diff))} more than sourcing the parts yourself`
-          : `${usd(Math.abs(diff))} less than sourcing the parts yourself`;
-      const ships =
-        r.ships_status === "now" ? "Ships now" : "Preorder";
-      return `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> ${usd(r.price_cents)} (${esc(delta)}). ${esc(ships)}. Bill of materials: ${bom || "see product page"}.</li>`;
-    })
-    .join("");
-
-  const groupBlocks = groups
-    .map((r) => {
-      const people = Number(r.people) || 1;
-      const per = Math.round(Number(r.price_cents) / people);
-      const bom = itemsFor(String(r.id))
-        .map((it) => `${esc(it.component_name)} x${Number(it.qty)}`)
-        .join(", ");
-      const ships =
-        r.ships_status === "now" ? "Ships now" : "Preorder";
-      return `<li id="${esc(r.slug)}"><strong>${esc(r.name)}</strong> ${usd(r.price_cents)} for ${people} people (${usd(per)} per person). ${esc(ships)}. Includes: ${bom || "see product page"}.</li>`;
-    })
-    .join("");
+  const kitBlocks = KITS.map(
+    (k) => `<section id="${esc(k.id)}">
+    <h3>${esc(k.name)}</h3>
+    ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.name)}" width="800" height="450" />` : ""}
+    <p><strong>$${k.price.toLocaleString("en-US")}</strong></p>
+    <p>Sourcing the parts yourself: &asymp; $${k.parts.toLocaleString("en-US")}</p>
+    <p>${esc(k.description)}</p>
+    <p>Ships in 7-10 business days. Free US shipping included. 18+, for research use.</p>
+    <p>Class II laser - do not stare into beam.</p>
+    <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
+  </section>`,
+  ).join("");
 
   const body = `<article data-prerender="prepare">
   <h1>Careful preparation over careless purchase</h1>
@@ -949,25 +883,11 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
       <li>Personal or family history of psychosis</li>
     </ul>
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
-    <p>Every bundle that contains a 650 nm optical module also contains eyewear marked Safety Eyewear OD2+. We have not published the measured output of that module, its laser classification, or the optical density curve of that eyewear. Until we do, do not look into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
+    <p>Every kit that contains a laser module also contains safety eyewear. Class II laser: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <section>
-    <h2>Kit ladder (one observer)</h2>
-    <ul>${kitBlocks}</ul>
-  </section>
-  <section>
-    <h2>Group ladder (two, three, or five together)</h2>
-    <ul>${groupBlocks}</ul>
-  </section>
-  <section>
-    <h2>What is settled and what is not</h2>
-    <ul>
-      <li>The bill of materials is the whole bill. Every component of every kit is listed with its quantity.</li>
-      <li>The price sits above the parts total, not below it. Every kit and bundle on this page costs more than sourcing the same parts yourself.</li>
-      <li>Two kits can be produced now. Every bundle containing a 650 nm optical module is preorder, and preorder here means no source and no date have been confirmed.</li>
-      <li>There is no checkout on this page. The notify form records an email address against a bundle and does nothing else.</li>
-      <li>The optical specifications are not published. No manufacturer, model, measured wavelength, measured output, laser classification, grating line density, or eyewear optical density curve has been published.</li>
-    </ul>
+    <h2>Laser diffraction research kits</h2>
+    ${kitBlocks}
   </section>
   <section>
     <h2>The open data behind this</h2>
@@ -981,12 +901,13 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     description: metaDesc,
     canonical,
     ogType: "website",
-    jsonLd: [organizationLd, websiteLd, breadcrumbLd, datasetLd, faqLd, itemListLd, ...productLds],
+    jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd, ...productLds],
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
 
 async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
