@@ -283,6 +283,15 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
       eq: slug ? { column: 'bundle_slug', value: slug } : undefined,
       primary: (r) => (typeof r.email === 'string' ? r.email : 'Unknown email'),
       secondary: (r) => `kit: ${typeof r.bundle_slug === 'string' ? r.bundle_slug : 'unspecified'}`,
+      href: (r) => (typeof r.email === 'string' && r.email ? `mailto:${r.email}` : null),
+      preview: (r) => [
+        { label: 'email', value: typeof r.email === 'string' ? r.email : 'unknown' },
+        {
+          label: 'kit',
+          value: typeof r.bundle_slug === 'string' ? r.bundle_slug : 'unspecified',
+        },
+        { label: 'notified', value: r.notified_at ? 'yes' : 'no' },
+      ],
     },
   ];
 
