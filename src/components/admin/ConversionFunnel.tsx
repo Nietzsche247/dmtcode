@@ -1,7 +1,77 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { FunnelDrilldown, type DrilldownSource } from './FunnelDrilldown';
+
+type Row = Record<string, unknown>;
+const str = (v: unknown) => (typeof v === 'string' ? v : '');
+
+const SOURCES: Record<string, DrilldownSource[]> = {
+  accounts: [
+    {
+      table: 'profiles',
+      label: 'Accounts created',
+      select: 'id, handle, display_name, symbol_count, created_at',
+      primary: (r: Row) => str(r.handle) || str(r.display_name) || 'Anonymous account',
+      secondary: (r: Row) => `${Number(r.symbol_count ?? 0)} symbols contributed`,
+    },
+  ],
+  emails: [
+    {
+      table: 'waitlist',
+      label: 'General waitlist',
+      select: 'id, email, source, created_at',
+      primary: (r: Row) => str(r.email),
+      secondary: (r: Row) => (str(r.source) ? `source: ${str(r.source)}` : null),
+    },
+    {
+      table: 'product_signups',
+      label: 'Kit signups',
+      select: 'id, email, bundle_slug, notified_at, created_at',
+      primary: (r: Row) => str(r.email),
+      secondary: (r: Row) => `kit: ${str(r.bundle_slug) || 'unspecified'}`,
+    },
+  ],
+  contributions: [
+    {
+      table: 'symbol_submissions',
+      label: 'Symbol submissions',
+      select: 'id, description, moderation_status, visibility_status, created_at',
+      primary: (r: Row) => str(r.description).slice(0, 90) || 'Untitled symbol',
+      secondary: (r: Row) =>
+        `${str(r.moderation_status) || 'unreviewed'}, ${str(r.visibility_status) || 'private'}`,
+      to: (r: Row) => `/registry/${String(r.id)}`,
+    },
+    {
+      table: 'registry_glyphs',
+      label: 'Registry glyphs',
+      select: 'id, source, perceived_surface, free_text_notes, created_at',
+      primary: (r: Row) => str(r.free_text_notes).slice(0, 90) || 'Registry glyph',
+      secondary: (r: Row) =>
+        [str(r.source), str(r.perceived_surface)].filter(Boolean).join(', ') || null,
+    },
+  ],
+  attention: [
+    {
+      table: 'trial_watchlist',
+      label: 'Trials watched',
+      select: 'id, trial_id, email, created_at',
+      primary: (r: Row) => `Trial ${String(r.trial_id).slice(0, 8)}`,
+      secondary: (r: Row) => str(r.email) || null,
+      to: (r: Row) => `/trials/${String(r.trial_id)}`,
+    },
+    {
+      table: 'follows',
+      label: 'Follows',
+      select: 'id, entity_type, entity_id, created_at',
+      primary: (r: Row) => `${str(r.entity_type) || 'entity'} followed`,
+      secondary: (r: Row) => String(r.entity_id),
+    },
+  ],
+};
+
 
 type WindowKey = '7d' | '30d' | 'all';
 
