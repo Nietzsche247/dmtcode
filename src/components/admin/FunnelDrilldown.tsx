@@ -25,6 +25,10 @@ export interface DrilldownSource {
   secondary?: (row: Record<string, unknown>) => string | null;
   /** Optional in-app link for the row. */
   to?: (row: Record<string, unknown>) => string | null;
+  /** Optional external link (mailto:, https:) for the row. */
+  href?: (row: Record<string, unknown>) => string | null;
+  /** Optional detail fields shown in the hover preview. */
+  preview?: (row: Record<string, unknown>) => { label: string; value: string }[];
 }
 
 interface Props {
