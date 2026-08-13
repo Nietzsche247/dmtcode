@@ -291,14 +291,24 @@ export const ArticlesManager = () => {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("articles")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      toast.error(error.message);
+    const [articlesRes, leadsRes] = await Promise.all([
+      supabase.from("articles").select("*").order("created_at", { ascending: false }),
+      supabase
+        .from("article_leads")
+        .select("*")
+        .eq("is_approved", false)
+        .order("relevance_score", { ascending: false })
+        .limit(50),
+    ]);
+    if (articlesRes.error) {
+      toast.error(articlesRes.error.message);
     } else {
-      setArticles((data ?? []) as Article[]);
+      setArticles((articlesRes.data ?? []) as Article[]);
+    }
+    if (leadsRes.error) {
+      toast.error(leadsRes.error.message);
+    } else {
+      setLeads((leadsRes.data ?? []) as ArticleLead[]);
     }
     setLoading(false);
   };
