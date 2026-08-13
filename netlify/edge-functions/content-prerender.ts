@@ -3754,14 +3754,34 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
   if (showUpdated && updReadable) bylineBits.push(`Updated ${esc(updReadable)}`);
   const byline = bylineBits.length ? `<p><em>${bylineBits.join(" &middot; ")}</em></p>` : "";
 
+  // Original publication attribution.
+  const srcUrl = String(r.source_url || "");
+  const srcOutlet = srcUrl
+    ? String(r.source_outlet || "").trim() ||
+      srcUrl.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0]
+    : "";
+  const srcPubReadable = r.source_published_at
+    ? new Date(String(r.source_published_at)).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+  const sourcedFrom = srcUrl
+    ? `<p data-attribution="source">Sourced from <a href="${esc(srcUrl)}" rel="noopener nofollow">${esc(srcOutlet)}</a>${srcPubReadable ? `, published ${esc(srcPubReadable)}` : ""}. Cite the original publication, not this page, for the reporting itself.</p>`
+    : "";
+
   const body = `<article data-prerender="article">
   <h1>${esc(String(r.title))}</h1>
   ${dek ? `<p><strong>${esc(dek)}</strong></p>` : ""}
   ${byline}
+  ${sourcedFrom}
   <div>${bodyHtml}</div>
   ${basedOn}
+  ${sourcedFrom}
   <p><a href="/articles">Back to articles</a></p>
 </article>`;
+
 
   const tags = [
     ...((r.topic_tags as string[]) || []),
