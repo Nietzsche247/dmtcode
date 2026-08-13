@@ -3310,13 +3310,61 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
 
 // ---------- Articles prerender ----------
 
+// Inline figure sanitizer. Used only by the articles renderer, whose bodies are
+// written through the admin gated editor. Everything outside this allowlist is
+// dropped: no script, iframe, foreignObject, event handlers, or javascript URLs
+// can survive, and unknown tags are removed while their text is kept.
+const FIGURE_TAGS = new Set([
+  "figure", "figcaption", "strong", "em", "br",
+  "svg", "title", "desc", "path", "circle", "rect", "text", "tspan",
+  "g", "line", "polyline", "polygon", "ellipse",
+]);
+
+const FIGURE_ATTRS = new Set([
+  "class", "id", "role", "style", "xmlns", "viewbox", "preserveaspectratio",
+  "width", "height", "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry",
+  "d", "points", "transform", "opacity",
+  "fill", "fill-opacity", "fill-rule", "stroke", "stroke-opacity", "stroke-width",
+  "stroke-linecap", "stroke-linejoin", "stroke-dasharray",
+  "font-family", "font-size", "font-weight", "font-style", "text-anchor",
+  "letter-spacing", "dominant-baseline", "aria-label", "aria-hidden",
+]);
+
+function sanitizeFigure(block: string): string {
+  return block
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<\/?([a-zA-Z][a-zA-Z0-9:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)\/?>/g, (m, rawName: string, rawAttrs: string) => {
+      const name = rawName.toLowerCase();
+      if (!FIGURE_TAGS.has(name)) return "";
+      const closing = m.startsWith("</");
+      if (closing) return `</${name}>`;
+      const selfClosing = /\/\s*>$/.test(m);
+      const attrs: string[] = [];
+      const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+      let a: RegExpExecArray | null;
+      while ((a = attrRe.exec(rawAttrs)) !== null) {
+        const key = a[1];
+        const lower = key.toLowerCase();
+        if (!FIGURE_ATTRS.has(lower)) continue;
+        const value = a[2] ?? a[3] ?? "";
+        if (/^\s*(javascript|data|vbscript)\s*:/i.test(value)) continue;
+        if (/expression\s*\(|url\s*\(\s*['"]?\s*javascript:/i.test(value)) continue;
+        attrs.push(`${key}="${value.replace(/"/g, "&quot;")}"`);
+      }
+      // Preserve the source spelling of camelCase SVG attributes.
+      return `<${rawName}${attrs.length ? " " + attrs.join(" ") : ""}${selfClosing ? "/" : ""}>`;
+    });
+}
+
 // Minimal, safe markdown to HTML converter for prerendered article bodies.
 // Every user-authored character is HTML-escaped first, so no raw HTML from the
 // source can survive. Then a small set of block and inline patterns is turned
 // back into tags. Supported: h2, h3, paragraphs, bold, italic, links,
 // unordered lists, ordered lists, blockquotes, inline code, fenced code.
+// With allowFigures, sanitized inline <figure> blocks (used for the article
+// SVG plates) pass through untouched by the escaper.
 // Never emits a second <h1> because articles always render their title as h1.
-function mdToHtml(src: string): string {
+function mdToHtml(src: string, opts?: { allowFigures?: boolean }): string {
   const esc0 = (s: string) => s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -3331,6 +3379,15 @@ function mdToHtml(src: string): string {
     codeBlocks.push(`<pre><code>${esc0(code.replace(/\n$/, ""))}</code></pre>`);
     return `\u0000CODE${idx}\u0000`;
   });
+
+  const figures: string[] = [];
+  if (opts?.allowFigures) {
+    text = text.replace(/<figure[\s\S]*?<\/figure>/gi, (block: string) => {
+      const idx = figures.length;
+      figures.push(sanitizeFigure(block));
+      return `\n\n\u0000FIG${idx}\u0000\n\n`;
+    });
+  }
 
   text = esc0(text);
 
