@@ -43,6 +43,8 @@ interface Props {
   sources: DrilldownSource[];
   /** Dashboard time window this drilldown was opened from, e.g. "Last 7 days". */
   windowLabel?: string;
+  /** Element id of the dashboard card for this window, used by breadcrumb links. */
+  windowAnchorId?: string;
 }
 
 interface Group {
@@ -63,8 +65,20 @@ export const FunnelDrilldown = ({
   since,
   sources,
   windowLabel,
+  windowAnchorId,
 }: Props) => {
   const [groups, setGroups] = useState<Group[] | null>(null);
+
+  const goBackTo = (anchorId?: string) => {
+    onOpenChange(false);
+    if (!anchorId) return;
+    requestAnimationFrame(() => {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const crumbClass =
+    'rounded-sm underline-offset-2 hover:text-foreground hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
   useEffect(() => {
     if (!open) return;
@@ -103,17 +117,39 @@ export const FunnelDrilldown = ({
         <DialogHeader className="space-y-3">
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-              <li>Admin</li>
+              <li>
+                <button type="button" className={crumbClass} onClick={() => goBackTo()}>
+                  Admin
+                </button>
+              </li>
               <li aria-hidden="true">/</li>
-              <li>Engagement</li>
+              <li>
+                <button
+                  type="button"
+                  className={crumbClass}
+                  onClick={() => goBackTo('admin-engagement')}
+                >
+                  Engagement
+                </button>
+              </li>
               {windowLabel && (
                 <>
                   <li aria-hidden="true">/</li>
-                  <li>{windowLabel}</li>
+                  <li>
+                    <button
+                      type="button"
+                      className={crumbClass}
+                      onClick={() => goBackTo(windowAnchorId ?? 'admin-engagement')}
+                    >
+                      {windowLabel}
+                    </button>
+                  </li>
                 </>
               )}
               <li aria-hidden="true">/</li>
-              <li className="text-foreground font-medium">{title}</li>
+              <li className="text-foreground font-medium" aria-current="page">
+                {title}
+              </li>
             </ol>
           </nav>
           <div className="flex items-start justify-between gap-3">

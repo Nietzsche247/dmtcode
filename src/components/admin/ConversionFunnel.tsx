@@ -223,7 +223,15 @@ const StatRow = ({
   </button>
 );
 
-const WindowSection = ({ label, data }: { label: string; data: WindowData }) => {
+const WindowSection = ({
+  label,
+  data,
+  anchorId,
+}: {
+  label: string;
+  data: WindowData;
+  anchorId: string;
+}) => {
   const [drill, setDrill] = useState<{ title: string; sources: DrilldownSource[] } | null>(null);
   const emails = (data.waitlist ?? 0) + (data.signups ?? 0);
   const emailsReadable = data.waitlist !== null || data.signups !== null;
@@ -296,7 +304,7 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
   ];
 
   return (
-    <Card>
+    <Card id={anchorId} className="scroll-mt-24">
       <CardHeader>
         <CardTitle>{label}</CardTitle>
         <CardDescription>
@@ -346,6 +354,7 @@ const WindowSection = ({ label, data }: { label: string; data: WindowData }) => 
         since={data.start}
         sources={drill?.sources ?? []}
         windowLabel={label}
+        windowAnchorId={anchorId}
       />
     </Card>
   );
@@ -370,14 +379,21 @@ export const ConversionFunnel = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div id="admin-engagement" className="space-y-6 scroll-mt-24">
       <p className="text-sm text-muted-foreground">
         This site does not track visitors, so there is no visit count to convert from. These are
         consented actions users actually took.
       </p>
       {loading && <p className="text-sm text-muted-foreground">Loading recorded actions.</p>}
       {data &&
-        WINDOWS.map((w) => <WindowSection key={w.key} label={w.label} data={data[w.key]} />)}
+        WINDOWS.map((w) => (
+          <WindowSection
+            key={w.key}
+            label={w.label}
+            data={data[w.key]}
+            anchorId={`admin-engagement-${w.key}`}
+          />
+        ))}
     </div>
   );
 };
