@@ -65,8 +65,20 @@ export const FunnelDrilldown = ({
   since,
   sources,
   windowLabel,
+  windowAnchorId,
 }: Props) => {
   const [groups, setGroups] = useState<Group[] | null>(null);
+
+  const goBackTo = (anchorId?: string) => {
+    onOpenChange(false);
+    if (!anchorId) return;
+    requestAnimationFrame(() => {
+      document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const crumbClass =
+    'rounded-sm underline-offset-2 hover:text-foreground hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
   useEffect(() => {
     if (!open) return;
