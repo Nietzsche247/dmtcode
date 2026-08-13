@@ -281,11 +281,13 @@ function TokenInput({
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [leads, setLeads] = useState<ArticleLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [publishingLeadId, setPublishingLeadId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
