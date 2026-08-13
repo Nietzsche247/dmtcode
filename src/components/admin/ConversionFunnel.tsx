@@ -223,7 +223,15 @@ const StatRow = ({
   </button>
 );
 
-const WindowSection = ({ label, data }: { label: string; data: WindowData }) => {
+const WindowSection = ({
+  label,
+  data,
+  anchorId,
+}: {
+  label: string;
+  data: WindowData;
+  anchorId: string;
+}) => {
   const [drill, setDrill] = useState<{ title: string; sources: DrilldownSource[] } | null>(null);
   const emails = (data.waitlist ?? 0) + (data.signups ?? 0);
   const emailsReadable = data.waitlist !== null || data.signups !== null;
