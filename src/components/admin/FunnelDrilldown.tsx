@@ -8,6 +8,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface DrilldownSource {
