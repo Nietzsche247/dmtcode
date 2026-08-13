@@ -16,6 +16,16 @@ type ArticleRow = {
   dek: string;
   topic_tags: string[];
   published_at: string | null;
+  source_url: string | null;
+  source_outlet: string | null;
+};
+
+const hostOf = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 };
 
 const formatDate = (iso: string | null) => {
