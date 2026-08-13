@@ -8,6 +8,19 @@ import { FunnelDrilldown, type DrilldownSource } from './FunnelDrilldown';
 type Row = Record<string, unknown>;
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 
+const mailto = (r: Row) => (str(r.email) ? `mailto:${str(r.email)}` : null);
+
+// Only entity kinds that have a real detail route on this site are linked.
+const FOLLOW_PATHS: Record<string, (id: string) => string> = {
+  symbol: (id) => `/registry/${id}`,
+  trial: (id) => `/trials/${id}`,
+  event: (id) => `/events/${id}`,
+  retreat: (id) => `/retreats/${id}`,
+  article: (id) => `/articles/${id}`,
+  theory: (id) => `/theories/${id}`,
+  protocol: (id) => `/protocols/${id}`,
+};
+
 const SOURCES: Record<string, DrilldownSource[]> = {
   accounts: [
     {
@@ -16,6 +29,11 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       select: 'id, handle, display_name, symbol_count, created_at',
       primary: (r: Row) => str(r.handle) || str(r.display_name) || 'Anonymous account',
       secondary: (r: Row) => `${Number(r.symbol_count ?? 0)} symbols contributed`,
+      preview: (r: Row) => [
+        { label: 'handle', value: str(r.handle) || 'not set' },
+        { label: 'symbols', value: String(Number(r.symbol_count ?? 0)) },
+        { label: 'account id', value: String(r.id ?? '') },
+      ],
     },
   ],
   emails: [
@@ -25,6 +43,11 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       select: 'id, email, source, created_at',
       primary: (r: Row) => str(r.email),
       secondary: (r: Row) => (str(r.source) ? `source: ${str(r.source)}` : null),
+      href: mailto,
+      preview: (r: Row) => [
+        { label: 'email', value: str(r.email) || 'unknown' },
+        { label: 'source', value: str(r.source) || 'unspecified' },
+      ],
     },
     {
       table: 'product_signups',
@@ -32,17 +55,28 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       select: 'id, email, bundle_slug, notified_at, created_at',
       primary: (r: Row) => str(r.email),
       secondary: (r: Row) => `kit: ${str(r.bundle_slug) || 'unspecified'}`,
+      href: mailto,
+      preview: (r: Row) => [
+        { label: 'email', value: str(r.email) || 'unknown' },
+        { label: 'kit', value: str(r.bundle_slug) || 'unspecified' },
+        { label: 'notified', value: str(r.notified_at) ? 'yes' : 'no' },
+      ],
     },
   ],
   contributions: [
     {
       table: 'symbol_submissions',
       label: 'Symbol submissions',
-      select: 'id, description, moderation_status, visibility_status, created_at',
+      select: 'id, description, moderation_status, visibility_status, evidence_status, created_at',
       primary: (r: Row) => str(r.description).slice(0, 90) || 'Untitled symbol',
       secondary: (r: Row) =>
         `${str(r.moderation_status) || 'unreviewed'}, ${str(r.visibility_status) || 'private'}`,
       to: (r: Row) => `/registry/${String(r.id)}`,
+      preview: (r: Row) => [
+        { label: 'moderation', value: str(r.moderation_status) || 'unreviewed' },
+        { label: 'visibility', value: str(r.visibility_status) || 'private' },
+        { label: 'evidence', value: str(r.evidence_status) || 'community report' },
+      ],
     },
     {
       table: 'registry_glyphs',
@@ -51,6 +85,11 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       primary: (r: Row) => str(r.free_text_notes).slice(0, 90) || 'Registry glyph',
       secondary: (r: Row) =>
         [str(r.source), str(r.perceived_surface)].filter(Boolean).join(', ') || null,
+      preview: (r: Row) => [
+        { label: 'source', value: str(r.source) || 'unspecified' },
+        { label: 'surface', value: str(r.perceived_surface) || 'unspecified' },
+        { label: 'glyph id', value: String(r.id ?? '') },
+      ],
     },
   ],
   attention: [
@@ -61,6 +100,10 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       primary: (r: Row) => `Trial ${String(r.trial_id).slice(0, 8)}`,
       secondary: (r: Row) => str(r.email) || null,
       to: (r: Row) => `/trials/${String(r.trial_id)}`,
+      preview: (r: Row) => [
+        { label: 'trial id', value: String(r.trial_id ?? '') },
+        { label: 'watcher', value: str(r.email) || 'signed-in account' },
+      ],
     },
     {
       table: 'follows',
@@ -68,6 +111,11 @@ const SOURCES: Record<string, DrilldownSource[]> = {
       select: 'id, entity_type, entity_id, created_at',
       primary: (r: Row) => `${str(r.entity_type) || 'entity'} followed`,
       secondary: (r: Row) => String(r.entity_id),
+      to: (r: Row) => FOLLOW_PATHS[str(r.entity_type)]?.(String(r.entity_id)) ?? null,
+      preview: (r: Row) => [
+        { label: 'type', value: str(r.entity_type) || 'unknown' },
+        { label: 'entity id', value: String(r.entity_id ?? '') },
+      ],
     },
   ],
 };
