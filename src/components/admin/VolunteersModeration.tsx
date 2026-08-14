@@ -27,6 +27,8 @@ const STATUSES = ['new', 'contacted', 'active', 'declined'];
 export const VolunteersModeration = () => {
   const [rows, setRows] = useState<Volunteer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [moderatorIds, setModeratorIds] = useState<Set<string>>(new Set());
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -39,6 +41,11 @@ export const VolunteersModeration = () => {
     } else {
       setRows((data as Volunteer[]) ?? []);
     }
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('user_id, role')
+      .eq('role', 'moderator');
+    setModeratorIds(new Set((roles ?? []).map((r) => r.user_id as string)));
     setLoading(false);
   };
 
@@ -55,6 +62,32 @@ export const VolunteersModeration = () => {
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     toast.success(`Marked ${status}`);
   };
+
+  const runAction = async (
+    volunteerId: string,
+    action: 'grant_moderator' | 'revoke_moderator' | 'send_welcome',
+  ) => {
+    setBusyId(volunteerId);
+    const { data, error } = await supabase.functions.invoke('volunteer-access', {
+      body: { volunteerId, action },
+    });
+    setBusyId(null);
+
+    const failure = error?.message || (data as { error?: string } | null)?.error;
+    if (failure) {
+      toast.error('Action failed', { description: failure });
+      return;
+    }
+    toast.success(
+      action === 'send_welcome'
+        ? 'Welcome email sent'
+        : action === 'grant_moderator'
+          ? 'Reviewer access granted'
+          : 'Reviewer access revoked',
+    );
+    load();
+  };
+
 
   if (loading) {
     return (
