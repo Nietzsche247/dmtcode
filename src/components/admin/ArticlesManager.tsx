@@ -335,8 +335,10 @@ export const ArticlesManager = () => {
         .from("article_leads")
         .select("*")
         .eq("is_approved", false)
+        .or("triage_status.is.null,triage_status.neq.archived")
         .order("relevance_score", { ascending: false })
         .limit(50),
+
     ]);
     if (articlesRes.error) {
       toast.error(articlesRes.error.message);
@@ -394,7 +396,31 @@ export const ArticlesManager = () => {
     setEditorOpen(true);
   };
 
+  const archiveLead = async (lead: ArticleLead) => {
+    const { error } = await supabase
+      .from("article_leads")
+      .update({ triage_status: "archived" })
+      .eq("id", lead.id);
+    if (error) return toast.error(error.message);
+    setLeads((prev) => prev.filter((l) => l.id !== lead.id));
+    toast.success("Lead archived.", { description: "It stays in the database but is off this list." });
+  };
+
+  const archiveAllLeads = async () => {
+    if (leads.length === 0) return;
+    const ids = leads.map((l) => l.id);
+    const { error } = await supabase
+      .from("article_leads")
+      .update({ triage_status: "archived" })
+      .in("id", ids);
+    if (error) return toast.error(error.message);
+    setLeads([]);
+    toast.success(`Archived ${ids.length} leads.`);
+    load();
+  };
+
   const openPublishFromLead = (lead: ArticleLead) => {
+
     const body = lead.ai_summary || lead.excerpt || "";
     setDraft({
       ...EMPTY_DRAFT,
@@ -591,11 +617,16 @@ export const ArticlesManager = () => {
           <div className="space-y-6">
             {leads.length > 0 && (
               <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
                   <h3 className="text-sm font-medium">
                     Pending article leads ({leads.length})
                   </h3>
-                  <span className="text-xs text-muted-foreground">Newly scraped, awaiting review</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Newly scraped, awaiting review</span>
+                    <Button size="sm" variant="ghost" onClick={archiveAllLeads}>
+                      Archive all
+                    </Button>
+                  </div>
                 </div>
                 {leads.map((lead) => (
                   <div
@@ -619,7 +650,11 @@ export const ArticlesManager = () => {
                       <Button size="sm" variant="outline" onClick={() => openPublishFromLead(lead)}>
                         Publish
                       </Button>
+                      <Button size="sm" variant="ghost" onClick={() => archiveLead(lead)}>
+                        Archive
+                      </Button>
                     </div>
+
                   </div>
                 ))}
               </div>
