@@ -51,6 +51,15 @@ export const ConvergenceHero = () => {
             .eq('vote_type', 'seen_it');
           setConfirmCount(count ?? top.upvotes ?? 0);
         }
+        // Four most recently reviewed entries, newest first.
+        const { data: recentData } = await supabase
+          .from('symbol_submissions')
+          .select('id,image_url,tags,wavelength,dose_level,surface_type,upvotes')
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false })
+          .limit(4);
+        if (!cancelled && recentData) setRecent(recentData as TopSymbol[]);
+
 
         // One library, one count. Every published symbol is counted the same
         // way; nothing is segregated by how it entered the record.
