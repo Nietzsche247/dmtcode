@@ -103,6 +103,21 @@ export const ConvergenceHero = () => {
   const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
   const specimenHref = featured ? `/registry/${featured.id}` : '/registry';
 
+  // Four quadrants. If fewer than four entries exist, the remainder fall back to
+  // placeholder plates rather than collapsing the grid.
+  const quadrants: TopSymbol[] = Array.from({ length: 4 }, (_, i) =>
+    recent[i] ?? ({
+      id: 'placeholder',
+      image_url: `/placeholder-symbol-${(i % 5) + 1}.svg`,
+      tags: [],
+      wavelength: null,
+      dose_level: null,
+      surface_type: null,
+      upvotes: 0,
+    } as TopSymbol),
+  );
+
+
   // A count of zero renders as nothing at all, never as a printed zero.
   const countSegments: string[] = [];
   if (libraryCount > 0) {
