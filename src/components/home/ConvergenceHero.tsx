@@ -23,10 +23,12 @@ interface TopStrip {
 export const ConvergenceHero = () => {
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
+  const [recent, setRecent] = useState<TopSymbol[]>([]);
   const [confirmCount, setConfirmCount] = useState<number>(0);
   const [libraryCount, setLibraryCount] = useState<number>(0);
   const [verifiedCount, setVerifiedCount] = useState<number>(0);
   const [strip, setStrip] = useState<TopStrip[]>([]);
+
 
   useEffect(() => {
     let cancelled = false;
