@@ -589,8 +589,46 @@ export const ArticlesManager = () => {
           <p className="text-muted-foreground">No articles yet.</p>
         ) : (
           <div className="space-y-6">
+            {leads.length > 0 && (
+              <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">
+                    Pending article leads ({leads.length})
+                  </h3>
+                  <span className="text-xs text-muted-foreground">Newly scraped, awaiting review</span>
+                </div>
+                {leads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className="flex items-start justify-between gap-3 border border-border rounded-md bg-card p-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium truncate">{lead.title || "(untitled)"}</span>
+                        <Badge variant="secondary">Lead</Badge>
+                        <span className="text-xs text-muted-foreground">score {lead.relevance_score}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {lead.outlet || lead.source} {lead.url}
+                      </div>
+                      {lead.ai_summary && (
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{lead.ai_summary}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => openPublishFromLead(lead)}>
+                        Publish
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {articles.length > 0 && (
               <div className="space-y-2">
+
+
                 {articles.map((a) => (
                   <div
                     key={a.id}
@@ -627,43 +665,7 @@ export const ArticlesManager = () => {
               </div>
             )}
 
-            {leads.length > 0 && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">Pending article leads</h3>
-                  <span className="text-xs text-muted-foreground">Top {leads.length} by relevance</span>
-                </div>
-                {leads.map((lead) => (
-                  <div
-                    key={lead.id}
-                    className="flex items-start justify-between gap-3 border border-border rounded-md p-3"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium truncate">{lead.title || "(untitled)"}</span>
-                        <Badge variant="secondary">Lead</Badge>
-                        <span className="text-xs text-muted-foreground">score {lead.relevance_score}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {lead.outlet || lead.source} {lead.url}
-                      </div>
-                      {lead.ai_summary && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{lead.ai_summary}</p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openPublishFromLead(lead)}
-                      >
-                        Publish
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+
           </div>
         )}
       </CardContent>

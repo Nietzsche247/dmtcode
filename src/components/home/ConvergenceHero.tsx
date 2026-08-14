@@ -23,10 +23,12 @@ interface TopStrip {
 export const ConvergenceHero = () => {
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
+  const [recent, setRecent] = useState<TopSymbol[]>([]);
   const [confirmCount, setConfirmCount] = useState<number>(0);
   const [libraryCount, setLibraryCount] = useState<number>(0);
   const [verifiedCount, setVerifiedCount] = useState<number>(0);
   const [strip, setStrip] = useState<TopStrip[]>([]);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -49,6 +51,15 @@ export const ConvergenceHero = () => {
             .eq('vote_type', 'seen_it');
           setConfirmCount(count ?? top.upvotes ?? 0);
         }
+        // Four most recently reviewed entries, newest first.
+        const { data: recentData } = await supabase
+          .from('symbol_submissions')
+          .select('id,image_url,tags,wavelength,dose_level,surface_type,upvotes')
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false })
+          .limit(4);
+        if (!cancelled && recentData) setRecent(recentData as TopSymbol[]);
+
 
         // One library, one count. Every published symbol is counted the same
         // way; nothing is segregated by how it entered the record.
@@ -91,6 +102,21 @@ export const ConvergenceHero = () => {
   const displayCount = confirmCount || specimen.upvotes || 0;
   const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
   const specimenHref = featured ? `/registry/${featured.id}` : '/registry';
+
+  // Four quadrants. If fewer than four entries exist, the remainder fall back to
+  // placeholder plates rather than collapsing the grid.
+  const quadrants: TopSymbol[] = Array.from({ length: 4 }, (_, i) =>
+    recent[i] ?? ({
+      id: 'placeholder',
+      image_url: `/placeholder-symbol-${(i % 5) + 1}.svg`,
+      tags: [],
+      wavelength: null,
+      dose_level: null,
+      surface_type: null,
+      upvotes: 0,
+    } as TopSymbol),
+  );
+
 
   // A count of zero renders as nothing at all, never as a printed zero.
   const countSegments: string[] = [];
@@ -152,52 +178,72 @@ export const ConvergenceHero = () => {
           </p>
         </div>
 
-        {/* Specimen plate */}
-        <Link
-          to={specimenHref}
-          className="group block"
-          aria-label={`View specimen ${specimen.id.slice(0, 8)}`}
-        >
-          <div className="relative rounded-sm border border-border bg-card p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
-            {/* corner marks */}
-            <span className="absolute top-2 left-2 w-3 h-3 border-l border-t border-foreground/30" aria-hidden />
-            <span className="absolute top-2 right-2 w-3 h-3 border-r border-t border-foreground/30" aria-hidden />
-            <span className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-foreground/30" aria-hidden />
-            <span className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-foreground/30" aria-hidden />
+        {/* Specimen plate: four most recently reviewed entries */}
+        <div className="relative rounded-sm border border-border bg-card p-6 md:p-8 shadow-sm">
+          {/* corner marks */}
+          <span className="absolute top-2 left-2 w-3 h-3 border-l border-t border-foreground/30" aria-hidden />
+          <span className="absolute top-2 right-2 w-3 h-3 border-r border-t border-foreground/30" aria-hidden />
+          <span className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-foreground/30" aria-hidden />
+          <span className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-foreground/30" aria-hidden />
 
-            <div className="specimen-breathe aspect-square bg-white rounded-sm flex items-center justify-center overflow-hidden border border-border/60">
-              <img
-                src={specimen.image_url}
-                alt={`Specimen ${specimen.id.slice(0, 8)}`}
-                className="w-full h-full object-contain p-6"
-                loading="eager"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
-              />
-            </div>
-
-            {displayCount > 0 && (
-              <div className="mt-6 text-center">
-                <div
-                  className="text-5xl md:text-6xl leading-none text-foreground tabular-nums"
-                  style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
-                >
-                  {displayCount}
+          <div className="specimen-breathe grid grid-cols-2 gap-3">
+            {quadrants.map((s, i) => (
+              <Link
+                key={`${s.id}-${i}`}
+                to={s.id === 'placeholder' ? '/registry' : `/registry/${s.id}`}
+                className="group block rounded-sm border border-border/60 overflow-hidden hover:border-primary/60 transition-colors"
+                aria-label={`View specimen ${s.id.slice(0, 8)}`}
+              >
+                <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
+                  <img
+                    src={s.image_url}
+                    alt={`Specimen ${s.id.slice(0, 8)}`}
+                    className="w-full h-full object-contain p-4"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
+                  />
                 </div>
-                <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
-                  READERS RECOGNIZED THIS AFTER SEEING IT HERE
-                </p>
-              </div>
-            )}
+                <div className="px-2 py-2 border-t border-border/60 bg-card">
+                  <p className="label-data text-[9px] text-muted-foreground truncate">
+                    {s.id.slice(0, 8)}
+                    {s.wavelength ? ` · ${s.wavelength}` : ''}
+                  </p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {(s.tags ?? []).slice(0, 2).map((t) => (
+                      <span
+                        key={t}
+                        className="label-data text-[9px] px-1.5 py-0.5 rounded-sm border border-border text-muted-foreground truncate max-w-[7rem]"
+                      >
+                        {t.toUpperCase()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
 
-            <div className="mt-5 pt-4 border-t border-border/60">
-              <p className="label-data text-[10px] text-muted-foreground truncate">
-                SPECIMEN {specimen.id.slice(0, 8)}
-                {specimen.wavelength ? ` · ${specimen.wavelength}` : ''}
-                {tagLine ? ` · ${tagLine}` : ''}
+          {displayCount > 0 && (
+            <div className="mt-6 text-center">
+              <div
+                className="text-5xl md:text-6xl leading-none text-foreground tabular-nums"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                {displayCount}
+              </div>
+              <p className="label-data text-[11px] text-muted-foreground mt-3 tracking-[0.15em]">
+                READERS RECOGNIZED THE LEADING SPECIMEN AFTER SEEING IT HERE
               </p>
             </div>
+          )}
+
+          <div className="mt-5 pt-4 border-t border-border/60">
+            <p className="label-data text-[10px] text-muted-foreground truncate">
+              FOUR MOST RECENTLY REVIEWED ENTRIES
+            </p>
           </div>
-        </Link>
+        </div>
+
       </div>
 
       {/* How it works */}
