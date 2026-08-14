@@ -617,11 +617,16 @@ export const ArticlesManager = () => {
           <div className="space-y-6">
             {leads.length > 0 && (
               <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
                   <h3 className="text-sm font-medium">
                     Pending article leads ({leads.length})
                   </h3>
-                  <span className="text-xs text-muted-foreground">Newly scraped, awaiting review</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">Newly scraped, awaiting review</span>
+                    <Button size="sm" variant="ghost" onClick={archiveAllLeads}>
+                      Archive all
+                    </Button>
+                  </div>
                 </div>
                 {leads.map((lead) => (
                   <div
@@ -645,7 +650,11 @@ export const ArticlesManager = () => {
                       <Button size="sm" variant="outline" onClick={() => openPublishFromLead(lead)}>
                         Publish
                       </Button>
+                      <Button size="sm" variant="ghost" onClick={() => archiveLead(lead)}>
+                        Archive
+                      </Button>
                     </div>
+
                   </div>
                 ))}
               </div>
