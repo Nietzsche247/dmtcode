@@ -18,8 +18,26 @@ interface SurfaceResult {
   error?: string;
 }
 
+// Service workers and cached responses can make a plain same-origin fetch fail with an
+// opaque "TypeError: Failed to fetch". Probe against an absolute URL with a cache-buster
+// and retry once before reporting an error.
+const probe = async (path: string): Promise<Response> => {
+  const url = `${window.location.origin}${path}${path.includes('?') ? '&' : '?'}_geo=${Date.now()}`;
+  try {
+    return await fetch(url, { cache: 'no-store', credentials: 'omit', redirect: 'follow' });
+  } catch {
+    return await fetch(url, { credentials: 'omit', redirect: 'follow' });
+  }
+};
+
+const describeError = (e: unknown) =>
+  `${String(e)} (same-origin request to ${window.location.origin} was blocked: usually a stale service worker, an extension, or an offline preview tab)`;
+
+const isProductionHost = () => window.location.hostname === 'dmtcode.com';
+
 const runChecks = async (): Promise<SurfaceResult[]> => {
   const results: SurfaceResult[] = [];
+
 
   // /llms.txt
   try {
