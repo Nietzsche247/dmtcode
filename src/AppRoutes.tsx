@@ -26,6 +26,8 @@ import Terms from "./pages/Terms";
 import Disclosure from "./pages/Disclosure";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
+
 import Join from "./pages/Join";
 import Prepare from "./pages/Prepare";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
