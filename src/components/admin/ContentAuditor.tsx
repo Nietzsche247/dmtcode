@@ -41,7 +41,7 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
 
   // /llms.txt
   try {
-    const res = await fetch('/llms.txt', { cache: 'no-store' });
+    const res = await probe('/llms.txt');
     const text = await res.text();
     results.push({
       surface: '/llms.txt',
@@ -54,12 +54,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/llms.txt', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/llms.txt', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /robots.txt
   try {
-    const res = await fetch('/robots.txt', { cache: 'no-store' });
+    const res = await probe('/robots.txt');
     const text = await res.text();
     const hasSitemap = /^\s*Sitemap:/im.test(text);
     results.push({
@@ -72,12 +72,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/robots.txt', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/robots.txt', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /sitemap.xml
   try {
-    const res = await fetch('/sitemap.xml', { cache: 'no-store' });
+    const res = await probe('/sitemap.xml');
     const text = await res.text();
     const locCount = (text.match(/<loc>/g) || []).length;
     results.push({
@@ -90,12 +90,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/sitemap.xml', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/sitemap.xml', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /data.json
   try {
-    const res = await fetch('/data.json', { cache: 'no-store' });
+    const res = await probe('/data.json');
     const text = await res.text();
     let parsed: Record<string, unknown> | null = null;
     try {
@@ -119,12 +119,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/data.json', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/data.json', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /agent/
   try {
-    const res = await fetch('/agent/', { cache: 'no-store' });
+    const res = await probe('/agent/');
     const robotsTag = res.headers.get('x-robots-tag');
     results.push({
       surface: '/agent/',
@@ -136,7 +136,7 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/agent/', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/agent/', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   return results;
