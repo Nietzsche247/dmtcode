@@ -39,8 +39,12 @@ export const AdminDashboard = () => {
           <p className="text-muted-foreground mt-2">
             Comprehensive GEO/AEO tracking and analytics
           </p>
+          <div className="mt-6">
+            <DeployButton />
+          </div>
         </div>
       </div>
+
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="niche-geo" className="space-y-6">
@@ -117,8 +121,8 @@ export const AdminDashboard = () => {
 
           <TabsContent value="bundles" className="space-y-4">
             <KitSignups />
-            <DeployButton />
             <RepoCloneButton />
+
 
             <GA4DebugTester />
             <GA4KeyEventChecklist />
