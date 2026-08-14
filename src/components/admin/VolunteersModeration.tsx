@@ -115,7 +115,15 @@ export const VolunteersModeration = () => {
                 <p className="font-medium">{v.handle ?? '-'} <span className="text-muted-foreground text-sm font-normal">({v.email})</span></p>
                 <p className="text-xs text-muted-foreground">{new Date(v.created_at).toLocaleString()}</p>
               </div>
-              <Badge variant={v.status === 'new' ? 'default' : 'secondary'}>{v.status}</Badge>
+              <div className="flex flex-wrap gap-2">
+                {v.user_id && moderatorIds.has(v.user_id) && (
+                  <Badge variant="outline" className="text-xs">reviewer access</Badge>
+                )}
+                {v.welcomed_at && (
+                  <Badge variant="outline" className="text-xs">welcomed</Badge>
+                )}
+                <Badge variant={v.status === 'new' ? 'default' : 'secondary'}>{v.status}</Badge>
+              </div>
             </div>
             <div className="flex flex-wrap gap-1">
               {v.roles.map((r) => (
@@ -138,6 +146,37 @@ export const VolunteersModeration = () => {
                 </Button>
               ))}
             </div>
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={busyId === v.id}
+                onClick={() => runAction(v.id, 'send_welcome')}
+              >
+                {v.welcomed_at ? 'Resend welcome email' : 'Send welcome email'}
+              </Button>
+              {v.user_id && moderatorIds.has(v.user_id) ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busyId === v.id}
+                  onClick={() => runAction(v.id, 'revoke_moderator')}
+                >
+                  Revoke reviewer access
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busyId === v.id}
+                  onClick={() => runAction(v.id, 'grant_moderator')}
+                >
+                  Grant reviewer access
+                </Button>
+              )}
+              {busyId === v.id && <Loader2 className="w-4 h-4 animate-spin self-center" />}
+            </div>
+
           </div>
         ))}
       </div>
