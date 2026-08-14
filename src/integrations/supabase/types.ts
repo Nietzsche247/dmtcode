@@ -3070,6 +3070,7 @@ export type Database = {
       }
       volunteers: {
         Row: {
+          admin_note: string | null
           consent_contact: boolean
           created_at: string
           email: string
@@ -3082,9 +3083,11 @@ export type Database = {
           status: string
           updated_at: string
           user_id: string | null
+          welcomed_at: string | null
           why: string | null
         }
         Insert: {
+          admin_note?: string | null
           consent_contact?: boolean
           created_at?: string
           email: string
@@ -3097,9 +3100,11 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string | null
+          welcomed_at?: string | null
           why?: string | null
         }
         Update: {
+          admin_note?: string | null
           consent_contact?: boolean
           created_at?: string
           email?: string
@@ -3112,6 +3117,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string | null
+          welcomed_at?: string | null
           why?: string | null
         }
         Relationships: []
