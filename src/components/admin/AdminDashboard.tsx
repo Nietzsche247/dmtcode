@@ -121,8 +121,8 @@ export const AdminDashboard = () => {
 
           <TabsContent value="bundles" className="space-y-4">
             <KitSignups />
-            <DeployButton />
             <RepoCloneButton />
+
 
             <GA4DebugTester />
             <GA4KeyEventChecklist />
