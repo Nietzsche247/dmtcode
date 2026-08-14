@@ -626,6 +626,8 @@ export const ArticlesManager = () => {
             )}
 
             {articles.length > 0 && (
+              <div className="space-y-2">
+
 
                 {articles.map((a) => (
                   <div
