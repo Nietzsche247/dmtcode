@@ -17,7 +17,10 @@ interface Volunteer {
   consent_contact: boolean;
   status: string;
   created_at: string;
+  user_id: string | null;
+  welcomed_at: string | null;
 }
+
 
 const STATUSES = ['new', 'contacted', 'active', 'declined'];
 
