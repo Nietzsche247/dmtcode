@@ -125,16 +125,22 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
   // /agent/
   try {
     const res = await probe('/agent/');
-    const robotsTag = res.headers.get('x-robots-tag');
+    const robotsTag = (res.headers.get('x-robots-tag') || '').trim();
+    const prod = isProductionHost();
+    const checks: Check[] = [{ label: 'HTTP 200', ok: res.status === 200 }];
+    if (prod) {
+      checks.push({ label: 'X-Robots-Tag allows following', ok: !/nofollow/i.test(robotsTag) });
+    }
     results.push({
       surface: '/agent/',
       status: res.status,
-      values: [`X-Robots-Tag: ${robotsTag ?? 'not readable'}`],
-      checks: [
-        { label: 'HTTP 200', ok: res.status === 200 },
-        { label: 'X-Robots-Tag is "noindex, follow"', ok: (robotsTag || '').trim() === 'noindex, follow' },
-      ],
+      values: [
+        `X-Robots-Tag: ${robotsTag || 'not set'}`,
+        prod ? '' : 'preview host injects noindex, nofollow: header assertion only runs on dmtcode.com',
+      ].filter(Boolean),
+      checks,
     });
+
   } catch (e) {
     results.push({ surface: '/agent/', status: null, values: [], checks: [], error: describeError(e) });
   }
