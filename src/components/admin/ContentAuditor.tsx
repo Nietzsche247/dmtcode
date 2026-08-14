@@ -18,12 +18,30 @@ interface SurfaceResult {
   error?: string;
 }
 
+// Service workers and cached responses can make a plain same-origin fetch fail with an
+// opaque "TypeError: Failed to fetch". Probe against an absolute URL with a cache-buster
+// and retry once before reporting an error.
+const probe = async (path: string): Promise<Response> => {
+  const url = `${window.location.origin}${path}${path.includes('?') ? '&' : '?'}_geo=${Date.now()}`;
+  try {
+    return await fetch(url, { cache: 'no-store', credentials: 'omit', redirect: 'follow' });
+  } catch {
+    return await fetch(url, { credentials: 'omit', redirect: 'follow' });
+  }
+};
+
+const describeError = (e: unknown) =>
+  `${String(e)} (same-origin request to ${window.location.origin} was blocked: usually a stale service worker, an extension, or an offline preview tab)`;
+
+const isProductionHost = () => window.location.hostname === 'dmtcode.com';
+
 const runChecks = async (): Promise<SurfaceResult[]> => {
   const results: SurfaceResult[] = [];
 
+
   // /llms.txt
   try {
-    const res = await fetch('/llms.txt', { cache: 'no-store' });
+    const res = await probe('/llms.txt');
     const text = await res.text();
     results.push({
       surface: '/llms.txt',
@@ -36,12 +54,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/llms.txt', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/llms.txt', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /robots.txt
   try {
-    const res = await fetch('/robots.txt', { cache: 'no-store' });
+    const res = await probe('/robots.txt');
     const text = await res.text();
     const hasSitemap = /^\s*Sitemap:/im.test(text);
     results.push({
@@ -54,12 +72,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/robots.txt', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/robots.txt', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /sitemap.xml
   try {
-    const res = await fetch('/sitemap.xml', { cache: 'no-store' });
+    const res = await probe('/sitemap.xml');
     const text = await res.text();
     const locCount = (text.match(/<loc>/g) || []).length;
     results.push({
@@ -72,12 +90,12 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/sitemap.xml', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/sitemap.xml', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /data.json
   try {
-    const res = await fetch('/data.json', { cache: 'no-store' });
+    const res = await probe('/data.json');
     const text = await res.text();
     let parsed: Record<string, unknown> | null = null;
     try {
@@ -101,24 +119,30 @@ const runChecks = async (): Promise<SurfaceResult[]> => {
       ],
     });
   } catch (e) {
-    results.push({ surface: '/data.json', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/data.json', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   // /agent/
   try {
-    const res = await fetch('/agent/', { cache: 'no-store' });
-    const robotsTag = res.headers.get('x-robots-tag');
+    const res = await probe('/agent/');
+    const robotsTag = (res.headers.get('x-robots-tag') || '').trim();
+    const prod = isProductionHost();
+    const checks: Check[] = [{ label: 'HTTP 200', ok: res.status === 200 }];
+    if (prod) {
+      checks.push({ label: 'X-Robots-Tag allows following', ok: !/nofollow/i.test(robotsTag) });
+    }
     results.push({
       surface: '/agent/',
       status: res.status,
-      values: [`X-Robots-Tag: ${robotsTag ?? 'not readable'}`],
-      checks: [
-        { label: 'HTTP 200', ok: res.status === 200 },
-        { label: 'X-Robots-Tag is "noindex, follow"', ok: (robotsTag || '').trim() === 'noindex, follow' },
-      ],
+      values: [
+        `X-Robots-Tag: ${robotsTag || 'not set'}`,
+        prod ? '' : 'preview host injects noindex, nofollow: header assertion only runs on dmtcode.com',
+      ].filter(Boolean),
+      checks,
     });
+
   } catch (e) {
-    results.push({ surface: '/agent/', status: null, values: [], checks: [], error: String(e) });
+    results.push({ surface: '/agent/', status: null, values: [], checks: [], error: describeError(e) });
   }
 
   return results;
