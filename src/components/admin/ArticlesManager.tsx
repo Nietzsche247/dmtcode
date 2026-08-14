@@ -335,8 +335,10 @@ export const ArticlesManager = () => {
         .from("article_leads")
         .select("*")
         .eq("is_approved", false)
+        .or("triage_status.is.null,triage_status.neq.archived")
         .order("relevance_score", { ascending: false })
         .limit(50),
+
     ]);
     if (articlesRes.error) {
       toast.error(articlesRes.error.message);
