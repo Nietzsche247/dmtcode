@@ -17,13 +17,18 @@ interface Volunteer {
   consent_contact: boolean;
   status: string;
   created_at: string;
+  user_id: string | null;
+  welcomed_at: string | null;
 }
+
 
 const STATUSES = ['new', 'contacted', 'active', 'declined'];
 
 export const VolunteersModeration = () => {
   const [rows, setRows] = useState<Volunteer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [moderatorIds, setModeratorIds] = useState<Set<string>>(new Set());
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -36,6 +41,11 @@ export const VolunteersModeration = () => {
     } else {
       setRows((data as Volunteer[]) ?? []);
     }
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('user_id, role')
+      .eq('role', 'moderator');
+    setModeratorIds(new Set((roles ?? []).map((r) => r.user_id as string)));
     setLoading(false);
   };
 
@@ -52,6 +62,32 @@ export const VolunteersModeration = () => {
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     toast.success(`Marked ${status}`);
   };
+
+  const runAction = async (
+    volunteerId: string,
+    action: 'grant_moderator' | 'revoke_moderator' | 'send_welcome',
+  ) => {
+    setBusyId(volunteerId);
+    const { data, error } = await supabase.functions.invoke('volunteer-access', {
+      body: { volunteerId, action },
+    });
+    setBusyId(null);
+
+    const failure = error?.message || (data as { error?: string } | null)?.error;
+    if (failure) {
+      toast.error('Action failed', { description: failure });
+      return;
+    }
+    toast.success(
+      action === 'send_welcome'
+        ? 'Welcome email sent'
+        : action === 'grant_moderator'
+          ? 'Reviewer access granted'
+          : 'Reviewer access revoked',
+    );
+    load();
+  };
+
 
   if (loading) {
     return (
@@ -79,7 +115,15 @@ export const VolunteersModeration = () => {
                 <p className="font-medium">{v.handle ?? '-'} <span className="text-muted-foreground text-sm font-normal">({v.email})</span></p>
                 <p className="text-xs text-muted-foreground">{new Date(v.created_at).toLocaleString()}</p>
               </div>
-              <Badge variant={v.status === 'new' ? 'default' : 'secondary'}>{v.status}</Badge>
+              <div className="flex flex-wrap gap-2">
+                {v.user_id && moderatorIds.has(v.user_id) && (
+                  <Badge variant="outline" className="text-xs">reviewer access</Badge>
+                )}
+                {v.welcomed_at && (
+                  <Badge variant="outline" className="text-xs">welcomed</Badge>
+                )}
+                <Badge variant={v.status === 'new' ? 'default' : 'secondary'}>{v.status}</Badge>
+              </div>
             </div>
             <div className="flex flex-wrap gap-1">
               {v.roles.map((r) => (
@@ -102,6 +146,37 @@ export const VolunteersModeration = () => {
                 </Button>
               ))}
             </div>
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={busyId === v.id}
+                onClick={() => runAction(v.id, 'send_welcome')}
+              >
+                {v.welcomed_at ? 'Resend welcome email' : 'Send welcome email'}
+              </Button>
+              {v.user_id && moderatorIds.has(v.user_id) ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busyId === v.id}
+                  onClick={() => runAction(v.id, 'revoke_moderator')}
+                >
+                  Revoke reviewer access
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={busyId === v.id}
+                  onClick={() => runAction(v.id, 'grant_moderator')}
+                >
+                  Grant reviewer access
+                </Button>
+              )}
+              {busyId === v.id && <Loader2 className="w-4 h-4 animate-spin self-center" />}
+            </div>
+
           </div>
         ))}
       </div>

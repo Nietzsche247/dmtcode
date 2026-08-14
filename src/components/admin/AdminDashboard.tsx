@@ -28,9 +28,55 @@ import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
 import { GA4Analytics } from './GA4Analytics';
 import { IntelHub } from './IntelHub';
-
+import { Link } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
+import { useRoles } from '@/hooks/useRoles';
 
 export const AdminDashboard = () => {
+  const { loading, isAdmin, isModerator } = useRoles();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Reviewers (moderators) get a narrowed console: review queues only, no
+  // analytics, no volunteer records, no deploy controls, no deletion.
+  if (!isAdmin && isModerator) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b border-border bg-muted/20">
+          <div className="max-w-5xl mx-auto px-4 py-6">
+            <h1 className="text-3xl font-bold">Review console</h1>
+            <p className="text-muted-foreground mt-2">
+              Symbol submissions and article leads. Your decisions are logged and reversible by an administrator.
+            </p>
+            <Link to="/volunteer" className="text-sm underline mt-2 inline-block">
+              Your volunteer dashboard
+            </Link>
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          <Tabs defaultValue="symbols" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="symbols">Symbol submissions</TabsTrigger>
+              <TabsTrigger value="leads">Article leads</TabsTrigger>
+            </TabsList>
+            <TabsContent value="symbols" className="space-y-4">
+              <SymbolSubmissionModeration />
+            </TabsContent>
+            <TabsContent value="leads" className="space-y-4">
+              <ArticleLeadsQueue />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-border bg-muted/20">
@@ -44,6 +90,8 @@ export const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+
 
 
       <div className="max-w-7xl mx-auto px-4 py-8">
