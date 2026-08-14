@@ -396,7 +396,31 @@ export const ArticlesManager = () => {
     setEditorOpen(true);
   };
 
+  const archiveLead = async (lead: ArticleLead) => {
+    const { error } = await supabase
+      .from("article_leads")
+      .update({ triage_status: "archived" })
+      .eq("id", lead.id);
+    if (error) return toast.error(error.message);
+    setLeads((prev) => prev.filter((l) => l.id !== lead.id));
+    toast.success("Lead archived.", { description: "It stays in the database but is off this list." });
+  };
+
+  const archiveAllLeads = async () => {
+    if (leads.length === 0) return;
+    const ids = leads.map((l) => l.id);
+    const { error } = await supabase
+      .from("article_leads")
+      .update({ triage_status: "archived" })
+      .in("id", ids);
+    if (error) return toast.error(error.message);
+    setLeads([]);
+    toast.success(`Archived ${ids.length} leads.`);
+    load();
+  };
+
   const openPublishFromLead = (lead: ArticleLead) => {
+
     const body = lead.ai_summary || lead.excerpt || "";
     setDraft({
       ...EMPTY_DRAFT,
