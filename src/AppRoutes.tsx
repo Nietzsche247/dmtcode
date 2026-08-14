@@ -303,6 +303,8 @@ export const AppRoutes = () => (
   
   
     <Route path="admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+    <Route path="volunteer" element={<VolunteerDashboard />} />
+
     <Route path="auth" element={<Auth />} />
     <Route path="join" element={<Join />} />
     <Route path="prepare" element={<Prepare />} />
