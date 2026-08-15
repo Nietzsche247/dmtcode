@@ -195,7 +195,13 @@ const Prepare = () => {
                 {', '}
                 <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="underline hover:text-foreground">Sober Baseline Protocol (EN)</a>
                 {', '}
+                <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo Base Sobria (ES)</a>
+                {', '}
+                <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="underline hover:text-foreground">Basisprotokoll (DE)</a>
+                {', '}
                 <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="underline hover:text-foreground">AVP Passthrough Protocol (EN)</a>
+                {', '}
+                <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo AVP (ES)</a>
               </p>
             </header>
 
