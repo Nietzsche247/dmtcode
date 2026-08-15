@@ -205,11 +205,57 @@ const Prepare = () => {
                 <a href="/data.json" className="underline hover:text-foreground">/data.json</a> directly. CC-BY-4.0.
                 Common questions are answered at <a href="/faq" className="underline hover:text-foreground">/faq</a>.
               </p>
-            </Card>
-          </section>
+          </Card>
+        </section>
 
-          {/* DISCLAIMER */}
-          <section className="max-w-4xl mx-auto px-4 mt-16 mb-24">
+        {/* STORE POLICIES */}
+        <section className="max-w-4xl mx-auto px-4 mt-16">
+          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Store policies
+          </div>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            Checkout runs on Shopify under Meridian Optics Lab. Full store policies:{" "}
+            <a
+              href="https://dmtcode-p4szt.myshopify.com/policies/refund-policy"
+              target="_blank"
+              rel="noopener"
+              className="underline hover:text-foreground"
+            >
+              Returns and refunds
+            </a>
+            ,{" "}
+            <a
+              href="https://dmtcode-p4szt.myshopify.com/policies/terms-of-service"
+              target="_blank"
+              rel="noopener"
+              className="underline hover:text-foreground"
+            >
+              Terms of service
+            </a>
+            ,{" "}
+            <a
+              href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy"
+              target="_blank"
+              rel="noopener"
+              className="underline hover:text-foreground"
+            >
+              Shipping
+            </a>
+            , and{" "}
+            <a
+              href="https://dmtcode-p4szt.myshopify.com/policies/contact-information"
+              target="_blank"
+              rel="noopener"
+              className="underline hover:text-foreground"
+            >
+              Contact
+            </a>
+            .
+          </p>
+        </section>
+
+        {/* DISCLAIMER */}
+        <section className="max-w-4xl mx-auto px-4 mt-16 mb-24">
             <p className="text-xs text-muted-foreground leading-relaxed">
               For educational and harm reduction purposes only. Does not encourage or condone use
               of any illegal substance. Not medical or legal advice. Not intended to diagnose,
