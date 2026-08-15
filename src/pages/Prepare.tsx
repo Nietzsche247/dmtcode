@@ -202,6 +202,8 @@ const Prepare = () => {
                 <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="underline hover:text-foreground">AVP Passthrough Protocol (EN)</a>
                 {', '}
                 <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo AVP (ES)</a>
+                {', '}
+                <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="underline hover:text-foreground">AVP Protokoll (DE)</a>
               </p>
             </header>
 
