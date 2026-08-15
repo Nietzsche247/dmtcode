@@ -182,6 +182,9 @@ const Prepare = () => {
                 Three configurations, sized by the number of observers. Each card prints what the
                 same parts cost if you sourced them yourself.
               </p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
+              </p>
             </header>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">

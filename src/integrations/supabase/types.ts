@@ -1899,6 +1899,7 @@ export type Database = {
           updated_at: string
           user_id: string | null
           voice_note_url: string | null
+          wavelength_nm: number | null
         }
         Insert: {
           approximate_dose?: string | null
@@ -1945,6 +1946,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           voice_note_url?: string | null
+          wavelength_nm?: number | null
         }
         Update: {
           approximate_dose?: string | null
@@ -1991,6 +1993,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           voice_note_url?: string | null
+          wavelength_nm?: number | null
         }
         Relationships: [
           {
