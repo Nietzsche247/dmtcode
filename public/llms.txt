@@ -57,14 +57,6 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 - /articles/feed.xml: RSS 2.0 feed of published articles, newest first, with the full body in content:encoded.
 - /dataset: HTML index of the machine readable corpus with schema.org Dataset metadata. CC-BY-4.0.
 - /prepare: HTML page of kits and group bundles with ItemList, Product, FAQPage, Dataset, and BreadcrumbList JSON-LD. CC-BY-4.0.
-
-## Free protocol documents
-
-Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
-
-- /downloads/DMTCode_Observation_Field_Sheet_v1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_DE.pdf (DE)
-- /downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf (ES), /downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf (DE)
-- /downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf (ES), /downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf (DE)
 - /bibliography: HTML index. Head emits a schema.org Dataset with an ItemList of featured rows. Each list item carries stanceScore and authority as additionalProperty.
 - /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. When full_text or transcript is present it is included in the "text" property so language models can quote it directly.
 - /trials: HTML index of clinical trials.
@@ -77,6 +69,14 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - /retreats/:id: HTML detail page for community submitted retreat centers. Head emits Schema.org LodgingBusiness with address, image, contact, and tag keywords.
 - /sitemap.xml: full URL index, regenerated on each request from the database and the chronology file.
 - License: CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/). Attribute to DMT Code, https://dmtcode.com.
+
+## Free protocol documents
+
+Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
+
+- /downloads/DMTCode_Observation_Field_Sheet_v1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_DE.pdf (DE)
+- /downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf (ES), /downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf (DE)
+- /downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf (ES), /downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf (DE)
 
 ## Pages
 
