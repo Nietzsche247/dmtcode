@@ -93,6 +93,9 @@ function KitCard({ kit }: { kit: Kit }) {
       <div className="mt-4 text-xs text-muted-foreground">
         Ships in 7–10 business days. Free US shipping included. 18+, for research use.
       </div>
+      <div className="mt-1 text-xs text-muted-foreground">
+        Plain packaging. Your card statement lists Meridian Optics Lab.
+      </div>
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
         Class II laser — do not stare into beam.
       </div>
