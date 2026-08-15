@@ -186,12 +186,16 @@ const Prepare = () => {
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Field materials, free download, no account needed:{' '}
+                Field materials and protocols, free download, no account needed:{' '}
                 <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="underline hover:text-foreground">Field Sheet (EN)</a>
                 {', '}
                 <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="underline hover:text-foreground">Hoja de Campo (ES)</a>
                 {', '}
                 <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="underline hover:text-foreground">Feldblatt (DE)</a>
+                {', '}
+                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="underline hover:text-foreground">Sober Baseline Protocol (EN)</a>
+                {', '}
+                <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="underline hover:text-foreground">AVP Passthrough Protocol (EN)</a>
               </p>
             </header>
 
