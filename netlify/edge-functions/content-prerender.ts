@@ -890,6 +890,21 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     ${kitBlocks}
   </section>
   <section>
+    <h2>Field materials and protocols, free download</h2>
+    <p>Nine PDF documents, no account needed. Each protocol is available in English, Spanish, and German.</p>
+    <ul>
+      <li><a href="${SITE}/downloads/DMTCode_Observation_Field_Sheet_v1.pdf">Observation Field Sheet (EN)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf">Hoja de Campo de Observacion (ES)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Feldblatt_v1_DE.pdf">Beobachtungs-Feldblatt (DE)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf">Sober Baseline Protocol (EN)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf">Protocolo de Linea Base Sobria (ES)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf">Nuechtern-Basisprotokoll (DE)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf">AVP Passthrough Observation Protocol (EN)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf">Protocolo de Observacion AVP Passthrough (ES)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf">AVP-Passthrough-Beobachtungsprotokoll (DE)</a></li>
+    </ul>
+  </section>
+  <section>
     <h2>The open data behind this</h2>
     <p>The convergence registry (<a href="${SITE}/registry">/registry</a>) and the machine-readable corpus (<a href="${SITE}/dataset">/dataset</a>, <a href="${SITE}/data.json">/data.json</a>) are CC-BY-4.0.</p>
   </section>
