@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useModeStore } from "@/stores/modeStore";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
