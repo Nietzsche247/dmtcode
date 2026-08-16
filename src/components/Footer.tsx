@@ -184,7 +184,7 @@ export const Footer = () => {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} DMT Code Project. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <a 
               href="https://creativecommons.org/licenses/by/4.0/" 
               target="_blank" 
