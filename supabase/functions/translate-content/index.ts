@@ -70,15 +70,60 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
   }
 }
 
-// Walks a jsonb value. If the run deadline passes mid-walk we throw: a
+// Collects and translates every non-empty string leaf with bounded concurrency.
+// If the run deadline passes before a worker starts a leaf we throw: a
 // half-translated JSON must never be stored, because the prerender overlay
 // replaces the whole field with whatever is in content_translations.
 async function translateJson(v: unknown, locale: "es" | "de", deadline: number): Promise<unknown> {
-  if (Date.now() > deadline) throw new DeadlineError();
-  if (typeof v === "string") return v.trim() ? await translate(v, locale) : v;
-  if (Array.isArray(v)) { const out = []; for (const x of v) out.push(await translateJson(x, locale, deadline)); return out; }
-  if (v && typeof v === "object") { const o: Record<string, unknown> = {}; for (const [k, x] of Object.entries(v)) o[k] = await translateJson(x, locale, deadline); return o; }
-  return v;
+  const TRANSLATE_JSON_CONCURRENCY = 5;
+  type PathPart = string | number;
+  type Leaf = { path: PathPart[]; source: string; translated?: string };
+  const leaves: Leaf[] = [];
+
+  const collect = (value: unknown, path: PathPart[]) => {
+    if (typeof value === "string") {
+      if (value.trim()) leaves.push({ path, source: value });
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => collect(item, [...path, index]));
+      return;
+    }
+    if (value && typeof value === "object") {
+      Object.entries(value).forEach(([key, item]) => collect(item, [...path, key]));
+    }
+  };
+
+  collect(v, []);
+  let nextLeaf = 0;
+  const worker = async () => {
+    while (true) {
+      const index = nextLeaf++;
+      if (index >= leaves.length) return;
+      if (Date.now() > deadline) throw new DeadlineError();
+      const leaf = leaves[index];
+      if (!leaf) return;
+      leaf.translated = await translate(leaf.source, locale);
+    }
+  };
+
+  const workerCount = Math.min(TRANSLATE_JSON_CONCURRENCY, leaves.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  let rebuilt = structuredClone(v);
+  for (const leaf of leaves) {
+    if (leaf.translated === undefined) throw new DeadlineError();
+    if (leaf.path.length === 0) {
+      rebuilt = leaf.translated;
+      continue;
+    }
+    let parent = rebuilt as Record<string | number, unknown>;
+    for (let i = 0; i < leaf.path.length - 1; i++) {
+      parent = parent[leaf.path[i]] as Record<string | number, unknown>;
+    }
+    parent[leaf.path[leaf.path.length - 1]] = leaf.translated;
+  }
+  return rebuilt;
 }
 
 async function getRows(c: Cfg): Promise<Record<string, unknown>[]> {
