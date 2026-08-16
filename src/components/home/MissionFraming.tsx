@@ -2,7 +2,7 @@ export const MissionFraming = () => {
   return (
     <section
       aria-label="Mission"
-      className="container mx-auto px-4 py-16 md:py-20 max-w-3xl"
+      className="container mx-auto px-4 py-10 md:py-14 max-w-3xl"
     >
       <div className="space-y-6">
         <p className="label-data text-xs text-primary">THE PROJECT</p>

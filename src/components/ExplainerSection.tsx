@@ -4,7 +4,7 @@ import { AlertTriangle, ExternalLink } from 'lucide-react';
 // source claims are tracked on /bibliography. The safety block stays here.
 export const ExplainerSection = () => {
   return (
-    <section id="explainer" className="relative py-14 px-4 border-t border-border/30">
+    <section id="explainer" className="relative py-10 px-4 border-t border-border/30">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="motion-safe:animate-blur-in-up" style={{ animationFillMode: 'both' }}>
           <p className="label-data text-xs text-primary mb-4">UNDERSTANDING THE PROTOCOL</p>

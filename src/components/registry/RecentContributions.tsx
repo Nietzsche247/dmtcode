@@ -76,7 +76,7 @@ export const RecentContributions = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
         {symbols.map((symbol) => (
           <Link key={symbol.id} to={`/registry/${symbol.id}`} className="group">
             <article className="rounded-sm border border-border bg-card p-3 transition-colors hover:border-foreground/40">

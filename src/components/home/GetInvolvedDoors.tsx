@@ -36,7 +36,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
   return (
     <section
       aria-label="Get involved"
-      className={variant === 'top' ? 'container mx-auto px-4 pt-4 pb-14 max-w-6xl' : 'container mx-auto px-4 py-24 max-w-6xl border-t border-border/40'}
+      className={variant === 'top' ? 'container mx-auto px-4 pt-2 pb-10 max-w-6xl' : 'container mx-auto px-4 py-24 max-w-6xl border-t border-border/40'}
     >
       {variant === 'bottom' && (
         <div className="text-center mb-10">

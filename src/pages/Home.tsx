@@ -121,7 +121,7 @@ const Home = () => {
           <GetInvolvedDoors variant="top" />
 
           {/* Voice Logger Callout */}
-          <section className="container mx-auto px-4 py-8 max-w-4xl">
+          <section className="container mx-auto px-4 py-6 max-w-4xl">
             <AnimatedSection>
               <div 
                 className="p-4 md:p-6 rounded-lg border border-primary bg-primary/10"
@@ -158,7 +158,7 @@ const Home = () => {
           <ExplainerSection />
           
           {/* Key Takeaways summary. Full argument lives on /methods. */}
-          <section className="container mx-auto px-4 py-16 max-w-3xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-10 max-w-3xl border-t border-border/30">
             <AnimatedSection>
               <p className="label-data text-xs text-primary mb-4">THE RESEARCH</p>
               <h2
@@ -188,7 +188,7 @@ const Home = () => {
           </section>
 
           {/* Live counters */}
-          <section className="container mx-auto px-4 py-16 max-w-5xl border-t border-border/20">
+          <section className="container mx-auto px-4 py-10 max-w-5xl border-t border-border/20">
             <AnimatedSection className="mb-8">
               <p className="label-data text-xs text-primary mb-4">CURRENT STATUS</p>
               <h2
@@ -214,7 +214,7 @@ const Home = () => {
           <RecentContributions />
 
           {/* Mission summary. Full statement lives on /about. */}
-          <section className="container mx-auto px-4 py-16 max-w-3xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-10 max-w-3xl border-t border-border/30">
             <AnimatedSection>
               <p className="label-data text-xs text-primary mb-4">OUR MISSION</p>
               <h2
@@ -239,7 +239,7 @@ const Home = () => {
           </section>
 
           {/* Instruments Section */}
-          <section className="container mx-auto px-4 py-16 max-w-6xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-10 max-w-6xl border-t border-border/30">
             <AnimatedSection>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
                 Instruments for careful observation
@@ -309,7 +309,7 @@ const Home = () => {
           <EmailCapture source="homepage" />
           
           {/* CTA Section */}
-          <section className="container mx-auto px-4 py-16 text-center border-t border-border/30">
+          <section className="container mx-auto px-4 py-10 text-center border-t border-border/30">
             <AnimatedSection className="max-w-2xl mx-auto">
               <h2
                 className="text-3xl md:text-4xl text-foreground mb-4"
