@@ -33,8 +33,19 @@ interface MemberProfile {
   reputation_score: number | null;
 }
 
+interface MemberEmail {
+  id: string;
+  email: string | null;
+  provider: string | null;
+  email_confirmed: boolean;
+  last_sign_in_at: string | null;
+}
+
+type MemberRow = MemberProfile & Partial<Omit<MemberEmail, 'id'>>;
+
 const DAY_MS = 86400000;
 const PAGE_SIZE = 50;
+
 
 export const ageInDays = (createdAt: string, now: number = Date.now()): number =>
   Math.max(0, Math.floor((now - new Date(createdAt).getTime()) / DAY_MS));
@@ -74,6 +85,27 @@ const csvCell = (value: string | number | null) => {
 
 type SortKey = 'newest' | 'oldest' | 'longest' | 'symbols' | 'reputation';
 
+const EmailCell = ({ member }: { member: MemberRow }) => {
+  if (!member.email) {
+    return <span className="text-muted-foreground">&mdash;</span>;
+  }
+  return (
+    <div className="min-w-0">
+      <a href={`mailto:${member.email}`} className="block truncate underline underline-offset-2">
+        {member.email}
+      </a>
+      <span
+        className={`block text-xs ${
+          member.email_confirmed ? 'text-muted-foreground' : 'text-destructive'
+        }`}
+      >
+        {member.provider ?? 'unknown'} · {member.email_confirmed ? 'confirmed' : 'unconfirmed'}
+      </span>
+    </div>
+  );
+};
+
+
 export const MembersDirectory = () => {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('newest');
@@ -91,7 +123,33 @@ export const MembersDirectory = () => {
     },
   });
 
-  const rows = useMemo(() => data ?? [], [data]);
+  const emailQuery = useQuery({
+    queryKey: ['admin-member-emails'],
+    queryFn: async (): Promise<MemberEmail[]> => {
+      const { data, error } = await supabase.functions.invoke('admin-member-emails');
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return (data?.members ?? []) as MemberEmail[];
+    },
+    retry: false,
+  });
+
+  const rows = useMemo<MemberRow[]>(() => {
+    const profiles = data ?? [];
+    const byId = new Map((emailQuery.data ?? []).map((e) => [e.id, e]));
+    return profiles.map((p) => {
+      const e = byId.get(p.id);
+      return e
+        ? {
+            ...p,
+            email: e.email,
+            provider: e.provider,
+            email_confirmed: e.email_confirmed,
+            last_sign_in_at: e.last_sign_in_at,
+          }
+        : p;
+    });
+  }, [data, emailQuery.data]);
   const now = Date.now();
 
   const stats = useMemo(() => {
@@ -118,12 +176,14 @@ export const MembersDirectory = () => {
       ? rows.filter(
           (r) =>
             (r.display_name ?? '').toLowerCase().includes(q) ||
-            (r.handle ?? '').toLowerCase().includes(q),
+            (r.handle ?? '').toLowerCase().includes(q) ||
+            (r.email ?? '').toLowerCase().includes(q),
         )
       : rows.slice();
 
-    const byCreated = (a: MemberProfile, b: MemberProfile) =>
+    const byCreated = (a: MemberRow, b: MemberRow) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+
 
     switch (sort) {
       case 'oldest':
@@ -143,17 +203,21 @@ export const MembersDirectory = () => {
   const pageRows = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
 
   const exportCsv = () => {
-    const header = 'display_name,handle,joined_utc,membership_age_days,symbol_count,reputation_score';
+    const header =
+      'display_name,handle,email,email_confirmed,joined_utc,membership_age_days,symbol_count,reputation_score';
     const lines = filtered.map((r) =>
       [
         csvCell(r.display_name),
         csvCell(r.handle),
+        csvCell(r.email ?? ''),
+        csvCell(r.email === undefined || r.email === null ? '' : String(r.email_confirmed ?? false)),
         csvCell(new Date(r.created_at).toISOString()),
         csvCell(ageInDays(r.created_at, now)),
         csvCell(r.symbol_count ?? 0),
         csvCell(r.reputation_score ?? 0),
       ].join(','),
     );
+
     const blob = new Blob([[header, ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -245,10 +309,17 @@ export const MembersDirectory = () => {
         </Button>
       </div>
 
+      {emailQuery.error && (
+        <p className="text-sm text-muted-foreground">
+          Email lookup unavailable: {(emailQuery.error as Error).message}
+        </p>
+      )}
+
       {filtered.length === 0 ? (
         <p className="text-muted-foreground py-8">No members match that search.</p>
       ) : (
         <>
+
           {/* Mobile cards */}
           <div className="space-y-3 md:hidden">
             {pageRows.map((m) => (
@@ -261,10 +332,17 @@ export const MembersDirectory = () => {
                   </div>
                 </div>
                 <dl className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="col-span-2 min-w-0">
+                    <dt className="text-xs text-muted-foreground">Email</dt>
+                    <dd className="min-w-0">
+                      <EmailCell member={m} />
+                    </dd>
+                  </div>
                   <div>
                     <dt className="text-xs text-muted-foreground">Member since</dt>
                     <dd>{formatJoined(m.created_at)}</dd>
                   </div>
+
                   <div>
                     <dt className="text-xs text-muted-foreground">Membership age</dt>
                     <dd>
@@ -293,7 +371,9 @@ export const MembersDirectory = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Member</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Member since</TableHead>
+
                   <TableHead>Membership age</TableHead>
                   <TableHead className="text-right">Symbols</TableHead>
                   <TableHead className="text-right">Reputation</TableHead>
@@ -313,7 +393,11 @@ export const MembersDirectory = () => {
                         </div>
                       </div>
                     </TableCell>
+                    <TableCell className="max-w-[16rem]">
+                      <EmailCell member={m} />
+                    </TableCell>
                     <TableCell>{formatJoined(m.created_at)}</TableCell>
+
                     <TableCell>
                       {formatMembershipAge(m.created_at, now)}
                       <span className="block text-xs text-muted-foreground">
