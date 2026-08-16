@@ -393,7 +393,11 @@ export const MembersDirectory = () => {
                         </div>
                       </div>
                     </TableCell>
+                    <TableCell className="max-w-[16rem]">
+                      <EmailCell member={m} />
+                    </TableCell>
                     <TableCell>{formatJoined(m.created_at)}</TableCell>
+
                     <TableCell>
                       {formatMembershipAge(m.created_at, now)}
                       <span className="block text-xs text-muted-foreground">
