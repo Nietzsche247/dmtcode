@@ -6,7 +6,7 @@ import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
-import { ArrowRight, Database, Users, Target, FileText, AlertTriangle, Mic } from 'lucide-react';
+import { ArrowRight, Mic } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
@@ -239,7 +239,7 @@ const Home = () => {
           </section>
 
           {/* Instruments Section */}
-          <section className="container mx-auto px-4 py-32 max-w-6xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-16 max-w-6xl border-t border-border/30">
             <AnimatedSection>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
                 Instruments for careful observation
