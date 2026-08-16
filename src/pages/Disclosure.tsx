@@ -46,7 +46,7 @@ const Disclosure = () => {
               <p>Danny Goler first described the observation this project studies, and he is credited as its originator throughout the site. He is aware of the project but holds no editorial role in it. What gets published here, including the critiques and the null results, is decided independently, and the open dataset lets anyone check that policy against practice.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Listings are not endorsements</h2>
-              <p>Retreats, events and clinical trials are listed because they exist and are relevant, not because we vouch for them. We are not affiliated with the retreat centres we list, apart from the one named above, and we have not inspected any of them. Verify independently and get medical screening before booking anything.</p>
+              <p>Retreats, events and clinical trials are listed because they exist and are relevant, not because we vouch for them. We are not affiliated with any of the retreat centres we list, and we have not inspected any of them. Verify independently and get medical screening before booking anything.</p>
 
               <h2 className="text-2xl font-semibold mt-8">What we do not do</h2>
               <p>We do not accept payment for a listing, a favourable description, or a place in the registry. We do not sell, source or broker any controlled substance. We do not sell visitor data.</p>
