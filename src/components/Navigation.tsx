@@ -14,6 +14,8 @@ import { MegaMenu } from "./MegaMenu";
 import { UserDropdown } from "./UserDropdown";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuthTracking } from "@/hooks/useAuthTracking";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import {
   Collapsible,
   CollapsibleContent,
@@ -33,6 +35,9 @@ export const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const locale = useLocale();
+  // Header navigation must keep a visitor inside the locale they arrived in.
+  const lp = (path: string) => localePath(locale, path);
   const { trackLogout } = useAuthTracking();
 
   useEffect(() => {
@@ -74,18 +79,22 @@ export const Navigation = () => {
     setIsAuthenticated(false);
     setUserHandle(null);
     setAvatarSeed(null);
-    navigate('/');
+    navigate(lp('/'));
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path);
+    navigate(lp(path));
     setIsOpen(false);
     setOpenSection(null);
   };
 
   const goToAuth = () => {
     const here = location.pathname + location.search;
-    navigate(location.pathname === '/auth' ? '/auth' : `/auth?returnTo=${encodeURIComponent(here)}`);
+    navigate(
+      location.pathname === lp('/auth')
+        ? lp('/auth')
+        : `${lp('/auth')}?returnTo=${encodeURIComponent(here)}`,
+    );
     setIsOpen(false);
     setOpenSection(null);
   };
@@ -146,6 +155,7 @@ export const Navigation = () => {
             </div>
 
             <div className="hidden lg:flex items-center gap-3">
+              <LanguageSwitcher />
               <ModeToggle />
               <ThemeToggle />
               <CartDrawer />
@@ -191,11 +201,13 @@ export const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 max-h-[80vh] overflow-y-auto">
             <div className="px-4 pt-2 pb-4 space-y-1">
+              <LanguageSwitcher className="px-2 pb-1" />
+
               {/* Home */}
               <button
                 onClick={() => handleNavigation('/')}
                 className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
-                  location.pathname === '/'
+                  location.pathname === lp('/')
                     ? 'text-primary bg-primary/10'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
@@ -215,7 +227,7 @@ export const Navigation = () => {
                       key={item.path}
                       onClick={() => handleNavigation(item.path)}
                       className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
-                        location.pathname === item.path
+                        location.pathname === lp(item.path)
                           ? 'text-primary bg-primary/10'
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
@@ -238,7 +250,7 @@ export const Navigation = () => {
                       key={item.path}
                       onClick={() => handleNavigation(item.path)}
                       className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
-                        location.pathname === item.path
+                        location.pathname === lp(item.path)
                           ? 'text-primary bg-primary/10'
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
@@ -261,7 +273,7 @@ export const Navigation = () => {
                       key={item.path}
                       onClick={() => handleNavigation(item.path)}
                       className={`block w-full text-left px-4 py-2 min-h-[40px] text-sm rounded-lg transition-colors ${
-                        location.pathname === item.path
+                        location.pathname === lp(item.path)
                           ? 'text-primary bg-primary/10'
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
@@ -276,7 +288,7 @@ export const Navigation = () => {
               <button
                 onClick={() => handleNavigation('/prepare')}
                 className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
-                  location.pathname === '/prepare'
+                  location.pathname === lp('/prepare')
                     ? 'text-primary bg-primary/10'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
@@ -321,7 +333,7 @@ export const Navigation = () => {
               <button
                 onClick={() => handleNavigation('/about')}
                 className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
-                  location.pathname === '/about'
+                  location.pathname === lp('/about')
                     ? 'text-primary bg-primary/10'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
