@@ -28,15 +28,8 @@ export const MissionFraming = () => {
         >
           This is not a claim. It is an experiment, and you can be part of it. We record what people
           see, then test whether the reports truly converge, or whether optics, shared
-          neurobiology, expectation, and memory explain the overlap.
-        </p>
-
-        <p
-          className="text-lg md:text-xl text-muted-foreground leading-relaxed"
-          style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
-        >
-          Sign in and add what you saw. That is what turns a story into evidence and keeps the
-          record real. Your identity stays private.
+          neurobiology, expectation, and memory explain the overlap. Sign in and add what you saw.
+          Your identity stays private.
         </p>
 
         <p
