@@ -311,10 +311,17 @@ export const MembersDirectory = () => {
                   </div>
                 </div>
                 <dl className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="col-span-2 min-w-0">
+                    <dt className="text-xs text-muted-foreground">Email</dt>
+                    <dd className="min-w-0">
+                      <EmailCell member={m} />
+                    </dd>
+                  </div>
                   <div>
                     <dt className="text-xs text-muted-foreground">Member since</dt>
                     <dd>{formatJoined(m.created_at)}</dd>
                   </div>
+
                   <div>
                     <dt className="text-xs text-muted-foreground">Membership age</dt>
                     <dd>
