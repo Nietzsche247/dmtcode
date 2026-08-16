@@ -1909,7 +1909,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/dataset", label: "Dataset" },
     ],
     breadcrumbName: "Methods",
-    bodyExtraHtml: `<section><h2>Common questions</h2>${METHODS_FAQ.map((f) => `<div><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("")}</section>`,
+    bodyExtraHtml: `<section><h2>What would falsify this</h2><ul><li>Independent reports do not converge above what chance and shared culture would predict.</li><li>Convergence disappears when priming is controlled, so that people who have not seen the catalogue do not draw its forms.</li><li>Sober observers using the same apparatus report the same forms, so the forms belong to the optics, not the state.</li></ul><p>The registry, the null reports and the sober baseline exist so that each of these can be checked by anyone.</p></section><section><h2>Common questions</h2>${METHODS_FAQ.map((f) => `<div><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("")}</section>`,
     extraJsonLd: [METHODS_FAQ_LD],
   },
   "open-questions": {

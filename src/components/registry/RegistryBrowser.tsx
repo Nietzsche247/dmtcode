@@ -1,14 +1,27 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, FileEdit } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const RESONANCE_MIN_RESPONSES = 5;
+
+const CC_LINE = 'DMT Code registry export. Licensed CC-BY-4.0. Attribution: DMT Code (dmtcode.com).';
+
+// Tag vocabulary used to surface null reports and sober-baseline records.
+// There is no null_report and no sober/condition column on symbol_submissions
+// today, so these are derived from the existing tags array rather than from a
+// new column. Records matching them are shown in the same list as everything
+// else, never hidden by default, and carry a visible tag.
+const NULL_REPORT_TAGS = ['null-report', 'null_report', 'nothing-seen', 'no-forms'];
+const SOBER_TAGS = ['sober', 'sober-baseline', 'sober_baseline', 'no-substance'];
+
+const hasAnyTag = (tags: string[] | null, vocab: string[]) =>
+  (tags || []).some((t) => vocab.includes(t.toLowerCase().trim()));
 
 interface SymbolSubmission {
   id: string;
@@ -19,6 +32,8 @@ interface SymbolSubmission {
   downvotes: number;
   status: 'pending' | 'approved' | 'rejected';
   source_method: string | null;
+  dose_level: string | null;
+  wavelength: string | null;
   created_at: string;
   user_id: string;
 }
@@ -32,6 +47,7 @@ interface ProfileData {
 export const RegistryBrowser = () => {
   const navigate = useNavigate();
   const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
@@ -39,12 +55,32 @@ export const RegistryBrowser = () => {
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
   const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
   const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
-  
-  // Filters
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sourceFilter, setSourceFilter] = useState('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('newest');
+
+  // Filters are query-string driven so a counter elsewhere on the site can link
+  // to exactly the rows that make up its number.
+  const searchQuery = searchParams.get('q') || '';
+  const sourceFilter = searchParams.get('source') || 'all';
+  const doseFilter = searchParams.get('dose') || 'all';
+  const recordFilter = searchParams.get('record') || 'all';
+  const selectedTags = (searchParams.get('tags') || '').split(',').map((t) => t.trim()).filter(Boolean);
+  const sortBy = searchParams.get('sort') || 'newest';
+
+  const setParam = useCallback(
+    (key: string, value: string, defaultValue: string) => {
+      const next = new URLSearchParams(searchParams);
+      if (!value || value === defaultValue) next.delete(key);
+      else next.set(key, value);
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
+
+  const setSearchQuery = (v: string) => setParam('q', v, '');
+  const setSourceFilter = (v: string) => setParam('source', v, 'all');
+  const setDoseFilter = (v: string) => setParam('dose', v, 'all');
+  const setRecordFilter = (v: string) => setParam('record', v, 'all');
+  const setSelectedTags = (v: string[]) => setParam('tags', v.join(','), '');
+  const setSortBy = (v: string) => setParam('sort', v, 'newest');
 
   useEffect(() => {
     loadSymbols();
@@ -55,7 +91,7 @@ export const RegistryBrowser = () => {
     if (sourceFilter !== 'all' || selectedTags.length > 0) {
       trackRegistryFiltered({ source: sourceFilter, tags: selectedTags });
     }
-  }, [sourceFilter, selectedTags]);
+  }, [sourceFilter, selectedTags.join(',')]);
 
   useEffect(() => {
     // Track search
@@ -67,13 +103,14 @@ export const RegistryBrowser = () => {
     }
   }, [searchQuery]);
 
+
   const loadSymbols = async () => {
     setLoading(true);
     
     // Load approved submissions
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, created_at, user_id')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, dose_level, wavelength, created_at, user_id')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
@@ -161,6 +198,21 @@ export const RegistryBrowser = () => {
       filtered = filtered.filter(s => s.source_method === sourceFilter);
     }
 
+    // Dose level filter (real column: dose_level)
+    if (doseFilter !== 'all') {
+      filtered = filtered.filter(s =>
+        doseFilter === 'unreported' ? !s.dose_level : s.dose_level === doseFilter
+      );
+    }
+
+    // Record type: null reports and sober-baseline records, derived from tags.
+    // They are never hidden by default; this only narrows to them.
+    if (recordFilter === 'null_report') {
+      filtered = filtered.filter(s => hasAnyTag(s.tags, NULL_REPORT_TAGS));
+    } else if (recordFilter === 'sober') {
+      filtered = filtered.filter(s => hasAnyTag(s.tags, SOBER_TAGS));
+    }
+
     // Tags filter
     if (selectedTags.length > 0) {
       filtered = filtered.filter(s => 
@@ -171,6 +223,7 @@ export const RegistryBrowser = () => {
         )
       );
     }
+
 
     // Sorting
     switch (sortBy) {
@@ -211,7 +264,7 @@ export const RegistryBrowser = () => {
     // saw keeps its place, because a rare form only a few people recognize is
     // exactly the kind of thing this registry exists to find.
     return filtered;
-  }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
+  }, [symbols, searchQuery, sourceFilter, doseFilter, recordFilter, selectedTags.join(','), sortBy, validationCounts]);
 
   // One library, one list. Nothing is segregated by how a symbol entered the
   // record; the sort the reader chose is the only thing that orders it.
@@ -222,16 +275,81 @@ export const RegistryBrowser = () => {
     );
   }
 
-  const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
+  const hasActiveFilters =
+    sourceFilter !== 'all' ||
+    doseFilter !== 'all' ||
+    recordFilter !== 'all' ||
+    selectedTags.length > 0 ||
+    searchQuery.trim() !== '';
 
   const clearFilters = () => {
-    setSearchQuery('');
-    setSourceFilter('all');
-    setSelectedTags([]);
-    setSortBy('newest');
+    setSearchParams(new URLSearchParams(), { replace: true });
+  };
+
+  // Export exactly the rows currently on screen, from the already-loaded data.
+  const exportRows = () =>
+    filteredSymbols.map((s) => ({
+      id: s.id,
+      created_at: s.created_at,
+      contributor_handle: profiles[s.user_id]?.handle || '',
+      description: s.description || '',
+      tags: (s.tags || []).join('|'),
+      source_method: s.source_method || '',
+      dose_level: s.dose_level || '',
+      wavelength: s.wavelength || '',
+      recognitions_after_exposure: validationCounts[s.id] || 0,
+      similar_responses: similarCounts[s.id] || 0,
+      upvotes: s.upvotes || 0,
+      downvotes: s.downvotes || 0,
+      null_report: hasAnyTag(s.tags, NULL_REPORT_TAGS),
+      sober_baseline: hasAnyTag(s.tags, SOBER_TAGS),
+      url: `https://dmtcode.com/symbol/${s.id}`,
+    }));
+
+  const download = (contents: string, mime: string, filename: string) => {
+    const blob = new Blob([contents], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportCsv = () => {
+    const rows = exportRows();
+    const headers = rows.length ? Object.keys(rows[0]) : [];
+    const escape = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const body = rows.map((r) => headers.map((h) => escape((r as Record<string, unknown>)[h])).join(',')).join('\n');
+    const filterLine = `# filters: ${searchParams.toString() || 'none'}`;
+    download(
+      `# ${CC_LINE}\n${filterLine}\n${headers.join(',')}\n${body}\n`,
+      'text/csv;charset=utf-8',
+      'dmtcode-registry-export.csv'
+    );
+  };
+
+  const exportJson = () => {
+    download(
+      JSON.stringify(
+        {
+          license: 'CC-BY-4.0',
+          attribution: CC_LINE,
+          exported_at: new Date().toISOString(),
+          filters: Object.fromEntries(searchParams.entries()),
+          row_count: filteredSymbols.length,
+          rows: exportRows(),
+        },
+        null,
+        2
+      ),
+      'application/json',
+      'dmtcode-registry-export.json'
+    );
   };
 
   const highlightTerms = searchQuery.trim() ? searchQuery.toLowerCase().split(/\s+/) : [];
+
 
   return (
     <section id="browse" className="container mx-auto px-4 py-16">
@@ -273,6 +391,10 @@ export const RegistryBrowser = () => {
         onSearchChange={setSearchQuery}
         sourceFilter={sourceFilter}
         onSourceChange={setSourceFilter}
+        doseFilter={doseFilter}
+        onDoseChange={setDoseFilter}
+        recordFilter={recordFilter}
+        onRecordChange={setRecordFilter}
         selectedTags={selectedTags}
         onTagsChange={setSelectedTags}
         sortBy={sortBy}
@@ -280,6 +402,23 @@ export const RegistryBrowser = () => {
         onClearFilters={clearFilters}
         hasActiveFilters={hasActiveFilters}
       />
+
+      {/* Export */}
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-muted-foreground max-w-[52ch]">
+          Export what you see: {filteredSymbols.length} row{filteredSymbols.length === 1 ? '' : 's'} exactly as
+          filtered. Files carry a CC-BY-4.0 line and the filter string used.
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="rounded-full" onClick={exportCsv} disabled={loading || filteredSymbols.length === 0}>
+            CSV
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-full" onClick={exportJson} disabled={loading || filteredSymbols.length === 0}>
+            JSON
+          </Button>
+        </div>
+      </div>
+
 
       {/* Results count */}
       {resultSegments.length > 0 && (

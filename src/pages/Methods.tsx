@@ -260,7 +260,24 @@ const Methods = () => {
               </AccordionItem>
             </Accordion>
 
+            {/* What would falsify this */}
+            <section className="mt-12 p-6 md:p-8 border border-border rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4">What would falsify this</h2>
+              <ul className="list-disc list-inside space-y-3 text-base">
+                <li>Independent reports do not converge above what chance and shared culture would predict.</li>
+                <li>Convergence disappears when priming is controlled, so that people who have not seen the catalogue do not draw its forms.</li>
+                <li>Sober observers using the same apparatus report the same forms, so the forms belong to the optics, not the state.</li>
+              </ul>
+              <p className="mt-4 text-base">
+                The registry, the null reports and the sober baseline exist so that each of these can be checked by anyone.
+              </p>
+              <p className="mt-4 text-sm">
+                <a href="/registry?set=submissions#browse" className="text-gold hover:underline">Open the registry explorer</a>
+              </p>
+            </section>
+
             {/* Related Resources */}
+
             <div className="mt-12 p-8 bg-muted/30 border border-border rounded-lg">
               <h2 className="text-2xl font-semibold mb-4">Related Resources</h2>
               <div className="grid md:grid-cols-3 gap-4">
