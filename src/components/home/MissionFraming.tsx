@@ -18,7 +18,8 @@ export const MissionFraming = () => {
           className="text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight"
           style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
         >
-          Thousands of people say they have seen the same hidden world. You might be one of them.
+          Many people report seeing the same structured forms. Some of them have started
+          recording what they saw. You might be one of them.
         </h2>
 
         <p

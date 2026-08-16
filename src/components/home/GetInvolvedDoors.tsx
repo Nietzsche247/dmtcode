@@ -11,6 +11,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
       to: '/registry',
       title: 'I saw this',
       body: 'Browse the record. Tell us which forms echo something you saw.',
+      cta: 'Browse the record',
       Icon: Eye,
       tone: 'ghost' as const,
     },
@@ -18,6 +19,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
       to: '/submit-symbol',
       title: 'Add what you saw',
       body: 'Reconstruct the form on a blank canvas. It joins the open record.',
+      cta: 'Draw what you saw',
       Icon: PencilLine,
       tone: 'primary' as const,
     },
@@ -25,6 +27,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
       to: '/join',
       title: 'Help build it',
       body: 'Volunteer as a recorder, translator, analyst, developer, or test subject.',
+      cta: 'Volunteer',
       Icon: Users,
       tone: 'secondary' as const,
     },
@@ -47,7 +50,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
         </div>
       )}
       <div className="grid md:grid-cols-3 gap-4 md:gap-5">
-        {doors.map(({ to, title, body, Icon, tone }) => {
+        {doors.map(({ to, title, body, cta, Icon, tone }) => {
           const base =
             'group relative flex flex-col gap-3 rounded-sm border p-6 md:p-7 transition-colors bg-card';
           const toneClass =
@@ -72,7 +75,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
                 {body}
               </p>
               <span className="label-data text-[10px] text-primary mt-2 group-hover:underline">
-                {tone === 'primary' ? 'PRIMARY' : 'ENTER'}
+                {cta}
               </span>
             </Link>
           );
