@@ -391,6 +391,10 @@ export const RegistryBrowser = () => {
         onSearchChange={setSearchQuery}
         sourceFilter={sourceFilter}
         onSourceChange={setSourceFilter}
+        doseFilter={doseFilter}
+        onDoseChange={setDoseFilter}
+        recordFilter={recordFilter}
+        onRecordChange={setRecordFilter}
         selectedTags={selectedTags}
         onTagsChange={setSelectedTags}
         sortBy={sortBy}
@@ -398,6 +402,23 @@ export const RegistryBrowser = () => {
         onClearFilters={clearFilters}
         hasActiveFilters={hasActiveFilters}
       />
+
+      {/* Export */}
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-muted-foreground max-w-[52ch]">
+          Export what you see: {filteredSymbols.length} row{filteredSymbols.length === 1 ? '' : 's'} exactly as
+          filtered. Files carry a CC-BY-4.0 line and the filter string used.
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="rounded-full" onClick={exportCsv} disabled={loading || filteredSymbols.length === 0}>
+            CSV
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-full" onClick={exportJson} disabled={loading || filteredSymbols.length === 0}>
+            JSON
+          </Button>
+        </div>
+      </div>
+
 
       {/* Results count */}
       {resultSegments.length > 0 && (
