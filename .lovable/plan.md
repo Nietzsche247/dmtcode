@@ -1,63 +1,57 @@
-# Kit catalogue: single source of truth for agent surfaces
+# Locale mirrors: human-visible fixes (diagnosis + smallest bounded changes)
 
-## 1. Findings (verified)
+Diagnosis only below, each with the smallest bounded change. Page-body translation is out of scope.
 
-**renderPrepare inline array** — `netlify/edge-functions/content-prerender.ts`
-- `const KITS = [...]` at lines **739-777** (solo 739-750, triad 751-761, circle 762-776), fields: `id, sku, name, price, parts, image, cart, description`.
-- Readers of it:
-  - `productLds` lines **798-820** (`k.id`, `k.name`, `k.description`, `k.sku`, `k.price`, `k.image`)
-  - `itemListLd` lines **822-832** (`k.name`, `k.id`)
-  - `kitBlocks` lines **860-...** (`k.id`, `k.name`, `k.image`, `k.price`, `k.parts`, `k.description`, `k.cart`)
-  - `${kitBlocks}` is injected at line **891**.
-- The "Field materials and protocols, free download" section (lines **893-908**) and the FAQ data (`~1506-1530`) / `renderFaq` are not touched by this change.
+## 1. Where runtime title / meta description come from
 
-**Module** — `netlify/lib/kits.ts` / `src/data/kits.ts` carry `id, name, shortName, observers, price, priceNumber, cart, image, diyCost, diyCostNumber, availability, description`. No `sku`. `shop-json.ts` line 2 already does `import { KITS } from "../lib/kits.ts";`, so the same import works in `content-prerender.ts`.
+There is **no shared SEO hook**. Three mechanisms coexist:
 
-**SKU decision:** add an optional `sku` field to both kits.ts files rather than a local map in renderPrepare. Reason: the SKU is catalogue data, one more thing an agent surface may need, and the existing `check-kits-drift.mjs` key-by-key diff covers it for free. A local map in the edge function would be a second place to edit.
+- **`react-helmet` (not `react-helmet-async`)**, `package.json:63`, imported per page. Example: `src/pages/Theories.tsx:2, 242-253` hardcodes English `<title>Open Theories about the DMT Code | DMT Code</title>`, description, canonical `https://dmtcode.com/theories`, og:*. Same pattern in `src/pages/Prepare.tsx:1, 89-96`, `src/pages/FAQ.tsx:4, 136-153`, and ~50 more pages (`rg -l Helmet src/pages` = most of the directory). These are locale-blind, hardcoded English literals — this is exactly why the prerendered Spanish title is overwritten on hydration.
+- **`src/hooks/useDynamicMeta.tsx`** — a research/explorer mode dictionary for 6 keys only (home, tools, bibliography, registry, events, bundles). Consumed by `src/pages/Home.tsx` only. No locale awareness.
+- No direct `document.title =` writes in page code (only `useGA4PageTracking` reads it).
 
-**Name punctuation consequence:** the module names use typographic dashes (`— Solo`, `2–3 Observers`); the inline copy uses ASCII (`- Solo`, `2-3 Observers`). Switching to the module makes the prerendered HTML/JSON-LD names match the React page exactly. Kit names Solo/Triad/Circle, prices and cart URLs are unchanged.
+Smallest bounded change: add one shared component `src/components/SEO.tsx` that wraps `Helmet`, takes a `uiKey`, reads `useLocale()`, pulls title/description from the shared string module (item 2), and self-references canonical/og:url via `localePath(locale, path)`. Then swap the Helmet block on the locale-mirrored index pages only (theories, faq, prepare, registry, articles, guides, timeline, evidence-map, trials, bibliography, retreats, protocols, home) to `<SEO uiKey="theories" path="/theories" />`. English output must stay byte-identical to today where a key already matches, so the change is invisible for `en`.
 
-**llms.txt** — `public/llms.txt`, 147 lines. No kit lines exist. `/shop.json` description is line **55** (old Supabase shape "kind, tier, people, ... items[]"). `/prepare` page line is **88**. "## Machine endpoints" heading line **52**, list ends line **71**; "## Free protocol documents" starts line **73**. Marker block goes **between line 71 and 73** (after the endpoint list, before "## Free protocol documents"), which is exactly your suggestion. The "## Free protocol documents" section (73-77+) stays untouched — the generator only rewrites text strictly between the markers, and updates line 55 in place.
+## 2. The prerender locale dictionary and whether it can be shared
 
-**geo-drift.yml** — `prod-checks` job lines **55-122**; python heredoc starts line 61; `fetch(path)` helper is lines **65-73**, UA hardcoded `"geo-drift-audit"`. `repo-drift` job starts line **124**, first step `actions/checkout@v4`, no node setup (ubuntu-latest ships node 20, so plain `node scripts/check-kits-drift.mjs` works — confirmed, no setup-node needed).
+- It already lives in a shared module: **`netlify/lib/ui-strings.ts`** (608 lines), imported at `netlify/edge-functions/content-prerender.ts:2`.
+- Shape: `UI_STRINGS: Record<string, Record<"en"|"es"|"de", { title: string; description: string }>>`, plus `uiCopy(key, locale, vars?)` at `ui-strings.ts:594-608` with English fallback and `{var}` interpolation. 26 keys today: home, theories, articles, guides, retreats, faq, timeline, people, prepare, protocols, registry, trials, bibliography, dataset, about, critiques, events, glossary, methods, research, forecasts, privacy, terms, disclosure, capture, join.
+- Call sites: `content-prerender.ts:736, 894, 1121, 1135, 1504, 2319, 2600, 2985, 3582, 4029, 4379`.
 
-**Other hardcodes (Q4)** — outside `public/downloads`, `public/agent`, `docs`:
-- Only `src/data/kits.ts` and `netlify/lib/kits.ts` carry `$289 / $649 / $1,090` and `Solo (1 Observer)`; plus the inline copy at `content-prerender.ts:743`. No other file hardcodes a kit price.
-- `observer-kit` survives in three legacy-Shopify places: `src/hooks/useBundleAvailability.tsx:7`, `src/components/CartDrawer.tsx:29`, `src/components/ShopSection.tsx:10`, and `public/_redirects:1` (`/products/observer-kit -> /prepare 301`). None render a price. Out of scope here, but they are why the CI "absent" assertion must be scoped to the four live URLs (/, /prepare, /faq, /llms.txt), not to the repo.
-- No `$109` / `$159` / `$349` anywhere in src/netlify/public.
+The edge function cannot import from `src/`, and the SPA cannot import from `netlify/lib/`. So use the **kits mirror pattern**: `src/data/kits.ts` is the source of truth, `netlify/lib/kits.ts` is the hand-copied mirror, and `scripts/check-kits-drift.mjs` (wired as `prebuild` in `package.json:8`) parses both files and fails the build on any field mismatch.
 
-## 2. Proposed change (smallest)
+Bounded change: create `src/i18n/ui-strings.ts` as the SPA-side mirror of `UI_STRINGS` + `uiCopy` (identical content, TS instead of Deno import style), and add `scripts/check-ui-strings-drift.mjs` chained into the existing `prebuild` script. Direction of authority to be declared in a header comment, matching kits ("edit the src file first, then copy").
 
-**A. `src/data/kits.ts` + `netlify/lib/kits.ts`** — add `sku?: string` to the `Kit` type and `sku: 'KIT-SOLO-650' | 'KIT-TRIAD-MW' | 'KIT-CIRCLE-MW'` to the three entries, identically in both files.
+## 3. Why the breadcrumb shows "Home / Es / Prepare"
 
-**B. `netlify/edge-functions/content-prerender.ts`** — add `import { KITS } from "../lib/kits.ts";` at the top; delete the inline array (739-777); in `renderPrepare` map the module fields at the three read sites: `k.priceNumber` for price, `k.diyCostNumber` for parts, `k.sku`, `k.name`, `k.image`, `k.cart`, `k.description`, `k.id`. No other line in the function changes.
+- `src/components/Breadcrumb.tsx:5-6`: `const pathnames = location.pathname.split('/').filter(Boolean)`. There is no hook — crumbs are derived inline from the raw pathname, so on `/es/prepare` the first segment `es` becomes a crumb. `es` is absent from `breadcrumbNameMap` (lines 8-48) so the fallback title-caser at lines 66-69 renders it as "Es". The Home crumb at line 54 is hardcoded `to="/"`, which drops a Spanish visitor back to English.
 
-**C. `scripts/sync-llms-kits.mjs`** (new, dependency-free Node) — reuses the `extractKits()` reader from `check-kits-drift.mjs` (exported from that file, imported here, so there is one extractor). It rewrites only the region between `<!-- kits:start -->` and `<!-- kits:end -->` in `public/llms.txt` with:
+Bounded change, one file:
+- Import `useLocale, localePath` from `@/i18n/LocaleProvider`; drop a leading segment when it is the active non-`en` locale before mapping.
+- Build each crumb `to` with `localePath(locale, ...)`, and make the Home crumb `to={localePath(locale, '/')}`.
 
-```text
-## Kits
+## 4. Language switcher placement
 
-- Solo — 1 observer — $289 — sourcing the parts yourself ≈ $219 — cart: <permalink>
-- Triad — 2 to 3 observers — $649 — ≈ $516 — cart: <permalink>
-- Circle — 6 observers — $1,090 — ≈ $883 — cart: <permalink>
+- Header: `src/components/Navigation.tsx`. Desktop cluster at lines 145-171 (ModeToggle / ThemeToggle / CartDrawer / auth). Mobile: toggle cluster at 174-186 and the open panel at 190+.
+- Footer: `src/components/Footer.tsx`, bottom utility row at lines 186-228 (CC-BY, data.json, Privacy, Terms, ...).
 
-Sold and shipped by Meridian Optics Lab; support info@dmtcode.com; free US shipping; arrives in 7 to 10 business days.
-```
+Bounded change: one new `src/components/LanguageSwitcher.tsx` rendering exactly three plain `<a href>` anchors (not `Link`, not buttons) — EN / ES / DE — each pointing at the current `location.pathname` re-prefixed via `localePath`, with `hreflang="en|es|de"`, `aria-current="true"` on the active one, and a labelled `<nav aria-label="Language">`. Mount it in three places: the desktop header cluster, the top of the mobile menu panel, and the footer utility row.
 
-and replaces the `/shop.json` line (55) with the new field list: `slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url`. If the markers are absent the script inserts them after the "## Machine endpoints" list, before "## Free protocol documents". Idempotent: re-running produces no diff.
+## 5. `useLocale()` availability and header/footer links needing `localePath`
 
-**D. `scripts/check-kits-drift.mjs`** — export `extractKits`, and add a third assertion: `public/llms.txt` must contain every kit's `price` string and `cart` permalink; otherwise exit 1 with "llms.txt is stale, run node scripts/sync-llms-kits.mjs".
+- `LocaleProvider` wraps `AppRoutes` for all three trees in `src/App.tsx:43-45, 51-53, 59-61`, and `Navigation`/`Footer` render inside pages inside `AppRoutes`, so `useLocale()` is available in both. `src/i18n/LocaleProvider.tsx:11-14` already exports `localePath`.
+- Header links that would strand a Spanish visitor in English:
+  - `Navigation.tsx:80-83` `handleNavigation(path)` → bare `navigate(path)`, used by the logo (line 137), the mobile Home button (line 194), and every mobile menu item built from `researchItems` (93-103), `explorerItems` (105-110), `resourceItems` (113-121).
+  - `Navigation.tsx:87-90` `goToAuth()` → `/auth?returnTo=...`.
+  - `Navigation.tsx:76` sign-out `navigate('/')`.
+  - `MegaMenu.tsx:76` (the generic desktop item `Link to`), `MegaMenu.tsx:99` `isActive` comparison against `location.pathname`, and `MegaMenu.tsx:135` `to="/about"`.
+- Footer links: every `Link to` in `Footer.tsx` — lines 39, 44, 49, 54, 59, 64, 69, 74, 79, 86, 91, 96, 101, 106, 111, 116, 121, 126, 137, 142, 147, 152, 181, 204, 207, 210, 213, 216. External anchors (Zenodo/DOI line 20 and 220, CC line 190, `/data.json` line 199) stay unprefixed.
 
-**E. `package.json`** — `"prebuild": "node scripts/check-kits-drift.mjs && node scripts/sync-llms-kits.mjs"`. (Order per your spec; the generator writes the fresh file for the build, the checker guards the committed one.)
+Bounded change: route header and footer internal navigation through one `localePath(locale, path)` call — a single `to()` helper in `Footer.tsx`, the same inside `handleNavigation`/`goToAuth` in `Navigation.tsx`, and the item mapper plus `isActive` in `MegaMenu.tsx`. No other site links touched.
 
-**F. `.github/workflows/geo-drift.yml`**
-- `prod-checks`: change the helper to `def fetch(path, ua="geo-drift-audit")` and pass `"Mozilla/5.0 (compatible; Googlebot/2.1)"` where needed. Add:
-  - fetch `/prepare` (Googlebot UA) and `/llms.txt`; for each of `$289`, `$649`, `$1,090` and the three cart permalinks (`...cart/54376696709430:1`, `54376697692470:1`, `54376698446134:1`) assert presence in **both** — 12 checks.
-  - fetch `/`, `/prepare`, `/faq` (Googlebot UA) and `/llms.txt`; assert none contains `$109`, `$159`, `$349`, `observer-kit` — 4 checks.
-- `repo-drift`: add a step after checkout, `run: node scripts/check-kits-drift.mjs` (ubuntu-latest has node preinstalled; no setup-node), so a mirror or llms.txt drift fails CI as well as the build.
+## Suggested build order (each independently shippable)
 
-## Not touched
-`public/downloads/*`, the "## Free protocol documents" block, the renderPrepare downloads section, the FAQ data / `renderFaq`, `src/pages/FAQ.tsx`, any migration, the three cart permalinks, prices, kit names, kit contents claims.
-
-## Human step after merge
-Netlify deploy from `main` for the new prerender output and the regenerated `/llms.txt`.
+1. Breadcrumb locale strip (1 file).
+2. Language switcher component + 3 mount points.
+3. Header/footer `localePath` pass.
+4. `src/i18n/ui-strings.ts` mirror + drift check, then the `SEO` component swap on locale-mirrored index pages.
