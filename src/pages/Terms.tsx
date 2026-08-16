@@ -24,7 +24,7 @@ const Terms = () => {
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms</h1>
-            <p className="text-lg text-muted-foreground mb-10">Effective 29 July 2026.</p>
+            <p className="text-lg text-muted-foreground mb-10">Effective 16 August 2026.</p>
 
             <div className="space-y-6 text-base leading-relaxed">
               <h2 className="text-2xl font-semibold mt-8">What this site is</h2>
@@ -53,7 +53,7 @@ const Terms = () => {
               <p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Buying equipment</h2>
-              <p>Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases. Those policies are mirrored at /shipping, /returns, /store-terms and /store-contact. Some links to third party products are affiliate links. Our /disclosure page names them.</p>
+              <p>Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases. Those policies are mirrored at /shipping, /returns, /store-terms and /store-contact. This site does not currently carry affiliate links. If that changes, /disclosure will name them before they go live.</p>
               <p>Equipment listed here is ordinary optical and wellness gear. We do not sell, source or explain how to obtain any controlled substance.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Accuracy</h2>

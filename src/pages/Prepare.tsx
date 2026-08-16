@@ -65,7 +65,7 @@ function KitCard({ kit }: { kit: Kit }) {
         </div>
       )}
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-        Class II laser — do not stare into beam.
+        Class II laser. Do not stare into beam.
       </div>
 
       <div className="mt-auto pt-6">
@@ -75,7 +75,7 @@ function KitCard({ kit }: { kit: Kit }) {
           onClick={trackClick}
           className="inline-flex items-center justify-center w-full h-11 rounded-lg bg-primary text-primary-foreground font-black text-sm hover:opacity-90 transition-opacity"
         >
-          Buy — secure Shopify checkout
+          Buy. Secure Shopify checkout
         </a>
       </div>
 
