@@ -211,39 +211,19 @@ const Prepare = () => {
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
             Checkout runs on Shopify under Meridian Optics Lab. Full store policies:{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/refund-policy"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/returns" className="underline hover:text-foreground">
               Returns and refunds
             </a>
             ,{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/terms-of-service"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/store-terms" className="underline hover:text-foreground">
               Terms of service
             </a>
             ,{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/shipping" className="underline hover:text-foreground">
               Shipping
             </a>
             , and{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/contact-information"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/store-contact" className="underline hover:text-foreground">
               Contact
             </a>
             .
