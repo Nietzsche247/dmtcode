@@ -110,7 +110,7 @@ export const RegistryBrowser = () => {
     // Load approved submissions
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, created_at, user_id')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, dose_level, wavelength, created_at, user_id')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
