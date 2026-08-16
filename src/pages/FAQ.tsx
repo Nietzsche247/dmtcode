@@ -49,7 +49,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: 'Is the laser safe for my eyes?',
-        a: 'A laser is not a toy. The kits include the right optical density and eyewear for how the protocol uses the light, and everything should be used exactly as described and kept away from children. If you are unsure how to handle optical equipment safely, do not improvise with it.',
+        a: 'A laser is not a toy. The kit modules are low-power visible red lasers (Class II). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.',
       },
     ],
   },
@@ -83,11 +83,11 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     items: [
       {
         q: 'What do I need to get started?',
-        a: 'Everything is laid out on the prepare page, from a single-instrument Observer kit up to a full Complete kit. The core is a verified 650nm laser and the right optical density, plus an observation journal and a screening card. You can also source every part yourself. We show the do-it-yourself total next to each kit so you know exactly what you are paying for.',
+        a: 'Everything is on the Prepare page: three kits. Solo for one observer, Triad for two to three, Circle for six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German. You can also source every part yourself. We show the do-it-yourself figure next to each kit so you know exactly what you are paying for.',
       },
       {
         q: 'Why a 650nm laser?',
-        a: 'It is the specific red wavelength the observation protocol is built around, paired with the right optical density so it is used the same way each time. Consistent equipment is what lets one person\u2019s observation be compared against another\u2019s instead of guessing at the differences.',
+        a: 'It is the specific red wavelength the observation protocol is built around, so every observation is made with the same instrument used the same way. Consistent equipment is what lets one person\'s observation be compared against another\'s instead of guessing at the differences.',
       },
       {
         q: 'Do I have to use DMT to take part?',
@@ -99,11 +99,11 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: 'Can my friends and I do this together?',
-        a: 'Yes, and it is often better that way. The group bundles on the prepare page share the costly instruments across two, three, or five people, so the per-person cost drops as the circle grows. Three and five also include a facilitator guide and a group agreements card, because doing this with other people asks for a little more structure.',
+        a: 'Yes, and it is often better that way. Triad is built for two to three observers and Circle for six, so the shared optics amortize and the per-person cost drops as the circle grows. Every observer in the group is an adult and goes through the same screening card. A group session protocol is in progress; until it is published, use the free Observation Field Sheet and Sober Baseline Protocol from the Prepare page for each observer.',
       },
       {
         q: 'What are your shipping and refund terms?',
-        a: 'Every item shows its ship window before you pay, and if a date slips you hear it from us first. Preorder items are not charged until there is a confirmed source and date. If a component arrives not as described, we replace it and cover it.',
+        a: 'Kits are sold and shipped by Meridian Optics Lab, our store of record. That is the name on your card statement and on the parcel, and kits ship in plain packaging. US shipping is free and orders arrive in 7 to 10 business days. Unopened kits can be returned within 30 days; the full refund and shipping policies are linked on the Prepare page and at checkout. If anything arrives damaged or not as described, email info@dmtcode.com with your order number and photos and we will sort it out.',
       },
     ],
   },
