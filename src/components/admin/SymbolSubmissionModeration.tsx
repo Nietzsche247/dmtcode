@@ -131,6 +131,19 @@ export const SymbolSubmissionModeration = () => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [viewingSubmission, setViewingSubmission] = useState<SymbolSubmission | null>(null);
+  // Per-dialog only. Never cached across rows: cleared whenever the dialog
+  // opens, closes, or a different submission is viewed.
+  const [translation, setTranslation] = useState<TranslationResult | null>(null);
+  const [translationHidden, setTranslationHidden] = useState(false);
+  const [translationError, setTranslationError] = useState<string | null>(null);
+  const [translating, setTranslating] = useState(false);
+  useEffect(() => {
+    setTranslation(null);
+    setTranslationHidden(false);
+    setTranslationError(null);
+    setTranslating(false);
+  }, [viewingSubmission?.id]);
+
 
   // All counts are over the currently selected corpus. Curated operator
   // examples are excluded unless the operator explicitly switches to them.
