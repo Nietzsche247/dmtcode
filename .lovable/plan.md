@@ -1,61 +1,82 @@
-# Single source of truth for the three kits
+# Buyer trust batch: copy corrections + four policy mirror pages
 
-## 1. Diagnosis: where kit data lives today
+## 1. Where the strings live (verified)
 
-Live catalogue (Solo $289 / Triad $649 / Circle $1,090) is duplicated in three places, and stale legacy catalogue data survives in four more.
+React pages:
+- `src/pages/About.tsx:229` — the "Revenue model" paragraph, inside the "Funding & Transparency" card (`src/pages/About.tsx:223-236`). Contains "Affiliate commissions from the curated equipment catalogue at /prepare". The following paragraph (`:232`) repeats "we ... earn affiliate commissions on some third party products".
+- `src/pages/Terms.tsx:56` — "Equipment is sold through our Shopify store, and Shopify's own terms and refund handling apply to the purchase itself. Some links to third party products are affiliate links. Our /disclosure page names them."
+- `src/pages/Privacy.tsx:36` — "We do not ask for your real name at any point." (end of the "If you create an account" paragraph).
+- `src/pages/Privacy.tsx:45` — second occurrence: "We do not ask for your real name, your date of birth, your address or your phone number anywhere on this site."
 
-Current live-kit duplicates:
-- `src/pages/Prepare.tsx:19-50` — `KITS` array: names, prices, parts figures, images, Shopify cart permalinks, descriptions.
-- `src/pages/Home.tsx:20-50` — `INSTRUMENTS` array: slug, name, spec line, price string, image.
-- `src/hooks/useDynamicMeta.tsx:67-73` — `bundles` entry, "$289 to $1,090" written by hand.
+Crawler render (`netlify/edge-functions/content-prerender.ts`, `STATIC_PAGES` starts at line 1774):
+- `about` entry starts at `:1853`. Note: the About "Revenue model" sentence is **not** present in the prerender copy; the `about` entry's `paragraphs` array (`:1857-1862`) has no funding text at all. So there is nothing to correct there, only an optional addition.
+- `privacy` entry at `:2015`; the two "real name" sentences are inside `bodyExtraHtml` at `:2025` and `:2026`.
+- `terms` entry at `:2037`; the Shopify sentence is inside `bodyExtraHtml` at `:2050`.
+- `disclosure` entry at `:2056`, funding text at `:2065`, "Equipment we sell ourselves" at `:2067`.
 
-Stale legacy references found by the requested string search:
-- `src/hooks/useDynamicMeta.tsx:32` — `tools` entry still says "Kits and group bundles from $109 to $1,090. Bills of materials are published in full."
-- `src/hooks/useBundleAvailability.tsx:6-13` — `bundleShopifyHandles` maps `k1-observer`, `k2-practitioner`, `k3-instrument`, `k4-complete` to dead Shopify handles.
-- `src/components/ShopSection.tsx:10` — `FEATURED_HANDLE_ORDER` lists `complete-kit`, `practitioner-kit`, `observer-kit`.
-- `src/components/CartDrawer.tsx:29-32` — legacy handle-to-tier map (`observer-kit`, `practitioner-kit`, `complete-kit`).
-- `public/_redirects:1-3` — already 301s the three legacy product handles to `/prepare` (correct, leave as is).
+## 2. Who actually hosts affiliate links today
 
-Supabase `bundles` / `bundle_items` table is read by: `netlify/edge-functions/shop-json.ts:26-35`, `src/pages/ProductDetail.tsx:145,151`, `src/components/EmailCapture.tsx:28,49`, `src/components/admin/ConversionFunnel.tsx:168`, `src/components/admin/KitSignups.tsx:34`. Only `shop-json.ts` publishes that stale data to the public web, which is why `/shop.json` still advertises Observer $109 and Practitioner $159.
+Answer: **no page hosts a live affiliate link any more.**
+- `/disclosure` (`src/pages/Disclosure.tsx:38-45`) *names* three affiliate products (Bon Charge Max Red Light Device, MitoMAT Red Light Therapy Yoga Mat, Peyote Way Church of God Spirit Walk) but renders them as a plain `<li>` list, no anchors.
+- No `rel="sponsored"` anywhere in `src/`.
+- The only component that ever rendered those products, `src/components/RelatedBundleProducts.tsx`, is imported by nothing (it and `src/data/bundleItems.ts` are orphaned; `bundleItems.ts` contains no URLs at all).
+- `/prepare` hosts three Shopify cart permalinks for our own kits plus four Shopify policy links. Zero affiliate links.
 
-## 2. Diagnosis: edge functions, mirroring, and drift checking
+Consequence for About: the sentence is wrong on two counts — /prepare is direct sales, not affiliate, and there is no live affiliate revenue. The correct page to name for the disclosure of past/named affiliate relationships is `/disclosure`.
 
-- A Netlify edge function cannot import from `src/`. Deno resolves relative specifiers with explicit `.ts` extensions and no Vite `@/` alias, and the `src/` tree is not part of the edge bundle. The existing working precedent is `netlify/edge-functions/content-prerender.ts:2`, which imports `../lib/ui-strings.ts`. So `netlify/lib/kits.ts` is a safe, proven location for a mirrored copy imported as `../lib/kits.ts`.
-- Vitest is not configured: `package.json` scripts are only `dev`, `build`, `build:dev`, `lint`, `preview`; there is no vitest dependency and no `test` block in `vite.config.ts`; `scripts/` contains only `route_parity.py`.
-- `netlify.toml` has no `[build] command` — only `publish = "dist"`, so Netlify runs the default `npm run build`.
-- Smallest drift check that therefore actually gates a deploy: a dependency-free Node script `scripts/check-kits-drift.mjs` that reads both files and compares the normalized kit payload, wired as `"prebuild": "node scripts/check-kits-drift.mjs"` in `package.json`. npm runs `prebuild` automatically before `build`, so it gates local builds and the Netlify build with no new dependency and no test runner.
+## 3. Routing and scaffolding for four new pages
 
-## 3. Diagnosis: are the three legacy modules live?
+- `src/AppRoutes.tsx` imports the small legal pages **eagerly**: `Privacy` (:24), `Terms` (:25), `Disclosure` (:26); routes at `:150-152`. New pages follow the same pattern (eager import, `<Route path="shipping" .../>` etc.).
+- Footer: legal links are in the bottom bar (`src/components/Footer.tsx:203-211`, Privacy / Terms / Disclosure). The "Resources" column is at `:36+` and is content links, not legal. The four new pages belong in the bottom legal bar.
+- Layout to copy: `src/pages/Terms.tsx` — `Helmet` (title, description, canonical, robots, og:*), `Navigation`, `Breadcrumb`, `<main id="main-content">`, `container mx-auto px-4 py-16 max-w-4xl`, `h1`, effective-date line, `div.space-y-6` prose, `Footer`. Exactly the right template.
+- Sitemap: there is no static `public/sitemap.xml`; it is generated by `netlify/edge-functions/sitemap.ts` from a `STATIC_ROUTES` array (`/privacy` `:46`, `/terms` `:47`, `/disclosure` `:48`). Yes — add the four routes there.
+- Prerender: yes, add four `STATIC_PAGES` entries. The `StaticPage` type is at `:1603-1614` (`title`, `description`, `heading`, `paragraphs[]`, optional `links`, `breadcrumbName`, `bodyExtraHtml`). Single-segment paths dispatch automatically via `renderStatic` at `:254-257`, so no routing change is needed there.
+- One more file the question did not list but that is required: `netlify/edge-functions/spa-guard.ts:22` holds the allowlist of single-segment routes that stay 200. Without the four slugs added there the new pages 404 in production.
 
-- `src/hooks/useBundleAvailability.tsx` — **USED**. Imported by `src/pages/ProductDetail.tsx:14` (`bundleShopifyHandles`), which is routed at `/products/:handle`. Do not delete; out of scope here.
-- `src/components/CartDrawer.tsx` — **USED**. Imported and rendered by `src/components/Navigation.tsx:4,148,174`, so it is on every page. Do not delete.
-- `src/components/ShopSection.tsx` — **UNUSED on any live route**. Its only importer is `src/pages/Index.tsx:11,96`, and `src/pages/Index.tsx` is imported by nothing; `src/AppRoutes.tsx:96` renders `Home` at the index route. Deleting either file would build clean, but that is a separate cleanup and is not part of this change.
+## 4. /prepare exact JSX (confirmed, all unchanged by this plan)
 
-## 4. The change
+`src/pages/Prepare.tsx`:
+- `:46` — `Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}`
+- `:53-55` — `Ships in 7–10 business days. Free US shipping included. 18+, for research use.` (en dash)
+- `:56-58` — `Plain packaging. Your card statement lists Meridian Optics Lab.`
+- `:99` — PageHero subtitle "…one observer, three observers, six observers…"
+- `:149` — "Field materials and protocols, free download, no account needed:" plus the nine links
+- `:194-238` — STORE POLICIES section with the four `dmtcode-p4szt.myshopify.com/policies/*` URLs
 
-Create one typed catalogue module, mirror it for Deno, and make every current hardcode read from it. No visual change, no price change, no name change, no new permalinks.
+`netlify/edge-functions/content-prerender.ts` `renderPrepare`:
+- `:865` — parts line, `:867` — `Ships in 7-10 business days. Free US shipping included. 18+, for research use.` (hyphen)
+- `:893` — "Field materials and protocols, free download" section — untouched.
+- FAQ data and `renderFaq` — untouched.
 
-Files created:
-1. `src/data/kits.ts` — exports `KITS` with `{ id, name, observers, price, priceNumber, cart, image, diyCost, diyCostNumber, availability, description }` for solo/triad/circle, plus a derived `KIT_PRICE_RANGE` string. Values copied verbatim from the current `Prepare.tsx` `KITS` array and `Home.tsx` `INSTRUMENTS` spec/price strings.
-2. `netlify/lib/kits.ts` — byte-equivalent mirror of the kit payload, Deno-safe (no imports, no aliases), for edge-function use.
-3. `scripts/check-kits-drift.mjs` — compares the two files' kit payloads and exits non-zero on any difference.
+## Proposed change (smallest coherent batch)
 
-Files modified:
-4. `src/pages/Prepare.tsx` — delete the local `KITS` array and the local `Kit` type, import both from `src/data/kits.ts`. Rendering untouched.
-5. `src/pages/Home.tsx` — delete the local `INSTRUMENTS` array, derive the same three cards from the imported `KITS` (spec line built from `observers`, `href` fixed to `/prepare`). Rendering and analytics untouched.
-6. `src/hooks/useDynamicMeta.tsx` — derive the price range in the `bundles` and `tools` descriptions from `KIT_PRICE_RANGE` instead of the hardcoded "$289 to $1,090" and "$109 to $1,090", and drop the stale bill-of-materials sentence from `tools`.
-7. `netlify/edge-functions/shop-json.ts` — stop querying Supabase `bundles`/`bundle_items`; emit the three kits from `../lib/kits.ts` in the same JSON envelope shape (license, source, generated_at, bundles array with slug/name/price_usd/url).
-8. `package.json` — add `"prebuild": "node scripts/check-kits-drift.mjs"`.
+### A. Copy corrections (3 React files + 2 prerender strings)
+1. `src/pages/About.tsx:229` — rewrite the Revenue model sentence so it stops claiming affiliate income from /prepare. Replacement: "**Revenue model:** Direct sales of research kits through our own Shopify store are intended to cover server costs, domain registration, and development time. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible." Adjust `:232` to say we sell 650 nm laser kits directly and that /disclosure names every commercial relationship, dropping the present-tense affiliate-commission claim.
+2. `src/pages/Terms.tsx:56` — replace with: "Equipment is sold through our Shopify store, operating as Meridian Optics Lab, and the store's own terms, shipping and refund handling apply to the purchase itself. Those policies are mirrored at /shipping, /returns, /store-terms and /store-contact. Our /disclosure page names every commercial relationship."
+3. `netlify/edge-functions/content-prerender.ts:2050` — same replacement text, verbatim, inside the `terms` `bodyExtraHtml`.
+4. `src/pages/Privacy.tsx:36` and `:45` — add the checkout carve-out so the "no real name" claim is not contradicted by shipping a physical box: at `:36` append "…We do not ask for your real name at any point on this site. If you buy a kit, the store collects the name and shipping address needed to deliver it, and that happens on Shopify's systems, not here." At `:45` scope the second sentence the same way ("anywhere on this site outside of store checkout, which runs on Shopify").
+5. `netlify/edge-functions/content-prerender.ts:2025` and `:2026` — mirror both Privacy edits verbatim.
+6. Optionally mirror the corrected funding sentence into the `about` prerender `paragraphs` array (`:1857-1862`), which currently omits funding entirely. Recommended for parity.
 
-Nothing else is touched. Specifically unchanged: `public/downloads/*`, `public/llms.txt`, `netlify/edge-functions/content-prerender.ts`, `src/pages/FAQ.tsx`, all Supabase migrations, the three Shopify cart permalinks, prices, and kit names.
+### B. Four policy mirror pages
+New files, each cloned from the `Terms.tsx` layout, owner-authored copy stating the store's actual policy (text to be supplied/confirmed before writing any shipping window, refund window, or warranty claim):
+- `src/pages/Shipping.tsx` → `/shipping`
+- `src/pages/Returns.tsx` → `/returns`
+- `src/pages/StoreTerms.tsx` → `/store-terms`
+- `src/pages/StoreContact.tsx` → `/store-contact`
 
-## Verification after implementation
+Each: canonical `https://dmtcode.com/<slug>`, `h1`, prose, and a closing line linking to the corresponding Shopify policy URL as the authoritative version.
 
-- `rg -n '\$289|\$649|\$1,090' src` returns hits only in `src/data/kits.ts`.
-- `rg -n '\$109' src` returns zero matches.
-- Build passes with `prebuild` running; deliberately editing one price in `src/data/kits.ts` makes `npm run build` fail.
-- `/prepare` and `/` render byte-identically to today.
+Wiring:
+- `src/AppRoutes.tsx` — four eager imports next to `:24-26`, four routes next to `:150-152`.
+- `src/components/Footer.tsx:203-211` — add the four links to the legal bar.
+- `netlify/edge-functions/sitemap.ts:46-48` — add the four routes at priority `0.3`, `yearly`.
+- `netlify/edge-functions/spa-guard.ts:22` — add `"shipping", "returns", "store-terms", "store-contact"`.
+- `netlify/edge-functions/content-prerender.ts` `STATIC_PAGES` — four entries carrying the verbatim policy text so the crawler render matches the React pages.
+- `src/pages/Prepare.tsx:194-238` — leave the four Shopify links intact; add the four internal mirror links alongside them in the same sentence (this is the only /prepare touch, and it adds no product or shipping claim).
 
-## Needs a human step
+### Facts needed before writing the policy copy
+The mirror pages must state only confirmed facts. Please confirm: return window and condition, who pays return shipping, restocking fee if any, warranty period, order-cancellation window, support email and response time, and business address if you want one published. Absent confirmation the pages will state only what is already live on site ("Ships in 7 to 10 business days. Free US shipping included.") and link out to Shopify for the rest.
 
-Netlify must redeploy for the new `/shop.json` output to go live; the stale Supabase-backed JSON persists on the CDN until then (it carries a 1-hour `s-maxage`).
+### Explicitly not touched
+`public/downloads/*`, `public/llms.txt`, FAQ (`src/pages/FAQ.tsx` and the FAQ block in the prerender), any migration, the three cart permalinks, prices, kit names, `src/data/kits.ts`, `netlify/lib/kits.ts`, kit contents claims.
