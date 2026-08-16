@@ -33,8 +33,19 @@ interface MemberProfile {
   reputation_score: number | null;
 }
 
+interface MemberEmail {
+  id: string;
+  email: string | null;
+  provider: string | null;
+  email_confirmed: boolean;
+  last_sign_in_at: string | null;
+}
+
+type MemberRow = MemberProfile & Partial<Omit<MemberEmail, 'id'>>;
+
 const DAY_MS = 86400000;
 const PAGE_SIZE = 50;
+
 
 export const ageInDays = (createdAt: string, now: number = Date.now()): number =>
   Math.max(0, Math.floor((now - new Date(createdAt).getTime()) / DAY_MS));
