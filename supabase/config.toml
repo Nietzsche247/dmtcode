@@ -85,3 +85,6 @@ verify_jwt = false
 
 [functions.scrape-articles]
 verify_jwt = false
+
+[functions.admin-member-emails]
+verify_jwt = true
