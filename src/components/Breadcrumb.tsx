@@ -58,7 +58,7 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
       <ol className="flex items-center space-x-2 text-sm">
         <li>
           <Link 
-            to="/" 
+            to={localePath(locale, '/')}
             className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Home"
           >
@@ -66,7 +66,8 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
           </Link>
         </li>
         {pathnames.map((value, index) => {
-          const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+          const to = localePath(locale, `/${pathnames.slice(0, index + 1).join('/')}`);
+
           const isLast = index === pathnames.length - 1;
           const mapped = breadcrumbNameMap[value];
           const fallback = value
