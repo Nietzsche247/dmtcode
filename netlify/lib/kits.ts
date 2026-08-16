@@ -20,7 +20,7 @@ export const KITS: Kit[] = [
   {
     id: 'solo',
     sku: 'KIT-SOLO-650',
-    name: '650 nm Laser Diffraction Research Kit — Solo (1 Observer)',
+    name: '650 nm Laser Diffraction Research Kit, Solo (1 Observer)',
     shortName: 'Solo',
     observers: '1',
     price: '$289',
@@ -29,14 +29,14 @@ export const KITS: Kit[] = [
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg',
     diyCost: '$219',
     diyCostNumber: 219,
-    availability: 'Ships in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
       'Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
   },
   {
     id: 'triad',
     sku: 'KIT-TRIAD-MW',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit — Triad (2–3 Observers)',
+    name: 'Multi-Wavelength Laser Diffraction Research Kit, Triad (2 to 3 Observers)',
     shortName: 'Triad',
     observers: '2 to 3',
     price: '$649',
@@ -45,14 +45,14 @@ export const KITS: Kit[] = [
     image: null,
     diyCost: '$516',
     diyCostNumber: 516,
-    availability: 'Ships in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
       'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
   },
   {
     id: 'circle',
     sku: 'KIT-CIRCLE-MW',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit — Circle (6 Observers)',
+    name: 'Multi-Wavelength Laser Diffraction Research Kit, Circle (6 Observers)',
     shortName: 'Circle',
     observers: '6',
     price: '$1,090',
@@ -61,7 +61,7 @@ export const KITS: Kit[] = [
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg',
     diyCost: '$883',
     diyCostNumber: 883,
-    availability: 'Ships in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
       'Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
   },

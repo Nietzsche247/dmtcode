@@ -30,7 +30,7 @@ const Shipping = () => {
               <p>All kits ship free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days of ordering.</p>
               <p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship in plain packaging.</p>
               <p>If your order has not arrived within 10 business days, email info@dmtcode.com with your order number and we will investigate with the carrier.</p>
-              <p>International shipping, where offered at checkout, is calculated at checkout and delivery timelines vary by destination. Any customs duties or import taxes are the responsibility of the buyer.</p>
+              <p>We also ship internationally to Canada, the United Kingdom, Ireland, most of the European Union, Norway, Switzerland, Israel, the United Arab Emirates, Japan, South Korea, Hong Kong, Singapore, Malaysia, Australia and New Zealand. International rates are carrier calculated (USPS or DHL Express) and shown at checkout before you pay. Delivery timelines vary by destination, and any customs duties or import taxes are the responsibility of the buyer. If your country is not offered at checkout, email info@dmtcode.com before ordering.</p>
 
               <p className="text-sm text-muted-foreground pt-6">
                 Authoritative copy:{' '}

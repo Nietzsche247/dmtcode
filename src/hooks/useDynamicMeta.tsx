@@ -25,8 +25,8 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   },
   tools: {
     research: {
-      title: 'Research Equipment & Protocol Tools | DMT Code',
-      description: 'Kits and optical components for symbol documentation. Two kits ship now and are printed material only. Kits containing a 650nm module are preorder and their specifications are not yet published.',
+      title: 'Laser Diffraction Research Kits | DMT Code',
+      description: `Kits for one observer or for groups of two to three or six observers, ${KIT_PRICE_RANGE}. Sold by Meridian Optics Lab.`,
     },
     explorer: {
       title: 'Journey Equipment | From Entry-Level to Premium | DMT Code',

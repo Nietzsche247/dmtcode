@@ -173,21 +173,21 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
   },
   prepare: {
     en: {
-      title: "Prepare. Kits and group bundles for careful practice. | DMT Code",
+      title: "Prepare. Laser diffraction research kits. | DMT Code",
       description:
-        "Kits and group bundles for careful practice. The two kits that ship now are printed material only. Everything with a 650 nm module is preorder.",
+        "Three laser diffraction research kits for one, two to three, or six observers: 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials. Sold by Meridian Optics Lab.",
     },
     es: {
       title:
-        "Preparación. Kits y paquetes grupales para una práctica cuidadosa. | DMT Code",
+        "Preparación. Kits de investigación de difracción láser. | DMT Code",
       description:
-        "Kits y paquetes grupales para una práctica cuidadosa. Los dos kits que se envían ahora son solo material impreso. Todo lo que lleva módulo de 650 nm es reserva.",
+        "Tres kits de investigación de difracción láser para uno, dos a tres o seis observadores: módulos ópticos de 650 nm y multilongitud de onda, óptica de difracción y materiales impresos de observación. Vendidos por Meridian Optics Lab.",
     },
     de: {
       title:
-        "Vorbereitung. Kits und Gruppenpakete für sorgfältige Praxis. | DMT Code",
+        "Vorbereitung. Forschungskits zur Laserbeugung. | DMT Code",
       description:
-        "Kits und Gruppenpakete für sorgfältige Praxis. Die zwei sofort lieferbaren Kits enthalten nur Druckmaterial. Alles mit 650 nm Modul ist Vorbestellung.",
+        "Drei Forschungskits zur Laserbeugung für einen, zwei bis drei oder sechs Beobachter: 650 nm und Mehrwellenlängen-Lasermodule, Beugungsoptik und gedruckte Beobachtungsmaterialien. Verkauft von Meridian Optics Lab.",
     },
   },
   "evidence-map": {

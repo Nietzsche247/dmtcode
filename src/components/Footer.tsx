@@ -177,7 +177,8 @@ export const Footer = () => {
               <span className="text-foreground font-medium">No Scientific Validation:</span> The DMT code phenomenon described represents subjective experiences and has not been scientifically validated through peer-reviewed research.
             </p>
             <p>
-              <span className="text-foreground font-medium">Affiliate Disclosure:</span> This site contains affiliate links. We may earn a commission when you purchase through these links.
+              <span className="text-foreground font-medium">Commercial Disclosure:</span> Kits are sold by Meridian Optics Lab, operated by the same owner as DMT Code Project. This site does not currently carry affiliate links. See the{' '}
+              <Link to="/disclosure" className="underline hover:text-foreground">Disclosure page</Link>.
             </p>
           </div>
         </div>

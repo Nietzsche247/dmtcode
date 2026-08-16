@@ -7,7 +7,7 @@ import { storefrontApiRequest, STOREFRONT_PRODUCTS_QUERY, ShopifyProduct } from 
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
-const FEATURED_HANDLE_ORDER = ['complete-kit', 'instrument-kit', 'practitioner-kit', 'observer-kit', 'multi-wavelength-laser-diffraction-kit-circle', '650nm-laser-diffraction-research-kit-solo', 'quarton-vlm-650-21-lpt-laser-module', 'refraction-tank-laser-system'];
+const FEATURED_HANDLE_ORDER = ['multi-wavelength-laser-diffraction-kit-circle', 'multi-wavelength-laser-diffraction-kit-triad', '650nm-laser-diffraction-research-kit-solo', 'quarton-vlm-650-21-lpt-laser-module', 'refraction-tank-laser-system'];
 
 export const ShopSection = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);

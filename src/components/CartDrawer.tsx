@@ -23,14 +23,12 @@ declare global {
   }
 }
 
-// Bundle SKU prefixes to detect bundle purchases
-const BUNDLE_SKU_PREFIXES = ['KIT-OBSERVER', 'KIT-PRACTITIONER', 'KIT-INSTRUMENT', 'KIT-COMPLETE'];
-const BUNDLE_TYPE_MAP: Record<string, 'starter' | 'gateway' | 'complete' | 'ceremony'> = {
-  'observer-kit': 'starter',
-  'practitioner-kit': 'gateway',
-  'instrument-kit': 'complete',
-  'complete-kit': 'ceremony',
-};
+// The three live Shopify kit handles.
+const KIT_HANDLES = new Set([
+  '650nm-laser-diffraction-research-kit-solo',
+  'multi-wavelength-laser-diffraction-kit-triad',
+  'multi-wavelength-laser-diffraction-kit-circle',
+]);
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,15 +46,8 @@ export const CartDrawer = () => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
-  // Check if cart contains any bundles
-  const bundleInCart = items.find(item => {
-    const handle = item.product.node?.handle || '';
-    return Object.keys(BUNDLE_TYPE_MAP).includes(handle);
-  });
-
-  const getBundleType = (handle: string): 'starter' | 'gateway' | 'complete' | 'ceremony' | null => {
-    return BUNDLE_TYPE_MAP[handle] || null;
-  };
+  // Check if cart contains any kit
+  const bundleInCart = items.find(item => KIT_HANDLES.has(item.product.node?.handle || ''));
 
   const persistedRef = useRef(false);
 
@@ -83,31 +74,7 @@ export const CartDrawer = () => {
     }
   };
 
-  const triggerEmailSequence = async (bundleType: 'starter' | 'gateway' | 'complete' | 'ceremony', orderId: string) => {
-    if (!email) return;
-
-    try {
-      const { data, error } = await supabase.functions.invoke('bundle-purchase-emails', {
-        body: {
-          email,
-          customerName: customerName || 'Researcher',
-          bundleType,
-          orderId,
-        },
-      });
-
-      if (error) {
-        console.error('Error triggering email sequence:', error);
-      } else {
-        console.log('Email sequence initiated:', data);
-      }
-    } catch (err) {
-      console.error('Failed to trigger email sequence:', err);
-    }
-  };
-
   const handleCheckout = async () => {
-    const bundleTier = bundleInCart ? getBundleType(bundleInCart.product.node?.handle || '') : null;
     const discountApplied = items.some(item => {
       const title = item.product.node?.title?.toLowerCase() || '';
       return title.includes('journal') && bundleInCart;
@@ -124,7 +91,7 @@ export const CartDrawer = () => {
           quantity: i.quantity,
         })),
         has_bundle: !!bundleInCart,
-        bundle_tier: bundleTier,
+        bundle_tier: bundleInCart?.product.node?.handle ?? null,
         price: totalPrice,
         email_captured: emailCaptured,
         discount_applied: discountApplied,
@@ -139,7 +106,7 @@ export const CartDrawer = () => {
         // Track bundle purchased event (fired before redirect)
         if (window.posthog && bundleInCart) {
           window.posthog.capture('bundle_purchased', {
-            bundle_tier: bundleTier,
+            bundle_tier: bundleInCart?.product.node?.handle ?? null,
             bundle_name: bundleInCart.product.node?.title,
             price: totalPrice,
             discount_applied: discountApplied,
@@ -148,20 +115,11 @@ export const CartDrawer = () => {
           });
         }
 
-        // If bundle in cart and email captured, trigger email sequence
+        // Record the email capture against the kit before redirecting.
         if (bundleInCart && email) {
-          const bundleHandle = bundleInCart.product.node?.handle || '';
-          const bundleType = getBundleType(bundleHandle);
-          
-          if (bundleType) {
-            await persistEmail();
-            const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-            await triggerEmailSequence(bundleType, orderId);
-            toast.success('Email sequence started!', {
-              description: 'Check your inbox for onboarding instructions.',
-            });
-          }
+          await persistEmail();
         }
+
         
         window.open(checkoutUrl, '_blank');
         setIsOpen(false);
