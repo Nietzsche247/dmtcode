@@ -40,6 +40,32 @@ async function recordReviewActivity(userId: string | null): Promise<void> {
 
 type Profile = { id: string; handle: string | null; avatar_seed: string | null };
 
+// Read-only translation aid returned by the admin-translate-submission function.
+// Nothing here is ever written back to symbol_submissions.
+type TranslationResult = {
+  detected_language?: string;
+  description_en?: string;
+  context_note_en?: string;
+  nothing_to_translate?: boolean;
+};
+
+const LANGUAGE_NAMES =
+  typeof Intl !== 'undefined' && 'DisplayNames' in Intl
+    ? new Intl.DisplayNames(['en'], { type: 'language' })
+    : null;
+
+function languageLabel(code: string): string {
+  const name = (() => {
+    try {
+      return LANGUAGE_NAMES?.of(code) ?? null;
+    } catch {
+      return null;
+    }
+  })();
+  return name && name !== code ? `${name} (${code})` : code;
+}
+
+
 type SymbolSubmission = Tables<'symbol_submissions'> & {
   profile?: Profile | null;
 };
