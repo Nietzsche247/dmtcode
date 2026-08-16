@@ -2420,6 +2420,7 @@ export const config: Config = {
     "/store-terms",
     "/store-contact",
     "/capture",
+    "/co-witnesses",
     "/join",
     "/submit-symbol",
     // Locale mirrors. Netlify honours this in-file config over netlify.toml,
