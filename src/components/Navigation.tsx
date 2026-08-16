@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./CartDrawer";
 import { useCartStore } from "@/stores/cartStore";
 import { useModeStore } from "@/stores/modeStore";
+import { useThemeStore } from "@/stores/themeStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
@@ -28,6 +29,7 @@ export const Navigation = () => {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
   const { mode, setMode } = useModeStore();
+  const { resolvedTheme, setTheme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
