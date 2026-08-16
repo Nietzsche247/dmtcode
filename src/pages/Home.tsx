@@ -244,7 +244,7 @@ const Home = () => {
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
                 Instruments for careful observation
               </h2>
-              <p className="text-muted-foreground mb-12">
+              <p className="text-muted-foreground mb-8">
                 Three kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -269,7 +269,7 @@ const Home = () => {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-5">
                       <h3 className="font-serif text-2xl text-foreground">{kit.name}</h3>
                       <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
                         {kit.spec}
@@ -283,7 +283,7 @@ const Home = () => {
                       <Button
                         asChild
                         variant="outline"
-                        className="w-full mt-6 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="w-full mt-5 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         <Link
                           to={kit.href}

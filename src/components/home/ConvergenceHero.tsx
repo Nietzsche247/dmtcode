@@ -114,8 +114,8 @@ export const ConvergenceHero = () => {
   }
 
   return (
-    <section className="relative px-4 pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-14 md:gap-16 items-center">
+    <section className="relative px-4 pt-20 pb-10 md:pt-32 md:pb-20 overflow-hidden">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-10 md:gap-16 items-center">
         {/* Editorial statement */}
         <div className="space-y-7">
           <p className="label-data text-xs text-muted-foreground">
