@@ -2055,6 +2055,61 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 <section><h2>Changes</h2><p>If we change these terms we will change the date at the top.</p></section>
 <p>Questions: info@dmtcode.com</p>`,
   },
+  shipping: {
+    title: "Shipping Policy | Meridian Optics Lab via DMT Code",
+    description: "Shipping timelines, tracking, packaging and international terms for Meridian Optics Lab, the store of record for DMT Code kits.",
+    heading: "Shipping Policy",
+    paragraphs: [
+      "These policies belong to Meridian Optics Lab, the store of record for DMT Code kits.",
+    ],
+    breadcrumbName: "Shipping",
+    bodyExtraHtml: `<section><p>All kits ship free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days of ordering.</p><p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship in plain packaging.</p><p>If your order has not arrived within 10 business days, email info@dmtcode.com with your order number and we will investigate with the carrier.</p><p>International shipping, where offered at checkout, is calculated at checkout and delivery timelines vary by destination. Any customs duties or import taxes are the responsibility of the buyer.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy">Meridian Optics Lab Shipping Policy</a></p></section>`,
+  },
+  returns: {
+    title: "Returns and Refunds | Meridian Optics Lab via DMT Code",
+    description: "Return eligibility, refund timelines and damaged item handling for Meridian Optics Lab, the store of record for DMT Code kits.",
+    heading: "Returns and Refunds",
+    paragraphs: [
+      "These policies belong to Meridian Optics Lab, the store of record for DMT Code kits.",
+    ],
+    breadcrumbName: "Returns",
+    bodyExtraHtml: `<section><p>Meridian Optics Lab accepts returns of unopened, unused optical research kits within 30 days of delivery.</p></section>
+<section><h2>Eligibility</h2><p>Items must be unopened, unused, and in original packaging with all components and printed materials included. Opened laser modules and protective eyewear are not eligible for return. These are precision optical instruments and personal safety items; once opened, we cannot verify their calibration or hygiene and cannot resell them. Kits with broken factory seals on the laser module compartment are treated as opened.</p></section>
+<section><h2>How to start a return</h2><p>Email info@dmtcode.com with your order number. We will confirm eligibility and provide the return address. Return shipping is paid by the buyer. We recommend a tracked service; lost return shipments are the sender's responsibility.</p></section>
+<section><h2>Refunds</h2><p>Once the returned kit is received and inspected, approved refunds are issued to the original payment method within 10 business days. Original shipping charges, where applicable, are not refunded.</p></section>
+<section><h2>Damaged or defective items</h2><p>If your kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the damage and packaging. We will replace the affected component or the full kit at no cost to you. Defective claims do not require returning the original item unless we request it.</p></section>
+<section><h2>Exchanges</h2><p>We do not offer direct exchanges. Return the eligible item for a refund and place a new order.</p></section>
+<section><p>This policy is governed by the laws of the State of Arizona, United States.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/refund-policy">Meridian Optics Lab Refund Policy</a></p></section>`,
+  },
+  "store-terms": {
+    title: "Terms of Service | Meridian Optics Lab via DMT Code",
+    description: "Purchase terms, laser safety requirements, liability and governing law for Meridian Optics Lab, the store of record for DMT Code kits.",
+    heading: "Terms of Service",
+    paragraphs: [
+      "These policies belong to Meridian Optics Lab, the store of record for DMT Code kits.",
+    ],
+    breadcrumbName: "Store terms",
+    bodyExtraHtml: `<section><p>These terms govern purchases from Meridian Optics Lab, an online retailer of educational optical research equipment based in Tucson, Arizona, United States. By placing an order you agree to these terms.</p></section>
+<section><h2>Products</h2><p>We sell 650 nm laser diffraction and refraction observation kits and related optical components intended for educational and observational research use by adults. Products are laboratory and classroom style equipment. They are not toys, not medical devices, and are not intended to diagnose, treat, cure, or prevent any condition.</p></section>
+<section><h2>Age requirement</h2><p>You must be at least 18 years old to purchase. Laser devices should be used by, or under the direct supervision of, an adult.</p></section>
+<section><h2>Laser safety</h2><p>Kits contain low power visible laser modules that comply with applicable United States FDA CDRH requirements for consumer laser products. Never point a laser at eyes, faces, people, animals, vehicles, or aircraft. Never view the beam directly or through magnifying optics. Read all included safety documentation before use. You are responsible for using the equipment safely and in compliance with the laws of your jurisdiction.</p></section>
+<section><h2>Orders and pricing</h2><p>All prices are in US dollars. We reserve the right to refuse or cancel any order, including where a product listing contains a pricing or descriptive error. If we cancel a paid order you receive a full refund.</p></section>
+<section><h2>Shipping</h2><p>Shipping terms, timelines, and destinations are described in our Shipping Policy at checkout.</p></section>
+<section><h2>Intellectual property</h2><p>All product names, printed observation materials, and site content are the property of Meridian Optics Lab or its licensors and may not be reproduced for commercial purposes without written permission.</p></section>
+<section><h2>Limitation of liability</h2><p>To the maximum extent permitted by law, Meridian Optics Lab is not liable for indirect, incidental, or consequential damages arising from the use or misuse of purchased equipment. Our total liability for any claim is limited to the amount you paid for the product giving rise to the claim. Nothing in these terms limits liability that cannot be limited under applicable law.</p></section>
+<section><h2>Governing law</h2><p>These terms are governed by the laws of the State of Arizona, United States, without regard to conflict of law principles. Any dispute will be resolved in the state or federal courts located in Pima County, Arizona.</p></section>
+<section><h2>Contact</h2><p>Questions about these terms: info@dmtcode.com</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/terms-of-service">Meridian Optics Lab Terms of Service</a></p></section>`,
+  },
+  "store-contact": {
+    title: "Contact Information | Meridian Optics Lab via DMT Code",
+    description: "Contact details and response times for Meridian Optics Lab, the store of record for DMT Code kits.",
+    heading: "Contact Information",
+    paragraphs: [
+      "These policies belong to Meridian Optics Lab, the store of record for DMT Code kits.",
+    ],
+    breadcrumbName: "Store contact",
+    bodyExtraHtml: `<section><p>Meridian Optics Lab</p><p>Tucson, Arizona, United States</p><p>Email: <a href="mailto:info@dmtcode.com">info@dmtcode.com</a></p><p>We respond to order and product inquiries within 2 business days. For return requests, include your order number in the subject line.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/contact-information">Meridian Optics Lab Contact Information</a></p></section>`,
+  },
   disclosure: {
     title: "Disclosure | DMT Code",
     description: "How this project makes money, who we have relationships with, and where the conflicts are.",
