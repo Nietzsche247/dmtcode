@@ -309,19 +309,21 @@ const Home = () => {
           <EmailCapture source="homepage" />
           
           {/* CTA Section */}
-          <section className="container mx-auto px-4 py-32 text-center">
-            <AnimatedSection className="max-w-3xl mx-auto">
-              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Get Involved</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-foreground mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Contribute to Open Research
+          <section className="container mx-auto px-4 py-16 text-center border-t border-border/30">
+            <AnimatedSection className="max-w-2xl mx-auto">
+              <h2
+                className="text-3xl md:text-4xl text-foreground mb-4"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                Contribute to open research
               </h2>
-              <p className="text-muted-foreground font-normal mb-12 text-lg max-w-xl mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <p className="text-muted-foreground mb-8 text-base" style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}>
                 Submit your observations or explore the evidence. Null reports are equally valuable.
               </p>
-              <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
-                  className="px-10 py-7 h-auto rounded-full btn-lickable border-beam group text-lg"
+                  className="px-8 py-6 h-auto rounded-full btn-lickable border-beam group"
                   onClick={() => navigate('/registry#submit')}
                 >
                   Submit Symbol
@@ -330,7 +332,7 @@ const Home = () => {
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="px-10 py-7 h-auto rounded-full btn-lickable border-primary/50 hover:border-primary text-lg"
+                  className="px-8 py-6 h-auto rounded-full btn-lickable border-primary/50 hover:border-primary"
                   onClick={() => navigate('/evidence-map')}
                 >
                   View Evidence
@@ -339,7 +341,6 @@ const Home = () => {
             </AnimatedSection>
           </section>
 
-          <GetInvolvedDoors variant="bottom" />
         </main>
 
         <Footer />
