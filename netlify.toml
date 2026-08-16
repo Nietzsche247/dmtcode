@@ -161,6 +161,22 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/shipping"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/returns"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/store-terms"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/store-contact"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/card/*"
   function = "convergence-card"
 
