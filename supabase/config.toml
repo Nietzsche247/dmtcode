@@ -88,3 +88,7 @@ verify_jwt = false
 
 [functions.admin-member-emails]
 verify_jwt = true
+
+[functions.admin-translate-submission]
+verify_jwt = true
+
