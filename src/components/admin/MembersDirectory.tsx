@@ -85,6 +85,27 @@ const csvCell = (value: string | number | null) => {
 
 type SortKey = 'newest' | 'oldest' | 'longest' | 'symbols' | 'reputation';
 
+const EmailCell = ({ member }: { member: MemberRow }) => {
+  if (!member.email) {
+    return <span className="text-muted-foreground">&mdash;</span>;
+  }
+  return (
+    <div className="min-w-0">
+      <a href={`mailto:${member.email}`} className="block truncate underline underline-offset-2">
+        {member.email}
+      </a>
+      <span
+        className={`block text-xs ${
+          member.email_confirmed ? 'text-muted-foreground' : 'text-destructive'
+        }`}
+      >
+        {member.provider ?? 'unknown'} · {member.email_confirmed ? 'confirmed' : 'unconfirmed'}
+      </span>
+    </div>
+  );
+};
+
+
 export const MembersDirectory = () => {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('newest');
