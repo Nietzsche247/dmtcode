@@ -90,7 +90,7 @@ const Prepare = () => {
         <title>Prepare. Laser diffraction research kits.</title>
         <meta
           name="description"
-          content="Three laser diffraction research kits for one, three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
+          content="Three laser diffraction research kits for one, two to three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
         />
         <link rel="canonical" href="https://dmtcode.com/prepare" />
       </Helmet>
@@ -104,7 +104,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Three laser diffraction research kits: one observer, three observers, six observers. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
+            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
@@ -153,26 +153,31 @@ const Prepare = () => {
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
-              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Field materials and protocols, free download, no account needed:{' '}
-                <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="underline hover:text-foreground">Field Sheet (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="underline hover:text-foreground">Hoja de Campo (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="underline hover:text-foreground">Feldblatt (DE)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="underline hover:text-foreground">Sober Baseline Protocol (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo Base Sobria (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="underline hover:text-foreground">Basisprotokoll (DE)</a>
-                {', '}
-                <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="underline hover:text-foreground">AVP Passthrough Protocol (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo AVP (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="underline hover:text-foreground">AVP Protokoll (DE)</a>
-              </p>
+              <div className="mt-4 max-w-2xl">
+                <p className="text-sm text-muted-foreground">
+                  Field materials and protocols, free download, no account needed:
+                </p>
+                <ul className="mt-3 space-y-3">
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Field Sheet</span>
+                    <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Sober Baseline Protocol</span>
+                    <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">AVP Passthrough Protocol</span>
+                    <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                </ul>
+              </div>
             </header>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
