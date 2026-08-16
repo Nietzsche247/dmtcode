@@ -10,7 +10,6 @@ import { SEO } from '@/components/SEO';
 import { ArrowRight, Mic } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
-import { useDynamicMeta } from '@/hooks/useDynamicMeta';
 import { RecentContributions } from '@/components/registry/RecentContributions';
 import { CommunityStats } from '@/components/registry/CommunityStats';
 import { MissionFraming } from '@/components/home/MissionFraming';
@@ -46,7 +45,6 @@ const AnimatedSection = ({ children, className = '' }: { children: ReactNode; cl
 const Home = () => {
   const navigate = useNavigate();
   const { mode } = useModeStore();
-  const meta = useDynamicMeta('home');
 
   return (
     <>
