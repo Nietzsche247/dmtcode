@@ -1,14 +1,27 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, FileEdit } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const RESONANCE_MIN_RESPONSES = 5;
+
+const CC_LINE = 'DMT Code registry export. Licensed CC-BY-4.0. Attribution: DMT Code (dmtcode.com).';
+
+// Tag vocabulary used to surface null reports and sober-baseline records.
+// There is no null_report and no sober/condition column on symbol_submissions
+// today, so these are derived from the existing tags array rather than from a
+// new column. Records matching them are shown in the same list as everything
+// else, never hidden by default, and carry a visible tag.
+const NULL_REPORT_TAGS = ['null-report', 'null_report', 'nothing-seen', 'no-forms'];
+const SOBER_TAGS = ['sober', 'sober-baseline', 'sober_baseline', 'no-substance'];
+
+const hasAnyTag = (tags: string[] | null, vocab: string[]) =>
+  (tags || []).some((t) => vocab.includes(t.toLowerCase().trim()));
 
 interface SymbolSubmission {
   id: string;
@@ -19,6 +32,8 @@ interface SymbolSubmission {
   downvotes: number;
   status: 'pending' | 'approved' | 'rejected';
   source_method: string | null;
+  dose_level: string | null;
+  wavelength: string | null;
   created_at: string;
   user_id: string;
 }
@@ -32,6 +47,7 @@ interface ProfileData {
 export const RegistryBrowser = () => {
   const navigate = useNavigate();
   const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
@@ -39,12 +55,32 @@ export const RegistryBrowser = () => {
   const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
   const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
   const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
-  
-  // Filters
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sourceFilter, setSourceFilter] = useState('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('newest');
+
+  // Filters are query-string driven so a counter elsewhere on the site can link
+  // to exactly the rows that make up its number.
+  const searchQuery = searchParams.get('q') || '';
+  const sourceFilter = searchParams.get('source') || 'all';
+  const doseFilter = searchParams.get('dose') || 'all';
+  const recordFilter = searchParams.get('record') || 'all';
+  const selectedTags = (searchParams.get('tags') || '').split(',').map((t) => t.trim()).filter(Boolean);
+  const sortBy = searchParams.get('sort') || 'newest';
+
+  const setParam = useCallback(
+    (key: string, value: string, defaultValue: string) => {
+      const next = new URLSearchParams(searchParams);
+      if (!value || value === defaultValue) next.delete(key);
+      else next.set(key, value);
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
+
+  const setSearchQuery = (v: string) => setParam('q', v, '');
+  const setSourceFilter = (v: string) => setParam('source', v, 'all');
+  const setDoseFilter = (v: string) => setParam('dose', v, 'all');
+  const setRecordFilter = (v: string) => setParam('record', v, 'all');
+  const setSelectedTags = (v: string[]) => setParam('tags', v.join(','), '');
+  const setSortBy = (v: string) => setParam('sort', v, 'newest');
 
   useEffect(() => {
     loadSymbols();
@@ -55,7 +91,7 @@ export const RegistryBrowser = () => {
     if (sourceFilter !== 'all' || selectedTags.length > 0) {
       trackRegistryFiltered({ source: sourceFilter, tags: selectedTags });
     }
-  }, [sourceFilter, selectedTags]);
+  }, [sourceFilter, selectedTags.join(',')]);
 
   useEffect(() => {
     // Track search
@@ -66,6 +102,7 @@ export const RegistryBrowser = () => {
       return () => clearTimeout(timer);
     }
   }, [searchQuery]);
+
 
   const loadSymbols = async () => {
     setLoading(true);
