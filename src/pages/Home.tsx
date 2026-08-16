@@ -289,7 +289,7 @@ const Home = () => {
                         {kit.price}
                       </div>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Ships in 7 to 10 business days. Free US shipping. 18+, for research use.
+                        {kit.availability}
                       </p>
                       <Button
                         asChild
