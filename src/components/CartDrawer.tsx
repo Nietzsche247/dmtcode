@@ -149,8 +149,8 @@ export const CartDrawer = () => {
     }
     setEmailCaptured(true);
     void persistEmail();
-    toast.success('Email saved!', {
-      description: 'You\'ll receive onboarding emails after purchase.',
+    toast.success('Email saved.', {
+      description: 'We will write only if your kit\'s materials are revised.',
     });
   };
 
@@ -264,10 +264,10 @@ export const CartDrawer = () => {
                   <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
                     <div className="flex items-center gap-2 text-primary">
                       <Mail className="h-4 w-4" />
-                      <span className="text-sm font-medium">Get Onboarding Support</span>
+                      <span className="text-sm font-medium">Kit updates by email</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Enter your email to receive research guides, protocol tips, and integration support after purchase.
+                      Optional. Leave your email and we will write only if the observation materials or protocol documents for your kit are revised. Nothing else is sent.
                     </p>
                     <div className="space-y-2">
                       <Input
@@ -301,7 +301,7 @@ export const CartDrawer = () => {
                   <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
                     <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-2">
                       <Mail className="h-3 w-3" />
-                      Email saved! You'll receive onboarding emails after checkout.
+                      Email saved. We will write only if your kit's materials are revised.
                     </p>
                   </div>
                 )}
