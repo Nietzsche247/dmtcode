@@ -4,12 +4,9 @@ import { storefrontApiRequest } from '@/lib/shopify';
 // Shared source of truth for bundle availability, keyed by the Supabase bundle
 // slug used on /prepare and mapped to the real live Shopify product handles.
 export const bundleShopifyHandles: Record<string, string> = {
-  'k1-observer': 'observer-kit',
-  'k2-practitioner': 'practitioner-kit',
-  'k3-instrument': 'instrument-kit',
-  'k4-complete': 'complete-kit',
-  'b3-triad': 'multi-wavelength-laser-diffraction-kit-triad',
-  'b5-circle': 'multi-wavelength-laser-diffraction-kit-circle',
+  solo: '650nm-laser-diffraction-research-kit-solo',
+  triad: 'multi-wavelength-laser-diffraction-kit-triad',
+  circle: 'multi-wavelength-laser-diffraction-kit-circle',
 };
 
 const BUNDLE_AVAILABILITY_QUERY = `
