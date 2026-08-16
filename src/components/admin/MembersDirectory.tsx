@@ -182,17 +182,21 @@ export const MembersDirectory = () => {
   const pageRows = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
 
   const exportCsv = () => {
-    const header = 'display_name,handle,joined_utc,membership_age_days,symbol_count,reputation_score';
+    const header =
+      'display_name,handle,email,email_confirmed,joined_utc,membership_age_days,symbol_count,reputation_score';
     const lines = filtered.map((r) =>
       [
         csvCell(r.display_name),
         csvCell(r.handle),
+        csvCell(r.email ?? ''),
+        csvCell(r.email === undefined || r.email === null ? '' : String(r.email_confirmed ?? false)),
         csvCell(new Date(r.created_at).toISOString()),
         csvCell(ageInDays(r.created_at, now)),
         csvCell(r.symbol_count ?? 0),
         csvCell(r.reputation_score ?? 0),
       ].join(','),
     );
+
     const blob = new Blob([[header, ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
