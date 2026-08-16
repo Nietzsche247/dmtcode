@@ -102,7 +102,33 @@ export const MembersDirectory = () => {
     },
   });
 
-  const rows = useMemo(() => data ?? [], [data]);
+  const emailQuery = useQuery({
+    queryKey: ['admin-member-emails'],
+    queryFn: async (): Promise<MemberEmail[]> => {
+      const { data, error } = await supabase.functions.invoke('admin-member-emails');
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return (data?.members ?? []) as MemberEmail[];
+    },
+    retry: false,
+  });
+
+  const rows = useMemo<MemberRow[]>(() => {
+    const profiles = data ?? [];
+    const byId = new Map((emailQuery.data ?? []).map((e) => [e.id, e]));
+    return profiles.map((p) => {
+      const e = byId.get(p.id);
+      return e
+        ? {
+            ...p,
+            email: e.email,
+            provider: e.provider,
+            email_confirmed: e.email_confirmed,
+            last_sign_in_at: e.last_sign_in_at,
+          }
+        : p;
+    });
+  }, [data, emailQuery.data]);
   const now = Date.now();
 
   const stats = useMemo(() => {
@@ -129,12 +155,14 @@ export const MembersDirectory = () => {
       ? rows.filter(
           (r) =>
             (r.display_name ?? '').toLowerCase().includes(q) ||
-            (r.handle ?? '').toLowerCase().includes(q),
+            (r.handle ?? '').toLowerCase().includes(q) ||
+            (r.email ?? '').toLowerCase().includes(q),
         )
       : rows.slice();
 
-    const byCreated = (a: MemberProfile, b: MemberProfile) =>
+    const byCreated = (a: MemberRow, b: MemberRow) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+
 
     switch (sort) {
       case 'oldest':
