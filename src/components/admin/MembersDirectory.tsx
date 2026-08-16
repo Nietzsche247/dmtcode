@@ -379,6 +379,7 @@ export const MembersDirectory = () => {
     { label: 'New (7 days)', value: stats.new7 },
     { label: 'Active (30 days)', value: stats.active },
     { label: 'Dormant (30+ days)', value: stats.dormant },
+    { label: 'Never returned', value: stats.never },
     { label: 'Contributors', value: stats.contributors },
     { label: 'Unconfirmed email', value: stats.unconfirmed },
   ];
