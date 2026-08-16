@@ -2442,8 +2442,10 @@ function buildHead(o: HeadOpts): string {
   const alternates = localizable
     ? [
         `<link rel="alternate" hreflang="en" href="${esc(SITE + path)}" />`,
-        `<link rel="alternate" hreflang="es" href="${esc(SITE + "/es" + (path === "/" ? "" : path))}" />`,
-        `<link rel="alternate" hreflang="de" href="${esc(SITE + "/de" + (path === "/" ? "" : path))}" />`,
+        // Locale roots keep the trailing slash so the alternate matches the
+        // canonical and the sitemap exactly: https://dmtcode.com/es/
+        `<link rel="alternate" hreflang="es" href="${esc(SITE + "/es" + (path === "/" ? "/" : path))}" />`,
+        `<link rel="alternate" hreflang="de" href="${esc(SITE + "/de" + (path === "/" ? "/" : path))}" />`,
         `<link rel="alternate" hreflang="x-default" href="${esc(SITE + path)}" />`,
       ]
     : [];
