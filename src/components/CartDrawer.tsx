@@ -150,7 +150,7 @@ export const CartDrawer = () => {
     setEmailCaptured(true);
     void persistEmail();
     toast.success('Email saved.', {
-      description: 'We will write only if your kit\'s materials are revised.',
+      description: "We will write only if your kit's materials are revised.",
     });
   };
 
