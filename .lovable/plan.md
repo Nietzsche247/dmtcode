@@ -1,36 +1,61 @@
-# Homepage "Instruments" section vs the real /prepare catalogue
+# Single source of truth for the three kits
 
-## 1. What renders the homepage section
+## 1. Diagnosis: where kit data lives today
 
-`src/pages/Home.tsx`. The section is inline in that file (heading "Instruments for careful observation" at line 276, the "Every kit ships with its full bill of materials published." line at 279, cards at 282-315).
+Live catalogue (Solo $289 / Triad $649 / Circle $1,090) is duplicated in three places, and stale legacy catalogue data survives in four more.
 
-Data source: a hardcoded module-level array `INSTRUMENTS` at the top of `src/pages/Home.tsx` (lines 20-50). Observer $109, Practitioner $159, Complete $349, each with `href: '/products/<handle>'` and a Shopify CDN image URL. Nothing fetches shop-json, Shopify, or Supabase for this section. A second stale copy of the same $109-$1,090 claim lives in `src/hooks/useDynamicMeta.tsx` line 68 (homepage meta description, including "Every bill of materials is published").
+Current live-kit duplicates:
+- `src/pages/Prepare.tsx:19-50` — `KITS` array: names, prices, parts figures, images, Shopify cart permalinks, descriptions.
+- `src/pages/Home.tsx:20-50` — `INSTRUMENTS` array: slug, name, spec line, price string, image.
+- `src/hooks/useDynamicMeta.tsx:67-73` — `bundles` entry, "$289 to $1,090" written by hand.
 
-## 2. What renders /prepare
+Stale legacy references found by the requested string search:
+- `src/hooks/useDynamicMeta.tsx:32` — `tools` entry still says "Kits and group bundles from $109 to $1,090. Bills of materials are published in full."
+- `src/hooks/useBundleAvailability.tsx:6-13` — `bundleShopifyHandles` maps `k1-observer`, `k2-practitioner`, `k3-instrument`, `k4-complete` to dead Shopify handles.
+- `src/components/ShopSection.tsx:10` — `FEATURED_HANDLE_ORDER` lists `complete-kit`, `practitioner-kit`, `observer-kit`.
+- `src/components/CartDrawer.tsx:29-32` — legacy handle-to-tier map (`observer-kit`, `practitioner-kit`, `complete-kit`).
+- `public/_redirects:1-3` — already 301s the three legacy product handles to `/prepare` (correct, leave as is).
 
-`src/pages/Prepare.tsx`, also a hardcoded module-level array `KITS` (lines 19-51): Solo $289 / Triad $649 / Circle $1,090, each with a `cart` Shopify permalink (`https://dmtcode-p4szt.myshopify.com/cart/<variantId>:1`), a `parts` count, and an image. No API call. The card CTA is a plain anchor to `kit.cart`, firing `gtag('event','bundle_cta_click')`.
+Supabase `bundles` / `bundle_items` table is read by: `netlify/edge-functions/shop-json.ts:26-35`, `src/pages/ProductDetail.tsx:145,151`, `src/components/EmailCapture.tsx:28,49`, `src/components/admin/ConversionFunnel.tsx:168`, `src/components/admin/KitSignups.tsx:34`. Only `shop-json.ts` publishes that stale data to the public web, which is why `/shop.json` still advertises Observer $109 and Practitioner $159.
 
-## 3. /products/:slug routing
+## 2. Diagnosis: edge functions, mirroring, and drift checking
 
-The route exists: `src/AppRoutes.tsx` line 313, `path="products/:handle"` to lazy `ProductDetail`, and `spa-guard.ts` whitelists `products`. So it is not a router fallthrough. `src/pages/ProductDetail.tsx` resolves the handle against Shopify Storefront plus the legacy `bundles` records and renders `NotFound` when neither resolves. The three legacy handles (`observer-kit`, `practitioner-kit`, `complete-kit`) no longer resolve after the /bundles retirement, so the page itself returns the 404 body. Confirming which of the two lookups is empty is a one-query check before the fix; the fix below does not depend on it.
+- A Netlify edge function cannot import from `src/`. Deno resolves relative specifiers with explicit `.ts` extensions and no Vite `@/` alias, and the `src/` tree is not part of the edge bundle. The existing working precedent is `netlify/edge-functions/content-prerender.ts:2`, which imports `../lib/ui-strings.ts`. So `netlify/lib/kits.ts` is a safe, proven location for a mirrored copy imported as `../lib/kits.ts`.
+- Vitest is not configured: `package.json` scripts are only `dev`, `build`, `build:dev`, `lint`, `preview`; there is no vitest dependency and no `test` block in `vite.config.ts`; `scripts/` contains only `route_parity.py`.
+- `netlify.toml` has no `[build] command` — only `publish = "dist"`, so Netlify runs the default `npm run build`.
+- Smallest drift check that therefore actually gates a deploy: a dependency-free Node script `scripts/check-kits-drift.mjs` that reads both files and compares the normalized kit payload, wired as `"prebuild": "node scripts/check-kits-drift.mjs"` in `package.json`. npm runs `prebuild` automatically before `build`, so it gates local builds and the Netlify build with no new dependency and no test runner.
 
-## 4. Smallest change
+## 3. Diagnosis: are the three legacy modules live?
 
-Two files, one of them optional.
+- `src/hooks/useBundleAvailability.tsx` — **USED**. Imported by `src/pages/ProductDetail.tsx:14` (`bundleShopifyHandles`), which is routed at `/products/:handle`. Do not delete; out of scope here.
+- `src/components/CartDrawer.tsx` — **USED**. Imported and rendered by `src/components/Navigation.tsx:4,148,174`, so it is on every page. Do not delete.
+- `src/components/ShopSection.tsx` — **UNUSED on any live route**. Its only importer is `src/pages/Index.tsx:11,96`, and `src/pages/Index.tsx` is imported by nothing; `src/AppRoutes.tsx:96` renders `Home` at the index route. Deleting either file would build clean, but that is a separate cleanup and is not part of this change.
 
-**`src/pages/Home.tsx`** (the only required edit)
-- Replace the `INSTRUMENTS` array with the three real kits, mirroring `Prepare.tsx` values exactly: Solo / 1 observer / $289, Triad / 2 to 3 observers / $649, Circle / 6 observers / $1,090. Short display names ("Solo", "Triad", "Circle") with the observer count in the existing spec line, so the card layout is unchanged.
-- Swap `href: '/products/...'` for the same Shopify cart permalinks used on /prepare, rendered as a plain `<a>` (target `_self`, `rel="noopener"`) labelled "Buy — secure Shopify checkout", matching the /prepare CTA. Keep a secondary text link to `/prepare` for full specs. This drops the dead `/products/*` links entirely. If you would rather not put checkout links on the homepage, the alternative is a single link per card to `/prepare` and no cart URL duplication; say which you prefer.
-- Fire the same `gtag('event','bundle_cta_click', { kit, price })` on click so homepage conversions land in the existing funnel rather than going untracked.
-- Add the availability line used on /prepare ("Ships in 7 to 10 business days. Free US shipping included. 18+, for research use.") under the price.
-- Delete the "Every kit ships with its full bill of materials published." line. /prepare publishes only a part count (`parts: 219 / 516 / 883`), not an itemised BOM, so the claim is unsupported. Replace with a factual line referencing the published part counts, or nothing.
-- Images: Solo and Circle have real Shopify CDN images in `KITS`; Triad has `image: null`. The card grid needs a neutral fallback for Triad rather than the old `kit-practitioner.jpg` asset.
+## 4. The change
 
-**`src/hooks/useDynamicMeta.tsx`** (recommended, same defect)
-- Line 68: correct the homepage meta description price range to $289 to $1,090 and remove the "Every bill of materials is published" sentence, for the same reason.
+Create one typed catalogue module, mirror it for Deno, and make every current hardcode read from it. No visual change, no price change, no name change, no new permalinks.
 
-Not touched: `src/pages/Prepare.tsx`, `netlify/edge-functions/content-prerender.ts`, `public/llms.txt`, `public/downloads/*`, `AppRoutes.tsx`, `ProductDetail.tsx`.
+Files created:
+1. `src/data/kits.ts` — exports `KITS` with `{ id, name, observers, price, priceNumber, cart, image, diyCost, diyCostNumber, availability, description }` for solo/triad/circle, plus a derived `KIT_PRICE_RANGE` string. Values copied verbatim from the current `Prepare.tsx` `KITS` array and `Home.tsx` `INSTRUMENTS` spec/price strings.
+2. `netlify/lib/kits.ts` — byte-equivalent mirror of the kit payload, Deno-safe (no imports, no aliases), for edge-function use.
+3. `scripts/check-kits-drift.mjs` — compares the two files' kit payloads and exits non-zero on any difference.
 
-Open question: leave `/products/:handle` in place (it still serves live Shopify handles) or 301 it to /prepare. Out of scope for this fix unless you want it included.
+Files modified:
+4. `src/pages/Prepare.tsx` — delete the local `KITS` array and the local `Kit` type, import both from `src/data/kits.ts`. Rendering untouched.
+5. `src/pages/Home.tsx` — delete the local `INSTRUMENTS` array, derive the same three cards from the imported `KITS` (spec line built from `observers`, `href` fixed to `/prepare`). Rendering and analytics untouched.
+6. `src/hooks/useDynamicMeta.tsx` — derive the price range in the `bundles` and `tools` descriptions from `KIT_PRICE_RANGE` instead of the hardcoded "$289 to $1,090" and "$109 to $1,090", and drop the stale bill-of-materials sentence from `tools`.
+7. `netlify/edge-functions/shop-json.ts` — stop querying Supabase `bundles`/`bundle_items`; emit the three kits from `../lib/kits.ts` in the same JSON envelope shape (license, source, generated_at, bundles array with slug/name/price_usd/url).
+8. `package.json` — add `"prebuild": "node scripts/check-kits-drift.mjs"`.
 
-Deploy note: this ships through the Netlify `main` build, not Lovable Publish.
+Nothing else is touched. Specifically unchanged: `public/downloads/*`, `public/llms.txt`, `netlify/edge-functions/content-prerender.ts`, `src/pages/FAQ.tsx`, all Supabase migrations, the three Shopify cart permalinks, prices, and kit names.
+
+## Verification after implementation
+
+- `rg -n '\$289|\$649|\$1,090' src` returns hits only in `src/data/kits.ts`.
+- `rg -n '\$109' src` returns zero matches.
+- Build passes with `prebuild` running; deliberately editing one price in `src/data/kits.ts` makes `npm run build` fail.
+- `/prepare` and `/` render byte-identically to today.
+
+## Needs a human step
+
+Netlify must redeploy for the new `/shop.json` output to go live; the stale Supabase-backed JSON persists on the CDN until then (it carries a 1-hour `s-maxage`).
