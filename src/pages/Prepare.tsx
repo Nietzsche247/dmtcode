@@ -6,48 +6,8 @@ import { PageHero } from '@/components/PageHero';
 import { Card } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
 
-type Kit = {
-  id: 'solo' | 'triad' | 'circle';
-  name: string;
-  price: number;
-  parts: number;
-  image: string | null;
-  cart: string;
-  description: string;
-};
+import { KITS, type Kit } from '@/data/kits';
 
-const KITS: Kit[] = [
-  {
-    id: 'solo',
-    name: '650 nm Laser Diffraction Research Kit — Solo (1 Observer)',
-    price: 289,
-    parts: 219,
-    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg',
-    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1',
-    description:
-      'Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
-  },
-  {
-    id: 'triad',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit — Triad (2–3 Observers)',
-    price: 649,
-    parts: 516,
-    image: null,
-    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1',
-    description:
-      'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
-  },
-  {
-    id: 'circle',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit — Circle (6 Observers)',
-    price: 1090,
-    parts: 883,
-    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg',
-    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1',
-    description:
-      'Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
-  },
-];
 
 const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 
@@ -56,7 +16,7 @@ function KitCard({ kit }: { kit: Kit }) {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'bundle_cta_click', {
         kit: kit.id,
-        price: kit.price,
+        price: kit.priceNumber,
       });
     }
   };
@@ -80,10 +40,10 @@ function KitCard({ kit }: { kit: Kit }) {
       <h3 className="font-serif text-2xl md:text-3xl leading-tight">{kit.name}</h3>
 
       <div className="mt-4 text-3xl font-black tracking-tight tabular-nums">
-        {usd(kit.price)}
+        {usd(kit.priceNumber)}
       </div>
       <div className="text-xs text-muted-foreground mt-1 tabular-nums">
-        Sourcing the parts yourself: ≈ {usd(kit.parts)}
+        Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}
       </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">

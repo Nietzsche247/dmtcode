@@ -1,4 +1,5 @@
 import { useModeStore } from '@/stores/modeStore';
+import { KIT_PRICE_RANGE } from '@/data/kits';
 
 interface MetaConfig {
   research: {
@@ -29,7 +30,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: 'Journey Equipment | From Entry-Level to Premium | DMT Code',
-      description: 'Kits and group bundles from $109 to $1,090. Bills of materials are published in full. Ship-now kits check out directly; preorders join a notify list.',
+      description: `Kits for one observer or for groups of two to three or six observers, ${KIT_PRICE_RANGE}. Each card prints what the same parts cost if you sourced them yourself.`,
     },
   },
   bibliography: {
@@ -65,11 +66,11 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   bundles: {
     research: {
       title: 'Research Kits & Protocol Equipment Bundles | DMT Code',
-      description: 'Equipment bundles for 650nm protocol observation, from $289 to $1,090. Component specifications are not yet published.',
+      description: `Equipment bundles for 650nm protocol observation, from ${KIT_PRICE_RANGE}. Component specifications are not yet published.`,
     },
     explorer: {
-      title: 'Kits & Group Bundles | $289 to $1,090 | DMT Code',
-      description: 'Equipment packages for one observer or for groups of two to three or six observers. From $289 to $1,090. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
+      title: `Kits & Group Bundles | ${KIT_PRICE_RANGE} | DMT Code`,
+      description: `Equipment packages for one observer or for groups of two to three or six observers. From ${KIT_PRICE_RANGE}. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.`,
     },
   },
 };

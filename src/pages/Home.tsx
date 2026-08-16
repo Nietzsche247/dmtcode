@@ -16,38 +16,19 @@ import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
 import { LatestArticle } from '@/components/home/LatestArticle';
 
-// Featured kits. Prices and availability match /prepare exactly.
-const INSTRUMENTS = [
-  {
-    slug: 'solo',
-    id: 'solo',
-    href: '/prepare',
-    name: 'Solo',
-    spec: '650 NM · 1 OBSERVER',
-    price: '$289',
-    image:
-      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg',
-  },
-  {
-    slug: 'triad',
-    id: 'triad',
-    href: '/prepare',
-    name: 'Triad',
-    spec: '650 NM · 2 TO 3 OBSERVERS',
-    price: '$649',
-    image: null,
-  },
-  {
-    slug: 'circle',
-    id: 'circle',
-    href: '/prepare',
-    name: 'Circle',
-    spec: '650 NM · 6 OBSERVERS',
-    price: '$1,090',
-    image:
-      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg',
-  },
-];
+import { KITS } from '@/data/kits';
+
+// Featured kits. Prices and availability come from the shared catalogue.
+const INSTRUMENTS = KITS.map((kit) => ({
+  slug: kit.id,
+  id: kit.id,
+  href: '/prepare',
+  name: kit.shortName,
+  spec: `650 NM · ${kit.observers.toUpperCase()} OBSERVER${kit.observers === '1' ? '' : 'S'}`,
+  price: kit.price,
+  image: kit.image,
+  availability: kit.availability,
+}));
 
 const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -308,7 +289,7 @@ const Home = () => {
                         {kit.price}
                       </div>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Ships in 7 to 10 business days. Free US shipping. 18+, for research use.
+                        {kit.availability}
                       </p>
                       <Button
                         asChild
