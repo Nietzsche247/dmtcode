@@ -121,10 +121,10 @@ const Home = () => {
           <GetInvolvedDoors variant="top" />
 
           {/* Voice Logger Callout */}
-          <section className="container mx-auto px-4 py-6 max-w-4xl">
+          <section className="container mx-auto px-4 py-4 max-w-4xl">
             <AnimatedSection>
               <div 
-                className="p-4 md:p-6 rounded-lg border border-primary bg-primary/10"
+                className="p-4 md:p-5 rounded-lg border border-primary bg-primary/10"
                 role="complementary"
                 aria-label="Voice Logger recommendation"
               >

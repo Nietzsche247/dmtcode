@@ -4,7 +4,7 @@ export const MissionFraming = () => {
       aria-label="Mission"
       className="container mx-auto px-4 py-10 md:py-14 max-w-3xl"
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         <p className="label-data text-xs text-primary">THE PROJECT</p>
         <p
           className="text-sm md:text-base text-muted-foreground leading-relaxed"
