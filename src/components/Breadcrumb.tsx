@@ -1,9 +1,15 @@
 import { ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
 export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) => {
   const location = useLocation();
-  const pathnames = location.pathname.split('/').filter((x) => x);
+  const locale = useLocale();
+  const rawSegments = location.pathname.split('/').filter((x) => x);
+  // The locale prefix is routing, not a page: it must never become a crumb.
+  const pathnames =
+    locale !== 'en' && rawSegments[0] === locale ? rawSegments.slice(1) : rawSegments;
+
 
   const breadcrumbNameMap: Record<string, string> = {
     '': 'Home',
