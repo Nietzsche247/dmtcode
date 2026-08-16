@@ -1,3 +1,6 @@
+/products/observer-kit    /prepare    301!
+/products/practitioner-kit    /prepare    301!
+/products/complete-kit    /prepare    301!
 /tools    /prepare    301!
 /tools/*    /prepare    301!
 /bundles    /prepare    301!
