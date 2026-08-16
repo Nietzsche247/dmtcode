@@ -1088,6 +1088,92 @@ export const SymbolSubmissionModeration = () => {
               {viewingSubmission.description && (
                 <p className="text-sm text-muted-foreground">{viewingSubmission.description}</p>
               )}
+
+              {/* Translation is an aid to the reviewer, never a version of the record.
+                  The original above is untouched and always visible. Nothing is stored. */}
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={
+                      translating ||
+                      (!viewingSubmission.description && !viewingSubmission.context_note)
+                    }
+                    onClick={async () => {
+                      setTranslating(true);
+                      setTranslationError(null);
+                      setTranslation(null);
+                      setTranslationHidden(false);
+                      const { data, error } = await supabase.functions.invoke(
+                        'admin-translate-submission',
+                        { body: { submissionId: viewingSubmission.id } },
+                      );
+                      setTranslating(false);
+                      if (error) {
+                        setTranslationError(error.message);
+                        return;
+                      }
+                      if (data?.error) {
+                        setTranslationError(String(data.error));
+                        return;
+                      }
+                      setTranslation(data as TranslationResult);
+                    }}
+                  >
+                    {translating && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
+                    Show English translation
+                  </Button>
+                  {translation && !translationHidden && (
+                    <Button size="sm" variant="ghost" onClick={() => setTranslationHidden(true)}>
+                      Hide translation
+                    </Button>
+                  )}
+                  {translation && translationHidden && (
+                    <Button size="sm" variant="ghost" onClick={() => setTranslationHidden(false)}>
+                      Show translation
+                    </Button>
+                  )}
+                </div>
+
+                {translationError && (
+                  <p className="text-xs text-muted-foreground break-words">{translationError}</p>
+                )}
+
+                {translation && !translationHidden && (
+                  translation.nothing_to_translate ? (
+                    <p className="text-xs text-muted-foreground">
+                      No text on this submission to translate.
+                    </p>
+                  ) : (
+                    <div className="rounded-md border border-border p-3 space-y-2 max-h-[40vh] overflow-y-auto">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                        <span>
+                          Machine translation, for review only. The record is the submitter's
+                          original text above.
+                        </span>
+                        {translation.detected_language && (
+                          <span>detected: {languageLabel(translation.detected_language)}</span>
+                        )}
+                      </div>
+                      {translation.description_en && (
+                        <p className="text-sm break-words whitespace-pre-wrap">
+                          {translation.description_en}
+                        </p>
+                      )}
+                      {translation.context_note_en && (
+                        <div className="space-y-1">
+                          <div className="text-xs text-muted-foreground">Context note</div>
+                          <p className="text-sm break-words whitespace-pre-wrap">
+                            {translation.context_note_en}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+
               <div className="flex flex-wrap gap-1.5">
                 {[...new Set(((viewingSubmission.tags ?? []) as string[]).filter(Boolean))].map((t) => (
                   <Badge key={t} variant="secondary" className="font-normal">
