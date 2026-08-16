@@ -17,6 +17,10 @@ interface RegistryFiltersProps {
   onSearchChange: (query: string) => void;
   sourceFilter: string;
   onSourceChange: (source: string) => void;
+  doseFilter: string;
+  onDoseChange: (dose: string) => void;
+  recordFilter: string;
+  onRecordChange: (record: string) => void;
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
   sortBy: string;
@@ -30,6 +34,10 @@ export const RegistryFilters = ({
   onSearchChange,
   sourceFilter,
   onSourceChange,
+  doseFilter,
+  onDoseChange,
+  recordFilter,
+  onRecordChange,
   selectedTags,
   onTagsChange,
   sortBy,
