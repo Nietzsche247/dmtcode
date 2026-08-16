@@ -28,6 +28,7 @@ import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
 import { GA4Analytics } from './GA4Analytics';
 import { IntelHub } from './IntelHub';
+import { MembersDirectory } from './MembersDirectory';
 import { Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useRoles } from '@/hooks/useRoles';
