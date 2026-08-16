@@ -198,6 +198,21 @@ export const RegistryBrowser = () => {
       filtered = filtered.filter(s => s.source_method === sourceFilter);
     }
 
+    // Dose level filter (real column: dose_level)
+    if (doseFilter !== 'all') {
+      filtered = filtered.filter(s =>
+        doseFilter === 'unreported' ? !s.dose_level : s.dose_level === doseFilter
+      );
+    }
+
+    // Record type: null reports and sober-baseline records, derived from tags.
+    // They are never hidden by default; this only narrows to them.
+    if (recordFilter === 'null_report') {
+      filtered = filtered.filter(s => hasAnyTag(s.tags, NULL_REPORT_TAGS));
+    } else if (recordFilter === 'sober') {
+      filtered = filtered.filter(s => hasAnyTag(s.tags, SOBER_TAGS));
+    }
+
     // Tags filter
     if (selectedTags.length > 0) {
       filtered = filtered.filter(s => 
@@ -208,6 +223,7 @@ export const RegistryBrowser = () => {
         )
       );
     }
+
 
     // Sorting
     switch (sortBy) {
