@@ -24,6 +24,10 @@ import OpenQuestions from "./pages/OpenQuestions";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Disclosure from "./pages/Disclosure";
+import Shipping from "./pages/Shipping";
+import Returns from "./pages/Returns";
+import StoreTerms from "./pages/StoreTerms";
+import StoreContact from "./pages/StoreContact";
 import Profile from "./pages/Profile";
 import MySymbols from "./pages/MySymbols";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
@@ -150,6 +154,10 @@ export const AppRoutes = () => (
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
     <Route path="disclosure" element={<Disclosure />} />
+    <Route path="shipping" element={<Shipping />} />
+    <Route path="returns" element={<Returns />} />
+    <Route path="store-terms" element={<StoreTerms />} />
+    <Route path="store-contact" element={<StoreContact />} />
     <Route path="profile" element={<Profile />} />
     <Route path="co-witnesses" element={<Suspense fallback={<CalibratingLasersLoader />}><CoWitnesses /></Suspense>} />
     <Route path="my-symbols" element={<MySymbols />} />

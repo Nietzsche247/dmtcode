@@ -226,10 +226,10 @@ const About = () => {
               <h2 className="text-2xl font-semibold mb-4">Funding & Transparency</h2>
               <div className="space-y-4 text-base leading-relaxed">
                 <p>
-                  <strong>Revenue model:</strong> Affiliate commissions from the curated equipment catalogue at /prepare, together with direct sales through our own store, are intended to cover server costs, domain registration, and development time. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible.
+                  <strong>Revenue model:</strong> Direct sales of research kits. Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases. No venture capital, no pharmaceutical sponsorships, no paywalled data. 100% of registry data remains freely accessible.
                 </p>
                 <p>
-                  <strong>Conflicts of interest:</strong> We sell 650 nm laser kits and earn affiliate commissions on some third party products, so we have a commercial interest in the protocol this site documents. We do not sell DMT extraction services or consulting. Our /disclosure page names every affiliate relationship and explains what we do about the conflict.
+                  <strong>Conflicts of interest:</strong> We sell 650 nm laser kits, so we have a commercial interest in the protocol this site documents. We do not sell DMT extraction services or consulting. Every commercial relationship, past or present, is named on /disclosure.
                 </p>
               </div>
             </Card>
