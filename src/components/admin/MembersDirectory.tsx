@@ -371,7 +371,9 @@ export const MembersDirectory = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Member</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Member since</TableHead>
+
                   <TableHead>Membership age</TableHead>
                   <TableHead className="text-right">Symbols</TableHead>
                   <TableHead className="text-right">Reputation</TableHead>
