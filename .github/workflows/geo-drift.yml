@@ -65,8 +65,9 @@ jobs:
           SITE = os.environ.get("SITE", "https://dmtcode.com")
           GOOD = os.environ.get("GOOD_TAG", "geometric")
           results = []
-          def fetch(path):
-              req = urllib.request.Request(SITE + path, headers={"Cache-Control": "no-cache", "User-Agent": "geo-drift-audit"})
+          GOOGLEBOT = "Mozilla/5.0 (compatible; Googlebot/2.1)"
+          def fetch(path, ua="geo-drift-audit"):
+              req = urllib.request.Request(SITE + path, headers={"Cache-Control": "no-cache", "User-Agent": ua})
               try:
                   with urllib.request.urlopen(req, timeout=30) as r:
                       return r.status, dict(r.headers), r.read().decode("utf-8", "replace")
@@ -110,6 +111,28 @@ jobs:
               s, h, _ = fetch(p)
               tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip().lower()
               check(f"{p} 200 + no X-Robots-Tag noindex", s == 200 and "noindex" not in tag, f"{s} / {tag!r}")
+          # Kit catalogue: prices and cart permalinks must be present on the
+          # crawler render of /prepare and in /llms.txt. Source of truth is
+          # src/data/kits.ts (mirrored to netlify/lib/kits.ts).
+          CARTS = [
+              "https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1",
+              "https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1",
+              "https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1",
+          ]
+          _, _, prepare_bot = fetch("/prepare", GOOGLEBOT)
+          _, _, llms_now = fetch("/llms.txt")
+          for label, doc in (("/prepare (Googlebot)", prepare_bot), ("/llms.txt", llms_now)):
+              for token in ("$289", "$649", "$1,090"):
+                  check(f"{label} lists {token}", token in doc, "kit price")
+              for cart in CARTS:
+                  check(f"{label} lists cart {cart.rsplit('/', 1)[1]}", cart in doc, "cart permalink")
+          _, _, home_bot = fetch("/", GOOGLEBOT)
+          _, _, faq_bot = fetch("/faq", GOOGLEBOT)
+          stale_docs = {"/ (Googlebot)": home_bot, "/prepare (Googlebot)": prepare_bot,
+                        "/faq (Googlebot)": faq_bot, "/llms.txt": llms_now}
+          for token in ("$109", "$159", "$349", "observer-kit"):
+              offenders = [name for name, doc in stale_docs.items() if token in doc]
+              check(f"retired catalogue string {token} absent", not offenders, offenders)
           s, h, _ = fetch("/zzz-geo-drift-route-probe")
           check("unknown route returns 404 (spa-guard alive)", s == 404, s)
           fails = [r for r in results if not r["ok"]]
@@ -125,6 +148,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check kit catalogue drift (src/data/kits.ts vs netlify/lib/kits.ts vs llms.txt)
+        run: node scripts/check-kits-drift.mjs
       - name: Check shadow-coupling contracts
         run: |
           python3 - <<'EOF'
