@@ -112,6 +112,20 @@ const Timeline = () => {
 
   const entries = useMemo(() => file?.entries ?? [], [file]);
 
+  // Head copy mirrors the prerender: the counted title once the file is in
+  // hand, the uncounted one before that. Never a title with unfilled slots.
+  const seo = useMemo(() => {
+    if (entries.length === 0) return { key: 'timeline-empty' as const, vars: undefined };
+    const years = entries.map((e) => e.date.year).filter((y): y is number => typeof y === 'number');
+    if (years.length === 0) return { key: 'timeline-empty' as const, vars: undefined };
+    return {
+      key: 'timeline' as const,
+      vars: { first: Math.min(...years), last: Math.max(...years), n: entries.length },
+    };
+  }, [entries]);
+
+
+
   const tagCounts = useMemo(() => {
     const m = new Map<string, number>();
     entries.forEach((e) => e.tags.forEach((t) => m.set(t, (m.get(t) ?? 0) + 1)));
