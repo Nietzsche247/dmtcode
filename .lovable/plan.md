@@ -1,57 +1,71 @@
-# Locale mirrors: human-visible fixes (diagnosis + smallest bounded changes)
+# Translation engine + people pages: diagnosis
 
-Diagnosis only below, each with the smallest bounded change. Page-body translation is out of scope.
+Measured today against the live database and the repo. No code changed.
 
-## 1. Where runtime title / meta description come from
+## 1. Protocols: hypothesis is mostly refuted
 
-There is **no shared SEO hook**. Three mechanisms coexist:
+Measurements:
 
-- **`react-helmet` (not `react-helmet-async`)**, `package.json:63`, imported per page. Example: `src/pages/Theories.tsx:2, 242-253` hardcodes English `<title>Open Theories about the DMT Code | DMT Code</title>`, description, canonical `https://dmtcode.com/theories`, og:*. Same pattern in `src/pages/Prepare.tsx:1, 89-96`, `src/pages/FAQ.tsx:4, 136-153`, and ~50 more pages (`rg -l Helmet src/pages` = most of the directory). These are locale-blind, hardcoded English literals — this is exactly why the prerendered Spanish title is overwritten on hydration.
-- **`src/hooks/useDynamicMeta.tsx`** — a research/explorer mode dictionary for 6 keys only (home, tools, bibliography, registry, events, bundles). Consumed by `src/pages/Home.tsx` only. No locale awareness.
-- No direct `document.title =` writes in page code (only `useGA4PageTracking` reads it).
+- `protocols` has 9 rows total, all `is_published = true` (not 27). The "27" is 9 records x 3 fields; the "6" is 2 records (`ketamine`, `psilocybin`) x 3 fields, present in both locales. So 7 protocols are untranslated, per locale.
+- Largest published `content_jsonb`: `ketamine-spravato`, 6,716 chars, 10 top-level string leaves. Next: `dmt-laser` 5,445 / 8 leaves. The rest are 1.5k-3.1k with 6-7 leaves. Nothing here is large enough to burn a 100 s budget on its own at normal gateway latency.
 
-Smallest bounded change: add one shared component `src/components/SEO.tsx` that wraps `Helmet`, takes a `uiKey`, reads `useLocale()`, pulls title/description from the shared string module (item 2), and self-references canonical/og:url via `localePath(locale, path)`. Then swap the Helmet block on the locale-mirrored index pages only (theories, faq, prepare, registry, articles, guides, timeline, evidence-map, trials, bibliography, retreats, protocols, home) to `<SEO uiKey="theories" path="/theories" />`. English output must stay byte-identical to today where a key already matches, so the change is invisible for `en`.
+Code reality (`supabase/functions/translate-content/index.ts`):
 
-## 2. The prerender locale dictionary and whether it can be shared
+- Line 131 and line 138: the `TIME_BUDGET_MS` check runs **after every field**, including after each `json` field. It does not only run at the end. So the stated cause ("budget only checked after the whole field") is wrong at field granularity; it is true only *inside* one `content_jsonb` (translateJson, lines 69-74, walks leaves sequentially with no budget check between leaves, each leaf allowed 45 s at line 49 - worst case 10 x 45 s = 450 s on one field).
+- Line 142: `if (batch.length) await upsert(batch)` runs once per (table, locale), **after the whole row loop**, and it is also reached on the `pending` path. So a clean budget stop does write. Zero rows landing means the invocation never reached line 142: the runtime killed it, or every `translate()` call threw.
+- Lines 130 and 137: `catch { stats.errors++ }` swallows the error text. A gateway 429 or a 45 s abort is indistinguishable from success-with-nothing-to-do in the response body.
+- `supabase--edge_function_logs` for `translate-content` returns **no logs at all**. Either the function is not currently deployed (it was edited on 2026-08-16 and never redeployed) or the invocations are not reaching it. This must be confirmed before any code change - it may be the entire cause of the four no-op runs.
 
-- It already lives in a shared module: **`netlify/lib/ui-strings.ts`** (608 lines), imported at `netlify/edge-functions/content-prerender.ts:2`.
-- Shape: `UI_STRINGS: Record<string, Record<"en"|"es"|"de", { title: string; description: string }>>`, plus `uiCopy(key, locale, vars?)` at `ui-strings.ts:594-608` with English fallback and `{var}` interpolation. 26 keys today: home, theories, articles, guides, retreats, faq, timeline, people, prepare, protocols, registry, trials, bibliography, dataset, about, critiques, events, glossary, methods, research, forecasts, privacy, terms, disclosure, capture, join.
-- Call sites: `content-prerender.ts:736, 894, 1121, 1135, 1504, 2319, 2600, 2985, 3582, 4029, 4379`.
+Smallest bounded fix (one file, `translate-content/index.ts`):
 
-The edge function cannot import from `src/`, and the SPA cannot import from `netlify/lib/`. So use the **kits mirror pattern**: `src/data/kits.ts` is the source of truth, `netlify/lib/kits.ts` is the hand-copied mirror, and `scripts/check-kits-drift.mjs` (wired as `prebuild` in `package.json:8`) parses both files and fails the build on any field mismatch.
+1. Move the upsert inside the row loop: flush `batch` after **each row** (and keep the final flush). Partial progress then survives any kill.
+2. Add the budget check inside `translateJson`'s object/array walk, or simply check between leaves at the call site by passing a deadline, so one big `content_jsonb` cannot run 450 s.
+3. Lower the per-call abort from 45 s to 20 s and record the caught error message in `stats` (last 3 errors, truncated) so the response says why.
+4. Do **not** split `content_jsonb` into `content_jsonb.<key>` fields. `overlay()` in `netlify/edge-functions/content-prerender.ts` (lines 183-205) reassembles a jsonb field by `JSON.parse` of one stored string keyed by the exact column name; per-key fields would silently not apply, and `renderProtocolDetail` (line 3147) calls `overlay` generically. Reassembly is not trivial and is out of scope. Keep one field, flush per row.
 
-Bounded change: create `src/i18n/ui-strings.ts` as the SPA-side mirror of `UI_STRINGS` + `uiCopy` (identical content, TS instead of Deno import style), and add `scripts/check-ui-strings-drift.mjs` chained into the existing `prebuild` script. Direction of authority to be declared in a header comment, matching kits ("edit the src file first, then copy").
+## 2. /people/danny-goler content source
 
-## 3. Why the breadcrumb shows "Home / Es / Prepare"
+- SPA: `src/pages/PersonDannyGoler.tsx` (prose hardcoded in JSX, lines 83-201) and `src/pages/People.tsx` (index, lines 39-52).
+- Prerender: `netlify/edge-functions/content-prerender.ts`, `renderPersonDannyGoler` body at lines 4300-4340 and `renderPeopleIndex` at 4343+, with the prose duplicated as an HTML literal.
 
-- `src/components/Breadcrumb.tsx:5-6`: `const pathnames = location.pathname.split('/').filter(Boolean)`. There is no hook — crumbs are derived inline from the raw pathname, so on `/es/prepare` the first segment `es` becomes a crumb. `es` is absent from `breadcrumbNameMap` (lines 8-48) so the fallback title-caser at lines 66-69 renders it as "Es". The Home crumb at line 54 is hardcoded `to="/"`, which drops a Spanish visitor back to English.
+There is no `people` table, so the nightly engine cannot touch it: `translate-content` reads Postgres rows only. Translating these pages requires a static mirror, exactly the `kits` / `ui-strings` pattern: one shared module holding en/es/de copy, mirrored between `src/` and `netlify/lib/`, with a drift-check script chained into `prebuild`. That is a separate build, not a config change.
 
-Bounded change, one file:
-- Import `useLocale, localePath` from `@/i18n/LocaleProvider`; drop a leading segment when it is the active non-`en` locale before mapping.
-- Build each crumb `to` with `localePath(locale, ...)`, and make the Home crumb `to={localePath(locale, '/')}`.
+## 3. CONFIG reorder
 
-## 4. Language switcher placement
+Safe. `CONFIG` (lines 16-33) is consumed only by the ordered loop at line 118; nothing keys off index or position, and `?table=` filters by name. Reordering to theories, guides, articles, protocols, events, retreats, bibliography, clinical_trials only changes who gets the budget first - which is the intent, since `clinical_trials` (544 rows) currently starves everything after it. No stored state, no migration.
 
-- Header: `src/components/Navigation.tsx`. Desktop cluster at lines 145-171 (ModeToggle / ThemeToggle / CartDrawer / auth). Mobile: toggle cluster at 174-186 and the open panel at 190+.
-- Footer: `src/components/Footer.tsx`, bottom utility row at lines 186-228 (CC-BY, data.json, Privacy, Terms, ...).
+## 4. translation_runs table
 
-Bounded change: one new `src/components/LanguageSwitcher.tsx` rendering exactly three plain `<a href>` anchors (not `Link`, not buttons) — EN / ES / DE — each pointing at the current `location.pathname` re-prefixed via `localePath`, with `hreflang="en|es|de"`, `aria-current="true"` on the active one, and a labelled `<nav aria-label="Language">`. Mount it in three places: the desktop header cluster, the top of the mobile menu panel, and the footer utility row.
+Nothing reads the stats object today: the only reference to `translate-content` outside the function itself is two generated graph reports. The JSON response goes to whoever curled it and is then lost.
 
-## 5. `useLocale()` availability and header/footer links needing `localePath`
+Proposed additive migration:
 
-- `LocaleProvider` wraps `AppRoutes` for all three trees in `src/App.tsx:43-45, 51-53, 59-61`, and `Navigation`/`Footer` render inside pages inside `AppRoutes`, so `useLocale()` is available in both. `src/i18n/LocaleProvider.tsx:11-14` already exports `localePath`.
-- Header links that would strand a Spanish visitor in English:
-  - `Navigation.tsx:80-83` `handleNavigation(path)` → bare `navigate(path)`, used by the logo (line 137), the mobile Home button (line 194), and every mobile menu item built from `researchItems` (93-103), `explorerItems` (105-110), `resourceItems` (113-121).
-  - `Navigation.tsx:87-90` `goToAuth()` → `/auth?returnTo=...`.
-  - `Navigation.tsx:76` sign-out `navigate('/')`.
-  - `MegaMenu.tsx:76` (the generic desktop item `Link to`), `MegaMenu.tsx:99` `isActive` comparison against `location.pathname`, and `MegaMenu.tsx:135` `to="/about"`.
-- Footer links: every `Link to` in `Footer.tsx` — lines 39, 44, 49, 54, 59, 64, 69, 74, 79, 86, 91, 96, 101, 106, 111, 116, 121, 126, 137, 142, 147, 152, 181, 204, 207, 210, 213, 216. External anchors (Zenodo/DOI line 20 and 220, CC line 190, `/data.json` line 199) stay unprefixed.
+```
+create table public.translation_runs (
+  id uuid primary key default gen_random_uuid(),
+  started_at timestamptz not null,
+  finished_at timestamptz not null default now(),
+  table_name text,          -- null = full sweep
+  locale text,              -- null = all locales
+  checked int not null default 0,
+  translated int not null default 0,
+  skipped int not null default 0,
+  errors int not null default 0,
+  pending boolean not null default false,
+  note text
+);
+grant select on public.translation_runs to authenticated;
+grant all on public.translation_runs to service_role;
+alter table public.translation_runs enable row level security;
+create policy "Admins read translation runs" on public.translation_runs
+  for select to authenticated using (public.has_role(auth.uid(), 'admin'));
+```
 
-Bounded change: route header and footer internal navigation through one `localePath(locale, path)` call — a single `to()` helper in `Footer.tsx`, the same inside `handleNavigation`/`goToAuth` in `Navigation.tsx`, and the item mapper plus `isActive` in `MegaMenu.tsx`. No other site links touched.
+No anon grant, no public insert policy: the function writes with the service role, which bypasses RLS. One insert at the end of the handler, in both the success and the `catch` path, with `note` carrying the fatal message or the first few swallowed errors.
 
-## Suggested build order (each independently shippable)
+## Order of work, when approved
 
-1. Breadcrumb locale strip (1 file).
-2. Language switcher component + 3 mount points.
-3. Header/footer `localePath` pass.
-4. `src/i18n/ui-strings.ts` mirror + drift check, then the `SEO` component swap on locale-mirrored index pages.
+1. Confirm deploy state / why there are no logs.
+2. `translate-content`: per-row flush, budget inside the jsonb walk, 20 s abort, error text in stats, CONFIG reorder.
+3. `translation_runs` migration + insert.
+4. People-page static locale mirror (separate build).
