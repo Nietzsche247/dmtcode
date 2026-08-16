@@ -1982,7 +1982,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "What DMT Code collects, who processes it, and what becomes public.",
     heading: "Privacy",
     paragraphs: [
-      "Effective 16 August 2026.",
+      "Effective 24 July 2026.",
       "This page describes what this site collects, where it goes, and what becomes public. It was written by reading our own code and database rather than from a template, so it describes what actually happens here.",
     ],
     breadcrumbName: "Privacy",
