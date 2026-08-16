@@ -253,7 +253,8 @@ export const MembersDirectory = () => {
       total: rows.length,
       new7: within(7),
       active: authAvailable ? countState('active') : null,
-      dormant: authAvailable ? countState('dormant') + countState('never') : null,
+      dormant: authAvailable ? countState('dormant') : null,
+      never: authAvailable ? countState('never') : null,
       contributors: rows.filter((r) => (r.symbol_count ?? 0) > 0).length,
       unconfirmed: authAvailable
         ? rows.filter((r) => r.email !== undefined && r.email_confirmed === false).length
