@@ -264,7 +264,7 @@ export const RegistryBrowser = () => {
     // saw keeps its place, because a rare form only a few people recognize is
     // exactly the kind of thing this registry exists to find.
     return filtered;
-  }, [symbols, searchQuery, sourceFilter, selectedTags, sortBy, validationCounts]);
+  }, [symbols, searchQuery, sourceFilter, doseFilter, recordFilter, selectedTags.join(','), sortBy, validationCounts]);
 
   // One library, one list. Nothing is segregated by how a symbol entered the
   // record; the sort the reader chose is the only thing that orders it.
@@ -275,16 +275,81 @@ export const RegistryBrowser = () => {
     );
   }
 
-  const hasActiveFilters = sourceFilter !== 'all' || selectedTags.length > 0 || searchQuery.trim() !== '';
+  const hasActiveFilters =
+    sourceFilter !== 'all' ||
+    doseFilter !== 'all' ||
+    recordFilter !== 'all' ||
+    selectedTags.length > 0 ||
+    searchQuery.trim() !== '';
 
   const clearFilters = () => {
-    setSearchQuery('');
-    setSourceFilter('all');
-    setSelectedTags([]);
-    setSortBy('newest');
+    setSearchParams(new URLSearchParams(), { replace: true });
+  };
+
+  // Export exactly the rows currently on screen, from the already-loaded data.
+  const exportRows = () =>
+    filteredSymbols.map((s) => ({
+      id: s.id,
+      created_at: s.created_at,
+      contributor_handle: profiles[s.user_id]?.handle || '',
+      description: s.description || '',
+      tags: (s.tags || []).join('|'),
+      source_method: s.source_method || '',
+      dose_level: s.dose_level || '',
+      wavelength: s.wavelength || '',
+      recognitions_after_exposure: validationCounts[s.id] || 0,
+      similar_responses: similarCounts[s.id] || 0,
+      upvotes: s.upvotes || 0,
+      downvotes: s.downvotes || 0,
+      null_report: hasAnyTag(s.tags, NULL_REPORT_TAGS),
+      sober_baseline: hasAnyTag(s.tags, SOBER_TAGS),
+      url: `https://dmtcode.com/symbol/${s.id}`,
+    }));
+
+  const download = (contents: string, mime: string, filename: string) => {
+    const blob = new Blob([contents], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportCsv = () => {
+    const rows = exportRows();
+    const headers = rows.length ? Object.keys(rows[0]) : [];
+    const escape = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const body = rows.map((r) => headers.map((h) => escape((r as Record<string, unknown>)[h])).join(',')).join('\n');
+    const filterLine = `# filters: ${searchParams.toString() || 'none'}`;
+    download(
+      `# ${CC_LINE}\n${filterLine}\n${headers.join(',')}\n${body}\n`,
+      'text/csv;charset=utf-8',
+      'dmtcode-registry-export.csv'
+    );
+  };
+
+  const exportJson = () => {
+    download(
+      JSON.stringify(
+        {
+          license: 'CC-BY-4.0',
+          attribution: CC_LINE,
+          exported_at: new Date().toISOString(),
+          filters: Object.fromEntries(searchParams.entries()),
+          row_count: filteredSymbols.length,
+          rows: exportRows(),
+        },
+        null,
+        2
+      ),
+      'application/json',
+      'dmtcode-registry-export.json'
+    );
   };
 
   const highlightTerms = searchQuery.trim() ? searchQuery.toLowerCase().split(/\s+/) : [];
+
 
   return (
     <section id="browse" className="container mx-auto px-4 py-16">
