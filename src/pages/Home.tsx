@@ -247,7 +247,7 @@ const Home = () => {
               <p className="text-muted-foreground mb-12">
                 Three kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {INSTRUMENTS.map((kit) => (
                   <article
                     key={kit.slug}

@@ -40,7 +40,7 @@ export const RecentContributions = () => {
 
   if (loading) {
     return (
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-10">
         <div className="text-center mb-12">
           <Skeleton className="h-8 w-64 mx-auto mb-4" />
           <Skeleton className="h-4 w-96 mx-auto" />
@@ -59,7 +59,7 @@ export const RecentContributions = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-16 border-t border-border/30 max-w-6xl">
+    <section className="container mx-auto px-4 py-10 border-t border-border/30 max-w-6xl">
       <div className="mb-8">
         <p className="label-data text-xs text-primary mb-4">COMMUNITY</p>
         <h2
