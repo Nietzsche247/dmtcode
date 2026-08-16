@@ -65,11 +65,11 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   bundles: {
     research: {
       title: 'Research Kits & Protocol Equipment Bundles | DMT Code',
-      description: 'Equipment bundles for 650nm protocol observation, from $109 to $1,090. Every bill of materials is published. Component specifications are not yet published.',
+      description: 'Equipment bundles for 650nm protocol observation, from $289 to $1,090. Component specifications are not yet published.',
     },
     explorer: {
-      title: 'Kits & Group Bundles | $109 to $1,090 | DMT Code',
-      description: 'Equipment packages for one observer or for groups of two, three, or five. From $109 to $1,090. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
+      title: 'Kits & Group Bundles | $289 to $1,090 | DMT Code',
+      description: 'Equipment packages for one observer or for groups of two to three or six observers. From $289 to $1,090. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.',
     },
   },
 };
