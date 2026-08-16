@@ -864,7 +864,8 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <p><strong>$${k.price.toLocaleString("en-US")}</strong></p>
     <p>Sourcing the parts yourself: &asymp; $${k.parts.toLocaleString("en-US")}</p>
     <p>${esc(k.description)}</p>
-    <p>Ships in 7-10 business days. Free US shipping included. 18+, for research use.</p>
+    <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
+    <p>Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.</p>
     <p>Class II laser - do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
   </section>`,
