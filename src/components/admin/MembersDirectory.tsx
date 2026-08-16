@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -45,7 +46,9 @@ type MemberRow = MemberProfile & Partial<Omit<MemberEmail, 'id'>>;
 
 const DAY_MS = 86400000;
 const PAGE_SIZE = 50;
+const ACTIVE_WINDOW_DAYS = 30;
 
+const EM_DASH = '\u2014';
 
 export const ageInDays = (createdAt: string, now: number = Date.now()): number =>
   Math.max(0, Math.floor((now - new Date(createdAt).getTime()) / DAY_MS));
@@ -70,6 +73,45 @@ export function formatMembershipAge(createdAt: string, now: number = Date.now())
     : `${years} year${years === 1 ? '' : 's'}`;
 }
 
+export type ActivityState = 'active' | 'dormant' | 'never' | 'unknown';
+
+/**
+ * Pure helper. `lookupAvailable === false` means the auth lookup did not resolve,
+ * so we cannot know the state. Unknown is never bucketed as a default.
+ */
+export function activityState(
+  lastSignInAt: string | null | undefined,
+  lookupAvailable: boolean,
+  now: number = Date.now(),
+): ActivityState {
+  if (!lookupAvailable) return 'unknown';
+  if (lastSignInAt === null || lastSignInAt === undefined) return 'never';
+  const t = new Date(lastSignInAt).getTime();
+  if (Number.isNaN(t)) return 'unknown';
+  return now - t <= ACTIVE_WINDOW_DAYS * DAY_MS ? 'active' : 'dormant';
+}
+
+const ACTIVITY_LABEL: Record<ActivityState, string> = {
+  active: 'Active',
+  dormant: 'Dormant',
+  never: 'Never returned',
+  unknown: EM_DASH,
+};
+
+export function formatRelative(iso: string | null | undefined, now: number = Date.now()): string {
+  if (!iso) return 'never';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return 'never';
+  const days = Math.max(0, Math.floor((now - then) / DAY_MS));
+  if (days < 1) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 30) return `${days} days ago`;
+  const months = Math.floor(days / 30.4375);
+  if (months < 12) return `${months} month${months === 1 ? '' : 's'} ago`;
+  const years = Math.floor(months / 12);
+  return `${years} year${years === 1 ? '' : 's'} ago`;
+}
+
 const formatJoined = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', {
     day: 'numeric',
@@ -83,11 +125,12 @@ const csvCell = (value: string | number | null) => {
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
 
-type SortKey = 'newest' | 'oldest' | 'longest' | 'symbols' | 'reputation';
+type SortKey = 'newest' | 'oldest' | 'longest' | 'symbols' | 'reputation' | 'recent' | 'dormant';
+type FilterKey = 'all' | 'active' | 'dormant' | 'never' | 'contributors' | 'unconfirmed';
 
 const EmailCell = ({ member }: { member: MemberRow }) => {
   if (!member.email) {
-    return <span className="text-muted-foreground">&mdash;</span>;
+    return <span className="text-muted-foreground">{EM_DASH}</span>;
   }
   return (
     <div className="min-w-0">
@@ -105,10 +148,48 @@ const EmailCell = ({ member }: { member: MemberRow }) => {
   );
 };
 
+const LastSeenCell = ({
+  member,
+  available,
+  now,
+}: {
+  member: MemberRow;
+  available: boolean;
+  now: number;
+}) => {
+  if (!available) return <span className="text-muted-foreground">{EM_DASH}</span>;
+  return (
+    <div className="min-w-0">
+      <span className="block">{formatRelative(member.last_sign_in_at, now)}</span>
+      <span className="block text-xs text-muted-foreground">
+        {member.last_sign_in_at ? formatJoined(member.last_sign_in_at) : EM_DASH}
+      </span>
+    </div>
+  );
+};
+
+const StatusCell = ({ state, symbolCount }: { state: ActivityState; symbolCount: number }) => (
+  <div className="flex flex-wrap items-center gap-1.5">
+    {state === 'unknown' ? (
+      <span className="text-muted-foreground">{EM_DASH}</span>
+    ) : (
+      <Badge
+        variant={
+          state === 'active' ? 'secondary' : state === 'never' ? 'destructive' : 'outline'
+        }
+        className={state === 'dormant' ? 'text-muted-foreground' : undefined}
+      >
+        {ACTIVITY_LABEL[state]}
+      </Badge>
+    )}
+    {symbolCount > 0 && <Badge variant="outline">Contributor</Badge>}
+  </div>
+);
 
 export const MembersDirectory = () => {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('newest');
+  const [filter, setFilter] = useState<FilterKey>('all');
   const [page, setPage] = useState(0);
 
   const { data, isLoading, error, refetch, isRefetching } = useQuery({
@@ -134,6 +215,10 @@ export const MembersDirectory = () => {
     retry: false,
   });
 
+  // The auth lookup is the source for last_sign_in_at and email_confirmed.
+  // If it has not resolved, every derived figure is unavailable, not zero.
+  const authAvailable = emailQuery.isSuccess && Array.isArray(emailQuery.data);
+
   const rows = useMemo<MemberRow[]>(() => {
     const profiles = data ?? [];
     const byId = new Map((emailQuery.data ?? []).map((e) => [e.id, e]));
@@ -152,27 +237,34 @@ export const MembersDirectory = () => {
   }, [data, emailQuery.data]);
   const now = Date.now();
 
+  const stateById = useMemo(() => {
+    const m = new Map<string, ActivityState>();
+    rows.forEach((r) => m.set(r.id, activityState(r.last_sign_in_at, authAvailable, now)));
+    return m;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, authAvailable]);
+
   const stats = useMemo(() => {
-    const within = (d: number) => rows.filter((r) => now - new Date(r.created_at).getTime() <= d * DAY_MS).length;
-    const ages = rows.map((r) => ageInDays(r.created_at, now)).sort((a, b) => a - b);
-    let median = 0;
-    if (ages.length > 0) {
-      const mid = Math.floor(ages.length / 2);
-      median = ages.length % 2 ? ages[mid] : Math.round((ages[mid - 1] + ages[mid]) / 2);
-    }
+    const within = (d: number) =>
+      rows.filter((r) => now - new Date(r.created_at).getTime() <= d * DAY_MS).length;
+    const countState = (s: ActivityState) =>
+      rows.filter((r) => stateById.get(r.id) === s).length;
     return {
       total: rows.length,
-      d1: within(1),
-      d7: within(7),
-      d30: within(30),
-      median,
+      new7: within(7),
+      active: authAvailable ? countState('active') : null,
+      dormant: authAvailable ? countState('dormant') + countState('never') : null,
+      contributors: rows.filter((r) => (r.symbol_count ?? 0) > 0).length,
+      unconfirmed: authAvailable
+        ? rows.filter((r) => r.email !== undefined && r.email_confirmed === false).length
+        : null,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
+  }, [rows, stateById, authAvailable]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const base = q
+    let base = q
       ? rows.filter(
           (r) =>
             (r.display_name ?? '').toLowerCase().includes(q) ||
@@ -181,9 +273,32 @@ export const MembersDirectory = () => {
         )
       : rows.slice();
 
+    if (filter === 'contributors') {
+      base = base.filter((r) => (r.symbol_count ?? 0) > 0);
+    } else if (filter === 'unconfirmed') {
+      if (!authAvailable) return [];
+      base = base.filter((r) => r.email !== undefined && r.email_confirmed === false);
+    } else if (filter !== 'all') {
+      if (!authAvailable) return [];
+      base = base.filter((r) => stateById.get(r.id) === filter);
+    }
+
     const byCreated = (a: MemberRow, b: MemberRow) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
 
+    // Never-signed-in members sort last in both sign-in orderings.
+    const signInTime = (r: MemberRow) => {
+      const t = r.last_sign_in_at ? new Date(r.last_sign_in_at).getTime() : NaN;
+      return Number.isNaN(t) ? null : t;
+    };
+    const bySignIn = (dir: 'recent' | 'dormant') => (a: MemberRow, b: MemberRow) => {
+      const ta = signInTime(a);
+      const tb = signInTime(b);
+      if (ta === null && tb === null) return byCreated(a, b);
+      if (ta === null) return 1;
+      if (tb === null) return -1;
+      return dir === 'recent' ? tb - ta : ta - tb;
+    };
 
     switch (sort) {
       case 'oldest':
@@ -193,10 +308,15 @@ export const MembersDirectory = () => {
         return base.sort((a, b) => (b.symbol_count ?? 0) - (a.symbol_count ?? 0));
       case 'reputation':
         return base.sort((a, b) => (b.reputation_score ?? 0) - (a.reputation_score ?? 0));
+      case 'recent':
+        return base.sort(bySignIn('recent'));
+      case 'dormant':
+        return base.sort(bySignIn('dormant'));
       default:
         return base.sort(byCreated);
     }
-  }, [rows, search, sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, search, sort, filter, stateById, authAvailable]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);
@@ -204,19 +324,22 @@ export const MembersDirectory = () => {
 
   const exportCsv = () => {
     const header =
-      'display_name,handle,email,email_confirmed,joined_utc,membership_age_days,symbol_count,reputation_score';
-    const lines = filtered.map((r) =>
-      [
+      'display_name,handle,email,email_confirmed,last_sign_in_utc,activity_state,joined_utc,membership_age_days,symbol_count,reputation_score';
+    const lines = filtered.map((r) => {
+      const state = stateById.get(r.id) ?? 'unknown';
+      return [
         csvCell(r.display_name),
         csvCell(r.handle),
         csvCell(r.email ?? ''),
         csvCell(r.email === undefined || r.email === null ? '' : String(r.email_confirmed ?? false)),
+        csvCell(authAvailable && r.last_sign_in_at ? new Date(r.last_sign_in_at).toISOString() : ''),
+        csvCell(state === 'unknown' ? '' : state),
         csvCell(new Date(r.created_at).toISOString()),
         csvCell(ageInDays(r.created_at, now)),
         csvCell(r.symbol_count ?? 0),
         csvCell(r.reputation_score ?? 0),
-      ].join(','),
-    );
+      ].join(',');
+    });
 
     const blob = new Blob([[header, ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -250,6 +373,15 @@ export const MembersDirectory = () => {
     );
   }
 
+  const tiles: { label: string; value: number | null }[] = [
+    { label: 'Total members', value: stats.total },
+    { label: 'New (7 days)', value: stats.new7 },
+    { label: 'Active (30 days)', value: stats.active },
+    { label: 'Dormant (30+ days)', value: stats.dormant },
+    { label: 'Contributors', value: stats.contributors },
+    { label: 'Unconfirmed email', value: stats.unconfirmed },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
@@ -260,31 +392,27 @@ export const MembersDirectory = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        {[
-          { label: 'Total members', value: stats.total },
-          { label: 'Last 24 hours', value: stats.d1 },
-          { label: 'Last 7 days', value: stats.d7 },
-          { label: 'Last 30 days', value: stats.d30 },
-          { label: 'Median age (days)', value: stats.median },
-        ].map((tile) => (
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+        {tiles.map((tile) => (
           <Card key={tile.label} className="p-4">
-            <p className="text-2xl font-semibold tabular-nums">{tile.value}</p>
+            <p className="text-2xl font-semibold tabular-nums">
+              {tile.value === null ? EM_DASH : tile.value}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">{tile.label}</p>
           </Card>
         ))}
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <Input
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setPage(0);
           }}
-          placeholder="Search name or handle"
+          placeholder="Search name, handle or email"
           aria-label="Search members"
-          className="sm:max-w-xs"
+          className="w-full sm:max-w-xs"
         />
         <Select
           value={sort}
@@ -293,18 +421,56 @@ export const MembersDirectory = () => {
             setPage(0);
           }}
         >
-          <SelectTrigger className="sm:w-56" aria-label="Sort members">
+          <SelectTrigger className="w-full sm:w-52" aria-label="Sort members">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="newest">Newest first</SelectItem>
             <SelectItem value="oldest">Oldest first</SelectItem>
             <SelectItem value="longest">Longest membership</SelectItem>
+            <SelectItem value="recent" disabled={!authAvailable}>
+              Recently active
+            </SelectItem>
+            <SelectItem value="dormant" disabled={!authAvailable}>
+              Longest dormant
+            </SelectItem>
             <SelectItem value="symbols">Most symbols</SelectItem>
             <SelectItem value="reputation">Highest reputation</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="outline" onClick={exportCsv} disabled={filtered.length === 0} className="sm:ml-auto">
+        <Select
+          value={filter}
+          onValueChange={(v) => {
+            setFilter(v as FilterKey);
+            setPage(0);
+          }}
+        >
+          <SelectTrigger className="w-full sm:w-48" aria-label="Filter members">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All members</SelectItem>
+            <SelectItem value="active" disabled={!authAvailable}>
+              Active
+            </SelectItem>
+            <SelectItem value="dormant" disabled={!authAvailable}>
+              Dormant
+            </SelectItem>
+            <SelectItem value="never" disabled={!authAvailable}>
+              Never returned
+            </SelectItem>
+            <SelectItem value="contributors">Contributors</SelectItem>
+            <SelectItem value="unconfirmed" disabled={!authAvailable}>
+              Unconfirmed email
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="outline"
+          onClick={exportCsv}
+          disabled={filtered.length === 0}
+          className="w-full sm:w-auto sm:ml-auto"
+        >
           Export CSV
         </Button>
       </div>
@@ -331,6 +497,10 @@ export const MembersDirectory = () => {
                     {m.handle && <p className="text-xs text-muted-foreground truncate">@{m.handle}</p>}
                   </div>
                 </div>
+                <StatusCell
+                  state={stateById.get(m.id) ?? 'unknown'}
+                  symbolCount={m.symbol_count ?? 0}
+                />
                 <dl className="grid grid-cols-2 gap-2 text-sm">
                   <div className="col-span-2 min-w-0">
                     <dt className="text-xs text-muted-foreground">Email</dt>
@@ -350,6 +520,12 @@ export const MembersDirectory = () => {
                       <span className="block text-xs text-muted-foreground">
                         {ageInDays(m.created_at, now)} days
                       </span>
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-xs text-muted-foreground">Last seen</dt>
+                    <dd>
+                      <LastSeenCell member={m} available={authAvailable} now={now} />
                     </dd>
                   </div>
                   <div>
@@ -375,6 +551,8 @@ export const MembersDirectory = () => {
                   <TableHead>Member since</TableHead>
 
                   <TableHead>Membership age</TableHead>
+                  <TableHead>Last seen</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Symbols</TableHead>
                   <TableHead className="text-right">Reputation</TableHead>
                 </TableRow>
@@ -403,6 +581,15 @@ export const MembersDirectory = () => {
                       <span className="block text-xs text-muted-foreground">
                         {ageInDays(m.created_at, now)} days
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      <LastSeenCell member={m} available={authAvailable} now={now} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusCell
+                        state={stateById.get(m.id) ?? 'unknown'}
+                        symbolCount={m.symbol_count ?? 0}
+                      />
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{m.symbol_count ?? 0}</TableCell>
                     <TableCell className="text-right tabular-nums">{m.reputation_score ?? 0}</TableCell>
