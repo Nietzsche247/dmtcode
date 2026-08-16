@@ -129,8 +129,44 @@ export const RegistryFilters = ({
                 </Select>
               </div>
 
-              <div className="md:col-span-1" />
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Record Type</label>
+                <Select value={recordFilter} onValueChange={onRecordChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All records" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All records</SelectItem>
+                    <SelectItem value="null_report">Null reports only</SelectItem>
+                    <SelectItem value="sober">Sober baseline only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">Dose Level</label>
+                <Select value={doseFilter} onValueChange={onDoseChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any dose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Any dose</SelectItem>
+                    <SelectItem value="none">None reported as zero</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="unreported">Not stated</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Null reports and sober-baseline records sit in the same list as everything else and are
+              tagged in place. There is no priming or co-witness field on these records today, so no
+              filter is offered for either.
+            </p>
+
 
             {/* Tags Multi-Select */}
             <div>
