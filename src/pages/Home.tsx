@@ -16,37 +16,36 @@ import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
 import { LatestArticle } from '@/components/home/LatestArticle';
 
-// Featured kits. Images are real Shopify CDN assets; purchase lives on /prepare.
+// Featured kits. Prices and availability match /prepare exactly.
 const INSTRUMENTS = [
   {
-    slug: 'k1-observer',
-    handle: 'observer-kit',
-    href: '/products/observer-kit',
-    name: 'Observer',
-    spec: '650 nm · 1 observer · Ships now',
-    price: '$109',
+    slug: 'solo',
+    id: 'solo',
+    href: '/prepare',
+    name: 'Solo',
+    spec: '650 NM · 1 OBSERVER',
+    price: '$289',
     image:
-      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-observer.jpg?v=1786330859',
+      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg',
   },
   {
-    slug: 'k2-practitioner',
-    handle: 'practitioner-kit',
-    href: '/products/practitioner-kit',
-    name: 'Practitioner',
-    spec: '650 nm · 1 observer · Ships now',
-    price: '$159',
-    image:
-      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-practitioner.jpg?v=1786330859',
+    slug: 'triad',
+    id: 'triad',
+    href: '/prepare',
+    name: 'Triad',
+    spec: '650 NM · 2 TO 3 OBSERVERS',
+    price: '$649',
+    image: null,
   },
   {
-    slug: 'k4-complete',
-    handle: 'complete-kit',
-    href: '/products/complete-kit',
-    name: 'Complete',
-    spec: '650 nm · 1 observer · Preorder',
-    price: '$349',
+    slug: 'circle',
+    id: 'circle',
+    href: '/prepare',
+    name: 'Circle',
+    spec: '650 NM · 6 OBSERVERS',
+    price: '$1,090',
     image:
-      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-complete.jpg?v=1786330859',
+      'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg',
   },
 ];
 
