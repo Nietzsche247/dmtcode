@@ -737,7 +737,6 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
   const title = prepareCopy.title;
   const metaDesc = clip(prepareCopy.description, 200);
 
-
   const shippingDetails = {
     "@type": "OfferShippingDetails",
     shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "USD" },
