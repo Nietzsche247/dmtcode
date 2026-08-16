@@ -45,17 +45,25 @@ function KitCard({ kit }: { kit: Kit }) {
       <div className="text-xs text-muted-foreground mt-1 tabular-nums">
         Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}
       </div>
+      <div className="text-xs text-muted-foreground mt-1">
+        The difference covers a tested module, matched optics, printed materials and support.
+      </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
         {kit.description}
       </p>
 
       <div className="mt-4 text-xs text-muted-foreground">
-        Ships in 7–10 business days. Free US shipping included. 18+, for research use.
+        Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.
       </div>
       <div className="mt-1 text-xs text-muted-foreground">
-        Plain packaging. Your card statement lists Meridian Optics Lab.
+        Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.
       </div>
+      {kit.id === 'circle' && (
+        <div className="mt-1 text-xs text-muted-foreground">
+          Buying for a group? Every observer must be an adult who has read the screening card. A group session protocol is in progress.
+        </div>
+      )}
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
         Class II laser — do not stare into beam.
       </div>
