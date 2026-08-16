@@ -33,16 +33,16 @@ const Privacy = () => {
               <p>You can read almost everything on this site without an account and without telling us anything. If you make an account and contribute, the content you contribute is meant to become public, because a convergence dataset that nobody can check is worth nothing. Your identity is not part of what becomes public.</p>
 
               <h2 className="text-2xl font-semibold mt-8">What we collect</h2>
-              <p><strong>If you create an account.</strong> Your email address and a password, or a Google or Apple sign in if you choose that instead. Passwords are handled by our authentication provider and never reach us in readable form. On sign up we generate a pseudonym for you automatically, in the form of a two word handle. You can change the display name attached to it. We do not ask for your real name at any point.</p>
+              <p><strong>If you create an account.</strong> Your email address and a password, or a Google or Apple sign in if you choose that instead. Passwords are handled by our authentication provider and never reach us in readable form. On sign up we generate a pseudonym for you automatically, in the form of a two word handle. You can change the display name attached to it. We do not ask for your real name at any point, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p>
               <p><strong>If you submit a symbol.</strong> The image you draw or upload, your written description, the tags you choose, and, if you fill them in, the route of administration and approximate dose. If you record a voice note, we store the audio.</p>
               <p><strong>If you complete an assessment.</strong> Your responses to the PHQ-9, GAD-7, MEQ-4 and CEQ-7 questionnaires, and your before and after mood ratings. These are mental health questions and we treat the answers accordingly. They are stored in a private area that is not readable by other visitors. If you upload imaging, that is stored in the same private area.</p>
               <p><strong>If you join a list.</strong> For the general waiting list and for the clinical trial watch list, your email address, and nothing else.</p>
               <p><strong>If you volunteer.</strong> The email address, handle, roles, experience level, languages, skills and motivation you enter on the volunteer form, and whether you consented to being contacted.</p>
-              <p><strong>If you buy something.</strong> Nothing about the payment. Checkout happens on Shopify's own systems. Card numbers never touch this site or our database.</p>
+              <p><strong>If you buy something.</strong> Nothing about the payment. Checkout happens on Shopify's own systems. Card numbers never touch this site or our database. Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases.</p>
 
               <h2 className="text-2xl font-semibold mt-8">What we deliberately do not collect</h2>
               <p>We do not log the IP addresses of visitors. Our server side logging records only automated crawlers, and for those it records only the page requested, the crawler's name, and its user agent string. There is no visitor identifier, no fingerprint and no IP address in that log.</p>
-              <p>We do not ask for your real name, your date of birth, your address or your phone number anywhere on this site.</p>
+              <p>We do not ask for your real name, your date of birth, your address or your phone number anywhere on this site, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Who processes data for us</h2>
               <ul className="list-disc pl-6 space-y-2">

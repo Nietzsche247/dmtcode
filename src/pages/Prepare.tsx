@@ -45,17 +45,25 @@ function KitCard({ kit }: { kit: Kit }) {
       <div className="text-xs text-muted-foreground mt-1 tabular-nums">
         Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}
       </div>
+      <div className="text-xs text-muted-foreground mt-1">
+        The difference covers a tested module, matched optics, printed materials and support.
+      </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
         {kit.description}
       </p>
 
       <div className="mt-4 text-xs text-muted-foreground">
-        Ships in 7–10 business days. Free US shipping included. 18+, for research use.
+        Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.
       </div>
       <div className="mt-1 text-xs text-muted-foreground">
-        Plain packaging. Your card statement lists Meridian Optics Lab.
+        Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.
       </div>
+      {kit.id === 'circle' && (
+        <div className="mt-1 text-xs text-muted-foreground">
+          Buying for a group? Every observer must be an adult who has read the screening card. A group session protocol is in progress.
+        </div>
+      )}
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
         Class II laser — do not stare into beam.
       </div>
@@ -82,7 +90,7 @@ const Prepare = () => {
         <title>Prepare. Laser diffraction research kits.</title>
         <meta
           name="description"
-          content="Three laser diffraction research kits for one, three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
+          content="Three laser diffraction research kits for one, two to three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
         />
         <link rel="canonical" href="https://dmtcode.com/prepare" />
       </Helmet>
@@ -96,7 +104,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Three laser diffraction research kits: one observer, three observers, six observers. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
+            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
@@ -145,26 +153,31 @@ const Prepare = () => {
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
-              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Field materials and protocols, free download, no account needed:{' '}
-                <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="underline hover:text-foreground">Field Sheet (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="underline hover:text-foreground">Hoja de Campo (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="underline hover:text-foreground">Feldblatt (DE)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="underline hover:text-foreground">Sober Baseline Protocol (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo Base Sobria (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="underline hover:text-foreground">Basisprotokoll (DE)</a>
-                {', '}
-                <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="underline hover:text-foreground">AVP Passthrough Protocol (EN)</a>
-                {', '}
-                <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="underline hover:text-foreground">Protocolo AVP (ES)</a>
-                {', '}
-                <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="underline hover:text-foreground">AVP Protokoll (DE)</a>
-              </p>
+              <div className="mt-4 max-w-2xl">
+                <p className="text-sm text-muted-foreground">
+                  Field materials and protocols, free download, no account needed:
+                </p>
+                <ul className="mt-3 space-y-3">
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Field Sheet</span>
+                    <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Sober Baseline Protocol</span>
+                    <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">AVP Passthrough Protocol</span>
+                    <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
+                </ul>
+              </div>
             </header>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
@@ -198,39 +211,19 @@ const Prepare = () => {
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
             Checkout runs on Shopify under Meridian Optics Lab. Full store policies:{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/refund-policy"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/returns" className="underline hover:text-foreground">
               Returns and refunds
             </a>
             ,{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/terms-of-service"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/store-terms" className="underline hover:text-foreground">
               Terms of service
             </a>
             ,{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/shipping" className="underline hover:text-foreground">
               Shipping
             </a>
             , and{" "}
-            <a
-              href="https://dmtcode-p4szt.myshopify.com/policies/contact-information"
-              target="_blank"
-              rel="noopener"
-              className="underline hover:text-foreground"
-            >
+            <a href="/store-contact" className="underline hover:text-foreground">
               Contact
             </a>
             .

@@ -209,6 +209,12 @@ export const Footer = () => {
             <Link to="/disclosure" className="hover:text-primary transition-colors">
               Disclosure
             </Link>
+            <Link to="/shipping" className="hover:text-primary transition-colors">
+              Shipping
+            </Link>
+            <Link to="/returns" className="hover:text-primary transition-colors">
+              Returns
+            </Link>
             <a 
               href={`https://doi.org/${ZENODO_DOI}`}
               target="_blank"

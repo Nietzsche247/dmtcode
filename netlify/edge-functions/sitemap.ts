@@ -46,6 +46,10 @@ const STATIC: Array<[string, string, string]> = [
   ["/privacy", "0.3", "yearly"],
   ["/terms", "0.3", "yearly"],
   ["/disclosure", "0.4", "yearly"],
+  ["/shipping", "0.3", "yearly"],
+  ["/returns", "0.3", "yearly"],
+  ["/store-terms", "0.3", "yearly"],
+  ["/store-contact", "0.3", "yearly"],
   ["/agent/", "0.4", "monthly"],
 ];
 

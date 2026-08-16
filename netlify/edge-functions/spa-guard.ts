@@ -20,6 +20,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "correlations", "events", "dashboard", "profile", "my-symbols", "analysis",
   "tools", "bundles", "api", "contribute", "Elizabeth_Baker",
   "card", "articles", "guides", "privacy", "terms", "disclosure", "capture",
+  "shipping", "returns", "store-terms", "store-contact",
   "timeline", "people", "products",
   // Machine endpoints and public assets
   "data.json", "shop.json", "sitemap.xml", "llms.txt", "robots.txt",
