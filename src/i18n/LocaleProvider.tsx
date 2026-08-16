@@ -8,9 +8,11 @@ export function useLocale(): AppLocale {
 }
 
 // Prefix a site-relative path with the active locale. English stays unprefixed.
+// The locale root keeps its trailing slash ("/es/") so canonical, sitemap and
+// hreflang all name the same URL.
 export function localePath(locale: AppLocale, path: string): string {
   if (locale === "en") return path;
-  return `/${locale}${path === "/" ? "" : path}`;
+  return `/${locale}${path === "/" ? "/" : path}`;
 }
 
 export function LocaleProvider({
