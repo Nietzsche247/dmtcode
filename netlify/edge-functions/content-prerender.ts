@@ -1,5 +1,6 @@
 import type { Config, Context } from "@netlify/edge-functions";
 import { uiCopy } from "../lib/ui-strings.ts";
+import { KITS } from "../lib/kits.ts";
 
 const SITE = "https://dmtcode.com";
 const SUPABASE_URL =
@@ -736,44 +737,6 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
   const title = prepareCopy.title;
   const metaDesc = clip(prepareCopy.description, 200);
 
-  const KITS = [
-    {
-      id: "solo",
-      sku: "KIT-SOLO-650",
-      name: "650 nm Laser Diffraction Research Kit - Solo (1 Observer)",
-      price: 289,
-      parts: 219,
-      image:
-        "https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo.jpg",
-      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1",
-      description:
-        "Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
-    },
-    {
-      id: "triad",
-      sku: "KIT-TRIAD-MW",
-      name: "Multi-Wavelength Laser Diffraction Research Kit - Triad (2-3 Observers)",
-      price: 649,
-      parts: 516,
-      image: null as string | null,
-      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1",
-      description:
-        "Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
-    },
-    {
-      id: "circle",
-      sku: "KIT-CIRCLE-MW",
-      name: "Multi-Wavelength Laser Diffraction Research Kit - Circle (6 Observers)",
-      price: 1090,
-      parts: 883,
-      image:
-        "https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-circle.jpg",
-      cart: "https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1",
-      description:
-        "Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.",
-    },
-  ];
-
   const shippingDetails = {
     "@type": "OfferShippingDetails",
     shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "USD" },
@@ -807,7 +770,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
       offers: {
         "@type": "Offer",
         url: canonical,
-        price: k.price,
+        price: k.priceNumber,
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         shippingDetails,
@@ -861,8 +824,8 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     (k) => `<section id="${esc(k.id)}">
     <h3>${esc(k.name)}</h3>
     ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.name)}" width="800" height="450" />` : ""}
-    <p><strong>$${k.price.toLocaleString("en-US")}</strong></p>
-    <p>Sourcing the parts yourself: &asymp; $${k.parts.toLocaleString("en-US")}</p>
+    <p><strong>$${k.priceNumber.toLocaleString("en-US")}</strong></p>
+    <p>Sourcing the parts yourself: &asymp; $${k.diyCostNumber.toLocaleString("en-US")}</p>
     <p>${esc(k.description)}</p>
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.</p>

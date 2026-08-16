@@ -2,6 +2,7 @@
 
 export type Kit = {
   id: 'solo' | 'triad' | 'circle';
+  sku?: string;
   name: string;
   shortName: string;
   observers: string;
@@ -18,6 +19,7 @@ export type Kit = {
 export const KITS: Kit[] = [
   {
     id: 'solo',
+    sku: 'KIT-SOLO-650',
     name: '650 nm Laser Diffraction Research Kit — Solo (1 Observer)',
     shortName: 'Solo',
     observers: '1',
@@ -33,6 +35,7 @@ export const KITS: Kit[] = [
   },
   {
     id: 'triad',
+    sku: 'KIT-TRIAD-MW',
     name: 'Multi-Wavelength Laser Diffraction Research Kit — Triad (2–3 Observers)',
     shortName: 'Triad',
     observers: '2 to 3',
@@ -48,6 +51,7 @@ export const KITS: Kit[] = [
   },
   {
     id: 'circle',
+    sku: 'KIT-CIRCLE-MW',
     name: 'Multi-Wavelength Laser Diffraction Research Kit — Circle (6 Observers)',
     shortName: 'Circle',
     observers: '6',

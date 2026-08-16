@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 const SRC = 'src/data/kits.ts';
 const MIRROR = 'netlify/lib/kits.ts';
 
-function extractKits(path) {
+export function extractKits(path) {
   const text = readFileSync(path, 'utf8');
   const start = text.indexOf('export const KITS');
   if (start === -1) throw new Error(`No KITS export found in ${path}`);
@@ -39,13 +39,30 @@ function diff(a, b) {
   return problems;
 }
 
-const problems = diff(extractKits(SRC), extractKits(MIRROR));
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const kits = extractKits(SRC);
+  const problems = diff(kits, extractKits(MIRROR));
 
-if (problems.length > 0) {
-  console.error(`Kit catalogue drift between ${SRC} and ${MIRROR}:\n`);
-  for (const p of problems) console.error(`  ${p}`);
-  console.error(`\nEdit ${SRC} first, then copy the KITS array into ${MIRROR}.`);
-  process.exit(1);
+  if (problems.length > 0) {
+    console.error(`Kit catalogue drift between ${SRC} and ${MIRROR}:\n`);
+    for (const p of problems) console.error(`  ${p}`);
+    console.error(`\nEdit ${SRC} first, then copy the KITS array into ${MIRROR}.`);
+    process.exit(1);
+  }
+
+  const LLMS = 'public/llms.txt';
+  const llms = readFileSync(LLMS, 'utf8');
+  const stale = [];
+  for (const kit of kits) {
+    if (!llms.includes(kit.price)) stale.push(`${kit.shortName}: price ${kit.price} missing`);
+    if (!llms.includes(kit.cart)) stale.push(`${kit.shortName}: cart permalink missing`);
+  }
+
+  if (stale.length > 0) {
+    console.error(`${LLMS} is stale, run node scripts/sync-llms-kits.mjs\n`);
+    for (const s of stale) console.error(`  ${s}`);
+    process.exit(1);
+  }
+
+  console.log('Kit catalogue in sync.');
 }
-
-console.log('Kit catalogue in sync.');
