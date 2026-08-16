@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,20 +34,12 @@ const Protocols = () => {
 
   return (
     <>
+      <SEO uiKey="protocols" path="/protocols" />
       <Helmet>
-        <title>DMT Laser & Therapy Protocols | Evidence-Based Guides | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser, and psychedelic-assisted therapy. Preparation, dosing, integration frameworks with DOI citations." 
-        />
-        <link rel="canonical" href="https://dmtcode.com/protocols" />
         <meta name="robots" content="index, follow" />
-        
+
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dmtcode.com/protocols" />
-        <meta property="og:title" content="DMT Laser & Therapy Protocols | Evidence-Based Guides" />
-        <meta property="og:description" content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser. Preparation, dosing, integration frameworks with DOI citations." />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         
         {/* Twitter */}

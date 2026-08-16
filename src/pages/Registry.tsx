@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { RegistryHero } from '@/components/registry/RegistryHero';
 import { RegistryRationale } from '@/components/registry/RegistryRationale';
 import { RegistryStatistics } from '@/components/registry/RegistryStatistics';
@@ -107,17 +108,12 @@ const Registry = () => {
   return (
 
     <>
+      <SEO uiKey="registry" path="/registry" />
       <Helmet>
-        <title>DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)</title>
-        <meta name="description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
         <meta name="keywords" content="DMT glyphs, 650nm laser, visual symbols, N,N-DMT administration, psychedelic research, scientific catalogue, open data, CC-BY-4.0, null reports, baseline data" />
-        <link rel="canonical" href="https://dmtcode.com/registry" />
-        
+
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
-        <meta property="og:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
-        <meta property="og:url" content="https://dmtcode.com/registry" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/registry" />

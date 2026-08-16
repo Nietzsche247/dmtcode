@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -205,16 +206,12 @@ const Timeline = () => {
 
   return (
     <>
+      {seo.key === 'timeline' ? (
+        <SEO uiKey="timeline" path="/timeline" vars={seo.vars} />
+      ) : (
+        <SEO uiKey="timeline-empty" path="/timeline" />
+      )}
       <Helmet>
-        <title>Chronology of DMT visual research | DMT Code</title>
-        <meta
-          name="description"
-          content="A dated record of published research, legal decisions and community claims about DMT visual phenomena, sortable by date, person, place and kind of evidence. Every DOI resolved against Crossref."
-        />
-        <link rel="canonical" href="https://dmtcode.com/timeline" />
-        <meta property="og:title" content="Chronology of DMT visual research | DMT Code" />
-        <meta property="og:description" content="Sortable by date, person, place and kind of evidence. Every DOI resolved against Crossref." />
-        <meta property="og:url" content="https://dmtcode.com/timeline" />
         <meta property="og:type" content="website" />
       </Helmet>
 

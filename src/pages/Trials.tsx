@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -148,13 +149,8 @@ const Trials = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO uiKey="trials" path="/trials" />
       <Helmet>
-        <title>Clinical Trials: DMT Research Observatory | DMT Code</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href="https://dmtcode.com/trials" />
-        <meta property="og:title" content="Clinical Trials: DMT Research Observatory" />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content="https://dmtcode.com/trials" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Clinical Trials: DMT Research Observatory" />

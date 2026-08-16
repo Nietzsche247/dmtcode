@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -86,14 +87,7 @@ function KitCard({ kit }: { kit: Kit }) {
 const Prepare = () => {
   return (
     <>
-      <Helmet>
-        <title>Prepare. Laser diffraction research kits.</title>
-        <meta
-          name="description"
-          content="Three laser diffraction research kits for one, two to three, or six observers. 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials."
-        />
-        <link rel="canonical" href="https://dmtcode.com/prepare" />
-      </Helmet>
+      <SEO uiKey="prepare" path="/prepare" />
 
       <div className="relative min-h-screen">
         <main className="relative z-10">

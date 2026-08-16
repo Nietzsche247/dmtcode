@@ -6,6 +6,7 @@ import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { ArrowRight, Mic } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
@@ -49,24 +50,17 @@ const Home = () => {
 
   return (
     <>
+      <SEO uiKey="home" path="/" />
       <Helmet>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:description" content={meta.description} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dmtcode.com" />
         <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         <meta property="og:site_name" content="DMT Code" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com" />
-        <meta name="twitter:title" content={meta.title} />
-        <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
         
-        <link rel="canonical" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">

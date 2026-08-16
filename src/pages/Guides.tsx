@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
+import { SEO } from '@/components/SEO';
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
@@ -50,13 +51,8 @@ export default function Guides() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO uiKey="guides" path="/guides" />
       <Helmet>
-        <title>Guides | DMT Code</title>
-        <meta name="description" content={SUBLINE} />
-        <link rel="canonical" href="https://dmtcode.com/guides" />
-        <meta property="og:title" content="Guides | DMT Code" />
-        <meta property="og:description" content={SUBLINE} />
-        <meta property="og:url" content="https://dmtcode.com/guides" />
         <meta property="og:type" content="website" />
       </Helmet>
 
