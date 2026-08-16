@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import { SEO } from '@/components/SEO';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronUp, ExternalLink, Plus } from "lucide-react";
 import { z } from "zod";
@@ -239,15 +240,8 @@ export default function TheoriesPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO uiKey="theories" path="/theories" />
       <Helmet>
-        <title>Open Theories about the DMT Code | DMT Code</title>
-        <meta
-          name="description"
-          content="Attributed explanatory theories for the DMT laser code phenomenon, from simulation readings to skeptical accounts, with real community voting."
-        />
-        <link rel="canonical" href="https://dmtcode.com/theories" />
-        <meta property="og:title" content="Open Theories about the DMT Code" />
-        <meta property="og:url" content="https://dmtcode.com/theories" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
       </Helmet>

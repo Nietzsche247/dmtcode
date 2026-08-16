@@ -1,9 +1,15 @@
 import { ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
 export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) => {
   const location = useLocation();
-  const pathnames = location.pathname.split('/').filter((x) => x);
+  const locale = useLocale();
+  const rawSegments = location.pathname.split('/').filter((x) => x);
+  // The locale prefix is routing, not a page: it must never become a crumb.
+  const pathnames =
+    locale !== 'en' && rawSegments[0] === locale ? rawSegments.slice(1) : rawSegments;
+
 
   const breadcrumbNameMap: Record<string, string> = {
     '': 'Home',
@@ -52,7 +58,7 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
       <ol className="flex items-center space-x-2 text-sm">
         <li>
           <Link 
-            to="/" 
+            to={localePath(locale, '/')}
             className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Home"
           >
@@ -60,7 +66,8 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
           </Link>
         </li>
         {pathnames.map((value, index) => {
-          const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+          const to = localePath(locale, `/${pathnames.slice(0, index + 1).join('/')}`);
+
           const isLast = index === pathnames.length - 1;
           const mapped = breadcrumbNameMap[value];
           const fallback = value

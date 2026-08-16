@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import { SEO } from '@/components/SEO';
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -85,13 +86,8 @@ const Retreats = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO uiKey="retreats" path="/retreats" />
       <Helmet>
-        <title>{TITLE}</title>
-        <meta name="description" content={DESC} />
-        <link rel="canonical" href="https://dmtcode.com/retreats" />
-        <meta property="og:title" content={TITLE} />
-        <meta property="og:description" content={DESC} />
-        <meta property="og:url" content="https://dmtcode.com/retreats" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={OG_IMAGE} />
         <meta name="twitter:card" content="summary_large_image" />

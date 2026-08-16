@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -111,6 +112,20 @@ const Timeline = () => {
 
   const entries = useMemo(() => file?.entries ?? [], [file]);
 
+  // Head copy mirrors the prerender: the counted title once the file is in
+  // hand, the uncounted one before that. Never a title with unfilled slots.
+  const seo = useMemo(() => {
+    if (entries.length === 0) return { key: 'timeline-empty' as const, vars: undefined };
+    const years = entries.map((e) => e.date.year).filter((y): y is number => typeof y === 'number');
+    if (years.length === 0) return { key: 'timeline-empty' as const, vars: undefined };
+    return {
+      key: 'timeline' as const,
+      vars: { first: Math.min(...years), last: Math.max(...years), n: entries.length },
+    };
+  }, [entries]);
+
+
+
   const tagCounts = useMemo(() => {
     const m = new Map<string, number>();
     entries.forEach((e) => e.tags.forEach((t) => m.set(t, (m.get(t) ?? 0) + 1)));
@@ -205,16 +220,12 @@ const Timeline = () => {
 
   return (
     <>
+      {seo.key === 'timeline' ? (
+        <SEO uiKey="timeline" path="/timeline" vars={seo.vars} />
+      ) : (
+        <SEO uiKey="timeline-empty" path="/timeline" />
+      )}
       <Helmet>
-        <title>Chronology of DMT visual research | DMT Code</title>
-        <meta
-          name="description"
-          content="A dated record of published research, legal decisions and community claims about DMT visual phenomena, sortable by date, person, place and kind of evidence. Every DOI resolved against Crossref."
-        />
-        <link rel="canonical" href="https://dmtcode.com/timeline" />
-        <meta property="og:title" content="Chronology of DMT visual research | DMT Code" />
-        <meta property="og:description" content="Sortable by date, person, place and kind of evidence. Every DOI resolved against Crossref." />
-        <meta property="og:url" content="https://dmtcode.com/timeline" />
         <meta property="og:type" content="website" />
       </Helmet>
 

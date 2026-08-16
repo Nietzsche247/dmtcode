@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 
 const ITEM_LIST_LD = {
   "@context": "https://schema.org",
@@ -19,13 +20,8 @@ const ITEM_LIST_LD = {
 const People = () => {
   return (
     <>
+      <SEO uiKey="people" path="/people" />
       <Helmet>
-        <title>People | DMT Code</title>
-        <meta
-          name="description"
-          content="Entity profiles for the people whose work this record is built on."
-        />
-        <link rel="canonical" href="https://dmtcode.com/people" />
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(ITEM_LIST_LD)}</script>
       </Helmet>

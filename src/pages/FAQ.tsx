@@ -2,6 +2,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import {
   Accordion,
@@ -133,18 +134,10 @@ const FAQ = () => {
 
   return (
     <>
+      <SEO uiKey="faq" path="/faq" />
       <Helmet>
-        <title>Questions about the DMT Code project and preparing to observe | DMT Code</title>
-        <meta
-          name="description"
-          content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured."
-        />
-        <link rel="canonical" href="https://dmtcode.com/faq" />
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dmtcode.com/faq" />
-        <meta property="og:title" content="Questions about the DMT Code project and preparing to observe | DMT Code" />
-        <meta property="og:description" content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured." />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Questions about the DMT Code project and preparing to observe | DMT Code" />
         <meta name="twitter:description" content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured." />

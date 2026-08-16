@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { FilterGuide } from '@/components/bibliography/FilterGuide';
 import { BibliographyCard } from '@/components/bibliography/BibliographyCard';
@@ -121,14 +122,9 @@ const Bibliography = () => {
 
   return (
     <>
+      <SEO uiKey="bibliography" path="/bibliography" />
       <Helmet>
-        <title>Research Library | DMT Code</title>
-        <meta name="description" content="Unified research library covering the Code of Reality phenomenon: peer reviewed papers, curated public sources, and skeptical responses." />
-        <link rel="canonical" href="https://dmtcode.com/bibliography" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Research Library | DMT Code" />
-        <meta property="og:description" content="Unified research library covering the Code of Reality phenomenon: peer reviewed papers, curated public sources, and skeptical responses." />
-        <meta property="og:url" content="https://dmtcode.com/bibliography" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         {listJsonLd && <script type="application/ld+json">{JSON.stringify(listJsonLd)}</script>}

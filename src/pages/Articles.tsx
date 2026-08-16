@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import { SEO } from '@/components/SEO';
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
@@ -71,15 +72,8 @@ export default function Articles() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO uiKey="articles" path="/articles" />
       <Helmet>
-        <title>Articles | DMT Code</title>
-        <meta
-          name="description"
-          content="Long-form answers grounded in this site's own records, with every claim linked to the trial, paper, or symbol it rests on."
-        />
-        <link rel="canonical" href="https://dmtcode.com/articles" />
-        <meta property="og:title" content="Articles | DMT Code" />
-        <meta property="og:url" content="https://dmtcode.com/articles" />
         <meta property="og:type" content="website" />
       </Helmet>
 

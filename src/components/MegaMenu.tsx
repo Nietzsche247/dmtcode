@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useModeStore } from "@/stores/modeStore";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
@@ -70,11 +71,11 @@ const resourceItems: NavItem[] = [
   { title: "Null Reports", href: "/null-reports", description: "Negative results and baseline data", icon: ScrollText },
 ];
 
-const renderItem = (item: NavItem, active: boolean) => (
+const renderItem = (item: NavItem, active: boolean, href: string) => (
   <li key={item.href}>
     <NavigationMenuLink asChild>
       <Link
-        to={item.href}
+        to={href}
         className={cn(
           "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors w-full text-left",
           "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
@@ -96,7 +97,10 @@ const renderItem = (item: NavItem, active: boolean) => (
 export const MegaMenu = () => {
   const location = useLocation();
   const { mode } = useModeStore();
-  const isActive = (href: string) => location.pathname === href;
+  const locale = useLocale();
+  // Keep a visitor inside their locale while navigating the mega menu.
+  const lp = (path: string) => localePath(locale, path);
+  const isActive = (href: string) => location.pathname === lp(href);
 
   return (
     <NavigationMenu className="hidden lg:flex">
@@ -105,7 +109,7 @@ export const MegaMenu = () => {
           <NavigationMenuTrigger className="bg-transparent text-sm">Research</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {researchItems.map((item) => renderItem(item, isActive(item.href)))}
+              {researchItems.map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -116,7 +120,7 @@ export const MegaMenu = () => {
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {explorerItems
                 .filter((item) => mode === 'explorer' || item.href === '/prepare' || item.href === '/events' || item.href === '/capture')
-                .map((item) => renderItem(item, isActive(item.href)))}
+                .map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -125,7 +129,7 @@ export const MegaMenu = () => {
           <NavigationMenuTrigger className="bg-transparent text-sm">Resources</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
-              {resourceItems.map((item) => renderItem(item, isActive(item.href)))}
+              {resourceItems.map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -133,7 +137,7 @@ export const MegaMenu = () => {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
-              to="/about"
+              to={lp('/about')}
               className={cn(
                 "px-4 py-2 text-sm font-medium transition-colors rounded-md inline-block",
                 isActive('/about')
