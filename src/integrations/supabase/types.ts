@@ -2790,6 +2790,48 @@ export type Database = {
           },
         ]
       }
+      translation_runs: {
+        Row: {
+          checked: number
+          errors: number
+          finished_at: string
+          id: string
+          locale: string | null
+          note: string | null
+          pending: boolean
+          skipped: number
+          started_at: string
+          table_name: string | null
+          translated: number
+        }
+        Insert: {
+          checked?: number
+          errors?: number
+          finished_at?: string
+          id?: string
+          locale?: string | null
+          note?: string | null
+          pending?: boolean
+          skipped?: number
+          started_at: string
+          table_name?: string | null
+          translated?: number
+        }
+        Update: {
+          checked?: number
+          errors?: number
+          finished_at?: string
+          id?: string
+          locale?: string | null
+          note?: string | null
+          pending?: boolean
+          skipped?: number
+          started_at?: string
+          table_name?: string | null
+          translated?: number
+        }
+        Relationships: []
+      }
       trial_backfill_runs: {
         Row: {
           errors: Json
