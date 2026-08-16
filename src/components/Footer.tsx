@@ -3,8 +3,14 @@ import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { ZENODO_DOI, CITATION_APA } from '@/lib/constants';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Footer = () => {
+  const locale = useLocale();
+  // Every internal footer link stays inside the visitor's locale.
+  const to = (path: string) => localePath(locale, path);
+
   return (
     <footer className="relative py-16 px-4 bg-background border-t border-border/50 transition-theme">
       <div className="max-w-6xl mx-auto space-y-12">
@@ -36,94 +42,94 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground">Resources</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/articles" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/articles')} className="text-muted-foreground hover:text-primary transition-colors">
                   Articles
                 </Link>
               </li>
               <li>
-                <Link to="/guides" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/guides')} className="text-muted-foreground hover:text-primary transition-colors">
                   Guides
                 </Link>
               </li>
               <li>
-                <Link to="/capture" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/capture')} className="text-muted-foreground hover:text-primary transition-colors">
                   Capture
                 </Link>
               </li>
               <li>
-                <Link to="/registry" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/registry')} className="text-muted-foreground hover:text-primary transition-colors">
                   Glyph Registry
                 </Link>
               </li>
               <li>
-                <Link to="/dataset" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/dataset')} className="text-muted-foreground hover:text-primary transition-colors">
                   Dataset & DOI
                 </Link>
               </li>
               <li>
-                <Link to="/prepare" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/prepare')} className="text-muted-foreground hover:text-primary transition-colors">
                   Kits
                 </Link>
               </li>
               <li>
-                <Link to="/bibliography" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/bibliography')} className="text-muted-foreground hover:text-primary transition-colors">
                   Bibliography
                 </Link>
               </li>
               <li>
-                <Link to="/correlations" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/correlations')} className="text-muted-foreground hover:text-primary transition-colors">
                   Correlations
                 </Link>
               </li>
               <li>
-                <Link to="/timeline" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/timeline')} className="text-muted-foreground hover:text-primary transition-colors">
                   Chronology
                 </Link>
               </li>
 
 
               <li>
-                <Link to="/trials" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/trials')} className="text-muted-foreground hover:text-primary transition-colors">
                   Clinical trials
                 </Link>
               </li>
               <li>
-                <Link to="/events" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/events')} className="text-muted-foreground hover:text-primary transition-colors">
                   Events
                 </Link>
               </li>
               <li>
-                <Link to="/retreats" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/retreats')} className="text-muted-foreground hover:text-primary transition-colors">
                   Retreat centers
                 </Link>
               </li>
               <li>
-                <Link to="/protocols" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/protocols')} className="text-muted-foreground hover:text-primary transition-colors">
                   Protocols
                 </Link>
               </li>
               <li>
-                <Link to="/research" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/research')} className="text-muted-foreground hover:text-primary transition-colors">
                   Research library
                 </Link>
               </li>
               <li>
-                <Link to="/protocol-guide" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/protocol-guide')} className="text-muted-foreground hover:text-primary transition-colors">
                   Protocol Guide
                 </Link>
               </li>
               <li>
-                <Link to="/co-witnesses" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/co-witnesses')} className="text-muted-foreground hover:text-primary transition-colors">
                   Co-witness wall
                 </Link>
               </li>
               <li>
-                <Link to="/theories" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/theories')} className="text-muted-foreground hover:text-primary transition-colors">
                   Open Theories
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/faq')} className="text-muted-foreground hover:text-primary transition-colors">
                   FAQ
                 </Link>
               </li>
@@ -134,22 +140,22 @@ export const Footer = () => {
             <h4 className="font-semibold text-foreground">The project</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/about')} className="text-muted-foreground hover:text-primary transition-colors">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/critiques" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/critiques')} className="text-muted-foreground hover:text-primary transition-colors">
                   Critiques
                 </Link>
               </li>
               <li>
-                <Link to="/methods" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/methods')} className="text-muted-foreground hover:text-primary transition-colors">
                   Methods
                 </Link>
               </li>
               <li>
-                <Link to="/null-reports" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to={to('/null-reports')} className="text-muted-foreground hover:text-primary transition-colors">
                   Null reports
                 </Link>
               </li>
@@ -178,7 +184,7 @@ export const Footer = () => {
             </p>
             <p>
               <span className="text-foreground font-medium">Commercial Disclosure:</span> Kits are sold by Meridian Optics Lab, operated by the same owner as DMT Code Project. This site does not currently carry affiliate links. See the{' '}
-              <Link to="/disclosure" className="underline hover:text-foreground">Disclosure page</Link>.
+              <Link to={to('/disclosure')} className="underline hover:text-foreground">Disclosure page</Link>.
             </p>
           </div>
         </div>
@@ -186,6 +192,7 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} DMT Code Project. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <LanguageSwitcher />
             <a 
               href="https://creativecommons.org/licenses/by/4.0/" 
               target="_blank" 
@@ -201,19 +208,19 @@ export const Footer = () => {
             >
               data.json
             </a>
-            <Link to="/privacy" className="hover:text-primary transition-colors">
+            <Link to={to('/privacy')} className="hover:text-primary transition-colors">
               Privacy
             </Link>
-            <Link to="/terms" className="hover:text-primary transition-colors">
+            <Link to={to('/terms')} className="hover:text-primary transition-colors">
               Terms
             </Link>
-            <Link to="/disclosure" className="hover:text-primary transition-colors">
+            <Link to={to('/disclosure')} className="hover:text-primary transition-colors">
               Disclosure
             </Link>
-            <Link to="/shipping" className="hover:text-primary transition-colors">
+            <Link to={to('/shipping')} className="hover:text-primary transition-colors">
               Shipping
             </Link>
-            <Link to="/returns" className="hover:text-primary transition-colors">
+            <Link to={to('/returns')} className="hover:text-primary transition-colors">
               Returns
             </Link>
             <a 
