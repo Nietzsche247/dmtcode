@@ -275,7 +275,7 @@ const Home = () => {
                 Instruments for careful observation
               </h2>
               <p className="text-muted-foreground mb-12">
-                Every kit ships with its full bill of materials published.
+                Three kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {INSTRUMENTS.map((kit) => (
@@ -284,12 +284,20 @@ const Home = () => {
                     className="rounded-2xl border border-border/60 overflow-hidden bg-card/40 hover:border-primary/50 transition-colors"
                   >
                     <div className="aspect-video bg-muted/20 overflow-hidden">
-                      <img
-                        src={kit.image}
-                        alt={`${kit.name} kit contents`}
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                      />
+                      {kit.image ? (
+                        <img
+                          src={kit.image}
+                          alt={`${kit.name} kit contents`}
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted/30 flex items-center justify-center">
+                          <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                            Kit image pending
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-6">
                       <h3 className="font-serif text-2xl text-foreground">{kit.name}</h3>
@@ -299,12 +307,26 @@ const Home = () => {
                       <div className="text-2xl font-black tracking-tight tabular-nums mt-4">
                         {kit.price}
                       </div>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Ships in 7 to 10 business days. Free US shipping. 18+, for research use.
+                      </p>
                       <Button
                         asChild
                         variant="outline"
                         className="w-full mt-6 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
-                        <Link to={kit.href}>View instrument</Link>
+                        <Link
+                          to={kit.href}
+                          onClick={() => {
+                            if (typeof window !== 'undefined' && (window as any).gtag) {
+                              (window as any).gtag('event', 'home_kit_card_click', {
+                                kit: kit.id,
+                              });
+                            }
+                          }}
+                        >
+                          See kit and buy
+                        </Link>
                       </Button>
                     </div>
                   </article>
