@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { ConvergenceHero } from '@/components/home/ConvergenceHero';
 import { ExplainerSection } from '@/components/ExplainerSection';
@@ -30,31 +30,17 @@ const INSTRUMENTS = KITS.map((kit) => ({
   availability: kit.availability,
 }));
 
-const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div 
-      ref={ref} 
-      className={`opacity-0 ${isVisible ? 'animate-blur-in-up' : ''} ${className}`}
-      style={{ animationFillMode: 'forwards' }}
-    >
-      {children}
-    </div>
-  );
-};
+// Scroll reveal without JavaScript gating: the element is visible by default and
+// the animation only decorates its arrival. Nothing can be left stranded at
+// opacity 0 when an intersection never fires or motion is reduced.
+const AnimatedSection = ({ children, className = '' }: { children: ReactNode; className?: string }) => (
+  <div
+    className={`motion-safe:animate-blur-in-up ${className}`}
+    style={{ animationFillMode: 'both' }}
+  >
+    {children}
+  </div>
+);
 
 const Home = () => {
   const navigate = useNavigate();
