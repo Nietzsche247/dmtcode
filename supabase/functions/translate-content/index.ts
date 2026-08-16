@@ -14,11 +14,10 @@ const GLOSSARY = [
 
 type Cfg = { table: string; gate: string; key: "id" | "slug"; fields: string[]; json?: string[] };
 const CONFIG: Cfg[] = [
-  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
-  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
-  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
   { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
-  { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
+  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
+  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
+  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
   { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
   { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
   // symbol_submissions is deliberately NOT translated here. A submission's
@@ -30,9 +29,14 @@ const CONFIG: Cfg[] = [
   // dialog, via the admin-translate-submission function, which stores nothing.
   // Operator decision, 2026-08-16.
   { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
+  { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
 ];
 
 const sbHeaders = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" };
+
+class DeadlineError extends Error {
+  constructor() { super("deadline reached mid-field"); }
+}
 
 async function md5(s: string): Promise<string> {
   const buf = await crypto.subtle.digest("MD5", new TextEncoder().encode(s));
@@ -46,7 +50,7 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 45_000);
+  const timer = setTimeout(() => ctrl.abort(), 20_000);
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -66,10 +70,14 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
   }
 }
 
-async function translateJson(v: unknown, locale: "es" | "de"): Promise<unknown> {
+// Walks a jsonb value. If the run deadline passes mid-walk we throw: a
+// half-translated JSON must never be stored, because the prerender overlay
+// replaces the whole field with whatever is in content_translations.
+async function translateJson(v: unknown, locale: "es" | "de", deadline: number): Promise<unknown> {
+  if (Date.now() > deadline) throw new DeadlineError();
   if (typeof v === "string") return v.trim() ? await translate(v, locale) : v;
-  if (Array.isArray(v)) { const out = []; for (const x of v) out.push(await translateJson(x, locale)); return out; }
-  if (v && typeof v === "object") { const o: Record<string, unknown> = {}; for (const [k, x] of Object.entries(v)) o[k] = await translateJson(x, locale); return o; }
+  if (Array.isArray(v)) { const out = []; for (const x of v) out.push(await translateJson(x, locale, deadline)); return out; }
+  if (v && typeof v === "object") { const o: Record<string, unknown> = {}; for (const [k, x] of Object.entries(v)) o[k] = await translateJson(x, locale, deadline); return o; }
   return v;
 }
 
@@ -113,39 +121,84 @@ Deno.serve(async (req) => {
   const onlyTable = u.searchParams.get("table");
   const onlyLocale = u.searchParams.get("locale");
   const started = Date.now();
-  const stats = { checked: 0, translated: 0, skipped: 0, errors: 0, pending: false };
+  const startedAtIso = new Date(started).toISOString();
+  const deadline = started + TIME_BUDGET_MS;
+  const stats = { checked: 0, translated: 0, skipped: 0, errors: 0, pending: false, error_samples: [] as string[] };
+
+  const noteError = (e: unknown) => {
+    stats.errors++;
+    if (stats.error_samples.length < 3) stats.error_samples.push(String(e).slice(0, 160));
+  };
+
+  const logRun = async (fatal?: string) => {
+    try {
+      const note = fatal ?? (stats.error_samples.length ? stats.error_samples.join(" | ") : null);
+      await fetch(`${SUPABASE_URL}/rest/v1/translation_runs`, {
+        method: "POST",
+        headers: { ...sbHeaders, Prefer: "return=minimal" },
+        body: JSON.stringify({
+          started_at: startedAtIso,
+          finished_at: new Date().toISOString(),
+          table_name: onlyTable,
+          locale: onlyLocale,
+          checked: stats.checked,
+          translated: stats.translated,
+          skipped: stats.skipped,
+          errors: stats.errors,
+          pending: stats.pending,
+          note,
+        }),
+      });
+    } catch (e) {
+      console.error("translation_runs log failed", String(e));
+    }
+  };
+
   try {
     for (const c of CONFIG.filter((c) => !onlyTable || c.table === onlyTable)) {
       const rows = await getRows(c);
       for (const locale of LOCALES.filter((l) => !onlyLocale || l === onlyLocale)) {
         const have = await existingHashes(c.table, locale);
-        const batch: Record<string, unknown>[] = [];
         for (const row of rows) {
+          const batch: Record<string, unknown>[] = [];
           const recId = String(row[c.key] ?? "");
           if (!recId) continue;
           for (const f of c.fields) {
             const src = row[f]; if (src == null || String(src).trim() === "") continue;
             const srcStr = String(src); const h = await md5(srcStr); stats.checked++;
             if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
-            try { const t = await translate(srcStr, locale); batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, reviewed: false }); stats.translated++; } catch { stats.errors++; }
-            if (Date.now() - started > TIME_BUDGET_MS) { stats.pending = true; break; }
+            try { const t = await translate(srcStr, locale); batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, reviewed: false }); stats.translated++; } catch (e) { noteError(e); }
+            if (Date.now() > deadline) { stats.pending = true; break; }
           }
-          for (const jf of c.json ?? []) {
-            const src = row[jf]; if (src == null) continue;
-            const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
-            if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
-            try { const t = JSON.stringify(await translateJson(src, locale)); batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, reviewed: false }); stats.translated++; } catch { stats.errors++; }
-            if (Date.now() - started > TIME_BUDGET_MS) { stats.pending = true; break; }
+          if (!stats.pending) {
+            for (const jf of c.json ?? []) {
+              const src = row[jf]; if (src == null) continue;
+              const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
+              if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
+              try {
+                const t = JSON.stringify(await translateJson(src, locale, deadline));
+                batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, reviewed: false });
+                stats.translated++;
+              } catch (e) {
+                // Abandon a partially translated jsonb field entirely; never store half.
+                if (e instanceof DeadlineError) { stats.pending = true; break; }
+                noteError(e);
+              }
+              if (Date.now() > deadline) { stats.pending = true; break; }
+            }
           }
+          // Flush after every row so partial progress survives a kill.
+          if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
           if (stats.pending) break;
         }
-        if (batch.length) await upsert(batch);
         if (stats.pending) break;
       }
       if (stats.pending) break;
     }
+    await logRun();
     return new Response(JSON.stringify(stats), { headers: { "Content-Type": "application/json" } });
   } catch (e) {
+    await logRun(String(e).slice(0, 500));
     return new Response(JSON.stringify({ ...stats, fatal: String(e) }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 });
