@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { ConvergenceHero } from '@/components/home/ConvergenceHero';
 import { ExplainerSection } from '@/components/ExplainerSection';
@@ -6,7 +6,7 @@ import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
-import { ArrowRight, Database, Users, Target, FileText, AlertTriangle, Mic } from 'lucide-react';
+import { ArrowRight, Mic } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { useDynamicMeta } from '@/hooks/useDynamicMeta';
@@ -30,31 +30,17 @@ const INSTRUMENTS = KITS.map((kit) => ({
   availability: kit.availability,
 }));
 
-const AnimatedSection = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div 
-      ref={ref} 
-      className={`opacity-0 ${isVisible ? 'animate-blur-in-up' : ''} ${className}`}
-      style={{ animationFillMode: 'forwards' }}
-    >
-      {children}
-    </div>
-  );
-};
+// Scroll reveal without JavaScript gating: the element is visible by default and
+// the animation only decorates its arrival. Nothing can be left stranded at
+// opacity 0 when an intersection never fires or motion is reduced.
+const AnimatedSection = ({ children, className = '' }: { children: ReactNode; className?: string }) => (
+  <div
+    className={`motion-safe:animate-blur-in-up ${className}`}
+    style={{ animationFillMode: 'both' }}
+  >
+    {children}
+  </div>
+);
 
 const Home = () => {
   const navigate = useNavigate();
@@ -135,10 +121,10 @@ const Home = () => {
           <GetInvolvedDoors variant="top" />
 
           {/* Voice Logger Callout */}
-          <section className="container mx-auto px-4 py-8 max-w-4xl">
+          <section className="container mx-auto px-4 py-4 max-w-4xl">
             <AnimatedSection>
               <div 
-                className="p-4 md:p-6 rounded-lg border border-primary bg-primary/10"
+                className="p-4 md:p-5 rounded-lg border border-primary bg-primary/10"
                 role="complementary"
                 aria-label="Voice Logger recommendation"
               >
@@ -171,52 +157,51 @@ const Home = () => {
 
           <ExplainerSection />
           
-          {/* Key Takeaways Section */}
-          <section className="container mx-auto px-4 py-32 max-w-4xl">
-            <AnimatedSection className="text-center mb-16">
-              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">The Research</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-foreground" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Key Takeaways
+          {/* Key Takeaways summary. Full argument lives on /methods. */}
+          <section className="container mx-auto px-4 py-10 max-w-3xl border-t border-border/30">
+            <AnimatedSection>
+              <p className="label-data text-xs text-primary mb-4">THE RESEARCH</p>
+              <h2
+                className="text-3xl md:text-4xl text-foreground mb-5"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                Key takeaways
               </h2>
-            </AnimatedSection>
-
-            <AnimatedSection className="animation-delay-200">
-              <div className="p-8 md:p-12 rounded-3xl bg-card/50 border border-border/40">
-                <ul className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                  <li className="flex gap-4">
-                    <Target className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>The 650 nm protocol passes coherent red light through a diffraction grating during N,N-DMT administration. Observers report seeing discrete visual symbols during that exposure. Whether the light produces them, or whether they would be reported without it, is the open question this project exists to settle.</span>
-                  </li>
-                  <li className="flex gap-4">
-                    <Users className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Reports of recurring symbol forms come from self selected observers who are usually aware of the protocol beforehand. Establishing whether the convergence is real requires records sealed before the observer sees the catalogue, which is what the capture route collects.</span>
-                  </li>
-                  <li className="flex gap-4">
-                    <Database className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Submitting to the registry requires an account, and each submission carries structured metadata. The registry pages export records as CSV or JSON, and the full corpus is published at /data.json under a CC-BY-4.0 license.</span>
-                  </li>
-                  <li className="flex gap-4">
-                    <FileText className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>This project makes no medical claims. It exists solely to document reported phenomena for academic analysis.</span>
-                  </li>
-                  <li className="flex gap-4">
-                    <AlertTriangle className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                    <span>Critical perspectives are welcome. The /critiques page presents counter-arguments and alternative explanations for these observations.</span>
-                  </li>
-                </ul>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed" style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}>
+                The 650 nm protocol passes coherent red light through a diffraction grating during
+                N,N-DMT administration, and observers report discrete visual symbols during that
+                exposure. Most reporters already know the protocol, so convergence is not
+                established: it needs records sealed before the observer sees the catalogue. Every
+                submission carries structured metadata and the corpus is published under CC-BY-4.0.
+                We make no medical claims and we publish the counter-arguments alongside the
+                symbols.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4 text-sm">
+                <Link to="/methods" className="text-primary hover:underline inline-flex items-center gap-1">
+                  Read more on Methods <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to="/critiques" className="text-primary hover:underline inline-flex items-center gap-1">
+                  Read the critiques <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </AnimatedSection>
           </section>
 
-          {/* Stats Section - Now uses live CommunityStats */}
-          <section className="container mx-auto px-4 py-32 max-w-5xl border-t border-border/20">
-            <AnimatedSection className="text-center mb-16">
-              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Current Status</p>
-              <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-[0.02em] text-foreground mb-6" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Dataset Overview
+          {/* Live counters */}
+          <section className="container mx-auto px-4 py-10 max-w-5xl border-t border-border/20">
+            <AnimatedSection className="mb-8">
+              <p className="label-data text-xs text-primary mb-4">CURRENT STATUS</p>
+              <h2
+                className="text-3xl md:text-4xl text-foreground mb-3"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                Dataset overview
               </h2>
-              <p className="text-muted-foreground font-normal max-w-2xl mx-auto text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                Live statistics from our growing dataset
+              <p className="text-base text-muted-foreground" style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}>
+                Live counts from the open record.{' '}
+                <Link to="/dataset" className="text-primary hover:underline">
+                  Read more on Dataset
+                </Link>
               </p>
             </AnimatedSection>
 
@@ -228,37 +213,41 @@ const Home = () => {
           {/* Recent Contributions Section */}
           <RecentContributions />
 
-          {/* Mission Section */}
-          <section className="container mx-auto px-4 py-32 max-w-4xl border-t border-border/30">
+          {/* Mission summary. Full statement lives on /about. */}
+          <section className="container mx-auto px-4 py-10 max-w-3xl border-t border-border/30">
             <AnimatedSection>
-              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-4">Our Mission</p>
-              <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-foreground mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Structured Documentation for Science
+              <p className="label-data text-xs text-primary mb-4">OUR MISSION</p>
+              <h2
+                className="text-3xl md:text-4xl text-foreground mb-5"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                Structured documentation for science
               </h2>
-              <div className="space-y-6 text-lg text-muted-foreground font-normal leading-relaxed" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-                <p>
-                  DMT Code collects discrete visual symbols reported during 650 nm coherent light exposure and N,N-DMT administration. Anyone with an account can contribute. Symbols publish immediately and an administrator has 72 hours to review and deny. Events, retreats, clinical trial records and theories are reviewed before they appear.
-                </p>
-                <p>
-                  Danny Goler developed this protocol and published a pilot account of it in IPI Letters in 2025. Participants shine coherent red light through a diffraction grating during the experience and report observing discrete, bounded visual symbols that resemble alphabetic characters and geometric patterns.
-                </p>
-                <p>
-                  Individual reports of similar forms are what prompted this project. They are not yet evidence of convergence, because almost everyone who reports one has already read about the protocol. Separating a real shared structure from a shared expectation is the whole task, and it is why this site publishes null reports and competing explanations alongside the symbols.
-                </p>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed" style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}>
+                DMT Code collects discrete visual symbols reported during 650 nm coherent light
+                exposure and N,N-DMT administration. Danny Goler developed the protocol and
+                published a pilot account of it in IPI Letters in 2025. Individual reports of
+                similar forms prompted this project, but they are not yet evidence of convergence.
+                Separating a real shared structure from a shared expectation is the whole task.
+              </p>
+              <div className="mt-6 text-sm">
+                <Link to="/about" className="text-primary hover:underline inline-flex items-center gap-1">
+                  Read more About the project <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </AnimatedSection>
           </section>
 
           {/* Instruments Section */}
-          <section className="container mx-auto px-4 py-32 max-w-6xl border-t border-border/30">
+          <section className="container mx-auto px-4 py-10 max-w-6xl border-t border-border/30">
             <AnimatedSection>
               <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
                 Instruments for careful observation
               </h2>
-              <p className="text-muted-foreground mb-12">
+              <p className="text-muted-foreground mb-8">
                 Three kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {INSTRUMENTS.map((kit) => (
                   <article
                     key={kit.slug}
@@ -280,7 +269,7 @@ const Home = () => {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-5">
                       <h3 className="font-serif text-2xl text-foreground">{kit.name}</h3>
                       <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mt-2">
                         {kit.spec}
@@ -294,7 +283,7 @@ const Home = () => {
                       <Button
                         asChild
                         variant="outline"
-                        className="w-full mt-6 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="w-full mt-5 rounded-lg border-primary/50 hover:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         <Link
                           to={kit.href}
@@ -320,19 +309,21 @@ const Home = () => {
           <EmailCapture source="homepage" />
           
           {/* CTA Section */}
-          <section className="container mx-auto px-4 py-32 text-center">
-            <AnimatedSection className="max-w-3xl mx-auto">
-              <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-6">Get Involved</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-[0.02em] text-foreground mb-8" style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}>
-                Contribute to Open Research
+          <section className="container mx-auto px-4 py-10 text-center border-t border-border/30">
+            <AnimatedSection className="max-w-2xl mx-auto">
+              <h2
+                className="text-3xl md:text-4xl text-foreground mb-4"
+                style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+              >
+                Contribute to open research
               </h2>
-              <p className="text-muted-foreground font-normal mb-12 text-lg max-w-xl mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <p className="text-muted-foreground mb-8 text-base" style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}>
                 Submit your observations or explore the evidence. Null reports are equally valuable.
               </p>
-              <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   size="lg" 
-                  className="px-10 py-7 h-auto rounded-full btn-lickable border-beam group text-lg"
+                  className="px-8 py-6 h-auto rounded-full btn-lickable border-beam group"
                   onClick={() => navigate('/registry#submit')}
                 >
                   Submit Symbol
@@ -341,7 +332,7 @@ const Home = () => {
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="px-10 py-7 h-auto rounded-full btn-lickable border-primary/50 hover:border-primary text-lg"
+                  className="px-8 py-6 h-auto rounded-full btn-lickable border-primary/50 hover:border-primary"
                   onClick={() => navigate('/evidence-map')}
                 >
                   View Evidence
@@ -350,7 +341,6 @@ const Home = () => {
             </AnimatedSection>
           </section>
 
-          <GetInvolvedDoors variant="bottom" />
         </main>
 
         <Footer />

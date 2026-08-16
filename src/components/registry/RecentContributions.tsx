@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ChevronUp, Eye } from 'lucide-react';
+import { ArrowRight, ChevronUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -34,14 +32,15 @@ export const RecentContributions = () => {
       .limit(6);
 
     if (!error && data) {
-      setSymbols(data);
+      // Hide tiles with no image: an empty frame reads as a missing record.
+      setSymbols(data.filter((s) => typeof s.image_url === 'string' && s.image_url.trim() !== ''));
     }
     setLoading(false);
   };
 
   if (loading) {
     return (
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-10">
         <div className="text-center mb-12">
           <Skeleton className="h-8 w-64 mx-auto mb-4" />
           <Skeleton className="h-4 w-96 mx-auto" />
@@ -60,34 +59,28 @@ export const RecentContributions = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-16 border-t border-border/30">
-      <div className="text-center mb-12">
-        <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-4">
-          Community
-        </p>
-        <h2 
-          className="text-3xl md:text-4xl font-bold uppercase tracking-[0.02em] text-foreground mb-4"
-          style={{ fontFamily: "'Montserrat', system-ui, sans-serif" }}
+    <section className="container mx-auto px-4 py-10 border-t border-border/30 max-w-6xl">
+      <div className="mb-8">
+        <p className="label-data text-xs text-primary mb-4">COMMUNITY</p>
+        <h2
+          className="text-3xl md:text-4xl text-foreground mb-3"
+          style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
         >
-          Recent Contributions
+          Recent contributions
         </h2>
-        <p 
-          className="text-muted-foreground max-w-xl mx-auto"
-          style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+        <p
+          className="text-base text-muted-foreground"
+          style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
         >
-          Latest approved symbols from our community of researchers
+          The latest symbols added to the open record.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
         {symbols.map((symbol) => (
-          <Link
-            key={symbol.id}
-            to={`/registry/${symbol.id}`}
-            className="group"
-          >
-            <Card className="p-3 bg-card/50 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-              <div className="aspect-square bg-white rounded border border-border overflow-hidden mb-2">
+          <Link key={symbol.id} to={`/registry/${symbol.id}`} className="group">
+            <article className="rounded-sm border border-border bg-card p-3 transition-colors hover:border-foreground/40">
+              <div className="aspect-square bg-white rounded-sm border border-border overflow-hidden mb-2">
                 <img
                   src={symbol.image_url}
                   alt={symbol.description || 'Recent symbol'}
@@ -95,30 +88,33 @@ export const RecentContributions = () => {
                   loading="lazy"
                 />
               </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <ChevronUp className="w-3 h-3" />
-                  {symbol.upvotes}
-                </span>
+              <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground min-h-[18px]">
+                {symbol.upvotes > 0 ? (
+                  <span className="flex items-center gap-1 tabular-nums">
+                    <ChevronUp className="w-3 h-3" aria-hidden="true" />
+                    {symbol.upvotes}
+                  </span>
+                ) : (
+                  <span aria-hidden="true" />
+                )}
                 {symbol.tags && symbol.tags[0] && (
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                  <span className="label-data text-[10px] text-muted-foreground truncate">
                     {symbol.tags[0]}
-                  </Badge>
+                  </span>
                 )}
               </div>
-            </Card>
+            </article>
           </Link>
         ))}
       </div>
 
-      <div className="text-center">
-        <Button 
-          size="lg"
+      <div>
+        <Button
           variant="outline"
-          className="rounded-full px-8 border-primary/50 hover:border-primary group"
+          className="rounded-sm border-border hover:border-foreground/40 group"
           onClick={() => navigate('/registry')}
         >
-          Browse All Symbols
+          Browse all symbols
           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>

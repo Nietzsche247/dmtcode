@@ -14,12 +14,6 @@ interface TopSymbol {
   upvotes: number;
 }
 
-interface TopStrip {
-  id: string;
-  image_url: string;
-  upvotes: number;
-}
-
 export const ConvergenceHero = () => {
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
@@ -27,7 +21,6 @@ export const ConvergenceHero = () => {
   const [confirmCount, setConfirmCount] = useState<number>(0);
   const [libraryCount, setLibraryCount] = useState<number>(0);
   const [verifiedCount, setVerifiedCount] = useState<number>(0);
-  const [strip, setStrip] = useState<TopStrip[]>([]);
 
 
   useEffect(() => {
@@ -76,13 +69,6 @@ export const ConvergenceHero = () => {
           .gte('upvotes', 3);
         if (!cancelled) setVerifiedCount(verified ?? 0);
 
-        const { data: stripData } = await supabase
-          .from('symbol_submissions')
-          .select('id,image_url,upvotes')
-          .eq('status', 'approved')
-          .order('upvotes', { ascending: false })
-          .limit(6);
-        if (!cancelled && stripData) setStrip(stripData as TopStrip[]);
       } catch (e) {
         // fail silently - render fallback
       }
@@ -128,10 +114,10 @@ export const ConvergenceHero = () => {
   }
 
   return (
-    <section className="relative px-4 pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-14 md:gap-16 items-center">
+    <section className="relative px-4 pt-20 pb-10 md:pt-32 md:pb-20 overflow-hidden">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-10 md:gap-16 items-center">
         {/* Editorial statement */}
-        <div className="space-y-7">
+        <div className="space-y-6">
           <p className="label-data text-xs text-muted-foreground">
             CONVERGENCE · OPEN RECORD · N,N-DMT
           </p>
@@ -247,7 +233,7 @@ export const ConvergenceHero = () => {
       </div>
 
       {/* How it works */}
-      <div className="max-w-5xl mx-auto mt-24 md:mt-32 grid md:grid-cols-3 gap-8 md:gap-12 border-t border-border/50 pt-14">
+      <div className="max-w-5xl mx-auto mt-10 md:mt-16 grid md:grid-cols-3 gap-6 md:gap-10 border-t border-border/50 pt-8">
         {[
           { n: '01', h: 'Observe', d: 'Notice a discrete visual form during an N,N-DMT experience.' },
           { n: '02', h: 'Draw or Respond', d: 'Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.' },
@@ -269,43 +255,8 @@ export const ConvergenceHero = () => {
         ))}
       </div>
 
-      {/* Convergence strip */}
-      {strip.length > 0 && (
-        <div className="max-w-6xl mx-auto mt-24 border-t border-border/50 pt-10">
-          <div className="flex items-baseline justify-between mb-6">
-            <p className="label-data text-xs text-muted-foreground">
-              FROM THE OPEN RECORD
-            </p>
-            <Link to="/registry" className="label-data text-xs text-primary hover:underline">
-              BROWSE ALL →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            {strip.map((s) => (
-              <Link
-                key={s.id}
-                to={`/registry/${s.id}`}
-                className="group block relative rounded-sm border border-border bg-card p-2 hover:border-primary/60 transition-colors"
-              >
-                <div className="aspect-square bg-white rounded-sm flex items-center justify-center overflow-hidden">
-                  <img
-                    src={s.image_url}
-                    alt={`Specimen ${s.id.slice(0, 8)}`}
-                    className="w-full h-full object-contain p-2"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-symbol-1.svg'; }}
-                  />
-                </div>
-                {s.upvotes > 0 && (
-                  <p className="label-data text-[10px] text-muted-foreground mt-2 text-center">
-                    {s.upvotes} RECOGNIZED
-                  </p>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* The six specimen strip lived here. It duplicated the Recent
+          contributions grid further down the page, so the page shows it once. */}
 
       <style>{`
         @keyframes specimen-breathe {

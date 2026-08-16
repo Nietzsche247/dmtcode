@@ -34,7 +34,7 @@ export const LatestArticle = () => {
   if (!ready || !article) return null;
 
   return (
-    <section className="container mx-auto px-4 py-16 max-w-4xl border-t border-border/20">
+    <section className="container mx-auto px-4 py-10 max-w-4xl border-t border-border/20">
       <p className="font-montserrat font-light italic text-muted-foreground text-lg tracking-wide mb-4">
         Latest article
       </p>

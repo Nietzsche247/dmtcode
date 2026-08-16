@@ -62,7 +62,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link to="/prepare" className="text-muted-foreground hover:text-primary transition-colors">
-                  Equipment
+                  Kits
                 </Link>
               </li>
               <li>
@@ -183,13 +183,13 @@ export const Footer = () => {
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© 2025 DMT Code Project. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} DMT Code Project. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a 
               href="https://creativecommons.org/licenses/by/4.0/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+              className="inline-flex items-center gap-2 whitespace-nowrap hover:text-primary transition-colors"
             >
               CC-BY-4.0
               <ExternalLink className="w-3 h-3" />

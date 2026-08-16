@@ -79,7 +79,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
   };
 
   return (
-    <section className="relative py-24 px-4 border-t border-border/30">
+    <section className="relative py-14 px-4 border-t border-border/30">
       <div className="max-w-2xl mx-auto text-center">
         <div className="inline-flex items-center justify-center w-14 h-14 bg-primary/10 rounded-2xl mb-6">
           <Mail className="w-7 h-7 text-primary" />

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, FlaskConical, Sparkles, SunMedium, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./CartDrawer";
 import { useCartStore } from "@/stores/cartStore";
 import { useModeStore } from "@/stores/modeStore";
+import { useThemeStore } from "@/stores/themeStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
@@ -27,7 +28,8 @@ export const Navigation = () => {
   const [avatarSeed, setAvatarSeed] = useState<string | null>(null);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const itemCount = useCartStore((state) => state.items.length);
-  const { mode } = useModeStore();
+  const { mode, setMode } = useModeStore();
+  const { resolvedTheme, setTheme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -109,6 +111,7 @@ export const Navigation = () => {
 
 
   const resourceItems = [
+    { path: '/prepare', label: 'Kits' },
     { path: '/protocol-guide', label: 'Protocol Guide' },
     { path: '/protocols', label: 'Protocols' },
     { path: '/assess', label: 'Assessment' },
@@ -268,6 +271,51 @@ export const Navigation = () => {
                   ))}
                 </CollapsibleContent>
               </Collapsible>
+
+              {/* Kits */}
+              <button
+                onClick={() => handleNavigation('/prepare')}
+                className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                  location.pathname === '/prepare'
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                Kits
+              </button>
+
+              {/* Text labels for the header icon buttons, which are icon only on mobile */}
+              <div className="pt-3 mt-2 border-t border-border/50 space-y-1">
+                <p className="px-4 py-1 text-xs uppercase tracking-widest text-muted-foreground/70">
+                  Display and cart
+                </p>
+                <button
+                  onClick={() => { setMode('research'); }}
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  <FlaskConical className="h-4 w-4" aria-hidden="true" />
+                  Research mode
+                </button>
+                <button
+                  onClick={() => { setMode('explorer'); }}
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  Explorer mode
+                </button>
+                <button
+                  onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                  disabled={mode === 'research'}
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 disabled:opacity-50"
+                >
+                  <SunMedium className="h-4 w-4" aria-hidden="true" />
+                  {mode === 'research' ? 'Light mode locked in Research mode' : 'Switch light or dark mode'}
+                </button>
+                <p className="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground">
+                  <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+                  Cart: {itemCount} item{itemCount === 1 ? '' : 's'}
+                </p>
+              </div>
 
               {/* About */}
               <button

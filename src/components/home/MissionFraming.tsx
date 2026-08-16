@@ -2,9 +2,9 @@ export const MissionFraming = () => {
   return (
     <section
       aria-label="Mission"
-      className="container mx-auto px-4 py-16 md:py-20 max-w-3xl"
+      className="container mx-auto px-4 py-10 md:py-14 max-w-3xl"
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         <p className="label-data text-xs text-primary">THE PROJECT</p>
         <p
           className="text-sm md:text-base text-muted-foreground leading-relaxed"
@@ -18,7 +18,8 @@ export const MissionFraming = () => {
           className="text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight"
           style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
         >
-          Thousands of people say they have seen the same hidden world. You might be one of them.
+          Many people report seeing the same structured forms. Some of them have started
+          recording what they saw. You might be one of them.
         </h2>
 
         <p
@@ -27,15 +28,8 @@ export const MissionFraming = () => {
         >
           This is not a claim. It is an experiment, and you can be part of it. We record what people
           see, then test whether the reports truly converge, or whether optics, shared
-          neurobiology, expectation, and memory explain the overlap.
-        </p>
-
-        <p
-          className="text-lg md:text-xl text-muted-foreground leading-relaxed"
-          style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
-        >
-          Sign in and add what you saw. That is what turns a story into evidence and keeps the
-          record real. Your identity stays private.
+          neurobiology, expectation, and memory explain the overlap. Sign in and add what you saw.
+          Your identity stays private.
         </p>
 
         <p
