@@ -21,7 +21,14 @@ const CONFIG: Cfg[] = [
   { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
   { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
   { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
-  { table: "symbol_submissions",gate: "visibility_status=eq.public", key: "id",   fields: ["description","context_note"] },
+  // symbol_submissions is deliberately NOT translated here. A submission's
+  // description and context_note are primary evidence: a first-person perceptual
+  // report in the observer's own words. A machine translation of such a report is
+  // a different object from a translated marketing page, and publishing one
+  // unlabelled would make a paraphrase quotable as the record. Reports stay in the
+  // language they were written in. Moderators translate on demand, in the admin
+  // dialog, via the admin-translate-submission function, which stores nothing.
+  // Operator decision, 2026-08-16.
   { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
 ];
 
