@@ -288,10 +288,17 @@ export const MembersDirectory = () => {
         </Button>
       </div>
 
+      {emailQuery.error && (
+        <p className="text-sm text-muted-foreground">
+          Email lookup unavailable: {(emailQuery.error as Error).message}
+        </p>
+      )}
+
       {filtered.length === 0 ? (
         <p className="text-muted-foreground py-8">No members match that search.</p>
       ) : (
         <>
+
           {/* Mobile cards */}
           <div className="space-y-3 md:hidden">
             {pageRows.map((m) => (
