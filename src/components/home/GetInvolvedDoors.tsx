@@ -52,7 +52,7 @@ export const GetInvolvedDoors = ({ variant = 'top' }: Props) => {
       <div className="grid md:grid-cols-3 gap-4 md:gap-5">
         {doors.map(({ to, title, body, cta, Icon, tone }) => {
           const base =
-            'group relative flex flex-col gap-3 rounded-sm border p-6 md:p-7 transition-colors bg-card';
+            'group relative flex flex-col gap-3 rounded-sm border p-5 md:p-7 transition-colors bg-card';
           const toneClass =
             tone === 'primary'
               ? 'border-primary/60 hover:border-primary hover:bg-primary/5'

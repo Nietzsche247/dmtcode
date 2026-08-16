@@ -233,7 +233,7 @@ export const ConvergenceHero = () => {
       </div>
 
       {/* How it works */}
-      <div className="max-w-5xl mx-auto mt-14 md:mt-20 grid md:grid-cols-3 gap-8 md:gap-10 border-t border-border/50 pt-10">
+      <div className="max-w-5xl mx-auto mt-10 md:mt-16 grid md:grid-cols-3 gap-6 md:gap-10 border-t border-border/50 pt-8">
         {[
           { n: '01', h: 'Observe', d: 'Notice a discrete visual form during an N,N-DMT experience.' },
           { n: '02', h: 'Draw or Respond', d: 'Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.' },
