@@ -40,7 +40,7 @@ function isDetailPatternValid(path: string): boolean {
   if (m) return UUID_RE.test(m[2]);
   // /people/:slug is a static profile set, not a table
   const pe = path.match(/^\/people\/([^/]+)$/i);
-  if (pe) return pe[1].toLowerCase() === "danny-goler";
+  if (pe) return ["danny-goler", "andrew-gallimore", "chase-hughes"].includes(pe[1].toLowerCase());
   // /card/:uuid.png
   const c = path.match(/^\/card\/([^/]+)\.png$/i);
   if (c) return UUID_RE.test(c[1]);
