@@ -1873,6 +1873,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Research Timeline and Events",
     paragraphs: [
       "This page aggregates community reported events and publicly available clinical trial data into one scholarly reference timeline. Inclusion does not constitute endorsement.",
+      "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.",
       "Events and trials are sourced from the community and from public registries, and are reviewed by moderators before publication. A listing is not an endorsement. Verify legal status, medical screening and staff credentials directly with any organizer or retreat center before you book.",
     ],
     links: [
@@ -2997,6 +2998,8 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
     "is_approved=is.true&select=id,name,description,details,location,country,image_url,website_url,contact_email,tags&order=name.asc",
   );
 
+  const paraProtocol =
+    "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.";
   const para1 =
     "Centers that operate openly and publish who they are, where they operate, and under what legal framework. This list is short on purpose. Centers we could not confirm are currently operating are not shown.";
   const para2 =
@@ -3023,6 +3026,7 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
   const body = `<article data-prerender="retreats">
   <h1>Retreat centers</h1>
   <section>
+    <p>${esc(paraProtocol)}</p>
     <p>${esc(para1)}</p>
     <p>${esc(para2)}</p>
   </section>
