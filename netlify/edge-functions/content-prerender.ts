@@ -828,7 +828,6 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <h3>${esc(k.name)}</h3>
     ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.name)}" width="800" height="450" />` : ""}
     <p><strong>$${k.priceNumber.toLocaleString("en-US")}</strong></p>
-    <p>Sourcing the parts yourself: &asymp; $${k.diyCostNumber.toLocaleString("en-US")}</p>
     <p>${esc(k.description)}</p>
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.</p>
@@ -1759,6 +1758,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     links: [
       { href: "/registry", label: "Visual symbol registry" },
+      { href: "/people/danny-goler", label: "Danny Goler, who described the observation" },
       { href: "/prepare", label: "Prepare to observe" },
       { href: "/evidence-map", label: "Evidence and analysis" },
       { href: "/faq", label: "Questions and answers" },
@@ -4312,6 +4312,49 @@ const BREADCRUMB_LD_DANNY_GOLER = {
   ],
 };
 
+const VIDEO_LD_DISCOVERY = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: "The Discovery Film Official Teaser Trailer",
+  description:
+    "Official teaser trailer for The Discovery, a documentary about the 650 nm laser observation first described by Danny Goler.",
+  embedUrl: "https://www.youtube.com/embed/vB2-vIumXss",
+  url: "https://www.youtube.com/watch?v=vB2-vIumXss",
+  thumbnailUrl: "https://i.ytimg.com/vi/vB2-vIumXss/hqdefault.jpg",
+  uploadDate: "2026-01-01",
+};
+
+const FAQ_LD_DANNY_GOLER = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Who is Danny Goler and what is the DMT code of reality?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Danny Goler first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025, DOI 10.59973/ipil.158. Whether the phenomenon is real remains an open question, with four explanations actively defended.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is dmtcode.com affiliated with Danny Goler or Code of Reality?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When does The Discovery documentary premiere?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Per the film's official site, the world premiere is in the Los Angeles area between late October and early November 2026. Date and venue are to be announced.",
+      },
+    },
+  ],
+};
+
 async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/people/danny-goler`;
@@ -4330,6 +4373,17 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   <p>Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project. We state that plainly rather than leave it to be inferred. The relationship does not change how this site treats his claim. His paper is scored on the same scale as the papers that dispute it. His protocol sits next to the null results people file against it. Nothing here is written to shield the origination story from a test.</p>
   <h2>Where his claim stands today</h2>
   <p>Four explanations for the reported forms are actively defended. Goler's reading, that the pattern is a structured feature of reality rather than of the visual system, is stated here first because it is the originator's position. The competing readings, from retinal and cortical optics to expectation and suggestion, are set out on the <a href="/critiques">critiques page</a> and in the <a href="/open-questions">open questions</a>. Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. That is a fact about the state of the field, not a charge against anyone. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it.</p>
+  <h2>The Discovery, a documentary film</h2>
+  <p>The Discovery is a feature documentary about the 650 nm laser observation and the people attempting to test it, directed by Aaron Vanden. The film's official site lists a world premiere in the Los Angeles area between late October and early November 2026, with date and venue to be announced. The official teaser trailer is below. DMT Code is not affiliated with the film. We index it here because it is the most significant upcoming driver of public attention to the claim this site keeps the record of.</p>
+  <p><a href="https://www.youtube.com/watch?v=vB2-vIumXss" rel="noopener">The Discovery Film Official Teaser Trailer</a></p>
+  <p><a href="https://thediscoveryfilm.com" rel="noopener">The Discovery, official site</a></p>
+  <h2>Questions and answers</h2>
+  <h3>Who is Danny Goler and what is the DMT code of reality?</h3>
+  <p>Danny Goler first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025, DOI 10.59973/ipil.158. Whether the phenomenon is real remains an open question, with four explanations actively defended.</p>
+  <h3>Is dmtcode.com affiliated with Danny Goler or Code of Reality?</h3>
+  <p>Goler is listed among the site's founders on the <a href="/about">about page</a>. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.</p>
+  <h3>When does The Discovery documentary premiere?</h3>
+  <p>Per the film's official site, the world premiere is in the Los Angeles area between late October and early November 2026. Date and venue are to be announced.</p>
   <h2>Follow the record</h2>
   <ul>
     <li>The full <a href="/timeline">chronology, 1926 to 2025</a></li>
@@ -4339,6 +4393,8 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
+  <script type="application/ld+json">${jsonLd(VIDEO_LD_DISCOVERY)}</script>
+  <script type="application/ld+json">${jsonLd(FAQ_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
@@ -4349,7 +4405,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     canonical,
     canonicalPath: "/people/danny-goler",
     ogType: "profile",
-    jsonLd: [PERSON_LD_DANNY_GOLER, BREADCRUMB_LD_DANNY_GOLER],
+    jsonLd: [PERSON_LD_DANNY_GOLER, BREADCRUMB_LD_DANNY_GOLER, VIDEO_LD_DISCOVERY, FAQ_LD_DANNY_GOLER],
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
