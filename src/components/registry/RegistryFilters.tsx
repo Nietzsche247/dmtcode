@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useState } from 'react';
+import { tagLabel } from '@/lib/tags';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
@@ -183,7 +184,7 @@ export const RegistryFilters = ({
                     }`}
                     onClick={() => toggleTag(tag)}
                   >
-                    {tag}
+                    {tagLabel(tag)}
                   </Badge>
                 ))}
               </div>

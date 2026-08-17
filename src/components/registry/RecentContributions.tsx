@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
+import { tagLabel } from '@/lib/tags';
 
 interface RecentSymbol {
   id: string;
@@ -99,7 +100,7 @@ export const RecentContributions = () => {
                 )}
                 {symbol.tags && symbol.tags[0] && (
                   <span className="label-data text-[10px] text-muted-foreground truncate">
-                    {symbol.tags[0]}
+                    {tagLabel(symbol.tags[0])}
                   </span>
                 )}
               </div>

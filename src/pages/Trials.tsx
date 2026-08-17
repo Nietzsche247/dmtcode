@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 
@@ -37,6 +38,7 @@ interface Trial {
   trial_registry_id: string | null;
   doi: string | null;
   url: string | null;
+  compounds: string[] | null;
   updated_at: string;
   created_at: string;
 }
@@ -58,6 +60,7 @@ const Trials = () => {
   const [institutionFilter, setInstitutionFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [sort, setSort] = useState<'newest' | 'oldest' | 'title'>('newest');
+  const [compoundFilter, setCompoundFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
   useEffect(() => {

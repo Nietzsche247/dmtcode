@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card';
+import { tagLabel } from '@/lib/tags';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
@@ -76,7 +77,7 @@ export const SymbolCard = ({
             title="Tags added by readers after publication, ranked by agreement"
           >
             {communityTags.slice(0, 5).map(t => (
-              <span key={t.name} className="mr-2.5 whitespace-nowrap">{t.name}<sup className="ml-px text-[8px] font-bold text-muted-foreground">{t.count}</sup></span>
+              <span key={t.name} className="mr-2.5 whitespace-nowrap">{tagLabel(t.name)}<sup className="ml-px text-[8px] font-bold text-muted-foreground">{t.count}</sup></span>
             ))}
           </p>
         )}
