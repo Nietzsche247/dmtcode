@@ -4393,8 +4393,6 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
-  <script type="application/ld+json">${jsonLd(VIDEO_LD_DISCOVERY)}</script>
-  <script type="application/ld+json">${jsonLd(FAQ_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
