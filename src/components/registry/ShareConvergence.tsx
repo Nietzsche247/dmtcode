@@ -56,7 +56,7 @@ export const ShareConvergence = ({ symbolId, seenItCount }: ShareConvergenceProp
   return (
     <div className="w-full rounded-lg border border-border bg-muted/40 p-3 space-y-2">
       <p className="font-body text-sm text-muted-foreground">
-        Share this convergence
+        Share this record
       </p>
       <div className="grid grid-cols-2 gap-2">
         <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
