@@ -850,7 +850,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
       <li>Personal or family history of psychosis</li>
     </ul>
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
-    <p>No protective eyewear is used or needed: you view the pattern on the wall, never the aperture and never a reflection. Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
+    <p>Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <section>
     <h2>Laser diffraction research kits</h2>
