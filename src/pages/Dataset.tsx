@@ -195,10 +195,14 @@ const Dataset = () => {
                   and academic research into reported visual phenomena.
                 </p>
                 
+                <p className="text-muted-foreground">
+                  The registry shows every published record. The export at /data.json includes only records whose contributor granted publication consent, so its count is lower than the registry count.
+                </p>
+                
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Dataset Contents</h4>
                 <ul className="text-muted-foreground space-y-1">
                   <li>Symbol images (100×100 px PNG)</li>
-                  <li>Structured metadata (source, dose, observation conditions)</li>
+                  <li>Structured metadata (source method, surface, wavelength where recorded, duration, priming tag where set)</li>
                   <li>Community validation counts</li>
                   <li>Motif tags and classifications</li>
                   <li>Browse the symbol corpus in your browser at <a href="/api/symbols" className="text-primary hover:underline">/api/symbols</a></li>

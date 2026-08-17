@@ -6,6 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SymbolCard } from '@/components/registry/SymbolCard';
+import { tagLabel } from '@/lib/tags';
 
 interface SymbolSubmission {
   id: string;
@@ -163,7 +164,7 @@ const TagHub = () => {
         <main className="relative z-10 pt-20 pb-16">
           <div className="container mx-auto px-4">
             <header className="mb-8 max-w-[65ch]">
-              <h1 className="text-2xl font-bold mb-2">Symbols tagged "{tag}"</h1>
+              <h1 className="text-2xl font-bold mb-2">Symbols tagged "{tagLabel(tag)}"</h1>
               <p className="text-muted-foreground">
                 {count} record{count === 1 ? '' : 's'} in the open registry carry this tag.
               </p>

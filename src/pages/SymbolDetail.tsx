@@ -36,6 +36,7 @@ import {
   evidenceLabel,
   moderationTone,
 } from '@/lib/submissionStatus';
+import { tagLabel } from '@/lib/tags';
 
 interface SymbolData {
   id: string;
@@ -461,7 +462,7 @@ const SymbolDetail = () => {
                     <h3 className="text-sm font-medium mb-2">Tags</h3>
                     <div className="flex flex-wrap gap-2">
                       {symbol.tags.map((tag, i) => (
-                        <Badge key={i} variant="outline">{tag}</Badge>
+                        <Badge key={i} variant="outline">{tagLabel(tag)}</Badge>
                       ))}
                     </div>
                   </div>
@@ -587,7 +588,7 @@ const SymbolDetail = () => {
                           )}
                           {related.tags && related.tags[0] && (
                             <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                              {related.tags[0]}
+                              {tagLabel(related.tags[0])}
                             </Badge>
                           )}
                         </div>

@@ -164,7 +164,8 @@ const Home = () => {
                 N,N-DMT administration, and observers report discrete visual symbols during that
                 exposure. Most reporters already know the protocol, so convergence is not
                 established: it needs records sealed before the observer sees the catalogue. Every
-                submission carries structured metadata and the corpus is published under CC-BY-4.0.
+                submission carries structured metadata (source method, surface, priming tag where
+                set) and the corpus is published under CC-BY-4.0.
                 We make no medical claims and we publish the counter-arguments alongside the
                 symbols.
               </p>
@@ -254,9 +255,9 @@ const Home = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-muted/30 flex items-center justify-center">
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
                           <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                            Kit image pending
+                            Kit photo coming
                           </span>
                         </div>
                       )}

@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 
@@ -37,6 +38,7 @@ interface Trial {
   trial_registry_id: string | null;
   doi: string | null;
   url: string | null;
+  compounds: string[] | null;
   updated_at: string;
   created_at: string;
 }
@@ -58,6 +60,7 @@ const Trials = () => {
   const [institutionFilter, setInstitutionFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [sort, setSort] = useState<'newest' | 'oldest' | 'title'>('newest');
+  const [compoundFilter, setCompoundFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -87,6 +90,17 @@ const Trials = () => {
   const institutions = useMemo(() => uniq(trials.map((t) => t.institution)), [trials]);
   const sources = useMemo(() => uniq(trials.map((t) => t.source)), [trials]);
 
+  const compoundCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    trials.forEach((t) => {
+      (t.compounds || []).forEach((c) => {
+        if (!c) return;
+        counts.set(c, (counts.get(c) || 0) + 1);
+      });
+    });
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+  }, [trials]);
+
   const recruitingCount = useMemo(
     () => trials.filter((t) => t.status === 'recruiting').length,
     [trials]
@@ -109,6 +123,7 @@ const Trials = () => {
       if (locationFilter !== 'all' && t.location !== locationFilter) return false;
       if (institutionFilter !== 'all' && t.institution !== institutionFilter) return false;
       if (sourceFilter !== 'all' && t.source !== sourceFilter) return false;
+      if (compoundFilter && !(t.compounds || []).includes(compoundFilter)) return false;
       if (term) {
         const hay = [t.title, t.institution || ''].join(' ').toLowerCase();
         if (!hay.includes(term)) return false;
@@ -122,11 +137,11 @@ const Trials = () => {
       return sort === 'newest' ? bv - av : av - bv;
     });
     return rows;
-  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = visible.length < filtered.length;
@@ -140,6 +155,7 @@ const Trials = () => {
     setLocationFilter('all');
     setInstitutionFilter('all');
     setSourceFilter('all');
+    setCompoundFilter(null);
     setSort('newest');
   };
 
@@ -200,7 +216,7 @@ const Trials = () => {
           </p>
 
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            An open atlas of active and historical DMT-related clinical trials.
+            An open atlas of psychedelic clinical trials: DMT, 5-MeO-DMT, ayahuasca, psilocybin, ketamine, MDMA, LSD, ibogaine.
             Filter by status, type, location or institution to explore the current research frontier.
           </p>
         </header>
@@ -277,6 +293,26 @@ const Trials = () => {
           </Select>
         </section>
 
+        {compoundCounts.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {compoundCounts.map(([c, count]) => (
+              <Badge
+                key={c}
+                variant={compoundFilter === c ? 'default' : 'outline'}
+                className="cursor-pointer select-none"
+                onClick={() => setCompoundFilter(compoundFilter === c ? null : c)}
+              >
+                {c} ({count})
+              </Badge>
+            ))}
+            {compoundFilter && (
+              <Button variant="ghost" size="sm" onClick={() => setCompoundFilter(null)}>
+                Clear compound filter
+              </Button>
+            )}
+          </div>
+        )}
+
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
 
           <p className="label-data text-xs text-muted-foreground">
@@ -347,6 +383,18 @@ const Trials = () => {
                           <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
                             {t.description}
                           </p>
+                        )}
+                        {t.compounds && t.compounds.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {t.compounds.map((c) => (
+                              <span
+                                key={c}
+                                className="label-data rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[9px] text-muted-foreground"
+                              >
+                                {c.toUpperCase()}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </Link>
                       {(() => {

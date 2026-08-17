@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Eye, PencilLine } from 'lucide-react';
+import { tagLabel } from '@/lib/tags';
 
 interface TopSymbol {
   id: string;
@@ -86,7 +87,7 @@ export const ConvergenceHero = () => {
   } as unknown as TopSymbol;
 
   const displayCount = confirmCount || specimen.upvotes || 0;
-  const tagLine = (specimen.tags ?? []).slice(0, 3).join(' · ').toUpperCase();
+  const tagLine = (specimen.tags ?? []).slice(0, 3).map(tagLabel).join(' · ');
   const specimenHref = featured ? `/registry/${featured.id}` : '/registry';
 
   // Four quadrants. If fewer than four entries exist, the remainder fall back to
@@ -200,7 +201,7 @@ export const ConvergenceHero = () => {
                         key={t}
                         className="label-data text-[9px] px-1.5 py-0.5 rounded-sm border border-border text-muted-foreground truncate max-w-[7rem]"
                       >
-                        {t.toUpperCase()}
+                        {tagLabel(t)}
                       </span>
                     ))}
                   </div>

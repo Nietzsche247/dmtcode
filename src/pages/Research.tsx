@@ -48,7 +48,7 @@ const Research = () => {
   return (
     <>
       <Helmet>
-        <title>Published Research and Literature | DMT Code</title>
+        <title>Sources and references | DMT Code</title>
         <meta
           name="description"
           content="Academic papers, studies, and publications related to the DMT laser code phenomenon."
@@ -91,7 +91,7 @@ const Research = () => {
           <div className="pt-4">
             <div className="container mx-auto px-4 space-y-4">
               <h1 className="font-display text-4xl md:text-5xl tracking-tight">
-                Published Research and Literature
+                Sources and references
               </h1>
               <a
                 href="/trials"

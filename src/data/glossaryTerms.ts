@@ -13,12 +13,24 @@ export const terms: GlossaryTerm[] = [
     definition: "Discrete visual element resembling written characters from alphabetic writing systems (e.g., katakana, Cyrillic, runic), described as bounded and character like rather than as a continuous geometric field."
   },
   {
+    term: "AVP Passthrough Protocol",
+    definition: "A variant of the observation protocol run through an Apple Vision Pro in passthrough mode, so the projected pattern is seen through the headset cameras. Free PDF on /prepare. It exists to test whether the effect survives a camera pipeline."
+  },
+  {
     term: "Coherent Light",
     definition: "Electromagnetic radiation with constant phase relationship between waves. Laser light is coherent, which is what allows a diffraction grating to project a precise pattern."
   },
   {
     term: "Confirmation Count",
     definition: "A count of readers who said a registry form echoed their own memory. Because those readers saw the form in this catalogue before they responded, the number measures recognition after exposure, not independent convergence. An independent match requires an account sealed before the person viewed the catalogue."
+  },
+  {
+    term: "Co-witness",
+    definition: "A second observer present in the same room during the same session, recording independently on their own field sheet without conferring. Co-witness records let the registry compare two accounts of one projection."
+  },
+  {
+    term: "Convergence",
+    definition: "The claim that different observers, who have never met, report the same visual forms. Convergence is what this registry exists to test. It is not established; recognition after seeing the catalogue does not count toward it."
   },
   {
     term: "Diffraction Grating",
@@ -45,6 +57,10 @@ export const terms: GlossaryTerm[] = [
     definition: "Endogenous tryptamine compound and Schedule I controlled substance. Administered via smoking, vaporisation, or intramuscular injection. Produces intense visual phenomena lasting 5-20 minutes."
   },
   {
+    term: "Null report",
+    definition: "A session record in which the observer ran the protocol and saw no structured or repeating form. Null reports carry the same weight as positive ones and are listed on /null-reports."
+  },
+  {
     term: "Perceived Surface",
     definition: "Physical or conceptual location where visual symbols appear during N,N-DMT experience (e.g., wall, ceiling, closed eyelids, hands). Recorded as metadata so any relationship to symbol form can be tested later rather than assumed."
   },
@@ -53,12 +69,20 @@ export const terms: GlossaryTerm[] = [
     definition: "Therapeutic use of red or near-infrared light (660-850 nm) to enhance cellular energy production via mitochondrial cytochrome c oxidase stimulation. Any link to symbol clarity in the 650 nm protocol is an untested hypothesis and has not been demonstrated."
   },
   {
+    term: "Priming",
+    definition: "Prior exposure to images or descriptions of what other people report seeing. A record is tagged as primed if the observer had seen laser-experiment imagery or the catalogue before recording. Unprimed records are the ones convergence must be tested on."
+  },
+  {
     term: "Registry Glyph",
-    definition: "100×100 pixel black-and-white or red-and-gold symbol submitted to DMT Code Glyph Registry with structured metadata (source, dose, surface, depth, emotional valence, etc.)."
+    definition: "A symbol drawn or uploaded to the registry canvas, stored as vector or image data, with structured metadata (source method, surface, priming tag where set)."
   },
   {
     term: "Route of Administration",
     definition: "Method of N,N-DMT delivery: smoked/vaporised (most common, rapid onset), intramuscular injection (slower onset, longer duration), or other experimental routes."
+  },
+  {
+    term: "Sober baseline",
+    definition: "A session run with the full rig by observers who have taken nothing, recorded on the standard field sheet. Baseline records define what the optics alone put on the wall. Free PDF on /prepare."
   },
   {
     term: "Symmetry Classification",

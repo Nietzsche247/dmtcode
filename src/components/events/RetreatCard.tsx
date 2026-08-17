@@ -26,6 +26,16 @@ interface TrustMetrics {
   count: number;
 }
 
+const MULTI_LOCATION_RE = /^multiple\s+locations?$/i;
+
+function formatLocation(location: string, country: string | null): string {
+  if (country && country.includes("/") && MULTI_LOCATION_RE.test(location.trim())) {
+    const countries = country.split("/").map((c) => c.trim()).filter(Boolean).join(", ");
+    return `Multiple locations: ${countries}`;
+  }
+  return country ? `${location}, ${country}` : location;
+}
+
 const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
   const [metrics, setMetrics] = useState<TrustMetrics | null>(null);
 
@@ -96,8 +106,7 @@ const RetreatCard = ({ retreat }: { retreat: Retreat }) => {
           <CardTitle className="text-lg">{retreat.name}</CardTitle>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <MapPin className="w-4 h-4" />
-            <span>{retreat.location}</span>
-            {retreat.country && <span>, {retreat.country}</span>}
+            <span>{formatLocation(retreat.location, retreat.country)}</span>
           </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col">

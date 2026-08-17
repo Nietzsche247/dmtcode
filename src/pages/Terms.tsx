@@ -54,7 +54,7 @@ const Terms = () => {
 
               <h2 className="text-2xl font-semibold mt-8">Buying equipment</h2>
               <p>Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases. Those policies are mirrored at /shipping, /returns, /store-terms and /store-contact. This site does not currently carry affiliate links. If that changes, /disclosure will name them before they go live.</p>
-              <p>Equipment listed here is ordinary optical and wellness gear. We do not sell, source or explain how to obtain any controlled substance.</p>
+              <p>Equipment listed here is ordinary optical equipment. We do not sell, source or explain how to obtain any controlled substance.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Accuracy</h2>
               <p>We correct errors publicly rather than quietly. Where a record turns out to be wrong or unverifiable, we hide it and say so. Where a citation is wrong, we fix it. If you find something wrong, tell us at info@dmtcode.com and we would rather hear it than not.</p>

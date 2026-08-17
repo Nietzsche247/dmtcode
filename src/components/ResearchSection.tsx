@@ -52,7 +52,7 @@ export const ResearchSection = () => {
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h2 className="text-4xl md:text-5xl font-bold glow-text">
-            Scientific Research and References
+            Sources
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             A live selection from the stance scored research library, ordered by recency. Each entry links to its full record.
@@ -129,8 +129,8 @@ export const ResearchSection = () => {
             to="/bibliography"
             className="text-primary hover:underline text-sm"
           >
-            Browse the full stance scored library
-            {totalCount !== null ? ` (${totalCount} entries)` : ""}
+            Browse the full library
+            {totalCount !== null ? ` (${totalCount} entries, 20 stance-scored)` : ""}
           </Link>
         </div>
       </div>

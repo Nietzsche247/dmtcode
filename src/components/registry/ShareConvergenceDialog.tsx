@@ -50,7 +50,7 @@ export const ShareConvergenceDialog = ({
   const content = (
     <DialogContent className="sm:max-w-md">
       <DialogHeader className="text-left">
-        <DialogTitle className="font-display text-xl">Share this convergence</DialogTitle>
+        <DialogTitle className="font-display text-xl">Share this record</DialogTitle>
       </DialogHeader>
       {!hideImg && (
         <img
@@ -86,7 +86,7 @@ export const ShareConvergenceButton = ({
     trigger={
       <Button variant="outline" size="sm" className="rounded-full gap-2">
         <Share2 className="w-4 h-4" />
-        Share this convergence
+        Share this record
       </Button>
     }
   />

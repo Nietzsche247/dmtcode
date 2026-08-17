@@ -17,7 +17,7 @@ Every item in the unified corpus carries the same facets. Filter across the whol
 - doi: DOI when available
 - compounds: array such as ["DMT", "5-MeO-DMT", "psilocybin"]
 - topic: array of tags and indications
-- authority_type: Academic, Clinical, Journalism, Community, Independent
+- authority_type: Academic, Clinical, Journalism, Community, Independent, Podcaster, Anonymous, Journalist
 - stance_score: signed integer from roughly minus ten skeptical to plus ten supportive. Only part of the library is scored. The field is null on every row that is not scored, and an unscored row is not a neutral row.
 - people: named entities associated with the item
 - status: trial status such as recruiting, active, completed

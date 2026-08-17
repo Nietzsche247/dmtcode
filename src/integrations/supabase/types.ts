@@ -552,6 +552,7 @@ export type Database = {
       clinical_trials: {
         Row: {
           application_url: string | null
+          compounds: string[]
           confirmed_status: string
           created_at: string
           description: string | null
@@ -579,6 +580,7 @@ export type Database = {
         }
         Insert: {
           application_url?: string | null
+          compounds?: string[]
           confirmed_status?: string
           created_at?: string
           description?: string | null
@@ -606,6 +608,7 @@ export type Database = {
         }
         Update: {
           application_url?: string | null
+          compounds?: string[]
           confirmed_status?: string
           created_at?: string
           description?: string | null
