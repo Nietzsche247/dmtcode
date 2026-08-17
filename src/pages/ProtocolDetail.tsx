@@ -282,7 +282,7 @@ const ProtocolDetail = () => {
                     <div className="space-y-6">
                       <div>
                         <h3 className="font-medium mb-2">Clinical Setting Requirements</h3>
-                        <p className="text-muted-foreground">{content.preparation.set_setting}</p>
+                        <p className="text-muted-foreground">{setSettingText}</p>
                       </div>
                       <div>
                         <h3 className="font-medium mb-2">Screening Checklist</h3>
