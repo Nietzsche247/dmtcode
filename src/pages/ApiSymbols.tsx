@@ -189,12 +189,13 @@ const ApiSymbols = () => {
                 tags. Comma separated, substring match.
               </li>
               <li>
-                <code className="bg-muted px-1 rounded">?moderation_status=published</code> Exact
-                match on the record's moderation status.
+                <code className="bg-muted px-1 rounded">?moderation_status=unreviewed</code> Exact
+                match on the record's moderation status. Other values: reviewed, denied, reported.
               </li>
               <li>
-                <code className="bg-muted px-1 rounded">?evidence_status=unreviewed</code> Exact
-                match on the record's evidence status.
+                <code className="bg-muted px-1 rounded">?evidence_status=raw</code> Exact match on
+                the record's evidence status. Other values: eligible, ineligible, candidate_match,
+                reviewed_convergence, controlled_replication.
               </li>
               <li>
                 <code className="bg-muted px-1 rounded">?record_class=community_observation</code>{' '}

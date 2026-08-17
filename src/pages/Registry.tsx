@@ -158,6 +158,9 @@ const Registry = () => {
           <RegistryHero />
           <RegistryRationale />
           <RegistryStatistics />
+          <p className="container mx-auto px-4 max-w-4xl text-sm text-muted-foreground">
+            The registry shows every published record. The export at /data.json includes only records whose contributor granted publication consent, so its count is lower than the registry count.
+          </p>
           
           {/* Voice Logger Callout */}
           <section className="container mx-auto px-4 py-8 max-w-4xl">

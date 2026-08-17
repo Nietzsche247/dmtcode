@@ -182,6 +182,9 @@ const About = () => {
                   <p className="text-sm text-muted-foreground">
                     All registry submissions released under CC-BY-4.0 license. Full dataset accessible at /data.json for academic research, computational analysis, and independent verification. Transparency enables reproducibility.
                   </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    The registry shows every published record. The export at /data.json includes only records whose contributor granted publication consent, so its count is lower than the registry count.
+                  </p>
                 </div>
               </div>
             </Card>
