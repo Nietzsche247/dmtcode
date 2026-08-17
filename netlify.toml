@@ -250,6 +250,12 @@
   path = "/*"
   function = "spa-guard"
 
+[[redirects]]
+  from = "/danny-goler"
+  to = "/people/danny-goler"
+  status = 301
+  force = true
+
 # Permanent redirect: /tools ranking equity moves to /prepare.
 [[redirects]]
   from = "/tools"

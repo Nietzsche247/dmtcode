@@ -123,7 +123,22 @@ type Entry = {
 
 function renderUrlset(entries: Entry[], locale: Loc): string {
   const rows: string[] = [];
-  for (const e of entries) {
+  // The default sitemap.xml also enumerates the /es and /de mirrors of every
+  // localized route, so the localized URLs are discoverable without relying on
+  // the sitemap index. Non-localized routes stay English-only.
+  const expanded: Array<{ e: Entry; loc: Loc }> =
+    locale === "en"
+      ? entries.flatMap((e) =>
+          e.localized
+            ? [
+                { e, loc: "en" as Loc },
+                { e, loc: "es" as Loc },
+                { e, loc: "de" as Loc },
+              ]
+            : [{ e, loc: "en" as Loc }]
+        )
+      : entries.map((e) => ({ e, loc: locale }));
+  for (const { e, loc: locale } of expanded) {
     if (!e.localized && locale !== "en") continue;
     const prefix = e.localized && locale !== "en" ? `/${locale}` : "";
     const alts = e.localized
