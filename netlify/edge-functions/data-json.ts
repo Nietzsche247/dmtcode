@@ -254,7 +254,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at",
+      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at,compounds",
       "is_approved=is.true"
     ),
     // The status=eq.approved filter is retained because the row level security
@@ -341,7 +341,7 @@ export default async (req: Request): Promise<Response> => {
       content_type: "Trial",
       title,
       url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
-      compounds: [],
+      compounds: (r.compounds as string[]) || [],
       topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
       authority_type: "Clinical",
       people,

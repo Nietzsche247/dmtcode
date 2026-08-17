@@ -32,6 +32,7 @@ interface Trial {
   trial_registry_id: string | null;
   doi: string | null;
   url: string | null;
+  compounds: string[] | null;
   updated_at: string;
   created_at: string;
 }
@@ -159,6 +160,18 @@ const TrialDetail = () => {
             {trial.title}
           </h1>
           <FollowButton entityType="trial" entityId={trial.id} className="mt-4" />
+          {trial.compounds && trial.compounds.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {trial.compounds.map((c) => (
+                <span
+                  key={c}
+                  className="label-data rounded-full border border-border/60 bg-muted px-2.5 py-1 text-[10px] text-muted-foreground"
+                >
+                  {c.toUpperCase()}
+                </span>
+              ))}
+            </div>
+          )}
         </header>
 
         <dl className="mb-10 grid grid-cols-1 gap-x-8 gap-y-4 border-b border-border/60 pb-8 sm:grid-cols-2">
