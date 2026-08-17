@@ -2141,7 +2141,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   join: {
 
     title: "Help build it | DMT Code",
-    description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome.",
+    description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, and developers welcome.",
     heading: "A real experiment with an unknown answer.",
     paragraphs: [
       "Thousands of people report vivid, structured experiences. We are testing whether those reports truly converge, or whether optics, shared neurobiology, expectation, and memory explain the apparent overlap.",
@@ -2149,16 +2149,15 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "Volunteering asks for an email, the roles you can help with, and optionally your experience level, languages, skills, and why you want to help. You need an account so the entry is tied to a person. Your real name stays private and you are given an avatar instead.",
       "We may confirm something extraordinary, or we may find it was the mind all along. Both results matter. Thank you for helping us find out honestly.",
     ],
-    bodyExtraHtml: `<section><h2>Roles</h2><ul>${[
-      "Test Subject (blinded study)",
-      "Recorder",
-      "Translator",
-      "Moderator",
-      "Analyst",
-      "Developer",
-      "Outreach",
-      "Peer Support",
-    ].map((r) => `<li>${esc(r)}</li>`).join("")}</ul></section>`,
+    bodyExtraHtml: `<section><h2>Roles</h2><dl>${[
+      ["Recorder", "Recorders run the observation protocol and write down what they saw on the field sheet, in their own words. Nothing is required beyond care, honesty, and a completed record."],
+      ["Translator", "Translators carry records, protocol documents, and site pages into Spanish, German, and other languages. Accuracy matters more than fluency, because a mistranslated report is worse than no translation."],
+      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it."],
+      ["Developer", "Developers work on the site, the registry, and the export pipeline that keeps the data open. Most of the work is small, careful, and public."],
+    ].map(([r, d]) => `<dt>${esc(r)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
+    <p>Moderation, outreach, and peer support roles are filled from within these four.</p>
+    <p><a href="/auth?returnTo=%2Fjoin">Sign in to volunteer</a></p></section>`,
+
     links: [
       { href: "/capture", label: "Submit what you saw" },
       { href: "/trials", label: "Clinical trials" },

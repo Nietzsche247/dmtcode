@@ -36,6 +36,7 @@ interface SymbolSubmission {
   wavelength: string | null;
   created_at: string;
   user_id: string;
+  is_sober_baseline: boolean | null;
 }
 
 interface ProfileData {
@@ -110,7 +111,7 @@ export const RegistryBrowser = () => {
     // Load approved submissions
     const { data, error } = await supabase
       .from('symbol_submissions')
-      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, dose_level, wavelength, created_at, user_id')
+      .select('id, image_url, description, tags, upvotes, downvotes, status, source_method, dose_level, wavelength, created_at, user_id, is_sober_baseline')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
@@ -215,6 +216,8 @@ export const RegistryBrowser = () => {
       filtered = filtered.filter(s => hasAnyTag(s.tags, NULL_REPORT_TAGS));
     } else if (recordFilter === 'sober') {
       filtered = filtered.filter(s => hasAnyTag(s.tags, SOBER_TAGS));
+    } else if (recordFilter === 'sober_baseline_declared') {
+      filtered = filtered.filter(s => s.is_sober_baseline === true);
     }
 
     // Tags filter
@@ -270,6 +273,12 @@ export const RegistryBrowser = () => {
     return filtered;
   }, [symbols, searchQuery, sourceFilter, doseFilter, recordFilter, selectedTags.join(','), sortBy, validationCounts]);
 
+  // Count for the sober-baseline chip. Contributor declared, not verified.
+  const soberBaselineCount = useMemo(
+    () => symbols.filter((s) => s.is_sober_baseline === true).length,
+    [symbols]
+  );
+
   // One library, one list. Nothing is segregated by how a symbol entered the
   // record; the sort the reader chose is the only thing that orders it.
   const resultSegments: string[] = [];
@@ -307,6 +316,7 @@ export const RegistryBrowser = () => {
       downvotes: s.downvotes || 0,
       null_report: hasAnyTag(s.tags, NULL_REPORT_TAGS),
       sober_baseline: hasAnyTag(s.tags, SOBER_TAGS),
+      is_sober_baseline: s.is_sober_baseline === true,
       url: `https://dmtcode.com/symbol/${s.id}`,
     }));
 
@@ -399,6 +409,7 @@ export const RegistryBrowser = () => {
         onDoseChange={setDoseFilter}
         recordFilter={recordFilter}
         onRecordChange={setRecordFilter}
+        soberBaselineCount={soberBaselineCount}
         selectedTags={selectedTags}
         onTagsChange={setSelectedTags}
         sortBy={sortBy}
