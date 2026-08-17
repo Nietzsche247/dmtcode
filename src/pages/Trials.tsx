@@ -293,6 +293,26 @@ const Trials = () => {
           </Select>
         </section>
 
+        {compoundCounts.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {compoundCounts.map(([c, count]) => (
+              <Badge
+                key={c}
+                variant={compoundFilter === c ? 'default' : 'outline'}
+                className="cursor-pointer select-none"
+                onClick={() => setCompoundFilter(compoundFilter === c ? null : c)}
+              >
+                {c} ({count})
+              </Badge>
+            ))}
+            {compoundFilter && (
+              <Button variant="ghost" size="sm" onClick={() => setCompoundFilter(null)}>
+                Clear compound filter
+              </Button>
+            )}
+          </div>
+        )}
+
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
 
           <p className="label-data text-xs text-muted-foreground">
@@ -363,6 +383,18 @@ const Trials = () => {
                           <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
                             {t.description}
                           </p>
+                        )}
+                        {t.compounds && t.compounds.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {t.compounds.map((c) => (
+                              <span
+                                key={c}
+                                className="label-data rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[9px] text-muted-foreground"
+                              >
+                                {c.toUpperCase()}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </Link>
                       {(() => {

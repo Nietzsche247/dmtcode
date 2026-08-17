@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from '@/components/registry/VisualFieldMap';
 import { BadgeIcon } from '@/components/badges/BadgeIcon';
+import { tagLabel } from '@/lib/tags';
 
 interface UserBadge {
   badge_name: string;
@@ -387,7 +388,7 @@ const MySymbols = () => {
                         {m.motif_tags && m.motif_tags.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {m.motif_tags.map((tag, idx) => (
-                              <Badge key={`${tag}-${idx}`} variant="outline" className="text-xs">{tag}</Badge>
+                              <Badge key={`${tag}-${idx}`} variant="outline" className="text-xs">{tagLabel(tag)}</Badge>
                             ))}
                           </div>
                         )}
