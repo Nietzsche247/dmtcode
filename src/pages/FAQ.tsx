@@ -11,7 +11,27 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }> }> = [
+const SCREENING_CARD_PDF = '/downloads/DMTCode_Screening_Card_v1.pdf';
+
+// Renders an answer, turning the phrase "screening card" into a link to the PDF.
+const renderAnswer = (a: string) => {
+  const parts = a.split('screening card');
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {i < parts.length - 1 && (
+        <a href={SCREENING_CARD_PDF} className="underline hover:text-foreground">
+          screening card
+        </a>
+      )}
+    </span>
+  ));
+};
+
+const FAQ_GROUPS: Array<{
+  heading: string;
+  items: Array<{ q: string; a: string; links?: Array<{ label: string; href: string }> }>;
+}> = [
   {
     heading: 'The project',
     items: [
