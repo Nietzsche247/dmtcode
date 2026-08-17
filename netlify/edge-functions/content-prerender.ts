@@ -855,8 +855,11 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
   </section>
   <section>
     <h2>Field materials and protocols, free download</h2>
-    <p>Nine PDF documents, no account needed. Each protocol is available in English, Spanish, and German.</p>
+    <p>Twelve PDF documents, no account needed. Each protocol is available in English, Spanish, and German.</p>
     <ul>
+      <li><a href="${SITE}/downloads/DMTCode_Screening_Card_v1.pdf">Screening Card (EN)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Tarjeta_de_Cribado_v1_ES.pdf">Tarjeta de Cribado (ES)</a></li>
+      <li><a href="${SITE}/downloads/DMTCode_Screening_Karte_v1_DE.pdf">Screening-Karte (DE)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_Observation_Field_Sheet_v1.pdf">Observation Field Sheet (EN)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf">Hoja de Campo de Observacion (ES)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_Feldblatt_v1_DE.pdf">Beobachtungs-Feldblatt (DE)</a></li>
