@@ -1,6 +1,98 @@
+import { useState } from 'react';
+import { Play } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+
+const VIDEO_ID = 'vB2-vIumXss';
+
+const VIDEO_LD = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "The Discovery Film Official Teaser Trailer",
+  "description":
+    "Official teaser trailer for The Discovery, a documentary about the 650 nm laser observation first described by Danny Goler.",
+  "embedUrl": `https://www.youtube.com/embed/${VIDEO_ID}`,
+  "url": `https://www.youtube.com/watch?v=${VIDEO_ID}`,
+  "thumbnailUrl": `https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`,
+  "uploadDate": "2026-01-01",
+};
+
+const FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who is Danny Goler and what is the DMT code of reality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Danny Goler first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025, DOI 10.59973/ipil.158. Whether the phenomenon is real remains an open question, with four explanations actively defended.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "Is dmtcode.com affiliated with Danny Goler or Code of Reality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "When does The Discovery documentary premiere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Per the film's official site, the world premiere is in the Los Angeles area between late October and early November 2026. Date and venue are to be announced.",
+      },
+    },
+  ],
+};
+
+const LiteYouTube = () => {
+  const [active, setActive] = useState(false);
+
+  if (active) {
+    return (
+      <div className="relative w-full overflow-hidden rounded-lg border border-border aspect-video bg-muted">
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1`}
+          title="The Discovery Film Official Teaser Trailer"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setActive(true)}
+      aria-label="Play the official teaser trailer for The Discovery"
+      className="group relative block w-full overflow-hidden rounded-lg border border-border aspect-video bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`}
+        alt="The Discovery documentary teaser trailer thumbnail"
+        loading="lazy"
+        width={480}
+        height={360}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <span className="absolute inset-0 flex items-center justify-center bg-background/30 transition-colors group-hover:bg-background/20">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 border border-border">
+          <Play className="h-6 w-6 text-foreground" aria-hidden="true" />
+        </span>
+      </span>
+    </button>
+  );
+};
 
 const PERSON_LD = {
   "@context": "https://schema.org",
