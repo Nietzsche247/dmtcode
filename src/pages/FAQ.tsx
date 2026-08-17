@@ -61,6 +61,14 @@ const FAQ_GROUPS: Array<{
     heading: 'Safety and law',
     items: [
       {
+        q: 'Never done DMT? Start here.',
+        a: 'You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig, the same field sheet, run sober, and sober records are the ones the registry needs most. Read the Screening Card first, then run a baseline tonight and record it.',
+        links: [
+          { label: 'Screening Card (PDF)', href: '/downloads/DMTCode_Screening_Card_v1.pdf' },
+          { label: 'Sober Baseline Protocol (PDF)', href: '/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf' },
+        ],
+      },
+      {
         q: 'How do I do this safely?',
         a: 'Start with the screening card. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.',
       },
