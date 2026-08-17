@@ -9,6 +9,8 @@ import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
+import { useContentTranslations, overlay } from "@/hooks/useContentTranslations";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
 
 type SourceEntry = {
   claim?: string;
@@ -151,6 +153,9 @@ export default function GuideDetail() {
   const { slug } = useParams<{ slug: string }>();
   const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
   const [guide, setGuide] = useState<Guide | null>(null);
+  const locale = useLocale();
+  // guides are keyed by slug in content_translations.
+  const translations = useContentTranslations("guides", guide?.slug);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -211,22 +216,35 @@ export default function GuideDetail() {
     );
   }
 
-  const supports = asEntries(guide.what_supports);
-  const weakens = asEntries(guide.what_weakens);
-  const unknowns = asStrings(guide.what_is_unknown);
-  const changes = asStrings(guide.what_would_change);
+  const shown = (overlay(guide, translations, [
+    "question",
+    "short_answer",
+    "evidence_grade_note",
+    "safety_note",
+    "body_md",
+    "what_supports",
+    "what_weakens",
+    "what_is_unknown",
+    "what_would_change",
+  ]) ?? guide) as Guide;
+  const canonicalUrl = `https://dmtcode.com${localePath(locale, `/guides/${guide.slug}`)}`;
+
+  const supports = asEntries(shown.what_supports);
+  const weakens = asEntries(shown.what_weakens);
+  const unknowns = asStrings(shown.what_is_unknown);
+  const changes = asStrings(shown.what_would_change);
   const related = asRelated(guide.related_paths);
-  const description = truncateAtWord(guide.short_answer);
+  const description = truncateAtWord(shown.short_answer);
 
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>{`${guide.question} | DMT Code`}</title>
+        <title>{`${shown.question} | DMT Code`}</title>
         <meta name="description" content={description} />
-        <link rel="canonical" href={`https://dmtcode.com/guides/${guide.slug}`} />
-        <meta property="og:title" content={guide.question} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={shown.question} />
         <meta property="og:description" content={description} />
-        <meta property="og:url" content={`https://dmtcode.com/guides/${guide.slug}`} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="article" />
       </Helmet>
 
@@ -234,12 +252,12 @@ export default function GuideDetail() {
 
       <main className="pt-20 pb-20 px-4">
         <article className="max-w-3xl mx-auto">
-          <Breadcrumb titleOverride={guide.question} />
+          <Breadcrumb titleOverride={shown.question} />
 
           <header className="mt-4 mb-8 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">{guide.question}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">{shown.question}</h1>
             <p className="text-xl text-foreground leading-relaxed border-l-4 border-primary pl-4">
-              {guide.short_answer}
+              {shown.short_answer}
             </p>
             {hasText(guide.evidence_grade) && (
               <div className="text-sm">
@@ -249,16 +267,16 @@ export default function GuideDetail() {
                   </span>{" "}
                   <span className="text-foreground">{guide.evidence_grade}</span>
                 </p>
-                {hasText(guide.evidence_grade_note) && (
-                  <p className="text-muted-foreground mt-1">{guide.evidence_grade_note}</p>
+                {hasText(shown.evidence_grade_note) && (
+                  <p className="text-muted-foreground mt-1">{shown.evidence_grade_note}</p>
                 )}
               </div>
             )}
           </header>
 
-          {hasText(guide.safety_note) && (
+          {hasText(shown.safety_note) && (
             <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-foreground/90">
-              {guide.safety_note}
+              {shown.safety_note}
             </div>
           )}
 
@@ -267,7 +285,7 @@ export default function GuideDetail() {
           <PlainList title="What is still unknown" items={unknowns} />
           <PlainList title="What would change this answer" items={changes} />
 
-          {hasText(guide.body_md) && (
+          {hasText(shown.body_md) && (
             <div
               className={cn(
                 "prose max-w-none mt-10 prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
@@ -280,7 +298,7 @@ export default function GuideDetail() {
                   h1: ({ node, ...props }) => <h2 {...props} />,
                 }}
               >
-                {guide.body_md}
+                {shown.body_md}
               </ReactMarkdown>
             </div>
           )}

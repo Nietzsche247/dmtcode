@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useContentTranslations, overlay } from '@/hooks/useContentTranslations';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { FollowButton } from '@/components/FollowButton';
 
 import { 
@@ -26,6 +28,7 @@ const statusConfig = {
 const ProtocolDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const locale = useLocale();
 
   const { data: protocol, isLoading, error } = useQuery({
     queryKey: ['protocol', slug],
@@ -42,6 +45,8 @@ const ProtocolDetail = () => {
       return data;
     }
   });
+
+  const translations = useContentTranslations('protocols', slug);
 
   if (isLoading) {
     return (
@@ -76,7 +81,16 @@ const ProtocolDetail = () => {
     );
   }
 
-  const content = protocol.content_jsonb as any || {};
+  // protocols are keyed by slug in content_translations. content_jsonb is
+  // replaced whole, exactly as the prerender overlay does.
+  const shown = (overlay(
+    protocol as unknown as Record<string, unknown>,
+    translations,
+    ['title', 'tagline', 'content_jsonb'],
+  ) ?? protocol) as any;
+  const canonicalUrl = `https://dmtcode.com${localePath(locale, `/protocols/${protocol.slug}`)}`;
+
+  const content = shown.content_jsonb as any || {};
   const status = statusConfig[protocol.status as keyof typeof statusConfig] || statusConfig.coming_soon;
   const StatusIcon = status.icon;
   const isClinicalMode = content.clinical_mode === true;
@@ -84,20 +98,20 @@ const ProtocolDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{protocol.slug === 'dmt-laser' ? `${protocol.title} - 650 nm DMT laser protocol | DMT Code` : `${protocol.title} | DMT Code Protocols`}</title>
+        <title>{protocol.slug === 'dmt-laser' ? `${shown.title} - 650 nm DMT laser protocol | DMT Code` : `${shown.title} | DMT Code Protocols`}</title>
         <meta 
           name="description" 
-          content={`${protocol.tagline || protocol.title} - Evidence-based protocol with preparation, dosing, and integration guidelines.`} 
+          content={`${shown.tagline || shown.title} - Evidence-based protocol with preparation, dosing, and integration guidelines.`} 
         />
-        <link rel="canonical" href={`https://dmtcode.com/protocols/${protocol.slug}`} />
+        <link rel="canonical" href={canonicalUrl} />
         <meta name="robots" content="index, follow" />
         
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "MedicalWebPage",
-            "name": protocol.title,
-            "description": protocol.tagline,
+            "name": shown.title,
+            "description": shown.tagline,
             "lastReviewed": protocol.updated_at,
             "mainContentOfPage": {
               "@type": "WebPageElement",
@@ -138,10 +152,10 @@ const ProtocolDetail = () => {
                   )}
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black tracking-tight">
-                  {protocol.slug === 'dmt-laser' ? `${protocol.title}: 650 nm DMT Laser Protocol` : protocol.title}
+                  {protocol.slug === 'dmt-laser' ? `${shown.title}: 650 nm DMT Laser Protocol` : shown.title}
                 </h1>
                 <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
-                  {protocol.tagline}
+                  {shown.tagline}
                 </p>
               </div>
 

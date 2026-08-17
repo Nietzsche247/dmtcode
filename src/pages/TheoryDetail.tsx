@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { theorySlug, resolveTheoryBySlug } from "@/lib/theorySlug";
 import { FollowButton } from "@/components/FollowButton";
+import { useContentTranslations, overlay } from "@/hooks/useContentTranslations";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
 
 
 type Theory = {
@@ -44,6 +46,11 @@ export default function TheoryDetail() {
   const { slug = "" } = useParams<{ slug: string }>();
   const [loading, setLoading] = useState(true);
   const [theory, setTheory] = useState<Theory | null>(null);
+  const locale = useLocale();
+  // Display copy is overlaid per locale. Slugs and links stay derived from the
+  // SOURCE English title so a translated page never invents a new URL.
+  const translations = useContentTranslations("theories", theory?.id);
+  const shown = overlay(theory, translations, ["title", "summary", "content"]);
 
   useEffect(() => {
     (async () => {
@@ -95,10 +102,12 @@ export default function TheoryDetail() {
     );
   }
 
+  const display = (shown ?? theory) as Theory;
+  // Slug is always derived from the source title, never the translation.
   const canonicalSlug = theorySlug(theory.title);
-  const canonical = `https://dmtcode.com/theories/${canonicalSlug}`;
-  const metaDesc = (theory.summary || "").replace(/\s+/g, " ").trim().slice(0, 160);
-  const pageTitle = `${theory.title} | DMT Code`;
+  const canonical = `https://dmtcode.com${localePath(locale, `/theories/${canonicalSlug}`)}`;
+  const metaDesc = (display.summary || "").replace(/\s+/g, " ").trim().slice(0, 160);
+  const pageTitle = `${display.title} | DMT Code`;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -106,7 +115,7 @@ export default function TheoryDetail() {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://dmtcode.com/" },
       { "@type": "ListItem", position: 2, name: "Open theories", item: "https://dmtcode.com/theories" },
-      { "@type": "ListItem", position: 3, name: theory.title, item: canonical },
+      { "@type": "ListItem", position: 3, name: display.title, item: canonical },
     ],
   };
 
@@ -115,11 +124,11 @@ export default function TheoryDetail() {
     "@type": "CreativeWork",
     "@id": canonical,
     url: canonical,
-    name: theory.title,
+    name: display.title,
     license: "https://creativecommons.org/licenses/by/4.0/",
   };
-  if (theory.summary) creativeWorkLd.abstract = theory.summary;
-  if (theory.content) creativeWorkLd.text = theory.content;
+  if (display.summary) creativeWorkLd.abstract = display.summary;
+  if (display.content) creativeWorkLd.text = display.content;
   if (theory.proponent) creativeWorkLd.author = { "@type": "Person", name: theory.proponent };
   if (theory.source_url) creativeWorkLd.isBasedOn = theory.source_url;
   if (theory.tags && theory.tags.length > 0) creativeWorkLd.keywords = theory.tags.join(", ");
@@ -133,7 +142,7 @@ export default function TheoryDetail() {
         {metaDesc && <meta name="description" content={metaDesc} />}
         <link rel="canonical" href={canonical} />
         <meta property="og:type" content="article" />
-        <meta property="og:title" content={theory.title} />
+        <meta property="og:title" content={display.title} />
         {metaDesc && <meta property="og:description" content={metaDesc} />}
         <meta property="og:url" content={canonical} />
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
@@ -163,7 +172,7 @@ export default function TheoryDetail() {
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight">{theory.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold leading-tight">{display.title}</h1>
             {theory.proponent && (
               <p className="text-sm text-muted-foreground">Proposed by {theory.proponent}</p>
             )}
@@ -172,17 +181,17 @@ export default function TheoryDetail() {
             )}
           </header>
 
-          {theory.summary && (
+          {display.summary && (
             <section className="text-lg text-foreground/90 leading-relaxed">
-              {paragraphs(theory.summary).map((p, i) => (
+              {paragraphs(display.summary).map((p, i) => (
                 <p key={i} className="mb-3">{p}</p>
               ))}
             </section>
           )}
 
-          {theory.content && (
+          {display.content && (
             <section className="prose prose-invert max-w-none text-foreground/90">
-              {paragraphs(theory.content).map((p, i) => (
+              {paragraphs(display.content).map((p, i) => (
                 <p key={i} className="mb-4 leading-relaxed whitespace-pre-wrap">{p}</p>
               ))}
             </section>

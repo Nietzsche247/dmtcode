@@ -1,56 +1,25 @@
 import { ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
 export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) => {
   const location = useLocation();
   const locale = useLocale();
+  const { t } = useTranslation();
   const rawSegments = location.pathname.split('/').filter((x) => x);
   // The locale prefix is routing, not a page: it must never become a crumb.
   const pathnames =
     locale !== 'en' && rawSegments[0] === locale ? rawSegments.slice(1) : rawSegments;
 
 
-  const breadcrumbNameMap: Record<string, string> = {
-    '': 'Home',
-    'tools': 'Tools',
-    'registry': 'Registry',
-    'research': 'Research',
-    'waitlist': 'Waitlist',
-    'faq': 'FAQ',
-    'bibliography': 'Bibliography',
-    'glossary': 'Glossary',
-    'protocol-guide': 'Protocol Guide',
-    'evidence-map': 'Evidence Map',
-    'methods': 'Methods',
-    'critiques': 'Critiques',
-    'about': 'About',
-    'events': 'Events & Trials',
-    'open-questions': 'Open Questions',
-    'admin': 'Admin',
-    'auth': 'Login',
-    'dataset': 'Dataset',
-    'guides': 'Guides',
-    'bundles': 'Bundles',
-    'null-reports': 'Null Reports',
-    'leaderboard': 'Community',
-    'assess': 'Assessment',
-    'submit-symbol': 'Submit Symbol',
-    'submit': 'Submit Symbol',
-    'protocols': 'Protocols',
-    'log': 'Voice Logger',
-    'dashboard': 'Dashboard',
-    'profile': 'Profile',
-    'my-symbols': 'My Symbols',
-    'trials': 'Clinical Trials',
-    'retreats': 'Retreat centers',
-    'theories': 'Open theories',
-    'co-witnesses': 'Co-witness wall',
-    'articles': 'Articles',
-    'prepare': 'Prepare',
-    'disclosure': 'Disclosure',
-    'terms': 'Terms',
-    'privacy': 'Privacy'
+  // Crumb labels live in the breadcrumb namespace of the locale bundles so
+  // /es/* and /de/* read in their own language. A missing key falls back to
+  // the title-cased slug, never to a blank crumb.
+  const crumbLabel = (segment: string): string | null => {
+    const key = `breadcrumb.${segment}`;
+    const label = t(key);
+    return label === key ? null : label;
   };
 
   return (
@@ -60,16 +29,16 @@ export const Breadcrumb = ({ titleOverride }: { titleOverride?: string } = {}) =
           <Link 
             to={localePath(locale, '/')}
             className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Home"
+            aria-label={t('breadcrumb.home')}
           >
-            Home
+            {t('breadcrumb.home')}
           </Link>
         </li>
         {pathnames.map((value, index) => {
           const to = localePath(locale, `/${pathnames.slice(0, index + 1).join('/')}`);
 
           const isLast = index === pathnames.length - 1;
-          const mapped = breadcrumbNameMap[value];
+          const mapped = crumbLabel(value);
           const fallback = value
             .split('-')
             .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { theorySlug } from "@/lib/theorySlug";
+import { useContentTranslationsMany, overlay } from "@/hooks/useContentTranslations";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -147,6 +148,12 @@ export default function TheoriesPage() {
     theories.forEach((t) => t.tags?.forEach((tag) => s.add(tag)));
     return Array.from(s).sort();
   }, [theories]);
+
+  // Locale overlay for list copy. Slugs and links keep using the source title.
+  const translations = useContentTranslationsMany(
+    "theories",
+    useMemo(() => theories.map((t) => t.id), [theories]),
+  );
 
   const filtered = useMemo(() => {
     return theories.filter((t) => {
@@ -405,6 +412,11 @@ export default function TheoriesPage() {
             <div className="grid md:grid-cols-2 gap-6">
               {filtered.map((t) => {
                 const isOpen = !!expanded[t.id];
+                const shown = (overlay(t, translations[t.id] ?? {}, [
+                  "title",
+                  "summary",
+                  "content",
+                ]) ?? t) as Theory;
                 const proponentLine = t.proponent
                   ? `Proposed by ${t.proponent}`
                   : t.user_id && handles[t.user_id]
@@ -427,7 +439,7 @@ export default function TheoriesPage() {
                           </div>
                           <CardTitle className="text-lg">
                             <Link to={`/theories/${theorySlug(t.title)}`} className="hover:underline">
-                              {t.title}
+                              {shown.title}
                             </Link>
                           </CardTitle>
                           {proponentLine && (
@@ -448,7 +460,7 @@ export default function TheoriesPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <CardDescription>{t.summary}</CardDescription>
+                      <CardDescription>{shown.summary}</CardDescription>
                       {t.source_title && (
                         <p className="text-xs">
                           {t.source_url ? (
@@ -473,7 +485,7 @@ export default function TheoriesPage() {
                           </Button>
                         </CollapsibleTrigger>
                         <CollapsibleContent className="mt-3 text-sm whitespace-pre-wrap text-foreground/90">
-                          {t.content}
+                          {shown.content}
                         </CollapsibleContent>
                       </Collapsible>
                     </CardContent>

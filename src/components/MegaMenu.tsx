@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useModeStore } from "@/stores/modeStore";
 import { useLocale, localePath } from "@/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,8 @@ import {
   PencilLine,
 } from "lucide-react";
 
+// Labels and descriptions are i18n keys resolved at render time so the mega
+// menu reads in the visitor's locale.
 interface NavItem {
   title: string;
   href: string;
@@ -38,40 +41,45 @@ interface NavItem {
 }
 
 const researchItems: NavItem[] = [
-  { title: "Articles", href: "/articles", description: "Long form answers grounded in this site's own records", icon: FileText },
-  { title: "Symbol Registry", href: "/registry", description: "Community-curated catalogue of visual symbols", icon: Database },
-  { title: "Evidence Map", href: "/evidence-map", description: "Pro/con analysis of research findings", icon: Map },
-  { title: "Chronology", href: "/timeline", description: "Every source as a dated record, sortable by date, person, place or kind of evidence", icon: History },
-  { title: "Clinical Trials", href: "/trials", description: "Active psychedelic research trials", icon: FlaskConical },
-  { title: "Bibliography", href: "/bibliography", description: "Peer-reviewed papers and citations", icon: BookOpen },
-  { title: "Methods", href: "/methods", description: "Replication methodology and protocols", icon: Microscope },
-  { title: "Critiques", href: "/critiques", description: "Skeptical perspectives and counter-evidence", icon: ScrollText },
-  { title: "Open Theories", href: "/theories", description: "Explanatory frameworks, attributed and voted on", icon: Sparkles },
+  { title: "nav.articles", href: "/articles", description: "menu.articlesDesc", icon: FileText },
+  { title: "nav.symbolRegistry", href: "/registry", description: "menu.registryDesc", icon: Database },
+  { title: "nav.evidenceMapTitle", href: "/evidence-map", description: "menu.evidenceMapDesc", icon: Map },
+  { title: "nav.timeline", href: "/timeline", description: "menu.timelineDesc", icon: History },
+  { title: "nav.clinicalTrials", href: "/trials", description: "menu.trialsDesc", icon: FlaskConical },
+  { title: "nav.bibliographyTitle", href: "/bibliography", description: "menu.bibliographyDesc", icon: BookOpen },
+  { title: "nav.methods", href: "/methods", description: "menu.methodsDesc", icon: Microscope },
+  { title: "nav.critiques", href: "/critiques", description: "menu.critiquesDesc", icon: ScrollText },
+  { title: "nav.openTheories", href: "/theories", description: "menu.theoriesDesc", icon: Sparkles },
 ];
 
 const explorerItems: NavItem[] = [
-  { title: "Capture", href: "/capture", description: "Record what you saw before you browse anything else", icon: PencilLine },
-  { title: "Events & Retreats", href: "/events", description: "Conferences, workshops, and retreat centers", icon: Calendar },
-  { title: "Retreat centers", href: "/retreats", description: "Centers that operate openly and publish who they are", icon: Users },
-  { title: "Tools & Equipment", href: "/prepare", description: "Lasers, lenses, and research equipment", icon: Wrench },
-  { title: "Community", href: "/leaderboard", description: "Contributors, rankings, and discussions", icon: Users },
-  { title: "Co-witness wall", href: "/co-witnesses", description: "Field notes from people who recognized the same symbol", icon: Users },
+  { title: "nav.capture", href: "/capture", description: "menu.captureDesc", icon: PencilLine },
+  { title: "nav.eventsRetreats", href: "/events", description: "menu.eventsDesc", icon: Calendar },
+  { title: "nav.retreatCenters", href: "/retreats", description: "menu.retreatsDesc", icon: Users },
+  { title: "nav.toolsEquipment", href: "/prepare", description: "menu.toolsDesc", icon: Wrench },
+  { title: "nav.community", href: "/leaderboard", description: "menu.communityDesc", icon: Users },
+  { title: "nav.coWitnessWall", href: "/co-witnesses", description: "menu.coWitnessDesc", icon: Users },
 ];
 
 const resourceItems: NavItem[] = [
-  { title: "Forecasts", href: "/forecasts", description: "Technology timeline predictions", icon: TrendingUp },
-  { title: "Protocols", href: "/protocols", description: "Therapeutic protocol frameworks", icon: FlaskConical },
-  { title: "Voice Logger", href: "/log", description: "Record and analyze experiences", icon: FileText },
-  { title: "Assessment", href: "/assess", description: "PHQ-9, GAD-7, and clinical evaluations", icon: ClipboardCheck },
-  { title: "Analysis", href: "/analysis", description: "t-SNE clustering and research tools", icon: BarChart3 },
-  { title: "Dataset", href: "/dataset", description: "Download open research data", icon: Database },
-  { title: "Protocol Guide", href: "/protocol-guide", description: "650nm laser protocol documentation", icon: Microscope },
-  { title: "FAQ", href: "/faq", description: "Frequently asked questions", icon: HelpCircle },
-  { title: "Glossary", href: "/glossary", description: "Key terms and definitions", icon: BookOpen },
-  { title: "Null Reports", href: "/null-reports", description: "Negative results and baseline data", icon: ScrollText },
+  { title: "nav.forecasts", href: "/forecasts", description: "menu.forecastsDesc", icon: TrendingUp },
+  { title: "nav.protocols", href: "/protocols", description: "menu.protocolsDesc", icon: FlaskConical },
+  { title: "nav.voiceLogger", href: "/log", description: "menu.voiceLoggerDesc", icon: FileText },
+  { title: "nav.assessment", href: "/assess", description: "menu.assessmentDesc", icon: ClipboardCheck },
+  { title: "nav.analysis", href: "/analysis", description: "menu.analysisDesc", icon: BarChart3 },
+  { title: "nav.dataset", href: "/dataset", description: "menu.datasetDesc", icon: Database },
+  { title: "nav.protocolGuide", href: "/protocol-guide", description: "menu.protocolGuideDesc", icon: Microscope },
+  { title: "nav.faqShort", href: "/faq", description: "menu.faqDesc", icon: HelpCircle },
+  { title: "nav.glossary", href: "/glossary", description: "menu.glossaryDesc", icon: BookOpen },
+  { title: "nav.nullReportsTitle", href: "/null-reports", description: "menu.nullReportsDesc", icon: ScrollText },
 ];
 
-const renderItem = (item: NavItem, active: boolean, href: string) => (
+const renderItem = (
+  item: NavItem,
+  active: boolean,
+  href: string,
+  t: (key: string) => string,
+) => (
   <li key={item.href}>
     <NavigationMenuLink asChild>
       <Link
@@ -84,10 +92,10 @@ const renderItem = (item: NavItem, active: boolean, href: string) => (
       >
         <div className="flex items-center gap-2">
           <item.icon className="h-4 w-4 text-primary" />
-          <div className="text-sm font-medium leading-none">{item.title}</div>
+          <div className="text-sm font-medium leading-none">{t(item.title)}</div>
         </div>
         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-          {item.description}
+          {t(item.description)}
         </p>
       </Link>
     </NavigationMenuLink>
@@ -98,6 +106,7 @@ export const MegaMenu = () => {
   const location = useLocation();
   const { mode } = useModeStore();
   const locale = useLocale();
+  const { t } = useTranslation();
   // Keep a visitor inside their locale while navigating the mega menu.
   const lp = (path: string) => localePath(locale, path);
   const isActive = (href: string) => location.pathname === lp(href);
@@ -106,30 +115,30 @@ export const MegaMenu = () => {
     <NavigationMenu className="hidden lg:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-sm">Research</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent text-sm">{t("nav.sectionResearch")}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {researchItems.map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
+              {researchItems.map((item) => renderItem(item, isActive(item.href), lp(item.href), t))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-sm">Explorer</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent text-sm">{t("nav.sectionExplorer")}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {explorerItems
                 .filter((item) => mode === 'explorer' || item.href === '/prepare' || item.href === '/events' || item.href === '/capture')
-                .map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
+                .map((item) => renderItem(item, isActive(item.href), lp(item.href), t))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-sm">Resources</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent text-sm">{t("nav.sectionResources")}</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
-              {resourceItems.map((item) => renderItem(item, isActive(item.href), lp(item.href)))}
+              {resourceItems.map((item) => renderItem(item, isActive(item.href), lp(item.href), t))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -145,7 +154,7 @@ export const MegaMenu = () => {
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
-              About
+              {t('nav.about')}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
