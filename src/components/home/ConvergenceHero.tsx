@@ -255,6 +255,38 @@ export const ConvergenceHero = () => {
         ))}
       </div>
 
+      {/* Sober entry point */}
+      <div className="max-w-5xl mx-auto mt-8 md:mt-10">
+        <div className="rounded-sm border border-border bg-card p-5 md:p-7">
+          <h3
+            className="text-2xl text-foreground"
+            style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+          >
+            Never done DMT? Start here.
+          </h3>
+          <p
+            className="text-sm text-muted-foreground leading-relaxed mt-3"
+            style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+          >
+            You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig, the same field sheet, run sober, and sober records are the ones the registry needs most. Read the Screening Card first, then run a baseline tonight and record it.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <a
+              href="/downloads/DMTCode_Screening_Card_v1.pdf"
+              className="label-data text-[10px] text-primary hover:underline"
+            >
+              Screening Card (PDF)
+            </a>
+            <a
+              href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf"
+              className="label-data text-[10px] text-primary hover:underline"
+            >
+              Sober Baseline Protocol (PDF)
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* The six specimen strip lived here. It duplicated the Recent
           contributions grid further down the page, so the page shows it once. */}
 
