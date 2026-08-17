@@ -534,7 +534,7 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
     en: {
       title: "Help build it | DMT Code",
       description:
-        "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome.",
+        "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, and developers welcome.",
     },
     es: {
       title: "Ayude a construirlo | DMT Code",
