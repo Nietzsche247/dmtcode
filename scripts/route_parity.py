@@ -20,9 +20,7 @@ PRERENDERED_NOT_IN_SITEMAP = {
     "/submit-symbol": "server rendered but deliberately noindex (see sitemap.ts comment)",
 }
 # Sitemap entries that are deliberately NOT literal prerender routes.
-SITEMAP_NOT_PRERENDERED = {
-    "/agent/": "static hand-written agent-map page under public/, English-only infrastructure",
-}
+SITEMAP_NOT_PRERENDERED = {}
 
 results = []
 def check(name, ok, detail=""):

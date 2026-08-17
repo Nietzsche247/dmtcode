@@ -2,7 +2,7 @@
 #
 # WHAT THIS DOES
 #   1. prod-checks : asserts production invariants (llms.txt contract, sitemap/corpus
-#                    count direction, tag-hub 404 guard, /agent/* indexable (no noindex)).
+#                    count direction, tag-hub 404 guard, /agent/ indexable (no noindex)).
 #   2. repo-drift  : asserts shadow-coupling contracts inside the repo (duplicated
 #                    CONTEXT_TAG_RE / symbolTitlePhrase / theorySlug copies identical,
 #                    consent-filter placement, no fabricated admin metrics).
@@ -16,7 +16,7 @@
 #                    graph, repackages ONLY the generated agent-map artifacts and
 #                    commits them. The commit carries [skip actions], which stops
 #                    GitHub Actions re-triggering this workflow but is NOT recognized
-#                    by Netlify, so the push still deploys the committed public/agent/*
+#                    by Netlify, so the push still deploys the committed docs/agent/*
 #                    assets. Degrades to verify-only if graphify cannot run.
 #   5. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
@@ -105,9 +105,10 @@ jobs:
           check(f"known-good tag hub /{GOOD} is 200", s == 200, s)
           s, h, _ = fetch("/registry/tag/zzz-geo-drift-probe")
           check("nonexistent tag hub returns 404", s == 404, s)
-          # Contract: /agent/* is intentionally indexable. Source of truth is the
-          # graph-handoff-headers block in public/_headers. Do not re-add a noindex assertion.
-          for p in ("/agent/", "/agent/graph.html"):
+          # Contract: /agent/ is a single hand-written pointer page and is
+          # intentionally indexable. The generated graph artifacts live in
+          # docs/agent/ in the repo and are not served. Do not re-add a noindex assertion.
+          for p in ("/agent/",):
               s, h, _ = fetch(p)
               tag = (h.get("X-Robots-Tag") or h.get("x-robots-tag") or "").strip().lower()
               check(f"{p} 200 + no X-Robots-Tag noindex", s == 200 and "noindex" not in tag, f"{s} / {tag!r}")
@@ -218,9 +219,7 @@ jobs:
       ALLOWED_COMMIT_PATHS: |
         docs/agent/GRAPH_REPORT.md
         docs/agent/graph-manifest.json
-        public/agent/GRAPH_REPORT.md
-        public/agent/graph-manifest.json
-        public/agent/graph.html
+        docs/agent/graph.html
     steps:
       - uses: actions/checkout@v4
       - name: Install graphify (CI-install; degrade on failure)
@@ -242,9 +241,8 @@ jobs:
           built = g.get("built_at_commit", "")
           nodes, edges = len(g.get("nodes", [])), len(g.get("links", []))
           shutil.copy("graphify-out/GRAPH_REPORT.md", "docs/agent/GRAPH_REPORT.md")
-          shutil.copy("graphify-out/GRAPH_REPORT.md", "public/agent/GRAPH_REPORT.md")
-          shutil.copy("graphify-out/graph.html", "public/agent/graph.html")
-          for mp in ("docs/agent/graph-manifest.json", "public/agent/graph-manifest.json"):
+          shutil.copy("graphify-out/graph.html", "docs/agent/graph.html")
+          for mp in ("docs/agent/graph-manifest.json",):
               m = json.load(open(mp))
               m["commit"] = head
               m["generatedAt"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -273,8 +271,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # The keyword must stay `[skip actions]`, not `[skip ci]`. Both keywords stop
           # GitHub Actions re-triggering this workflow on its own push, but Netlify also
-          # honors `[skip ci]` and would skip the deploy — stranding the committed
-          # public/agent/* assets in git. `[skip actions]` is recognized by GitHub
+          # honors `[skip ci]` and would skip the deploy. `[skip actions]` is recognized by GitHub
           # Actions only, so the loop guard holds and the deploy still runs.
           git commit -m "chore(agent-map): refresh graph artifacts [skip actions]"
           git push

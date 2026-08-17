@@ -50,7 +50,6 @@ const STATIC: Array<[string, string, string]> = [
   ["/returns", "0.3", "yearly"],
   ["/store-terms", "0.3", "yearly"],
   ["/store-contact", "0.3", "yearly"],
-  ["/agent/", "0.4", "monthly"],
 ];
 
 // This function is duplicated verbatim in src/lib/theorySlug.ts,
@@ -179,7 +178,7 @@ export default async (request: Request) => {
     path: p,
     changefreq: cf,
     priority: pr,
-    localized: !p.startsWith("/agent"),
+    localized: true,
   }));
 
   const addById = (
