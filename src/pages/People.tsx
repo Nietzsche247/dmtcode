@@ -14,6 +14,18 @@ const ITEM_LIST_LD = {
       name: "Danny Goler",
       url: "https://dmtcode.com/people/danny-goler",
     },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Andrew Gallimore",
+      url: "https://dmtcode.com/people/andrew-gallimore",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Chase Hughes",
+      url: "https://dmtcode.com/people/chase-hughes",
+    },
   ],
 };
 
@@ -47,6 +59,30 @@ const People = () => {
                 <p className="text-sm text-muted-foreground">
                   Described the 650 nm laser observation in August 2020 and published the pilot
                   study in IPI Letters in 2025.
+                </p>
+              </li>
+              <li>
+                <a
+                  href="/people/andrew-gallimore"
+                  className="block py-3 text-lg text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors"
+                >
+                  Andrew Gallimore
+                </a>
+                <p className="text-sm text-muted-foreground">
+                  Proposes the laser speckle explanation, one of the strongest cases against the
+                  reality-code reading.
+                </p>
+              </li>
+              <li>
+                <a
+                  href="/people/chase-hughes"
+                  className="block py-3 text-lg text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors"
+                >
+                  Chase Hughes
+                </a>
+                <p className="text-sm text-muted-foreground">
+                  Listed as a co-author, with Danny Goler, on the pilot study documenting
+                  650nm laser-induced visual patterns under DMT.
                 </p>
               </li>
             </ul>
