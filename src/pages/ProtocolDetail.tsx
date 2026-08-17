@@ -94,6 +94,15 @@ const ProtocolDetail = () => {
   const status = statusConfig[protocol.status as keyof typeof statusConfig] || statusConfig.coming_soon;
   const StatusIcon = status.icon;
   const isClinicalMode = content.clinical_mode === true;
+  const showDosing = Array.isArray(content.dosing) && content.dosing.length > 0;
+  // The dmt-laser set/setting copy in the database describes the laser without
+  // naming the diffraction grating in the beam path; render that detail here
+  // rather than depending on a database edit.
+  const setSettingText = content.preparation?.set_setting
+    ? (protocol.slug === 'dmt-laser' && !/diffraction grating/i.test(content.preparation.set_setting)
+        ? `${content.preparation.set_setting} A diffraction grating sits in the beam path.`
+        : content.preparation.set_setting)
+    : content.preparation?.set_setting;
 
   return (
     <>
