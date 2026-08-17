@@ -93,6 +93,26 @@ export const RegistryFilters = ({
               Clear all
             </Button>
           )}
+
+          {/* Sober baseline chip. Contributor declared and unverified. */}
+          <div>
+            <Badge
+              variant={recordFilter === 'sober_baseline_declared' ? 'default' : 'outline'}
+              className={`cursor-pointer transition-colors ${
+                recordFilter === 'sober_baseline_declared'
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  : 'hover:border-primary hover:text-primary'
+              }`}
+              onClick={() =>
+                onRecordChange(recordFilter === 'sober_baseline_declared' ? 'all' : 'sober_baseline_declared')
+              }
+            >
+              Sober baseline ({soberBaselineCount})
+            </Badge>
+            <p className="text-xs text-muted-foreground mt-1">
+              Contributor declared, not independently verified.
+            </p>
+          </div>
         </div>
 
         <CollapsibleContent className="mt-4">
@@ -169,27 +189,6 @@ export const RegistryFilters = ({
               tagged in place. There is no priming or co-witness field on these records today, so no
               filter is offered for either.
             </p>
-
-            {/* Sober baseline chip. Contributor declared and unverified. */}
-            <div>
-              <Badge
-                variant={recordFilter === 'sober_baseline_declared' ? 'default' : 'outline'}
-                className={`cursor-pointer transition-colors ${
-                  recordFilter === 'sober_baseline_declared'
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'hover:border-primary hover:text-primary'
-                }`}
-                onClick={() =>
-                  onRecordChange(recordFilter === 'sober_baseline_declared' ? 'all' : 'sober_baseline_declared')
-                }
-              >
-                Sober baseline ({soberBaselineCount})
-              </Badge>
-              <p className="text-xs text-muted-foreground mt-1">
-                Contributor declared, not independently verified.
-              </p>
-            </div>
-
 
             {/* Tags Multi-Select */}
             <div>
