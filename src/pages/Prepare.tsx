@@ -47,7 +47,7 @@ function KitCard({ kit }: { kit: Kit }) {
         Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}
       </div>
       <div className="text-xs text-muted-foreground mt-1">
-        The difference covers a tested module, matched optics, printed materials and support.
+        The difference covers a tested module, matched optics and support.
       </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
@@ -98,7 +98,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components, diffraction optics, and printed observation materials. Checkout runs on secure Shopify."
+            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
