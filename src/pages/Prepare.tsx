@@ -43,9 +43,6 @@ function KitCard({ kit }: { kit: Kit }) {
       <div className="mt-4 text-3xl font-black tracking-tight tabular-nums">
         {usd(kit.priceNumber)}
       </div>
-      <div className="text-xs text-muted-foreground mt-1 tabular-nums">
-        Sourcing the parts yourself: ≈ {usd(kit.diyCostNumber)}
-      </div>
       <div className="text-xs text-muted-foreground mt-1">
         The difference covers a tested module, matched optics and support.
       </div>
