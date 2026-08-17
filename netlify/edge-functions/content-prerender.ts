@@ -4400,7 +4400,7 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
     <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
-    <li><a href="/people/chase-hughes">Chase Hughes</a>: listed as a co-author, with Danny Goler, on the pilot study documenting 650 nm laser-induced visual patterns under DMT.</li>
+    <li><a href="/people/chase-hughes">Chase Hughes</a>: popularizer of an unverified validation claim about the 650 nm laser protocol; not an author of the pilot study.</li>
   </ul>
 
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
@@ -4455,13 +4455,13 @@ const SIMPLE_PEOPLE: Record<string, {
   },
   "chase-hughes": {
     name: "Chase Hughes",
-    title: "Chase Hughes, co-author on the pilot study | DMT Code",
+    title: "Chase Hughes, popularizer of an unverified validation claim | DMT Code",
     description:
-      "Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study documenting 650nm laser-induced visual patterns under DMT.",
-    sameAs: [],
+      "Chase Hughes has publicly described the 650 nm laser protocol as validated. This site has not been able to confirm a published, readable source for that claim.",
+    sameAs: ["https://dmtcode.com/bibliography/f0f66690-8508-493f-ba93-bdc2bf810261"],
     bodyHtml: `
-  <p>Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study "DMT Laser Experiment Pilot Study: Visual Pattern Recognition and Consistency," which documents 650nm red laser-induced visual patterns under DMT and reports notable consistency across an independent replicator community.</p>
-  <p>This site has not published independent, controlled, blinded replication of that consistency claim. That is a fact about the state of the field, not a charge against anyone. The paper is one entry among the sources this site tracks; it does not receive special treatment because of who is credited on it.</p>
+  <p>Chase Hughes is a podcaster and author who has publicly described the 650 nm laser protocol as validated, most visibly in interviews in 2025. This site has not been able to confirm a published, readable source for any validation he refers to, so the claim is listed as unverified in the bibliography (see the entry Chase Hughes Validation References). He is not an author of the pilot study, which is a single-author paper by Danny Goler (IPI Letters, 2025).</p>
+  <p>That is a statement about the state of the record, not a charge against anyone. Where his account is discussed on this site, it carries the same caveat: recognition after seeing imagery is not replication, and no controlled, blinded replication has been published.</p>
   <h2>Where his claim stands today</h2>
   <p>Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it. The competing readings of the underlying observation are set out on the <a href="/critiques">critiques page</a>.</p>
   <h2>Follow the record</h2>
