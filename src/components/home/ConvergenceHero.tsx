@@ -154,7 +154,7 @@ export const ConvergenceHero = () => {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Recording first keeps your memory unshaped by the catalogue. No account needed.
+            Recording first keeps your memory unshaped by the catalogue. Free account, avatar only, your name is never shown.
           </p>
 
           <p className="label-data text-xs text-muted-foreground pt-4">
