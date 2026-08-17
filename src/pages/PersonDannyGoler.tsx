@@ -15,7 +15,7 @@ const VIDEO_LD = {
   "embedUrl": `https://www.youtube.com/embed/${VIDEO_ID}`,
   "url": `https://www.youtube.com/watch?v=${VIDEO_ID}`,
   "thumbnailUrl": `https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`,
-  "uploadDate": "2026-01-01",
+  "uploadDate": "2026-08-11",
 };
 
 const FAQ_LD = {

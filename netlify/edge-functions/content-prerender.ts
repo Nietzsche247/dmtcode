@@ -4321,7 +4321,7 @@ const VIDEO_LD_DISCOVERY = {
   embedUrl: "https://www.youtube.com/embed/vB2-vIumXss",
   url: "https://www.youtube.com/watch?v=vB2-vIumXss",
   thumbnailUrl: "https://i.ytimg.com/vi/vB2-vIumXss/hqdefault.jpg",
-  uploadDate: "2026-01-01",
+  uploadDate: "2026-08-11",
 };
 
 const FAQ_LD_DANNY_GOLER = {
