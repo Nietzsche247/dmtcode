@@ -4371,6 +4371,18 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
         name: "Danny Goler",
         url: `${SITE}/people/danny-goler`,
       },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Andrew Gallimore",
+        url: `${SITE}/people/andrew-gallimore`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Chase Hughes",
+        url: `${SITE}/people/chase-hughes`,
+      },
     ],
   };
   const breadcrumbLd = {
@@ -4387,7 +4399,10 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   <p>Entity profiles for the people whose work this record is built on.</p>
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
+    <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
+    <li><a href="/people/chase-hughes">Chase Hughes</a>: listed as a co-author, with Danny Goler, on the pilot study documenting 650 nm laser-induced visual patterns under DMT.</li>
   </ul>
+
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
