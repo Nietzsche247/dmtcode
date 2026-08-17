@@ -37,7 +37,7 @@ const FAQ_LD = {
       "acceptedAnswer": {
         "@type": "Answer",
         "text":
-          "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+          "No. Danny Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project and is credited throughout the site as the person who first described the observation. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
       },
     },
     {
@@ -313,10 +313,11 @@ const PersonDannyGoler = () => {
                     Is dmtcode.com affiliated with Danny Goler or Code of Reality?
                   </h3>
                   <p className="mt-2">
-                    Goler is listed among the site's founders on the{' '}
-                    <a className={link} href="/about">about page</a>. dmtcode.com operates as an
-                    independent open registry, and it publishes evidence on both sides of the
-                    claim, including null results.
+                    No. Danny Goler is not a founder of DMT Code and holds no editorial role in it.
+                    He is aware of the project and is credited throughout the site as the person who
+                    first described the observation. dmtcode.com operates as an independent open
+                    registry, and it publishes evidence on both sides of the claim, including null
+                    results.
                   </p>
                 </div>
                 <div>
