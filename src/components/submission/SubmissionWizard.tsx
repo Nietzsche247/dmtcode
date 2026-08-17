@@ -145,6 +145,7 @@ export const SubmissionWizard = () => {
           emotional_valence: metadata.emotionalValence || null,
           svg_data: svgData,
           vector_json: vectorJson,
+          is_sober_baseline: metadata.isSoberBaseline ?? false,
         })
         .select()
         .single();
