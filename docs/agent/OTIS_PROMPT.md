@@ -18,7 +18,7 @@ Public-safe graph preview: `https://dmtcode.com/agent/`
 5. `docs/agent/GRAPH_REPORT.md`
 6. `public/llms.txt`
 7. `public/robots.txt`
-8. `public/agent/`
+8. `public/agent/index.html` (the served agent guide; generated graph artifacts are repo-only under `docs/agent/`)
 
 If you only have the zip/package, start with `README_FOR_AGENT.md`, then `OTIS_PROMPT.md`, then `repo-map/graph-manifest.json`, then `repo-map/GRAPH_REPORT.md`.
 

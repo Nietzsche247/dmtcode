@@ -148,10 +148,8 @@ Long form articles that answer specific questions using the DMT Code corpus. Eac
 <!-- graph-handoff:start -->
 ## Agent Project Map
 
-- Graph preview: https://dmtcode.com/agent/
-- Graph report: https://dmtcode.com/agent/GRAPH_REPORT.md
-- Graph manifest: https://dmtcode.com/agent/graph-manifest.json
-- Otis/Lovable prompt: https://dmtcode.com/agent/OTIS_PROMPT.md
+- Agent guide: https://dmtcode.com/agent/
+- Repository graph artifacts are kept in the repo under docs/agent/ and are not served from this domain.
 
 Use these as maps; verify source before relying on them.
 <!-- graph-handoff:end -->

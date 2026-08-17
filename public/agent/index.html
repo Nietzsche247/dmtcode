@@ -1,37 +1,37 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="index, follow">
-  <title>DMTCode Agent Map</title>
-  <style>
-    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background: #101214; color: #f4f0e8; }
-    main { max-width: 920px; margin: 0 auto; padding: 48px 20px; }
-    h1 { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin: 0 0 16px; }
-    p { color: #c9c3b8; font-size: 1.05rem; line-height: 1.6; }
-    a { color: #76d1ff; }
-    ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0; list-style: none; margin-top: 28px; }
-    li a { display: block; border: 1px solid #343a40; border-radius: 8px; padding: 16px; text-decoration: none; background: #181b1f; }
-    section { margin-top: 32px; border-top: 1px solid #343a40; padding-top: 24px; }
-    code { color: #f0d99d; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent guide | DMT Code</title>
+<meta name="description" content="Where machine readers should start on dmtcode.com: the corpus, the site description, and the licence." />
+<link rel="canonical" href="https://dmtcode.com/agent/" />
+<style>
+  body { font-family: ui-serif, Georgia, serif; max-width: 42rem; margin: 4rem auto; padding: 0 1.25rem; line-height: 1.6; }
+  code { font-family: ui-monospace, monospace; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+</style>
 </head>
 <body>
-<main>
-  <h1>DMTCode Agent Map</h1>
-  <p>Curated public agent map. Raw graph JSON is intentionally not published here by default.</p>
-  <ul><li><a href="graph.html">Graph Preview</a></li>
-<li><a href="GRAPH_REPORT.md">Graph Report</a></li>
-<li><a href="graph-manifest.json">Graph Manifest</a></li>
-<li><a href="OTIS_PROMPT.md">Otis/Lovable Prompt</a></li>
-<li><a href="https://dmtcode.com">Site</a></li>
-<li><a href="https://dmtcode.com/llms.txt">llms.txt</a></li>
-<li><a href="https://dmtcode.com/sitemap.xml">Sitemap</a></li></ul>
-  <section>
-    <p><strong>How to use this:</strong> start with the report, open the graph preview to find connected systems, then verify claims in source before editing. The graph is a navigation map, not a substitute for source review.</p>
-    <p><code>Audit loop:</code> graph health -> package -> public/private split -> secret scan -> pointer review.</p>
-  </section>
-</main>
+<h1>Agent guide</h1>
+<p>This page tells a machine reader where to start. It is short on purpose.</p>
+
+<h2>Start here</h2>
+<ul>
+  <li><a href="/llms.txt">/llms.txt</a>: what this site is, what each surface claims, and what it does not claim.</li>
+  <li><a href="/data.json">/data.json</a>: the machine corpus, with a <code>field_definitions</code> block that documents every field.</li>
+  <li><a href="/sitemap-index.xml">/sitemap-index.xml</a>: every indexable URL, including the Spanish and German mirrors.</li>
+  <li><a href="/robots.txt">/robots.txt</a>: crawl policy.</li>
+</ul>
+
+<h2>Reading the record correctly</h2>
+<p>Publication is not review and not approval. A submitted symbol is public immediately, so visibility never means verified. Recognition counts are post exposure recognition, not independent replication. Curated example rows are operator added illustrations and are excluded from every convergence total. The three status fields, visibility, moderation and evidence, are independent and must not be collapsed into one badge.</p>
+
+<h2>Repository map</h2>
+<p>The generated code graph and the agent brief are kept in the repository under <code>docs/agent/</code>. They are development artifacts and are not served from this domain.</p>
+
+<h2>Licence</h2>
+<p>Site content and the exported corpus are published under CC BY 4.0. Attribute to DMT Code and link the record you used.</p>
 </body>
 </html>
