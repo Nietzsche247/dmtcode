@@ -84,6 +84,7 @@ All kits: 650 nm laser module, diffraction optics, printed observation materials
 
 Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
 
+- Screening Card (pre-observation self-check): https://dmtcode.com/downloads/DMTCode_Screening_Card_v1.pdf (ES: DMTCode_Tarjeta_de_Cribado_v1_ES.pdf, DE: DMTCode_Screening_Karte_v1_DE.pdf)
 - /downloads/DMTCode_Observation_Field_Sheet_v1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_DE.pdf (DE)
 - /downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf (ES), /downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf (DE)
 - /downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf (ES), /downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf (DE)

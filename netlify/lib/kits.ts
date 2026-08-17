@@ -31,7 +31,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 219,
     availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
-      'Optical research kit for one observer: a 650 nm laser module, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+      'Optical research kit for one observer. Contents: one 650 nm red laser pointer, Class 3R (IIIa), under 5 mW (Arbor Scientific P2-7500); one adjustable laser pointer stand (Arbor 92-7660); one demonstration diffraction grating (Arbor P3-6405); printed observation materials: Field Sheet, Sober Baseline Protocol, Screening Card and Laser Safety Card. For educational study of laser diffraction patterns.',
   },
   {
     id: 'triad',
@@ -47,7 +47,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 516,
     availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
-      'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+      'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns. The full contents list is being finalized and will be published here before these kits ship.',
   },
   {
     id: 'circle',
@@ -63,6 +63,6 @@ export const KITS: Kit[] = [
     diyCostNumber: 883,
     availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
     description:
-      'Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns.',
+      'Optical research kit for six observers: multi-wavelength laser modules including 650 nm, diffraction optics, and printed observation materials for educational study of laser diffraction patterns. The full contents list is being finalized and will be published here before these kits ship.',
   },
 ];

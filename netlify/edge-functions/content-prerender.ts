@@ -1431,7 +1431,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     items: [
       {
         q: "How do I do this safely?",
-        a: "Start with the screening card. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.",
+        a: "Start with the <a href=\"/downloads/DMTCode_Screening_Card_v1.pdf\">screening card</a>. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.",
       },
       {
         q: "Is this legal?",
