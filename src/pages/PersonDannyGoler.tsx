@@ -155,6 +155,8 @@ const PersonDannyGoler = () => {
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>
         <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
+        <script type="application/ld+json">{JSON.stringify(VIDEO_LD)}</script>
+        <script type="application/ld+json">{JSON.stringify(FAQ_LD)}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -268,6 +270,66 @@ const PersonDannyGoler = () => {
                 <a className={link} href="/null-reports">null reports</a> in the same place, under
                 the same license, as the ones that support it.
               </p>
+
+              <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
+                The Discovery, a documentary film
+              </h2>
+              <p>
+                The Discovery is a feature documentary about the 650 nm laser observation and the
+                people attempting to test it, directed by Aaron Vanden. The film's official site
+                lists a world premiere in the Los Angeles area between late October and early
+                November 2026, with date and venue to be announced. The official teaser trailer is
+                below. DMT Code is not affiliated with the film. We index it here because it is the
+                most significant upcoming driver of public attention to the claim this site keeps
+                the record of.
+              </p>
+              <LiteYouTube />
+              <p className="text-sm">
+                <a className={link} href="https://thediscoveryfilm.com" rel="noopener" target="_blank">
+                  The Discovery, official site
+                </a>
+              </p>
+
+              <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
+                Questions and answers
+              </h2>
+              <div className="space-y-5">
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    Who is Danny Goler and what is the DMT code of reality?
+                  </h3>
+                  <p className="mt-2">
+                    Danny Goler first described the 650 nm laser observation in August 2020 and
+                    published the pilot study in IPI Letters in 2025, DOI{' '}
+                    <a className={link} href="https://doi.org/10.59973/ipil.158" rel="noopener" target="_blank">
+                      10.59973/ipil.158
+                    </a>
+                    . Whether the phenomenon is real remains an open question, with four
+                    explanations actively defended.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    Is dmtcode.com affiliated with Danny Goler or Code of Reality?
+                  </h3>
+                  <p className="mt-2">
+                    Goler is listed among the site's founders on the{' '}
+                    <a className={link} href="/about">about page</a>. dmtcode.com operates as an
+                    independent open registry, and it publishes evidence on both sides of the
+                    claim, including null results.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    When does The Discovery documentary premiere?
+                  </h3>
+                  <p className="mt-2">
+                    Per the film's official site, the world premiere is in the Los Angeles area
+                    between late October and early November 2026. Date and venue are to be
+                    announced.
+                  </p>
+                </div>
+              </div>
 
               <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
                 Follow the record
