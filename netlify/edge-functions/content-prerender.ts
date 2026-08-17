@@ -4341,7 +4341,7 @@ const FAQ_LD_DANNY_GOLER = {
       name: "Is dmtcode.com affiliated with Danny Goler or Code of Reality?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+        text: "No. Danny Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project and is credited throughout the site as the person who first described the observation. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
       },
     },
     {
