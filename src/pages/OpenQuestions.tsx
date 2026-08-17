@@ -116,9 +116,9 @@ const OpenQuestions = () => {
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
                   Pharmacokinetic differences (rapid onset smoked vs. extended duration IM) may correlate with symbol complexity or duration of visibility. Davis et al. (2021) documented route-dependent phenomenology differences.
                 </p>
-                <a 
-                  href="https://doi.org/10.1002/hup.2806" 
-                  target="_blank" 
+                <a
+                  href="https://doi.org/10.1177/0269881120916143"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
                 >
@@ -169,15 +169,10 @@ const OpenQuestions = () => {
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
                   Dose-response curve analysis would determine whether symbol appearance requires full "breakthrough" doses or occurs at lower intensity experiences. Strassman (2001) documented dose-dependent phenomenology variations.
                 </p>
-                <a 
-                  href="https://doi.org/10.1007/978-1-4615-0115-9" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
-                >
+                <p className="inline-flex items-center gap-2 text-gold text-sm">
                   Strassman R (2001) DMT: The Spirit Molecule, Park Street Press (book, no DOI)
                   <ExternalLink className="w-4 h-4" />
-                </a>
+                </p>
               </Card>
 
               <Card className="p-6 border-border">
@@ -195,9 +190,9 @@ const OpenQuestions = () => {
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
                   Current registry predominantly English-speaking participants. Cross-cultural replication (Asia, Africa, South America) would test whether symbol archetypes show cultural variance or universal consistency. Davis et al. (2021) documented cultural influences on entity encounter interpretations.
                 </p>
-                <a 
-                  href="https://doi.org/10.1002/hup.2806" 
-                  target="_blank" 
+                <a
+                  href="https://doi.org/10.1177/0269881120916143"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
                 >
