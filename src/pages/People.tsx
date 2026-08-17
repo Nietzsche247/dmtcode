@@ -81,8 +81,8 @@ const People = () => {
                   Chase Hughes
                 </a>
                 <p className="text-sm text-muted-foreground">
-                  Listed as a co-author, with Danny Goler, on the pilot study documenting
-                  650nm laser-induced visual patterns under DMT.
+                  Popularizer of an unverified validation claim about the 650 nm laser
+                  protocol; not an author of the pilot study.
                 </p>
               </li>
             </ul>
