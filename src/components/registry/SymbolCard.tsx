@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { tagLabel } from '@/lib/tags';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
 import { SaveButton } from '@/components/dashboard/SaveButton';
 import { Link } from 'react-router-dom';
+import { isRenderableImage } from '@/lib/imageValue';
 
 interface SymbolCardProps {
   id: string;
@@ -37,6 +39,8 @@ export const SymbolCard = ({
   similarCount = 0,
   communityTags = [],
 }: SymbolCardProps) => {
+  const [imageFailed, setImageFailed] = useState(false);
+  const showPlaceholder = imageFailed || !isRenderableImage(imageUrl);
   const specimenId = `#${id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
   const captureDate = (() => {
@@ -53,13 +57,20 @@ export const SymbolCard = ({
         to={`/registry/${id}`}
         className="block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <div className="aspect-square flex items-center justify-center bg-white rounded-md border border-border overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={description || 'Symbol submission'}
-            className="w-full h-full object-contain p-1"
-            loading="lazy"
-          />
+        <div className="aspect-square flex items-center justify-center bg-card rounded-md border border-border overflow-hidden">
+          {showPlaceholder ? (
+            <div className="flex h-full w-full items-center justify-center border border-dashed border-border p-2 text-center">
+              <span className="text-xs text-muted-foreground">No drawing recorded</span>
+            </div>
+          ) : (
+            <img
+              src={imageUrl}
+              alt={description || 'Symbol submission'}
+              className="w-full h-full object-contain p-1"
+              loading="lazy"
+              onError={() => setImageFailed(true)}
+            />
+          )}
         </div>
       </Link>
 
