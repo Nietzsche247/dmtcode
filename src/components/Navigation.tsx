@@ -7,6 +7,7 @@ import { useModeStore } from "@/stores/modeStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Logo } from "./Logo";
 import { ModeToggle } from "./ModeToggle";
 import { ThemeToggle } from "./ThemeToggle";
@@ -36,6 +37,7 @@ export const Navigation = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const locale = useLocale();
+  const { t } = useTranslation();
   // Header navigation must keep a visitor inside the locale they arrived in.
   const lp = (path: string) => localePath(locale, path);
   const { trackLogout } = useAuthTracking();
@@ -99,34 +101,35 @@ export const Navigation = () => {
     setOpenSection(null);
   };
 
+  // Labels are i18n keys; the mobile menu resolves them at render time.
   const researchItems = [
-    { path: '/articles', label: 'Articles' },
-    { path: '/registry', label: 'Symbol Registry' },
-    { path: '/evidence-map', label: 'Evidence Map' },
-    { path: '/timeline', label: 'Chronology' },
-    { path: '/trials', label: 'Clinical Trials' },
-    { path: '/bibliography', label: 'Bibliography' },
-    { path: '/methods', label: 'Methods' },
-    { path: '/critiques', label: 'Critiques' },
-    { path: '/theories', label: 'Open Theories' },
+    { path: '/articles', label: 'nav.articles' },
+    { path: '/registry', label: 'nav.symbolRegistry' },
+    { path: '/evidence-map', label: 'nav.evidenceMapTitle' },
+    { path: '/timeline', label: 'nav.timeline' },
+    { path: '/trials', label: 'nav.clinicalTrials' },
+    { path: '/bibliography', label: 'nav.bibliographyTitle' },
+    { path: '/methods', label: 'nav.methods' },
+    { path: '/critiques', label: 'nav.critiques' },
+    { path: '/theories', label: 'nav.openTheories' },
   ];
 
   const explorerItems = [
-    { path: '/events', label: 'Events & Retreats' },
-    { path: '/retreats', label: 'Retreat centers' },
-    { path: '/leaderboard', label: 'Community' },
-    { path: '/co-witnesses', label: 'Co-witness wall' },
+    { path: '/events', label: 'nav.eventsRetreats' },
+    { path: '/retreats', label: 'nav.retreatCenters' },
+    { path: '/leaderboard', label: 'nav.community' },
+    { path: '/co-witnesses', label: 'nav.coWitnessWall' },
   ];
 
 
   const resourceItems = [
-    { path: '/prepare', label: 'Kits' },
-    { path: '/protocol-guide', label: 'Protocol Guide' },
-    { path: '/protocols', label: 'Protocols' },
-    { path: '/assess', label: 'Assessment' },
-    { path: '/faq', label: 'FAQ' },
-    { path: '/glossary', label: 'Glossary' },
-    { path: '/null-reports', label: 'Null Reports' },
+    { path: '/prepare', label: 'nav.kits' },
+    { path: '/protocol-guide', label: 'nav.protocolGuide' },
+    { path: '/protocols', label: 'nav.protocols' },
+    { path: '/assess', label: 'nav.assessment' },
+    { path: '/faq', label: 'nav.faqShort' },
+    { path: '/glossary', label: 'nav.glossary' },
+    { path: '/null-reports', label: 'nav.nullReportsTitle' },
   ];
 
   return (
@@ -175,7 +178,7 @@ export const Navigation = () => {
                   size="sm"
                   className="rounded-full px-4 hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all min-h-[44px]"
                 >
-                  Sign In
+                  {t('actions.signIn')}
                 </Button>
               )}
             </div>
@@ -212,13 +215,13 @@ export const Navigation = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
               >
-                Home
+                {t('nav.home')}
               </button>
 
               {/* Research Section */}
               <Collapsible open={openSection === 'research'} onOpenChange={() => setOpenSection(openSection === 'research' ? null : 'research')}>
                 <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
-                  <span>Research</span>
+                  <span>{t('nav.sectionResearch')}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'research' ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1">
@@ -232,7 +235,7 @@ export const Navigation = () => {
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
                     >
-                      {item.label}
+                      {t(item.label)}
                     </button>
                   ))}
                 </CollapsibleContent>
@@ -241,7 +244,7 @@ export const Navigation = () => {
               {/* Explorer Section */}
               <Collapsible open={openSection === 'explorer'} onOpenChange={() => setOpenSection(openSection === 'explorer' ? null : 'explorer')}>
                 <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
-                  <span>Explorer</span>
+                  <span>{t('nav.sectionExplorer')}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'explorer' ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1">
@@ -255,7 +258,7 @@ export const Navigation = () => {
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
                     >
-                      {item.label}
+                      {t(item.label)}
                     </button>
                   ))}
                 </CollapsibleContent>
@@ -264,7 +267,7 @@ export const Navigation = () => {
               {/* Resources Section */}
               <Collapsible open={openSection === 'resources'} onOpenChange={() => setOpenSection(openSection === 'resources' ? null : 'resources')}>
                 <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50">
-                  <span>Resources</span>
+                  <span>{t('nav.sectionResources')}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${openSection === 'resources' ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1">
@@ -278,7 +281,7 @@ export const Navigation = () => {
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       }`}
                     >
-                      {item.label}
+                      {t(item.label)}
                     </button>
                   ))}
                 </CollapsibleContent>
@@ -293,27 +296,27 @@ export const Navigation = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
               >
-                Kits
+                {t('nav.kits')}
               </button>
 
               {/* Text labels for the header icon buttons, which are icon only on mobile */}
               <div className="pt-3 mt-2 border-t border-border/50 space-y-1">
                 <p className="px-4 py-1 text-xs uppercase tracking-widest text-muted-foreground/70">
-                  Display and cart
+                  {t('nav.displayAndCart')}
                 </p>
                 <button
                   onClick={() => { setMode('research'); }}
                   className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 >
                   <FlaskConical className="h-4 w-4" aria-hidden="true" />
-                  Research mode
+                  {t('nav.researchMode')}
                 </button>
                 <button
                   onClick={() => { setMode('explorer'); }}
                   className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  Explorer mode
+                  {t('nav.explorerMode')}
                 </button>
                 <button
                   onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
@@ -321,11 +324,11 @@ export const Navigation = () => {
                   className="flex items-center gap-3 w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 disabled:opacity-50"
                 >
                   <SunMedium className="h-4 w-4" aria-hidden="true" />
-                  {mode === 'research' ? 'Light mode locked in Research mode' : 'Switch light or dark mode'}
+                  {mode === 'research' ? t('nav.themeLocked') : t('nav.themeSwitch')}
                 </button>
                 <p className="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground">
                   <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-                  Cart: {itemCount} item{itemCount === 1 ? '' : 's'}
+                  {t('nav.cart', { count: itemCount })}
                 </p>
               </div>
 
@@ -338,20 +341,20 @@ export const Navigation = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                 }`}
               >
-                About
+                {t('nav.about')}
               </button>
 
               {/* Auth Section */}
               <div className="pt-4 border-t border-border/50 mt-4">
                 {isAuthenticated ? (
                   <>
-                    <Button onClick={() => handleNavigation('/dashboard')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Dashboard</Button>
-                    <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">Profile</Button>
-                    <Button onClick={() => handleNavigation('/my-symbols')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">My Symbols</Button>
-                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">Sign Out</Button>
+                    <Button onClick={() => handleNavigation('/dashboard')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">{t('nav.dashboard')}</Button>
+                    <Button onClick={() => handleNavigation('/profile')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">{t('nav.profile')}</Button>
+                    <Button onClick={() => handleNavigation('/my-symbols')} variant="ghost" size="sm" className="w-full justify-start min-h-[44px]">{t('nav.mySymbols')}</Button>
+                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full mt-2 min-h-[44px]">{t('actions.signOut')}</Button>
                   </>
                 ) : (
-                  <Button onClick={goToAuth} className="w-full rounded-full min-h-[44px] hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all">Sign In</Button>
+                  <Button onClick={goToAuth} className="w-full rounded-full min-h-[44px] hover:shadow-[0_0_15px_rgba(196,30,58,0.3)] transition-all">{t('actions.signIn')}</Button>
                 )}
               </div>
             </div>
