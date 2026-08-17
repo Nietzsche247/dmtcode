@@ -250,7 +250,7 @@ const Home = () => {
                       {kit.image ? (
                         <img
                           src={kit.image}
-                          alt={`${kit.name} kit contents`}
+                          alt={`${kit.name} kit contents: every component photographed as shipped`}
                           loading="lazy"
                           className="w-full h-full object-cover"
                         />
