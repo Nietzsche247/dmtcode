@@ -162,6 +162,7 @@ export const CartDrawer = () => {
           size="icon" 
           className="relative touch-manipulation"
           aria-label={`Shopping cart with ${totalItems} items`}
+          title={`Shopping cart with ${totalItems} items`}
         >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
