@@ -4341,7 +4341,7 @@ const FAQ_LD_DANNY_GOLER = {
       name: "Is dmtcode.com affiliated with Danny Goler or Code of Reality?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+        text: "No. Danny Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project and is credited throughout the site as the person who first described the observation. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
       },
     },
     {
@@ -4381,7 +4381,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   <h3>Who is Danny Goler and what is the DMT code of reality?</h3>
   <p>Danny Goler first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025, DOI 10.59973/ipil.158. Whether the phenomenon is real remains an open question, with four explanations actively defended.</p>
   <h3>Is dmtcode.com affiliated with Danny Goler or Code of Reality?</h3>
-  <p>Goler is listed among the site's founders on the <a href="/about">about page</a>. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.</p>
+  <p>No. Danny Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project and is credited throughout the site as the person who first described the observation. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.</p>
   <h3>When does The Discovery documentary premiere?</h3>
   <p>Per the film's official site, the world premiere is in the Los Angeles area between late October and early November 2026. Date and venue are to be announced.</p>
   <h2>Follow the record</h2>
