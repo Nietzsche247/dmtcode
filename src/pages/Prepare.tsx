@@ -123,10 +123,9 @@ const Prepare = () => {
                     who knows your history.
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    No protective eyewear is used or needed: you view the pattern on the wall, never
-                    the aperture and never a reflection. Class 3R laser, under 5 mW: do not stare
-                    into the beam, do not aim it at anyone, and treat every reflective surface in
-                    the room as part of the beam path.
+                    Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at
+                    anyone, and treat every reflective surface in the room as part of the beam
+                    path.
                   </p>
                 </div>
               </div>

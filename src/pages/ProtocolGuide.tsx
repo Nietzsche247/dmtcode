@@ -58,7 +58,7 @@ const ProtocolGuide = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 text-base">
                 <li>A 650 nm red laser pointer, Class 3R (IIIa), under 5 mW, on a stand.</li>
-                <li>No eyewear is worn during observation. The beam is never viewed directly; it is aimed through a diffraction grating at a matte surface 3 to 5 m away.</li>
+                <li>The beam is never viewed directly; it is aimed through a diffraction grating at a matte surface 3 to 5 m away.</li>
                 <li>A diffraction grating in the beam path, close to the aperture.</li>
                 <li>A diffraction or refraction element used to structure the beam.</li>
                 <li>An observation journal for recording what was seen.</li>
