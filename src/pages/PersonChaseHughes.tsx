@@ -7,8 +7,8 @@ const PERSON_LD = {
   "@type": "Person",
   "name": "Chase Hughes",
   "description":
-    "Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study documenting 650nm red laser-induced visual patterns under DMT.",
-  "sameAs": [],
+    "Chase Hughes has publicly described the 650 nm laser protocol as validated. This site has not been able to confirm a published, readable source for that claim.",
+  "sameAs": ["https://dmtcode.com/bibliography/f0f66690-8508-493f-ba93-bdc2bf810261"],
 };
 
 const BREADCRUMB_LD = {
@@ -33,10 +33,10 @@ const PersonChaseHughes = () => {
   return (
     <>
       <Helmet>
-        <title>Chase Hughes, co-author on the pilot study | DMT Code</title>
+        <title>Chase Hughes, popularizer of an unverified validation claim | DMT Code</title>
         <meta
           name="description"
-          content="Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study documenting 650nm laser-induced visual patterns under DMT."
+          content="Chase Hughes has publicly described the 650 nm laser protocol as validated. This site has not been able to confirm a published, readable source for that claim."
         />
         <link rel="canonical" href="https://dmtcode.com/people/chase-hughes" />
         <meta name="robots" content="index, follow" />
@@ -61,16 +61,18 @@ const PersonChaseHughes = () => {
 
             <div className="mt-8 space-y-6 text-base sm:text-lg leading-relaxed text-foreground/90">
               <p>
-                Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study
-                "DMT Laser Experiment Pilot Study: Visual Pattern Recognition and Consistency,"
-                which documents 650nm red laser-induced visual patterns under DMT and reports
-                notable consistency across an independent replicator community.
+                Chase Hughes is a podcaster and author who has publicly described the 650 nm
+                laser protocol as validated, most visibly in interviews in 2025. This site has
+                not been able to confirm a published, readable source for any validation he
+                refers to, so the claim is listed as unverified in the bibliography (see the
+                entry Chase Hughes Validation References). He is not an author of the pilot
+                study, which is a single-author paper by Danny Goler (IPI Letters, 2025).
               </p>
               <p>
-                This site has not published independent, controlled, blinded replication of that
-                consistency claim. That is a fact about the state of the field, not a charge
-                against anyone. The paper is one entry among the sources this site tracks; it does
-                not receive special treatment because of who is credited on it.
+                That is a statement about the state of the record, not a charge against anyone.
+                Where his account is discussed on this site, it carries the same caveat:
+                recognition after seeing imagery is not replication, and no controlled, blinded
+                replication has been published.
               </p>
 
               <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
