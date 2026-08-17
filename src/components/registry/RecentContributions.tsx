@@ -5,6 +5,7 @@ import { ArrowRight, ChevronUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { tagLabel } from '@/lib/tags';
+import { isRenderableImage } from '@/lib/imageValue';
 
 interface RecentSymbol {
   id: string;
@@ -18,6 +19,7 @@ interface RecentSymbol {
 export const RecentContributions = () => {
   const [symbols, setSymbols] = useState<RecentSymbol[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failedIds, setFailedIds] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,8 +35,9 @@ export const RecentContributions = () => {
       .limit(6);
 
     if (!error && data) {
-      // Hide tiles with no image: an empty frame reads as a missing record.
-      setSymbols(data.filter((s) => typeof s.image_url === 'string' && s.image_url.trim() !== ''));
+      // Hide tiles with no renderable image: an empty frame reads as a
+      // missing record, and short data: URIs cannot be a real drawing.
+      setSymbols(data.filter((s) => isRenderableImage(s.image_url)));
     }
     setLoading(false);
   };
@@ -78,15 +81,22 @@ export const RecentContributions = () => {
       </div>
 
       <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
-        {symbols.map((symbol) => (
+        {symbols.filter((symbol) => !failedIds.has(symbol.id)).map((symbol) => (
           <Link key={symbol.id} to={`/registry/${symbol.id}`} className="group">
             <article className="rounded-sm border border-border bg-card p-3 transition-colors hover:border-foreground/40">
-              <div className="aspect-square bg-white rounded-sm border border-border overflow-hidden mb-2">
+              <div className="aspect-square bg-card rounded-sm border border-border overflow-hidden mb-2">
                 <img
                   src={symbol.image_url}
                   alt={symbol.description || 'Recent symbol'}
                   className="w-full h-full object-contain p-1"
                   loading="lazy"
+                  onError={() =>
+                    setFailedIds((prev) => {
+                      const next = new Set(prev);
+                      next.add(symbol.id);
+                      return next;
+                    })
+                  }
                 />
               </div>
               <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground min-h-[18px]">
