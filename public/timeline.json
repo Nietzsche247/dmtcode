@@ -617,6 +617,34 @@
       }
     },
     {
+      "id": "goler-2020-laser-grating-first-public",
+      "date": {
+        "year": 2020,
+        "month": 8,
+        "precision": "month",
+        "sort_key": "2020-08-00"
+      },
+      "headline": "Danny Goler first describes the laser and grating observation publicly",
+      "summary": "Danny Goler publishes video accounts describing structured visual forms seen while a red laser is passed through a diffraction grating during N,N-DMT. No peer-reviewed source exists for this period; the date is taken from the earliest public posts and is approximate.",
+      "people": [
+        {
+          "name": "Danny Goler",
+          "sort": "Goler"
+        }
+      ],
+      "tags": [
+        "laser-protocol",
+        "origin",
+        "community-report",
+        "unverified"
+      ],
+      "evidence_class": "community_report",
+      "source": {
+        "kind": "unpublished",
+        "note": "Public video posts, 2020. No DOI."
+      }
+    },
+    {
       "id": "lawrence-2022-phenomenology",
       "date": {
         "year": 2022,
@@ -802,7 +830,7 @@
         "sort_key": "2023-00-02"
       },
       "headline": "Laser and grating experiments spread outside institutions",
-      "summary": "Independent experimenters begin combining a red laser with a diffraction grating during DMT sessions and reporting symbol-like forms on surfaces. No study, no controls, no published record. This is where the protocol this site catalogues comes from, and it is listed here as origin rather than as evidence.",
+      "summary": "Independent experimenters begin combining a red laser with a diffraction grating during DMT sessions and reporting symbol-like forms on surfaces. No study, no controls, no published record. This is when the protocol this site catalogues spreads outside institutions.",
       "tags": [
         "laser-protocol",
         "origin",
