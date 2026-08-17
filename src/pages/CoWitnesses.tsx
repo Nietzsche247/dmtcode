@@ -136,15 +136,6 @@ export default function CoWitnesses() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading recollections.</p>
         ) : filtered.length === 0 ? (
-          <Card className="p-8 text-center space-y-3">
-            <p className="text-sm text-muted-foreground">
-              The wall opens as explorers opt in. If you have recognized a symbol, your field note could be the first.
-            </p>
-            <Link to="/registry" className="text-sm text-primary hover:underline inline-block">
-              Browse the registry
-            </Link>
-          </Card>
-        ) : filtered.length === 0 ? (
           <Card className="p-8 text-center space-y-3 border-border">
             <p className="text-sm text-muted-foreground">
               No co-witness sessions are listed yet. If you and another observer ran the protocol

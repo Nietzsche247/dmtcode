@@ -20,9 +20,11 @@ const NullReports = () => {
   const [nullReports, setNullReports] = useState<NullReport[]>([]);
   const [totalNulls, setTotalNulls] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [soberBaselineCount, setSoberBaselineCount] = useState<number | null>(null);
 
   useEffect(() => {
     loadNullReports();
+    loadSoberBaselineCount();
     
     const channel = supabase
       .channel('null_reports_changes')
@@ -44,6 +46,18 @@ const NullReports = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  const loadSoberBaselineCount = async () => {
+    const { count, error } = await supabase
+      .from('symbol_submissions')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_sober_baseline', true)
+      .eq('status', 'approved');
+
+    if (!error) {
+      setSoberBaselineCount(count ?? 0);
+    }
+  };
 
   const loadNullReports = async () => {
     setIsLoading(true);
@@ -147,6 +161,12 @@ const NullReports = () => {
                 nothing, or nothing that matched, please submit that outcome so the record reflects
                 both sides of the ledger.
               </p>
+              {soberBaselineCount !== null && (
+                <p className="text-muted-foreground">
+                  {soberBaselineCount} record{soberBaselineCount === 1 ? '' : 's'} {soberBaselineCount === 1 ? 'is' : 'are'} marked
+                  by their contributor as sober baseline sessions.
+                </p>
+              )}
             </div>
           </div>
 
