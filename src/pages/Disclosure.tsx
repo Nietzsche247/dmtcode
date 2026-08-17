@@ -27,6 +27,7 @@ const Disclosure = () => {
             <p className="text-lg text-muted-foreground mb-10">Effective 16 August 2026.</p>
 
             <div className="space-y-6 text-base leading-relaxed">
+              <p>Kits are sold as Meridian Optics Lab, Tucson, Arizona, a trade name of the same owner as DMT Code Project. That name appears on your card statement.</p>
               <p>A site whose whole claim is that it can be trusted with a contested subject owes you a straight account of where its money comes from. This is that account.</p>
 
               <h2 className="text-2xl font-semibold mt-8">How this project pays for itself</h2>

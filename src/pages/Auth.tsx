@@ -291,6 +291,19 @@ const Auth = () => {
           </Button>
         </form>
 
+        {activeTab === 'signup' && (
+          <div className="space-y-2 text-center">
+            <p className="text-xs text-muted-foreground font-light">
+              By continuing you confirm you are 18 or older and that anything you publish to the record is licensed CC-BY-4.0.
+            </p>
+            <p className="text-xs text-muted-foreground font-light space-x-3">
+              <a href="/privacy" className="hover:underline">Privacy</a>
+              <a href="/terms" className="hover:underline">Terms</a>
+              <a href="/" className="hover:underline">Back to DMT Code</a>
+            </p>
+          </div>
+        )}
+
         {/* Toggle Login/Signup */}
         <p className="text-center text-sm text-muted-foreground font-light">
           {activeTab === 'login' ? (

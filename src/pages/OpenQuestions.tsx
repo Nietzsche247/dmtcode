@@ -104,7 +104,7 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">3. What is the minimum effective laser power (1 mW vs. 5 mW vs. 10 mW)?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Current recommendations specify ≤5 mW (Class 2 safety). Dose-response relationship between laser power and symbol clarity remains unquantified. Lower power reduces ocular safety concerns but may reduce signal intensity.
+                  Current recommendations specify ≤5 mW (Class 3R / IIIa). Dose-response relationship between laser power and symbol clarity remains unquantified. Lower power reduces ocular safety concerns but may reduce signal intensity.
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Experimental design: Double-blind trial with three power levels (1 mW, 5 mW, 10 mW) measuring symbol appearance frequency and participant-rated clarity scores.
@@ -114,7 +114,7 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">4. Does DMT route of administration (smoked, vaporized, intramuscular) affect symbol consistency?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Registry metadata tracks route but lacks sufficient sample sizes per condition for statistical comparison. Pharmacokinetic differences (rapid onset smoked vs. extended duration IM) may correlate with symbol complexity or duration of visibility. Davis et al. (2021) documented route-dependent phenomenology differences.
+                  Pharmacokinetic differences (rapid onset smoked vs. extended duration IM) may correlate with symbol complexity or duration of visibility. Davis et al. (2021) documented route-dependent phenomenology differences.
                 </p>
                 <a 
                   href="https://doi.org/10.1002/hup.2806" 
@@ -122,7 +122,7 @@ const OpenQuestions = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
                 >
-                  Davis et al. (2021) Survey Methodology DOI: 10.1002/hup.2806
+                  Davis AK et al. (2020) Survey Methodology, J Psychopharmacol, DOI: 10.1177/0269881120916143
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </Card>
@@ -167,7 +167,7 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">9. Do symbols correlate with specific N,N-DMT doses (breakthrough vs. sub-breakthrough)?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Registry tracks approximate dose but lacks standardized measurement. Dose-response curve analysis would determine whether symbol appearance requires full "breakthrough" doses or occurs at lower intensity experiences. Strassman (2001) documented dose-dependent phenomenology variations.
+                  Dose-response curve analysis would determine whether symbol appearance requires full "breakthrough" doses or occurs at lower intensity experiences. Strassman (2001) documented dose-dependent phenomenology variations.
                 </p>
                 <a 
                   href="https://doi.org/10.1007/978-1-4615-0115-9" 
@@ -175,7 +175,7 @@ const OpenQuestions = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-gold hover:underline text-sm"
                 >
-                  Strassman (2001) Dose Documentation DOI: 10.1007/978-1-4615-0115-9
+                  Strassman R (2001) DMT: The Spirit Molecule, Park Street Press (book, no DOI)
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </Card>
@@ -186,7 +186,7 @@ const OpenQuestions = () => {
                   Machine learning clustering (convolutional neural networks, dimensionality reduction) applied to 100×100 px symbol canvas data may identify latent archetypes not visible through manual categorization. Enables objective quantification of inter-subject similarity.
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Implementation: Open-access registry data (CC-BY-4.0) permits academic institutions to apply computer vision analysis. Contact research@dmtcode.com for API access.
+                  Implementation: Open-access registry data (CC-BY-4.0) permits academic institutions to apply computer vision analysis. The public export is at /data.json.
                 </p>
               </Card>
 
@@ -247,7 +247,7 @@ const OpenQuestions = () => {
                 </a>
               </div>
               <p className="text-sm text-muted-foreground mt-6">
-                Last updated: 2025-11-29
+                Last updated: 2026-08-17
               </p>
             </div>
           </section>
