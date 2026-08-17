@@ -248,6 +248,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "people" && seg.length === 2 && seg[1] === "danny-goler") {
       return await renderPersonPage(context, locale);
     }
+    if (kind === "people" && seg.length === 2 && (seg[1] === "andrew-gallimore" || seg[1] === "chase-hughes")) {
+      return await renderSimplePersonPage(context, seg[1], locale);
+    }
     if (kind === "people" && seg.length >= 2) {
       return await notFoundPrerender(context);
     }
