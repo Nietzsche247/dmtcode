@@ -102,6 +102,8 @@ export default function TheoryDetail() {
     );
   }
 
+  const display = (shown ?? theory) as Theory;
+  // Slug is always derived from the source title, never the translation.
   const canonicalSlug = theorySlug(theory.title);
   const canonical = `https://dmtcode.com${localePath(locale, `/theories/${canonicalSlug}`)}`;
   const metaDesc = (display.summary || "").replace(/\s+/g, " ").trim().slice(0, 160);
