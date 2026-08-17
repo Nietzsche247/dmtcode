@@ -11,7 +11,7 @@ const START = '<!-- kits:start -->';
 const END = '<!-- kits:end -->';
 
 const SELLER_LINE =
-  'All kits: 650 nm laser module, diffraction optics, printed observation materials. ' +
+  'All kits: 650 nm laser module and diffraction optics; observation documents are free PDF downloads. ' +
   'Sold and shipped by Meridian Optics Lab (the name on the card statement and parcel); ' +
   'support info@dmtcode.com. Free US shipping, processed within 2 business days, arrives in 7 to 10 business days. ' +
   'Unopened kits returnable within 30 days. Policies: /shipping, /returns, /store-terms, /store-contact. ' +

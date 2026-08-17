@@ -30,7 +30,7 @@ const Returns = () => {
               <p>Meridian Optics Lab accepts returns of unopened, unused optical research kits within 30 days of delivery.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Eligibility</h2>
-              <p>Items must be unopened, unused, and in original packaging with all components and printed materials included. Opened laser modules are not eligible for return. These are precision optical instruments and personal safety items; once opened, we cannot verify their calibration or hygiene and cannot resell them. Kits with broken factory seals on the laser module compartment are treated as opened.</p>
+              <p>Items must be unopened, unused, and in original packaging with all components included. Opened laser modules are not eligible for return. These are precision optical instruments and personal safety items; once opened, we cannot verify their calibration or hygiene and cannot resell them. Kits with broken factory seals on the laser module compartment are treated as opened.</p>
 
               <h2 className="text-2xl font-semibold mt-8">How to start a return</h2>
               <p>Email info@dmtcode.com with your order number. We will confirm eligibility and provide the return address. Return shipping is paid by the buyer. We recommend a tracked service; lost return shipments are the sender's responsibility.</p>

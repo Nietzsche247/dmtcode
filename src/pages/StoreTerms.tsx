@@ -45,7 +45,7 @@ const StoreTerms = () => {
               <p>Shipping terms, timelines, and destinations are described in our Shipping Policy at checkout.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Intellectual property</h2>
-              <p>Product photography and printed kit materials are the property of Meridian Optics Lab or its licensors and may not be reproduced for commercial purposes without written permission. The protocol documents included in the kits are also published free under CC-BY-4.0 at dmtcode.com/prepare.</p>
+              <p>Product photography and kit materials are the property of Meridian Optics Lab or its licensors and may not be reproduced for commercial purposes without written permission. The protocol documents are published free under CC-BY-4.0 at dmtcode.com/prepare.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Limitation of liability</h2>
               <p>To the maximum extent permitted by law, Meridian Optics Lab is not liable for indirect, incidental, or consequential damages arising from the use or misuse of purchased equipment. Our total liability for any claim is limited to the amount you paid for the product giving rise to the claim. Nothing in these terms limits liability that cannot be limited under applicable law.</p>

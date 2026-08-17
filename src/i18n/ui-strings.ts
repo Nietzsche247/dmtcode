@@ -181,19 +181,19 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
     en: {
       title: "Prepare. Laser diffraction research kits. | DMT Code",
       description:
-        "Three laser diffraction research kits for one, two to three, or six observers: 650 nm and multi-wavelength optical modules, diffraction optics, and printed observation materials. Sold by Meridian Optics Lab.",
+        "Three laser diffraction research kits for one, two to three, or six observers: 650 nm and multi-wavelength optical modules, and diffraction optics; observation documents are free PDF downloads. Sold by Meridian Optics Lab.",
     },
     es: {
       title:
         "Preparación. Kits de investigación de difracción láser. | DMT Code",
       description:
-        "Tres kits de investigación de difracción láser para uno, dos a tres o seis observadores: módulos ópticos de 650 nm y multilongitud de onda, óptica de difracción y materiales impresos de observación. Vendidos por Meridian Optics Lab.",
+        "Tres kits de investigación de difracción láser para uno, dos a tres o seis observadores: módulos ópticos de 650 nm y multilongitud de onda, y óptica de difracción; los documentos de observación son descargas PDF gratuitas. Vendidos por Meridian Optics Lab.",
     },
     de: {
       title:
         "Vorbereitung. Forschungskits zur Laserbeugung. | DMT Code",
       description:
-        "Drei Forschungskits zur Laserbeugung für einen, zwei bis drei oder sechs Beobachter: 650 nm und Mehrwellenlängen-Lasermodule, Beugungsoptik und gedruckte Beobachtungsmaterialien. Verkauft von Meridian Optics Lab.",
+        "Drei Forschungskits zur Laserbeugung für einen, zwei bis drei oder sechs Beobachter: 650 nm und Mehrwellenlängen-Lasermodule, und Beugungsoptik; die Beobachtungsdokumente sind kostenlose PDF-Downloads. Verkauft von Meridian Optics Lab.",
     },
   },
   "evidence-map": {
