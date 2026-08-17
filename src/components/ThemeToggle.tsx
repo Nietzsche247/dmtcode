@@ -12,7 +12,7 @@ import {
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useThemeStore();
   const { mode } = useModeStore();
-  
+
   // Research Mode forces light theme
   const isLocked = mode === 'research';
   const effectiveTheme = isLocked ? 'light' : resolvedTheme;
@@ -22,41 +22,38 @@ export const ThemeToggle = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
-  const button = (
-    <button
-      onClick={toggleTheme}
-      disabled={isLocked}
-      className={cn(
-        "flex items-center justify-center w-9 h-9 rounded-full transition-all",
-        "bg-secondary/50 border border-border/50",
-        isLocked 
-          ? "opacity-50 cursor-not-allowed" 
-          : "hover:bg-secondary hover:border-border"
-      )}
-      aria-label={`Switch to ${effectiveTheme === 'dark' ? 'light' : 'dark'} mode`}
-    >
-      {effectiveTheme === 'dark' ? (
-        <Moon className="w-4 h-4 text-muted-foreground" />
-      ) : (
-        <Sun className="w-4 h-4 text-muted-foreground" />
-      )}
-    </button>
+  const label = isLocked
+    ? 'Light and dark theme, locked to light in Research mode'
+    : `Switch to ${effectiveTheme === 'dark' ? 'light' : 'dark'} mode`;
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={toggleTheme}
+            disabled={isLocked}
+            className={cn(
+              "flex items-center justify-center w-9 h-9 rounded-full transition-all",
+              "bg-secondary/50 border border-border/50",
+              isLocked
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-secondary hover:border-border"
+            )}
+            aria-label={label}
+            title={label}
+          >
+            {effectiveTheme === 'dark' ? (
+              <Moon className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <Sun className="w-4 h-4 text-muted-foreground" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-xs">{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
-
-  if (isLocked) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            {button}
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-xs">Light mode locked in Research Mode</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-
-  return button;
 };
