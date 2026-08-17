@@ -153,9 +153,8 @@ const PersonDannyGoler = () => {
                 His relationship to this project
               </h2>
               <p>
-                Goler is listed among the founders of DMT Code on the{' '}
-                <a className={link} href="/about">about page</a>. We state that plainly rather than
-                leave it to be inferred. The relationship does not change how this site treats his
+                Goler is not a founder of DMT Code and holds no editorial role in it. He is aware
+                of the project. We state that plainly rather than leave it to be inferred. The relationship does not change how this site treats his
                 claim. His paper is scored on the same scale as the papers that dispute it. His
                 protocol sits next to the null results people file against it. Nothing here is
                 written to shield the origination story from a test.

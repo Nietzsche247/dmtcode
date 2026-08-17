@@ -11,7 +11,27 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }> }> = [
+const SCREENING_CARD_PDF = '/downloads/DMTCode_Screening_Card_v1.pdf';
+
+// Renders an answer, turning the phrase "screening card" into a link to the PDF.
+const renderAnswer = (a: string) => {
+  const parts = a.split('screening card');
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {i < parts.length - 1 && (
+        <a href={SCREENING_CARD_PDF} className="underline hover:text-foreground">
+          screening card
+        </a>
+      )}
+    </span>
+  ));
+};
+
+const FAQ_GROUPS: Array<{
+  heading: string;
+  items: Array<{ q: string; a: string; links?: Array<{ label: string; href: string }> }>;
+}> = [
   {
     heading: 'The project',
     items: [
@@ -41,6 +61,14 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     heading: 'Safety and law',
     items: [
       {
+        q: 'Never done DMT? Start here.',
+        a: 'You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig, the same field sheet, run sober, and sober records are the ones the registry needs most. Read the Screening Card first, then run a baseline tonight and record it.',
+        links: [
+          { label: 'Screening Card (PDF)', href: '/downloads/DMTCode_Screening_Card_v1.pdf' },
+          { label: 'Sober Baseline Protocol (PDF)', href: '/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf' },
+        ],
+      },
+      {
         q: 'How do I do this safely?',
         a: 'Start with the screening card. Before you consider anything, talk with a qualified prescriber about MAOIs, SSRIs and related medications, any cardiac history, and any personal or family history of psychosis. We deliberately do not publish medication timing windows. The sources disagree and getting it wrong can be dangerous, so that decision belongs with a clinician who knows your history. This is for adults 18 and older.',
       },
@@ -50,7 +78,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: 'Is the laser safe for my eyes?',
-        a: 'A laser is not a toy. The kit modules are low-power visible red lasers (Class II). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.',
+        a: 'A laser is not a toy. The kit modules are low-power visible red lasers (Class 3R, IIIa, under 5 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.',
       },
     ],
   },
@@ -183,7 +211,16 @@ const FAQ = () => {
                           {item.q}
                         </AccordionTrigger>
                         <AccordionContent className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2 pb-4 whitespace-pre-line">
-                          {item.a}
+                          {renderAnswer(item.a)}
+                          {item.links && (
+                            <span className="flex flex-wrap gap-4 mt-3">
+                              {item.links.map((l) => (
+                                <a key={l.href} href={l.href} className="text-xs underline hover:text-foreground">
+                                  {l.label}
+                                </a>
+                              ))}
+                            </span>
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     ))}

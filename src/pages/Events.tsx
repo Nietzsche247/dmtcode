@@ -146,6 +146,10 @@ const Events = () => {
             <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
               Community sourced and moderator reviewed. Inclusion is not an endorsement.
             </p>
+
+            <p className="text-base md:text-lg font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
+              We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.
+            </p>
           </div>
         </section>
 

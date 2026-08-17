@@ -57,8 +57,9 @@ const ProtocolGuide = () => {
                 The apparatus, described in general terms, consists of:
               </p>
               <ul className="list-disc list-inside space-y-2 text-base">
-                <li>A verified 650 nm red laser at the correct optical density.</li>
-                <li>Appropriate laser-safety eyewear rated for the wavelength and power in use.</li>
+                <li>A 650 nm red laser pointer, Class 3R (IIIa), under 5 mW, on a stand.</li>
+                <li>No eyewear is worn during observation. The beam is never viewed directly; it is aimed through a diffraction grating at a matte surface 3 to 5 m away.</li>
+                <li>A diffraction grating in the beam path, close to the aperture.</li>
                 <li>A diffraction or refraction element used to structure the beam.</li>
                 <li>An observation journal for recording what was seen.</li>
                 <li>A screening card for the pre-observation self-check.</li>
@@ -67,13 +68,16 @@ const ProtocolGuide = () => {
                 Kit options are listed on the <Link to="/prepare" className="text-gold hover:underline">prepare</Link> page.
                 We do not link to third-party products from this guide.
               </p>
+              <p className="mt-2">
+                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" className="text-gold hover:underline">Sober Baseline Protocol (PDF)</a>
+              </p>
             </section>
 
             <section className="mb-10">
               <h2 className="text-2xl font-semibold mb-4">Safety first</h2>
               <p className="mb-4">
-                A laser is not a toy. Use the correct optical density and eyewear exactly as
-                described in the equipment documentation, and keep the apparatus away from children.
+                A laser is not a toy. Use the apparatus exactly as described in the equipment
+                documentation, and keep it away from children.
                 This protocol is intended for adults 18 and older.
               </p>
               <p className="mb-4">

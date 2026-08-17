@@ -106,6 +106,7 @@ const Retreats = () => {
 
         <header className="mb-8 space-y-4 max-w-3xl">
           <h1 className="text-3xl md:text-5xl font-black tracking-tight">Retreat centers</h1>
+          <p className="text-muted-foreground leading-relaxed">We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.</p>
           <p className="text-muted-foreground leading-relaxed">{PARA_1}</p>
           <p className="text-muted-foreground leading-relaxed">{PARA_2}</p>
         </header>

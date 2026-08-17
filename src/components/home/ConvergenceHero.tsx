@@ -154,7 +154,7 @@ export const ConvergenceHero = () => {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Recording first keeps your memory unshaped by the catalogue. No account needed.
+            Recording first keeps your memory unshaped by the catalogue. Free account, avatar only, your name is never shown.
           </p>
 
           <p className="label-data text-xs text-muted-foreground pt-4">
@@ -253,6 +253,38 @@ export const ConvergenceHero = () => {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* Sober entry point */}
+      <div className="max-w-5xl mx-auto mt-8 md:mt-10">
+        <div className="rounded-sm border border-border bg-card p-5 md:p-7">
+          <h3
+            className="text-2xl text-foreground"
+            style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+          >
+            Never done DMT? Start here.
+          </h3>
+          <p
+            className="text-sm text-muted-foreground leading-relaxed mt-3"
+            style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+          >
+            You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig, the same field sheet, run sober, and sober records are the ones the registry needs most. Read the Screening Card first, then run a baseline tonight and record it.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <a
+              href="/downloads/DMTCode_Screening_Card_v1.pdf"
+              className="label-data text-[10px] text-primary hover:underline"
+            >
+              Screening Card (PDF)
+            </a>
+            <a
+              href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf"
+              className="label-data text-[10px] text-primary hover:underline"
+            >
+              Sober Baseline Protocol (PDF)
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* The six specimen strip lived here. It duplicated the Recent
