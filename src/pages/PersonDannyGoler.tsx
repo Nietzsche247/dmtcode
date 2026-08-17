@@ -1,6 +1,98 @@
+import { useState } from 'react';
+import { Play } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+
+const VIDEO_ID = 'vB2-vIumXss';
+
+const VIDEO_LD = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "The Discovery Film Official Teaser Trailer",
+  "description":
+    "Official teaser trailer for The Discovery, a documentary about the 650 nm laser observation first described by Danny Goler.",
+  "embedUrl": `https://www.youtube.com/embed/${VIDEO_ID}`,
+  "url": `https://www.youtube.com/watch?v=${VIDEO_ID}`,
+  "thumbnailUrl": `https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`,
+  "uploadDate": "2026-01-01",
+};
+
+const FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who is Danny Goler and what is the DMT code of reality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Danny Goler first described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025, DOI 10.59973/ipil.158. Whether the phenomenon is real remains an open question, with four explanations actively defended.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "Is dmtcode.com affiliated with Danny Goler or Code of Reality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Goler is listed among the site's founders on the about page. dmtcode.com operates as an independent open registry and publishes evidence on both sides of the claim, including null results.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "When does The Discovery documentary premiere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text":
+          "Per the film's official site, the world premiere is in the Los Angeles area between late October and early November 2026. Date and venue are to be announced.",
+      },
+    },
+  ],
+};
+
+const LiteYouTube = () => {
+  const [active, setActive] = useState(false);
+
+  if (active) {
+    return (
+      <div className="relative w-full overflow-hidden rounded-lg border border-border aspect-video bg-muted">
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1`}
+          title="The Discovery Film Official Teaser Trailer"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setActive(true)}
+      aria-label="Play the official teaser trailer for The Discovery"
+      className="group relative block w-full overflow-hidden rounded-lg border border-border aspect-video bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`}
+        alt="The Discovery documentary teaser trailer thumbnail"
+        loading="lazy"
+        width={480}
+        height={360}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <span className="absolute inset-0 flex items-center justify-center bg-background/30 transition-colors group-hover:bg-background/20">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/90 border border-border">
+          <Play className="h-6 w-6 text-foreground" aria-hidden="true" />
+        </span>
+      </span>
+    </button>
+  );
+};
 
 const PERSON_LD = {
   "@context": "https://schema.org",
@@ -63,6 +155,8 @@ const PersonDannyGoler = () => {
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>
         <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
+        <script type="application/ld+json">{JSON.stringify(VIDEO_LD)}</script>
+        <script type="application/ld+json">{JSON.stringify(FAQ_LD)}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -176,6 +270,66 @@ const PersonDannyGoler = () => {
                 <a className={link} href="/null-reports">null reports</a> in the same place, under
                 the same license, as the ones that support it.
               </p>
+
+              <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
+                The Discovery, a documentary film
+              </h2>
+              <p>
+                The Discovery is a feature documentary about the 650 nm laser observation and the
+                people attempting to test it, directed by Aaron Vanden. The film's official site
+                lists a world premiere in the Los Angeles area between late October and early
+                November 2026, with date and venue to be announced. The official teaser trailer is
+                below. DMT Code is not affiliated with the film. We index it here because it is the
+                most significant upcoming driver of public attention to the claim this site keeps
+                the record of.
+              </p>
+              <LiteYouTube />
+              <p className="text-sm">
+                <a className={link} href="https://thediscoveryfilm.com" rel="noopener" target="_blank">
+                  The Discovery, official site
+                </a>
+              </p>
+
+              <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
+                Questions and answers
+              </h2>
+              <div className="space-y-5">
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    Who is Danny Goler and what is the DMT code of reality?
+                  </h3>
+                  <p className="mt-2">
+                    Danny Goler first described the 650 nm laser observation in August 2020 and
+                    published the pilot study in IPI Letters in 2025, DOI{' '}
+                    <a className={link} href="https://doi.org/10.59973/ipil.158" rel="noopener" target="_blank">
+                      10.59973/ipil.158
+                    </a>
+                    . Whether the phenomenon is real remains an open question, with four
+                    explanations actively defended.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    Is dmtcode.com affiliated with Danny Goler or Code of Reality?
+                  </h3>
+                  <p className="mt-2">
+                    Goler is listed among the site's founders on the{' '}
+                    <a className={link} href="/about">about page</a>. dmtcode.com operates as an
+                    independent open registry, and it publishes evidence on both sides of the
+                    claim, including null results.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-heading text-base sm:text-lg font-semibold text-foreground">
+                    When does The Discovery documentary premiere?
+                  </h3>
+                  <p className="mt-2">
+                    Per the film's official site, the world premiere is in the Los Angeles area
+                    between late October and early November 2026. Date and venue are to be
+                    announced.
+                  </p>
+                </div>
+              </div>
 
               <h2 className="font-heading text-xl sm:text-2xl font-semibold pt-6 text-foreground">
                 Follow the record

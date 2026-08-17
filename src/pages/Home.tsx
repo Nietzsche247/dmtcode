@@ -221,7 +221,11 @@ const Home = () => {
                 exposure and N,N-DMT administration. Danny Goler developed the protocol and
                 published a pilot account of it in IPI Letters in 2025. Individual reports of
                 similar forms prompted this project, but they are not yet evidence of convergence.
-                Separating a real shared structure from a shared expectation is the whole task.
+                Separating a real shared structure from a shared expectation is the whole task.{' '}
+                <Link to="/people/danny-goler" className="text-primary hover:underline">
+                  Danny Goler, who described the observation
+                </Link>
+                .
               </p>
               <div className="mt-6 text-sm">
                 <Link to="/about" className="text-primary hover:underline inline-flex items-center gap-1">
