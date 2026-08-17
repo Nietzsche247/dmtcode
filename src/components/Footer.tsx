@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Separator } from '@/components/ui/separator';
 import { ExternalLink } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -8,6 +9,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Footer = () => {
   const locale = useLocale();
+  const { t } = useTranslation();
   // Every internal footer link stays inside the visitor's locale.
   const to = (path: string) => localePath(locale, path);
 
@@ -39,124 +41,124 @@ export const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Resources</h4>
+            <h4 className="font-semibold text-foreground">{t('footer.resourcesHeading')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to={to('/articles')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Articles
+                  {t('footer.articles')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/guides')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Guides
+                  {t('footer.guides')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/capture')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Capture
+                  {t('footer.capture')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/registry')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Glyph Registry
+                  {t('footer.glyphRegistry')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/dataset')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Dataset & DOI
+                  {t('footer.datasetDoi')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/prepare')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Kits
+                  {t('footer.kits')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/bibliography')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Bibliography
+                  {t('footer.bibliography')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/correlations')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Correlations
+                  {t('footer.correlations')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/timeline')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Chronology
+                  {t('footer.chronology')}
                 </Link>
               </li>
 
 
               <li>
                 <Link to={to('/trials')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Clinical trials
+                  {t('footer.clinicalTrials')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/events')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Events
+                  {t('footer.events')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/retreats')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Retreat centers
+                  {t('footer.retreatCenters')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/protocols')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Protocols
+                  {t('footer.protocols')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/research')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Research library
+                  {t('footer.researchLibrary')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/protocol-guide')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Protocol Guide
+                  {t('footer.protocolGuide')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/co-witnesses')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Co-witness wall
+                  {t('footer.coWitnessWall')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/theories')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Open Theories
+                  {t('footer.openTheories')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/faq')} className="text-muted-foreground hover:text-primary transition-colors">
-                  FAQ
+                  {t('footer.faq')}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">The project</h4>
+            <h4 className="font-semibold text-foreground">{t('footer.projectHeading')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to={to('/about')} className="text-muted-foreground hover:text-primary transition-colors">
-                  About
+                  {t('footer.about')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/critiques')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Critiques
+                  {t('footer.critiques')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/methods')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Methods
+                  {t('footer.methods')}
                 </Link>
               </li>
               <li>
                 <Link to={to('/null-reports')} className="text-muted-foreground hover:text-primary transition-colors">
-                  Null reports
+                  {t('footer.nullReports')}
                 </Link>
               </li>
             </ul>
@@ -190,7 +192,7 @@ export const Footer = () => {
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} DMT Code Project. All rights reserved.</p>
+          <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <LanguageSwitcher />
             <a 
@@ -209,19 +211,19 @@ export const Footer = () => {
               data.json
             </a>
             <Link to={to('/privacy')} className="hover:text-primary transition-colors">
-              Privacy
+              {t('footer.privacy')}
             </Link>
             <Link to={to('/terms')} className="hover:text-primary transition-colors">
-              Terms
+              {t('footer.terms')}
             </Link>
             <Link to={to('/disclosure')} className="hover:text-primary transition-colors">
-              Disclosure
+              {t('footer.disclosure')}
             </Link>
             <Link to={to('/shipping')} className="hover:text-primary transition-colors">
-              Shipping
+              {t('footer.shipping')}
             </Link>
             <Link to={to('/returns')} className="hover:text-primary transition-colors">
-              Returns
+              {t('footer.returns')}
             </Link>
             <a 
               href={`https://doi.org/${ZENODO_DOI}`}
