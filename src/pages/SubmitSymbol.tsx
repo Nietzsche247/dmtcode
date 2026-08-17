@@ -73,7 +73,7 @@ const SubmitSymbol = () => {
           ) : (
             <SignInToContribute
               title="An account is needed to submit a symbol"
-              body="Browsing the whole library is open to everyone. Submitting requires a free account: your email stays hidden, you get a public avatar profile name, and everything you contribute is credited to you and counted on the leaderboard."
+              body="Browsing the whole library is open to everyone. Submitting requires a free account: your email stays hidden, you get a public avatar profile name, and everything you contribute is credited to you and counted in the record."
             />
           )}
         </div>

@@ -62,11 +62,11 @@ function KitCard({ kit }: { kit: Kit }) {
       </div>
       {kit.id === 'circle' && (
         <div className="mt-1 text-xs text-muted-foreground">
-          Buying for a group? Every observer must be an adult who has read the screening card. A group session protocol is in progress.
+          Buying for a group? Every observer must be an adult who has read the <a href="/downloads/DMTCode_Screening_Card_v1.pdf" className="underline hover:text-foreground">screening card</a>. A group session protocol is in progress.
         </div>
       )}
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-        Class II laser. Do not stare into beam.
+        Class 3R laser, under 5 mW. Do not stare into beam.
       </div>
 
       <div className="mt-auto pt-6">
@@ -123,8 +123,10 @@ const Prepare = () => {
                     who knows your history.
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Class II laser. Do not stare into the beam, do not aim it at anyone, and treat
-                    every reflective surface in the room as part of the beam path.
+                    No protective eyewear is used or needed: you view the pattern on the wall, never
+                    the aperture and never a reflection. Class 3R laser, under 5 mW: do not stare
+                    into the beam, do not aim it at anyone, and treat every reflective surface in
+                    the room as part of the beam path.
                   </p>
                 </div>
               </div>
@@ -152,6 +154,12 @@ const Prepare = () => {
                   Field materials and protocols, free download, no account needed:
                 </p>
                 <ul className="mt-3 space-y-3">
+                  <li className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Screening Card</span>
+                    <a href="/downloads/DMTCode_Screening_Card_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
+                    <a href="/downloads/DMTCode_Tarjeta_de_Cribado_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
+                    <a href="/downloads/DMTCode_Screening_Karte_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
+                  </li>
                   <li className="flex flex-wrap items-center gap-2">
                     <span className="text-sm text-muted-foreground">Field Sheet</span>
                     <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>

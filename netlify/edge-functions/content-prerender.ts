@@ -829,7 +829,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <p>${esc(k.description)}</p>
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.</p>
-    <p>Class II laser - do not stare into beam.</p>
+    <p>Class 3R laser, under 5 mW. Do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
   </section>`,
   ).join("");
@@ -847,7 +847,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
       <li>Personal or family history of psychosis</li>
     </ul>
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
-    <p>Every kit that contains a laser module also contains safety eyewear. Class II laser: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
+    <p>No protective eyewear is used or needed: you view the pattern on the wall, never the aperture and never a reflection. Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <section>
     <h2>Laser diffraction research kits</h2>
@@ -1436,7 +1436,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: "Is the laser safe for my eyes?",
-        a: "A laser is not a toy. The kit modules are low-power visible red lasers (Class II). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.",
+        a: "A laser is not a toy. The kit modules are low-power visible red lasers (Class 3R, IIIa, under 5 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.",
       },
     ],
   },
@@ -2037,7 +2037,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Returns",
     bodyExtraHtml: `<section><p>Meridian Optics Lab accepts returns of unopened, unused optical research kits within 30 days of delivery.</p></section>
-<section><h2>Eligibility</h2><p>Items must be unopened, unused, and in original packaging with all components and printed materials included. Opened laser modules and protective eyewear are not eligible for return. These are precision optical instruments and personal safety items; once opened, we cannot verify their calibration or hygiene and cannot resell them. Kits with broken factory seals on the laser module compartment are treated as opened.</p></section>
+<section><h2>Eligibility</h2><p>Items must be unopened, unused, and in original packaging with all components and printed materials included. Opened laser modules are not eligible for return. These are precision optical instruments and personal safety items; once opened, we cannot verify their calibration or hygiene and cannot resell them. Kits with broken factory seals on the laser module compartment are treated as opened.</p></section>
 <section><h2>How to start a return</h2><p>Email info@dmtcode.com with your order number. We will confirm eligibility and provide the return address. Return shipping is paid by the buyer. We recommend a tracked service; lost return shipments are the sender's responsibility.</p></section>
 <section><h2>Refunds</h2><p>Once the returned kit is received and inspected, approved refunds are issued to the original payment method within 10 business days. Original shipping charges, where applicable, are not refunded.</p></section>
 <section><h2>Damaged or defective items</h2><p>If your kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the damage and packaging. We will replace the affected component or the full kit at no cost to you. Defective claims do not require returning the original item unless we request it.</p></section>
@@ -2079,6 +2079,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "Disclosure",
     paragraphs: [
       "Effective 16 August 2026.",
+      "Kits are sold as Meridian Optics Lab, Tucson, Arizona, a trade name of the same owner as DMT Code Project. That name appears on your card statement.",
       "A site whose whole claim is that it can be trusted with a contested subject owes you a straight account of where its money comes from. This is that account.",
     ],
     breadcrumbName: "Disclosure",
@@ -4311,7 +4312,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   <h2>His work beyond the paper</h2>
   <p>Goler runs the non-profit research effort at <a href="https://codeofreality.org" rel="noopener">codeofreality.org</a> and is the subject of the documentary The Discovery. He has described the protocol at length in long-form interviews, including the Danny Jones Podcast and the Shawn Ryan Show, the second of which is catalogued here as <a href="/bibliography/a99cc4aa-8fc0-45fb-a1a1-6b90f16a5c8e">Shawn Ryan Show #320</a>. Those appearances are where most people first hear about the observation. His account of it is his own, and the links above go to it directly.</p>
   <h2>His relationship to this project</h2>
-  <p>Goler is listed among the founders of DMT Code on the <a href="/about">about page</a>. We state that plainly rather than leave it to be inferred. The relationship does not change how this site treats his claim. His paper is scored on the same scale as the papers that dispute it. His protocol sits next to the null results people file against it. Nothing here is written to shield the origination story from a test.</p>
+  <p>Goler is not a founder of DMT Code and holds no editorial role in it. He is aware of the project. We state that plainly rather than leave it to be inferred. The relationship does not change how this site treats his claim. His paper is scored on the same scale as the papers that dispute it. His protocol sits next to the null results people file against it. Nothing here is written to shield the origination story from a test.</p>
   <h2>Where his claim stands today</h2>
   <p>Four explanations for the reported forms are actively defended. Goler's reading, that the pattern is a structured feature of reality rather than of the visual system, is stated here first because it is the originator's position. The competing readings, from retinal and cortical optics to expectation and suggestion, are set out on the <a href="/critiques">critiques page</a> and in the <a href="/open-questions">open questions</a>. Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. That is a fact about the state of the field, not a charge against anyone. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it.</p>
   <h2>Follow the record</h2>
