@@ -117,8 +117,12 @@ export const RegistryBrowser = () => {
     if (!error && data) {
       setSymbols(data as SymbolSubmission[]);
       
-      // Load profiles for contributors
-      const userIds = [...new Set(data.map(s => s.user_id))];
+      // Load profiles for contributors. Approved rows can have a null
+      // user_id (anonymous submissions), so filter those out before the
+      // .in() call: a literal "null" in a uuid in-list makes Postgres 400.
+      const userIds = [...new Set(data.map(s => s.user_id))].filter(
+        (id): id is string => typeof id === 'string' && id.length > 0
+      );
       if (userIds.length > 0) {
         const { data: profileData } = await supabase
           .from('profiles')
