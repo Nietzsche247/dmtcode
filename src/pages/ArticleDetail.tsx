@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
 import { FollowButton } from "@/components/FollowButton";
+import { useContentTranslations, overlay } from "@/hooks/useContentTranslations";
+import { useLocale, localePath } from "@/i18n/LocaleProvider";
 
 
 type Article = {
@@ -63,6 +65,9 @@ export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
   const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
   const [article, setArticle] = useState<Article | null>(null);
+  const locale = useLocale();
+  // articles are keyed by slug in content_translations.
+  const translations = useContentTranslations("articles", article?.slug);
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
   const [trials, setTrials] = useState<LinkItem[]>([]);
@@ -193,6 +198,11 @@ export default function ArticleDetail() {
     );
   }
 
+  const shown = (overlay(article, translations, ["title", "dek", "body_md"]) ??
+    article) as Article;
+
+  const canonicalUrl = `https://dmtcode.com${localePath(locale, `/articles/${article.slug}`)}`;
+
   const showUpdated =
     !!article.published_at &&
     new Date(article.updated_at).getTime() - new Date(article.published_at).getTime() > 86_400_000;
@@ -203,12 +213,12 @@ export default function ArticleDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>{`${article.title} | DMT Code`}</title>
-        <meta name="description" content={article.dek} />
-        <link rel="canonical" href={`https://dmtcode.com/articles/${article.slug}`} />
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.dek} />
-        <meta property="og:url" content={`https://dmtcode.com/articles/${article.slug}`} />
+        <title>{`${shown.title} | DMT Code`}</title>
+        <meta name="description" content={shown.dek} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={shown.title} />
+        <meta property="og:description" content={shown.dek} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="article" />
       </Helmet>
 
@@ -216,11 +226,11 @@ export default function ArticleDetail() {
 
       <main className="pt-20 pb-20 px-4">
         <article className="max-w-3xl mx-auto">
-          <Breadcrumb titleOverride={article.title} />
+          <Breadcrumb titleOverride={shown.title} />
 
           <header className="mt-4 mb-8 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">{article.title}</h1>
-            <p className="text-xl text-muted-foreground leading-relaxed">{article.dek}</p>
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">{shown.title}</h1>
+            <p className="text-xl text-muted-foreground leading-relaxed">{shown.dek}</p>
             <div className="text-sm text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
               <span>{article.author}</span>
               {article.published_at && <span>Published {formatDate(article.published_at)}</span>}
