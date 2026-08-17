@@ -90,6 +90,17 @@ const Trials = () => {
   const institutions = useMemo(() => uniq(trials.map((t) => t.institution)), [trials]);
   const sources = useMemo(() => uniq(trials.map((t) => t.source)), [trials]);
 
+  const compoundCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    trials.forEach((t) => {
+      (t.compounds || []).forEach((c) => {
+        if (!c) return;
+        counts.set(c, (counts.get(c) || 0) + 1);
+      });
+    });
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+  }, [trials]);
+
   const recruitingCount = useMemo(
     () => trials.filter((t) => t.status === 'recruiting').length,
     [trials]
@@ -112,6 +123,7 @@ const Trials = () => {
       if (locationFilter !== 'all' && t.location !== locationFilter) return false;
       if (institutionFilter !== 'all' && t.institution !== institutionFilter) return false;
       if (sourceFilter !== 'all' && t.source !== sourceFilter) return false;
+      if (compoundFilter && !(t.compounds || []).includes(compoundFilter)) return false;
       if (term) {
         const hay = [t.title, t.institution || ''].join(' ').toLowerCase();
         if (!hay.includes(term)) return false;
@@ -125,11 +137,11 @@ const Trials = () => {
       return sort === 'newest' ? bv - av : av - bv;
     });
     return rows;
-  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   useEffect(() => {
     setPage(1);
-  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, sort]);
+  }, [q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
   const hasMore = visible.length < filtered.length;
@@ -143,6 +155,7 @@ const Trials = () => {
     setLocationFilter('all');
     setInstitutionFilter('all');
     setSourceFilter('all');
+    setCompoundFilter(null);
     setSort('newest');
   };
 
@@ -203,7 +216,7 @@ const Trials = () => {
           </p>
 
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            An open atlas of active and historical DMT-related clinical trials.
+            An open atlas of psychedelic clinical trials: DMT, 5-MeO-DMT, ayahuasca, psilocybin, ketamine, MDMA, LSD, ibogaine.
             Filter by status, type, location or institution to explore the current research frontier.
           </p>
         </header>
