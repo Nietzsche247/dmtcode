@@ -211,7 +211,16 @@ const FAQ = () => {
                           {item.q}
                         </AccordionTrigger>
                         <AccordionContent className="text-sm md:text-base text-muted-foreground leading-relaxed pt-2 pb-4 whitespace-pre-line">
-                          {item.a}
+                          {renderAnswer(item.a)}
+                          {item.links && (
+                            <span className="flex flex-wrap gap-4 mt-3">
+                              {item.links.map((l) => (
+                                <a key={l.href} href={l.href} className="text-xs underline hover:text-foreground">
+                                  {l.label}
+                                </a>
+                              ))}
+                            </span>
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     ))}
