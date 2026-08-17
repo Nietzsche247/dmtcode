@@ -31,7 +31,7 @@ function KitCard({ kit }: { kit: Kit }) {
         {kit.image && (
           <img
             src={kit.image}
-            alt={`${kit.name} contents`}
+            alt={`${kit.shortName} kit contents: every component photographed as shipped`}
             loading="lazy"
             className="w-full h-full object-cover"
           />
