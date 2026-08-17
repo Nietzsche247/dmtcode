@@ -248,6 +248,9 @@ export default async (request: Request, context: Context) => {
     if (kind === "people" && seg.length === 2 && seg[1] === "danny-goler") {
       return await renderPersonPage(context, locale);
     }
+    if (kind === "people" && seg.length === 2 && (seg[1] === "andrew-gallimore" || seg[1] === "chase-hughes")) {
+      return await renderSimplePersonPage(context, seg[1], locale);
+    }
     if (kind === "people" && seg.length >= 2) {
       return await notFoundPrerender(context);
     }
@@ -2141,7 +2144,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   join: {
 
     title: "Help build it | DMT Code",
-    description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome.",
+    description: "Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, and developers welcome.",
     heading: "A real experiment with an unknown answer.",
     paragraphs: [
       "Thousands of people report vivid, structured experiences. We are testing whether those reports truly converge, or whether optics, shared neurobiology, expectation, and memory explain the apparent overlap.",
@@ -2149,16 +2152,15 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "Volunteering asks for an email, the roles you can help with, and optionally your experience level, languages, skills, and why you want to help. You need an account so the entry is tied to a person. Your real name stays private and you are given an avatar instead.",
       "We may confirm something extraordinary, or we may find it was the mind all along. Both results matter. Thank you for helping us find out honestly.",
     ],
-    bodyExtraHtml: `<section><h2>Roles</h2><ul>${[
-      "Test Subject (blinded study)",
-      "Recorder",
-      "Translator",
-      "Moderator",
-      "Analyst",
-      "Developer",
-      "Outreach",
-      "Peer Support",
-    ].map((r) => `<li>${esc(r)}</li>`).join("")}</ul></section>`,
+    bodyExtraHtml: `<section><h2>Roles</h2><dl>${[
+      ["Recorder", "Recorders run the observation protocol and write down what they saw on the field sheet, in their own words. Nothing is required beyond care, honesty, and a completed record."],
+      ["Translator", "Translators carry records, protocol documents, and site pages into Spanish, German, and other languages. Accuracy matters more than fluency, because a mistranslated report is worse than no translation."],
+      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it."],
+      ["Developer", "Developers work on the site, the registry, and the export pipeline that keeps the data open. Most of the work is small, careful, and public."],
+    ].map(([r, d]) => `<dt>${esc(r)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
+    <p>Moderation, outreach, and peer support roles are filled from within these four.</p>
+    <p><a href="/auth?returnTo=%2Fjoin">Sign in to volunteer</a></p></section>`,
+
     links: [
       { href: "/capture", label: "Submit what you saw" },
       { href: "/trials", label: "Clinical trials" },
@@ -4369,6 +4371,18 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
         name: "Danny Goler",
         url: `${SITE}/people/danny-goler`,
       },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Andrew Gallimore",
+        url: `${SITE}/people/andrew-gallimore`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Chase Hughes",
+        url: `${SITE}/people/chase-hughes`,
+      },
     ],
   };
   const breadcrumbLd = {
@@ -4385,7 +4399,10 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   <p>Entity profiles for the people whose work this record is built on.</p>
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
+    <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
+    <li><a href="/people/chase-hughes">Chase Hughes</a>: listed as a co-author, with Danny Goler, on the pilot study documenting 650 nm laser-induced visual patterns under DMT.</li>
   </ul>
+
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
@@ -4398,6 +4415,107 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     canonicalPath: "/people",
     ogType: "website",
     jsonLd: [itemListLd, breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- People: secondary static profiles ----------
+// Copy is mirrored from src/pages/PersonAndrewGallimore.tsx and
+// src/pages/PersonChaseHughes.tsx. Every sentence is wording already published
+// elsewhere on the site. JSON-LD carries name, description and sameAs only.
+
+const SIMPLE_PEOPLE: Record<string, {
+  name: string;
+  title: string;
+  description: string;
+  sameAs: string[];
+  bodyHtml: string;
+}> = {
+  "andrew-gallimore": {
+    name: "Andrew Gallimore",
+    title: "Andrew Gallimore, the laser speckle critique | DMT Code",
+    description:
+      "Andrew Gallimore proposes the laser speckle explanation for the reported DMT code observation, one of the strongest cases against the reality-code reading.",
+    sameAs: ["https://alieninsect.substack.com/p/on-the-dmt-laser-code-of-reality"],
+    bodyHtml: `
+  <p>Andrew Gallimore is one of the critics catalogued on this site's <a href="/critiques">critiques page</a>, where the strongest cases against the reality-code reading are stated in their strongest form. His account is the laser speckle explanation, published as an essay and linked from that page.</p>
+  <h2>The laser speckle explanation</h2>
+  <p>The diffracted 650 nm beam produces speckle, a physically real, structured optical pattern generated by interference of coherent light scattered from a rough surface. DMT amplifies pattern recognition. Under this account, the shared structure that observers report reflects shared optics rather than any external code being revealed.</p>
+  <p>Testable prediction: swapping the diffraction grating for one with a different line density should change the reported forms in a way that tracks the new speckle field.</p>
+  <h2>Where this sits in the record</h2>
+  <p>This site states the laser speckle account first among the alternatives to the reality-code reading, alongside cymatics and cultural priming, on both the <a href="/critiques">critiques page</a> and the <a href="/protocol-guide">protocol guide</a>. Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. That is a fact about the state of the field, not a charge against anyone.</p>
+  <h2>Follow the record</h2>
+  <ul>
+    <li>Read the essay: <a href="https://alieninsect.substack.com/p/on-the-dmt-laser-code-of-reality" rel="noopener">On the DMT laser code of reality</a></li>
+    <li>The <a href="/critiques">critiques page</a>, where the laser speckle account is set alongside the other leading explanations</li>
+    <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
+  </ul>`,
+  },
+  "chase-hughes": {
+    name: "Chase Hughes",
+    title: "Chase Hughes, co-author on the pilot study | DMT Code",
+    description:
+      "Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study documenting 650nm laser-induced visual patterns under DMT.",
+    sameAs: [],
+    bodyHtml: `
+  <p>Chase Hughes is listed as a co-author, with Danny Goler, on the pilot study "DMT Laser Experiment Pilot Study: Visual Pattern Recognition and Consistency," which documents 650nm red laser-induced visual patterns under DMT and reports notable consistency across an independent replicator community.</p>
+  <p>This site has not published independent, controlled, blinded replication of that consistency claim. That is a fact about the state of the field, not a charge against anyone. The paper is one entry among the sources this site tracks; it does not receive special treatment because of who is credited on it.</p>
+  <h2>Where his claim stands today</h2>
+  <p>Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it. The competing readings of the underlying observation are set out on the <a href="/critiques">critiques page</a>.</p>
+  <h2>Follow the record</h2>
+  <ul>
+    <li>The <a href="/registry">visual symbol registry</a> where reported forms accumulate</li>
+    <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
+    <li>The <a href="/null-reports">null reports</a></li>
+  </ul>`,
+  },
+};
+
+async function renderSimplePersonPage(
+  context: Context,
+  slug: string,
+  locale: Loc = "en"
+): Promise<Response> {
+  const person = SIMPLE_PEOPLE[slug];
+  if (!person) return await notFoundPrerender(context);
+
+  const shellRes = await context.next();
+  const canonicalPath = `/people/${slug}`;
+  const canonical = `${SITE}${canonicalPath}`;
+
+  const personLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    description: person.description,
+    sameAs: person.sameAs,
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+      { "@type": "ListItem", position: 2, name: "People", item: `${SITE}/people` },
+      { "@type": "ListItem", position: 3, name: person.name, item: canonical },
+    ],
+  };
+
+  const body = `<article data-prerender="person-${slug}">
+  <h1>${esc(person.name)}</h1>${person.bodyHtml}
+  <script type="application/ld+json">${jsonLd(personLd)}</script>
+  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
+</article>`;
+
+  const head = buildHead({
+    locale,
+    title: person.title,
+    description: person.description,
+    canonical,
+    canonicalPath,
+    ogType: "profile",
+    jsonLd: [personLd, breadcrumbLd],
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);

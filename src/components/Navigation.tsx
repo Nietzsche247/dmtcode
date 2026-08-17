@@ -204,7 +204,7 @@ export const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 max-h-[80vh] overflow-y-auto">
             <div className="px-4 pt-2 pb-4 space-y-1">
-              <LanguageSwitcher className="px-2 pb-1" />
+              <LanguageSwitcher className="px-2 pb-1" showLabel />
 
               {/* Home */}
               <button

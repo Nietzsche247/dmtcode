@@ -5,4 +5,8 @@
 /tools/*    /prepare    301!
 /bundles    /prepare    301!
 /bundles/*    /prepare    301!
+/agent/GRAPH_REPORT.md    /index.html    404
+/agent/OTIS_PROMPT.md    /index.html    404
+/agent/graph-manifest.json    /index.html    404
+/agent/graph.html    /index.html    404
 /*    /index.html   200

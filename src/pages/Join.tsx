@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 const ROLE_OPTIONS = [
-  { id: 'test_subject', label: 'Test Subject (blinded study)' },
   { id: 'recorder', label: 'Recorder' },
   { id: 'translator', label: 'Translator' },
   { id: 'moderator', label: 'Moderator' },
@@ -38,6 +37,7 @@ const schema = z.object({
 const Join = () => {
   const navigate = useNavigate();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [signedIn, setSignedIn] = useState(false);
   const [profile, setProfile] = useState<{ handle: string; avatar_seed: string; id: string; email?: string } | null>(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
@@ -54,9 +54,11 @@ const Join = () => {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        navigate(`/auth?returnTo=${encodeURIComponent('/join')}`);
+        setSignedIn(false);
+        setCheckingAuth(false);
         return;
       }
+      setSignedIn(true);
       const { data: prof } = await supabase
         .from('profiles')
         .select('id, handle, avatar_seed')
@@ -83,7 +85,7 @@ const Join = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!profile) return;
+    if (!signedIn || !profile) return;
     setSubmitting(true);
     try {
       const parsed = schema.parse({
@@ -140,7 +142,7 @@ const Join = () => {
     <>
       <Helmet>
         <title>Help build it | DMT Code</title>
-        <meta name="description" content="Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, developers, and test subjects welcome." />
+        <meta name="description" content="Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, and developers welcome." />
         <link rel="canonical" href="https://dmtcode.com/join" />
       </Helmet>
 
@@ -182,7 +184,57 @@ const Join = () => {
         </section>
 
         <section className="container mx-auto px-4 pb-24 max-w-3xl">
-          {alreadySubmitted ? (
+          {!signedIn ? (
+            <div className="space-y-10">
+              <div className="grid sm:grid-cols-2 gap-6">
+                {[
+                  {
+                    title: 'Recorder',
+                    body: "Recorders run the observation protocol and write down what they saw on the field sheet, in their own words. Nothing is required beyond care, honesty, and a completed record.",
+                  },
+                  {
+                    title: 'Translator',
+                    body: "Translators carry records, protocol documents, and site pages into Spanish, German, and other languages. Accuracy matters more than fluency, because a mistranslated report is worse than no translation.",
+                  },
+                  {
+                    title: 'Analyst',
+                    body: "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it.",
+                  },
+                  {
+                    title: 'Developer',
+                    body: "Developers work on the site, the registry, and the export pipeline that keeps the data open. Most of the work is small, careful, and public.",
+                  },
+                ].map((role) => (
+                  <div key={role.title} className="rounded-sm border border-border bg-card p-6 space-y-2">
+                    <h2
+                      className="text-xl text-foreground"
+                      style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+                    >
+                      {role.title}
+                    </h2>
+                    <p
+                      className="text-sm text-muted-foreground leading-relaxed"
+                      style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+                    >
+                      {role.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-sm border border-border bg-card p-8 text-center space-y-4">
+                <p
+                  className="text-muted-foreground"
+                  style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+                >
+                  Sign in to tell us which role fits you and join the team.
+                </p>
+                <Button asChild className="h-12 rounded-full text-base px-8">
+                  <a href={`/auth?returnTo=${encodeURIComponent('/join')}`}>Sign in to volunteer</a>
+                </Button>
+              </div>
+            </div>
+          ) : alreadySubmitted ? (
             <div className="rounded-sm border border-border bg-card p-8 text-center space-y-3">
               <h2
                 className="text-2xl text-foreground"

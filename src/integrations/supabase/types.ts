@@ -2361,6 +2361,7 @@ export type Database = {
           id: string
           image_url: string
           is_curated_example: boolean
+          is_sober_baseline: boolean
           moderated_at: string | null
           moderated_by: string | null
           moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
@@ -2397,6 +2398,7 @@ export type Database = {
           id?: string
           image_url: string
           is_curated_example?: boolean
+          is_sober_baseline?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
@@ -2433,6 +2435,7 @@ export type Database = {
           id?: string
           image_url?: string
           is_curated_example?: boolean
+          is_sober_baseline?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]

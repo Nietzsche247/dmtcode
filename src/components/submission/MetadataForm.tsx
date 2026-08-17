@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import {
   Select,
@@ -71,6 +72,7 @@ const formSchema = z.object({
   durationSeconds: z.number().min(1).optional().nullable(),
   recurrence: z.string().optional(),
   emotionalValence: z.string().optional(),
+  isSoberBaseline: z.boolean().optional(),
 });
 
 export interface SymbolMetadata {
@@ -84,6 +86,7 @@ export interface SymbolMetadata {
   durationSeconds?: number;
   recurrence?: 'once' | 'multiple' | 'persistent';
   emotionalValence?: 'positive' | 'neutral' | 'negative' | 'mixed';
+  isSoberBaseline?: boolean;
 }
 
 interface MetadataFormProps {
@@ -94,6 +97,7 @@ interface MetadataFormProps {
 
 export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
+  const [isSoberBaseline, setIsSoberBaseline] = useState<boolean>(initialData?.isSoberBaseline || false);
   const [customTagInput, setCustomTagInput] = useState('');
   const { vocabulary } = useTagVocabulary();
 
@@ -164,6 +168,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       durationSeconds: data.durationSeconds ?? undefined,
       recurrence: data.recurrence as 'once' | 'multiple' | 'persistent' | undefined,
       emotionalValence: data.emotionalValence as 'positive' | 'neutral' | 'negative' | 'mixed' | undefined,
+      isSoberBaseline,
     });
   };
 
@@ -367,6 +372,22 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
                 </FormItem>
               )}
             />
+          </div>
+
+          <div className="flex items-start space-x-2 pt-2">
+            <Checkbox
+              id="isSoberBaseline"
+              checked={isSoberBaseline}
+              onCheckedChange={(checked) => setIsSoberBaseline(checked === true)}
+            />
+            <div className="grid gap-1 leading-none">
+              <Label htmlFor="isSoberBaseline" className="cursor-pointer">
+                This was a sober baseline session (no substance taken)
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                The full rig, nothing taken. See the Sober Baseline Protocol PDF on /prepare.
+              </p>
+            </div>
           </div>
         </div>
 

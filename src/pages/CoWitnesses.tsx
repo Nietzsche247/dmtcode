@@ -56,12 +56,22 @@ export default function CoWitnesses() {
       setItems(list);
 
       if (list.length) {
-        const userIds = Array.from(new Set(list.map((r) => r.user_id)));
-        const symIds = Array.from(new Set(list.map((r) => r.symbol_id)));
-        const [{ data: profs }, { data: syms }] = await Promise.all([
-          (supabase as any).from('profiles').select('id,handle,avatar_seed').in('id', userIds),
-          (supabase as any).from('symbol_submissions').select('id,image_url,svg_data').in('id', symIds),
+        const userIds = Array.from(
+          new Set(list.map((r) => r.user_id).filter((id): id is string => !!id)),
+        );
+        const symIds = Array.from(
+          new Set(list.map((r) => r.symbol_id).filter((id): id is string => !!id)),
+        );
+        const [profsRes, symsRes] = await Promise.all([
+          userIds.length
+            ? (supabase as any).from('profiles').select('id,handle,avatar_seed').in('id', userIds)
+            : Promise.resolve({ data: [] }),
+          symIds.length
+            ? (supabase as any).from('symbol_submissions').select('id,image_url,svg_data').in('id', symIds)
+            : Promise.resolve({ data: [] }),
         ]);
+        const profs = profsRes.data;
+        const syms = symsRes.data;
         const pmap: Record<string, Profile> = {};
         (profs || []).forEach((p: Profile) => { pmap[p.id] = p; });
         setProfiles(pmap);
@@ -126,13 +136,19 @@ export default function CoWitnesses() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading recollections.</p>
         ) : filtered.length === 0 ? (
-          <Card className="p-8 text-center space-y-3">
+          <Card className="p-8 text-center space-y-3 border-border">
             <p className="text-sm text-muted-foreground">
-              The wall opens as explorers opt in. If you have recognized a symbol, your field note could be the first.
+              No co-witness sessions are listed yet. If you and another observer ran the protocol
+              together and both recorded,{' '}
+              <Link to="/auth?returnTo=%2Fco-witnesses" className="text-primary hover:underline">
+                sign in
+              </Link>{' '}
+              and mark both records as co-witnessed; if you want to organise a session, use the{' '}
+              <Link to="/join" className="text-primary hover:underline">
+                Volunteer page
+              </Link>
+              .
             </p>
-            <Link to="/registry" className="text-sm text-primary hover:underline inline-block">
-              Browse the registry
-            </Link>
           </Card>
         ) : (
           <ul className="space-y-4">

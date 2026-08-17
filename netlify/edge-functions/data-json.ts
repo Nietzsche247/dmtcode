@@ -265,7 +265,7 @@ export default async (req: Request): Promise<Response> => {
     // and export consent are different grants; this file must honour the second.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent",
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent",
       "status=eq.approved&publication_consent=eq.true"
     ),
     fetchAll(
@@ -408,6 +408,7 @@ export default async (req: Request): Promise<Response> => {
       moderation_status: (r.moderation_status as string) || undefined,
       evidence_status: (r.evidence_status as string) || undefined,
       is_curated_example: isCurated(r),
+      is_sober_baseline: (r as Record<string, unknown>).is_sober_baseline === true,
       published_at: (r.published_at as string) || undefined,
       review_due_at: (r.review_due_at as string) || undefined,
       review_overdue: isReviewOverdue(r),
@@ -545,6 +546,7 @@ export default async (req: Request): Promise<Response> => {
     review_due_at: "published_at plus 72 hours. The deadline by which a moderator was meant to look at it. Null where no review clock applies.",
     review_overdue: "Computed at request time, never stored. True when moderation_status is unreviewed and review_due_at is in the past. A symbol nobody reviewed inside the window is overdue, not approved.",
     is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
+    is_sober_baseline: "True when the contributor marked the session as a sober baseline run: the full rig, no substance.",
     recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",
     not_a_match_count: "How many signed in readers recorded that this symbol does not resemble what they saw. It is published for completeness. It does not hide the symbol and it does not change where the symbol sits in any default browse order.",
     upvote_count: "How many signed in readers pressed the older generic upvote control. It is a popularity signal only and carries no evidential weight. The key is omitted when the vote table could not be read.",

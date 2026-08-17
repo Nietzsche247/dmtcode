@@ -19,6 +19,8 @@ import Methods from "./pages/Methods";
 import Critiques from "./pages/Critiques";
 import People from "./pages/People";
 import PersonDannyGoler from "./pages/PersonDannyGoler";
+import PersonAndrewGallimore from "./pages/PersonAndrewGallimore";
+import PersonChaseHughes from "./pages/PersonChaseHughes";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
 import Privacy from "./pages/Privacy";
@@ -149,6 +151,8 @@ export const AppRoutes = () => (
     <Route path="critiques" element={<Critiques />} />
     <Route path="people" element={<People />} />
     <Route path="people/danny-goler" element={<PersonDannyGoler />} />
+    <Route path="people/andrew-gallimore" element={<PersonAndrewGallimore />} />
+    <Route path="people/chase-hughes" element={<PersonChaseHughes />} />
     <Route path="about" element={<About />} />
     <Route path="open-questions" element={<OpenQuestions />} />
     <Route path="privacy" element={<Privacy />} />

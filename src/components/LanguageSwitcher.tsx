@@ -8,7 +8,7 @@ const LABELS: Record<AppLocale, string> = { en: 'EN', es: 'ES', de: 'DE' };
 // Plain crawlable anchors, not router links: each one is a real document at a
 // real URL under the other locale prefix, and crawlers must be able to follow
 // them without executing JavaScript.
-export const LanguageSwitcher = ({ className }: { className?: string }) => {
+export const LanguageSwitcher = ({ className, showLabel }: { className?: string; showLabel?: boolean }) => {
   const locale = useLocale();
   const location = useLocation();
 
@@ -19,6 +19,11 @@ export const LanguageSwitcher = ({ className }: { className?: string }) => {
 
   return (
     <nav aria-label="Language" className={cn('flex items-center', className)}>
+      {showLabel && (
+        <span className="pr-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+          Language
+        </span>
+      )}
       {SUPPORTED_LOCALES.map((code, i) => {
         const active = code === locale;
         return (
