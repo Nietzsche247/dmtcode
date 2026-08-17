@@ -162,7 +162,9 @@ const Protocols = () => {
                           </Badge>
                           
                           <p className="text-sm text-muted-foreground line-clamp-2">
-                            {protocol.tagline || 'Protocol documentation coming soon.'}
+                            {protocol.slug === 'mdma'
+                              ? 'Entactogen studied for PTSD; the FDA declined the first new drug application in August 2024 and asked for further trials'
+                              : (protocol.tagline || 'Protocol documentation coming soon.')}
                           </p>
                         </div>
                       </Card>

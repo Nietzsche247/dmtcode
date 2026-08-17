@@ -254,9 +254,9 @@ const Home = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-muted/30 flex items-center justify-center">
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
                           <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                            Kit image pending
+                            Kit photo coming
                           </span>
                         </div>
                       )}
