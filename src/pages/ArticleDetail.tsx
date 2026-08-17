@@ -279,7 +279,7 @@ export default function ArticleDetail() {
                 h1: ({ node, ...props }) => <h2 {...props} />,
               }}
             >
-              {article.body_md}
+              {shown.body_md}
             </ReactMarkdown>
           </div>
 
