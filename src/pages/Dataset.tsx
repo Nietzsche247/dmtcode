@@ -47,7 +47,7 @@ const Dataset = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Dataset",
-            "name": "DMT Code Visual Symbol Catalogue v1.0",
+            "name": "DMT Code Open Dataset v4.1",
             "description": "Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
             "url": "https://dmtcode.com/dataset",
             "isAccessibleForFree": true,
@@ -57,8 +57,11 @@ const Dataset = () => {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
-            "datePublished": "2025-12",
-            "identifier": zenodoDOI,
+            "version": "4.1",
+            "datePublished": "2026-08-17",
+            "dateModified": "2026-08-17",
+            "identifier": zenodoURL,
+            "sameAs": [zenodoURL, zenodoConceptURL],
             "distribution": [
               {
                 "@type": "DataDownload",
@@ -66,6 +69,7 @@ const Dataset = () => {
                 "contentUrl": "https://dmtcode.com/data.json"
               }
             ]
+
           })}
         </script>
       </Helmet>
