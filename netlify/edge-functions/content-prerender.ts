@@ -1874,8 +1874,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     bodyExtraHtml: `<section data-prerender="dataset-versions">
   <h2>Version history</h2>
   <ul>
-    <li>v4.1 &mdash; 17 August 2026 &mdash; DOI <a href="https://doi.org/10.5281/zenodo.21987511">10.5281/zenodo.21987511</a> (current)</li>
-    <li>v1.0 &mdash; DOI <a href="https://doi.org/10.5281/zenodo.17816520">10.5281/zenodo.17816520</a> (superseded)</li>
+    <li>v4.1, 17 August 2026, DOI <a href="https://doi.org/10.5281/zenodo.21987511">10.5281/zenodo.21987511</a> (current)</li>
+    <li>v1.0, DOI <a href="https://doi.org/10.5281/zenodo.17816520">10.5281/zenodo.17816520</a> (superseded)</li>
   </ul>
   <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a>. License: CC BY 4.0.</p>
 </section>`,
