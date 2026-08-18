@@ -64,6 +64,12 @@ export default async (request: Request, context: Context) => {
     return context.next();
   }
 
+  // Legacy vanity path: redirect here because edge functions run before Netlify redirect rules
+  if (/^\/danny-goler\/?$/i.test(path)) {
+    return Response.redirect(`${url.origin}/people/danny-goler`, 301);
+  }
+
+
   // Asset-shaped request. Let it through, then check what actually came back.
   // If the SPA fallback answered an asset request with the HTML shell, the file
   // does not exist and the honest answer is 404, not a 200 that looks like a
