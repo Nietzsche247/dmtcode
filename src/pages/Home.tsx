@@ -51,13 +51,13 @@ const Home = () => {
       <SEO uiKey="home" path="/" />
       <Helmet>
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta property="og:site_name" content="DMT Code" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com" />
-        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         
         <meta name="robots" content="index, follow" />
         
