@@ -950,12 +950,18 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
     description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
     license: LICENSE,
     url: `${SITE}/registry`,
-    identifier: "10.5281/zenodo.17816520",
+    identifier: "https://doi.org/10.5281/zenodo.21987511",
+    version: "4.1",
+    datePublished: "2026-08-17",
+    dateModified: "2026-08-17",
     creator: { "@id": `${SITE}#org` },
     distribution: [
       { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE}/data.json` },
     ],
-    sameAs: ["https://doi.org/10.5281/zenodo.17816520"],
+    sameAs: [
+      "https://doi.org/10.5281/zenodo.21987511",
+      "https://doi.org/10.5281/zenodo.17816519",
+    ],
   };
   const faqLd = {
     "@context": "https://schema.org",
