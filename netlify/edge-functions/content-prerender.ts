@@ -1862,6 +1862,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "The unified corpus is available at /data.json. It merges every bibliography row, every tracked clinical trial, and every approved symbol into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
       "License is CC-BY-4.0. Attribute to DMT Code, https://dmtcode.com. An archived, citable version is available by DOI.",
+      "Current release: DMT Code Open Dataset v4.1, published 17 August 2026. Version DOI 10.5281/zenodo.21987511 (https://doi.org/10.5281/zenodo.21987511). Concept DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) always resolves to the latest version.",
+      "Cite as: DMT Code Project (2026). DMT Code Open Dataset v4.1 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21987511",
     ],
     links: [
       { href: "/data.json", label: "/data.json (unified corpus)" },
@@ -1869,6 +1871,15 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/sitemap.xml", label: "/sitemap.xml" },
     ],
     breadcrumbName: "Dataset",
+    bodyExtraHtml: `<section data-prerender="dataset-versions">
+  <h2>Version history</h2>
+  <ul>
+    <li>v4.1 &mdash; 17 August 2026 &mdash; DOI <a href="https://doi.org/10.5281/zenodo.21987511">10.5281/zenodo.21987511</a> (current)</li>
+    <li>v1.0 &mdash; DOI <a href="https://doi.org/10.5281/zenodo.17816520">10.5281/zenodo.17816520</a> (superseded)</li>
+  </ul>
+  <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a>. License: CC BY 4.0.</p>
+</section>`,
+    extraJsonLd: [DATASET_PAGE_LD],
   },
   about: {
     title: "About the DMT Code project | DMT Code",
