@@ -9,13 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, FileJson, FileSpreadsheet, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ZENODO_DOI, ZENODO_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
+import { ZENODO_DOI, ZENODO_URL, ZENODO_CONCEPT_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
 
 const Dataset = () => {
   const [copied, setCopied] = useState(false);
   
   const zenodoDOI = ZENODO_DOI;
   const zenodoURL = ZENODO_URL;
+  const zenodoConceptURL = ZENODO_CONCEPT_URL;
   const citationText = CITATION_APA;
   const bibtexCitation = CITATION_BIBTEX;
 
