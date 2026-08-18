@@ -114,12 +114,12 @@ const Registry = () => {
 
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/registry" />
         <meta name="twitter:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
         <meta name="twitter:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
-        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

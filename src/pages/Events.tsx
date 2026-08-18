@@ -111,12 +111,12 @@ const Events = () => {
         <meta property="og:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
         <meta property="og:url" content="https://dmtcode.com/events" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/events" />
         <meta name="twitter:title" content="Research Events & Clinical Trials | DMT Code" />
         <meta name="twitter:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
-        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
           <script type="application/ld+json">

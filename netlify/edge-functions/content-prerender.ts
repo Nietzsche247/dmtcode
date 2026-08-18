@@ -39,7 +39,7 @@ const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
 // image in index.html changes, change this too, or prerendered pages will unfurl
 // with a stale image.
 const DEFAULT_OG_IMAGE =
-  "https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png";
+  "https://dmtcode.com/og-image.png";
 
 const SITE_NAME = "DMT Code";
 

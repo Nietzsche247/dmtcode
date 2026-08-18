@@ -155,12 +155,12 @@ const EvidenceMap = () => {
         <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
         <meta property="og:url" content="https://dmtcode.com/evidence-map" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/evidence-map" />
         <meta name="twitter:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
         <meta name="twitter:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
-        <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png" />
+        <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         
         <script type="application/ld+json">
           {JSON.stringify({

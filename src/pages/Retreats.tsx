@@ -21,7 +21,7 @@ interface Retreat {
 }
 
 const OG_IMAGE =
-  "https://storage.googleapis.com/gpt-engineer-file-uploads/xpje0qbzg7e7wLYOGt4x2WGDXtR2/social-images/social-1763590629562-Webp.net-resizeimage-3.png";
+  "https://dmtcode.com/og-image.png";
 
 const TITLE = "Retreat centers | DMT Code";
 const DESC =
