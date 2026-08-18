@@ -9,13 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, FileJson, FileSpreadsheet, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ZENODO_DOI, ZENODO_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
+import { ZENODO_DOI, ZENODO_URL, ZENODO_CONCEPT_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
 
 const Dataset = () => {
   const [copied, setCopied] = useState(false);
   
   const zenodoDOI = ZENODO_DOI;
   const zenodoURL = ZENODO_URL;
+  const zenodoConceptURL = ZENODO_CONCEPT_URL;
   const citationText = CITATION_APA;
   const bibtexCitation = CITATION_BIBTEX;
 
@@ -47,7 +48,7 @@ const Dataset = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Dataset",
-            "name": "DMT Code Visual Symbol Catalogue v1.0",
+            "name": "DMT Code Open Dataset v4.1",
             "description": "Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
             "url": "https://dmtcode.com/dataset",
             "isAccessibleForFree": true,
@@ -57,8 +58,11 @@ const Dataset = () => {
               "@type": "Organization",
               "name": "DMT Code Project"
             },
-            "datePublished": "2025-12",
-            "identifier": zenodoDOI,
+            "version": "4.1",
+            "datePublished": "2026-08-17",
+            "dateModified": "2026-08-17",
+            "identifier": zenodoURL,
+            "sameAs": [zenodoURL, zenodoConceptURL],
             "distribution": [
               {
                 "@type": "DataDownload",
@@ -66,6 +70,7 @@ const Dataset = () => {
                 "contentUrl": "https://dmtcode.com/data.json"
               }
             ]
+
           })}
         </script>
       </Helmet>
@@ -224,6 +229,7 @@ const Dataset = () => {
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Version History</h4>
                 <ul className="text-muted-foreground space-y-1">
+                  <li><strong>v4.1 (17 August 2026):</strong> Current version. DOI <a href={zenodoURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.21987511</a>. Concept DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> always resolves to the latest version.</li>
                   <li><strong>v1.0 (December 2025):</strong> Initial public release</li>
                 </ul>
               </CardContent>
