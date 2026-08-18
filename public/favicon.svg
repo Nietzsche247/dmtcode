@@ -1,4 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
 
-<g transform="scale(0.32)"><path d="M 50.00 10.00 L 15.36 30.00 L 15.36 70.00 L 50.00 90.00 L 84.64 70.00 L 84.64 30.00 Z" fill="none" stroke="#111111" stroke-width="10" stroke-linejoin="round"/><circle cx="50" cy="50" r="19" fill="#E3001B"/></g>
+<g transform="translate(1.9,1.9) scale(0.2816)"><line x1="90.00" y1="50.00" x2="70.00" y2="84.64" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="90.00" y2="50.00" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<line x1="70.00" y1="84.64" x2="30.00" y2="84.64" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="70.00" y2="84.64" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<line x1="30.00" y1="84.64" x2="10.00" y2="50.00" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="30.00" y2="84.64" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<line x1="10.00" y1="50.00" x2="30.00" y2="15.36" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="10.00" y2="50.00" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<line x1="30.00" y1="15.36" x2="70.00" y2="15.36" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="30.00" y2="15.36" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<line x1="70.00" y1="15.36" x2="90.00" y2="50.00" stroke="#111111" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="50" y1="50" x2="70.00" y2="15.36" stroke="#111111" stroke-width="3" stroke-linecap="round"/>
+<circle cx="90.00" cy="50.00" r="8" fill="#111111"/>
+<circle cx="70.00" cy="84.64" r="8" fill="#111111"/>
+<circle cx="30.00" cy="84.64" r="8" fill="#111111"/>
+<circle cx="10.00" cy="50.00" r="8" fill="#111111"/>
+<circle cx="30.00" cy="15.36" r="8" fill="#111111"/>
+<circle cx="70.00" cy="15.36" r="8" fill="#111111"/>
+<circle cx="50" cy="50" r="12.5" fill="#E3001B"/></g>
 </svg>
