@@ -1595,6 +1595,37 @@ type StaticPage = {
   extraJsonLd?: unknown[];
 };
 
+// Canonical Dataset JSON-LD for /dataset. Mirrors the block rendered client
+// side in src/pages/Dataset.tsx so crawlers see the DOI without executing JS.
+const DATASET_PAGE_LD = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "@id": `${SITE}/dataset#dataset`,
+  name: "DMT Code Open Dataset v4.1",
+  description:
+    "The unified DMT Code corpus: bibliography, clinical trials, and approved symbol submissions in one JSON document under CC-BY-4.0.",
+  url: `${SITE}/dataset`,
+  isAccessibleForFree: true,
+  license: LICENSE,
+  creator: { "@type": "Organization", "@id": `${SITE}#org`, name: "DMT Code Project", url: SITE },
+  version: "4.1",
+  datePublished: "2026-08-17",
+  dateModified: "2026-08-17",
+  identifier: "https://doi.org/10.5281/zenodo.21987511",
+  sameAs: [
+    "https://doi.org/10.5281/zenodo.21987511",
+    "https://doi.org/10.5281/zenodo.17816519",
+  ],
+  distribution: [
+    {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `${SITE}/data.json`,
+    },
+  ],
+};
+
+
 const PROTOCOL_GUIDE_LEDE =
   "The DMT code refers to a reported observation, first described by Danny Goler in August 2020, that people under the influence of N,N-DMT who look at a 650nm red laser beam diffracted through a grating report seeing similar code-like visual forms. The reported forms include rapidly moving character-like glyphs, stable geometric structures that persist when looked away from and back, and shapes that appear to extend indefinitely into depth. A pilot study was published in IPI Letters in January 2025 (DOI 10.59973/ipil.158). No controlled study has been conducted. Whether the similarity across observers is genuine, and if genuine what causes it, is unresolved. Four explanations are actively defended, and they make different predictions that can be tested.";
 
