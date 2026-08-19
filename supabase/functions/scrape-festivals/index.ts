@@ -3,6 +3,7 @@
 // (JSON-LD Event first, text regex fallback, then a headless-render fallback
 // through the Jina Reader proxy for JS-built SPA sites). Inserts NEW editions
 // into events with is_approved=false for moderation. Never writes approved rows.
+// Rows with category='retreat' skip date extraction; they get a liveness check and are upserted into the retreats table as unapproved rows.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const MONTH_MAP: Record<string, number> = {
@@ -204,6 +205,61 @@ Deno.serve(async (_req) => {
   for (const w of watchlist ?? []) {
     stats.checked++;
     let result = "no_dates_found";
+
+    if (w.category === "retreat") {
+      let alive = false;
+      let pageTitle = "";
+      try {
+        const ctrlR = new AbortController();
+        const timerR = setTimeout(() => ctrlR.abort(), 12000);
+        const resR = await fetch(w.source_url, { signal: ctrlR.signal, redirect: "follow", headers: BROWSER_HEADERS });
+        clearTimeout(timerR);
+        if (resR.ok) {
+          alive = true;
+          const htmlR = await resR.text();
+          const tm = htmlR.match(/<title>([^<]*)<\/title>/i);
+          pageTitle = tm ? tm[1].trim().slice(0, 200) : "";
+        }
+      } catch { /* liveness check is best-effort */ }
+      try {
+        const { data: existingR } = await supabase
+          .from("retreats")
+          .select("id,name,is_approved")
+          .ilike("name", `${w.festival_name.replace(/[%_]/g, "")}%`)
+          .maybeSingle();
+        if (existingR) {
+          if (alive) {
+            await supabase.from("retreats").update({ updated_at: new Date().toISOString() }).eq("id", existingR.id);
+            result = `retreat_alive:${existingR.name}`;
+          } else {
+            result = `retreat_unreachable:${existingR.name}`;
+          }
+          stats.skipped++;
+        } else if (alive) {
+          const { error: rErr } = await supabase.from("retreats").insert({
+            name: w.festival_name,
+            description: `[Auto-discovered] Retreat center detected from ${w.source_url}. Page title at scrape time: "${pageTitle}". Details require editorial verification before approval. Relevance: ${w.relevance}.`,
+            location: w.region,
+            website_url: w.official_url ?? w.source_url,
+            is_approved: false,
+            vetting_status: "unvetted",
+          });
+          if (rErr) throw new Error(rErr.message);
+          stats.inserted++;
+          result = `retreat_inserted:${w.festival_name}`;
+        } else {
+          stats.errors++;
+          result = "retreat_fetch_failed";
+        }
+      } catch (e) {
+        stats.errors++;
+        result = `error:${(e as Error).message.slice(0, 120)}`;
+      }
+      await supabase.from("festival_watchlist").update({ last_checked_at: new Date().toISOString(), last_result: result }).eq("id", w.id);
+      detail.push({ festival: w.festival_name, result });
+      continue;
+    }
+
     let found: Found | null = null;
     let via = "direct";
     let fetchError = "";
