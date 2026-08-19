@@ -167,13 +167,19 @@ const RetreatDetail = () => {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              {retreat.website_url && (
+              {referralSlug ? (
+                <Button asChild size="lg" className="rounded-full">
+                  <a href={`/go/${referralSlug}`} rel="nofollow noopener">
+                    Visit website <ExternalLink className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              ) : retreat.website_url ? (
                 <Button asChild size="lg" className="rounded-full">
                   <a href={retreat.website_url} target="_blank" rel="noopener noreferrer">
                     Visit website <ExternalLink className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-              )}
+              ) : null}
               {retreat.contact_email && (
                 <Button asChild variant="outline" size="lg" className="rounded-full">
                   <a href={`mailto:${retreat.contact_email}`}>
@@ -182,6 +188,7 @@ const RetreatDetail = () => {
                 </Button>
               )}
             </div>
+
           </article>
         )}
       </main>
