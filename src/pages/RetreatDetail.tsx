@@ -31,6 +31,7 @@ const RetreatDetail = () => {
   const [retreat, setRetreat] = useState<RetreatRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [referralSlug, setReferralSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -46,6 +47,20 @@ const RetreatDetail = () => {
       setLoading(false);
     })();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const { data } = await supabase
+        .from("referral_slugs")
+        .select("slug")
+        .eq("retreat_id", id)
+        .eq("active", true)
+        .maybeSingle();
+      if (data?.slug) setReferralSlug(data.slug);
+    })();
+  }, [id]);
+
 
   if (notFound) return <Navigate to="/events" replace />;
 
@@ -152,13 +167,19 @@ const RetreatDetail = () => {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              {retreat.website_url && (
+              {referralSlug ? (
+                <Button asChild size="lg" className="rounded-full">
+                  <a href={`/go/${referralSlug}`} rel="nofollow noopener">
+                    Visit website <ExternalLink className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              ) : retreat.website_url ? (
                 <Button asChild size="lg" className="rounded-full">
                   <a href={retreat.website_url} target="_blank" rel="noopener noreferrer">
                     Visit website <ExternalLink className="w-4 h-4 ml-2" />
                   </a>
                 </Button>
-              )}
+              ) : null}
               {retreat.contact_email && (
                 <Button asChild variant="outline" size="lg" className="rounded-full">
                   <a href={`mailto:${retreat.contact_email}`}>
@@ -167,6 +188,7 @@ const RetreatDetail = () => {
                 </Button>
               )}
             </div>
+
           </article>
         )}
       </main>

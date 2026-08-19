@@ -1824,6 +1824,78 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          is_bot: boolean
+          referrer: string | null
+          slug: string
+          user_agent: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          is_bot?: boolean
+          referrer?: string | null
+          slug: string
+          user_agent?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          is_bot?: boolean
+          referrer?: string | null
+          slug?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      referral_slugs: {
+        Row: {
+          active: boolean
+          affiliate_param: string | null
+          created_at: string
+          event_id: string | null
+          retreat_id: string | null
+          slug: string
+          target_url: string
+        }
+        Insert: {
+          active?: boolean
+          affiliate_param?: string | null
+          created_at?: string
+          event_id?: string | null
+          retreat_id?: string | null
+          slug: string
+          target_url: string
+        }
+        Update: {
+          active?: boolean
+          affiliate_param?: string | null
+          created_at?: string
+          event_id?: string | null
+          retreat_id?: string | null
+          slug?: string
+          target_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_slugs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_slugs_retreat_id_fkey"
+            columns: ["retreat_id"]
+            isOneToOne: false
+            referencedRelation: "retreats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registry_confirmations: {
         Row: {
           confirmation_type: string
@@ -3199,7 +3271,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      retreat_referral_stats: {
+        Row: {
+          clicks_human: number | null
+          clicks_human_30d: number | null
+          clicks_total: number | null
+          last_click: string | null
+          name: string | null
+          retreat_id: string | null
+          slug: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_slugs_retreat_id_fkey"
+            columns: ["retreat_id"]
+            isOneToOne: false
+            referencedRelation: "retreats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       generate_handle: { Args: never; Returns: string }
