@@ -69,6 +69,13 @@ export default async (request: Request, context: Context) => {
     return Response.redirect(`${url.origin}/people/danny-goler`, 301);
   }
 
+  // Referral redirect prefix: proxied to the Supabase go function by a
+  // redirect rule, which runs after edge functions. Pass through untouched.
+  if (/^\/go(\/|$)/i.test(path)) {
+    return context.next();
+  }
+
+
 
   // Asset-shaped request. Let it through, then check what actually came back.
   // If the SPA fallback answered an asset request with the HTML shell, the file
