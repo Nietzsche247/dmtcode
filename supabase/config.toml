@@ -92,3 +92,6 @@ verify_jwt = true
 [functions.admin-translate-submission]
 verify_jwt = true
 
+[functions.go]
+verify_jwt = false
+

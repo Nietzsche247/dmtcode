@@ -31,6 +31,7 @@ const RetreatDetail = () => {
   const [retreat, setRetreat] = useState<RetreatRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [referralSlug, setReferralSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -46,6 +47,20 @@ const RetreatDetail = () => {
       setLoading(false);
     })();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const { data } = await supabase
+        .from("referral_slugs")
+        .select("slug")
+        .eq("retreat_id", id)
+        .eq("active", true)
+        .maybeSingle();
+      if (data?.slug) setReferralSlug(data.slug);
+    })();
+  }, [id]);
+
 
   if (notFound) return <Navigate to="/events" replace />;
 
