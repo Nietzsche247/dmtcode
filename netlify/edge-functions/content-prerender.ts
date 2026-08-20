@@ -4598,8 +4598,8 @@ async function renderSimplePersonPage(
   if (!person) return await notFoundPrerender(context);
   const tr = await getTranslations("people", slug, locale);
 
-
   const shellRes = await context.next();
+
   const canonicalPath = `/people/${slug}`;
   const canonical = `${SITE}${canonicalPath}`;
 
