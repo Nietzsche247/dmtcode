@@ -4624,7 +4624,7 @@ async function renderSimplePersonPage(
   };
 
   const body = `<article data-prerender="person-${slug}">
-  <h1>${esc(person.name)}</h1>${person.bodyHtml}
+  <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}
   <script type="application/ld+json">${jsonLd(personLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
