@@ -4450,7 +4450,6 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
 
   const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
-
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
@@ -4459,12 +4458,12 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     title: tr.title ?? "Danny Goler, who described the DMT laser observation | DMT Code",
     description: tr.description ??
       "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
-
     canonical,
     canonicalPath: "/people/danny-goler",
     ogType: "profile",
     jsonLd: [PERSON_LD_DANNY_GOLER, BREADCRUMB_LD_DANNY_GOLER, VIDEO_LD_DISCOVERY, FAQ_LD_DANNY_GOLER],
   });
+
 
   const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
