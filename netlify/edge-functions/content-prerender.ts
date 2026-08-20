@@ -4465,8 +4465,8 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
-
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+
 }
 
 async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<Response> {
