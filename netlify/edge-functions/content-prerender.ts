@@ -4416,8 +4416,8 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   const tr = await getTranslations("people", "danny-goler", locale);
 
 
-  const body = `<article data-prerender="person-danny-goler">
-  <h1>Danny Goler</h1>
+  const innerEn = `<h1>Danny Goler</h1>
+
   <p>Danny Goler is the person who first described the observation this project exists to record. In August 2020 he reported that a specific optical setup, a 650 nm laser passed through a diffraction grating and viewed under N,N-DMT, produced a repeating geometric pattern that he and others came to call the code of reality. In January 2025 he published the first written account of the method as a pilot study in the journal IPI Letters. Everything on this site is downstream of that description.</p>
   <p>This page credits that origination and links to his own work. It does not speak for him, and it does not decide whether the phenomenon is real. That question is held open here on purpose.</p>
   <h2>What he described</h2>
