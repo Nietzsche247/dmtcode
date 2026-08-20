@@ -4464,8 +4464,8 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     jsonLd: [PERSON_LD_DANNY_GOLER, BREADCRUMB_LD_DANNY_GOLER, VIDEO_LD_DISCOVERY, FAQ_LD_DANNY_GOLER],
   });
 
-
   const html = renderShell(await shellRes.text(), head, body, locale);
+
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
