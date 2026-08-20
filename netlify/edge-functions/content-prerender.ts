@@ -4602,8 +4602,8 @@ async function renderSimplePersonPage(
   const canonicalPath = `/people/${slug}`;
   const canonical = `${SITE}${canonicalPath}`;
 
-
   const personLd = {
+
     "@context": "https://schema.org",
     "@type": "Person",
     name: person.name,
