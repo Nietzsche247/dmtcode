@@ -4521,8 +4521,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
-
   const head = buildHead({
+
     locale,
     title: uiCopy("people", locale).title,
     description: uiCopy("people", locale).description,
