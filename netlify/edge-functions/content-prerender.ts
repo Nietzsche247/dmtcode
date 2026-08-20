@@ -4415,10 +4415,9 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   const canonical = `${SITE}/people/danny-goler`;
   const tr = await getTranslations("people", "danny-goler", locale);
 
-
   const innerEn = `<h1>Danny Goler</h1>
-
   <p>Danny Goler is the person who first described the observation this project exists to record. In August 2020 he reported that a specific optical setup, a 650 nm laser passed through a diffraction grating and viewed under N,N-DMT, produced a repeating geometric pattern that he and others came to call the code of reality. In January 2025 he published the first written account of the method as a pilot study in the journal IPI Letters. Everything on this site is downstream of that description.</p>
+
   <p>This page credits that origination and links to his own work. It does not speak for him, and it does not decide whether the phenomenon is real. That question is held open here on purpose.</p>
   <h2>What he described</h2>
   <p>The observation is a method. A red 650 nm laser is directed through a fine diffraction grating so that it casts a lattice of points, and an observer under N,N-DMT reports what they see in that field. Goler's account is that the lattice resolves into consistent, recurring forms across different people. The method itself is written up on the <a href="/protocol-guide">protocol guide</a>. The forms people report, including the ones that do not match anyone else's, accumulate in the <a href="/registry">visual symbol registry</a>.</p>
