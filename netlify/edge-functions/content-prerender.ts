@@ -4457,9 +4457,10 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
 
   const head = buildHead({
     locale,
-    title: "Danny Goler, who described the DMT laser observation | DMT Code",
-    description:
+    title: tr.title ?? "Danny Goler, who described the DMT laser observation | DMT Code",
+    description: tr.description ??
       "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
+
     canonical,
     canonicalPath: "/people/danny-goler",
     ogType: "profile",
