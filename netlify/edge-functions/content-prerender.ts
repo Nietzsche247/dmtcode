@@ -4513,8 +4513,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
     <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
-
     <li><a href="/people/chase-hughes">Chase Hughes</a>: popularizer of an unverified validation claim about the 650 nm laser protocol; not an author of the pilot study.</li>
+
   </ul>`;
 
   const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
