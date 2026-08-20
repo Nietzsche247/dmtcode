@@ -4522,11 +4522,11 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
 </article>`;
 
   const head = buildHead({
-
     locale,
     title: uiCopy("people", locale).title,
     description: uiCopy("people", locale).description,
     canonical,
+
     canonicalPath: "/people",
     ogType: "website",
     jsonLd: [itemListLd, breadcrumbLd],
