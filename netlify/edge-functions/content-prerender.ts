@@ -4511,8 +4511,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     ],
   };
 
-  const body = `<article data-prerender="people">
-  <h1>People</h1>
+  const innerEn = `<h1>People</h1>
+
   <p>Entity profiles for the people whose work this record is built on.</p>
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
