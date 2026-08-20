@@ -4599,8 +4599,8 @@ async function renderSimplePersonPage(
   const tr = await getTranslations("people", slug, locale);
 
   const shellRes = await context.next();
-
   const canonicalPath = `/people/${slug}`;
+
   const canonical = `${SITE}${canonicalPath}`;
 
   const personLd = {
