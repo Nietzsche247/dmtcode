@@ -4447,8 +4447,11 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     <li>The <a href="/registry">visual symbol registry</a> where reported forms accumulate</li>
     <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
     <li>The <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the pilot study</a></li>
-  </ul>
+  </ul>`;
+
+  const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
+
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
