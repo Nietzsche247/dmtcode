@@ -4519,11 +4519,11 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
 
   const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
-
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({
+
     locale,
     title: uiCopy("people", locale).title,
     description: uiCopy("people", locale).description,
