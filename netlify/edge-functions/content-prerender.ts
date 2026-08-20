@@ -4536,8 +4536,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
-
 // ---------- People: secondary static profiles ----------
+
 // Copy is mirrored from src/pages/PersonAndrewGallimore.tsx and
 // src/pages/PersonChaseHughes.tsx. Every sentence is wording already published
 // elsewhere on the site. JSON-LD carries name, description and sameAs only.
