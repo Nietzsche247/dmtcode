@@ -4516,8 +4516,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     <li><a href="/people/chase-hughes">Chase Hughes</a>: popularizer of an unverified validation claim about the 650 nm laser protocol; not an author of the pilot study.</li>
   </ul>`;
 
-
   const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
+
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
