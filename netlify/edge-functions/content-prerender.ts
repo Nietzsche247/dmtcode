@@ -4606,10 +4606,10 @@ async function renderSimplePersonPage(
     "@context": "https://schema.org",
     "@type": "Person",
     name: person.name,
-
     description: person.description,
     sameAs: person.sameAs,
   };
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
