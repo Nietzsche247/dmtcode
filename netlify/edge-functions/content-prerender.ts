@@ -4413,6 +4413,8 @@ const FAQ_LD_DANNY_GOLER = {
 async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/people/danny-goler`;
+  const tr = await getTranslations("people", "danny-goler", locale);
+
 
   const body = `<article data-prerender="person-danny-goler">
   <h1>Danny Goler</h1>
