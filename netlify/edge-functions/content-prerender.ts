@@ -4605,8 +4605,8 @@ async function renderSimplePersonPage(
   const personLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-
     name: person.name,
+
     description: person.description,
     sameAs: person.sameAs,
   };
