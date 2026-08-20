@@ -4631,8 +4631,9 @@ async function renderSimplePersonPage(
 
   const head = buildHead({
     locale,
-    title: person.title,
-    description: person.description,
+    title: tr.title ?? person.title,
+    description: tr.description ?? person.description,
+
     canonical,
     canonicalPath,
     ogType: "profile",
