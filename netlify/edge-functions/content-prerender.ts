@@ -4599,6 +4599,8 @@ async function renderSimplePersonPage(
 ): Promise<Response> {
   const person = SIMPLE_PEOPLE[slug];
   if (!person) return await notFoundPrerender(context);
+  const tr = await getTranslations("people", slug, locale);
+
 
   const shellRes = await context.next();
   const canonicalPath = `/people/${slug}`;
