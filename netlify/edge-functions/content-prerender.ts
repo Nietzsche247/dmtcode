@@ -4413,11 +4413,12 @@ const FAQ_LD_DANNY_GOLER = {
 async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/people/danny-goler`;
+  const tr = await getTranslations("people", "danny-goler", locale);
 
-  const body = `<article data-prerender="person-danny-goler">
-  <h1>Danny Goler</h1>
+  const innerEn = `<h1>Danny Goler</h1>
   <p>Danny Goler is the person who first described the observation this project exists to record. In August 2020 he reported that a specific optical setup, a 650 nm laser passed through a diffraction grating and viewed under N,N-DMT, produced a repeating geometric pattern that he and others came to call the code of reality. In January 2025 he published the first written account of the method as a pilot study in the journal IPI Letters. Everything on this site is downstream of that description.</p>
   <p>This page credits that origination and links to his own work. It does not speak for him, and it does not decide whether the phenomenon is real. That question is held open here on purpose.</p>
+
   <h2>What he described</h2>
   <p>The observation is a method. A red 650 nm laser is directed through a fine diffraction grating so that it casts a lattice of points, and an observer under N,N-DMT reports what they see in that field. Goler's account is that the lattice resolves into consistent, recurring forms across different people. The method itself is written up on the <a href="/protocol-guide">protocol guide</a>. The forms people report, including the ones that do not match anyone else's, accumulate in the <a href="/registry">visual symbol registry</a>.</p>
   <h2>The pilot study</h2>
@@ -4445,15 +4446,17 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     <li>The <a href="/registry">visual symbol registry</a> where reported forms accumulate</li>
     <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
     <li>The <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the pilot study</a></li>
-  </ul>
+  </ul>`;
+
+  const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
     locale,
-    title: "Danny Goler, who described the DMT laser observation | DMT Code",
-    description:
+    title: tr.title ?? "Danny Goler, who described the DMT laser observation | DMT Code",
+    description: tr.description ??
       "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
     canonical,
     canonicalPath: "/people/danny-goler",
@@ -4465,9 +4468,11 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
+
 async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/people`;
+  const tr = await getTranslations("people", "index", locale);
 
   const itemListLd = {
     "@context": "https://schema.org",
@@ -4503,15 +4508,15 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     ],
   };
 
-  const body = `<article data-prerender="people">
-  <h1>People</h1>
+  const innerEn = `<h1>People</h1>
   <p>Entity profiles for the people whose work this record is built on.</p>
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
     <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
     <li><a href="/people/chase-hughes">Chase Hughes</a>: popularizer of an unverified validation claim about the 650 nm laser protocol; not an author of the pilot study.</li>
-  </ul>
+  </ul>`;
 
+  const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
@@ -4527,10 +4532,12 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
+
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 // ---------- People: secondary static profiles ----------
+
 // Copy is mirrored from src/pages/PersonAndrewGallimore.tsx and
 // src/pages/PersonChaseHughes.tsx. Every sentence is wording already published
 // elsewhere on the site. JSON-LD carries name, description and sameAs only.
@@ -4589,6 +4596,7 @@ async function renderSimplePersonPage(
 ): Promise<Response> {
   const person = SIMPLE_PEOPLE[slug];
   if (!person) return await notFoundPrerender(context);
+  const tr = await getTranslations("people", slug, locale);
 
   const shellRes = await context.next();
   const canonicalPath = `/people/${slug}`;
@@ -4601,6 +4609,7 @@ async function renderSimplePersonPage(
     description: person.description,
     sameAs: person.sameAs,
   };
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -4612,15 +4621,15 @@ async function renderSimplePersonPage(
   };
 
   const body = `<article data-prerender="person-${slug}">
-  <h1>${esc(person.name)}</h1>${person.bodyHtml}
+  <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}
   <script type="application/ld+json">${jsonLd(personLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({
     locale,
-    title: person.title,
-    description: person.description,
+    title: tr.title ?? person.title,
+    description: tr.description ?? person.description,
     canonical,
     canonicalPath,
     ogType: "profile",
@@ -4630,3 +4639,4 @@ async function renderSimplePersonPage(
   const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
