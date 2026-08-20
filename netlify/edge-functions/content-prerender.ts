@@ -4474,7 +4474,6 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   const canonical = `${SITE}/people`;
   const tr = await getTranslations("people", "index", locale);
 
-
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -4510,8 +4509,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   };
 
   const innerEn = `<h1>People</h1>
-
   <p>Entity profiles for the people whose work this record is built on.</p>
+
   <ul>
     <li><a href="/people/danny-goler">Danny Goler</a>: described the 650 nm laser observation in August 2020 and published the pilot study in IPI Letters in 2025.</li>
     <li><a href="/people/andrew-gallimore">Andrew Gallimore</a>: proposes the laser speckle explanation, one of the leading alternatives to the reality-code reading.</li>
