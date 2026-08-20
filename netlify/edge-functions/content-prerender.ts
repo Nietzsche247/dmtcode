@@ -4636,7 +4636,7 @@ async function renderSimplePersonPage(
     jsonLd: [personLd, breadcrumbLd],
   });
 
-
   const html = renderShell(await shellRes.text(), head, body, locale);
+
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
