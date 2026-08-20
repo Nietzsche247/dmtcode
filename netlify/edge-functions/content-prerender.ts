@@ -4600,8 +4600,8 @@ async function renderSimplePersonPage(
 
   const shellRes = await context.next();
   const canonicalPath = `/people/${slug}`;
-
   const canonical = `${SITE}${canonicalPath}`;
+
 
   const personLd = {
     "@context": "https://schema.org",
