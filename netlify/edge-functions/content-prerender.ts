@@ -4532,10 +4532,10 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     jsonLd: [itemListLd, breadcrumbLd],
   });
 
-
   const html = renderShell(await shellRes.text(), head, body, locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
+
 
 // ---------- People: secondary static profiles ----------
 // Copy is mirrored from src/pages/PersonAndrewGallimore.tsx and
