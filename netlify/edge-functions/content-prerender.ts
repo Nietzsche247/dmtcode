@@ -4517,8 +4517,8 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   </ul>`;
 
   const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
-
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
+
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
