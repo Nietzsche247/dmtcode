@@ -4474,6 +4474,8 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
 async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
   const canonical = `${SITE}/people`;
+  const tr = await getTranslations("people", "index", locale);
+
 
   const itemListLd = {
     "@context": "https://schema.org",
