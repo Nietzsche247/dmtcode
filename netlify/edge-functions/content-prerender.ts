@@ -3162,13 +3162,13 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
     .join("\n");
 
   const body = `<article data-prerender="retreats">
-  <h1>Retreat centers</h1>
+  <h1>${hubLabel("retreats-h1", locale)}</h1>
   <section>
     <p>${esc(paraProtocol)}</p>
     <p>${esc(para1)}</p>
     <p>${esc(para2)}</p>
   </section>
-  ${rows.length ? `<section><h2>Centers</h2>${blocks}</section>` : ""}
+  ${rows.length ? `<section><h2>${hubLabel("retreats-centers", locale)}</h2>${blocks}</section>` : ""}
 </article>`;
 
   const breadcrumbLd = {
