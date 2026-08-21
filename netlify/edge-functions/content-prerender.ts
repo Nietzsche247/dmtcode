@@ -2310,8 +2310,21 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
       const pasts = pastRes.ok ? await pastRes.json() as Array<Record<string, string>> : [];
       const rets = reRes.ok ? await reRes.json() as Array<Record<string, string>> : [];
+
+      const evTr = await getTranslationsBulk("events", locale);
+      const reTr = await getTranslationsBulk("retreats", locale);
+      for (const r of [...ups, ...pasts]) {
+        const t = evTr[String(r.id)];
+        if (t) overlay(r as unknown as Record<string, unknown>, t, ["title", "description"]);
+      }
+      for (const r of rets) {
+        const t = reTr[String(r.id)];
+        if (t) overlay(r as unknown as Record<string, unknown>, t, ["description"]);
+      }
+
       const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` - ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+
       const sections: string[] = [];
       if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
       if (pasts.length) sections.push(`<section><h2>Past events</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
