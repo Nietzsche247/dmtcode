@@ -2822,22 +2822,22 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
     .join("\n");
 
   const body = `<article data-prerender="theories">
-  <h1>Open theories</h1>
+  <h1>${hubLabel("theories-h1", locale)}</h1>
   <section>
-    <p>Theories are not evidence. They are explanations that people have offered for what could account for the reported DMT code phenomenon. Read them as candidate hypotheses to be tested, not as findings.</p>
-    <p>Entries here are either curated from the public record (published, attributed positions) or submitted by the community and reviewed before appearing. Votes on this page are never seeded or fabricated; every count reflects real reader activity.</p>
+    <p>${hubLabel("theories-p1", locale)}</p>
+    <p>${hubLabel("theories-p2", locale)}</p>
   </section>
   <section>
-    <h2>Theories</h2>
-    ${theoryBlocks || "<p>No approved theories are currently indexed.</p>"}
+    <h2>${hubLabel("theories-h2", locale)}</h2>
+    ${theoryBlocks || `<p>${hubLabel("theories-empty", locale)}</p>`}
   </section>
   <section>
-    <h2>Related</h2>
+    <h2>${hubLabel("related", locale)}</h2>
     <ul>
-      <li><a href="${SITE}/registry">Visual symbol registry</a></li>
-      <li><a href="${SITE}/bibliography">Research bibliography</a></li>
-      <li><a href="${SITE}/evidence-map">Evidence map</a></li>
-      <li><a href="${SITE}/data.json">Machine readable corpus</a></li>
+      <li><a href="${SITE}/registry">${hubLabel("link-registry", locale)}</a></li>
+      <li><a href="${SITE}/bibliography">${hubLabel("link-bibliography", locale)}</a></li>
+      <li><a href="${SITE}/evidence-map">${hubLabel("link-evidence-map", locale)}</a></li>
+      <li><a href="${SITE}/data.json">${hubLabel("link-corpus", locale)}</a></li>
     </ul>
   </section>
 </article>`;
