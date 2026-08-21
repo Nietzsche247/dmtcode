@@ -76,7 +76,7 @@ async function resolvePmcid(doi: string): Promise<string | null> {
     encodeURIComponent(doi) +
     '&format=json&tool=dmtcode&email=info@dmtcode.com';
   const res = await ncbi(url);
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error(`idconv_http_${res.status}`);
   const doc = (await res.json()) as { records?: Array<{ pmcid?: string }> };
   const pmcid = doc?.records?.[0]?.pmcid;
   return pmcid && String(pmcid).trim() !== '' ? String(pmcid).trim() : null;
@@ -92,7 +92,7 @@ async function checkOa(pmcid: string): Promise<OaInfo> {
     'https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id=' +
     encodeURIComponent(pmcid);
   const res = await ncbi(url);
-  if (!res.ok) return { license: null, retracted: false };
+  if (!res.ok) throw new Error(`oa_http_${res.status}`);
   const xml = await res.text();
   const rec = xml.match(/<record\b[^>]*>/i)?.[0] ?? '';
   const license = rec.match(/license="([^"]*)"/i)?.[1] ?? null;
@@ -114,12 +114,12 @@ async function fetchBioc(
     encodeURIComponent(pmcid) +
     '/unicode';
   const res = await ncbi(url);
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error(`bioc_http_${res.status}`);
   let doc: unknown;
   try {
     doc = await res.json();
   } catch {
-    return null;
+    throw new Error('bioc_parse_failed');
   }
   const collection = Array.isArray(doc) ? doc[0] : doc;
   const document = (collection as { documents?: unknown[] })?.documents?.[0] as
@@ -323,6 +323,23 @@ Deno.serve(async (req) => {
       String(pick('dry_run') ?? '').toLowerCase(),
     );
     const singleId = pick('id');
+    const retrySkipped = ['1', 'true', 'yes'].includes(
+      String(pick('retry_skipped') ?? '').toLowerCase(),
+    );
+
+    // A permanent skip is recorded in full_text_source as 'skip:<reason>' so the
+    // row leaves the candidate pool; retry_skipped=true selects exactly those.
+    const PERMANENT = /^(no_pmcid|retracted|too_short|license_)/;
+    const markSkip = async (id: string, reason: string) => {
+      if (dryRun || !PERMANENT.test(reason)) return;
+      await db
+        .from('bibliography')
+        .update({
+          full_text_source: 'skip:' + reason,
+          full_text_retrieved_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+    };
 
     let query = db
       .from('bibliography')
@@ -335,7 +352,11 @@ Deno.serve(async (req) => {
         .eq('is_approved', true)
         .not('doi', 'is', null)
         .neq('doi', '')
-        .or('full_text.is.null,full_text.eq.')
+        .or('full_text.is.null,full_text.eq.');
+      query = retrySkipped
+        ? query.like('full_text_source', 'skip:%')
+        : query.is('full_text_source', null);
+      query = query
         .order('featured', { ascending: false, nullsFirst: false })
         .order('source_date', { ascending: false, nullsFirst: false })
         .limit(limit);
@@ -359,31 +380,33 @@ Deno.serve(async (req) => {
         const pmcid = await resolvePmcid(doi);
         if (!pmcid) {
           skipped.push({ id: row.id, title, reason: 'no_pmcid' });
+          await markSkip(row.id, 'no_pmcid');
           continue;
         }
 
         const oa = await checkOa(pmcid);
         if (oa.retracted) {
           skipped.push({ id: row.id, title, reason: 'retracted' });
+          await markSkip(row.id, 'retracted');
           continue;
         }
         const licenseRaw = oa.license;
         if (!licenseRaw || !OK_LICENSES.has(normLicense(licenseRaw))) {
+          const licenseReason = 'license_' + (licenseRaw ?? 'unknown');
           skipped.push({
             id: row.id,
             title,
-            reason: 'license_' + (licenseRaw ?? 'unknown'),
+            reason: licenseReason,
           });
+          await markSkip(row.id, licenseReason);
           continue;
         }
 
         const bioc = await fetchBioc(pmcid);
         if (!bioc || bioc.text.length < MIN_CHARS) {
-          skipped.push({
-            id: row.id,
-            title,
-            reason: bioc ? 'too_short' : 'bioc_unavailable',
-          });
+          const reason = bioc ? 'too_short' : 'bioc_unavailable';
+          skipped.push({ id: row.id, title, reason });
+          await markSkip(row.id, reason);
           continue;
         }
 
