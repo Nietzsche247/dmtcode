@@ -1194,6 +1194,8 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   });
   const title = timelineCopy.title;
   const metaDesc = clip(timelineCopy.description, 200);
+  const trs = await getTranslations("static", "timeline", locale);
+
 
   const classCounts = new Map<string, number>();
   for (const e of entries) {
