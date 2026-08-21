@@ -144,6 +144,9 @@ const Prepare = () => {
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece spreads it into a continuous line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser and move it closer to the laser for a longer line. Arbor&apos;s ray box guide (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Instructional_Guide_38e60437-4f8e-44a7-825f-112f77b20baa.pdf" className="underline hover:text-foreground">PDF</a>) and student handout (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Student_Handout.pdf" className="underline hover:text-foreground">PDF</a>) cover the optics set.
+              </p>
               <div className="mt-4 max-w-2xl">
                 <p className="text-sm text-muted-foreground">
                   Field materials and protocols, free download, no account needed:
