@@ -3809,19 +3809,19 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
 
   const body = `<article data-prerender="articles-index">
-  <h1>Articles</h1>
+  <h1>${hubLabel("articles-h1", locale)}</h1>
   <section>
-    <p>Answer shaped articles built on named evidence in the DMT Code corpus. Each piece links every trial, paper, symbol, and protocol it rests on, so readers and language models can verify the source directly. Every article is published under CC-BY-4.0.</p>
+    <p>${hubLabel("articles-p1", locale)}</p>
   </section>
   <section>
-    <h2>All articles</h2>
-    ${items ? `<ul>${items}</ul>` : "<p>No articles have been published yet.</p>"}
+    <h2>${hubLabel("articles-all", locale)}</h2>
+    ${items ? `<ul>${items}</ul>` : `<p>${hubLabel("articles-empty", locale)}</p>`}
   </section>
   <section>
-    <h2>Machine access</h2>
+    <h2>${hubLabel("articles-machine", locale)}</h2>
     <ul>
-      <li><a href="/articles.json">Full corpus JSON (CC-BY-4.0)</a></li>
-      <li><a href="/articles/feed.xml">RSS feed</a></li>
+      <li><a href="/articles.json">${hubLabel("articles-json", locale)}</a></li>
+      <li><a href="/articles/feed.xml">${hubLabel("articles-rss", locale)}</a></li>
     </ul>
   </section>
 </article>`;
