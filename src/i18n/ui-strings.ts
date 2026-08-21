@@ -181,7 +181,7 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
     en: {
       title: "Prepare. Laser diffraction research kits. | DMT Code",
       description:
-        "Three laser diffraction research kits for one, two to three, or six observers: 650 nm and multi-wavelength optical modules, and diffraction optics; observation documents are free PDF downloads. Sold by Meridian Optics Lab.",
+        "Four laser diffraction research kits for one, one to two, two to three, or up to six observers, covering 650, 532 and 405 nm, with diffraction optics and a semicircle line maker in every kit; observation documents are free PDF downloads. Sold by Meridian Optics Lab.",
     },
     es: {
       title:

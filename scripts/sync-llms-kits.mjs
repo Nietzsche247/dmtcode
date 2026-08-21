@@ -21,7 +21,7 @@ const SHOP_JSON_LINE =
   '- /shop.json: the three research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
 
 const PREPARE_PAGE_LINE =
-  '- [Prepare](/prepare): Three laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.';
+  '- [Prepare](/prepare): Four laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.';
 
 function observerPhrase(kit) {
   return kit.observers === '1' ? '1 observer' : `${kit.observers} observers`;
