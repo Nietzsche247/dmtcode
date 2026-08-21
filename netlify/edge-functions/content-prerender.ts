@@ -1194,6 +1194,8 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   });
   const title = timelineCopy.title;
   const metaDesc = clip(timelineCopy.description, 200);
+  const trs = await getTranslations("static", "timeline", locale);
+
 
   const classCounts = new Map<string, number>();
   for (const e of entries) {
@@ -1279,7 +1281,9 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
     })),
   };
 
-  const body = `<article data-prerender="timeline">
+  const body = trs.body_html?.trim()
+    ? `<article data-prerender="timeline">${trs.body_html}</article>`
+    : `<article data-prerender="timeline">
   <h1>${esc(file.title.headline)}</h1>
   <p>${esc(file.title.text)}</p>
   <p>${entries.length} dated records, ${firstYear} to ${lastYear}. The interactive version of the same set is at <a href="${SITE}/evidence-map">/evidence-map</a>.</p>
@@ -1304,6 +1308,7 @@ ${items}
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
+
 
   const head = buildHead({
     locale,
