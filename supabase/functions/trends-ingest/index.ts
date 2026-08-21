@@ -255,7 +255,11 @@ Deno.serve(async (req) => {
 
     const distinctDates = [...new Set(allRows.map((r) => r.run_date))].sort();
     const latestDate = distinctDates[distinctDates.length - 1];
-    const requested = isoDate(nn((fd.get('run_date') as string | null) ?? null));
+    const requestedRaw = fd.get('run_date');
+    const requested = isoDate(
+      typeof requestedRaw === 'string' ? nn(requestedRaw) : null,
+    );
+
     const ingestAll = String(fd.get('all') ?? '') === '1';
 
     const runDates = ingestAll
