@@ -98,3 +98,6 @@ verify_jwt = false
 
 [functions.trends-ingest]
 verify_jwt = false
+
+[functions.bibliography-fulltext]
+verify_jwt = false
