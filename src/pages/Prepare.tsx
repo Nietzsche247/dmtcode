@@ -139,8 +139,7 @@ const Prepare = () => {
                 Laser diffraction research kits
               </h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Three configurations, sized by the number of observers. Each card prints what the
-                same parts cost if you sourced them yourself.
+                Four configurations, sized by the number of observers and wavelengths. Each card prints what the same parts cost at Arbor Scientific list price.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
