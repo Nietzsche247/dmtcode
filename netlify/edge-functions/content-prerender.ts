@@ -2334,11 +2334,11 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
 
       const sections: string[] = [];
-      if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
-      if (pasts.length) sections.push(`<section><h2>Past events</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
-      if (rets.length) sections.push(`<section><h2>Retreats</h2><ul>${rets.map(renderRe).join("")}</ul></section>`);
-      if (!sections.length) sections.push(`<section><h2>No approved events or retreats yet</h2><p>Nothing has been approved for this timeline yet. Submissions are reviewed before publication.</p></section>`);
-      recentList = sections.join("\n") + `\n<p><em>Scholarly reference only. Inclusion does not constitute endorsement.</em></p>`;
+      if (ups.length) sections.push(`<section><h2>${hubLabel("events-upcoming", locale)}</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
+      if (pasts.length) sections.push(`<section><h2>${hubLabel("events-past", locale)}</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
+      if (rets.length) sections.push(`<section><h2>${hubLabel("events-retreats", locale)}</h2><ul>${rets.map(renderRe).join("")}</ul></section>`);
+      if (!sections.length) sections.push(`<section><h2>${hubLabel("events-empty-h2", locale)}</h2><p>${hubLabel("events-empty-p", locale)}</p></section>`);
+      recentList = sections.join("\n") + `\n<p><em>${hubLabel("events-note", locale)}</em></p>`;
       const listItems = [
         ...ups.map((r, i) => ({ "@type": String(r.event_type || "").toLowerCase() === "festival" ? "Festival" : "Event", position: i + 1, name: String(r.title || ""), description: String(r.description || "").trim() || undefined, startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, eventStatus: "https://schema.org/EventScheduled", url: `${SITE}/events/${r.id}` })),
         ...pasts.map((r, i) => ({ "@type": String(r.event_type || "").toLowerCase() === "festival" ? "Festival" : "Event", position: ups.length + i + 1, name: String(r.title || ""), description: String(r.description || "").trim() || undefined, startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, url: `${SITE}/events/${r.id}` })),
@@ -2372,7 +2372,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
           const slug = String(a.slug);
           const title = String(a.title);
           const dek = String(a.dek || "");
-          recentList = `<section><h2>Latest article</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">Read all articles</a></p></section>`;
+          recentList = `<section><h2>${hubLabel("home-latest", locale)}</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">${hubLabel("home-read-all", locale)}</a></p></section>`;
         }
       }
     } catch { /* ignore */ }
@@ -2402,7 +2402,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   }
 
   const linksBlock = page.links && page.links.length
-    ? `<section><h2>Related</h2><ul>${page.links
+    ? `<section><h2>${hubLabel("related", locale)}</h2><ul>${page.links
         .map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`)
         .join("")}</ul></section>`
     : "";
