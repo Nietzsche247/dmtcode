@@ -354,6 +354,9 @@ export type Database = {
           doi: string | null
           featured: boolean
           full_text: string | null
+          full_text_license: string | null
+          full_text_retrieved_at: string | null
+          full_text_source: string | null
           id: string
           is_approved: boolean
           isbn: string | null
@@ -386,6 +389,9 @@ export type Database = {
           doi?: string | null
           featured?: boolean
           full_text?: string | null
+          full_text_license?: string | null
+          full_text_retrieved_at?: string | null
+          full_text_source?: string | null
           id?: string
           is_approved?: boolean
           isbn?: string | null
@@ -418,6 +424,9 @@ export type Database = {
           doi?: string | null
           featured?: boolean
           full_text?: string | null
+          full_text_license?: string | null
+          full_text_retrieved_at?: string | null
+          full_text_source?: string | null
           id?: string
           is_approved?: boolean
           isbn?: string | null
