@@ -2811,7 +2811,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         : "";
       return `<article>
   <h2>${esc(String(r.title || "Untitled theory"))}</h2>
-  <p><em>${esc(originLabel(r.origin))}</em></p>
+  <p><em>${esc(originLabel(r.origin, locale))}</em></p>
   ${proponentLine}
   ${summaryHtml}
   ${contentHtml}
