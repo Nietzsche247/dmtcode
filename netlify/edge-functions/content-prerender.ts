@@ -1,5 +1,5 @@
 import type { Config, Context } from "@netlify/edge-functions";
-import { uiCopy } from "../lib/ui-strings.ts";
+import { hubLabel, uiCopy } from "../lib/ui-strings.ts";
 import { KITS } from "../lib/kits.ts";
 
 const SITE = "https://dmtcode.com";
@@ -2334,11 +2334,11 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
 
       const sections: string[] = [];
-      if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
-      if (pasts.length) sections.push(`<section><h2>Past events</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
-      if (rets.length) sections.push(`<section><h2>Retreats</h2><ul>${rets.map(renderRe).join("")}</ul></section>`);
-      if (!sections.length) sections.push(`<section><h2>No approved events or retreats yet</h2><p>Nothing has been approved for this timeline yet. Submissions are reviewed before publication.</p></section>`);
-      recentList = sections.join("\n") + `\n<p><em>Scholarly reference only. Inclusion does not constitute endorsement.</em></p>`;
+      if (ups.length) sections.push(`<section><h2>${hubLabel("events-upcoming", locale)}</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
+      if (pasts.length) sections.push(`<section><h2>${hubLabel("events-past", locale)}</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
+      if (rets.length) sections.push(`<section><h2>${hubLabel("events-retreats", locale)}</h2><ul>${rets.map(renderRe).join("")}</ul></section>`);
+      if (!sections.length) sections.push(`<section><h2>${hubLabel("events-empty-h2", locale)}</h2><p>${hubLabel("events-empty-p", locale)}</p></section>`);
+      recentList = sections.join("\n") + `\n<p><em>${hubLabel("events-note", locale)}</em></p>`;
       const listItems = [
         ...ups.map((r, i) => ({ "@type": String(r.event_type || "").toLowerCase() === "festival" ? "Festival" : "Event", position: i + 1, name: String(r.title || ""), description: String(r.description || "").trim() || undefined, startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, eventStatus: "https://schema.org/EventScheduled", url: `${SITE}/events/${r.id}` })),
         ...pasts.map((r, i) => ({ "@type": String(r.event_type || "").toLowerCase() === "festival" ? "Festival" : "Event", position: ups.length + i + 1, name: String(r.title || ""), description: String(r.description || "").trim() || undefined, startDate: r.event_date || undefined, endDate: r.end_date || undefined, location: r.location || undefined, organizer: r.organizer ? { "@type": "Organization", name: String(r.organizer) } : undefined, url: `${SITE}/events/${r.id}` })),
@@ -2372,7 +2372,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
           const slug = String(a.slug);
           const title = String(a.title);
           const dek = String(a.dek || "");
-          recentList = `<section><h2>Latest article</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">Read all articles</a></p></section>`;
+          recentList = `<section><h2>${hubLabel("home-latest", locale)}</h2><p><a href="/articles/${esc(slug)}">${esc(title)}</a>. ${esc(clip(dek, 240))}</p><p><a href="/articles">${hubLabel("home-read-all", locale)}</a></p></section>`;
         }
       }
     } catch { /* ignore */ }
@@ -2402,7 +2402,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   }
 
   const linksBlock = page.links && page.links.length
-    ? `<section><h2>Related</h2><ul>${page.links
+    ? `<section><h2>${hubLabel("related", locale)}</h2><ul>${page.links
         .map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`)
         .join("")}</ul></section>`
     : "";
@@ -2708,13 +2708,13 @@ async function sbGetRows(
   return (await res.json()) as Array<Record<string, unknown>>;
 }
 
-function originLabel(origin: unknown): string {
+function originLabel(origin: unknown, locale: Loc = "en"): string {
   const s = String(origin || "").toLowerCase();
   if (s === "curated" || s === "public_record" || s === "record") {
-    return "From the public record";
+    return hubLabel("origin-record", locale);
   }
-  if (s === "community") return "Community";
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : "Community";
+  if (s === "community") return hubLabel("origin-community", locale);
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : hubLabel("origin-community", locale);
 }
 
 function paragraphsFromText(text: string): string {
@@ -2798,20 +2798,20 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         ? paragraphsFromText(String(r.summary))
         : "";
       const contentHtml = r.content
-        ? `<section><h3>Full argument</h3>${paragraphsFromText(String(r.content))}</section>`
+        ? `<section><h3>${hubLabel("full-argument", locale)}</h3>${paragraphsFromText(String(r.content))}</section>`
         : "";
       const proponentLine = r.proponent
-        ? `<p><strong>Proponent:</strong> ${esc(String(r.proponent))}</p>`
+        ? `<p><strong>${hubLabel("proponent", locale)}</strong> ${esc(String(r.proponent))}</p>`
         : "";
       const sourceLine = r.source_url
-        ? `<p><strong>Source:</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
-        : (r.source_title ? `<p><strong>Source:</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
+        ? `<p><strong>${hubLabel("source", locale)}</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
+        : (r.source_title ? `<p><strong>${hubLabel("source", locale)}</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
       const tagBlock = tags.length
-        ? `<p><strong>Tags:</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
+        ? `<p><strong>${hubLabel("tags", locale)}</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
         : "";
       return `<article>
   <h2>${esc(String(r.title || "Untitled theory"))}</h2>
-  <p><em>${esc(originLabel(r.origin))}</em></p>
+  <p><em>${esc(originLabel(r.origin, locale))}</em></p>
   ${proponentLine}
   ${summaryHtml}
   ${contentHtml}
@@ -2822,22 +2822,22 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
     .join("\n");
 
   const body = `<article data-prerender="theories">
-  <h1>Open theories</h1>
+  <h1>${hubLabel("theories-h1", locale)}</h1>
   <section>
-    <p>Theories are not evidence. They are explanations that people have offered for what could account for the reported DMT code phenomenon. Read them as candidate hypotheses to be tested, not as findings.</p>
-    <p>Entries here are either curated from the public record (published, attributed positions) or submitted by the community and reviewed before appearing. Votes on this page are never seeded or fabricated; every count reflects real reader activity.</p>
+    <p>${hubLabel("theories-p1", locale)}</p>
+    <p>${hubLabel("theories-p2", locale)}</p>
   </section>
   <section>
-    <h2>Theories</h2>
-    ${theoryBlocks || "<p>No approved theories are currently indexed.</p>"}
+    <h2>${hubLabel("theories-h2", locale)}</h2>
+    ${theoryBlocks || `<p>${hubLabel("theories-empty", locale)}</p>`}
   </section>
   <section>
-    <h2>Related</h2>
+    <h2>${hubLabel("related", locale)}</h2>
     <ul>
-      <li><a href="${SITE}/registry">Visual symbol registry</a></li>
-      <li><a href="${SITE}/bibliography">Research bibliography</a></li>
-      <li><a href="${SITE}/evidence-map">Evidence map</a></li>
-      <li><a href="${SITE}/data.json">Machine readable corpus</a></li>
+      <li><a href="${SITE}/registry">${hubLabel("link-registry", locale)}</a></li>
+      <li><a href="${SITE}/bibliography">${hubLabel("link-bibliography", locale)}</a></li>
+      <li><a href="${SITE}/evidence-map">${hubLabel("link-evidence-map", locale)}</a></li>
+      <li><a href="${SITE}/data.json">${hubLabel("link-corpus", locale)}</a></li>
     </ul>
   </section>
 </article>`;
@@ -3139,12 +3139,9 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
   }
 
 
-  const paraProtocol =
-    "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.";
-  const para1 =
-    "Centers that operate openly and publish who they are, where they operate, and under what legal framework. This list is short on purpose. Centers we could not confirm are currently operating are not shown.";
-  const para2 =
-    "A listing here is not an endorsement. Psychedelic retreats carry real medical and psychological risk, and the legal position varies by country and changes. Verify current legal status, medical screening practice, staff credentials and emergency procedures directly with the center before you book.";
+  const paraProtocol = hubLabel("retreats-protocol", locale);
+  const para1 = hubLabel("retreats-p1", locale);
+  const para2 = hubLabel("retreats-p2", locale);
 
   const blocks = rows
     .map((r) => {
@@ -3165,13 +3162,13 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
     .join("\n");
 
   const body = `<article data-prerender="retreats">
-  <h1>Retreat centers</h1>
+  <h1>${hubLabel("retreats-h1", locale)}</h1>
   <section>
     <p>${esc(paraProtocol)}</p>
     <p>${esc(para1)}</p>
     <p>${esc(para2)}</p>
   </section>
-  ${rows.length ? `<section><h2>Centers</h2>${blocks}</section>` : ""}
+  ${rows.length ? `<section><h2>${hubLabel("retreats-centers", locale)}</h2>${blocks}</section>` : ""}
 </article>`;
 
   const breadcrumbLd = {
@@ -3812,19 +3809,19 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
 
   const body = `<article data-prerender="articles-index">
-  <h1>Articles</h1>
+  <h1>${hubLabel("articles-h1", locale)}</h1>
   <section>
-    <p>Answer shaped articles built on named evidence in the DMT Code corpus. Each piece links every trial, paper, symbol, and protocol it rests on, so readers and language models can verify the source directly. Every article is published under CC-BY-4.0.</p>
+    <p>${hubLabel("articles-p1", locale)}</p>
   </section>
   <section>
-    <h2>All articles</h2>
-    ${items ? `<ul>${items}</ul>` : "<p>No articles have been published yet.</p>"}
+    <h2>${hubLabel("articles-all", locale)}</h2>
+    ${items ? `<ul>${items}</ul>` : `<p>${hubLabel("articles-empty", locale)}</p>`}
   </section>
   <section>
-    <h2>Machine access</h2>
+    <h2>${hubLabel("articles-machine", locale)}</h2>
     <ul>
-      <li><a href="/articles.json">Full corpus JSON (CC-BY-4.0)</a></li>
-      <li><a href="/articles/feed.xml">RSS feed</a></li>
+      <li><a href="/articles.json">${hubLabel("articles-json", locale)}</a></li>
+      <li><a href="/articles/feed.xml">${hubLabel("articles-rss", locale)}</a></li>
     </ul>
   </section>
 </article>`;
