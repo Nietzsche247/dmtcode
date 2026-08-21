@@ -178,6 +178,43 @@ async function getTranslations(
   }
 }
 
+// Field-level translations for many records of one table. Returns {} for English
+// or on any failure. Used to overlay list surfaces without N+1 reads.
+async function getTranslationsBulk(
+  table: string,
+  locale: string,
+): Promise<Record<string, Record<string, string>>> {
+  if (locale === "en" || !locale) return {};
+  if (!SUPABASE_URL || !SUPABASE_KEY) return {};
+  try {
+    const api =
+      `${SUPABASE_URL}/rest/v1/content_translations` +
+      `?table_name=eq.${encodeURIComponent(table)}` +
+      `&locale=eq.${encodeURIComponent(locale)}` +
+      `&select=record_id,field,translated_text`;
+    const res = await fetch(api, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) return {};
+    const rows = (await res.json()) as Array<Record<string, unknown>>;
+    const out: Record<string, Record<string, string>> = {};
+    for (const r of rows) {
+      const id = String(r.record_id ?? "");
+      const f = String(r.field ?? "");
+      const t = String(r.translated_text ?? "");
+      if (!id || !f || !t.trim()) continue;
+      (out[id] ??= {})[f] = t;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 // Overlay translated fields onto a source row in place. Only non-empty
 // translations are applied, and only for the allowed fields when given.
 function overlay(
@@ -2273,8 +2310,21 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
       const pasts = pastRes.ok ? await pastRes.json() as Array<Record<string, string>> : [];
       const rets = reRes.ok ? await reRes.json() as Array<Record<string, string>> : [];
+
+      const evTr = await getTranslationsBulk("events", locale);
+      const reTr = await getTranslationsBulk("retreats", locale);
+      for (const r of [...ups, ...pasts]) {
+        const t = evTr[String(r.id)];
+        if (t) overlay(r as unknown as Record<string, unknown>, t, ["title", "description"]);
+      }
+      for (const r of rets) {
+        const t = reTr[String(r.id)];
+        if (t) overlay(r as unknown as Record<string, unknown>, t, ["description"]);
+      }
+
       const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` - ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+
       const sections: string[] = [];
       if (ups.length) sections.push(`<section><h2>Upcoming events</h2><ul>${ups.map(renderEv).join("")}</ul></section>`);
       if (pasts.length) sections.push(`<section><h2>Past events</h2><ul>${pasts.map(renderEv).join("")}</ul></section>`);
@@ -2676,6 +2726,14 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
     "is_approved=eq.true&select=id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at&order=upvotes.desc",
   );
 
+  const slugs = rows.map((r) => theorySlug(String(r.title || "")));
+  const trMap = await getTranslationsBulk("theories", locale);
+  for (const r of rows) {
+    const t = trMap[String(r.id)];
+    if (t) overlay(r as Record<string, unknown>, t, ["title", "summary", "content"]);
+  }
+
+
   const organizationLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -2709,9 +2767,10 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
       const item: Record<string, unknown> = {
         "@type": "CreativeWork",
         name: r.title,
-        url: `${SITE}/theories/${theorySlug(String(r.title || ""))}`,
+        url: `${SITE}/theories/${slugs[i]}`,
         text: r.summary || "",
       };
+
       if (r.proponent) {
         item.author = { "@type": "Person", name: String(r.proponent) };
       }
@@ -3060,6 +3119,13 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
     "retreats",
     "is_approved=is.true&select=id,name,description,details,location,country,image_url,website_url,contact_email,tags&order=name.asc",
   );
+
+  const trMap = await getTranslationsBulk("retreats", locale);
+  for (const r of rows) {
+    const t = trMap[String(r.id)];
+    if (t) overlay(r as Record<string, unknown>, t, ["description", "details"]);
+  }
+
 
   const paraProtocol =
     "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.";
