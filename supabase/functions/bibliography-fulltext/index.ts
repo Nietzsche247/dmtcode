@@ -212,15 +212,17 @@ Deno.serve(async (req) => {
 
   const started = Date.now();
 
-  const expected =
-    Deno.env.get('BIBLIOGRAPHY_FULLTEXT_SECRET') ??
-    Deno.env.get('TRENDS_INGEST_SECRET') ??
-    Deno.env.get('INTEL_CRON_SECRET') ??
-    null;
+  const accepted = [
+    Deno.env.get('BIBLIOGRAPHY_FULLTEXT_SECRET'),
+    Deno.env.get('TRENDS_INGEST_SECRET'),
+    Deno.env.get('INTEL_CRON_SECRET'),
+  ].filter((v): v is string => typeof v === 'string' && v.trim() !== '');
+
   const provided = req.headers.get('x-fulltext-key');
-  if (!expected || provided !== expected) {
+  if (accepted.length === 0 || !provided || !accepted.includes(provided)) {
     return json({ error: 'Unauthorized' }, 401);
   }
+
 
   const db = createClient(
     Deno.env.get('SUPABASE_URL')!,
