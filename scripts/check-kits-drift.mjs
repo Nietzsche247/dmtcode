@@ -15,8 +15,18 @@ export function extractKits(path) {
   const close = text.indexOf('\n];', open);
   if (open === -1 || close === -1) throw new Error(`Malformed KITS array in ${path}`);
   const literal = text.slice(open, close + 2);
+  // Some files reference a const declared before the KITS array (e.g. AVAIL).
+  // Include those const declarations so the isolated array literal can evaluate.
+  const before = text.slice(0, start);
+  const constDecls = [];
+  const constRegex = /^const\s+\w+\s+=\s+['"`].*?['"`];$/gm;
+  let match;
+  while ((match = constRegex.exec(before)) !== null) {
+    constDecls.push(match[0]);
+  }
+  const body = constDecls.length > 0 ? `${constDecls.join('\n')}\nreturn ${literal};` : `return ${literal};`;
   // eslint-disable-next-line no-new-func
-  return new Function(`return ${literal}`)();
+  return new Function(body)();
 }
 
 function diff(a, b) {

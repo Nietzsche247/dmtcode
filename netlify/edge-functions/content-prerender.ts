@@ -874,7 +874,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <p><strong>$${k.priceNumber.toLocaleString("en-US")}</strong></p>
     <p>${esc(k.description)}</p>
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
-    <p>Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.</p>
+    <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
     <p>Class 3R laser, under 5 mW. Do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
   </section>`,

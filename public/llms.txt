@@ -73,9 +73,10 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 <!-- kits:start -->
 ## Kits
 
-- Solo (1 observer): $289. Sourcing the parts yourself ≈ $219. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1
-- Triad (2 to 3 observers): $649. Sourcing the parts yourself ≈ $516. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1
-- Circle (6 observers): $1,090. Sourcing the parts yourself ≈ $883. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1
+- Solo (1 observer): $289. Sourcing the parts yourself ≈ $155. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1
+- Dual (1 to 2 observers): $399. Sourcing the parts yourself ≈ $215. Cart: https://dmtcode-p4szt.myshopify.com/cart/54434179973430:1
+- Triad (2 to 3 observers): $699. Sourcing the parts yourself ≈ $342. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1
+- Circle (up to 6 observers): $1,090. Sourcing the parts yourself ≈ $442. Cart: https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1
 
 All kits: 650 nm laser module and diffraction optics; observation documents are free PDF downloads. Sold and shipped by Meridian Optics Lab (the name on the card statement and parcel); support info@dmtcode.com. Free US shipping, processed within 2 business days, arrives in 7 to 10 business days. Unopened kits returnable within 30 days. Policies: /shipping, /returns, /store-terms, /store-contact. Full cards at /prepare, machine copy at /shop.json.
 <!-- kits:end -->

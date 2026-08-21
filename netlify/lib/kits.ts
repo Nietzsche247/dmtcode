@@ -1,7 +1,7 @@
 // Mirror of src/data/kits.ts. Edge functions cannot import from src/. scripts/check-kits-drift.mjs fails the build if these drift. Edit src/data/kits.ts first, then copy here.
 
 export type Kit = {
-  id: 'solo' | 'triad' | 'circle';
+  id: 'solo' | 'dual' | 'triad' | 'circle';
   sku?: string;
   name: string;
   shortName: string;
@@ -16,6 +16,8 @@ export type Kit = {
   description: string;
 };
 
+const AVAIL = 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.';
+
 export const KITS: Kit[] = [
   {
     id: 'solo',
@@ -26,43 +28,63 @@ export const KITS: Kit[] = [
     price: '$289',
     priceNumber: 289,
     cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1',
-    image: '/img/kits/kit-solo-contents.jpg',
-    diyCost: '$219',
-    diyCostNumber: 219,
-    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_unboxed.jpg',
+    diyCost: '$155',
+    diyCostNumber: 155,
+    availability: AVAIL,
     description:
-      'Optical research kit for one observer. Contents: one 650 nm red laser pointer, Class 3R (IIIa), under 5 mW (Arbor Scientific P2-7500); one adjustable laser pointer stand (Arbor 92-7660); one demonstration diffraction grating (Arbor P3-6405); observation documents as free PDF downloads: Field Sheet, Sober Baseline Protocol, Screening Card and Laser Safety Card. For educational study of laser diffraction patterns.',
+      'One observer. Contents: 650 nm deluxe red laser pointer, under 5 mW (Arbor Scientific P2-7500); adjustable laser pointer stand (92-7660); three window diffraction grating, 100, 300 and 600 lines per mm (P3-6405); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The 75 mm semicircle in the acrylic set is the piece that turns the laser dot into a continuous line on the wall: flat face toward the laser. Observation documents are free PDF downloads.',
+  },
+  {
+    id: 'dual',
+    sku: 'KIT-DUAL-MW',
+    name: 'Laser Diffraction Research Kit, Dual (650 and 532 nm, 1 to 2 Observers)',
+    shortName: 'Dual',
+    observers: '1 to 2',
+    price: '$399',
+    priceNumber: 399,
+    cart: 'https://dmtcode-p4szt.myshopify.com/cart/54434179973430:1',
+    image: 'https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7679DualRed-GreenLaserPointer2048x2048.jpg',
+    diyCost: '$215',
+    diyCostNumber: 215,
+    availability: AVAIL,
+    description:
+      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes stand, three window grating, holographic gratings and the acrylic set with the semicircle line maker. Observation documents are free PDF downloads.",
   },
   {
     id: 'triad',
     sku: 'KIT-TRIAD-MW',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit, Triad (2 to 3 Observers)',
+    name: 'Laser Diffraction Research Kit, Triad (650 and 405 nm, 2 to 3 Observers)',
     shortName: 'Triad',
     observers: '2 to 3',
-    price: '$649',
-    priceNumber: 649,
+    price: '$699',
+    priceNumber: 699,
     cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1',
-    image: '/img/kits/kit-triad-contents.jpg',
-    diyCost: '$516',
-    diyCostNumber: 516,
-    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    image: 'https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680LaserRayBoxwithLenses2048x2048_c5e1df26-5de3-492b-97a2-dc948b077723.jpg',
+    diyCost: '$342',
+    diyCostNumber: 342,
+    availability: AVAIL,
     description:
-      'Optical research kit for two to three observers: multi-wavelength laser modules including 650 nm and diffraction optics, for educational study of laser diffraction patterns; observation documents are free PDF downloads. The full contents list is being finalized and will be published here before these kits ship.',
+      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); two adjustable stands; three window grating; holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case is the line maker. The ray box is under 1 mW, so dim the room for the wall line. Observation documents are free PDF downloads.',
   },
   {
     id: 'circle',
     sku: 'KIT-CIRCLE-MW',
-    name: 'Multi-Wavelength Laser Diffraction Research Kit, Circle (6 Observers)',
+    name: 'Laser Diffraction Research Kit, Circle (650, 532 and 405 nm, Up to 6 Observers)',
     shortName: 'Circle',
-    observers: '6',
+    observers: 'up to 6',
     price: '$1,090',
     priceNumber: 1090,
     cart: 'https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1',
-    image: '/img/kits/kit-circle-contents.jpg',
-    diyCost: '$883',
-    diyCostNumber: 883,
-    availability: 'Arrives in 7 to 10 business days. Free US shipping. 18+, for research use.',
+    image: 'https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680LaserRayBoxwithLenses-022048x2048_a370f73d-2953-4577-af4a-edd198a7e3ec.jpg',
+    diyCost: '$442',
+    diyCostNumber: 442,
+    availability: AVAIL,
     description:
-      'Optical research kit for six observers: multi-wavelength laser modules including 650 nm and diffraction optics, for educational study of laser diffraction patterns; observation documents are free PDF downloads. The full contents list is being finalized and will be published here before these kits ship.',
+      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679), a third stand, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case is the line maker. Observation documents are free PDF downloads.',
   },
 ];
+
+export const KIT_MIN_PRICE = KITS[0].priceNumber;
+export const KIT_MAX_PRICE = KITS[KITS.length - 1].priceNumber;
+export const KIT_PRICE_RANGE = `${KITS[0].price} to ${KITS[KITS.length - 1].price}`;

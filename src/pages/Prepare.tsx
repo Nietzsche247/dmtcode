@@ -31,7 +31,7 @@ function KitCard({ kit }: { kit: Kit }) {
         {kit.image && (
           <img
             src={kit.image}
-            alt={`${kit.shortName} kit contents: every component photographed as shipped`}
+            alt={`${kit.shortName} kit`}
             loading="lazy"
             className="w-full h-full object-cover"
           />
@@ -44,7 +44,7 @@ function KitCard({ kit }: { kit: Kit }) {
         {usd(kit.priceNumber)}
       </div>
       <div className="text-xs text-muted-foreground mt-1">
-        The difference covers a tested module, matched optics and support.
+        Parts at Arbor list: {kit.diyCost}. The difference covers sourcing, one shipment and support.
       </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
@@ -55,7 +55,7 @@ function KitCard({ kit }: { kit: Kit }) {
         Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.
       </div>
       <div className="mt-1 text-xs text-muted-foreground">
-        Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.
+        Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.
       </div>
       {kit.id === 'circle' && (
         <div className="mt-1 text-xs text-muted-foreground">
@@ -95,7 +95,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
+            subtitle="Four laser diffraction research kits: one observer, one to two, two to three, or up to six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
@@ -139,11 +139,13 @@ const Prepare = () => {
                 Laser diffraction research kits
               </h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Three configurations, sized by the number of observers. Each card prints what the
-                same parts cost if you sourced them yourself.
+                Four configurations, sized by the number of observers and wavelengths. Each card prints what the same parts cost at Arbor Scientific list price.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece spreads it into a continuous line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser and move it closer to the laser for a longer line. Arbor&apos;s ray box guide (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Instructional_Guide_38e60437-4f8e-44a7-825f-112f77b20baa.pdf" className="underline hover:text-foreground">PDF</a>) and student handout (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Student_Handout.pdf" className="underline hover:text-foreground">PDF</a>) cover the optics set.
               </p>
               <div className="mt-4 max-w-2xl">
                 <p className="text-sm text-muted-foreground">
@@ -178,7 +180,7 @@ const Prepare = () => {
               </div>
             </header>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="grid md:grid-cols-2 gap-6 items-stretch">
               {KITS.map((k) => (
                 <KitCard key={k.id} kit={k} />
               ))}
