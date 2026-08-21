@@ -97,7 +97,7 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - [Symbol Registry](/registry): Browse and submit symbols with structured metadata and community validation.
 - [Chronology](/timeline): Every source as a dated record, sortable by date, person, place or kind of evidence.
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
-- [Prepare](/prepare): Three laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.
+- [Prepare](/prepare): Four laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.
 - [Protocols](/protocols): Catalogue of psychedelic and laser protocols.
 - [Research](/research): Active research projects and findings.
 - [Bibliography](/bibliography): Research library. Filter by content type, authority, stance, tag, year, and person.
