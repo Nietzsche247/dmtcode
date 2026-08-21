@@ -3139,12 +3139,9 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
   }
 
 
-  const paraProtocol =
-    "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.";
-  const para1 =
-    "Centers that operate openly and publish who they are, where they operate, and under what legal framework. This list is short on purpose. Centers we could not confirm are currently operating are not shown.";
-  const para2 =
-    "A listing here is not an endorsement. Psychedelic retreats carry real medical and psychological risk, and the legal position varies by country and changes. Verify current legal status, medical screening practice, staff credentials and emergency procedures directly with the center before you book.";
+  const paraProtocol = hubLabel("retreats-protocol", locale);
+  const para1 = hubLabel("retreats-p1", locale);
+  const para2 = hubLabel("retreats-p2", locale);
 
   const blocks = rows
     .map((r) => {
