@@ -1,5 +1,5 @@
 import type { Config, Context } from "@netlify/edge-functions";
-import { uiCopy } from "../lib/ui-strings.ts";
+import { hubLabel, uiCopy } from "../lib/ui-strings.ts";
 import { KITS } from "../lib/kits.ts";
 
 const SITE = "https://dmtcode.com";

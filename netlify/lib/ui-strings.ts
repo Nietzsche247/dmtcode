@@ -606,3 +606,72 @@ export function uiCopy(
     s.replace(/\{(\w+)\}/g, (_m, k) => (k in vars ? String(vars[k]) : _m));
   return { title: fill(title), description: fill(description) };
 }
+
+export const HUB_LABELS: Record<string, Record<Loc, string>> = {
+  related: { en: "Related", es: "Relacionado", de: "Verwandt" },
+  "link-registry": { en: "Visual symbol registry", es: "Registro de símbolos visuales", de: "Register visueller Symbole" },
+  "link-bibliography": { en: "Research bibliography", es: "Bibliografía de investigación", de: "Forschungsbibliografie" },
+  "link-evidence-map": { en: "Evidence map", es: "Mapa de evidencia", de: "Evidenzkarte" },
+  "link-corpus": { en: "Machine readable corpus", es: "Corpus legible por máquina", de: "Maschinenlesbares Korpus" },
+  "theories-h1": { en: "Open theories", es: "Teorías abiertas", de: "Offene Theorien" },
+  "theories-p1": {
+    en: "Theories are not evidence. They are explanations that people have offered for what could account for the reported DMT code phenomenon. Read them as candidate hypotheses to be tested, not as findings.",
+    es: "Las teorías no son evidencia. Son explicaciones que distintas personas han propuesto para dar cuenta del fenómeno reportado del código DMT. Léalas como hipótesis candidatas por poner a prueba, no como hallazgos.",
+    de: "Theorien sind keine Belege. Es sind Erklärungen, die Menschen dafür vorgeschlagen haben, was das berichtete DMT-Code-Phänomen erklären könnte. Lesen Sie sie als zu prüfende Hypothesen, nicht als Befunde.",
+  },
+  "theories-p2": {
+    en: "Entries here are either curated from the public record (published, attributed positions) or submitted by the community and reviewed before appearing. Votes on this page are never seeded or fabricated; every count reflects real reader activity.",
+    es: "Las entradas provienen del registro público (posiciones publicadas y atribuidas) o son enviadas por la comunidad y revisadas antes de aparecer. Los votos de esta página nunca se siembran ni se fabrican; cada recuento refleja actividad real de lectores.",
+    de: "Die Einträge stammen entweder aus öffentlichen Quellen (veröffentlichte, zugeschriebene Positionen) oder werden von der Gemeinschaft eingereicht und vor der Veröffentlichung geprüft. Stimmen auf dieser Seite werden nie vorbelegt oder erfunden; jede Zahl spiegelt echte Leseraktivität wider.",
+  },
+  "theories-h2": { en: "Theories", es: "Teorías", de: "Theorien" },
+  "theories-empty": { en: "No approved theories are currently indexed.", es: "Actualmente no hay teorías aprobadas indexadas.", de: "Derzeit sind keine freigegebenen Theorien indexiert." },
+  "origin-record": { en: "From the public record", es: "Del registro público", de: "Aus öffentlichen Quellen" },
+  "origin-community": { en: "Community", es: "Comunidad", de: "Gemeinschaft" },
+  proponent: { en: "Proponent:", es: "Proponente:", de: "Vertreter:" },
+  "full-argument": { en: "Full argument", es: "Argumento completo", de: "Vollständiges Argument" },
+  source: { en: "Source:", es: "Fuente:", de: "Quelle:" },
+  tags: { en: "Tags:", es: "Etiquetas:", de: "Schlagwörter:" },
+  "retreats-h1": { en: "Retreat centers", es: "Centros de retiro", de: "Retreat-Zentren" },
+  "retreats-protocol": {
+    en: "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.",
+    es: "No conocemos ningún retiro legal ni evento público que ejecute este protocolo de observación con láser con N,N-DMT inhalado. Los listados siguientes se ofrecen solo como contexto y no lo ejecutan. Si eso cambia, se indicará aquí primero.",
+    de: "Uns ist kein legales Retreat und keine öffentliche Veranstaltung bekannt, die dieses Laserbeobachtungsprotokoll mit inhaliertem N,N-DMT durchführt. Die folgenden Einträge dienen nur dem Kontext und führen es nicht durch. Sollte sich das ändern, wird es hier zuerst vermerkt.",
+  },
+  "retreats-p1": {
+    en: "Centers that operate openly and publish who they are, where they operate, and under what legal framework. This list is short on purpose. Centers we could not confirm are currently operating are not shown.",
+    es: "Centros que operan abiertamente y publican quiénes son, dónde operan y bajo qué marco legal. Esta lista es corta a propósito. Los centros cuya operación actual no pudimos confirmar no se muestran.",
+    de: "Zentren, die offen arbeiten und angeben, wer sie sind, wo sie tätig sind und in welchem rechtlichen Rahmen. Diese Liste ist absichtlich kurz. Zentren, deren laufender Betrieb wir nicht bestätigen konnten, werden nicht angezeigt.",
+  },
+  "retreats-p2": {
+    en: "A listing here is not an endorsement. Psychedelic retreats carry real medical and psychological risk, and the legal position varies by country and changes. Verify current legal status, medical screening practice, staff credentials and emergency procedures directly with the center before you book.",
+    es: "Un listado aquí no es un aval. Los retiros psicodélicos conllevan riesgos médicos y psicológicos reales, y la situación legal varía según el país y cambia. Verifique el estatus legal vigente, la práctica de cribado médico, las credenciales del personal y los procedimientos de emergencia directamente con el centro antes de reservar.",
+    de: "Ein Eintrag hier ist keine Empfehlung. Psychedelische Retreats bergen reale medizinische und psychische Risiken, und die Rechtslage ist je nach Land unterschiedlich und ändert sich. Klären Sie den aktuellen Rechtsstatus, die medizinische Prüfung, die Qualifikation des Personals und die Notfallverfahren direkt mit dem Zentrum, bevor Sie buchen.",
+  },
+  "retreats-centers": { en: "Centers", es: "Centros", de: "Zentren" },
+  "events-upcoming": { en: "Upcoming events", es: "Próximos eventos", de: "Kommende Veranstaltungen" },
+  "events-past": { en: "Past events", es: "Eventos pasados", de: "Vergangene Veranstaltungen" },
+  "events-retreats": { en: "Retreats", es: "Retiros", de: "Retreats" },
+  "events-empty-h2": { en: "No approved events or retreats yet", es: "Aún no hay eventos ni retiros aprobados", de: "Noch keine freigegebenen Veranstaltungen oder Retreats" },
+  "events-empty-p": { en: "Nothing has been approved for this timeline yet. Submissions are reviewed before publication.", es: "Todavía no se ha aprobado nada para esta cronología. Los envíos se revisan antes de su publicación.", de: "Für diese Chronologie wurde noch nichts freigegeben. Einreichungen werden vor der Veröffentlichung geprüft." },
+  "events-note": { en: "Scholarly reference only. Inclusion does not constitute endorsement.", es: "Solo como referencia académica. La inclusión no constituye un aval.", de: "Nur als wissenschaftliche Referenz. Aufnahme bedeutet keine Empfehlung." },
+  "articles-h1": { en: "Articles", es: "Artículos", de: "Artikel" },
+  "articles-p1": {
+    en: "Answer shaped articles built on named evidence in the DMT Code corpus. Each piece links every trial, paper, symbol, and protocol it rests on, so readers and language models can verify the source directly. Every article is published under CC-BY-4.0.",
+    es: "Artículos con forma de respuesta, construidos sobre evidencia nombrada del corpus de DMT Code. Cada pieza enlaza cada ensayo, artículo, símbolo y protocolo en que se apoya, para que lectores y modelos de lenguaje puedan verificar la fuente directamente. Todos los artículos se publican bajo CC-BY-4.0.",
+    de: "Antwortförmige Artikel, die auf benannter Evidenz aus dem DMT-Code-Korpus aufbauen. Jeder Beitrag verlinkt jede Studie, Arbeit, jedes Symbol und Protokoll, auf dem er beruht, damit Leser und Sprachmodelle die Quelle direkt prüfen können. Jeder Artikel erscheint unter CC-BY-4.0.",
+  },
+  "articles-all": { en: "All articles", es: "Todos los artículos", de: "Alle Artikel" },
+  "articles-empty": { en: "No articles have been published yet.", es: "Aún no se ha publicado ningún artículo.", de: "Es wurden noch keine Artikel veröffentlicht." },
+  "articles-machine": { en: "Machine access", es: "Acceso para máquinas", de: "Maschinenzugang" },
+  "articles-json": { en: "Full corpus JSON (CC-BY-4.0)", es: "Corpus completo en JSON (CC-BY-4.0)", de: "Vollständiges Korpus als JSON (CC-BY-4.0)" },
+  "articles-rss": { en: "RSS feed", es: "Canal RSS", de: "RSS-Feed" },
+  "home-latest": { en: "Latest article", es: "Último artículo", de: "Neuester Artikel" },
+  "home-read-all": { en: "Read all articles", es: "Leer todos los artículos", de: "Alle Artikel lesen" },
+};
+
+export function hubLabel(key: string, locale: Loc = "en"): string {
+  const entry = HUB_LABELS[key];
+  if (!entry) return "";
+  return entry[locale] || entry.en;
+}
