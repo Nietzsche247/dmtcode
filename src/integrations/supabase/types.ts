@@ -1543,6 +1543,54 @@ export type Database = {
         }
         Relationships: []
       }
+      media_items: {
+        Row: {
+          channel: string | null
+          first_seen: string
+          id: string
+          kind: string
+          last_seen: string
+          prior_views: number | null
+          published_date: string | null
+          published_raw: string | null
+          title: string
+          updated_at: string
+          url: string | null
+          views: number | null
+          views_gain: number | null
+        }
+        Insert: {
+          channel?: string | null
+          first_seen: string
+          id: string
+          kind: string
+          last_seen: string
+          prior_views?: number | null
+          published_date?: string | null
+          published_raw?: string | null
+          title: string
+          updated_at?: string
+          url?: string | null
+          views?: number | null
+          views_gain?: number | null
+        }
+        Update: {
+          channel?: string | null
+          first_seen?: string
+          id?: string
+          kind?: string
+          last_seen?: string
+          prior_views?: number | null
+          published_date?: string | null
+          published_raw?: string | null
+          title?: string
+          updated_at?: string
+          url?: string | null
+          views?: number | null
+          views_gain?: number | null
+        }
+        Relationships: []
+      }
       metaculus_comparisons: {
         Row: {
           forecast_event_name: string
@@ -2910,6 +2958,104 @@ export type Database = {
           started_at?: string
           table_name?: string | null
           translated?: number
+        }
+        Relationships: []
+      }
+      trends_metrics: {
+        Row: {
+          anchor_ratio: number | null
+          delta_pct: number | null
+          delta28_pct: number | null
+          id: number
+          keyword: string
+          keyword_group: string | null
+          last28: number | null
+          last7: number | null
+          peak_date: string | null
+          peak_val: number | null
+          prior28: number | null
+          prior7: number | null
+          run_date: string
+          run_id: string
+          source: string
+        }
+        Insert: {
+          anchor_ratio?: number | null
+          delta_pct?: number | null
+          delta28_pct?: number | null
+          id?: number
+          keyword: string
+          keyword_group?: string | null
+          last28?: number | null
+          last7?: number | null
+          peak_date?: string | null
+          peak_val?: number | null
+          prior28?: number | null
+          prior7?: number | null
+          run_date: string
+          run_id: string
+          source: string
+        }
+        Update: {
+          anchor_ratio?: number | null
+          delta_pct?: number | null
+          delta28_pct?: number | null
+          id?: number
+          keyword?: string
+          keyword_group?: string | null
+          last28?: number | null
+          last7?: number | null
+          peak_date?: string | null
+          peak_val?: number | null
+          prior28?: number | null
+          prior7?: number | null
+          run_date?: string
+          run_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trends_metrics_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "trends_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trends_runs: {
+        Row: {
+          id: string
+          media_new: number
+          media_total: number
+          media_updated: number
+          metrics_count: number
+          received_at: string
+          run_date: string
+          source: string
+          summary: Json | null
+        }
+        Insert: {
+          id?: string
+          media_new?: number
+          media_total?: number
+          media_updated?: number
+          metrics_count?: number
+          received_at?: string
+          run_date: string
+          source?: string
+          summary?: Json | null
+        }
+        Update: {
+          id?: string
+          media_new?: number
+          media_total?: number
+          media_updated?: number
+          metrics_count?: number
+          received_at?: string
+          run_date?: string
+          source?: string
+          summary?: Json | null
         }
         Relationships: []
       }

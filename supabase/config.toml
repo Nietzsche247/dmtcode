@@ -95,3 +95,6 @@ verify_jwt = true
 [functions.go]
 verify_jwt = false
 
+
+[functions.trends-ingest]
+verify_jwt = false
