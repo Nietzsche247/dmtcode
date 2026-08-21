@@ -318,10 +318,9 @@ Deno.serve(async (req) => {
         updated_at: new Date().toISOString(),
       };
       if (m.url !== null) row.url = m.url;
-      // first_seen must never be overwritten on conflict; on insert it is needed.
-      row.first_seen = prev ? undefined : m.first_seen;
-      if (row.first_seen === undefined) delete row.first_seen;
+      // first_seen is only written on insert; it must never change on conflict.
       if (!prev) row.first_seen = m.first_seen;
+
       return row;
     });
 
