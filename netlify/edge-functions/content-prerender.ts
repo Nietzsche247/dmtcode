@@ -2708,13 +2708,13 @@ async function sbGetRows(
   return (await res.json()) as Array<Record<string, unknown>>;
 }
 
-function originLabel(origin: unknown): string {
+function originLabel(origin: unknown, locale: Loc = "en"): string {
   const s = String(origin || "").toLowerCase();
   if (s === "curated" || s === "public_record" || s === "record") {
-    return "From the public record";
+    return hubLabel("origin-record", locale);
   }
-  if (s === "community") return "Community";
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : "Community";
+  if (s === "community") return hubLabel("origin-community", locale);
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : hubLabel("origin-community", locale);
 }
 
 function paragraphsFromText(text: string): string {
