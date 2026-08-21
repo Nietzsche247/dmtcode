@@ -2402,7 +2402,11 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         .join("")}</ul></section>`
     : "";
 
-  const body = `<article data-prerender="${esc(key)}">
+  const trs = await getTranslations("static", key, locale);
+
+  const body = trs.body_html && trs.body_html.trim()
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}</article>`
+    : `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   ${page.bodyExtraHtml ?? ""}
