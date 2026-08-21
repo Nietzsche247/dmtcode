@@ -31,7 +31,7 @@ function KitCard({ kit }: { kit: Kit }) {
         {kit.image && (
           <img
             src={kit.image}
-            alt={`${kit.shortName} kit contents: every component photographed as shipped`}
+            alt={`${kit.shortName} kit`}
             loading="lazy"
             className="w-full h-full object-cover"
           />
@@ -44,7 +44,7 @@ function KitCard({ kit }: { kit: Kit }) {
         {usd(kit.priceNumber)}
       </div>
       <div className="text-xs text-muted-foreground mt-1">
-        The difference covers a tested module, matched optics and support.
+        Parts at Arbor list: {kit.diyCost}. The difference covers sourcing, one shipment and support.
       </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
@@ -55,7 +55,7 @@ function KitCard({ kit }: { kit: Kit }) {
         Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.
       </div>
       <div className="mt-1 text-xs text-muted-foreground">
-        Plain packaging. Label and card statement read Meridian Optics Lab. No prices on the packing slip.
+        Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.
       </div>
       {kit.id === 'circle' && (
         <div className="mt-1 text-xs text-muted-foreground">
@@ -95,7 +95,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Three laser diffraction research kits: one observer, two to three, or six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
+            subtitle="Four laser diffraction research kits: one observer, one to two, two to three, or up to six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
           />
 
           {/* SAFETY */}
@@ -178,7 +178,7 @@ const Prepare = () => {
               </div>
             </header>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            <div className="grid md:grid-cols-2 gap-6 items-stretch">
               {KITS.map((k) => (
                 <KitCard key={k.id} kit={k} />
               ))}
