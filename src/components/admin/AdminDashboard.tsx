@@ -28,6 +28,8 @@ import { CrawlerIntelligence } from './CrawlerIntelligence';
 import { KitSignups } from './KitSignups';
 import { GA4Analytics } from './GA4Analytics';
 import { IntelHub } from './IntelHub';
+import { TrendsTracker } from './TrendsTracker';
+
 import { MembersDirectory } from './MembersDirectory';
 import { Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -99,6 +101,8 @@ export const AdminDashboard = () => {
         <Tabs defaultValue="niche-geo" className="space-y-6">
           <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 p-1">
             <TabsTrigger value="intel">Intel</TabsTrigger>
+            <TabsTrigger value="trends">Trends</TabsTrigger>
+
             <TabsTrigger value="niche-geo">Niche GEO</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
@@ -123,6 +127,11 @@ export const AdminDashboard = () => {
           <TabsContent value="intel" className="space-y-4">
             <IntelHub />
           </TabsContent>
+
+          <TabsContent value="trends" className="space-y-4">
+            <TrendsTracker />
+          </TabsContent>
+
 
           <TabsContent value="articles" className="space-y-4">
             <ArticlesManager />
