@@ -2798,16 +2798,16 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         ? paragraphsFromText(String(r.summary))
         : "";
       const contentHtml = r.content
-        ? `<section><h3>Full argument</h3>${paragraphsFromText(String(r.content))}</section>`
+        ? `<section><h3>${hubLabel("full-argument", locale)}</h3>${paragraphsFromText(String(r.content))}</section>`
         : "";
       const proponentLine = r.proponent
-        ? `<p><strong>Proponent:</strong> ${esc(String(r.proponent))}</p>`
+        ? `<p><strong>${hubLabel("proponent", locale)}</strong> ${esc(String(r.proponent))}</p>`
         : "";
       const sourceLine = r.source_url
-        ? `<p><strong>Source:</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
-        : (r.source_title ? `<p><strong>Source:</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
+        ? `<p><strong>${hubLabel("source", locale)}</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
+        : (r.source_title ? `<p><strong>${hubLabel("source", locale)}</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
       const tagBlock = tags.length
-        ? `<p><strong>Tags:</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
+        ? `<p><strong>${hubLabel("tags", locale)}</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
         : "";
       return `<article>
   <h2>${esc(String(r.title || "Untitled theory"))}</h2>
