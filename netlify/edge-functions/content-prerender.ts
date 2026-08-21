@@ -1559,6 +1559,7 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
   const faqCopy = uiCopy("faq", locale);
   const title = faqCopy.title;
   const metaDesc = clip(faqCopy.description, 200);
+  const trs = await getTranslations("static", "faq", locale);
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -1595,7 +1596,9 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
     })),
   };
 
-  const body = `<article data-prerender="faq">
+  const body = trs.body_html && trs.body_html.trim()
+    ? `<article data-prerender="faq">${trs.body_html}</article>`
+    : `<article data-prerender="faq">
   <h1>Questions about the DMT Code project and preparing to observe</h1>
   ${FAQ_GROUPS.map(
     (g) => `<section><h2>${esc(g.heading)}</h2>
@@ -2399,7 +2402,11 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         .join("")}</ul></section>`
     : "";
 
-  const body = `<article data-prerender="${esc(key)}">
+  const trs = await getTranslations("static", key, locale);
+
+  const body = trs.body_html && trs.body_html.trim()
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}</article>`
+    : `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   ${page.bodyExtraHtml ?? ""}
