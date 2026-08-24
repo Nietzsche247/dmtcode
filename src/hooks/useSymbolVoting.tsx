@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { promptSignIn } from '@/lib/signInPrompt';
+import { getSessionId } from '@/lib/anonSession';
 
 declare global {
   interface Window {
