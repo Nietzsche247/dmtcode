@@ -166,6 +166,95 @@ async function fetchBioc(
   return { text: parts.join('\n\n'), meta };
 }
 
+// ------------------------------------------------------- efetch (JATS) path
+
+const DROP_ELEMENTS = [
+  'ref-list',
+  'fig',
+  'table-wrap',
+  'ack',
+  'fn-group',
+  'back',
+  'author-notes',
+  'permissions',
+  'supplementary-material',
+  'graphic',
+  'inline-graphic',
+  'funding-group',
+  'contrib-group',
+];
+
+function stripElements(xml: string): string {
+  let out = xml;
+  for (const el of DROP_ELEMENTS) {
+    // paired form (non-greedy, tolerant of attributes), then self-closing form
+    out = out.replace(
+      new RegExp(`<${el}(\\s[^>]*)?>[\\s\\S]*?</${el}>`, 'gi'),
+      ' ',
+    );
+    out = out.replace(new RegExp(`<${el}(\\s[^>]*)?/>`, 'gi'), ' ');
+  }
+  return out;
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_m, h) =>
+      String.fromCodePoint(parseInt(h, 16)),
+    )
+    .replace(/&#(\d+);/g, (_m, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&amp;/g, '&');
+}
+
+function jatsToText(fragment: string): string {
+  let s = stripElements(fragment);
+  // Keep section headings on their own line, paragraphs separated.
+  s = s.replace(/<\/title\s*>/gi, '\n');
+  s = s.replace(/<\/(p|sec|abstract|list-item)\s*>/gi, '\n\n');
+  s = s.replace(/<[^>]*>/g, ' ');
+  s = decodeEntities(s);
+  s = s.replace(/[ \t\r\f\v]+/g, ' ');
+  s = s.replace(/ *\n */g, '\n');
+  s = s.replace(/\n{3,}/g, '\n\n');
+  return s.trim();
+}
+
+function firstElement(xml: string, tag: string): string | null {
+  const m = xml.match(
+    new RegExp(`<${tag}(\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, 'i'),
+  );
+  return m ? m[2] : null;
+}
+
+async function fetchEfetch(pmcid: string): Promise<string | null> {
+  const numeric = pmcid.replace(/^PMC/i, '');
+  const url =
+    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' +
+    encodeURIComponent(numeric) +
+    '&rettype=xml&tool=dmtcode&email=info@dmtcode.com';
+  const res = await ncbi(url);
+  if (!res.ok) throw new Error(`efetch_http_${res.status}`);
+  const xml = await res.text();
+  if (!xml || !xml.includes('<')) return null;
+
+  const cleaned = stripElements(xml);
+  const abstract = firstElement(cleaned, 'abstract');
+  const body = firstElement(cleaned, 'body');
+  const parts = [abstract, body]
+    .filter((v): v is string => !!v)
+    .map((v) => jatsToText(v))
+    .filter((v) => v.length > 0);
+  if (!parts.length) return null;
+  const text = parts.join('\n\n').trim();
+  return text.length ? text : null;
+}
+
+
+
 function truncateWords(text: string, max: number): { text: string; cut: boolean } {
   if (text.length <= max) return { text, cut: false };
   const slice = text.slice(0, max);
