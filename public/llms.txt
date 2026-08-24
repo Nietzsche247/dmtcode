@@ -58,7 +58,7 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 - /dataset: HTML index of the machine readable corpus with schema.org Dataset metadata. CC-BY-4.0.
 - /prepare: HTML page of kits and group bundles with ItemList, Product, FAQPage, Dataset, and BreadcrumbList JSON-LD. CC-BY-4.0.
 - /bibliography: HTML index. Head emits a schema.org Dataset with an ItemList of featured rows. Each list item carries stanceScore and authority as additionalProperty.
-- /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. When full_text or transcript is present it is included in the "text" property so language models can quote it directly.
+- /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. Where the source was published under CC BY or CC0, the article's full text is included in the "text" property so language models can quote it directly, with the required attribution carried inside the text itself. 45 of 194 approved records currently carry full text. Filter for them with /data.json?has_full_text=true, and read the licence from each row's full_text_license field. Records under non-commercial or ShareAlike licences are deliberately not reproduced.
 - /trials: HTML index of clinical trials.
 - /trials/:id: HTML detail. Head emits schema.org MedicalStudy with sponsor, phase, status, and application URL.
 - /registry: HTML index of community submitted symbols. Per symbol pages at /registry/:id are server prerendered with CreativeWork JSON-LD.
