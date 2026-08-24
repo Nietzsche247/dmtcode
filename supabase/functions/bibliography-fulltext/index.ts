@@ -435,7 +435,7 @@ Deno.serve(async (req) => {
 
     // A permanent skip is recorded in full_text_source as 'skip:<reason>' so the
     // row leaves the candidate pool; retry_skipped=true selects exactly those.
-    const PERMANENT = /^(no_pmcid|retracted|too_short|license_)/;
+    const PERMANENT = /^(no_pmcid|retracted|too_short|license_|no_text_available)/;
     const markSkip = async (id: string, reason: string) => {
       if (dryRun || !PERMANENT.test(reason)) return;
       await db
