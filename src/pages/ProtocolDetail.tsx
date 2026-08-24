@@ -95,6 +95,7 @@ const ProtocolDetail = () => {
   const StatusIcon = status.icon;
   const isClinicalMode = content.clinical_mode === true;
   const showDosing = Array.isArray(content.dosing) && content.dosing.length > 0;
+  const showControlsRigor = content.controls_and_rigor != null;
   // The dmt-laser set/setting copy in the database describes the laser without
   // naming the diffraction grating in the beam path; render that detail here
   // rather than depending on a database edit.
