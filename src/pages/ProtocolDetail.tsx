@@ -804,6 +804,16 @@ const ProtocolDetail = () => {
                 {card_integration}
               </div>
 
+              {showControlsRigor && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <ClipboardList className="w-4 h-4" aria-hidden="true" />
+                    Controls and Rigor
+                  </h2>
+                  {card_controls_and_rigor}
+                </div>
+              )}
+
               {isClinicalMode && (
                 <div>
                   <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
