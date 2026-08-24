@@ -40,6 +40,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   const [loading, setLoading] = useState(false);
   const [isOwnSubmission, setIsOwnSubmission] = useState(false);
 
+  // Stable anonymous device id for this hook instance.
+  const sessionId = useMemo(() => getSessionId(), []);
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -47,12 +50,10 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   useEffect(() => {
     if (symbolId) {
       loadVoteCounts();
-      if (userId) {
-        loadUserVotes();
-        setIsOwnSubmission(userId === submitterId);
-      }
+      loadUserVotes();
+      setIsOwnSubmission(!!userId && userId === submitterId);
     }
-  }, [symbolId, userId, submitterId]);
+  }, [symbolId, userId, submitterId, sessionId]);
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
