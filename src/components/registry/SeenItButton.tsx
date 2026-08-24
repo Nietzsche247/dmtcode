@@ -57,7 +57,13 @@ export const SeenItButton = ({
     e.preventDefault();
     e.stopPropagation();
     if (isOwnSubmission) return;
-    if (!userId) {
+    const wasSeen = userVotes.hasSeenIt;
+    const ok = await seenIt();
+    // Only offer the share nudge on a new recognition, not on toggle-off.
+    if (wasSeen) return;
+    // Anonymous visitors: the recognition is already recorded. Invite them to
+    // claim and share it, never as a gate in front of the action.
+    if (ok && !userId) {
       trackGA('recognition_reveal_opened', {
         symbol_id: symbolId,
         seen_it_count: voteCounts.seenItCount,
@@ -65,10 +71,6 @@ export const SeenItButton = ({
       setRevealOpen(true);
       return;
     }
-    const wasSeen = userVotes.hasSeenIt;
-    await seenIt();
-    // Only offer the share nudge on a new recognition, not on toggle-off.
-    if (wasSeen) return;
     // Suppress the toast when the CoWitnessInviteDialog is about to appear.
     // The invite dialog fires when localStorage cw_invite_seen is unset AND
     // there is no co_witness_prefs row. We approximate that here with the
@@ -138,12 +140,12 @@ export const SeenItButton = ({
           <div className="p-6">
             <DialogHeader className="text-left space-y-3">
               <DialogTitle className="font-display text-2xl leading-tight">
-                {count > 0 ? 'You are not the only one.' : 'Recognize this shape? Mark it.'}
+                {count > 0 ? 'You are not the only one.' : 'Recognition recorded.'}
               </DialogTitle>
               <DialogDescription className="text-base text-muted-foreground">
                 {count > 0
-                  ? `${count.toLocaleString()} ${count === 1 ? 'other has' : 'others have'} recognized this symbol. Save yours and we map the overlap together.`
-                  : 'Save it and start the count. Every recognition helps us map where these forms converge.'}
+                  ? `${count.toLocaleString()} ${count === 1 ? 'other has' : 'others have'} recognized this symbol. Your recognition is recorded on this device. Sign in to keep it with your account.`
+                  : 'Recorded on this device. Sign in to keep it with your account.'}
               </DialogDescription>
             </DialogHeader>
             {!hideCard && (
@@ -176,7 +178,7 @@ export const SeenItButton = ({
                 onClick={handleSaveRecognition}
               >
                 <Eye className="w-4 h-4 mr-2" />
-                Save my recognition
+                Save it to my account
               </Button>
             </DialogFooter>
           </div>

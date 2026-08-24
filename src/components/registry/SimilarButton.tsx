@@ -11,9 +11,9 @@ interface SimilarButtonProps {
 }
 
 export const SimilarButton = ({ symbolId, submitterId, size = 'default', className }: SimilarButtonProps) => {
-  const { userId, userVotes, voteCounts, loading, isOwnSubmission, similar } = useSymbolVoting(symbolId, submitterId);
+  const { userVotes, voteCounts, loading, isOwnSubmission, similar } = useSymbolVoting(symbolId, submitterId);
 
-  if (!userId || isOwnSubmission) return null;
+  if (isOwnSubmission) return null;
 
   const active = userVotes.hasSimilar;
   const count = voteCounts.similarCount;

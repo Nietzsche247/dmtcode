@@ -11,9 +11,9 @@ interface DidNotMatchButtonProps {
 }
 
 export const DidNotMatchButton = ({ symbolId, submitterId, size = 'default', className }: DidNotMatchButtonProps) => {
-  const { userId, userVotes, voteCounts, loading, isOwnSubmission, downvote } = useSymbolVoting(symbolId, submitterId);
+  const { userVotes, voteCounts, loading, isOwnSubmission, downvote } = useSymbolVoting(symbolId, submitterId);
 
-  if (!userId || isOwnSubmission) return null;
+  if (isOwnSubmission) return null;
 
   const active = userVotes.hasDownvoted;
   const count = voteCounts.downvotes;

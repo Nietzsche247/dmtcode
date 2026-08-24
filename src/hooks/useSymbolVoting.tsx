@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { promptSignIn } from '@/lib/signInPrompt';
+import { getSessionId } from '@/lib/anonSession';
 
 declare global {
   interface Window {
@@ -40,6 +40,9 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   const [loading, setLoading] = useState(false);
   const [isOwnSubmission, setIsOwnSubmission] = useState(false);
 
+  // Stable anonymous device id for this hook instance.
+  const sessionId = useMemo(() => getSessionId(), []);
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -47,12 +50,10 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   useEffect(() => {
     if (symbolId) {
       loadVoteCounts();
-      if (userId) {
-        loadUserVotes();
-        setIsOwnSubmission(userId === submitterId);
-      }
+      loadUserVotes();
+      setIsOwnSubmission(!!userId && userId === submitterId);
     }
-  }, [symbolId, userId, submitterId]);
+  }, [symbolId, userId, submitterId, sessionId]);
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -92,13 +93,18 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   };
 
   const loadUserVotes = async () => {
-    if (!userId) return;
-
-    const { data, error } = await supabase
+    let query = supabase
       .from('symbol_votes')
       .select('vote_type')
-      .eq('symbol_id', symbolId)
-      .eq('user_id', userId);
+      .eq('symbol_id', symbolId);
+
+    if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = (query as any).eq('session_id', sessionId).is('user_id', null);
+    }
+
+    const { data, error } = await query;
 
     if (!error && data) {
       setUserVotes({
@@ -110,27 +116,28 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   };
 
   const vote = useCallback(async (voteType: VoteType) => {
-    if (!userId) {
-      promptSignIn('record your recognition');
+    if (isOwnSubmission) {
+      toast.error('You cannot vote on your own submission');
       return false;
     }
 
-    if (isOwnSubmission) {
-      toast.error('You cannot vote on your own submission');
+    const held = (t: VoteType) =>
+      t === 'downvote' ? userVotes.hasDownvoted :
+      t === 'seen_it' ? userVotes.hasSeenIt :
+      userVotes.hasSimilar;
+
+    const currentVote = held(voteType);
+
+    // Anonymous visitors cannot delete: the DELETE policy is auth.uid() = user_id.
+    if (!userId && currentVote) {
+      toast.info('Recorded on this device already. Sign in if you want to change it.');
       return false;
     }
 
     setLoading(true);
 
     try {
-      const held = (t: VoteType) =>
-        t === 'downvote' ? userVotes.hasDownvoted :
-        t === 'seen_it' ? userVotes.hasSeenIt :
-        userVotes.hasSimilar;
-
-      const currentVote = held(voteType);
-
-      if (currentVote) {
+      if (currentVote && userId) {
         // Remove the vote
         const { error } = await supabase
           .from('symbol_votes')
@@ -149,28 +156,46 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         toast.success('Vote removed');
       } else {
         // One stance per user per symbol: seen_it, similar and downvote are
-        // fully mutually exclusive.
-        const conflicting = ALL_VOTE_TYPES.filter((t) => t !== voteType && held(t));
+        // fully mutually exclusive. Cleanup deletes require an authenticated user.
+        if (userId) {
+          const conflicting = ALL_VOTE_TYPES.filter((t) => t !== voteType && held(t));
 
-        if (conflicting.length > 0) {
-          await supabase
-            .from('symbol_votes')
-            .delete()
-            .eq('symbol_id', symbolId)
-            .eq('user_id', userId)
-            .in('vote_type', conflicting as any);
+          if (conflicting.length > 0) {
+            await supabase
+              .from('symbol_votes')
+              .delete()
+              .eq('symbol_id', symbolId)
+              .eq('user_id', userId)
+              .in('vote_type', conflicting as any);
+          }
         }
 
-        // Insert new vote
+        // Insert new vote. user_id must be explicitly null for anonymous rows,
+        // because the RLS check compares it against auth.uid().
         const { error } = await supabase
           .from('symbol_votes')
           .insert({
             symbol_id: symbolId,
-            user_id: userId,
+            user_id: userId ?? null,
             vote_type: voteType,
+            session_id: sessionId,
           } as any);
 
-        if (error) throw error;
+        if (error) {
+          // Unique violation: this stance is already recorded for this identity.
+          if ((error as any).code === '23505') {
+            setUserVotes((prev) => ({
+              ...prev,
+              hasDownvoted: voteType === 'downvote' ? true : prev.hasDownvoted,
+              hasSeenIt: voteType === 'seen_it' ? true : prev.hasSeenIt,
+              hasSimilar: voteType === 'similar' ? true : prev.hasSimilar,
+            }));
+            toast.info('Already recorded.');
+            await loadVoteCounts();
+            return true;
+          }
+          throw error;
+        }
 
         const eventName = 
           voteType === 'downvote' ? 'symbol_downvoted' :
@@ -198,7 +223,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
+  }, [userId, sessionId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
 
   return {
     userId,
