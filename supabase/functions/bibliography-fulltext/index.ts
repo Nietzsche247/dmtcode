@@ -115,12 +115,20 @@ async function fetchBioc(
     '/unicode';
   const res = await ncbi(url);
   if (!res.ok) throw new Error(`bioc_http_${res.status}`);
+  const raw = await res.text();
+  const head = raw.trimStart().slice(0, 200);
+  // BioC returns HTTP 200 with an HTML/plain error page for articles it has not
+  // indexed yet. That is a miss, not an error: fall back to efetch.
+  if (head.startsWith('[Error]') || raw.includes('No result can be found')) {
+    return null;
+  }
   let doc: unknown;
   try {
-    doc = await res.json();
+    doc = JSON.parse(raw);
   } catch {
-    throw new Error('bioc_parse_failed');
+    return null;
   }
+
   const collection = Array.isArray(doc) ? doc[0] : doc;
   const document = (collection as { documents?: unknown[] })?.documents?.[0] as
     | { passages?: Array<{ text?: string; infons?: Record<string, unknown> }> }
@@ -158,6 +166,95 @@ async function fetchBioc(
   return { text: parts.join('\n\n'), meta };
 }
 
+// ------------------------------------------------------- efetch (JATS) path
+
+const DROP_ELEMENTS = [
+  'ref-list',
+  'fig',
+  'table-wrap',
+  'ack',
+  'fn-group',
+  'back',
+  'author-notes',
+  'permissions',
+  'supplementary-material',
+  'graphic',
+  'inline-graphic',
+  'funding-group',
+  'contrib-group',
+];
+
+function stripElements(xml: string): string {
+  let out = xml;
+  for (const el of DROP_ELEMENTS) {
+    // paired form (non-greedy, tolerant of attributes), then self-closing form
+    out = out.replace(
+      new RegExp(`<${el}(\\s[^>]*)?>[\\s\\S]*?</${el}>`, 'gi'),
+      ' ',
+    );
+    out = out.replace(new RegExp(`<${el}(\\s[^>]*)?/>`, 'gi'), ' ');
+  }
+  return out;
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_m, h) =>
+      String.fromCodePoint(parseInt(h, 16)),
+    )
+    .replace(/&#(\d+);/g, (_m, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&amp;/g, '&');
+}
+
+function jatsToText(fragment: string): string {
+  let s = stripElements(fragment);
+  // Keep section headings on their own line, paragraphs separated.
+  s = s.replace(/<\/title\s*>/gi, '\n');
+  s = s.replace(/<\/(p|sec|abstract|list-item)\s*>/gi, '\n\n');
+  s = s.replace(/<[^>]*>/g, ' ');
+  s = decodeEntities(s);
+  s = s.replace(/[ \t\r\f\v]+/g, ' ');
+  s = s.replace(/ *\n */g, '\n');
+  s = s.replace(/\n{3,}/g, '\n\n');
+  return s.trim();
+}
+
+function firstElement(xml: string, tag: string): string | null {
+  const m = xml.match(
+    new RegExp(`<${tag}(\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, 'i'),
+  );
+  return m ? m[2] : null;
+}
+
+async function fetchEfetch(pmcid: string): Promise<string | null> {
+  const numeric = pmcid.replace(/^PMC/i, '');
+  const url =
+    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' +
+    encodeURIComponent(numeric) +
+    '&rettype=xml&tool=dmtcode&email=info@dmtcode.com';
+  const res = await ncbi(url);
+  if (!res.ok) throw new Error(`efetch_http_${res.status}`);
+  const xml = await res.text();
+  if (!xml || !xml.includes('<')) return null;
+
+  const cleaned = stripElements(xml);
+  const abstract = firstElement(cleaned, 'abstract');
+  const body = firstElement(cleaned, 'body');
+  const parts = [abstract, body]
+    .filter((v): v is string => !!v)
+    .map((v) => jatsToText(v))
+    .filter((v) => v.length > 0);
+  if (!parts.length) return null;
+  const text = parts.join('\n\n').trim();
+  return text.length ? text : null;
+}
+
+
+
 function truncateWords(text: string, max: number): { text: string; cut: boolean } {
   if (text.length <= max) return { text, cut: false };
   const slice = text.slice(0, max);
@@ -181,6 +278,7 @@ function attribution(opts: {
   doi: string;
   pmcid: string;
   license: string;
+  via?: 'bioc' | 'efetch';
 }): string {
   const head = [
     opts.authors,
@@ -192,14 +290,20 @@ function attribution(opts: {
     .filter(Boolean)
     .join('. ');
   const citation = (line ? line + '. ' : '') + `https://doi.org/${opts.doi}`;
+  const changes =
+    opts.via === 'efetch'
+      ? 'Changes made: full text extracted from the PubMed Central article XML, reference list, figures, ' +
+        'tables, funding and acknowledgement sections removed. No wording was altered. '
+      : 'Changes made: full text extracted from the PubMed Central BioC service, reference list, figures, ' +
+        'tables and funding statements removed. No wording was altered. ';
   return (
     '\n\nSource and licence\n' +
     citation +
     `\nPubMed Central ${opts.pmcid}. Distributed under ${opts.license}, ` +
     'https://creativecommons.org/licenses/by/4.0/ . Reproduced on dmtcode.com under that licence. ' +
-    'Changes made: full text extracted from the PubMed Central BioC service, reference list, figures, ' +
-    'tables and funding statements removed. No wording was altered. ' +
+    changes +
     `Retrieved ${new Date().toISOString().slice(0, 10)}.`
+
   );
 }
 
@@ -331,7 +435,7 @@ Deno.serve(async (req) => {
 
     // A permanent skip is recorded in full_text_source as 'skip:<reason>' so the
     // row leaves the candidate pool; retry_skipped=true selects exactly those.
-    const PERMANENT = /^(no_pmcid|retracted|too_short|license_)/;
+    const PERMANENT = /^(no_pmcid|retracted|too_short|license_|no_text_available)/;
     const markSkip = async (id: string, reason: string) => {
       if (dryRun || !PERMANENT.test(reason)) return;
       await db
@@ -405,14 +509,29 @@ Deno.serve(async (req) => {
         }
 
         const bioc = await fetchBioc(pmcid);
-        if (!bioc || bioc.text.length < MIN_CHARS) {
-          const reason = bioc ? 'too_short' : 'bioc_unavailable';
-          skipped.push({ id: row.id, title, reason });
-          await markSkip(row.id, reason);
-          continue;
+        let via: 'bioc' | 'efetch' = 'bioc';
+        let rawText = bioc?.text ?? '';
+
+        // BioC only indexes part of the OA subset; recent articles are absent.
+        if (rawText.length < MIN_CHARS) {
+          const efetchText = await fetchEfetch(pmcid);
+          if (efetchText && efetchText.length >= MIN_CHARS) {
+            rawText = efetchText;
+            via = 'efetch';
+          } else if (efetchText || bioc) {
+            skipped.push({ id: row.id, title, reason: 'too_short' });
+            await markSkip(row.id, 'too_short');
+            continue;
+          } else {
+            skipped.push({ id: row.id, title, reason: 'no_text_available' });
+            await markSkip(row.id, 'no_text_available');
+            continue;
+          }
         }
 
-        const { text: trimmed, cut } = truncateWords(bioc.text, MAX_CHARS);
+        const sourceTag = (via === 'efetch' ? 'pmc-efetch:' : 'pmc:') + pmcid;
+
+        const { text: trimmed, cut } = truncateWords(rawText, MAX_CHARS);
         const bodyText =
           trimmed +
           (cut
@@ -423,13 +542,14 @@ Deno.serve(async (req) => {
         const full =
           bodyText +
           attribution({
-            authors: authorsToString(row.authors) ?? bioc.meta.authors,
-            year: (pubDate ? pubDate.slice(0, 4) : null) ?? bioc.meta.year,
+            authors: authorsToString(row.authors) ?? bioc?.meta.authors ?? null,
+            year: (pubDate ? pubDate.slice(0, 4) : null) ?? bioc?.meta.year ?? null,
             title,
-            journal: clean(row.journal) ?? bioc.meta.journal,
+            journal: clean(row.journal) ?? bioc?.meta.journal ?? null,
             doi,
             pmcid,
             license: licenseRaw,
+            via,
           });
 
         if (dryRun) {
@@ -438,7 +558,7 @@ Deno.serve(async (req) => {
             title,
             chars: full.length,
             license: licenseRaw,
-            source: 'pmc:' + pmcid,
+            source: sourceTag,
           });
           continue;
         }
@@ -447,7 +567,7 @@ Deno.serve(async (req) => {
           .from('bibliography')
           .update({
             full_text: full,
-            full_text_source: 'pmc:' + pmcid,
+            full_text_source: sourceTag,
             full_text_license: licenseRaw,
             full_text_retrieved_at: new Date().toISOString(),
           })
@@ -460,8 +580,9 @@ Deno.serve(async (req) => {
           title,
           chars: full.length,
           license: licenseRaw,
-          source: 'pmc:' + pmcid,
+          source: sourceTag,
         });
+
       } catch (e) {
         skipped.push({
           id: row.id,
