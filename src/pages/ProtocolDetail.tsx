@@ -541,6 +541,31 @@ const ProtocolDetail = () => {
                 </Card>
   );
 
+  const card_related = (
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Related protocols</h2>
+      {content.related && content.related.length > 0 ? (
+        <ul className="space-y-4">
+          {content.related.map((related: any, i: number) => (
+            <li key={i} className="pb-4 border-b last:border-0">
+              <Link
+                to={localePath(locale, `/protocols/${related.slug}`)}
+                className="font-medium hover:underline"
+              >
+                {related.title}
+              </Link>
+              {related.why && (
+                <p className="text-sm text-muted-foreground mt-1">{related.why}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-muted-foreground">Related protocols coming soon.</p>
+      )}
+    </Card>
+  );
+
   return (
     <>
       <Helmet>
