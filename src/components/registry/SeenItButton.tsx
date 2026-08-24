@@ -57,14 +57,6 @@ export const SeenItButton = ({
     e.preventDefault();
     e.stopPropagation();
     if (isOwnSubmission) return;
-    if (!userId) {
-      trackGA('recognition_reveal_opened', {
-        symbol_id: symbolId,
-        seen_it_count: voteCounts.seenItCount,
-      });
-      setRevealOpen(true);
-      return;
-    }
     const wasSeen = userVotes.hasSeenIt;
     await seenIt();
     // Only offer the share nudge on a new recognition, not on toggle-off.
