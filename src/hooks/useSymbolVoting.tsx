@@ -93,13 +93,18 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
   };
 
   const loadUserVotes = async () => {
-    if (!userId) return;
-
-    const { data, error } = await supabase
+    let query = supabase
       .from('symbol_votes')
       .select('vote_type')
-      .eq('symbol_id', symbolId)
-      .eq('user_id', userId);
+      .eq('symbol_id', symbolId);
+
+    if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = (query as any).eq('session_id', sessionId).is('user_id', null);
+    }
+
+    const { data, error } = await query;
 
     if (!error && data) {
       setUserVotes({
