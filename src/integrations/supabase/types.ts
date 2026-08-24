@@ -2682,22 +2682,25 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          session_id: string
           symbol_id: string
-          user_id: string
+          user_id: string | null
           vote_type: Database["public"]["Enums"]["symbol_vote_type"]
         }
         Insert: {
           created_at?: string
           id?: string
+          session_id: string
           symbol_id: string
-          user_id: string
+          user_id?: string | null
           vote_type: Database["public"]["Enums"]["symbol_vote_type"]
         }
         Update: {
           created_at?: string
           id?: string
+          session_id?: string
           symbol_id?: string
-          user_id?: string
+          user_id?: string | null
           vote_type?: Database["public"]["Enums"]["symbol_vote_type"]
         }
         Relationships: [
