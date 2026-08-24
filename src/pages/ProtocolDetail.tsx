@@ -651,7 +651,7 @@ const ProtocolDetail = () => {
                 className="grid w-full mb-8"
                 style={{
                   gridTemplateColumns: `repeat(${
-                    5 + (showDosing ? 1 : 0) + (isClinicalMode ? 3 : 0)
+                    5 + (showDosing ? 1 : 0) + (isClinicalMode ? 3 : 0) + (showControlsRigor ? 1 : 0)
                   }, minmax(0, 1fr))`,
                 }}
               >
