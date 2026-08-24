@@ -840,6 +840,12 @@ const ProtocolDetail = () => {
                 {card_research}
               </div>
             </div>
+
+            {content.related && content.related.length > 0 && (
+              <div className="mt-10">
+                {card_related}
+              </div>
+            )}
           </section>
         </main>
 
