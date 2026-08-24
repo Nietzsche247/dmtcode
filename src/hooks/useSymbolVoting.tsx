@@ -223,7 +223,7 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [userId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
+  }, [userId, sessionId, symbolId, userVotes, isOwnSubmission, logReviewActivity]);
 
   return {
     userId,
