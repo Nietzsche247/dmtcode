@@ -179,6 +179,7 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
   const phase = params.get("phase");
   const stanceMin = params.get("stance_min");
   const stanceMax = params.get("stance_max");
+  const hasFullText = params.get("has_full_text");
   const q = params.get("q")?.toLowerCase();
   const limit = Math.min(parseInt(params.get("limit") || "5000", 10), 10000);
   const offset = parseInt(params.get("offset") || "0", 10);
@@ -206,6 +207,8 @@ function applyFilters(items: UnifiedItem[], params: URLSearchParams): UnifiedIte
     out = out.filter((i) => i.stance_score != null && i.stance_score >= parseInt(stanceMin, 10));
   if (stanceMax != null)
     out = out.filter((i) => i.stance_score != null && i.stance_score <= parseInt(stanceMax, 10));
+  if (hasFullText != null)
+    out = out.filter((i) => (i.has_full_text === true) === (hasFullText === "true"));
   if (q)
     out = out.filter((i) =>
       `${i.title} ${i.people.join(" ")} ${i.topic.join(" ")}`.toLowerCase().includes(q)
@@ -249,7 +252,7 @@ export default async (req: Request): Promise<Response> => {
   const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides, retreats] = await Promise.all([
     fetchAll(
       "bibliography",
-      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved",
+      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license",
       "is_approved=eq.true"
     ),
     fetchAll(
@@ -320,6 +323,8 @@ export default async (req: Request): Promise<Response> => {
       stance_score: (r.stance_score as number) ?? undefined,
       people,
       source_date: (r.source_date as string) || (r.publication_date as string) || undefined,
+      has_full_text: typeof r.full_text === "string" && (r.full_text as string).trim().length > 0,
+      full_text_license: (r.full_text_license as string) || undefined,
     });
   });
 
