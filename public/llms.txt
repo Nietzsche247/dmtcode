@@ -99,6 +99,10 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
 - [Prepare](/prepare): Four laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.
 - [Protocols](/protocols): Catalogue of psychedelic and laser protocols.
+- /protocols/wavelength-comparison: a pre-registered comparison of the protocol at 650, 532 and 405 nm. States the wavelength claim already in circulation, the absence of any published controlled test of it, and a commitment to publish the result whichever way it falls.
+- /protocols/sober-baseline: the control arm. Observation of the same apparatus with no substance. Requires no kit and no purchase.
+- /protocols/avp-passthrough: the Apple Vision Pro claim, stated in its narrow form. Distinguishes a claim about what a person perceives in a displayed image from a claim about what a camera recorded, and names the test that separates them.
+- /protocols/physiological-instrumentation: a dated register of what instrumented work has been announced and what has not, with acceptance criteria for EEG, ECG and MRI data and an open call for pre-registrations.
 - [Research](/research): Active research projects and findings.
 - [Bibliography](/bibliography): Research library. Filter by content type, authority, stance, tag, year, and person.
 - [Evidence Map](/evidence-map): Visual map of supporting and contradicting evidence.
