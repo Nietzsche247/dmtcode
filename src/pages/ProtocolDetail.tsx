@@ -685,6 +685,12 @@ const ProtocolDetail = () => {
                   <ClipboardList className="w-4 h-4 hidden md:block" />
                   Integration
                 </TabsTrigger>
+                {showControlsRigor && (
+                  <TabsTrigger value="controls-and-rigor" className="gap-1">
+                    <ClipboardList className="w-4 h-4 hidden md:block" />
+                    Controls and Rigor
+                  </TabsTrigger>
+                )}
                 {isClinicalMode && (
                   <TabsTrigger value="export" className="gap-1">
                     <Download className="w-4 h-4 hidden md:block" />
