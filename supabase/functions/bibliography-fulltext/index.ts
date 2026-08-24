@@ -278,6 +278,7 @@ function attribution(opts: {
   doi: string;
   pmcid: string;
   license: string;
+  via?: 'bioc' | 'efetch';
 }): string {
   const head = [
     opts.authors,
@@ -289,14 +290,20 @@ function attribution(opts: {
     .filter(Boolean)
     .join('. ');
   const citation = (line ? line + '. ' : '') + `https://doi.org/${opts.doi}`;
+  const changes =
+    opts.via === 'efetch'
+      ? 'Changes made: full text extracted from the PubMed Central article XML, reference list, figures, ' +
+        'tables, funding and acknowledgement sections removed. No wording was altered. '
+      : 'Changes made: full text extracted from the PubMed Central BioC service, reference list, figures, ' +
+        'tables and funding statements removed. No wording was altered. ';
   return (
     '\n\nSource and licence\n' +
     citation +
     `\nPubMed Central ${opts.pmcid}. Distributed under ${opts.license}, ` +
     'https://creativecommons.org/licenses/by/4.0/ . Reproduced on dmtcode.com under that licence. ' +
-    'Changes made: full text extracted from the PubMed Central BioC service, reference list, figures, ' +
-    'tables and funding statements removed. No wording was altered. ' +
+    changes +
     `Retrieved ${new Date().toISOString().slice(0, 10)}.`
+
   );
 }
 
