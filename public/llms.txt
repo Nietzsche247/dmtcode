@@ -110,6 +110,7 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - [Open Theories](/theories): Attributed explanatory frameworks. Candidate hypotheses, not evidence.
 - [Methods](/methods): Research methodology and protocol design.
 - [Critiques](/critiques): Limitations and counter arguments.
+- [The Discovery](/the-discovery): Dated record of the independent documentary about the 650 nm laser observation. Premiere window (Los Angeles area, late October to early November 2026), ticket status, and what is not announced. Distinct from the unrelated 2017 Netflix film of the same name.
 - [Null Reports](/null-reports): Public dashboard of negative and null replication results.
 - [Co-witness wall](/co-witnesses): Field notes from people who recognised the same symbol.
 - [Events](/events): Research timeline of community reported events and clinical trial milestones.

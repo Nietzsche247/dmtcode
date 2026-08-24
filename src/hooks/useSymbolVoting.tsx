@@ -167,8 +167,8 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
           .insert({
             symbol_id: symbolId,
             user_id: userId,
-            vote_type: voteType as any,
-          });
+            vote_type: voteType,
+          } as any);
 
         if (error) throw error;
 
