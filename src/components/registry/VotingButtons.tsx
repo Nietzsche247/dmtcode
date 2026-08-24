@@ -107,7 +107,7 @@ export const VotingButtons = ({
         <VoteButton
           onClick={isOwnSubmission ? () => handleSelfVoteAttempt('similar') : similar}
           isActive={userVotes.hasSimilar}
-          disabled={!userId}
+          disabled={false}
           icon={Layers}
           count={voteCounts.similarCount}
           label={isOwnSubmission ? "Can't vote on own submission" : "I've seen something similar"}
@@ -116,7 +116,7 @@ export const VotingButtons = ({
         <VoteButton
           onClick={isOwnSubmission ? () => handleSelfVoteAttempt('downvote') : downvote}
           isActive={userVotes.hasDownvoted}
-          disabled={!userId}
+          disabled={false}
           icon={ChevronDown}
           count={voteCounts.downvotes}
           label={isOwnSubmission ? "Can't vote on own submission" : "Downvote"}
@@ -125,7 +125,7 @@ export const VotingButtons = ({
         <VoteButton
           onClick={isOwnSubmission ? () => handleSelfVoteAttempt('seen_it') : seenIt}
           isActive={userVotes.hasSeenIt}
-          disabled={!userId}
+          disabled={false}
           icon={Eye}
           count={voteCounts.seenItCount}
           label={isOwnSubmission ? "Can't vote on own submission" : "I've seen this too"}
@@ -160,13 +160,12 @@ export const VotingButtons = ({
                   variant={userVotes.hasSimilar ? 'default' : 'outline'}
                   size="lg"
                   onClick={isOwnSubmission ? () => handleSelfVoteAttempt('similar') : similar}
-                  disabled={!userId || loading}
+                  disabled={loading}
                   className={cn(
                     'rounded-full w-14 h-14 p-0 transition-all duration-200',
                     userVotes.hasSimilar && 'bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30',
-                    !userId && 'opacity-50',
                     isOwnSubmission && 'opacity-60 cursor-not-allowed',
-                    !isOwnSubmission && userId && 'hover:scale-110'
+                    !isOwnSubmission && 'hover:scale-110'
                   )}
                   aria-label={isOwnSubmission ? "Can't vote on own submission" : "I've seen something similar"}
                 >
@@ -193,13 +192,12 @@ export const VotingButtons = ({
                   variant={userVotes.hasDownvoted ? 'default' : 'outline'}
                   size="lg"
                   onClick={isOwnSubmission ? () => handleSelfVoteAttempt('downvote') : downvote}
-                  disabled={!userId || loading}
+                  disabled={loading}
                   className={cn(
                     'rounded-full w-14 h-14 p-0 transition-all duration-200',
                     userVotes.hasDownvoted && 'bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/30',
-                    !userId && 'opacity-50',
                     isOwnSubmission && 'opacity-60 cursor-not-allowed',
-                    !isOwnSubmission && userId && 'hover:scale-110'
+                    !isOwnSubmission && 'hover:scale-110'
                   )}
                   aria-label={isOwnSubmission ? "Can't vote on own submission" : "Downvote symbol"}
                 >
@@ -226,13 +224,13 @@ export const VotingButtons = ({
               variant={userVotes.hasSeenIt ? 'default' : 'outline'}
               size="lg"
               onClick={isOwnSubmission ? () => handleSelfVoteAttempt('seen_it') : seenIt}
-              disabled={!userId || loading}
+              disabled={loading}
               className={cn(
                 'w-full transition-all duration-200',
                 userVotes.hasSeenIt && 'bg-primary shadow-lg shadow-primary/30',
                 !userId && 'opacity-50',
                 isOwnSubmission && 'opacity-60 cursor-not-allowed',
-                !isOwnSubmission && userId && 'hover:scale-[1.02]'
+                !isOwnSubmission && 'hover:scale-[1.02]'
               )}
               aria-label={isOwnSubmission ? "Can't vote on own submission" : "Mark as I've seen this too"}
             >
