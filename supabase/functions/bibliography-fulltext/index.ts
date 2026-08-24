@@ -509,14 +509,29 @@ Deno.serve(async (req) => {
         }
 
         const bioc = await fetchBioc(pmcid);
-        if (!bioc || bioc.text.length < MIN_CHARS) {
-          const reason = bioc ? 'too_short' : 'bioc_unavailable';
-          skipped.push({ id: row.id, title, reason });
-          await markSkip(row.id, reason);
-          continue;
+        let via: 'bioc' | 'efetch' = 'bioc';
+        let rawText = bioc?.text ?? '';
+
+        // BioC only indexes part of the OA subset; recent articles are absent.
+        if (rawText.length < MIN_CHARS) {
+          const efetchText = await fetchEfetch(pmcid);
+          if (efetchText && efetchText.length >= MIN_CHARS) {
+            rawText = efetchText;
+            via = 'efetch';
+          } else if (efetchText || bioc) {
+            skipped.push({ id: row.id, title, reason: 'too_short' });
+            await markSkip(row.id, 'too_short');
+            continue;
+          } else {
+            skipped.push({ id: row.id, title, reason: 'no_text_available' });
+            await markSkip(row.id, 'no_text_available');
+            continue;
+          }
         }
 
-        const { text: trimmed, cut } = truncateWords(bioc.text, MAX_CHARS);
+        const sourceTag = (via === 'efetch' ? 'pmc-efetch:' : 'pmc:') + pmcid;
+
+        const { text: trimmed, cut } = truncateWords(rawText, MAX_CHARS);
         const bodyText =
           trimmed +
           (cut
@@ -527,13 +542,14 @@ Deno.serve(async (req) => {
         const full =
           bodyText +
           attribution({
-            authors: authorsToString(row.authors) ?? bioc.meta.authors,
-            year: (pubDate ? pubDate.slice(0, 4) : null) ?? bioc.meta.year,
+            authors: authorsToString(row.authors) ?? bioc?.meta.authors ?? null,
+            year: (pubDate ? pubDate.slice(0, 4) : null) ?? bioc?.meta.year ?? null,
             title,
-            journal: clean(row.journal) ?? bioc.meta.journal,
+            journal: clean(row.journal) ?? bioc?.meta.journal ?? null,
             doi,
             pmcid,
             license: licenseRaw,
+            via,
           });
 
         if (dryRun) {
@@ -542,7 +558,7 @@ Deno.serve(async (req) => {
             title,
             chars: full.length,
             license: licenseRaw,
-            source: 'pmc:' + pmcid,
+            source: sourceTag,
           });
           continue;
         }
@@ -551,7 +567,7 @@ Deno.serve(async (req) => {
           .from('bibliography')
           .update({
             full_text: full,
-            full_text_source: 'pmc:' + pmcid,
+            full_text_source: sourceTag,
             full_text_license: licenseRaw,
             full_text_retrieved_at: new Date().toISOString(),
           })
@@ -564,8 +580,9 @@ Deno.serve(async (req) => {
           title,
           chars: full.length,
           license: licenseRaw,
-          source: 'pmc:' + pmcid,
+          source: sourceTag,
         });
+
       } catch (e) {
         skipped.push({
           id: row.id,
