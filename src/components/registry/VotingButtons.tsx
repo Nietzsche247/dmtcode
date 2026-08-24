@@ -228,7 +228,7 @@ export const VotingButtons = ({
               className={cn(
                 'w-full transition-all duration-200',
                 userVotes.hasSeenIt && 'bg-primary shadow-lg shadow-primary/30',
-                !userId && 'opacity-50',
+                
                 isOwnSubmission && 'opacity-60 cursor-not-allowed',
                 !isOwnSubmission && 'hover:scale-[1.02]'
               )}
@@ -263,7 +263,7 @@ export const VotingButtons = ({
 
       {!userId && (
         <p className="text-xs text-muted-foreground text-center">
-          <Link to={`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`} className="text-primary hover:underline">Log in</Link> to vote
+          Recorded on this device. <Link to={`/auth?returnTo=${encodeURIComponent(location.pathname + location.search)}`} className="text-primary hover:underline">Sign in</Link> to keep your record across devices.
         </p>
       )}
 
