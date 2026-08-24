@@ -376,6 +376,33 @@ const ProtocolDetail = () => {
                 </Card>
   );
 
+  const card_controls_and_rigor = (
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Controls and Rigor</h2>
+      {content.controls_and_rigor ? (
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-medium mb-2">Why these controls</h3>
+            <p className="text-muted-foreground">{content.controls_and_rigor.why}</p>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">Practices</h3>
+            <ul className="space-y-2">
+              {content.controls_and_rigor.practices?.map((item: string, i: number) => (
+                <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                  <ClipboardList className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <p className="text-muted-foreground">Controls and rigor documentation coming soon.</p>
+      )}
+    </Card>
+  );
+
   const card_export = (
     <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Data Export & EHR Integration</h2>
