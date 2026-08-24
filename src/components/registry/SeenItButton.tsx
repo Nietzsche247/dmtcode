@@ -58,9 +58,19 @@ export const SeenItButton = ({
     e.stopPropagation();
     if (isOwnSubmission) return;
     const wasSeen = userVotes.hasSeenIt;
-    await seenIt();
+    const ok = await seenIt();
     // Only offer the share nudge on a new recognition, not on toggle-off.
     if (wasSeen) return;
+    // Anonymous visitors: the recognition is already recorded. Invite them to
+    // claim and share it, never as a gate in front of the action.
+    if (ok && !userId) {
+      trackGA('recognition_reveal_opened', {
+        symbol_id: symbolId,
+        seen_it_count: voteCounts.seenItCount,
+      });
+      setRevealOpen(true);
+      return;
+    }
     // Suppress the toast when the CoWitnessInviteDialog is about to appear.
     // The invite dialog fires when localStorage cw_invite_seen is unset AND
     // there is no co_witness_prefs row. We approximate that here with the
