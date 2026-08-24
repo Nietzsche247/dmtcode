@@ -216,10 +216,18 @@ const SymbolDetail = () => {
       .eq('vote_type', 'seen_it')
       .limit(10);
 
-    if (votes && votes.length > 0) {
-      const userIds = votes.map(v => v.user_id).filter((v): v is string => !!v);
-      setMemberValidatorCount(userIds.length);
-      if (userIds.length === 0) return;
+    // Signed in members among the confirmations (anonymous rows have no avatar).
+    const { count: memberCount } = await supabase
+      .from('symbol_votes')
+      .select('*', { count: 'exact', head: true })
+      .eq('symbol_id', symbolId)
+      .eq('vote_type', 'seen_it')
+      .not('user_id', 'is', null);
+
+    setMemberValidatorCount(memberCount || 0);
+
+    const userIds = (votes || []).map(v => v.user_id).filter((v): v is string => !!v);
+    if (userIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')
         .select('id, handle, avatar_seed')
