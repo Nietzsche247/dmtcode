@@ -114,6 +114,7 @@ const SymbolDetail = () => {
   const [communityTags, setCommunityTags] = useState<Array<{ name: string; count: number }>>([]);
   const [contributor, setContributor] = useState<ContributorData | null>(null);
   const [validators, setValidators] = useState<Validator[]>([]);
+  const [memberValidatorCount, setMemberValidatorCount] = useState(0);
   const [relatedSymbols, setRelatedSymbols] = useState<RelatedSymbol[]>([]);
   const [validationCount, setValidationCount] = useState(0);
   const [viewCount, setViewCount] = useState(0);
@@ -216,7 +217,9 @@ const SymbolDetail = () => {
       .limit(10);
 
     if (votes && votes.length > 0) {
-      const userIds = votes.map(v => v.user_id);
+      const userIds = votes.map(v => v.user_id).filter((v): v is string => !!v);
+      setMemberValidatorCount(userIds.length);
+      if (userIds.length === 0) return;
       const { data: profiles } = await supabase
         .from('profiles')
         .select('id, handle, avatar_seed')
@@ -543,9 +546,12 @@ const SymbolDetail = () => {
                 {/* Validators */}
                 {validators.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium mb-2">
+                    <h3 className="text-sm font-medium mb-1">
                       Recognized after seeing it here ({validationCount})
                     </h3>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {memberValidatorCount} of these confirmations are from signed in members. The rest were recorded anonymously.
+                    </p>
                     <div className="flex -space-x-2">
                       {validators.slice(0, 8).map((v, i) => (
                         <AvatarGlyph key={i} seed={v.avatar_seed || v.user_id} handle={v.handle || undefined} size={32} className="border-2 border-background" />
