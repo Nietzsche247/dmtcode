@@ -56,6 +56,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/the-discovery"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/null-reports"
   function = "content-prerender"
 

@@ -2478,6 +2478,7 @@ export const config: Config = {
     "/dataset",
     "/about",
     "/critiques",
+    "/the-discovery",
     "/null-reports",
     "/glossary",
     "/methods",

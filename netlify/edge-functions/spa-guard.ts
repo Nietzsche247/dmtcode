@@ -11,7 +11,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const VALID_FIRST_SEGMENT = new Set<string>([
   // Prerendered pages
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
-  "about", "critiques", "null-reports", "glossary", "methods",
+  "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats",
   // Client only app routes that must stay 200 for humans
