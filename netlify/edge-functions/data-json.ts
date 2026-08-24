@@ -539,6 +539,9 @@ export default async (req: Request): Promise<Response> => {
   const symbolsUnreviewed = symbols.filter(
     (r) => String(r.moderation_status ?? "") === "unreviewed",
   ).length;
+  const bibliographyWithFullText = bib.filter(
+    (r) => typeof r.full_text === "string" && (r.full_text as string).trim().length > 0,
+  ).length;
 
   // Published verbatim from the column comments on symbol_submissions so the
   // export and the database can never drift apart in what they claim a field means.
@@ -557,6 +560,8 @@ export default async (req: Request): Promise<Response> => {
     upvote_count: "How many signed in readers pressed the older generic upvote control. It is a popularity signal only and carries no evidential weight. The key is omitted when the vote table could not be read.",
     record_class: "curated_starter = added by the site operator as an illustrative example. community_observation = submitted by an account holder reporting their own experience.",
     counts_toward_evidence: "False for curated examples, true for observer submissions. This field says whether the row may enter a convergence count at all. It says nothing about whether the row has been reviewed.",
+    has_full_text: "True when this record carries the article's full text on its detail page at /bibliography/{id}, where it is also emitted in the JSON-LD text property so it can be quoted directly. Full text is only ever stored for sources published under CC BY or CC0, and the required attribution travels inside the text itself.",
+    full_text_license: "The licence the full text was published under, as reported by the source at the time of retrieval. Null when no full text is stored. Records under non-commercial or ShareAlike licences are deliberately not ingested, because this dataset is redistributed under CC-BY-4.0.",
   };
 
   const body = {
@@ -578,6 +583,7 @@ export default async (req: Request): Promise<Response> => {
       phase: phaseVocab,
       stance_min: "integer, inclusive lower bound",
       stance_max: "integer, inclusive upper bound",
+      has_full_text: "true or false. Filters bibliography rows on whether the row carries full text on its detail page at /bibliography/{id}.",
       q: "free text over title, people, topic",
       limit: "max 10000, default 5000",
       offset: "pagination offset",
@@ -589,6 +595,7 @@ export default async (req: Request): Promise<Response> => {
       total: items.length,
       returned: filtered.length,
       bibliography: bibItems.length,
+      bibliography_with_full_text: bibliographyWithFullText,
       trials: trialItems.length,
       symbols: symbolItems.length,
       symbols_community: symbolsCommunity,
