@@ -95,6 +95,7 @@ const ProtocolDetail = () => {
   const StatusIcon = status.icon;
   const isClinicalMode = content.clinical_mode === true;
   const showDosing = Array.isArray(content.dosing) && content.dosing.length > 0;
+  const showControlsRigor = content.controls_and_rigor != null;
   // The dmt-laser set/setting copy in the database describes the laser without
   // naming the diffraction grating in the beam path; render that detail here
   // rather than depending on a database edit.
@@ -375,6 +376,33 @@ const ProtocolDetail = () => {
                 </Card>
   );
 
+  const card_controls_and_rigor = (
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Controls and Rigor</h2>
+      {content.controls_and_rigor ? (
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-medium mb-2">Why these controls</h3>
+            <p className="text-muted-foreground">{content.controls_and_rigor.why}</p>
+          </div>
+          <div>
+            <h3 className="font-medium mb-2">Practices</h3>
+            <ul className="space-y-2">
+              {content.controls_and_rigor.practices?.map((item: string, i: number) => (
+                <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                  <ClipboardList className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <p className="text-muted-foreground">Controls and rigor documentation coming soon.</p>
+      )}
+    </Card>
+  );
+
   const card_export = (
     <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Data Export & EHR Integration</h2>
@@ -513,6 +541,31 @@ const ProtocolDetail = () => {
                 </Card>
   );
 
+  const card_related = (
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4">Related protocols</h2>
+      {content.related && content.related.length > 0 ? (
+        <ul className="space-y-4">
+          {content.related.map((related: any, i: number) => (
+            <li key={i} className="pb-4 border-b last:border-0">
+              <Link
+                to={localePath(locale, `/protocols/${related.slug}`)}
+                className="font-medium hover:underline"
+              >
+                {related.title}
+              </Link>
+              {related.why && (
+                <p className="text-sm text-muted-foreground mt-1">{related.why}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-muted-foreground">Related protocols coming soon.</p>
+      )}
+    </Card>
+  );
+
   return (
     <>
       <Helmet>
@@ -598,7 +651,7 @@ const ProtocolDetail = () => {
                 className="grid w-full mb-8"
                 style={{
                   gridTemplateColumns: `repeat(${
-                    5 + (showDosing ? 1 : 0) + (isClinicalMode ? 3 : 0)
+                    5 + (showDosing ? 1 : 0) + (isClinicalMode ? 3 : 0) + (showControlsRigor ? 1 : 0)
                   }, minmax(0, 1fr))`,
                 }}
               >
@@ -632,6 +685,12 @@ const ProtocolDetail = () => {
                   <ClipboardList className="w-4 h-4 hidden md:block" />
                   Integration
                 </TabsTrigger>
+                {showControlsRigor && (
+                  <TabsTrigger value="controls-and-rigor" className="gap-1">
+                    <ClipboardList className="w-4 h-4 hidden md:block" />
+                    Controls and Rigor
+                  </TabsTrigger>
+                )}
                 {isClinicalMode && (
                   <TabsTrigger value="export" className="gap-1">
                     <Download className="w-4 h-4 hidden md:block" />
@@ -671,6 +730,11 @@ const ProtocolDetail = () => {
 
               {/* Integration Tab */}
               <TabsContent value="integration">{card_integration}</TabsContent>
+
+              {/* Controls and Rigor Tab */}
+              {showControlsRigor && (
+                <TabsContent value="controls-and-rigor">{card_controls_and_rigor}</TabsContent>
+              )}
 
               {/* Data Export Tab (Clinical Only) */}
               {isClinicalMode && (
@@ -740,6 +804,16 @@ const ProtocolDetail = () => {
                 {card_integration}
               </div>
 
+              {showControlsRigor && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <ClipboardList className="w-4 h-4" aria-hidden="true" />
+                    Controls and Rigor
+                  </h2>
+                  {card_controls_and_rigor}
+                </div>
+              )}
+
               {isClinicalMode && (
                 <div>
                   <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -766,6 +840,12 @@ const ProtocolDetail = () => {
                 {card_research}
               </div>
             </div>
+
+            {content.related && content.related.length > 0 && (
+              <div className="mt-10">
+                {card_related}
+              </div>
+            )}
           </section>
         </main>
 
