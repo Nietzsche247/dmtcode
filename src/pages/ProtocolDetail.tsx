@@ -731,6 +731,11 @@ const ProtocolDetail = () => {
               {/* Integration Tab */}
               <TabsContent value="integration">{card_integration}</TabsContent>
 
+              {/* Controls and Rigor Tab */}
+              {showControlsRigor && (
+                <TabsContent value="controls-and-rigor">{card_controls_and_rigor}</TabsContent>
+              )}
+
               {/* Data Export Tab (Clinical Only) */}
               {isClinicalMode && (
                 <TabsContent value="export">{card_export}</TabsContent>
