@@ -115,12 +115,20 @@ async function fetchBioc(
     '/unicode';
   const res = await ncbi(url);
   if (!res.ok) throw new Error(`bioc_http_${res.status}`);
+  const raw = await res.text();
+  const head = raw.trimStart().slice(0, 200);
+  // BioC returns HTTP 200 with an HTML/plain error page for articles it has not
+  // indexed yet. That is a miss, not an error: fall back to efetch.
+  if (head.startsWith('[Error]') || raw.includes('No result can be found')) {
+    return null;
+  }
   let doc: unknown;
   try {
-    doc = await res.json();
+    doc = JSON.parse(raw);
   } catch {
-    throw new Error('bioc_parse_failed');
+    return null;
   }
+
   const collection = Array.isArray(doc) ? doc[0] : doc;
   const document = (collection as { documents?: unknown[] })?.documents?.[0] as
     | { passages?: Array<{ text?: string; infons?: Record<string, unknown> }> }
