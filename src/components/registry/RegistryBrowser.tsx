@@ -7,6 +7,7 @@ import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
 import { Skeleton } from '@/components/ui/skeleton';
+import { RegistryDoor } from './RegistryDoor';
 
 const RESONANCE_MIN_RESPONSES = 5;
 
@@ -367,26 +368,20 @@ export const RegistryBrowser = () => {
 
   return (
     <section id="browse" className="container mx-auto px-4 py-16">
-      {/* Header with CTA */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-        <div>
-          <h2 className="text-3xl md:text-4xl font-bold text-center md:text-left mb-2">
-            Browse Registry
-          </h2>
-          <p className="text-muted-foreground text-center md:text-left">
-            Every symbol in the record, in one list
-          </p>
-        </div>
-        <Button 
-          size="lg"
-          className="rounded-full px-8 btn-lickable border-beam group"
-          onClick={() => navigate('/submit-symbol')}
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Contribute Your Symbol
-          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-        </Button>
+      {/* Header */}
+      <div className="mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-center md:text-left mb-2">
+          Browse Registry
+        </h2>
+        <p className="text-muted-foreground text-center md:text-left">
+          Every symbol in the record, in one list
+        </p>
       </div>
+
+      {/* Segmentation door: first-time visitors answer one question before the
+          browse view opens. Returning visitors see their answer and a change
+          affordance above the list. */}
+      <RegistryDoor>
 
       {/* Credibility Legend */}
       <div className="mb-8 border-t border-border pt-4">
@@ -520,6 +515,7 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
+      </RegistryDoor>
     </section>
   );
 };
