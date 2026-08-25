@@ -912,7 +912,7 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <h3>Outside the US</h3>
     <p>Checkout offers shipping to Canada, the UK, the EU, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.</p>
     <h3>Returns</h3>
-    <p>Unopened kits can be returned within 30 days of delivery. Opened laser modules and protective eyewear are not returnable, since these are precision optics and personal safety items. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.</p>
+    <p>Unopened kits can be returned within 30 days of delivery. Opened laser modules are not returnable, since these are precision optical instruments that cannot be recalibrated or resold once the seal is broken. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.</p>
     <h3>Damaged or defective</h3>
     <p>If a kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the item and packaging. We replace the affected component or the full kit at no cost.</p>
     <p>Seller of record: Meridian Optics Lab, Tucson, Arizona. Checkout runs on Shopify. Questions: <a href="mailto:info@dmtcode.com">info@dmtcode.com</a>, answered within 2 business days. <a href="${SITE}/returns">Full policies</a></p>
