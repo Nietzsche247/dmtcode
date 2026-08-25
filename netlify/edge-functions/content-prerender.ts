@@ -1063,11 +1063,20 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     : "");
 
   const html = renderShell(await shellRes.text(), head, body, locale);
-  // The /prepare response is cached at the edge (netlify-cdn-cache-control has
+  // The CDN cache key ignores the query string, so a ?geo= override render must
+  // never be stored: bypass the cache entirely on that path. Without an
+  // override the response is cached at the edge (netlify-cdn-cache-control has
   // s-maxage and durable), so cached copies must vary per country.
+  const usedOverride = /^[A-Z]{2}$/.test(urlGeo);
   return new Response(html, {
     status: 200,
-    headers: { ...PRERENDER_RESP_HEADERS, "netlify-vary": "country" },
+    headers: usedOverride
+      ? {
+          ...PRERENDER_RESP_HEADERS,
+          "cache-control": "private, no-store",
+          "netlify-cdn-cache-control": "no-store",
+        }
+      : { ...PRERENDER_RESP_HEADERS, "netlify-vary": "country" },
   });
 }
 
