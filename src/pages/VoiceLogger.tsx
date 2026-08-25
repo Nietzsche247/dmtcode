@@ -213,7 +213,7 @@ const VoiceLogger = () => {
           user_id: userId,
           session_id: sessionId,
           protocol_id: protocolId,
-          audio_url: publicUrl,
+          audio_url: fileName,
           duration_seconds: duration,
           tags: selectedProtocol ? [selectedProtocol] : [],
           is_analyzed: false,
@@ -222,7 +222,12 @@ const VoiceLogger = () => {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        // Never leave an orphan: an uploaded object with no row is invisible
+        // to its owner and impossible to delete from the UI.
+        await supabase.storage.from('voice-logs').remove([fileName]);
+        throw insertError;
+      }
 
       toast.success(isClinicalMode 
         ? 'Clinical session log submitted! Generating report...' 
