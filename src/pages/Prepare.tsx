@@ -75,6 +75,9 @@ function KitCard({ kit }: { kit: Kit }) {
         >
           Buy. Secure Shopify checkout
         </a>
+        <div className="mt-2 text-xs text-muted-foreground">
+          30-day returns on unopened kits. Free US shipping.
+        </div>
       </div>
 
     </Card>
@@ -179,6 +182,43 @@ const Prepare = () => {
                 </ul>
               </div>
             </header>
+
+            <div data-block="shipping-returns" className="mb-10">
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Before you buy
+              </div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+                {[
+                  {
+                    title: 'Shipping',
+                    body: 'Free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days. You get a tracking email the moment it ships. Kits ship from Arbor Scientific in Arbor packaging with no prices on the packing slip.',
+                  },
+                  {
+                    title: 'Outside the US',
+                    body: "Checkout offers shipping to Canada, the UK, the EU, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.",
+                  },
+                  {
+                    title: 'Returns',
+                    body: 'Unopened kits can be returned within 30 days of delivery. Opened laser modules and protective eyewear are not returnable, since these are precision optics and personal safety items. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.',
+                  },
+                  {
+                    title: 'Damaged or defective',
+                    body: 'If a kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the item and packaging. We replace the affected component or the full kit at no cost.',
+                  },
+                ].map((item) => (
+                  <Card key={item.title} className="p-5 rounded-2xl border border-border/60">
+                    <h3 className="font-black text-sm">{item.title}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{item.body}</p>
+                  </Card>
+                ))}
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground">
+                Seller of record: Meridian Optics Lab, Tucson, Arizona. Checkout runs on Shopify. Questions:{' '}
+                <a href="mailto:info@dmtcode.com" className="underline hover:text-foreground">info@dmtcode.com</a>, answered within 2 business days.{' '}
+                <a href="/returns" className="underline hover:text-foreground">Full policies</a>
+              </p>
+            </div>
+
 
             <div className="grid md:grid-cols-2 gap-6 items-stretch">
               {KITS.map((k) => (
