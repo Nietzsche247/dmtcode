@@ -167,6 +167,9 @@ export const SubmissionPreview = ({
         <p className="text-sm text-muted-foreground">
           By submitting, your symbol and metadata are added to the public registry under the CC-BY-4.0 license for research purposes. It publishes immediately. There is no queue in front of it. An administrator has 72 hours to review it and deny it.
         </p>
+        <p className="text-sm text-muted-foreground mt-2">
+          Records added to the registry are published under CC BY 4.0 so they can be cited and reused. You can ask for yours to be removed at any time by emailing info@dmtcode.com.
+        </p>
       </div>
 
       {/* Navigation */}
