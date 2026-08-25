@@ -18,10 +18,10 @@ const SELLER_LINE =
   'Full cards at /prepare, machine copy at /shop.json.';
 
 const SHOP_JSON_LINE =
-  '- /shop.json: the three research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
+  '- /shop.json: the four research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
 
 const PREPARE_PAGE_LINE =
-  '- [Prepare](/prepare): Four laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.';
+  '- [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.';
 
 function observerPhrase(kit) {
   return kit.observers === '1' ? '1 observer' : `${kit.observers} observers`;
