@@ -52,11 +52,11 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 ## Machine endpoints
 
 - /data.json: unified JSON of every bibliography row, every clinical trial, and every published symbol whose contributor granted publication_consent, with the facets above. The symbols array is therefore a consented subset of the registry, not the full registry: the registry pages at /registry show every approved symbol, and the difference in counts is by design, not an error. Accepts filter query params: content_type, compound, topic, authority_type, person, status, verification, phase, evidence_status, moderation_status, stance_min, stance_max, q, limit, offset. The top level "filters" object documents each param inline, and the top level "field_definitions" object defines every symbol status and count field in plain language. CC-BY-4.0.
-- /shop.json: the three research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url), seller Meridian Optics Lab, support_email. CC-BY-4.0.
+- /shop.json: the four research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url), seller Meridian Optics Lab, support_email. CC-BY-4.0.
 - /articles.json: full published article corpus in one document. Each article carries slug, title, dek, full body, author, published_at, updated_at, topic_tags, compounds, and a citations array of URLs on dmtcode.com that the article rests on. CC-BY-4.0.
 - /articles/feed.xml: RSS 2.0 feed of published articles, newest first, with the full body in content:encoded.
 - /dataset: HTML index of the machine readable corpus with schema.org Dataset metadata. CC-BY-4.0.
-- /prepare: HTML page of kits and group bundles with ItemList, Product, FAQPage, Dataset, and BreadcrumbList JSON-LD. CC-BY-4.0.
+- /prepare: HTML page of the four research kits with Organization, WebSite, BreadcrumbList, ItemList and Product JSON-LD (each Product carries shippingDetails and hasMerchantReturnPolicy). CC-BY-4.0.
 - /bibliography: HTML index. Head emits a schema.org Dataset with an ItemList of featured rows. Each list item carries stanceScore and authority as additionalProperty.
 - /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. Where the source was published under CC BY or CC0, the article's full text is included in the "text" property so language models can quote it directly, with the required attribution carried inside the text itself. 45 of 194 approved records currently carry full text. Filter for them with /data.json?has_full_text=true, and read the licence from each row's full_text_license field. Records under non-commercial or ShareAlike licences are deliberately not reproduced.
 - /trials: HTML index of clinical trials.
@@ -97,7 +97,7 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - [Symbol Registry](/registry): Browse and submit symbols with structured metadata and community validation.
 - [Chronology](/timeline): Every source as a dated record, sortable by date, person, place or kind of evidence.
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
-- [Prepare](/prepare): Four laser diffraction research kits (Solo, Triad, Circle), screening notes, free protocol PDFs, and secure Shopify checkout.
+- [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.
 - [Protocols](/protocols): Catalogue of psychedelic and laser protocols.
 - /protocols/wavelength-comparison: a pre-registered comparison of the protocol at 650, 532 and 405 nm. States the wavelength claim already in circulation, the absence of any published controlled test of it, and a commitment to publish the result whichever way it falls.
 - /protocols/sober-baseline: the control arm. Observation of the same apparatus with no substance. Requires no kit and no purchase.
