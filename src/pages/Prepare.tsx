@@ -75,6 +75,9 @@ function KitCard({ kit }: { kit: Kit }) {
         >
           Buy. Secure Shopify checkout
         </a>
+        <div className="mt-2 text-xs text-muted-foreground">
+          30-day returns on unopened kits. Free US shipping.
+        </div>
       </div>
 
     </Card>
