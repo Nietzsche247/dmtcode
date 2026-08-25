@@ -30,7 +30,7 @@ const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'netlify/edge-functions/content-prerender.ts', why: 'REGISTRY_REPORT_LD identifier, mirrors Registry.tsx' },
   { doi: '22101522', file: 'src/components/registry/RegistryBrowser.tsx', why: 'download block, names the Volume 1 file' },
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },
-  { doi: '21987511', file: 'src/lib/constants.ts', why: 'comment only, explains why the version DOI is not used' },
+  { doi: '21987511', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, explains why the version DOI is not used' },
   { doi: '17816520', file: 'netlify/edge-functions/content-prerender.ts', why: 'version history list item, names the superseded v1.0 deposit' },
 ];
 
@@ -77,7 +77,20 @@ for (const file of files) {
     }
     seen.set(id, (seen.get(id) || 0) + 1);
     if (meta.kind === 'version') {
-      const allowed = VERSION_ALLOWLIST.some((a) => a.doi === id && a.file === file.split('\\').join('/'));
+      const normalised = file.split('\\').join('/');
+      const entry = VERSION_ALLOWLIST.find((a) => a.doi === id && a.file === normalised);
+      let allowed = Boolean(entry);
+      if (entry && entry.commentOnly) {
+        const lineText = text.split('\n')[line - 1] || '';
+        const trimmed = lineText.trimStart();
+        allowed = trimmed.startsWith('//') || trimmed.startsWith('*');
+        if (!allowed) {
+          problems.push(
+            `VERSION DOI zenodo.${id} is allowlisted in ${normalised} for COMMENTS ONLY, but this occurrence is live code.\n    at ${file}:${line}\n    ${lineText.trim()}`
+          );
+          continue;
+        }
+      }
       if (!allowed) {
         problems.push(
           `VERSION DOI used as a living pointer: zenodo.${id} (${meta.what})\n    at ${file}:${line}\n` +
