@@ -265,7 +265,7 @@ export default async (request: Request, context: Context) => {
 
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
-      return await renderPrepare(context, locale);
+      return await renderPrepare(context, request, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context, locale);
@@ -776,8 +776,114 @@ export default async (request: Request, context: Context) => {
   }
 };
 
-async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Response> {
+const PREPARE_BUY_COPY = {
+  en: {
+    eyebrow: "Before you buy",
+    shipping: {
+      title: "Shipping",
+      body: "Free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days. You get a tracking email the moment it ships. Kits ship from Arbor Scientific in Arbor packaging with no prices on the packing slip.",
+    },
+    outside: {
+      title: "Outside the US",
+      body: "Checkout offers shipping to Canada, the UK, most EU countries, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.",
+    },
+    returns: {
+      title: "Returns",
+      body: "Unopened kits can be returned within 30 days of delivery. Opened laser modules are not returnable, since these are precision optical instruments that cannot be recalibrated or resold once the seal is broken. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.",
+    },
+    damaged: {
+      title: "Damaged or defective",
+      body: "If a kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the item and packaging. We replace the affected component or the full kit at no cost.",
+    },
+    sellerPrefix: "Seller of record: Meridian Optics Lab, Tucson, Arizona. Checkout runs on Shopify.",
+    sellerQuestions: "Questions: info@dmtcode.com, answered within 2 business days.",
+    sellerPolicies: "Full policies",
+    cardLine: "30-day returns on unopened kits. Free US shipping.",
+    geoShips: "You appear to be in {country}. Shipping there is calculated at checkout (USPS or DHL Express) and shown before you pay.",
+    geoNoShip: "You appear to be in {country}. We do not ship there yet. Email info@dmtcode.com and we will tell you when that changes.",
+  },
+  es: {
+    eyebrow: "Antes de comprar",
+    shipping: {
+      title: "Envío",
+      body: "Envío gratuito dentro de Estados Unidos. Los pedidos se procesan en 2 días hábiles y llegan en 7 a 10 días hábiles. Recibirá un correo con el número de seguimiento en cuanto salga el paquete. Los kits se envían desde Arbor Scientific en embalaje de Arbor, sin precios en el albarán.",
+    },
+    outside: {
+      title: "Fuera de Estados Unidos",
+      body: "El pago ofrece envío a Canadá, Reino Unido, la mayoría de los países de la UE, Suiza, Noruega, Australia, Nueva Zelanda, Japón, Singapur, Hong Kong, Corea del Sur, Malasia, Israel y Emiratos Árabes Unidos. La tarifa del transportista (USPS o DHL Express) se muestra antes de pagar. Los aranceles y los impuestos de importación corren a cargo del comprador.",
+    },
+    returns: {
+      title: "Devoluciones",
+      body: "Los kits sin abrir pueden devolverse en un plazo de 30 días desde la entrega. Los módulos láser abiertos no admiten devolución, ya que son instrumentos ópticos de precisión que no pueden recalibrarse ni revenderse una vez roto el precinto. El envío de la devolución lo paga el comprador. Los reembolsos aprobados se abonan al método de pago original en un plazo de 10 días hábiles desde la recepción.",
+    },
+    damaged: {
+      title: "Dañado o defectuoso",
+      body: "Si el kit llega dañado o algún componente es defectuoso, escriba a info@dmtcode.com en los 7 días siguientes a la entrega con fotos del artículo y del embalaje. Sustituimos el componente afectado o el kit completo sin coste.",
+    },
+    sellerPrefix: "Vendedor: Meridian Optics Lab, Tucson, Arizona. El pago se realiza en Shopify.",
+    sellerQuestions: "Consultas: info@dmtcode.com, respuesta en 2 días hábiles.",
+    sellerPolicies: "Políticas completas",
+    cardLine: "Devoluciones en 30 días para kits sin abrir. Envío gratuito en EE. UU.",
+    geoShips: "Parece que está en {country}. El envío hasta allí se calcula al pagar (USPS o DHL Express) y se muestra antes del pago.",
+    geoNoShip: "Parece que está en {country}. Todavía no enviamos allí. Escriba a info@dmtcode.com y le avisaremos cuando cambie.",
+  },
+  de: {
+    eyebrow: "Vor dem Kauf",
+    shipping: {
+      title: "Versand",
+      body: "Kostenloser Versand innerhalb der USA. Bestellungen werden innerhalb von 2 Werktagen bearbeitet und kommen innerhalb von 7 bis 10 Werktagen an. Sobald das Paket unterwegs ist, erhalten Sie eine E-Mail mit der Sendungsverfolgung. Die Kits werden von Arbor Scientific in Arbor-Verpackung verschickt, ohne Preise auf dem Lieferschein.",
+    },
+    outside: {
+      title: "Außerhalb der USA",
+      body: "Beim Bezahlen wird Versand nach Kanada, Großbritannien, in die meisten EU-Länder, in die Schweiz, nach Norwegen, Australien, Neuseeland, Japan, Singapur, Hongkong, Südkorea, Malaysia, Israel und in die Vereinigten Arabischen Emirate angeboten. Der Tarif des Versanddienstleisters (USPS oder DHL Express) wird vor der Zahlung angezeigt. Zölle und Einfuhrsteuern trägt der Käufer.",
+    },
+    returns: {
+      title: "Rückgabe",
+      body: "Ungeöffnete Kits können innerhalb von 30 Tagen nach Lieferung zurückgegeben werden. Geöffnete Lasermodule sind von der Rückgabe ausgeschlossen, da es sich um optische Präzisionsinstrumente handelt, die nach dem Brechen des Siegels weder neu kalibriert noch weiterverkauft werden können. Die Rücksendekosten trägt der Käufer. Genehmigte Erstattungen gehen innerhalb von 10 Werktagen nach Eingang an die ursprüngliche Zahlungsmethode zurück.",
+    },
+    damaged: {
+      title: "Beschädigt oder defekt",
+      body: "Kommt ein Kit beschädigt an oder ist ein Bauteil defekt, schreiben Sie innerhalb von 7 Tagen nach Lieferung an info@dmtcode.com und fügen Sie Fotos des Artikels und der Verpackung bei. Wir ersetzen das betroffene Bauteil oder das komplette Kit kostenlos.",
+    },
+    sellerPrefix: "Verkäufer: Meridian Optics Lab, Tucson, Arizona. Die Zahlung läuft über Shopify.",
+    sellerQuestions: "Fragen: info@dmtcode.com, Antwort innerhalb von 2 Werktagen.",
+    sellerPolicies: "Alle Richtlinien",
+    cardLine: "30 Tage Rückgaberecht für ungeöffnete Kits. Kostenloser Versand in den USA.",
+    geoShips: "Sie scheinen sich in {country} zu befinden. Der Versand dorthin wird beim Bezahlen berechnet (USPS oder DHL Express) und vor der Zahlung angezeigt.",
+    geoNoShip: "Sie scheinen sich in {country} zu befinden. Dorthin versenden wir noch nicht. Schreiben Sie an info@dmtcode.com, wir melden uns, sobald sich das ändert.",
+  },
+} as const;
+
+const SHIP_TO = new Set([
+  "US","AE","AT","AU","BE","CA","CH","CZ","DE","DK","ES","FI","FR","GB","HK",
+  "IE","IL","IT","JP","KR","MY","NL","NO","NZ","PL","PT","SE","SG",
+]);
+
+function prepareBuyCopy(locale: Loc) {
+  return (PREPARE_BUY_COPY as Record<string, typeof PREPARE_BUY_COPY.en>)[locale] || PREPARE_BUY_COPY.en;
+}
+
+function regionLabel(code: string, locale: Loc): string {
+  try {
+    return new Intl.DisplayNames([locale], { type: "region" }).of(code) || code;
+  } catch (_e) {
+    return code;
+  }
+}
+
+async function renderPrepare(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
+
+  const urlGeo = (new URL(request.url).searchParams.get("geo") || "").toUpperCase();
+  const geoCtx = (context as unknown as { geo?: { country?: { code?: string } } }).geo;
+  const detected = ((geoCtx && geoCtx.country && geoCtx.country.code) || "").toUpperCase();
+  const country = /^[A-Z]{2}$/.test(urlGeo) ? urlGeo : detected;
+  const ships = SHIP_TO.has(country);
+  const buy = prepareBuyCopy(locale);
+  const geoSentence =
+    country && country !== "US"
+      ? (ships ? buy.geoShips : buy.geoNoShip).replace("{country}", regionLabel(country, locale))
+      : "";
 
   const canonical = `${SITE}/prepare`;
   const prepareCopy = uiCopy("prepare", locale);
@@ -906,16 +1012,16 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     <p>Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <section data-block="shipping-returns">
-    <h2>Before you buy</h2>
-    <h3>Shipping</h3>
-    <p>Free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days. You get a tracking email the moment it ships. Kits ship from Arbor Scientific in Arbor packaging with no prices on the packing slip.</p>
-    <h3>Outside the US</h3>
-    <p>Checkout offers shipping to Canada, the UK, the EU, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.</p>
-    <h3>Returns</h3>
-    <p>Unopened kits can be returned within 30 days of delivery. Opened laser modules are not returnable, since these are precision optical instruments that cannot be recalibrated or resold once the seal is broken. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.</p>
-    <h3>Damaged or defective</h3>
-    <p>If a kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the item and packaging. We replace the affected component or the full kit at no cost.</p>
-    <p>Seller of record: Meridian Optics Lab, Tucson, Arizona. Checkout runs on Shopify. Questions: <a href="mailto:info@dmtcode.com">info@dmtcode.com</a>, answered within 2 business days. <a href="${SITE}/returns">Full policies</a></p>
+    <h2>${esc(buy.eyebrow)}</h2>
+    <h3>${esc(buy.shipping.title)}</h3>
+    <p>${esc(buy.shipping.body)}</p>
+    <h3>${esc(buy.outside.title)}</h3>
+    <p>${esc(buy.outside.body)}${geoSentence ? ` <span data-geo="${esc(country)}">${esc(geoSentence)}</span>` : ""}</p>
+    <h3>${esc(buy.returns.title)}</h3>
+    <p>${esc(buy.returns.body)}</p>
+    <h3>${esc(buy.damaged.title)}</h3>
+    <p>${esc(buy.damaged.body)}</p>
+    <p>${esc(buy.sellerPrefix)} ${esc(buy.sellerQuestions.split("info@dmtcode.com")[0])}<a href="mailto:info@dmtcode.com">info@dmtcode.com</a>${esc(buy.sellerQuestions.split("info@dmtcode.com")[1] || "")} <a href="${SITE}/returns">${esc(buy.sellerPolicies)}</a></p>
   </section>
   <section>
     <h2>Laser diffraction research kits</h2>
@@ -952,10 +1058,17 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
     canonical,
     ogType: "website",
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, itemListLd, ...productLds],
-  });
+  }) + (country
+    ? `<script>window.__DMTCODE_GEO__=${JSON.stringify({ country, ships })}</script>`
+    : "");
 
   const html = renderShell(await shellRes.text(), head, body, locale);
-  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+  // The /prepare response is cached at the edge (netlify-cdn-cache-control has
+  // s-maxage and durable), so cached copies must vary per country.
+  return new Response(html, {
+    status: 200,
+    headers: { ...PRERENDER_RESP_HEADERS, "netlify-vary": "country" },
+  });
 }
 
 
