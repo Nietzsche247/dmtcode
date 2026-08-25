@@ -186,6 +186,14 @@ const TheDiscovery = () => {
               We do not know whether the phenomenon is real. We built the instrument that could
               find out.
             </p>
+            <p className="text-base leading-relaxed mb-8">
+              <a
+                href="/downloads/dmt-laser-code-symbols.pdf"
+                className="text-gold hover:underline font-medium"
+              >
+                The symbol set as a citable PDF
+              </a>
+            </p>
 
             <h3 className="text-xl font-semibold mb-4">Attribution</h3>
             <Card className="p-6 bg-muted/30 border-border mb-12">
