@@ -31,6 +31,7 @@ const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'src/components/registry/RegistryBrowser.tsx', why: 'download block, names the Volume 1 file' },
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },
   { doi: '21987511', file: 'src/lib/constants.ts', why: 'comment only, explains why the version DOI is not used' },
+  { doi: '17816520', file: 'netlify/edge-functions/content-prerender.ts', why: 'version history list item, names the superseded v1.0 deposit' },
 ];
 
 const ROOTS = ['src', 'public', 'netlify'];
