@@ -14,6 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SignInToContribute } from '@/components/SignInToContribute';
+import { VoiceRecordingsList } from '@/components/VoiceRecordingsList';
 import { toast } from 'sonner';
 import { 
   Mic, MicOff, Pause, Play, Square, Upload, 
@@ -369,6 +370,7 @@ const VoiceLogger = () => {
                   />
                 )}
                 {authChecked && userId && (
+                <>
                 <Card className="p-8">
                   {/* Protocol Selection */}
                   <div className="mb-8">
@@ -465,6 +467,10 @@ const VoiceLogger = () => {
                         <span className="text-muted-foreground">Ready to record</span>
                       )}
                     </div>
+
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Your recording is stored privately and only you can play it back. You can delete it at any time from Your recordings below, which removes the audio file and the log together.
+                    </p>
 
                     <div className="flex items-center justify-center gap-4">
                       {!isRecording && !audioBlob && (
@@ -656,6 +662,10 @@ const VoiceLogger = () => {
                     </ul>
                   </div>
                 </Card>
+                <div className="mt-8">
+                  <VoiceRecordingsList userId={userId} />
+                </div>
+                </>
                 )}
               </TabsContent>
 
