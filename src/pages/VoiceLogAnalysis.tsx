@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -15,6 +16,7 @@ import {
 
 const VoiceLogAnalysis = () => {
   const { id } = useParams<{ id: string }>();
+  const [signedAudioUrl, setSignedAudioUrl] = useState<string | null>(null);
 
   const { data: voiceLog, isLoading, error } = useQuery({
     queryKey: ['voice-log', id],
