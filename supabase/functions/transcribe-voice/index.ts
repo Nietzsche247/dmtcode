@@ -232,13 +232,8 @@ serve(async (req) => {
         integration_prompts: integrationPrompts,
         protocol_match_score: protocolMatchScore,
         analysis_jsonb: {
-          duration: transcriptionResult.duration,
-          language: transcriptionResult.language,
-          segments: transcriptionResult.segments?.map((s: any) => ({
-            start: s.start,
-            end: s.end,
-            text: s.text,
-          })),
+          // The gateway transcription endpoint does not return per-segment
+          // timestamps or audio duration, so those fields are omitted.
           symbol_matches: symbolMatches.slice(0, 10), // Top 10 symbol matches
           total_archetypes_found: archetypeMatches.length,
           analyzed_at: new Date().toISOString(),
@@ -257,7 +252,6 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         transcript: transcriptionResult.text,
-        duration: transcriptionResult.duration,
         archetype_matches: archetypeMatches.slice(0, 5),
         integration_prompts: integrationPrompts,
       }),
