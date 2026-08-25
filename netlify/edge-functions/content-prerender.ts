@@ -265,7 +265,7 @@ export default async (request: Request, context: Context) => {
 
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
-      return await renderPrepare(context, locale);
+      return await renderPrepare(context, request, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context, locale);
@@ -871,10 +871,10 @@ function regionLabel(code: string, locale: Loc): string {
   }
 }
 
-async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Response> {
+async function renderPrepare(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
 
-  const urlGeo = (new URL(context.request ? context.request.url : "https://dmtcode.com/").searchParams.get("geo") || "").toUpperCase();
+  const urlGeo = (new URL(request.url).searchParams.get("geo") || "").toUpperCase();
   const geoCtx = (context as unknown as { geo?: { country?: { code?: string } } }).geo;
   const detected = ((geoCtx && geoCtx.country && geoCtx.country.code) || "").toUpperCase();
   const country = /^[A-Z]{2}$/.test(urlGeo) ? urlGeo : detected;
