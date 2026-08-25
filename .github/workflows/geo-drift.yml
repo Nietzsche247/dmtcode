@@ -114,16 +114,19 @@ jobs:
               check(f"{p} 200 + no X-Robots-Tag noindex", s == 200 and "noindex" not in tag, f"{s} / {tag!r}")
           # Kit catalogue: prices and cart permalinks must be present on the
           # crawler render of /prepare and in /llms.txt. Source of truth is
-          # src/data/kits.ts (mirrored to netlify/lib/kits.ts).
+          # src/data/kits.ts (mirrored to netlify/lib/kits.ts). Update the CARTS
+          # list and the price tuple below whenever a kit is added, removed, or
+          # repriced, otherwise this job fails on every run.
           CARTS = [
               "https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1",
+              "https://dmtcode-p4szt.myshopify.com/cart/54434179973430:1",
               "https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1",
               "https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1",
           ]
           _, _, prepare_bot = fetch("/prepare", GOOGLEBOT)
           _, _, llms_now = fetch("/llms.txt")
           for label, doc in (("/prepare (Googlebot)", prepare_bot), ("/llms.txt", llms_now)):
-              for token in ("$289", "$649", "$1,090"):
+              for token in ("$289", "$399", "$699", "$1,090"):
                   check(f"{label} lists {token}", token in doc, "kit price")
               for cart in CARTS:
                   check(f"{label} lists cart {cart.rsplit('/', 1)[1]}", cart in doc, "cart permalink")
@@ -131,7 +134,8 @@ jobs:
           _, _, faq_bot = fetch("/faq", GOOGLEBOT)
           stale_docs = {"/ (Googlebot)": home_bot, "/prepare (Googlebot)": prepare_bot,
                         "/faq (Googlebot)": faq_bot, "/llms.txt": llms_now}
-          for token in ("$109", "$159", "$349", "observer-kit"):
+          for token in ("$109", "$159", "$349", "$649", "observer-kit"):
+
               offenders = [name for name, doc in stale_docs.items() if token in doc]
               check(f"retired catalogue string {token} absent", not offenders, offenders)
           s, h, _ = fetch("/zzz-geo-drift-route-probe")
