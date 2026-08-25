@@ -118,10 +118,10 @@ jobs:
           # list and the price tuple below whenever a kit is added, removed, or
           # repriced, otherwise this job fails on every run.
           CARTS = [
-              "https://dmtcode-p4szt.myshopify.com/cart/54376696709430:1",
-              "https://dmtcode-p4szt.myshopify.com/cart/54434179973430:1",
-              "https://dmtcode-p4szt.myshopify.com/cart/54376697692470:1",
-              "https://dmtcode-p4szt.myshopify.com/cart/54376698446134:1",
+              "https://shop.dmtcode.com/cart/54376696709430:1",
+              "https://shop.dmtcode.com/cart/54434179973430:1",
+              "https://shop.dmtcode.com/cart/54376697692470:1",
+              "https://shop.dmtcode.com/cart/54376698446134:1",
           ]
           _, _, prepare_bot = fetch("/prepare", GOOGLEBOT)
           _, _, llms_now = fetch("/llms.txt")
