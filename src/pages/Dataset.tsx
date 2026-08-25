@@ -48,21 +48,17 @@ const Dataset = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Dataset",
-            "name": "DMT Code Open Dataset v4.1",
-            "description": "Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences",
+            "name": "DMT Code Open Dataset",
+            "description": "Machine-readable export of the DMT Code registry: reported visual phenomena and the 650 nm laser protocol.",
+            "identifier": "https://doi.org/10.5281/zenodo.17816519",
             "url": "https://dmtcode.com/dataset",
-            "isAccessibleForFree": true,
-            "keywords": ["DMT", "N,N-DMT", "visual phenomena", "symbol registry", "psychedelic research", "650nm laser", "open dataset"],
             "license": "https://creativecommons.org/licenses/by/4.0/",
             "creator": {
               "@type": "Organization",
-              "name": "DMT Code Project"
+              "name": "DMT Code",
+              "url": "https://dmtcode.com"
             },
-            "version": "4.1",
-            "datePublished": "2026-08-17",
-            "dateModified": "2026-08-17",
-            "identifier": zenodoURL,
-            "sameAs": [zenodoURL, zenodoConceptURL],
+            "isAccessibleForFree": true,
             "distribution": [
               {
                 "@type": "DataDownload",
@@ -70,7 +66,6 @@ const Dataset = () => {
                 "contentUrl": "https://dmtcode.com/data.json"
               }
             ]
-
           })}
         </script>
       </Helmet>
@@ -229,7 +224,7 @@ const Dataset = () => {
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Version History</h4>
                 <ul className="text-muted-foreground space-y-1">
-                  <li><strong>v4.1 (17 August 2026):</strong> Current version. DOI <a href={zenodoURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.21987511</a>. Concept DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> always resolves to the latest version.</li>
+                  <li><strong>v4.1 (17 August 2026):</strong> Current version. DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> (concept DOI, always resolves to the latest version).</li>
                   <li><strong>v1.0 (December 2025):</strong> Initial public release</li>
                 </ul>
               </CardContent>

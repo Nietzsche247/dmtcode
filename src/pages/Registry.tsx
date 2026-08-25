@@ -148,6 +148,30 @@ const Registry = () => {
             ]
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Report",
+            "name": "The DMT Code Symbol Registry: Reported Visual Forms in Altered and Baseline States",
+            "alternateName": "Volume 1. N,N-DMT and the 650 nm laser protocol",
+            "identifier": "https://doi.org/10.5281/zenodo.22101522",
+            "author": {
+              "@type": "Person",
+              "name": "Aaron Baker"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "DMT Code",
+              "url": "https://dmtcode.com"
+            },
+            "datePublished": "2026-08-25",
+            "version": "1.0",
+            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "url": "https://dmtcode.com/downloads/dmt-laser-code-symbols.pdf",
+            "encodingFormat": "application/pdf",
+            "isBasedOn": "https://doi.org/10.5281/zenodo.17816519"
+          })}
+        </script>
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

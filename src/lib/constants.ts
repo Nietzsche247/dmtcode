@@ -1,5 +1,8 @@
-// Canonical DOI for the DMT Code Open Dataset (current version record)
-export const ZENODO_DOI = "10.5281/zenodo.21987511";
+// Canonical DOI for the DMT Code Open Dataset.
+// Living pointers use the CONCEPT DOI, which always resolves to the newest
+// version. The version DOI (10.5281/zenodo.21987511, v4.1) is pinned to one
+// deposit and must not be used for "go cite it" links.
+export const ZENODO_DOI = "10.5281/zenodo.17816519";
 export const ZENODO_URL = `https://doi.org/${ZENODO_DOI}`;
 
 // Concept DOI: always resolves to the latest version
