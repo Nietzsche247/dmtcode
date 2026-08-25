@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { localePath, useLocale } from '@/i18n/LocaleProvider';
 import { getSessionId } from '@/lib/anonSession';
 
 // Segmentation door for /registry. Asks the visitor where they are with the
@@ -67,12 +68,9 @@ const logTap = (segment: DoorSegment): void => {
   })();
 };
 
-interface RegistryDoorProps {
-  children: React.ReactNode;
-}
-
-export const RegistryDoor = ({ children }: RegistryDoorProps) => {
+export const RegistryDoor = () => {
   const navigate = useNavigate();
+  const locale = useLocale();
   const [segment, setSegment] = useState<DoorSegment | null>(() => readStoredSegment());
   const [doorOpen, setDoorOpen] = useState<boolean>(() => readStoredSegment() === null);
 
@@ -83,11 +81,11 @@ export const RegistryDoor = ({ children }: RegistryDoorProps) => {
     logTap(next);
 
     if (next === 'ran_protocol_saw_symbols') {
-      navigate('/submit-symbol');
+      navigate(localePath(locale, '/submit-symbol'));
       return;
     }
     if (next === 'planning_protocol') {
-      navigate('/prepare');
+      navigate(localePath(locale, '/prepare'));
       return;
     }
     // Remaining options land on the registry browse view below.
@@ -141,9 +139,12 @@ export const RegistryDoor = ({ children }: RegistryDoorProps) => {
           {segment === 'dmt_no_protocol' && (
             <p className="text-sm text-muted-foreground">
               The 650nm laser protocol is documented step by step in the{' '}
-              <a href="/protocol-guide" className="underline text-primary hover:text-foreground">
+              <Link
+                to={localePath(locale, '/protocol-guide')}
+                className="underline text-primary hover:text-foreground"
+              >
                 protocol guide
-              </a>
+              </Link>
               .
             </p>
           )}
@@ -151,20 +152,25 @@ export const RegistryDoor = ({ children }: RegistryDoorProps) => {
           {segment === 'reading_researching' && (
             <p className="text-sm text-muted-foreground">
               Start with the{' '}
-              <a href="/dataset" className="underline text-primary hover:text-foreground">
+              <Link
+                to={localePath(locale, '/dataset')}
+                className="underline text-primary hover:text-foreground"
+              >
                 open dataset
-              </a>{' '}
+              </Link>{' '}
               and the{' '}
-              <a href="/bibliography" className="underline text-primary hover:text-foreground">
+              <Link
+                to={localePath(locale, '/bibliography')}
+                className="underline text-primary hover:text-foreground"
+              >
                 research bibliography
-              </a>
+              </Link>
               .
             </p>
           )}
         </div>
       ) : null}
 
-      {children}
     </div>
   );
 };
