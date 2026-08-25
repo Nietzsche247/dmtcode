@@ -186,18 +186,16 @@ const VoiceLogger = () => {
       const sessionId = userId;
       const protocolId = protocols?.find(p => p.slug === selectedProtocol)?.id || null;
 
+      // Private bucket. Storage RLS only accepts objects inside a folder named
+      // with the owner's auth.uid(), so the path shape is not negotiable.
       const fileName = `${sessionId}/${Date.now()}.webm`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('glyphs')
-        .upload(`voice-logs/${fileName}`, audioBlob, {
+      const { error: uploadError } = await supabase.storage
+        .from('voice-logs')
+        .upload(fileName, audioBlob, {
           contentType: 'audio/webm'
         });
 
       if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('glyphs')
-        .getPublicUrl(`voice-logs/${fileName}`);
 
       // Include clinical mode data in analysis_jsonb
       const analysisData = isClinicalMode ? {
