@@ -199,7 +199,7 @@ const Prepare = () => {
                   },
                   {
                     title: 'Returns',
-                    body: 'Unopened kits can be returned within 30 days of delivery. Opened laser modules and protective eyewear are not returnable, since these are precision optics and personal safety items. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.',
+                    body: 'Unopened kits can be returned within 30 days of delivery. Opened laser modules are not returnable, since these are precision optical instruments that cannot be recalibrated or resold once the seal is broken. Return shipping is paid by the buyer. Approved refunds go back to the original payment method within 10 business days of receipt.',
                   },
                   {
                     title: 'Damaged or defective',
