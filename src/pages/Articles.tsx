@@ -110,6 +110,34 @@ export default function Articles() {
             </p>
           </header>
 
+          {isAdmin && (
+            <div className="mb-6 rounded-md border border-dashed border-border p-4 space-y-2">
+              <p className="text-sm font-medium">
+                Admin view: this page lists every published article, from every author.
+                {drafts.length > 0
+                  ? ` You also have ${drafts.length} unpublished draft${drafts.length === 1 ? "" : "s"}:`
+                  : " No unpublished drafts."}
+              </p>
+              {drafts.length > 0 && (
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  {drafts.map((d) => (
+                    <li key={d.id}>
+                      <span className="text-foreground/90">{d.title}</span>{" "}
+                      <span className="text-xs">(/{d.slug})</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Review, edit, or publish drafts in the{" "}
+                <Link to="/admin" className="underline hover:text-foreground">
+                  admin articles manager
+                </Link>
+                .
+              </p>
+            </div>
+          )}
+
           {allTags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               <Button
