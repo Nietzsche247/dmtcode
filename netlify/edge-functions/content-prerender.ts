@@ -821,6 +821,16 @@ async function renderPrepare(context: Context, locale: Loc = "en"): Promise<Resp
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         shippingDetails,
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "US",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 30,
+          returnMethod: "https://schema.org/ReturnByMail",
+          returnFees: "https://schema.org/ReturnShippingFees",
+          refundType: "https://schema.org/FullRefund",
+          itemCondition: "https://schema.org/NewCondition",
+        },
       },
     };
     if (k.image) ld.image = k.image;
