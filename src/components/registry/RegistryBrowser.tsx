@@ -381,6 +381,25 @@ export const RegistryBrowser = () => {
       {/* Segmentation door stays above the always-visible registry content. */}
       <RegistryDoor />
 
+      {/* Citable PDF. Static asset, so a plain anchor with the raw path: it is
+          served from /downloads on every locale, no locale prefix. */}
+      <div className="mb-8 rounded-lg border border-border bg-card p-5">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
+          The symbol set as a citable PDF
+        </h3>
+        <p className="text-sm text-muted-foreground mb-3">
+          Every public record in this registry, with drawings, identifiers, contributor handles and
+          confirmation counts. Version 1.0, 51 records, CC BY 4.0.
+        </p>
+        <a
+          href="/downloads/dmt-laser-code-symbols.pdf"
+          className="text-sm font-medium text-gold hover:underline"
+        >
+          Download the PDF
+        </a>
+        <p className="mt-2 text-xs text-muted-foreground">DOI 10.5281/zenodo.22101522</p>
+      </div>
+
       {/* Credibility Legend */}
       <div className="mb-8 border-t border-border pt-4">
         <p className="max-w-[65ch] text-xs leading-relaxed text-muted-foreground">
