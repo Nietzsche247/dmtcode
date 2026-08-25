@@ -9,6 +9,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRoles } from "@/hooks/useRoles";
 
 type ArticleRow = {
   id: string;
@@ -46,6 +47,8 @@ export default function Articles() {
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tagFilter, setTagFilter] = useState<string>("all");
+  const { isAdmin, loading: rolesLoading } = useRoles();
+  const [drafts, setDrafts] = useState<ArticleRow[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +61,21 @@ export default function Articles() {
       setLoading(false);
     })();
   }, []);
+
+  // Admin-only: also list unpublished drafts so an admin can see the whole
+  // pipeline (drafts + published) from this page. Drafts never render for
+  // regular visitors and are not part of the prerendered HTML.
+  useEffect(() => {
+    if (rolesLoading || !isAdmin) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id, slug, title, dek, topic_tags, published_at, source_url, source_outlet")
+        .eq("is_published", false)
+        .order("updated_at", { ascending: false });
+      if (!error && data) setDrafts(data as ArticleRow[]);
+    })();
+  }, [rolesLoading, isAdmin]);
 
   const allTags = useMemo(() => {
     const s = new Set<string>();
@@ -91,6 +109,34 @@ export default function Articles() {
               generated, and stay plain about what is reported and what is still open.
             </p>
           </header>
+
+          {isAdmin && (
+            <div className="mb-6 rounded-md border border-dashed border-border p-4 space-y-2">
+              <p className="text-sm font-medium">
+                Admin view: this page lists every published article, from every author.
+                {drafts.length > 0
+                  ? ` You also have ${drafts.length} unpublished draft${drafts.length === 1 ? "" : "s"}:`
+                  : " No unpublished drafts."}
+              </p>
+              {drafts.length > 0 && (
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  {drafts.map((d) => (
+                    <li key={d.id}>
+                      <span className="text-foreground/90">{d.title}</span>{" "}
+                      <span className="text-xs">(/{d.slug})</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Review, edit, or publish drafts in the{" "}
+                <Link to="/admin" className="underline hover:text-foreground">
+                  admin articles manager
+                </Link>
+                .
+              </p>
+            </div>
+          )}
 
           {allTags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
