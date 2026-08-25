@@ -59,9 +59,9 @@ serve(async (req) => {
     console.log(`Starting transcription for voice log: ${voice_log_id}`);
     console.log(`Audio URL: ${audio_url}`);
 
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      throw new Error('OPENAI_API_KEY is not configured');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
     // Fetch the audio file
@@ -73,30 +73,51 @@ serve(async (req) => {
     const audioBlob = await audioResponse.blob();
     console.log(`Audio blob size: ${audioBlob.size} bytes`);
 
-    // Create form data for Whisper API
+    // Transcribe via the Lovable AI Gateway. Whisper is not served there;
+    // gpt-4o-transcribe is the default transcription model. Language is left
+    // unset so the model auto-detects (logs are not English-only).
     const formData = new FormData();
     formData.append('file', audioBlob, 'audio.webm');
-    formData.append('model', 'whisper-1');
-    formData.append('language', 'en');
-    formData.append('response_format', 'verbose_json');
+    formData.append('model', 'openai/gpt-4o-transcribe');
 
-    // Call OpenAI Whisper API
-    console.log('Calling OpenAI Whisper API...');
-    const whisperResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    console.log('Calling Lovable AI transcription endpoint...');
+    const sttResponse = await fetch('https://ai.gateway.lovable.dev/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
       },
       body: formData,
     });
 
-    if (!whisperResponse.ok) {
-      const errorText = await whisperResponse.text();
-      console.error('Whisper API error:', errorText);
-      throw new Error(`Whisper API error: ${whisperResponse.status} - ${errorText}`);
+    if (!sttResponse.ok) {
+      const errorText = await sttResponse.text();
+      console.error('Transcription gateway error:', sttResponse.status, errorText);
+      // Pass the gateway status and message through; 402/403 are terminal and
+      // must not be retried or flattened into a generic 500.
+      return new Response(
+        JSON.stringify({ error: `Transcription failed (${sttResponse.status}): ${errorText.slice(0, 500)}` }),
+        { status: sttResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    const transcriptionResult = await whisperResponse.json();
+    // Buffered JSON response: { text, usage }. Defensively also handle SSE.
+    let transcriptTextRaw = '';
+    const contentType = sttResponse.headers.get('content-type') || '';
+    if (contentType.includes('text/event-stream')) {
+      const sseText = await sttResponse.text();
+      for (const line of sseText.split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        try {
+          const evt = JSON.parse(line.slice(5).trim());
+          if (evt.type === 'transcript.text.done') transcriptTextRaw = evt.text ?? transcriptTextRaw;
+          else if (evt.type === 'transcript.text.delta') transcriptTextRaw += evt.delta ?? '';
+        } catch { /* ignore non-JSON keepalive lines */ }
+      }
+    } else {
+      const result = await sttResponse.json();
+      transcriptTextRaw = result.text ?? '';
+    }
+    const transcriptionResult = { text: transcriptTextRaw };
     console.log('Transcription completed:', transcriptionResult.text?.substring(0, 100));
 
     // Initialize Supabase client with service role
@@ -211,13 +232,8 @@ serve(async (req) => {
         integration_prompts: integrationPrompts,
         protocol_match_score: protocolMatchScore,
         analysis_jsonb: {
-          duration: transcriptionResult.duration,
-          language: transcriptionResult.language,
-          segments: transcriptionResult.segments?.map((s: any) => ({
-            start: s.start,
-            end: s.end,
-            text: s.text,
-          })),
+          // The gateway transcription endpoint does not return per-segment
+          // timestamps or audio duration, so those fields are omitted.
           symbol_matches: symbolMatches.slice(0, 10), // Top 10 symbol matches
           total_archetypes_found: archetypeMatches.length,
           analyzed_at: new Date().toISOString(),
@@ -236,7 +252,6 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         transcript: transcriptionResult.text,
-        duration: transcriptionResult.duration,
         archetype_matches: archetypeMatches.slice(0, 5),
         integration_prompts: integrationPrompts,
       }),
