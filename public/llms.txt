@@ -90,6 +90,10 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - /downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf (ES), /downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf (DE)
 - /downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf (ES), /downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf (DE)
 
+## Citable registry PDF
+
+- /downloads/dmt-laser-code-symbols.pdf: every public registry record in one citable PDF, with drawings, identifiers, contributor handles and confirmation counts. Version 1.0, 51 records, CC BY 4.0. DOI 10.5281/zenodo.22101522.
+
 ## Pages
 
 - [Home](/): Mission and dataset status.
