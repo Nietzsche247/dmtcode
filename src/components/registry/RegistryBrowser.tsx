@@ -515,6 +515,7 @@ export const RegistryBrowser = () => {
         </div>
       )}
 
+      </RegistryDoor>
     </section>
   );
 };
