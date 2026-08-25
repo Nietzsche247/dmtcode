@@ -9,6 +9,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRoles } from "@/hooks/useRoles";
 
 type ArticleRow = {
   id: string;
@@ -46,6 +47,8 @@ export default function Articles() {
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [tagFilter, setTagFilter] = useState<string>("all");
+  const { isAdmin, loading: rolesLoading } = useRoles();
+  const [drafts, setDrafts] = useState<ArticleRow[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +61,21 @@ export default function Articles() {
       setLoading(false);
     })();
   }, []);
+
+  // Admin-only: also list unpublished drafts so an admin can see the whole
+  // pipeline (drafts + published) from this page. Drafts never render for
+  // regular visitors and are not part of the prerendered HTML.
+  useEffect(() => {
+    if (rolesLoading || !isAdmin) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id, slug, title, dek, topic_tags, published_at, source_url, source_outlet")
+        .eq("is_published", false)
+        .order("updated_at", { ascending: false });
+      if (!error && data) setDrafts(data as ArticleRow[]);
+    })();
+  }, [rolesLoading, isAdmin]);
 
   const allTags = useMemo(() => {
     const s = new Set<string>();
