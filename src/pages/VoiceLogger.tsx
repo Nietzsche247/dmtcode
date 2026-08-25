@@ -14,6 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SignInToContribute } from '@/components/SignInToContribute';
+import { VoiceRecordingsList } from '@/components/VoiceRecordingsList';
 import { toast } from 'sonner';
 import { 
   Mic, MicOff, Pause, Play, Square, Upload, 
@@ -186,18 +187,16 @@ const VoiceLogger = () => {
       const sessionId = userId;
       const protocolId = protocols?.find(p => p.slug === selectedProtocol)?.id || null;
 
+      // Private bucket. Storage RLS only accepts objects inside a folder named
+      // with the owner's auth.uid(), so the path shape is not negotiable.
       const fileName = `${sessionId}/${Date.now()}.webm`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('glyphs')
-        .upload(`voice-logs/${fileName}`, audioBlob, {
+      const { error: uploadError } = await supabase.storage
+        .from('voice-logs')
+        .upload(fileName, audioBlob, {
           contentType: 'audio/webm'
         });
 
       if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('glyphs')
-        .getPublicUrl(`voice-logs/${fileName}`);
 
       // Include clinical mode data in analysis_jsonb
       const analysisData = isClinicalMode ? {
@@ -215,7 +214,7 @@ const VoiceLogger = () => {
           user_id: userId,
           session_id: sessionId,
           protocol_id: protocolId,
-          audio_url: publicUrl,
+          audio_url: fileName,
           duration_seconds: duration,
           tags: selectedProtocol ? [selectedProtocol] : [],
           is_analyzed: false,
@@ -224,7 +223,12 @@ const VoiceLogger = () => {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        // Never leave an orphan: an uploaded object with no row is invisible
+        // to its owner and impossible to delete from the UI.
+        await supabase.storage.from('voice-logs').remove([fileName]);
+        throw insertError;
+      }
 
       toast.success(isClinicalMode 
         ? 'Clinical session log submitted! Generating report...' 
@@ -236,9 +240,9 @@ const VoiceLogger = () => {
       
       // Trigger transcription
       supabase.functions.invoke('transcribe-voice', {
-        body: { 
-          voice_log_id: voiceLog.id, 
-          audio_url: publicUrl,
+        body: {
+          voice_log_id: voiceLog.id,
+          audio_path: fileName,
           clinical_mode: isClinicalMode
         }
       }).then(({ error }) => {
@@ -366,6 +370,7 @@ const VoiceLogger = () => {
                   />
                 )}
                 {authChecked && userId && (
+                <>
                 <Card className="p-8">
                   {/* Protocol Selection */}
                   <div className="mb-8">
@@ -462,6 +467,10 @@ const VoiceLogger = () => {
                         <span className="text-muted-foreground">Ready to record</span>
                       )}
                     </div>
+
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Your recording is stored privately and only you can play it back. You can delete it at any time from Your recordings below, which removes the audio file and the log together.
+                    </p>
 
                     <div className="flex items-center justify-center gap-4">
                       {!isRecording && !audioBlob && (
@@ -653,6 +662,10 @@ const VoiceLogger = () => {
                     </ul>
                   </div>
                 </Card>
+                <div className="mt-8">
+                  <VoiceRecordingsList userId={userId} />
+                </div>
+                </>
                 )}
               </TabsContent>
 

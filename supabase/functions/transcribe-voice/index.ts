@@ -33,7 +33,7 @@ serve(async (req) => {
       });
     }
 
-    const { voice_log_id, audio_url } = await req.json();
+    const { voice_log_id, audio_url, audio_path } = await req.json();
 
     // Validate inputs
     const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -42,22 +42,51 @@ serve(async (req) => {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    // Only allow audio URLs from Supabase storage to prevent SSRF
-    const supaUrlHost = new URL(Deno.env.get('SUPABASE_URL')!).host;
-    let parsed: URL;
-    try { parsed = new URL(audio_url); } catch {
-      return new Response(JSON.stringify({ error: 'Invalid audio_url' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    if (parsed.protocol !== 'https:' || parsed.host !== supaUrlHost) {
-      return new Response(JSON.stringify({ error: 'audio_url must be a Supabase storage URL' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+    // Resolve the audio to a fetchable URL. The voice-logs bucket is private,
+    // so new callers pass audio_path (the object path) and we mint a short
+    // lived signed URL with the service role. The legacy audio_url form is
+    // still accepted for rows written before the migration.
+    let fetchUrl: string;
+    if (audio_path) {
+      const callerId = String(claimsData.claims.sub || '');
+      const pathStr = String(audio_path);
+      if (!callerId || !pathStr.startsWith(`${callerId}/`) || pathStr.includes('..')) {
+        return new Response(JSON.stringify({ error: 'audio_path must live in your own folder' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const signingClient = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      );
+      const { data: signed, error: signErr } = await signingClient.storage
+        .from('voice-logs')
+        .createSignedUrl(pathStr, 600);
+      if (signErr || !signed?.signedUrl) {
+        return new Response(JSON.stringify({ error: 'Could not access the stored recording' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      fetchUrl = signed.signedUrl;
+    } else {
+      // Only allow audio URLs from Supabase storage to prevent SSRF
+      const supaUrlHost = new URL(Deno.env.get('SUPABASE_URL')!).host;
+      let parsed: URL;
+      try { parsed = new URL(audio_url); } catch {
+        return new Response(JSON.stringify({ error: 'Invalid audio_url' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (parsed.protocol !== 'https:' || parsed.host !== supaUrlHost) {
+        return new Response(JSON.stringify({ error: 'audio_url must be a Supabase storage URL' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      fetchUrl = audio_url;
     }
 
     console.log(`Starting transcription for voice log: ${voice_log_id}`);
-    console.log(`Audio URL: ${audio_url}`);
 
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!lovableApiKey) {
@@ -65,7 +94,7 @@ serve(async (req) => {
     }
 
     // Fetch the audio file
-    const audioResponse = await fetch(audio_url);
+    const audioResponse = await fetch(fetchUrl);
     if (!audioResponse.ok) {
       throw new Error(`Failed to fetch audio file: ${audioResponse.statusText}`);
     }

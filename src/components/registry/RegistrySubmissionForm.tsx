@@ -107,16 +107,15 @@ export const RegistrySubmissionForm = () => {
       // Upload voice note if exists
       let voiceNoteUrl = null;
       if (voiceNote && userData.user?.id) {
+        // Private bucket; RLS only accepts paths inside the owner's own folder.
+        // The stored value is the object path, not a URL.
         const fileName = `${userData.user.id}/${symbolId}-voice.webm`;
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('glyphs')
-          .upload(fileName, voiceNote);
+          .from('voice-logs')
+          .upload(fileName, voiceNote, { contentType: 'audio/webm' });
 
         if (!uploadError && uploadData) {
-          const { data: urlData } = supabase.storage
-            .from('glyphs')
-            .getPublicUrl(fileName);
-          voiceNoteUrl = urlData.publicUrl;
+          voiceNoteUrl = fileName;
         }
       }
       

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -15,6 +16,7 @@ import {
 
 const VoiceLogAnalysis = () => {
   const { id } = useParams<{ id: string }>();
+  const [signedAudioUrl, setSignedAudioUrl] = useState<string | null>(null);
 
   const { data: voiceLog, isLoading, error } = useQuery({
     queryKey: ['voice-log', id],
@@ -42,6 +44,29 @@ const VoiceLogAnalysis = () => {
       return data && !data.is_analyzed ? 5000 : false;
     },
   });
+
+  // audio_url stores the bare object path in the private voice-logs bucket
+  // (older rows hold a full URL). Mint a short lived signed URL on demand;
+  // signed URLs are never stored.
+  useEffect(() => {
+    const stored = voiceLog?.audio_url;
+    if (!stored) {
+      setSignedAudioUrl(null);
+      return;
+    }
+    if (stored.startsWith('http')) {
+      setSignedAudioUrl(stored);
+      return;
+    }
+    let cancelled = false;
+    supabase.storage
+      .from('voice-logs')
+      .createSignedUrl(stored, 3600)
+      .then(({ data, error }) => {
+        if (!cancelled) setSignedAudioUrl(error ? null : data?.signedUrl ?? null);
+      });
+    return () => { cancelled = true; };
+  }, [voiceLog?.audio_url]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -194,15 +219,15 @@ const VoiceLogAnalysis = () => {
             )}
 
             {/* Audio Playback */}
-            {voiceLog.audio_url && (
+            {signedAudioUrl && (
               <Card className="p-6 mb-8">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                   <Mic className="w-4 h-4" />
                   Recording
                 </h3>
-                <audio 
-                  controls 
-                  src={voiceLog.audio_url} 
+                <audio
+                  controls
+                  src={signedAudioUrl}
                   className="w-full"
                 />
               </Card>
