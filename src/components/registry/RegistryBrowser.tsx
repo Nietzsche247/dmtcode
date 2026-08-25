@@ -378,10 +378,8 @@ export const RegistryBrowser = () => {
         </p>
       </div>
 
-      {/* Segmentation door: first-time visitors answer one question before the
-          browse view opens. Returning visitors see their answer and a change
-          affordance above the list. */}
-      <RegistryDoor>
+      {/* Segmentation door stays above the always-visible registry content. */}
+      <RegistryDoor />
 
       {/* Credibility Legend */}
       <div className="mb-8 border-t border-border pt-4">
@@ -514,8 +512,6 @@ export const RegistryBrowser = () => {
           </div>
         </div>
       )}
-
-      </RegistryDoor>
     </section>
   );
 };
