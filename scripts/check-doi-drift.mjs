@@ -30,7 +30,7 @@ const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'netlify/edge-functions/content-prerender.ts', why: 'REGISTRY_REPORT_LD identifier, mirrors Registry.tsx' },
   { doi: '22101522', file: 'src/components/registry/RegistryBrowser.tsx', why: 'download block, names the Volume 1 file' },
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },
-  { doi: '21987511', file: 'src/lib/constants.ts', why: 'comment only, explains why the version DOI is not used' },
+  { doi: '21987511', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, explains why the version DOI is not used' },
   { doi: '17816520', file: 'netlify/edge-functions/content-prerender.ts', why: 'version history list item, names the superseded v1.0 deposit' },
 ];
 
@@ -77,7 +77,20 @@ for (const file of files) {
     }
     seen.set(id, (seen.get(id) || 0) + 1);
     if (meta.kind === 'version') {
-      const allowed = VERSION_ALLOWLIST.some((a) => a.doi === id && a.file === file.split('\\').join('/'));
+      const normalised = file.split('\\').join('/');
+      const entry = VERSION_ALLOWLIST.find((a) => a.doi === id && a.file === normalised);
+      let allowed = Boolean(entry);
+      if (entry && entry.commentOnly) {
+        const lineText = text.split('\n')[line - 1] || '';
+        const trimmed = lineText.trimStart();
+        allowed = trimmed.startsWith('//') || trimmed.startsWith('*');
+        if (!allowed) {
+          problems.push(
+            `VERSION DOI zenodo.${id} is allowlisted in ${normalised} for COMMENTS ONLY, but this occurrence is live code.\n    at ${file}:${line}\n    ${lineText.trim()}`
+          );
+          continue;
+        }
+      }
       if (!allowed) {
         problems.push(
           `VERSION DOI used as a living pointer: zenodo.${id} (${meta.what})\n    at ${file}:${line}\n` +
@@ -164,6 +177,35 @@ if (truth) {
     } else if (m[1] !== truth) {
       problems.push(
         `Dataset version drift in ${p.file} (${p.label})\n    found v${m[1]}, ZENODO_VERSION says v${truth}`
+      );
+    }
+  }
+}
+
+// --- Check 4: the canonical exported DOI constants must be concept DOIs ---
+// This is the single most important living pointer on the site: it drives the
+// footer, the About citation block, the Dataset page badge and both citation
+// templates. A file-scoped allowlist cannot protect it, so it gets its own
+// check.
+if (constants) {
+  const EXPORTS = ['ZENODO_DOI', 'ZENODO_CONCEPT_DOI'];
+  for (const name of EXPORTS) {
+    const m = constants.match(new RegExp(name + '\\s*=\\s*[\'"][^\'"]*zenodo\\.(\\d+)[\'"]'));
+    if (!m) {
+      if (name === 'ZENODO_DOI') {
+        problems.push(`${name} not found in src/lib/constants.ts. If it was renamed, update the probe in scripts/check-doi-drift.mjs.`);
+      }
+      continue;
+    }
+    const id = m[1];
+    const meta = DOIS[id];
+    if (!meta) {
+      problems.push(`${name} points at unregistered DOI zenodo.${id}. Register it in the DOIS map.`);
+    } else if (meta.kind !== 'concept') {
+      problems.push(
+        `${name} is a VERSION DOI: zenodo.${id} (${meta.what})\n` +
+        `    src/lib/constants.ts drives the footer, the About citation block, the Dataset badge and both citation templates.\n` +
+        `    All of those are living pointers and must resolve to latest. Use 10.5281/zenodo.17816519.`
       );
     }
   }
