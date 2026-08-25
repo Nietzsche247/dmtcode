@@ -418,12 +418,8 @@ export default async (request: Request, context: Context) => {
           description:
             "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
           url: `${SITE}/registry`,
-          identifier: "https://doi.org/10.5281/zenodo.21987511",
-          version: "4.1",
-          datePublished: "2026-08-17",
-          dateModified: "2026-08-17",
+          identifier: "https://doi.org/10.5281/zenodo.17816519",
           sameAs: [
-            "https://doi.org/10.5281/zenodo.21987511",
             "https://doi.org/10.5281/zenodo.17816519",
           ],
           license: LICENSE,
@@ -1131,16 +1127,12 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
     description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure.",
     license: LICENSE,
     url: `${SITE}/registry`,
-    identifier: "https://doi.org/10.5281/zenodo.21987511",
-    version: "4.1",
-    datePublished: "2026-08-17",
-    dateModified: "2026-08-17",
+    identifier: "https://doi.org/10.5281/zenodo.17816519",
     creator: { "@id": `${SITE}#org` },
     distribution: [
       { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE}/data.json` },
     ],
     sameAs: [
-      "https://doi.org/10.5281/zenodo.21987511",
       "https://doi.org/10.5281/zenodo.17816519",
     ],
   };
@@ -1785,26 +1777,20 @@ type StaticPage = {
 };
 
 // Canonical Dataset JSON-LD for /dataset. Mirrors the block rendered client
-// side in src/pages/Dataset.tsx so crawlers see the DOI without executing JS.
+// side in src/pages/Dataset.tsx, field for field, so the two surfaces cannot
+// drift. The identifier is the CONCEPT DOI, which always resolves to the
+// newest version; never pin a version DOI here.
 const DATASET_PAGE_LD = {
   "@context": "https://schema.org",
   "@type": "Dataset",
-  "@id": `${SITE}/dataset#dataset`,
-  name: "DMT Code Open Dataset v4.1",
+  name: "DMT Code Open Dataset",
   description:
-    "The unified DMT Code corpus: bibliography, clinical trials, and approved symbol submissions in one JSON document under CC-BY-4.0.",
+    "Machine-readable export of the DMT Code registry: reported visual phenomena and the 650 nm laser protocol.",
+  identifier: "https://doi.org/10.5281/zenodo.17816519",
   url: `${SITE}/dataset`,
-  isAccessibleForFree: true,
   license: LICENSE,
-  creator: { "@type": "Organization", "@id": `${SITE}#org`, name: "DMT Code Project", url: SITE },
-  version: "4.1",
-  datePublished: "2026-08-17",
-  dateModified: "2026-08-17",
-  identifier: "https://doi.org/10.5281/zenodo.21987511",
-  sameAs: [
-    "https://doi.org/10.5281/zenodo.21987511",
-    "https://doi.org/10.5281/zenodo.17816519",
-  ],
+  creator: { "@type": "Organization", name: "DMT Code", url: SITE },
+  isAccessibleForFree: true,
   distribution: [
     {
       "@type": "DataDownload",
@@ -1812,6 +1798,26 @@ const DATASET_PAGE_LD = {
       contentUrl: `${SITE}/data.json`,
     },
   ],
+};
+
+// Canonical Report JSON-LD for /registry. Mirrors the block rendered client
+// side in src/pages/Registry.tsx, field for field. The identifier is the
+// VERSION DOI of the published Volume 1 deposit; a version DOI is correct
+// here because it identifies this specific deposit.
+const REGISTRY_REPORT_LD = {
+  "@context": "https://schema.org",
+  "@type": "Report",
+  name: "The DMT Code Symbol Registry: Reported Visual Forms in Altered and Baseline States",
+  alternateName: "Volume 1. N,N-DMT and the 650 nm laser protocol",
+  identifier: "https://doi.org/10.5281/zenodo.22101522",
+  author: { "@type": "Person", name: "Aaron Baker" },
+  publisher: { "@type": "Organization", name: "DMT Code", url: SITE },
+  datePublished: "2026-08-25",
+  version: "1.0",
+  license: LICENSE,
+  url: `${SITE}/downloads/dmt-laser-code-symbols.pdf`,
+  encodingFormat: "application/pdf",
+  isBasedOn: "https://doi.org/10.5281/zenodo.17816519",
 };
 
 
@@ -2013,6 +2019,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Registry",
     index: { table: "symbol_submissions", filter: "status=eq.approved", select: "id,description,created_at", titleField: "description", linkPrefix: "/registry", label: "Recent symbols" },
+    extraJsonLd: [REGISTRY_REPORT_LD],
   },
   trials: {
     title: "Clinical Trials Observatory | DMT Code",
@@ -2051,8 +2058,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "The unified corpus is available at /data.json. It merges every bibliography row, every tracked clinical trial, and every approved symbol into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
       "License is CC-BY-4.0. Attribute to DMT Code, https://dmtcode.com. An archived, citable version is available by DOI.",
-      "Current release: DMT Code Open Dataset v4.1, published 17 August 2026. Version DOI 10.5281/zenodo.21987511 (https://doi.org/10.5281/zenodo.21987511). Concept DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) always resolves to the latest version.",
-      "Cite as: DMT Code Project (2026). DMT Code Open Dataset v4.1 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21987511",
+      "Current release: DMT Code Open Dataset v4.1, published 17 August 2026. DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) is the concept DOI and always resolves to the latest version.",
+      "Cite as: DMT Code Project (2026). DMT Code Open Dataset [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17816519",
     ],
     links: [
       { href: "/data.json", label: "/data.json (unified corpus)" },
@@ -2063,7 +2070,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     bodyExtraHtml: `<section data-prerender="dataset-versions">
   <h2>Version history</h2>
   <ul>
-    <li>v4.1, 17 August 2026, DOI <a href="https://doi.org/10.5281/zenodo.21987511">10.5281/zenodo.21987511</a> (current)</li>
+    <li>v4.1, 17 August 2026, DOI <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a> (concept DOI, resolves to latest version) (current)</li>
     <li>v1.0, DOI <a href="https://doi.org/10.5281/zenodo.17816520">10.5281/zenodo.17816520</a> (superseded)</li>
   </ul>
   <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a>. License: CC BY 4.0.</p>
