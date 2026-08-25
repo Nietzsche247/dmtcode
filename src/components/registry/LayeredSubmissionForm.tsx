@@ -76,7 +76,6 @@ interface FormData {
 
   // Privacy
   privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
-  publicationConsent: boolean;
   pseudonym: string;
 }
 
@@ -150,7 +149,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     fieldOrientation: '',
     fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
-    publicationConsent: false,
     pseudonym: ''
   });
 
@@ -592,7 +590,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     fieldOrientation: '',
     fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
-    publicationConsent: false,
     pseudonym: ''
   });
     setStep(1);
