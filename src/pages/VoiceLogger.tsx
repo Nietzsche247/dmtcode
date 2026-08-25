@@ -239,9 +239,9 @@ const VoiceLogger = () => {
       
       // Trigger transcription
       supabase.functions.invoke('transcribe-voice', {
-        body: { 
-          voice_log_id: voiceLog.id, 
-          audio_url: publicUrl,
+        body: {
+          voice_log_id: voiceLog.id,
+          audio_path: fileName,
           clinical_mode: isClinicalMode
         }
       }).then(({ error }) => {
