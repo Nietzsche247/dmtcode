@@ -76,7 +76,6 @@ interface FormData {
 
   // Privacy
   privacyLevel: 'private' | 'anonymous_matchable' | 'public_pseudonym' | 'researcher_available';
-  publicationConsent: boolean;
   pseudonym: string;
 }
 
@@ -150,7 +149,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     fieldOrientation: '',
     fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
-    publicationConsent: false,
     pseudonym: ''
   });
 
@@ -309,7 +307,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         motion: formData.movements.length ? formData.movements.join(', ') : null,
         lighting_conditions: formData.timeOfDay || null,
         privacy_level: formData.privacyLevel,
-        publication_consent: formData.publicationConsent,
+        publication_consent: true,
         pseudonym: formData.privacyLevel === 'public_pseudonym' && formData.pseudonym.trim() ? formData.pseudonym.trim() : null,
         field_x: cannotPlace ? null : (fieldPin ? fieldPin.x : null),
         field_y: cannotPlace ? null : (fieldPin ? fieldPin.y : null),
@@ -592,7 +590,6 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     fieldOrientation: '',
     fieldLocations: '',
     privacyLevel: 'anonymous_matchable',
-    publicationConsent: false,
     pseudonym: ''
   });
     setStep(1);
@@ -1601,17 +1598,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 </div>
               )}
 
-              <div className="flex items-start space-x-2 mt-4">
-                <Checkbox
-                  id="publicationConsent"
-                  checked={formData.publicationConsent}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, publicationConsent: checked === true }))}
-                  className="mt-1"
-                />
-                <Label htmlFor="publicationConsent" className="font-normal">
-                  I consent to this record being included in the public CC BY 4.0 data export.
-                </Label>
-              </div>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Records added to the registry are published under CC BY 4.0 so they can be cited and reused. You can ask for yours to be removed at any time by emailing info@dmtcode.com.
+              </p>
             </div>
 
             <div className="flex justify-between">

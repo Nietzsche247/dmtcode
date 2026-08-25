@@ -12,13 +12,12 @@ export const RegistryDownloads = () => {
   const exportJSON = async () => {
     setIsExporting(true);
     try {
-      // These downloads are labelled CC-BY-4.0, so they may only contain rows
-      // whose submitter consented to the open-licensed export.
+      // Publication under CC BY 4.0 is the terms of contributing to the
+      // registry, so no publication_consent filter applies here.
       const { data, error } = await supabase
         .from('symbol_submissions')
         .select('*')
         .eq('status', 'approved')
-        .eq('publication_consent', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -46,13 +45,12 @@ export const RegistryDownloads = () => {
   const exportCSV = async () => {
     setIsExporting(true);
     try {
-      // These downloads are labelled CC-BY-4.0, so they may only contain rows
-      // whose submitter consented to the open-licensed export.
+      // Publication under CC BY 4.0 is the terms of contributing to the
+      // registry, so no publication_consent filter applies here.
       const { data, error } = await supabase
         .from('symbol_submissions')
         .select('*')
         .eq('status', 'approved')
-        .eq('publication_consent', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

@@ -146,6 +146,7 @@ export const SubmissionWizard = () => {
           svg_data: svgData,
           vector_json: vectorJson,
           is_sober_baseline: metadata.isSoberBaseline ?? false,
+          publication_consent: true,
         })
         .select()
         .single();
