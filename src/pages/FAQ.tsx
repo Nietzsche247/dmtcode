@@ -112,7 +112,7 @@ const FAQ_GROUPS: Array<{
     items: [
       {
         q: 'What do I need to get started?',
-        a: 'Everything is on the Prepare page: three kits. Solo for one observer, Triad for two to three, Circle for six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German. You can also source every part yourself. We show the do-it-yourself figure next to each kit so you know exactly what you are paying for.',
+        a: 'Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German. You can also source every part yourself. We show the do-it-yourself figure next to each kit so you know exactly what you are paying for.',
       },
       {
         q: 'Why a 650nm laser?',
@@ -128,7 +128,7 @@ const FAQ_GROUPS: Array<{
       },
       {
         q: 'Can my friends and I do this together?',
-        a: 'Yes, and it is often better that way. Triad is built for two to three observers and Circle for six, so the shared optics amortize and the per-person cost drops as the circle grows. Every observer in the group is an adult and goes through the same screening card. A group session protocol is in progress; until it is published, use the free Observation Field Sheet and Sober Baseline Protocol from the Prepare page for each observer.',
+        a: 'Yes, and it is often better that way. Dual covers one to two observers, Triad two to three, and Circle up to six, so the shared optics amortize and the per-person cost drops as the circle grows. Every observer in the group is an adult and goes through the same screening card. A group session protocol is in progress; until it is published, use the free Observation Field Sheet and Sober Baseline Protocol from the Prepare page for each observer.',
       },
       {
         q: 'What are your shipping and refund terms?',
