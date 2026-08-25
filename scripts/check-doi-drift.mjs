@@ -182,6 +182,35 @@ if (truth) {
   }
 }
 
+// --- Check 4: the canonical exported DOI constants must be concept DOIs ---
+// This is the single most important living pointer on the site: it drives the
+// footer, the About citation block, the Dataset page badge and both citation
+// templates. A file-scoped allowlist cannot protect it, so it gets its own
+// check.
+if (constants) {
+  const EXPORTS = ['ZENODO_DOI', 'ZENODO_CONCEPT_DOI'];
+  for (const name of EXPORTS) {
+    const m = constants.match(new RegExp(name + '\\s*=\\s*[\'"][^\'"]*zenodo\\.(\\d+)[\'"]'));
+    if (!m) {
+      if (name === 'ZENODO_DOI') {
+        problems.push(`${name} not found in src/lib/constants.ts. If it was renamed, update the probe in scripts/check-doi-drift.mjs.`);
+      }
+      continue;
+    }
+    const id = m[1];
+    const meta = DOIS[id];
+    if (!meta) {
+      problems.push(`${name} points at unregistered DOI zenodo.${id}. Register it in the DOIS map.`);
+    } else if (meta.kind !== 'concept') {
+      problems.push(
+        `${name} is a VERSION DOI: zenodo.${id} (${meta.what})\n` +
+        `    src/lib/constants.ts drives the footer, the About citation block, the Dataset badge and both citation templates.\n` +
+        `    All of those are living pointers and must resolve to latest. Use 10.5281/zenodo.17816519.`
+      );
+    }
+  }
+}
+
 // --- Report ---
 if (problems.length > 0) {
   console.error('DOI and version drift:\n');
