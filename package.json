@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/check-kits-drift.mjs && node scripts/check-ui-strings-drift.mjs && node scripts/sync-llms-kits.mjs",
+    "prebuild": "node scripts/check-doi-drift.mjs && node scripts/check-kits-drift.mjs && node scripts/check-ui-strings-drift.mjs && node scripts/sync-llms-kits.mjs",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
