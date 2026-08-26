@@ -149,6 +149,7 @@ const NullReports = () => {
                 nothing structured, or nothing that matched anything already in the catalogue. It is
                 the negative counterpart to a recognition.
               </p>
+              <p>This is stage one screening, not a controlled experiment.</p>
               <p>
                 We publish null reports for a simple reason: a dataset that cannot record failure
                 cannot be trusted about success. Null results are the credibility asset of this
