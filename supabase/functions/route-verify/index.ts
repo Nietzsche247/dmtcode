@@ -32,7 +32,7 @@ type Issue =
 
 type WorkItem = {
   path: string;
-  source: "crawler_hits" | "sitemap";
+  source: "sitemap";
   bot_name: string | null;
   inSitemap: boolean;
 };
@@ -187,23 +187,7 @@ Deno.serve(async (req) => {
   );
 
   try {
-    // ---- 1. build the work list -------------------------------------------
-    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5).toISOString();
-
-    const recent = await pageAll<{ path: string }>((from, to) =>
-      supabase
-        .from("route_health")
-        .select("path")
-        .gte("checked_at", sevenDaysAgo)
-        .order("checked_at", { ascending: false })
-        .range(from, to)
-    );
-    const recentlyChecked = new Set(recent.map((r) => r.path));
-    console.log(
-      `[route-verify] recentlyChecked: ${recent.length} rows paged, ${recentlyChecked.size} distinct paths`,
-    );
-
-
+    // ---- 1. build the work list from the site's own sitemaps ---------------
     const work: WorkItem[] = [];
     const seen = new Set<string>();
 
