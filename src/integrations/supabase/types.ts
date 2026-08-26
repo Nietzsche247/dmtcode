@@ -3490,6 +3490,10 @@ export type Database = {
       }
     }
     Functions: {
+      claim_anon_vote: {
+        Args: { p_session_id: string; p_symbol_id: string }
+        Returns: number
+      }
       generate_handle: { Args: never; Returns: string }
       get_co_witnesses: {
         Args: { _symbol_id: string }
