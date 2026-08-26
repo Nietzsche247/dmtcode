@@ -41,7 +41,24 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Auth gate. Must precede req.json(), getUserById, and every email send.
+  // The body is parsed first so the gate can recognise the one public intake
+  // type. Parsing has no side effects; nothing is written before the gate.
+  let body: NotificationRequest;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Invalid JSON body' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  }
+
+  // A research pre-registration is submitted by anonymous visitors through a
+  // public form. The handler for it writes only a fixed admin notice and reads
+  // nothing back to the caller.
+  const isPublicIntake = body.type === 'preregistration';
+
+  // Auth gate. Must precede getUserById and every email send.
   // Path A: shared-secret header (machine callers, e.g. the staleness cron).
   // Path B: any authenticated user JWT. The moderation path below
   // additionally requires the admin role when the caller is not using the
