@@ -222,7 +222,7 @@ const Prepare = () => {
             <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-3">
               <h2 className="font-serif text-2xl">What a kit is for</h2>
               <p className="text-sm text-muted-foreground">
-                Stage one is screening, not the experiment. The public registry is a screening
+                Stage one is screening, not the experiment. The symbol registry is a screening
                 collection, not a controlled experiment: it is open, self selected and unblinded,
                 and priming is not ruled out. It can only show whether there is a hint of agreement
                 worth digging into. Nothing here settles the question.
