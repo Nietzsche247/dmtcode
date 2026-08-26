@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale';
+  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale' | 'preregistration';
   message?: string;
 
   symbolId?: string;
@@ -41,7 +41,19 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Auth gate. Must precede req.json(), getUserById, and every email send.
+  let body: NotificationRequest;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Invalid request body' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  }
+
+  const isPreregistrationIntake = body.type === 'preregistration';
+
+  // Auth gate. Public pre-registration intake is the only anonymous path.
   // Path A: shared-secret header (machine callers, e.g. the staleness cron).
   // Path B: any authenticated user JWT. The moderation path below
   // additionally requires the admin role when the caller is not using the
@@ -54,7 +66,7 @@ const handler = async (req: Request): Promise<Response> => {
   let callerUserId: string | null = null;
   let callerIsAdmin = false;
 
-  if (!viaSecret) {
+  if (!viaSecret && !isPreregistrationIntake) {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (authHeader.startsWith('Bearer ')) {
       try {
@@ -95,7 +107,6 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const body: NotificationRequest = await req.json();
     const { type, symbolId, wavelength, surface, metadata, submission, submissionId, action, reason } = body;
 
     // Handle moderation status change notification to submitter
@@ -277,6 +288,20 @@ const handler = async (req: Request): Promise<Response> => {
 
       return new Response(
         JSON.stringify({ success: true, message: 'New submission notification sent' }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    if (type === 'preregistration') {
+      const message = `RESEARCH PRE-REGISTRATION SUBMITTED\n\nTimestamp: ${new Date().toISOString()}\n\nReview: https://dmtcode.com/admin`;
+      const { error: notifError } = await supabase
+        .from('admin_notifications')
+        .insert({ type, message, metadata: {} });
+
+      if (notifError) throw notifError;
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Pre-registration notification sent' }),
         { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
