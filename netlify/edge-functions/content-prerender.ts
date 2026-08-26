@@ -1007,6 +1007,8 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
     <p>Class 3R laser, under 5 mW. Do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
+    <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
+
   </section>`,
   ).join("");
 
