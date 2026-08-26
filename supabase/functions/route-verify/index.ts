@@ -207,10 +207,6 @@ Deno.serve(async (req) => {
     const work: WorkItem[] = [];
     const seen = new Set<string>();
 
-    // fixed per-run quotas; unused quota spills over to the other source
-    const CRAWLER_QUOTA = 80;
-    const SITEMAP_QUOTA = 40;
-
     const collect = (candidates: WorkItem[], quota: number) => {
       let taken = 0;
       for (const item of candidates) {
@@ -223,26 +219,7 @@ Deno.serve(async (req) => {
       }
     };
 
-    // a. crawler_hits, newest first, not checked in the last 7 days
-    const { data: hits } = await supabase
-      .from("crawler_hits")
-      .select("path, bot_name, ts")
-      .order("ts", { ascending: false })
-      .limit(2000);
-
-    const crawlerCandidates: WorkItem[] = [];
-    for (const h of hits ?? []) {
-      const p = normalizePath(String((h as Record<string, unknown>).path ?? ""));
-      if (!p || recentlyChecked.has(p)) continue;
-      crawlerCandidates.push({
-        path: p,
-        source: "crawler_hits",
-        bot_name: ((h as Record<string, unknown>).bot_name as string) ?? null,
-        inSitemap: false,
-      });
-    }
-
-    // b. sitemap surface, least recently checked first (never-checked first)
+    // sitemap surface only, least recently checked first (never-checked first)
     const sitemapPaths = new Set<string>();
     for (const sm of SITEMAPS) {
       for (const p of await parseSitemap(sm)) sitemapPaths.add(p);
