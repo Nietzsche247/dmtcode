@@ -29,7 +29,7 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
       const [subsRes, savedRes, watchRes] = await Promise.all([
         supabase
           .from('symbol_submissions')
-          .select('id, description, visibility_status, created_at')
+          .select('id, description, visibility_status, moderation_status, rejection_reason, created_at')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(30),
@@ -50,14 +50,27 @@ export const ActivityThread = ({ userId }: { userId: string }) => {
 
       for (const s of subsRes.data || []) {
         // Visibility, not review. A public symbol may still be unreviewed.
+        // Review outcome is a separate dimension and the submitter is entitled
+        // to see their own, including the reason a reviewer wrote.
         const isPublic = s.visibility_status === 'public';
+        const moderation = (s as { moderation_status?: string | null }).moderation_status || 'unreviewed';
+        const reason = (s as { rejection_reason?: string | null }).rejection_reason || '';
+
+        const parts: string[] = [];
+        if (!isPublic) parts.push('not published');
+        if (moderation === 'denied') parts.push('review outcome: declined');
+        else if (moderation === 'reviewed') parts.push('review outcome: reviewed');
+        else if (moderation === 'reported') parts.push('review outcome: reported');
+        else parts.push('review outcome: not yet reviewed');
+        if (reason) parts.push(`reason: ${reason}`);
+
         merged.push({
           key: `sub-${s.id}`,
           label: 'Submitted a symbol',
           text: firstWords(s.description) || 'Symbol report',
           created_at: s.created_at,
           to: isPublic ? `/registry/${s.id}` : undefined,
-          note: isPublic ? undefined : 'not published',
+          note: parts.join(' | '),
         });
       }
 

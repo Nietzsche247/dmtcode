@@ -31,6 +31,9 @@ import { IntelHub } from './IntelHub';
 import { TrendsTracker } from './TrendsTracker';
 
 import { MembersDirectory } from './MembersDirectory';
+import { PreregistrationQueue } from './PreregistrationQueue';
+import { WaitlistPanel } from './WaitlistPanel';
+import { DoorTapsPanel } from './DoorTapsPanel';
 import { Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useRoles } from '@/hooks/useRoles';
@@ -110,6 +113,7 @@ export const AdminDashboard = () => {
             <TabsTrigger value="forecasts">Forecasts</TabsTrigger>
             <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
+            <TabsTrigger value="intake">Intake</TabsTrigger>
             <TabsTrigger value="articles">Articles</TabsTrigger>
             <TabsTrigger value="symbols">Symbols</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
@@ -161,6 +165,12 @@ export const AdminDashboard = () => {
 
           <TabsContent value="members" className="space-y-4">
             <MembersDirectory />
+          </TabsContent>
+
+          <TabsContent value="intake" className="space-y-4">
+            <PreregistrationQueue />
+            <WaitlistPanel />
+            <DoorTapsPanel />
           </TabsContent>
 
 

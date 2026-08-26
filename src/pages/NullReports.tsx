@@ -9,6 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Download, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
+import { localePath, useLocale } from '@/i18n/LocaleProvider';
+
+// Tag variants the registry treats as a null report. Kept in step with
+// NULL_REPORT_TAGS in RegistryBrowser so the count and the filtered list agree.
+const NULL_REPORT_TAGS = ['null-report', 'null_report', 'nothing-seen', 'no-forms'];
 
 interface NullReport {
   wavelength: string;
@@ -21,10 +27,13 @@ const NullReports = () => {
   const [totalNulls, setTotalNulls] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [soberBaselineCount, setSoberBaselineCount] = useState<number | null>(null);
+  const [submittedNullCount, setSubmittedNullCount] = useState<number | null>(null);
+  const locale = useLocale();
 
   useEffect(() => {
     loadNullReports();
     loadSoberBaselineCount();
+    loadSubmittedNullCount();
     
     const channel = supabase
       .channel('null_reports_changes')
@@ -46,6 +55,16 @@ const NullReports = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // Live count of contributed null reports. Zero is rendered as zero.
+  const loadSubmittedNullCount = async () => {
+    const { count, error } = await supabase
+      .from('symbol_submissions')
+      .select('id', { count: 'exact', head: true })
+      .overlaps('tags', NULL_REPORT_TAGS);
+
+    setSubmittedNullCount(error ? null : count ?? 0);
+  };
 
   const loadSoberBaselineCount = async () => {
     const { count, error } = await supabase
@@ -149,7 +168,6 @@ const NullReports = () => {
                 nothing structured, or nothing that matched anything already in the catalogue. It is
                 the negative counterpart to a recognition.
               </p>
-              <p>This is stage one screening, not a controlled experiment.</p>
               <p>
                 We publish null reports for a simple reason: a dataset that cannot record failure
                 cannot be trusted about success. Null results are the credibility asset of this
@@ -162,12 +180,40 @@ const NullReports = () => {
                 nothing, or nothing that matched, please submit that outcome so the record reflects
                 both sides of the ledger.
               </p>
+              <p>
+                Stage one is screening, not the experiment. The symbol registry is a screening
+                collection, not a controlled experiment. Null reports are part of that screening
+                record and are treated as evidence, not as failures.
+              </p>
               {soberBaselineCount !== null && (
                 <p className="text-muted-foreground">
                   {soberBaselineCount} record{soberBaselineCount === 1 ? '' : 's'} {soberBaselineCount === 1 ? 'is' : 'are'} marked
                   by their contributor as sober baseline sessions.
                 </p>
               )}
+
+              <div className="rounded-lg border border-border p-5 space-y-4">
+                <div>
+                  <p className="text-3xl font-bold">
+                    {submittedNullCount === null ? '-' : submittedNullCount}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Contributed null reports on record today.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button asChild size="lg">
+                    <Link to={localePath(locale, '/submit-symbol?null=true')}>
+                      Submit a null report
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <Link to={localePath(locale, '/registry?record=null_report')}>
+                      Browse null reports
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -305,7 +351,9 @@ const NullReports = () => {
                   Observed no visual symbols during laser exposure? Your negative result is valuable data.
                 </p>
                 <Button asChild size="lg" variant="default">
-                  <a href="/submit?null=true">Report Null Observation</a>
+                  <Link to={localePath(locale, '/submit-symbol?null=true')}>
+                    Submit a null report
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

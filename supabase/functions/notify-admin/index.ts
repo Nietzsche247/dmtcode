@@ -8,6 +8,8 @@ const corsHeaders = {
 
 interface NotificationRequest {
   type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale' | 'preregistration';
+  submissionIds?: string[];
+  bulk?: boolean;
   message?: string;
 
   symbolId?: string;
@@ -107,7 +109,36 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { type, symbolId, wavelength, surface, metadata, submission, submissionId, action, reason } = body;
+    const { type, symbolId, wavelength, surface, metadata, submission, submissionId, submissionIds, bulk, action, reason } = body;
+
+    // Store one admin notification for a bulk decision, carrying every affected
+    // submission id. Submitter-facing email remains on the single-row path.
+    if (action && Array.isArray(submissionIds) && (bulk || submissionIds.length > 1)) {
+      if (!viaSecret && !callerIsAdmin) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      const ids = submissionIds.filter((value): value is string => typeof value === 'string');
+      const { error: bulkNotifError } = await supabase
+        .from('admin_notifications')
+        .insert({
+          type: 'bulk_moderation',
+          message: `BULK MODERATION DECISION\n\nAction: ${action}\nSubmissions: ${ids.length}\nReason: ${reason || 'Not provided'}\nIDs: ${ids.join(', ')}\nTimestamp: ${new Date().toISOString()}`,
+          metadata: { action, reason, submission_ids: ids, batch_size: ids.length },
+        });
+
+      if (bulkNotifError) {
+        console.error('Failed to store bulk moderation notification:', bulkNotifError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Bulk moderation notification stored', count: ids.length }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
 
     // Handle moderation status change notification to submitter
     if (submissionId && action) {
