@@ -1929,6 +1929,133 @@ const PROTOCOL_GUIDE_FAQ_LD = {
   })),
 };
 
+// Ordered steps of the reported 650 nm observation procedure. Every step below
+// restates equipment or conditions already described in the protocol guide body
+// copy on this page; nothing is invented here.
+const PROTOCOL_GUIDE_HOWTO_STEPS: Array<{ name: string; text: string }> = [
+  {
+    name: "Have the setup reviewed for laser safety",
+    text: "Before any use, have the apparatus and the intended viewing geometry reviewed by someone qualified in laser safety. The beam must never be viewed directly. Adults 18 and older only.",
+  },
+  {
+    name: "Assemble the optical components",
+    text: "Mount a 650 nm red laser module so that its beam passes through a transmission diffraction grating, which spreads the beam into a speckle and interference field.",
+  },
+  {
+    name: "Place the diffusing element",
+    text: "Place a diffusing or refracting element, such as an acrylic tank or a lens, in the path so the field is projected onto a surface rather than viewed at the source.",
+  },
+  {
+    name: "Set the room conditions and posture",
+    text: "Darken the room and take a stable seated observation posture facing the projected field, not the laser aperture. Record the room conditions and posture used.",
+  },
+  {
+    name: "Observe and record",
+    text: "Observe the projected field and record what is seen, including seeing nothing structured. Null reports carry the same weight as positive ones and are published alongside them.",
+  },
+  {
+    name: "Submit the record to the registry",
+    text: "Submit the drawn or uploaded form with its description and tags, noting whether you had prior exposure to the catalogue, so convergence can be tested on unprimed records.",
+  },
+];
+
+const PROTOCOL_GUIDE_HOWTO_LD = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "@id": "https://dmtcode.com/protocol-guide#howto",
+  "url": "https://dmtcode.com/protocol-guide",
+  "name": "650 nm laser observation procedure",
+  "description":
+    "The reported 650 nm laser observation procedure as documented by contributors: equipment, room conditions, observation posture, and recording. Qualified laser safety review is required before use, and the beam must never be viewed directly.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "supply": [
+    { "@type": "HowToSupply", "name": "650 nm red laser module" },
+    { "@type": "HowToSupply", "name": "Transmission diffraction grating" },
+    { "@type": "HowToSupply", "name": "Diffusing or refracting element (acrylic tank or lens)" },
+  ],
+  "tool": [
+    { "@type": "HowToTool", "name": "Darkened room" },
+    { "@type": "HowToTool", "name": "Stable observation seat" },
+  ],
+  "step": PROTOCOL_GUIDE_HOWTO_STEPS.map((s, i) => ({
+    "@type": "HowToStep",
+    "position": i + 1,
+    "name": s.name,
+    "text": s.text,
+  })),
+};
+
+// Locale-aware rebuild of the two structured-data blocks on /protocol-guide.
+// Translated copy comes from content_translations (static/protocol-guide,
+// fields faq_ld and howto_ld, each a JSON string). English is the fallback
+// whenever the row is missing or unparseable, and identifiers always point at
+// the locale URL so the Spanish and German mirrors never claim the English one.
+function localizedProtocolGuideLd(
+  locale: Loc,
+  trs: Record<string, string>,
+): unknown[] {
+  const base = `${SITE}${locale !== "en" ? "/" + locale : ""}/protocol-guide`;
+
+  let faqEntities = PROTOCOL_GUIDE_FAQ_LD.mainEntity;
+  const faqRaw = trs.faq_ld;
+  if (faqRaw && faqRaw.trim()) {
+    try {
+      const parsed = JSON.parse(faqRaw) as Array<Record<string, unknown>>;
+      if (Array.isArray(parsed) && parsed.length) {
+        faqEntities = parsed.map((q) => ({
+          "@type": "Question",
+          name: String((q as { name?: unknown }).name ?? ""),
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: String(
+              ((q as { acceptedAnswer?: { text?: unknown } }).acceptedAnswer?.text) ??
+                (q as { text?: unknown }).text ??
+                "",
+            ),
+          },
+        })) as typeof PROTOCOL_GUIDE_FAQ_LD.mainEntity;
+      }
+    } catch { /* keep English */ }
+  }
+
+  const faqLd = {
+    ...PROTOCOL_GUIDE_FAQ_LD,
+    "@id": `${base}#faq`,
+    "url": base,
+    "mainEntityOfPage": base,
+    "inLanguage": locale,
+    "mainEntity": faqEntities,
+  };
+
+  let steps = PROTOCOL_GUIDE_HOWTO_STEPS;
+  const howRaw = trs.howto_ld;
+  if (howRaw && howRaw.trim()) {
+    try {
+      const parsed = JSON.parse(howRaw) as Array<{ name?: unknown; text?: unknown }>;
+      if (Array.isArray(parsed) && parsed.length) {
+        steps = parsed.map((s) => ({ name: String(s.name ?? ""), text: String(s.text ?? "") }));
+      }
+    } catch { /* keep English */ }
+  }
+
+  const howToLd = {
+    ...PROTOCOL_GUIDE_HOWTO_LD,
+    "@id": `${base}#howto`,
+    "url": base,
+    "mainEntityOfPage": base,
+    "inLanguage": locale,
+    "step": steps.map((s, i) => ({
+      "@type": "HowToStep",
+      "position": i + 1,
+      "name": s.name,
+      "text": s.text,
+    })),
+  };
+
+  return [faqLd, howToLd];
+}
+
+
 // Verbatim copy of the terms array in src/data/glossaryTerms.ts, which is the source of truth.
 // Netlify edge functions run in Deno and cannot import from src/.
 const GLOSSARY_TERMS: Array<{ term: string; definition: string }> = [
