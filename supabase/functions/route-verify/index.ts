@@ -253,15 +253,12 @@ Deno.serve(async (req) => {
         inSitemap: true,
       }));
 
-    // fill each quota, then let each source use whatever the other left behind
-    collect(crawlerCandidates, CRAWLER_QUOTA);
-    collect(sitemapCandidates, SITEMAP_QUOTA);
-    collect(crawlerCandidates, MAX_PATHS);
     collect(sitemapCandidates, MAX_PATHS);
 
     for (const w of work) {
       if (sitemapPaths.has(w.path)) w.inSitemap = true;
     }
+
 
 
     // ---- 2-4. check each path ---------------------------------------------
