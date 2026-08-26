@@ -14,7 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Archive, ArchiveRestore, Pencil, Plus, Trash2, X } from "lucide-react";
 import { ArticlePublishPreview } from "@/components/admin/ArticlePublishPreview";
 
 
@@ -38,6 +39,7 @@ type Article = {
   source_published_at: string | null;
   is_published: boolean;
   published_at: string | null;
+  archived_at: string | null;
   updated_at: string;
   created_at: string;
 };
@@ -65,10 +67,21 @@ type ArticleLead = {
   ai_enriched_at: string | null;
 };
 
-type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at"> & {
+type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at" | "archived_at"> & {
   id?: string;
   published_at?: string | null;
 };
+
+type ArticleStatus = "published" | "draft" | "archived";
+
+const statusOf = (a: Article): ArticleStatus => {
+  if (a.is_published) return "published";
+  if (a.archived_at) return "archived";
+  return "draft";
+};
+
+const formatArticleDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleDateString() : "";
 
 const EMPTY_DRAFT: Draft = {
   slug: "",
@@ -455,8 +468,9 @@ export const ArticlesManager = () => {
 
   const togglePublish = async (a: Article) => {
     const patch: any = { is_published: !a.is_published };
-    if (!a.is_published && !a.published_at) {
-      patch.published_at = new Date().toISOString();
+    if (!a.is_published) {
+      patch.archived_at = null;
+      if (!a.published_at) patch.published_at = new Date().toISOString();
     }
     const { error } = await supabase.from("articles").update(patch).eq("id", a.id);
     if (error) return toast.error(error.message);
@@ -464,6 +478,39 @@ export const ArticlesManager = () => {
     if (deployAfterPublish) await triggerProductionDeploy();
     load();
   };
+
+  const writeStatus = async (
+    a: Article,
+    patch: Record<string, unknown>,
+    successMessage: string,
+  ) => {
+    const { data, error } = await supabase
+      .from("articles")
+      .update(patch)
+      .eq("id", a.id)
+      .select("id, is_published, archived_at");
+    if (error) return toast.error(error.message);
+    if (!data || data.length === 0) {
+      return toast.error(
+        "Write blocked by a permission rule. Nothing was saved.",
+      );
+    }
+    toast.success(successMessage);
+    load();
+  };
+
+  const archiveArticle = (a: Article) =>
+    writeStatus(
+      a,
+      { is_published: false, archived_at: new Date().toISOString() },
+      "Article archived.",
+    );
+
+  const unarchiveArticle = (a: Article) =>
+    writeStatus(a, { archived_at: null }, "Article returned to draft.");
+
+  const republishArticle = (a: Article) =>
+    writeStatus(a, { is_published: true, archived_at: null }, "Article republished.");
 
   const onTitleChange = (v: string) => {
     setDraft((d) => {
