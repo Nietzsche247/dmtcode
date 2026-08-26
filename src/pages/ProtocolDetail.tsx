@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/Navigation';
+import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
