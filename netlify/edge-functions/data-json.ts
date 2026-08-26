@@ -65,6 +65,7 @@ interface UnifiedItem {
   content_type: string;
   title: string;
   url?: string;
+  page_url?: string;
   doi?: string;
   compounds: string[];
   topic: string[];
@@ -318,6 +319,7 @@ export default async (req: Request): Promise<Response> => {
       id: `bib_${r.id}`,
       content_type: (r.content_type as string) || "Paper",
       title,
+      page_url: `${SITE}/bibliography/${r.id}`,
       url: (r.url as string) || (r.doi ? `https://doi.org/${r.doi}` : `${SITE}/bibliography/${r.id}`),
       doi: (r.doi as string) || undefined,
       compounds: normalizeCompounds(r.compounds),
@@ -348,6 +350,7 @@ export default async (req: Request): Promise<Response> => {
       id: `trial_${r.id}`,
       content_type: "Trial",
       title,
+      page_url: `${SITE}/trials/${r.id}`,
       url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
       compounds: (r.compounds as string[]) || [],
       topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
@@ -364,6 +367,7 @@ export default async (req: Request): Promise<Response> => {
     id: `symbol_${r.id}`,
     content_type: "Symbol",
     title: (r.description as string) || "Untitled symbol",
+    page_url: `${SITE}/registry/${r.id}`,
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
@@ -390,6 +394,7 @@ export default async (req: Request): Promise<Response> => {
     id: `article_${r.id}`,
     content_type: "Article",
     title: (r.title as string) || "",
+    page_url: `${SITE}/articles/${r.slug}`,
     url: `${SITE}/articles/${r.slug}`,
     compounds: (r.compounds as string[]) || [],
     topic: (r.topic_tags as string[]) || [],
@@ -549,6 +554,7 @@ export default async (req: Request): Promise<Response> => {
   // Published verbatim from the column comments on symbol_submissions so the
   // export and the database can never drift apart in what they claim a field means.
   const FIELD_DEFINITIONS: Record<string, string> = {
+    page_url: "The absolute URL of this record's own detail page on dmtcode.com. The id field carries a prefix, for example bib_<uuid>, that is not part of any URL, and the url field may point at an external source or a DOI. page_url is the on-site page and is always safe to follow.",
     status: "LEGACY. Kept because row level security policies and existing queries depend on it. It is now kept in sync with visibility_status by the sync_symbol_submission_status trigger. New code should read visibility_status, moderation_status and evidence_status instead.",
     visibility_status: "Who can see this row. private = only the author. public = published and readable by anyone. hidden = withdrawn from public view but never deleted.",
     moderation_status: "What a human moderator has actually done. unreviewed = nobody has looked at it yet. reviewed = a moderator looked and let it stand. denied = a moderator rejected it. reported = a reader flagged it and it awaits a decision. There is deliberately no stored overdue value. Overdue is derived as moderation_status = unreviewed and review_due_at < now(), so it can never go stale.",
