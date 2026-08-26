@@ -5,7 +5,9 @@
 // A status-code monitor cannot see this. This job fetches the page, reads the
 // canonical and alternates out of the head, and fetches THOSE.
 //
-// Read-only against crawler_hits. Writes only to route_health.
+// Work list comes from the site's own sitemaps only. crawler_hits is
+// attacker-writable (anon INSERT) and must never steer outbound traffic.
+// Writes only to route_health.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
@@ -30,7 +32,7 @@ type Issue =
 
 type WorkItem = {
   path: string;
-  source: "crawler_hits" | "sitemap";
+  source: "sitemap";
   bot_name: string | null;
   inSitemap: boolean;
 };
@@ -185,29 +187,9 @@ Deno.serve(async (req) => {
   );
 
   try {
-    // ---- 1. build the work list -------------------------------------------
-    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5).toISOString();
-
-    const recent = await pageAll<{ path: string }>((from, to) =>
-      supabase
-        .from("route_health")
-        .select("path")
-        .gte("checked_at", sevenDaysAgo)
-        .order("checked_at", { ascending: false })
-        .range(from, to)
-    );
-    const recentlyChecked = new Set(recent.map((r) => r.path));
-    console.log(
-      `[route-verify] recentlyChecked: ${recent.length} rows paged, ${recentlyChecked.size} distinct paths`,
-    );
-
-
+    // ---- 1. build the work list from the site's own sitemaps ---------------
     const work: WorkItem[] = [];
     const seen = new Set<string>();
-
-    // fixed per-run quotas; unused quota spills over to the other source
-    const CRAWLER_QUOTA = 80;
-    const SITEMAP_QUOTA = 40;
 
     const collect = (candidates: WorkItem[], quota: number) => {
       let taken = 0;
@@ -221,26 +203,7 @@ Deno.serve(async (req) => {
       }
     };
 
-    // a. crawler_hits, newest first, not checked in the last 7 days
-    const { data: hits } = await supabase
-      .from("crawler_hits")
-      .select("path, bot_name, ts")
-      .order("ts", { ascending: false })
-      .limit(2000);
-
-    const crawlerCandidates: WorkItem[] = [];
-    for (const h of hits ?? []) {
-      const p = normalizePath(String((h as Record<string, unknown>).path ?? ""));
-      if (!p || recentlyChecked.has(p)) continue;
-      crawlerCandidates.push({
-        path: p,
-        source: "crawler_hits",
-        bot_name: ((h as Record<string, unknown>).bot_name as string) ?? null,
-        inSitemap: false,
-      });
-    }
-
-    // b. sitemap surface, least recently checked first (never-checked first)
+    // sitemap surface only, least recently checked first (never-checked first)
     const sitemapPaths = new Set<string>();
     for (const sm of SITEMAPS) {
       for (const p of await parseSitemap(sm)) sitemapPaths.add(p);
@@ -274,15 +237,12 @@ Deno.serve(async (req) => {
         inSitemap: true,
       }));
 
-    // fill each quota, then let each source use whatever the other left behind
-    collect(crawlerCandidates, CRAWLER_QUOTA);
-    collect(sitemapCandidates, SITEMAP_QUOTA);
-    collect(crawlerCandidates, MAX_PATHS);
     collect(sitemapCandidates, MAX_PATHS);
 
     for (const w of work) {
       if (sitemapPaths.has(w.path)) w.inSitemap = true;
     }
+
 
 
     // ---- 2-4. check each path ---------------------------------------------
