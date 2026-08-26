@@ -3488,6 +3488,16 @@ export type Database = {
           },
         ]
       }
+      v_exposure_reports: {
+        Row: {
+          created_at: string | null
+          exposure: string | null
+          id: string | null
+          priming_detail: string | null
+          source_table: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       claim_anon_vote: {
