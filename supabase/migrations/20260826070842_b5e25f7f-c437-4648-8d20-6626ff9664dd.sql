@@ -1,0 +1,1 @@
+ALTER TABLE public.translation_runs ADD COLUMN IF NOT EXISTS resume_cursor jsonb;
