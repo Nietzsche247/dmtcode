@@ -227,56 +227,101 @@ function extractMarked(html: string, table: string, id: string): string | null {
   return m ? m[1].trim() : null;
 }
 
-// Rows for page-sourced configs: fetch each live English prerender and pull
-// the source fields out of it. Pages that fail to fetch or lack the marker
+// Rows for page-sourced configs: fetch the live English prerenders and pull
+// the source fields out of them. Pages that fail to fetch or lack the marker
 // are skipped by returning a row with empty fields (the field loop skips
-// empties, and the en-row upsert never fires for them).
-async function getPageRows(c: Cfg): Promise<Record<string, unknown>[]> {
+// empties, and the en-row upsert never fires for them). Fetched in batches of
+// six with a short per-page timeout, and abandoned at the run deadline, so
+// page fetching can never consume the whole budget before any translating.
+const PAGE_FETCH_CONCURRENCY = 6;
+const PAGE_FETCH_TIMEOUT_MS = 8_000;
+
+async function getPageRows(c: Cfg, deadline: number): Promise<Record<string, unknown>[]> {
+  const pages = c.pages ?? [];
   const out: Record<string, unknown>[] = [];
-  for (const p of c.pages ?? []) {
-    const row: Record<string, unknown> = { id: p.id };
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 15_000);
-      const res = await fetch(`${SITE_URL}${p.path}`, {
-        headers: { "User-Agent": "dmtcode-translate-content/2.0", Accept: "text/html" },
-        signal: ctrl.signal,
-      });
-      clearTimeout(timer);
-      if (!res.ok) throw new Error(`page ${p.path} ${res.status}`);
-      const html = await res.text();
-      if (c.fields.includes("body_html")) {
-        row.body_html = extractMarked(html, c.table, p.id) ?? "";
+  for (let i = 0; i < pages.length; i += PAGE_FETCH_CONCURRENCY) {
+    if (Date.now() > deadline) return out;
+    const batch = pages.slice(i, i + PAGE_FETCH_CONCURRENCY);
+    const rows = await Promise.all(batch.map(async (p) => {
+      const row: Record<string, unknown> = { id: p.id };
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), PAGE_FETCH_TIMEOUT_MS);
+        try {
+          const res = await fetch(`${SITE_URL}${p.path}`, {
+            headers: { "User-Agent": "dmtcode-translate-content/2.0", Accept: "text/html" },
+            signal: ctrl.signal,
+          });
+          if (!res.ok) throw new Error(`page ${p.path} ${res.status}`);
+          const html = await res.text();
+          if (c.fields.includes("body_html")) {
+            row.body_html = extractMarked(html, c.table, p.id) ?? "";
+          }
+          if (c.fields.includes("title")) {
+            row.title = unescapeHtml(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "");
+          }
+          if (c.fields.includes("description")) {
+            row.description = unescapeHtml(
+              html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
+            );
+          }
+        } finally {
+          clearTimeout(timer);
+        }
+      } catch {
+        // leave fields empty; this page is skipped this run
       }
-      if (c.fields.includes("title")) {
-        row.title = unescapeHtml(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "");
-      }
-      if (c.fields.includes("description")) {
-        row.description = unescapeHtml(
-          html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
-        );
-      }
-    } catch {
-      // leave fields empty; this page is skipped this run
-    }
-    out.push(row);
+      return row;
+    }));
+    out.push(...rows);
   }
   return out;
 }
 
-async function getRows(c: Cfg): Promise<Record<string, unknown>[]> {
-  if (c.pages) return await getPageRows(c);
-  const cols = ["id", c.key, ...c.fields, ...(c.json ?? [])].join(",");
-  const out: Record<string, unknown>[] = [];
-  for (let offset = 0; ; offset += 1000) {
-    const url = `${SUPABASE_URL}/rest/v1/${c.table}?select=${cols}&${c.gate}&order=${c.key}.asc&limit=1000&offset=${offset}`;
-    const r = await fetch(url, { headers: sbHeaders });
-    if (!r.ok) throw new Error(`read ${c.table} ${r.status}`);
+// The PostgREST gate expressed as the SQL predicate the candidates function
+// accepts. Anything unrecognised falls back to no filter rather than being
+// interpolated, so the dynamic SQL stays closed.
+function gateSql(gate?: string): string {
+  if (gate === "is_approved=eq.true") return "is_approved is true";
+  if (gate === "is_published=eq.true") return "is_published is true";
+  return "true";
+}
+
+// Table-sourced rows come from public.translation_candidates, which does the
+// "still needs translating" test in Postgres. Previously the whole table plus
+// every translation row was pulled over PostgREST and compared in JS, so a run
+// could check 1,110 fields and skip 1,105 of them.
+async function getRows(
+  c: Cfg,
+  locales: readonly string[],
+  after: string | null,
+  deadline: number,
+): Promise<Record<string, unknown>[]> {
+  if (c.pages) return await getPageRows(c, deadline);
+  const fields = [...c.fields, ...(c.json ?? [])];
+  const merged = new Map<string, Record<string, unknown>>();
+  for (const locale of locales) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/translation_candidates`, {
+      method: "POST",
+      headers: sbHeaders,
+      body: JSON.stringify({
+        p_table: c.table,
+        p_key: c.key,
+        p_fields: fields,
+        p_locale: locale,
+        p_gate_sql: gateSql(c.gate),
+        p_after: after,
+        p_limit: 200,
+      }),
+    });
+    if (!r.ok) throw new Error(`candidates ${c.table} ${r.status}: ${(await r.text()).slice(0, 200)}`);
     const page = await r.json() as Record<string, unknown>[];
-    out.push(...page);
-    if (page.length < 1000) break;
+    for (const row of page) {
+      const k = String(row[c.key] ?? "");
+      if (k && !merged.has(k)) merged.set(k, row);
+    }
   }
-  return out;
+  return [...merged.values()].sort((a, b) => String(a[c.key]).localeCompare(String(b[c.key])));
 }
 
 async function existingHashes(table: string, locale: string): Promise<Map<string, string>> {
