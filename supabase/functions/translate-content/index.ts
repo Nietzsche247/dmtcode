@@ -356,19 +356,19 @@ Deno.serve(async (req) => {
   };
 
   try {
-    // Ordered work list: table major, locale minor, matching the original
-    // loop nesting (LOCALES iterate inside the table loop).
+    // Ordered work list: one unit per table. Locales are interleaved at row
+    // level inside the unit, so es and de advance together instead of one
+    // locale draining a large table before the other starts.
     const configs = CONFIG.filter((c) => !onlyTable || c.table === onlyTable);
     const locales = LOCALES.filter((l) => !onlyLocale || l === onlyLocale);
-    const units: Array<{ c: Cfg; locale: "es" | "de" }> = [];
-    for (const c of configs) for (const locale of locales) units.push({ c, locale });
+    const units: Array<{ c: Cfg }> = configs.map((c) => ({ c }));
 
     let startUnit = 0;
     let resumeKey: string | null = null;
     if (useCursor) {
       const cur = await loadCursor();
       if (cur) {
-        const idx = units.findIndex((x) => x.c.table === cur.table && x.locale === cur.locale);
+        const idx = units.findIndex((x) => x.c.table === cur.table);
         if (idx >= 0) {
           startUnit = idx;
           resumeKey = cur.key ?? null;
@@ -379,9 +379,10 @@ Deno.serve(async (req) => {
     // up to the cursor unit, so every unit is visited exactly once per run.
     const order = [...units.slice(startUnit), ...units.slice(0, startUnit)];
 
-    for (const { c, locale } of order) {
+    for (const { c } of order) {
       const rows = await getRows(c);
-      const have = await existingHashes(c.table, locale);
+      const haveByLocale = new Map<string, Map<string, string>>();
+      for (const locale of locales) haveByLocale.set(locale, await existingHashes(c.table, locale));
       // The locale='en' rows are the source-of-truth record for page-sourced
       // configs (people/static), whose English lives in prerender templates.
       // Table-sourced configs read their source from the database directly,
@@ -402,47 +403,56 @@ Deno.serve(async (req) => {
         const batch: Record<string, unknown>[] = [];
         const recId = String(row[c.key] ?? "");
         if (!recId) continue;
-        newCursor = { table: c.table, locale, key: recId };
         const nowIso = new Date().toISOString();
-        for (const f of c.fields) {
-          const src = row[f]; if (src == null || String(src).trim() === "") continue;
-          const srcStr = String(src); const h = await md5(srcStr); stats.checked++;
-          if (c.pages && haveEn.get(`${recId}|${f}`) !== h) {
-            batch.push({ table_name: c.table, record_id: recId, locale: "en", field: f, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
-          }
-          if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
-          try {
-            const t = await translate(srcStr, locale);
-            batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
-            stats.translated++;
-          } catch (e) {
-            if (e instanceof GatewayPausedError) { stats.pending = true; noteError(e); break; }
-            noteError(e);
-          }
-          if (Date.now() > deadline) { stats.pending = true; break; }
-        }
-        if (!stats.pending) {
-          for (const jf of c.json ?? []) {
-            const src = row[jf]; if (src == null) continue;
-            const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
-            if (c.pages && haveEn.get(`${recId}|${jf}`) !== h) {
-              batch.push({ table_name: c.table, record_id: recId, locale: "en", field: jf, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
+        // Both locales are done for this row before moving to the next row.
+        for (let li = 0; li < locales.length; li++) {
+          const locale = locales[li];
+          const have = haveByLocale.get(locale)!;
+          // The en source row is written once per field, on the first locale
+          // pass, so a single upsert payload never carries the same key twice.
+          const writeEn = li === 0;
+          newCursor = { table: c.table, locale, key: recId };
+          for (const f of c.fields) {
+            const src = row[f]; if (src == null || String(src).trim() === "") continue;
+            const srcStr = String(src); const h = await md5(srcStr); stats.checked++;
+            if (writeEn && c.pages && haveEn.get(`${recId}|${f}`) !== h) {
+              batch.push({ table_name: c.table, record_id: recId, locale: "en", field: f, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
             }
-            if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
+            if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
             try {
-              const t = JSON.stringify(await translateJson(src, locale, deadline));
-              batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
+              const t = await translate(srcStr, locale);
+              batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
               stats.translated++;
             } catch (e) {
-              // Abandon a partially translated jsonb field entirely; never store half.
-              if (e instanceof DeadlineError || e instanceof GatewayPausedError) {
-                if (e instanceof GatewayPausedError) noteError(e);
-                stats.pending = true; break;
-              }
+              if (e instanceof GatewayPausedError) { stats.pending = true; noteError(e); break; }
               noteError(e);
             }
             if (Date.now() > deadline) { stats.pending = true; break; }
           }
+          if (!stats.pending) {
+            for (const jf of c.json ?? []) {
+              const src = row[jf]; if (src == null) continue;
+              const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
+              if (writeEn && c.pages && haveEn.get(`${recId}|${jf}`) !== h) {
+                batch.push({ table_name: c.table, record_id: recId, locale: "en", field: jf, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
+              }
+              if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
+              try {
+                const t = JSON.stringify(await translateJson(src, locale, deadline));
+                batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
+                stats.translated++;
+              } catch (e) {
+                // Abandon a partially translated jsonb field entirely; never store half.
+                if (e instanceof DeadlineError || e instanceof GatewayPausedError) {
+                  if (e instanceof GatewayPausedError) noteError(e);
+                  stats.pending = true; break;
+                }
+                noteError(e);
+              }
+              if (Date.now() > deadline) { stats.pending = true; break; }
+            }
+          }
+          if (stats.pending) break;
         }
         // Flush after every row so partial progress survives a kill.
         if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
@@ -450,6 +460,7 @@ Deno.serve(async (req) => {
       }
       if (stats.pending) break;
     }
+
 
     if (!stats.pending) newCursor = null; // full pass complete: start at the top next run
     await logRun();
