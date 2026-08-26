@@ -36,6 +36,7 @@ import MySymbols from "./pages/MySymbols";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
 
 import Join from "./pages/Join";
+import Preregister from "./pages/Preregister";
 import Prepare from "./pages/Prepare";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
@@ -323,6 +324,7 @@ export const AppRoutes = () => (
 
     <Route path="auth" element={<Auth />} />
     <Route path="join" element={<Join />} />
+    <Route path="preregister" element={<Preregister />} />
     <Route path="prepare" element={<Prepare />} />
     <Route path="products/:handle" element={
       <ErrorBoundary>

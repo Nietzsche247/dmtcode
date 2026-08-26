@@ -1,5 +1,4 @@
 import { Navigation } from '@/components/Navigation';
-import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -333,7 +332,15 @@ const ProtocolDetail = () => {
                             {content.integration.follow_up_structure.map((item: string, i: number) => (
                               <li key={i} className="flex items-start gap-2 text-muted-foreground">
                                 <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                                {item}
+                                {protocol.slug === 'physiological-instrumentation' && item.startsWith('Researchers with ethics approval or instrument access:') ? (
+                                  <span>
+                                    Researchers with ethics approval or instrument access:{' '}
+                                    <Link to={localePath(locale, '/preregister')} className="font-medium text-foreground underline underline-offset-4">
+                                      submit a pre-registration through the open call
+                                    </Link>{' '}
+                                    before collection.
+                                  </span>
+                                ) : item}
                               </li>
                             ))}
                           </ul>
@@ -650,14 +657,6 @@ const ProtocolDetail = () => {
 
             </div>
           </section>
-
-          {/* Pre-registration intake. The open call on this protocol asks for
-              planned instrumented arms and until now had no receiver. */}
-          {protocol.slug === 'physiological-instrumentation' && (
-            <section className="container mx-auto px-4 pb-8">
-              <PreregistrationForm />
-            </section>
-          )}
 
           {/* Protocol Content */}
           <section className="container mx-auto px-4 pb-16">
