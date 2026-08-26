@@ -363,97 +363,20 @@ const Trials = () => {
                 const joinUrl = t.application_url || t.url;
                 return (
                   <li key={t.id}>
-                    <div className="rounded border border-border/60 bg-card p-5 transition-colors hover:border-foreground/40">
-                      <Link to={`/trials/${t.id}`} className="block">
-                        <h2 className="font-display text-xl leading-snug">{t.title}</h2>
-                        <p className="label-data mt-2 text-[11px] text-muted-foreground">
-                          {[
-                            status,
-                            t.phase,
-                            t.trial_type,
-                            t.location,
-                            t.institution,
-                            t.start_date ? `START ${format(new Date(t.start_date), 'yyyy-MM-dd')}` : null,
-                            t.source,
-                          ]
-                            .filter(Boolean)
-                            .join(' · ')
-                            .toUpperCase()}
-                        </p>
-                        {showVerification && (
-                          <p className="label-data mt-1 text-[10px] text-muted-foreground/80">
-                            VERIFICATION: {t.confirmed_status!.toUpperCase()}
-                          </p>
-                        )}
-                        {t.description && (
-                          <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-                            {t.description}
-                          </p>
-                        )}
-                        {t.compounds && t.compounds.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-1.5">
-                            {t.compounds.map((c) => (
-                              <span
-                                key={c}
-                                className="label-data rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[9px] text-muted-foreground"
-                              >
-                                {c.toUpperCase()}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </Link>
-                      {(() => {
-                        if (status === 'recruiting') {
-                          if (t.application_url) {
-                            return (
-                              <div className="mt-3">
-                                <a
-                                  href={t.application_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                                >
-                                  How to apply <ExternalLink className="h-3.5 w-3.5" />
-                                </a>
-                              </div>
-                            );
-                          }
-                          if (t.url) {
-                            return (
-                              <div className="mt-3">
-                                <a
-                                  href={t.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                                >
-                                  Recruitment details on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
-                                </a>
-                              </div>
-                            );
-                          }
-                        }
-                        if (status === 'enrolling by invitation' && t.url) {
-                          return (
-                            <div className="mt-3 space-y-1">
-                              <a
-                                href={t.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                              >
-                                Study record on ClinicalTrials.gov <ExternalLink className="h-3.5 w-3.5" />
-                              </a>
-                              <p className="text-xs text-muted-foreground">
-                                This study enrols by invitation only.
-                              </p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </div>
+                    <ListRow
+                      gutterPrimary={stateInfo.state}
+                      gutterTone={stateInfo.tone}
+                      gutterSecondary={t.start_date ? formatMonthYear(t.start_date) : undefined}
+                      pill={t.phase || undefined}
+                      meta={[country, showVerification ? t.confirmed_status : null]}
+                      title={t.title}
+                      href={`/trials/${t.id}`}
+                      owner={t.institution || undefined}
+                      body={t.description || undefined}
+                      tags={t.compounds || undefined}
+                      dimmed={stateInfo.state === 'CLOSED'}
+                      action={action}
+                    />
                   </li>
                 );
               })}
