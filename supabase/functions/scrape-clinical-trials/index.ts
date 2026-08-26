@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { normaliseStatus, classify, extractCompounds } from '../_shared/trials.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,21 +10,28 @@ const corsHeaders = {
 interface TrialData {
   nctId: string;
   title: string;
-  status: string;
+  status: string; // normalised, always one of the nine allowed values
+  statusMapped: boolean;
   phase: string;
   sponsor: string;
   locations: string;
   startDate: string;
   completionDate: string | null;
-  compound: string;
   url: string;
+  relevance: 'core' | 'adjacent' | 'off_domain';
+  compounds: string[];
+  briefSummary: string | null;
+}
+
+interface WriteError {
+  nctId: string;
+  code: string;
+  message: string;
 }
 
 // Query terms sent to the registry search.
 // Deliberately narrow: bare "ketamine" and "psychedelic" pull thousands of
-// perioperative / anaesthesia / analgesia studies. Ketamine + esketamine still
-// pass the local RELEVANCE_REGEX when they surface via a genuinely psychedelic
-// search term, and are additionally gated by KETAMINE_CONTEXT_REGEX below.
+// perioperative / anaesthesia / analgesia studies.
 const SEARCH_TERMS = [
   'DMT',
   'N,N-DMT',
@@ -34,25 +42,6 @@ const SEARCH_TERMS = [
   'LSD',
   'MDMA',
 ];
-
-// Psychedelic tokens (excluding ketamine/esketamine). Any match here passes
-// unconditionally.
-const PSYCHEDELIC_REGEX = /(?<![\w-])(?:dimethyltryptamine|dmt|n,n-dmt|5-meo-dmt|psilocybin|psilocin|lsd|lysergic acid diethylamide|ayahuasca|harmine|harmaline|banisteriopsis|mescaline|peyote|ibogaine|iboga|mdma|methylenedioxymethamphetamine|psychedelic|psychedelics|hallucinogen|hallucinogenic|entheogen|serotonin 2a|5-ht2a|salvinorin|comp360|cyb003|cyb004|gh001|mm120|spl026|bpl-003)(?![\w-])/i;
-
-// Ketamine tokens. Only qualifies when paired with a psychiatric or
-// consciousness context.
-const KETAMINE_REGEX = /(?<![\w-])(?:ketamine|esketamine)(?![\w-])/i;
-
-const KETAMINE_CONTEXT_REGEX = /(?<![\w-])(?:depression|depressive|treatment-resistant|suicidal|suicidality|ptsd|post-traumatic|anxiety|psychiatric|psychiatry|mood disorder|bipolar|ocd|obsessive-compulsive|substance use|alcohol use disorder|addiction|anhedonia|consciousness|dissociative|psychotherapy|assisted therapy)(?![\w-])/i;
-
-function isRelevant(title: string, interventions: string[], brief: string): boolean {
-  const parts = [title, interventions.join(' '), brief].filter(Boolean);
-  const blob = parts.join(' \n ');
-  if (PSYCHEDELIC_REGEX.test(blob)) return true;
-  if (KETAMINE_REGEX.test(blob) && KETAMINE_CONTEXT_REGEX.test(blob)) return true;
-  return false;
-}
-
 
 // Normalize date from YYYY-MM to YYYY-MM-01 format
 function normalizeDate(dateStr: string | null | undefined): string | null {
@@ -93,7 +82,7 @@ async function sendWeeklyEmail(resend: Resend, trialsAdded: number, trialsUpdate
       console.error('Failed to send email:', error);
       return false;
     }
-    
+
     console.log('Weekly summary email sent successfully');
     return true;
   } catch (err) {
@@ -110,7 +99,7 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const resendApiKey = Deno.env.get('RESEND_API_KEY');
-  
+
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
@@ -123,7 +112,7 @@ Deno.serve(async (req) => {
     // No body or invalid JSON, continue without admin email
   }
 
-  console.log('Starting ClinicalTrials.gov scraper with enhanced filters...');
+  console.log('Starting ClinicalTrials.gov scraper...');
   console.log(`Searching for: ${SEARCH_TERMS.join(', ')}`);
 
   // Log scraper start
@@ -135,6 +124,8 @@ Deno.serve(async (req) => {
       trials_found: 0,
       trials_added: 0,
       new_trials_count: 0,
+      trials_updated: 0,
+      write_failures: 0,
     })
     .select()
     .single();
@@ -151,6 +142,9 @@ Deno.serve(async (req) => {
   let trialsFound = 0;
   let trialsAdded = 0;
   let trialsUpdated = 0;
+  let writeFailures = 0;
+  let unmappedStatuses = 0;
+  const writeErrors: WriteError[] = [];
 
   try {
     const allTrials: TrialData[] = [];
@@ -158,16 +152,13 @@ Deno.serve(async (req) => {
     // Fetch trials for each compound
     for (const term of SEARCH_TERMS) {
       console.log(`Fetching trials for: ${term}`);
-      
-      // Use ClinicalTrials.gov v2 API with filters
-      // Filter: recruiting, active, or not yet recruiting
-      // Start date >= 2024
+
       const statusFilter = 'RECRUITING,ACTIVE_NOT_RECRUITING,NOT_YET_RECRUITING';
       const apiUrl = `https://clinicaltrials.gov/api/v2/studies?query.cond=${encodeURIComponent(term)}&filter.overallStatus=${statusFilter}&pageSize=100&format=json`;
-      
+
       try {
         const response = await fetch(apiUrl);
-        
+
         if (!response.ok) {
           console.error(`Failed to fetch trials for ${term}: ${response.statusText}`);
           continue;
@@ -201,18 +192,25 @@ Deno.serve(async (req) => {
               || 'Untitled Study';
             const briefSummary: string | null = descriptionModule?.briefSummary || null;
             const interventionNames: string[] = (armsModule?.interventions || [])
-              .map((iv: any) => iv?.name).filter(Boolean);
+              .map((iv: { name?: string }) => iv?.name).filter(Boolean);
 
-            // Whole-token relevance filter across title, interventions, brief summary
-            if (!isRelevant(briefTitle, interventionNames, briefSummary || '')) {
-              continue;
+            const rawStatus: string = statusModule?.overallStatus || '';
+            const { value: status, mapped } = normaliseStatus(rawStatus);
+            if (!mapped) {
+              unmappedStatuses++;
+              console.warn(`Unmapped status "${rawStatus}" for ${identification?.nctId}`);
             }
 
-            const overallStatus: string = statusModule?.overallStatus || 'UNKNOWN';
+            // Nothing is auto-rejected: everything fetched is stored with a
+            // relevance verdict instead of being discarded.
+            const classText = `${briefTitle} ${interventionNames.join(' ')} ${briefSummary || ''}`;
+            const relevance = classify(classText);
+            const compounds = extractCompounds(classText);
 
             const locations = contactsModule?.locations
               ?.slice(0, 3)
-              ?.map((loc: any) => [loc.facility, loc.city, loc.country].filter(Boolean).join(', '))
+              ?.map((loc: { facility?: string; city?: string; country?: string }) =>
+                [loc.facility, loc.city, loc.country].filter(Boolean).join(', '))
               .filter((s: string) => !!s)
               .join('; ') || null;
 
@@ -224,18 +222,20 @@ Deno.serve(async (req) => {
             const trial: TrialData = {
               nctId,
               title: briefTitle,
-              status: overallStatus,
+              status,
+              statusMapped: mapped,
               phase: phase || '',
               sponsor: sponsorModule?.leadSponsor?.name || '',
               locations: locations || '',
               startDate: normalizeDate(startDateStr) || '',
               completionDate: normalizeDate(statusModule?.completionDateStruct?.date),
-              compound: '',
               url: `https://clinicaltrials.gov/study/${nctId}`,
+              relevance,
+              compounds,
+              briefSummary,
             };
 
             if (trial.nctId) {
-              (trial as any).briefSummary = briefSummary;
               allTrials.push(trial);
             }
           }
@@ -256,8 +256,6 @@ Deno.serve(async (req) => {
     console.log(`Unique trials after deduplication: ${uniqueTrials.length}`);
 
     for (const trial of uniqueTrials) {
-      const briefSummary = (trial as any).briefSummary as string | null;
-
       const { data: existing } = await supabase
         .from('clinical_trials')
         .select('id, status')
@@ -265,18 +263,29 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (existing) {
-        // Update status only if changed. Do not overwrite description here;
-        // real descriptions are refreshed via the admin backfill function.
+        // Only attempt an UPDATE when the NORMALISED status differs from the
+        // stored one. Relevance and compounds ride along so a reopened or
+        // closed trial also refreshes its classification.
         if (existing.status !== trial.status) {
           const { error: updateError } = await supabase
             .from('clinical_trials')
             .update({
               status: trial.status,
+              relevance: trial.relevance,
+              compounds: trial.compounds,
               updated_at: new Date().toISOString(),
             })
             .eq('id', existing.id);
 
-          if (!updateError) {
+          if (updateError) {
+            writeFailures++;
+            writeErrors.push({
+              nctId: trial.nctId,
+              code: updateError.code || 'unknown',
+              message: updateError.message || 'update failed',
+            });
+            console.error(`Update failed for ${trial.nctId}:`, updateError);
+          } else {
             trialsUpdated++;
           }
         }
@@ -288,7 +297,7 @@ Deno.serve(async (req) => {
         .from('clinical_trials')
         .insert({
           title: trial.title,
-          description: briefSummary,
+          description: trial.briefSummary,
           institution: trial.sponsor || null,
           principal_investigator: null,
           location: trial.locations || null,
@@ -298,16 +307,29 @@ Deno.serve(async (req) => {
           status: trial.status,
           trial_registry_id: trial.nctId,
           url: trial.url,
+          relevance: trial.relevance,
+          compounds: trial.compounds,
           is_approved: false,
         });
 
       if (insertError) {
+        writeFailures++;
+        writeErrors.push({
+          nctId: trial.nctId,
+          code: insertError.code || 'unknown',
+          message: insertError.message || 'insert failed',
+        });
         console.error(`Error inserting trial ${trial.nctId}:`, insertError);
       } else {
         trialsAdded++;
       }
     }
 
+    // Final status: success only when every write landed.
+    const finalStatus = writeFailures === 0 ? 'success' : 'partial';
+    const errorMessage = writeErrors.length > 0
+      ? writeErrors.slice(0, 5).map(e => `${e.nctId}: ${e.code} ${e.message}`).join(' | ')
+      : null;
 
     // Send weekly email summary if configured
     let emailSent = false;
@@ -319,24 +341,30 @@ Deno.serve(async (req) => {
     await supabase
       .from('scraper_runs')
       .update({
-        status: 'success',
+        status: finalStatus,
         trials_found: trialsFound,
         trials_added: trialsAdded,
+        trials_updated: trialsUpdated,
         new_trials_count: trialsAdded,
+        write_failures: writeFailures,
+        error_message: errorMessage,
         email_sent: emailSent,
       })
       .eq('id', runId);
 
-    console.log(`Scraper completed: ${trialsAdded} added, ${trialsUpdated} updated out of ${trialsFound} found`);
+    console.log(`Scraper completed: ${trialsAdded} added, ${trialsUpdated} updated, ${writeFailures} write failures, ${unmappedStatuses} unmapped statuses, out of ${trialsFound} found`);
 
     return new Response(
       JSON.stringify({
-        success: true,
+        success: writeFailures === 0,
+        status: finalStatus,
         trialsFound,
         trialsAdded,
         trialsUpdated,
+        writeFailures,
+        unmappedStatuses,
         emailSent,
-        message: `Successfully processed ${trialsAdded} new + ${trialsUpdated} updated trials`,
+        message: `Processed ${trialsAdded} new + ${trialsUpdated} updated trials, ${writeFailures} write failures`,
       }),
       {
         status: 200,
@@ -355,6 +383,8 @@ Deno.serve(async (req) => {
         status: 'error',
         trials_found: trialsFound,
         trials_added: trialsAdded,
+        trials_updated: trialsUpdated,
+        write_failures: writeFailures,
         error_message: errorMessage,
       })
       .eq('id', runId);
@@ -365,6 +395,8 @@ Deno.serve(async (req) => {
         error: errorMessage,
         trialsFound,
         trialsAdded,
+        trialsUpdated,
+        writeFailures,
       }),
       {
         status: 500,

@@ -577,6 +577,7 @@ export type Database = {
           phase: string | null
           principal_investigator: string | null
           record_type: string
+          relevance: string | null
           source: string | null
           start_date: string
           status: string
@@ -605,6 +606,7 @@ export type Database = {
           phase?: string | null
           principal_investigator?: string | null
           record_type?: string
+          relevance?: string | null
           source?: string | null
           start_date: string
           status: string
@@ -633,6 +635,7 @@ export type Database = {
           phase?: string | null
           principal_investigator?: string | null
           record_type?: string
+          relevance?: string | null
           source?: string | null
           start_date?: string
           status?: string
@@ -2348,6 +2351,8 @@ export type Database = {
           status: string
           trials_added: number | null
           trials_found: number | null
+          trials_updated: number | null
+          write_failures: number | null
         }
         Insert: {
           created_at?: string
@@ -2362,6 +2367,8 @@ export type Database = {
           status: string
           trials_added?: number | null
           trials_found?: number | null
+          trials_updated?: number | null
+          write_failures?: number | null
         }
         Update: {
           created_at?: string
@@ -2376,6 +2383,8 @@ export type Database = {
           status?: string
           trials_added?: number | null
           trials_found?: number | null
+          trials_updated?: number | null
+          write_failures?: number | null
         }
         Relationships: []
       }

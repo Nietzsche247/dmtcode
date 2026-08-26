@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { normaliseStatus, classify, extractCompounds } from '../_shared/trials.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,28 +27,7 @@ function normalizeDate(dateStr: string | null | undefined): string | null {
   return null;
 }
 
-function mapTrialStatus(status: string): string {
-  const s = status.toLowerCase();
-  if (s.includes('recruiting') && !s.includes('not')) return 'recruiting';
-  if (s.includes('not yet recruiting')) return 'planned';
-  if (s.includes('active')) return 'active';
-  if (s.includes('completed') || s.includes('terminated') || s.includes('withdrawn')) return 'completed';
-  return 'planned';
-}
 
-function detectCompound(text: string): string {
-  const t = text.toLowerCase();
-  if (t.includes('psilocybin')) return 'Psilocybin';
-  if (t.includes('ketamine')) return 'Ketamine';
-  if (t.includes('mdma')) return 'MDMA';
-  if (t.includes('lsd') || t.includes('lysergic')) return 'LSD';
-  if (t.includes('dmt') || t.includes('dimethyltryptamine')) return 'DMT';
-  if (t.includes('ayahuasca')) return 'Ayahuasca';
-  if (t.includes('5-meo-dmt')) return '5-MeO-DMT';
-  if (t.includes('ibogaine')) return 'Ibogaine';
-  if (t.includes('salvinorin')) return 'Salvinorin A';
-  return 'Psychedelic';
-}
 
 function hasLaserOrGlyphMention(text: string): boolean {
   const t = text.toLowerCase();
@@ -56,15 +36,16 @@ function hasLaserOrGlyphMention(text: string): boolean {
 
 // ============= SOURCE 1: CLINICALTRIALS.GOV =============
 
-async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; updated: number; found: number }> {
+async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; updated: number; found: number; writeFailures: number; errors: { nctId: string; code: string; message: string }[] }> {
   console.log('📊 Scraping ClinicalTrials.gov...');
-  let added = 0, updated = 0, found = 0;
+  let added = 0, updated = 0, found = 0, writeFailures = 0;
+  const errors: { nctId: string; code: string; message: string }[] = [];
 
   for (const term of CLINICAL_TRIALS_COMPOUNDS) {
     try {
       const statusFilter = 'RECRUITING,ACTIVE_NOT_RECRUITING,NOT_YET_RECRUITING';
       const apiUrl = `https://clinicaltrials.gov/api/v2/studies?query.cond=${encodeURIComponent(term)}&filter.overallStatus=${statusFilter}&pageSize=100&format=json`;
-      
+
       const response = await fetch(apiUrl);
       if (!response.ok) continue;
 
@@ -80,9 +61,18 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
 
         found++;
         const nctId = proto.identificationModule?.nctId;
+        if (!nctId) continue;
         const title = proto.identificationModule?.officialTitle || proto.identificationModule?.briefTitle || 'Untitled';
-        const status = mapTrialStatus(proto.statusModule?.overallStatus || '');
-        const compound = detectCompound(title + ' ' + (proto.conditionsModule?.conditions || []).join(' '));
+        const briefSummary: string | null = proto.descriptionModule?.briefSummary || null;
+
+        const { value: status, mapped } = normaliseStatus(proto.statusModule?.overallStatus || '');
+        if (!mapped) console.warn(`Unmapped status "${proto.statusModule?.overallStatus}" for ${nctId}`);
+
+        // Label everything the API returns; nothing is dropped. Off-domain
+        // rows stay unapproved but carry their verdict.
+        const classText = `${title} ${briefSummary || ''}`;
+        const relevance = classify(classText);
+        const compounds = extractCompounds(classText);
 
         const { data: existing } = await supabase
           .from('clinical_trials')
@@ -91,23 +81,43 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
           .maybeSingle();
 
         if (existing) {
+          // Only update when the NORMALISED status differs from the stored one.
           if (existing.status !== status) {
-            await supabase.from('clinical_trials').update({ status, updated_at: new Date().toISOString() }).eq('id', existing.id);
-            updated++;
+            const { error: updateError } = await supabase.from('clinical_trials').update({
+              status,
+              relevance,
+              compounds,
+              updated_at: new Date().toISOString(),
+            }).eq('id', existing.id);
+            if (updateError) {
+              writeFailures++;
+              errors.push({ nctId, code: updateError.code || 'unknown', message: updateError.message || 'update failed' });
+              console.error(`Update failed for ${nctId}:`, updateError);
+            } else {
+              updated++;
+            }
           }
         } else {
           const { error } = await supabase.from('clinical_trials').insert({
             title,
-            description: proto.descriptionModule?.briefSummary || null,
+            description: briefSummary,
             institution: proto.sponsorCollaboratorsModule?.leadSponsor?.name || null,
             start_date: normalizeDate(startDateStr) || null,
             end_date: normalizeDate(proto.statusModule?.completionDateStruct?.date),
             status,
             trial_registry_id: nctId,
             url: `https://clinicaltrials.gov/study/${nctId}`,
+            relevance,
+            compounds,
             is_approved: false,
           });
-          if (!error) added++;
+          if (error) {
+            writeFailures++;
+            errors.push({ nctId, code: error.code || 'unknown', message: error.message || 'insert failed' });
+            console.error(`Insert failed for ${nctId}:`, error);
+          } else {
+            added++;
+          }
         }
       }
     } catch (e) {
@@ -115,8 +125,8 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
     }
   }
 
-  console.log(`✅ ClinicalTrials.gov: ${added} added, ${updated} updated`);
-  return { added, updated, found };
+  console.log(`✅ ClinicalTrials.gov: ${added} added, ${updated} updated, ${writeFailures} write failures`);
+  return { added, updated, found, writeFailures, errors };
 }
 
 // ============= SOURCE 2: PUBMED =============
@@ -536,13 +546,22 @@ Deno.serve(async (req) => {
     const totalAdded = clinicalTrials.added + pubmed.added + psychedelicAlpha.added + erowid.added + retreatGuru.added;
     const totalFound = clinicalTrials.found + pubmed.found + psychedelicAlpha.found + erowid.found + retreatGuru.found;
 
+    // Final status: success only when every trials write landed.
+    const finalStatus = clinicalTrials.writeFailures === 0 ? 'success' : 'partial';
+    const errorMessage = clinicalTrials.errors.length > 0
+      ? clinicalTrials.errors.slice(0, 5).map(e => `${e.nctId}: ${e.code} ${e.message}`).join(' | ')
+      : null;
+
     // Update run status
     if (runId) {
       await supabase.from('scraper_runs').update({
-        status: 'success',
+        status: finalStatus,
         trials_found: totalFound,
         trials_added: totalAdded,
+        trials_updated: clinicalTrials.updated,
         new_trials_count: totalAdded,
+        write_failures: clinicalTrials.writeFailures,
+        error_message: errorMessage,
         email_sent: emailSent,
       }).eq('id', runId);
     }
@@ -550,7 +569,8 @@ Deno.serve(async (req) => {
     console.log(`\n🎉 Scraper complete! Total: ${totalAdded} added from ${totalFound} found`);
 
     return new Response(JSON.stringify({
-      success: true,
+      success: finalStatus === 'success',
+      status: finalStatus,
       totalFound,
       totalAdded,
       emailSent,
@@ -568,6 +588,8 @@ Deno.serve(async (req) => {
       await supabase.from('scraper_runs').update({
         status: 'error',
         error_message: errorMessage,
+        write_failures: 0,
+        trials_updated: 0,
       }).eq('id', runId);
     }
 
