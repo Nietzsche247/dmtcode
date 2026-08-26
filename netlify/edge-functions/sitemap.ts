@@ -11,8 +11,7 @@ const SUPABASE_KEY =
 // Canonical public content URLs. Every entry here corresponds to a route that
 // either has server prerender in content-prerender.ts or is a real app view
 // that returns 200. Removed: /correlations, /leaderboard, /bundles, /assess,
-// /log. /submit-symbol is server rendered but is deliberately noindex, so it
-// stays out of the sitemap.
+// /log.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/capture", "0.9", "weekly"],
@@ -47,6 +46,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/theories", "0.7", "weekly"],
   ["/articles", "0.8", "weekly"],
   ["/guides", "0.8", "weekly"],
+  ["/submit-symbol", "0.6", "monthly"],
   ["/privacy", "0.3", "yearly"],
   ["/terms", "0.3", "yearly"],
   ["/disclosure", "0.4", "yearly"],
@@ -383,8 +383,45 @@ export default async (request: Request) => {
     }
   } catch (_e) { /* skip */ }
 
+  // /agent/ is live English-only infrastructure advertised in llms.txt.
+  entries.push({
+    path: "/agent/",
+    changefreq: "monthly",
+    priority: "0.4",
+    localized: false,
+  });
 
-
+  // Every /downloads/*.pdf is a live, linked asset (including the DOI-bearing
+  // registry PDF) but a static file, so the list is read from llms.txt, which
+  // already enumerates them and is regenerated on each build. PDFs are
+  // English-only routes: no /es or /de mirrors and no hreflang alternates.
+  try {
+    const llmsRes = await fetch(new URL("/llms.txt", request.url).toString(), {
+      headers: { Accept: "text/plain" },
+    });
+    if (llmsRes.ok) {
+      const llmsText = await llmsRes.text();
+      // Some entries name the localized files bare (no /downloads/ prefix),
+      // so match both full paths and known document filenames and normalize.
+      const pdfs = [
+        ...new Set(
+          [
+            ...llmsText.matchAll(
+              /(?:\/downloads\/)?((?:DMTCode|dmt-laser-code)[A-Za-z0-9_.-]*\.pdf)\b/g
+            ),
+          ].map((m) => `/downloads/${m[1]}`)
+        ),
+      ].sort();
+      for (const p of pdfs) {
+        entries.push({
+          path: xesc(p),
+          changefreq: "yearly",
+          priority: "0.5",
+          localized: false,
+        });
+      }
+    }
+  } catch (_e) { /* skip */ }
 
   return new Response(renderUrlset(entries, locale), {
     headers: {
