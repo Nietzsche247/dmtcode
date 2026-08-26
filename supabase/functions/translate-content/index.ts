@@ -371,6 +371,8 @@ Deno.serve(async (req) => {
   const started = Date.now();
   const startedAtIso = new Date(started).toISOString();
   const deadline = started + TIME_BUDGET_MS;
+  // Per-request abort state. Starts at 0 on every request, always.
+  const st: RunState = { abortStreak: 0 };
   const stats = { checked: 0, translated: 0, skipped: 0, errors: 0, pending: false, error_samples: [] as string[] };
 
   const noteError = (e: unknown) => {
@@ -379,9 +381,9 @@ Deno.serve(async (req) => {
   };
 
   // Resume cursor: only full (unfiltered) runs read and advance it. A run
-  // that hits the deadline or the abort cap stores where it stopped; the next
-  // run starts there and wraps around to the beginning when it reaches the
-  // end. A run that completes a full pass clears the cursor.
+  // that hits the deadline stores where it stopped; the next run starts there
+  // and wraps around to the beginning when it reaches the end. A run that
+  // completes a full pass clears the cursor.
   const useCursor = !onlyTable && !onlyLocale;
   let newCursor: Cursor | null = null;
 
@@ -394,8 +396,10 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           started_at: startedAtIso,
           finished_at: new Date().toISOString(),
-          table_name: onlyTable,
-          locale: onlyLocale,
+          // Record where the run actually was when it stopped, not the query
+          // params the cron never sets.
+          table_name: newCursor?.table ?? onlyTable,
+          locale: newCursor?.locale ?? onlyLocale,
           checked: stats.checked,
           translated: stats.translated,
           skipped: stats.skipped,
@@ -413,13 +417,19 @@ Deno.serve(async (req) => {
   try {
     // Ordered work list: one unit per table. Locales are interleaved at row
     // level inside the unit, so es and de advance together instead of one
-    // locale draining a large table before the other starts.
+    // locale draining a large table before the other starts. The base locale
+    // order rotates per run (start-minute parity, no extra state) so de leads
+    // roughly half the time instead of es always restarting first.
     const configs = CONFIG.filter((c) => !onlyTable || c.table === onlyTable);
-    const locales = LOCALES.filter((l) => !onlyLocale || l === onlyLocale);
+    const base = new Date(started).getUTCMinutes() % 2 === 0
+      ? [...LOCALES]
+      : [...LOCALES].reverse();
+    const locales = base.filter((l) => !onlyLocale || l === onlyLocale);
     const units: Array<{ c: Cfg }> = configs.map((c) => ({ c }));
 
     let startUnit = 0;
     let resumeKey: string | null = null;
+    let resumeLocale: string | null = null;
     if (useCursor) {
       const cur = await loadCursor();
       if (cur) {
@@ -427,6 +437,7 @@ Deno.serve(async (req) => {
         if (idx >= 0) {
           startUnit = idx;
           resumeKey = cur.key ?? null;
+          resumeLocale = cur.locale ?? null;
         }
       }
     }
@@ -435,7 +446,15 @@ Deno.serve(async (req) => {
     const order = [...units.slice(startUnit), ...units.slice(0, startUnit)];
 
     for (const { c } of order) {
-      const rows = await getRows(c);
+      if (Date.now() > deadline) { stats.pending = true; break; }
+
+      // The cursor only applies to the unit it was written for.
+      const tableResumeKey = resumeKey;
+      const tableResumeLocale = resumeLocale;
+      resumeKey = null;
+      resumeLocale = null;
+
+      const rows = await getRows(c, locales, c.pages ? null : tableResumeKey, deadline);
       const haveByLocale = new Map<string, Map<string, string>>();
       for (const locale of locales) haveByLocale.set(locale, await existingHashes(c.table, locale));
       // The locale='en' rows are the source-of-truth record for page-sourced
@@ -444,14 +463,17 @@ Deno.serve(async (req) => {
       // so they get no en rows.
       const haveEn = c.pages ? await existingHashes(c.table, "en") : new Map<string, string>();
 
-      // Within the resumed unit, skip rows before the cursor key. The cursor
-      // row itself is reprocessed; hash equality skips its finished fields.
+      // Page-sourced configs always return the full page list, so the cursor
+      // row is located here. Table-sourced configs were already filtered in SQL.
       let startRow = 0;
-      if (resumeKey) {
-        const idx = rows.findIndex((r) => String(r[c.key] ?? "") === resumeKey);
+      if (c.pages && tableResumeKey) {
+        const idx = rows.findIndex((r) => String(r[c.key] ?? "") === tableResumeKey);
         startRow = idx >= 0 ? idx : 0;
-        resumeKey = null;
       }
+
+      // Set when the abort cap trips: abandon the rest of THIS table only,
+      // reset the streak, and carry on with the next table.
+      let skipTable = false;
 
       for (let ri = startRow; ri < rows.length; ri++) {
         const row = rows[ri];
@@ -459,13 +481,20 @@ Deno.serve(async (req) => {
         const recId = String(row[c.key] ?? "");
         if (!recId) continue;
         const nowIso = new Date().toISOString();
+        // Resume honours the locale, not just the key: the row the cursor
+        // stopped on picks up at the locale it stopped on.
+        let startLocale = 0;
+        if (tableResumeLocale && recId === tableResumeKey) {
+          const li0 = locales.indexOf(tableResumeLocale as typeof locales[number]);
+          if (li0 > 0) startLocale = li0;
+        }
         // Both locales are done for this row before moving to the next row.
-        for (let li = 0; li < locales.length; li++) {
+        for (let li = startLocale; li < locales.length; li++) {
           const locale = locales[li];
           const have = haveByLocale.get(locale)!;
           // The en source row is written once per field, on the first locale
           // pass, so a single upsert payload never carries the same key twice.
-          const writeEn = li === 0;
+          const writeEn = li === startLocale;
           newCursor = { table: c.table, locale, key: recId };
           for (const f of c.fields) {
             const src = row[f]; if (src == null || String(src).trim() === "") continue;
@@ -475,16 +504,16 @@ Deno.serve(async (req) => {
             }
             if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
             try {
-              const t = await translate(srcStr, locale);
+              const t = await translate(srcStr, locale, st);
               batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
               stats.translated++;
             } catch (e) {
-              if (e instanceof GatewayPausedError) { stats.pending = true; noteError(e); break; }
+              if (e instanceof GatewayPausedError) { skipTable = true; noteError(e); break; }
               noteError(e);
             }
             if (Date.now() > deadline) { stats.pending = true; break; }
           }
-          if (!stats.pending) {
+          if (!skipTable && !stats.pending) {
             for (const jf of c.json ?? []) {
               const src = row[jf]; if (src == null) continue;
               const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
@@ -493,29 +522,28 @@ Deno.serve(async (req) => {
               }
               if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
               try {
-                const t = JSON.stringify(await translateJson(src, locale, deadline));
+                const t = JSON.stringify(await translateJson(src, locale, deadline, st));
                 batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
                 stats.translated++;
               } catch (e) {
                 // Abandon a partially translated jsonb field entirely; never store half.
-                if (e instanceof DeadlineError || e instanceof GatewayPausedError) {
-                  if (e instanceof GatewayPausedError) noteError(e);
-                  stats.pending = true; break;
-                }
+                if (e instanceof GatewayPausedError) { skipTable = true; noteError(e); break; }
+                if (e instanceof DeadlineError) { stats.pending = true; break; }
                 noteError(e);
               }
               if (Date.now() > deadline) { stats.pending = true; break; }
             }
           }
-          if (stats.pending) break;
+          if (skipTable || stats.pending) break;
         }
         // Flush after every row so partial progress survives a kill.
         if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
-        if (stats.pending) break;
+        if (skipTable || stats.pending) break;
       }
+
+      if (skipTable) { st.abortStreak = 0; continue; }
       if (stats.pending) break;
     }
-
 
     if (!stats.pending) newCursor = null; // full pass complete: start at the top next run
     await logRun();
