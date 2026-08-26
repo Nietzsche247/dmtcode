@@ -1015,6 +1015,11 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   const body = `<article data-prerender="prepare">
   <h1>Careful preparation over careless purchase</h1>
   <p>${esc(metaDesc)}</p>
+  <section data-prerender="prepare-stage-framing">
+    <h2>What a kit is for</h2>
+    <p>Stage one is screening, not the experiment. The symbol registry is a screening collection, not a controlled experiment: it is open, self selected and unblinded, and priming is not ruled out. It can only show whether there is a hint of agreement worth digging into. Nothing here settles the question.</p>
+    <p>Stage two is capture before exposure. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses. Stage three is designed and has not been run. A kit lets you run the observation carefully and add a record. It does not turn a personal session into a controlled result.</p>
+  </section>
   <section>
     <h2>Before you go further</h2>
     <p>Adults 18 and older only. Raise the following with a qualified prescriber before any consideration of practice:</p>
