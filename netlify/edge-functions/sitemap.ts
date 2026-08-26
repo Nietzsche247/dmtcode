@@ -11,8 +11,7 @@ const SUPABASE_KEY =
 // Canonical public content URLs. Every entry here corresponds to a route that
 // either has server prerender in content-prerender.ts or is a real app view
 // that returns 200. Removed: /correlations, /leaderboard, /bundles, /assess,
-// /log. /submit-symbol is server rendered but is deliberately noindex, so it
-// stays out of the sitemap.
+// /log.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
   ["/capture", "0.9", "weekly"],
@@ -47,6 +46,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/theories", "0.7", "weekly"],
   ["/articles", "0.8", "weekly"],
   ["/guides", "0.8", "weekly"],
+  ["/submit-symbol", "0.6", "monthly"],
   ["/privacy", "0.3", "yearly"],
   ["/terms", "0.3", "yearly"],
   ["/disclosure", "0.4", "yearly"],
