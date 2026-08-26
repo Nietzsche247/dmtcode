@@ -2650,14 +2650,19 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
 
   const trs = await getTranslations("static", key, locale);
 
+  const attribution = key === "home" || key === "protocol-guide" || key === "about"
+    ? golerAttribution(locale)
+    : "";
+
   const body = trs.body_html && trs.body_html.trim()
-    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}</article>`
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   ${page.bodyExtraHtml ?? ""}
   ${recentList}
   ${linksBlock}
+  ${attribution}
 </article>`;
 
   const organizationLd = {
