@@ -351,7 +351,9 @@ const NullReports = () => {
                   Observed no visual symbols during laser exposure? Your negative result is valuable data.
                 </p>
                 <Button asChild size="lg" variant="default">
-                  <a href="/submit?null=true">Report Null Observation</a>
+                  <Link to={localePath(locale, '/submit-symbol?null=true')}>
+                    Submit a null report
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
