@@ -3059,7 +3059,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         ? `<p><strong>${hubLabel("tags", locale)}</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
         : "";
       return `<article>
-  <h2>${esc(String(r.title || "Untitled theory"))}</h2>
+  <h2><a href="${lpath(locale, `/theories/${esc(slugs[ri])}`)}">${esc(String(r.title || "Untitled theory"))}</a></h2>
   <p><em>${esc(originLabel(r.origin, locale))}</em></p>
   ${proponentLine}
   ${summaryHtml}
