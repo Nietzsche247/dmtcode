@@ -264,12 +264,14 @@ export default async (req: Request): Promise<Response> => {
     // policy on this table is expressed in terms of the legacy status column.
     // A database trigger keeps status and visibility_status in sync, so this is
     // the same set of rows as visibility_status=eq.public.
-    // Publication under CC BY 4.0 is the terms of contributing to the registry,
-    // so no publication_consent filter applies here.
+    // publication_consent=eq.true is required: this endpoint is the CC-BY-4.0
+    // dataset export, and both llms.txt and the registry page state it contains
+    // only records whose contributor granted publication consent. Display and
+    // export are separate grants; the consent filter keeps that claim true.
     fetchAll(
       "symbol_submissions",
       "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent",
-      "status=eq.approved"
+      "status=eq.approved&publication_consent=eq.true"
     ),
     fetchAll(
       "theories",
