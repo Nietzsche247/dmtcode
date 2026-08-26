@@ -14,7 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Archive, ArchiveRestore, Pencil, Plus, Trash2, X } from "lucide-react";
 import { ArticlePublishPreview } from "@/components/admin/ArticlePublishPreview";
 
 
@@ -38,6 +39,7 @@ type Article = {
   source_published_at: string | null;
   is_published: boolean;
   published_at: string | null;
+  archived_at: string | null;
   updated_at: string;
   created_at: string;
 };
@@ -65,10 +67,21 @@ type ArticleLead = {
   ai_enriched_at: string | null;
 };
 
-type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at"> & {
+type Draft = Omit<Article, "id" | "updated_at" | "created_at" | "published_at" | "archived_at"> & {
   id?: string;
   published_at?: string | null;
 };
+
+type ArticleStatus = "published" | "draft" | "archived";
+
+const statusOf = (a: Article): ArticleStatus => {
+  if (a.is_published) return "published";
+  if (a.archived_at) return "archived";
+  return "draft";
+};
+
+const formatArticleDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleDateString() : "";
 
 const EMPTY_DRAFT: Draft = {
   slug: "",
@@ -289,6 +302,7 @@ function TokenInput({
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [statusFilter, setStatusFilter] = useState<"all" | ArticleStatus>("all");
   const [leads, setLeads] = useState<ArticleLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -445,6 +459,20 @@ export const ArticlesManager = () => {
     setEditorOpen(true);
   };
 
+  const statusCounts = useMemo(() => {
+    const counts = { all: articles.length, published: 0, draft: 0, archived: 0 };
+    for (const a of articles) counts[statusOf(a)] += 1;
+    return counts;
+  }, [articles]);
+
+  const visibleArticles = useMemo(
+    () =>
+      statusFilter === "all"
+        ? articles
+        : articles.filter((a) => statusOf(a) === statusFilter),
+    [articles, statusFilter],
+  );
+
   const remove = async (a: Article) => {
     if (!confirm(`Delete article "${a.title}"?`)) return;
     const { error } = await supabase.from("articles").delete().eq("id", a.id);
@@ -455,8 +483,9 @@ export const ArticlesManager = () => {
 
   const togglePublish = async (a: Article) => {
     const patch: any = { is_published: !a.is_published };
-    if (!a.is_published && !a.published_at) {
-      patch.published_at = new Date().toISOString();
+    if (!a.is_published) {
+      patch.archived_at = null;
+      if (!a.published_at) patch.published_at = new Date().toISOString();
     }
     const { error } = await supabase.from("articles").update(patch).eq("id", a.id);
     if (error) return toast.error(error.message);
@@ -464,6 +493,39 @@ export const ArticlesManager = () => {
     if (deployAfterPublish) await triggerProductionDeploy();
     load();
   };
+
+  const writeStatus = async (
+    a: Article,
+    patch: Record<string, unknown>,
+    successMessage: string,
+  ) => {
+    const { data, error } = await supabase
+      .from("articles")
+      .update(patch)
+      .eq("id", a.id)
+      .select("id, is_published, archived_at");
+    if (error) return toast.error(error.message);
+    if (!data || data.length === 0) {
+      return toast.error(
+        "Write blocked by a permission rule. Nothing was saved.",
+      );
+    }
+    toast.success(successMessage);
+    load();
+  };
+
+  const archiveArticle = (a: Article) =>
+    writeStatus(
+      a,
+      { is_published: false, archived_at: new Date().toISOString() },
+      "Article archived.",
+    );
+
+  const unarchiveArticle = (a: Article) =>
+    writeStatus(a, { archived_at: null }, "Article returned to draft.");
+
+  const republishArticle = (a: Article) =>
+    writeStatus(a, { is_published: true, archived_at: null }, "Article republished.");
 
   const onTitleChange = (v: string) => {
     setDraft((d) => {
@@ -661,42 +723,100 @@ export const ArticlesManager = () => {
             )}
 
             {articles.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
+                <Tabs
+                  value={statusFilter}
+                  onValueChange={(v) => setStatusFilter(v as "all" | ArticleStatus)}
+                >
+                  <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 p-1">
+                    <TabsTrigger value="all">All ({statusCounts.all})</TabsTrigger>
+                    <TabsTrigger value="published">
+                      Published ({statusCounts.published})
+                    </TabsTrigger>
+                    <TabsTrigger value="draft">Draft ({statusCounts.draft})</TabsTrigger>
+                    <TabsTrigger value="archived">
+                      Archived ({statusCounts.archived})
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
 
-
-                {articles.map((a) => (
-                  <div
-                    key={a.id}
-                    className="flex items-center justify-between gap-3 border border-border rounded-md p-3"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium truncate">{a.title || "(untitled)"}</span>
-                        <Badge variant={a.is_published ? "default" : "outline"}>
-                          {a.is_published ? "Published" : "Draft"}
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
-                        {a.is_published ? "Unpublish" : "Publish"}
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
-                        <Pencil className="h-3 w-3" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => remove(a)}
-                        aria-label="Delete"
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
+                {visibleArticles.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">No articles with this status.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {visibleArticles.map((a) => {
+                      const status = statusOf(a);
+                      return (
+                        <div
+                          key={a.id}
+                          className="flex flex-col gap-3 border border-border rounded-md p-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium truncate">{a.title || "(untitled)"}</span>
+                              {status === "published" && <Badge variant="default">Published</Badge>}
+                              {status === "draft" && <Badge variant="outline">Draft</Badge>}
+                              {status === "archived" && <Badge variant="secondary">Archived</Badge>}
+                              {status === "archived" && a.archived_at && (
+                                <span className="text-xs text-muted-foreground">
+                                  Archived {formatArticleDate(a.archived_at)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate">/articles/{a.slug}</div>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+                            {status === "archived" ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => unarchiveArticle(a)}
+                                  className="gap-1"
+                                >
+                                  <ArchiveRestore className="h-3 w-3" />
+                                  Unarchive
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={() => republishArticle(a)}>
+                                  Republish
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button size="sm" variant="outline" onClick={() => togglePublish(a)}>
+                                  {a.is_published ? "Unpublish" : "Publish"}
+                                </Button>
+                                {status === "published" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => archiveArticle(a)}
+                                    className="gap-1"
+                                  >
+                                    <Archive className="h-3 w-3" />
+                                    Archive
+                                  </Button>
+                                )}
+                              </>
+                            )}
+                            <Button size="sm" variant="outline" onClick={() => openEdit(a)} className="gap-1">
+                              <Pencil className="h-3 w-3" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => remove(a)}
+                              aria-label="Delete"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
               </div>
             )}
 
