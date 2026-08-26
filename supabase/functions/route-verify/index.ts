@@ -175,6 +175,9 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const authError = machineAuthError(req, "ROUTE_VERIFY_SECRET", "x-route-key", corsHeaders);
+  if (authError) return authError;
+
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,

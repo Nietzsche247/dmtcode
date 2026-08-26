@@ -66,6 +66,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const authError = machineAuthError(req, 'METACULUS_SECRET', 'x-metaculus-key', corsHeaders);
+  if (authError) return authError;
+
   console.log('Starting Metaculus data update...');
 
   try {

@@ -200,7 +200,12 @@ function fromText(input: string): Found | null {
   return ok[0] ?? null;
 }
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const authError = await adminOrMachineAuthError(req, "SCRAPE_SECRET", "x-scrape-key", corsHeaders);
+  if (authError) return authError;
+
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const stats = { checked: 0, found: 0, inserted: 0, updated: 0, skipped: 0, errors: 0 };
   const detail: { festival: string; result: string }[] = [];

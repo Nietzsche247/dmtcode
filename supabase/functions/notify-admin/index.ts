@@ -100,6 +100,15 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Handle moderation status change notification to submitter
     if (submissionId && action) {
+      // Moderation emails go to the submitter from a human admin decision.
+      // Secret callers (machines) and admins only; a plain authenticated user
+      // must never reach getUserById or the email send below.
+      if (!viaSecret && !callerIsAdmin) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
       console.log(`[Moderation] Symbol ${submissionId} was ${action}`);
 
       // Get submission and user details

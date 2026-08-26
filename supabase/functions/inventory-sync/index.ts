@@ -49,6 +49,9 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const authError = machineAuthError(req, "INVENTORY_SYNC_SECRET", "x-inventory-key", corsHeaders);
+  if (authError) return authError;
+
   try {
     console.log("Starting inventory sync...");
 

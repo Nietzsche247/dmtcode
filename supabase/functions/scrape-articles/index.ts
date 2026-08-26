@@ -342,6 +342,9 @@ async function enrichPending(supabase: ReturnType<typeof createClient>, limit = 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const authError = await adminOrMachineAuthError(req, "SCRAPE_SECRET", "x-scrape-key", corsHeaders);
+  if (authError) return authError;
+
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
