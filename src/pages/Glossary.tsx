@@ -2,6 +2,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { terms, termSlug } from '@/data/glossaryTerms';
@@ -26,17 +27,16 @@ const Glossary = () => {
 
   return (
     <>
+      <SEO uiKey="glossary" path="/glossary" />
       <Helmet>
         <title>Terminology & Definitions | DMT Code</title>
         <meta 
           name="description" 
           content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." 
         />
-        <link rel="canonical" href="https://dmtcode.com/glossary" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Terminology & Definitions | DMT Code" />
         <meta property="og:description" content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." />
-        <meta property="og:url" content="https://dmtcode.com/glossary" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />

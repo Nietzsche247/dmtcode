@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -98,10 +99,10 @@ export default function CoWitnesses() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO uiKey="co-witnesses" path="/co-witnesses" />
       <Helmet>
         <title>Co-witness wall - independent recollections of the same symbol</title>
         <meta name="description" content="Field notes from people who independently recognized the same symbol. Handles only, opt-in, no PII." />
-        <link rel="canonical" href="https://dmtcode.com/co-witnesses" />
       </Helmet>
       <Navigation />
       <main className="container max-w-4xl py-10 space-y-6">

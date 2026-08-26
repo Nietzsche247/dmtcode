@@ -1,19 +1,19 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Disclosure = () => {
   return (
     <>
+      <SEO uiKey="disclosure" path="/disclosure" />
       <Helmet>
         <title>Disclosure | DMT Code</title>
         <meta name="description" content="How this project makes money, who we have relationships with, and where the conflicts are." />
-        <link rel="canonical" href="https://dmtcode.com/disclosure" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Disclosure | DMT Code" />
         <meta property="og:description" content="How this project makes money, who we have relationships with, and where the conflicts are." />
-        <meta property="og:url" content="https://dmtcode.com/disclosure" />
         <meta property="og:type" content="website" />
       </Helmet>
 

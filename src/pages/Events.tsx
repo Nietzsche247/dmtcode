@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Helmet } from "react-helmet";
+import { SEO } from "@/components/SEO";
+import { LocalizedBody } from "@/components/LocalizedBody";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import EventsTimeline from "@/components/events/EventsTimeline";
 import TrialsTimeline from "@/components/events/TrialsTimeline";
@@ -100,16 +102,8 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO uiKey="events" path="/events" />
       <Helmet>
-        <title>Research Events & Clinical Trials | DMT Code</title>
-        <meta
-          name="description"
-          content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones."
-        />
-        <link rel="canonical" href="https://dmtcode.com/events" />
-        <meta property="og:title" content="Research Events & Clinical Trials | DMT Code" />
-        <meta property="og:description" content="Timeline of psychedelic research events, clinical trials and retreat centers. A community sourced scholarly reference for DMT research milestones." />
-        <meta property="og:url" content="https://dmtcode.com/events" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -134,6 +128,7 @@ const Events = () => {
           </div>
 
           <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
+            <LocalizedBody pageId="events">
             <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase animate-blur-in-up" style={{ animationFillMode: 'forwards' }}>
               Research Timeline
             </p>
@@ -150,6 +145,7 @@ const Events = () => {
             <p className="text-base md:text-lg font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
               We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.
             </p>
+            </LocalizedBody>
           </div>
         </section>
 

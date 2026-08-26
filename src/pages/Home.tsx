@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { ArrowRight, Mic } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
@@ -108,9 +109,11 @@ const Home = () => {
       <div className="relative min-h-screen">
         <main id="main-content" className="relative z-10" role="main">
           <Navigation />
-          <ConvergenceHero />
+          <LocalizedBody pageId="home">
+            <ConvergenceHero />
 
-          <MissionFraming />
+            <MissionFraming />
+          </LocalizedBody>
           <GetInvolvedDoors variant="top" />
 
           {/* Voice Logger Callout */}

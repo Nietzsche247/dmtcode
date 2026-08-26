@@ -3,6 +3,7 @@ import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { Card } from '@/components/ui/card';
 import {
   Accordion,
@@ -182,6 +183,7 @@ const FAQ = () => {
         <Navigation />
 
         <main id="main-content" className="relative z-10 pt-20" role="main">
+          <LocalizedBody pageId="faq">
           <section className="relative px-4 py-16 md:py-24">
             <div className="max-w-4xl mx-auto text-center space-y-4">
               <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase">
@@ -240,6 +242,7 @@ const FAQ = () => {
               <a href="/data.json" className="underline hover:text-foreground">/data.json</a>. CC-BY-4.0.
             </p>
           </section>
+          </LocalizedBody>
         </main>
 
         <Footer />

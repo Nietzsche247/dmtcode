@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { EVIDENCE_LABEL, byDate, loadTimeline, sourceLink } from '@/lib/timeline';
 
@@ -86,14 +87,13 @@ const EvidenceMap = () => {
 
   return (
     <>
+      <SEO uiKey="evidence-map" path="/evidence-map" />
       <Helmet>
         <title>Is the DMT code real? Evidence Timeline & Analysis | DMT Code</title>
         <meta 
           name="description" 
           content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." 
         />
-        <link rel="canonical" href="https://dmtcode.com/evidence-map" />
-        
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -148,12 +148,9 @@ const EvidenceMap = () => {
             "dateModified": "2026-07-29"
           })}
         </script>
-        <link rel="canonical" href="https://dmtcode.com/evidence-map" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/evidence-map" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
         <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
-        <meta property="og:url" content="https://dmtcode.com/evidence-map" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />

@@ -1,6 +1,8 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { Card } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -8,14 +10,8 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 const Critiques = () => {
   return (
     <>
+      <SEO uiKey="critiques" path="/critiques" />
       <Helmet>
-        <title>Critiques & Alternative Hypotheses | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." 
-        />
-        <link rel="canonical" href="https://dmtcode.com/critiques" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/critiques" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Critiques & Alternative Hypotheses | DMT Code" />
         <meta property="og:description" content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." />
@@ -71,13 +67,15 @@ const Critiques = () => {
         <main id="main-content" className="relative z-10 pt-4" role="main">
 
           <section className="container mx-auto px-4 py-16 max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Critiques: the strongest cases against</h1>
-            <p className="text-lg text-muted-foreground mb-10">
-              The three most serious critical positions, each stated in its strongest form. Credit
-              to Danny Goler as the originator of the reported observation. Publishing the strongest
-              versions of the critiques is deliberate policy. If a claim cannot survive its best
-              opponents, it does not deserve to survive.
-            </p>
+            <LocalizedBody pageId="critiques">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">Critiques: the strongest cases against</h1>
+              <p className="text-lg text-muted-foreground mb-10">
+                The three most serious critical positions, each stated in its strongest form. Credit
+                to Danny Goler as the originator of the reported observation. Publishing the strongest
+                versions of the critiques is deliberate policy. If a claim cannot survive its best
+                opponents, it does not deserve to survive.
+              </p>
+            </LocalizedBody>
 
             <Card className="p-6 bg-primary/5 border-primary/20 mb-12">
               <p className="text-sm text-muted-foreground">

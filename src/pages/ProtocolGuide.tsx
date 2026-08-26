@@ -1,6 +1,9 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
+
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { GolerAttribution } from '@/components/GolerAttribution';
 import { Link } from 'react-router-dom';
@@ -15,14 +18,9 @@ const LEDE =
 const ProtocolGuide = () => {
   return (
     <>
+      <SEO uiKey="protocol-guide" path="/protocol-guide" />
       <Helmet>
-        <title>{TITLE}</title>
-        <meta name="description" content={DESCRIPTION} />
-        <link rel="canonical" href="https://dmtcode.com/protocol-guide" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content={TITLE} />
-        <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:url" content="https://dmtcode.com/protocol-guide" />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
@@ -35,7 +33,9 @@ const ProtocolGuide = () => {
 
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <article className="container mx-auto px-4 py-16 max-w-3xl">
+            <LocalizedBody pageId="protocol-guide">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">650 nm Laser Protocol Guide</h1>
+
 
             <aside
               className="mb-10 p-6 border-l-4 border-primary bg-muted/40 rounded-r-lg"
@@ -190,6 +190,9 @@ const ProtocolGuide = () => {
                 </div>
               </div>
             </section>
+            </LocalizedBody>
+
+
 
             <div className="mt-12 p-6 bg-muted/30 border border-border rounded-lg text-sm text-muted-foreground">
               <p className="mb-2 font-semibold text-foreground">Disclaimer</p>
