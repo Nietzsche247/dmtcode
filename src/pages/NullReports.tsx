@@ -27,10 +27,13 @@ const NullReports = () => {
   const [totalNulls, setTotalNulls] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [soberBaselineCount, setSoberBaselineCount] = useState<number | null>(null);
+  const [submittedNullCount, setSubmittedNullCount] = useState<number | null>(null);
+  const locale = useLocale();
 
   useEffect(() => {
     loadNullReports();
     loadSoberBaselineCount();
+    loadSubmittedNullCount();
     
     const channel = supabase
       .channel('null_reports_changes')
