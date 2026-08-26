@@ -1331,6 +1331,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
     const body = `<article data-prerender="timeline">
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
+  ${golerAttribution(locale)}
 </article>`;
     return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
@@ -1433,7 +1434,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   };
 
   const body = trs.body_html?.trim()
-    ? `<article data-prerender="timeline">${trs.body_html}</article>`
+    ? `<article data-prerender="timeline">${trs.body_html}${golerAttribution(locale)}</article>`
     : `<article data-prerender="timeline">
   <h1>${esc(file.title.headline)}</h1>
   <p>${esc(file.title.text)}</p>
