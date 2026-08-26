@@ -1363,7 +1363,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
     const body = `<article data-prerender="timeline">
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
 </article>`;
     return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
@@ -1466,7 +1466,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   };
 
   const body = trs.body_html?.trim()
-    ? `<article data-prerender="timeline">${trs.body_html}${golerAttribution(locale)}</article>`
+    ? `<article data-prerender="timeline">${trs.body_html}${await golerAttribution(locale)}</article>`
     : `<article data-prerender="timeline">
    <!--tsrc:static:timeline-->
    <h1>${esc(file.title.headline)}</h1>
@@ -1493,7 +1493,7 @@ ${items}
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
   <!--/tsrc-->
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
 </article>`;
 
 
@@ -2704,7 +2704,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   const trs = await getTranslations("static", key, locale);
 
   const attribution = key === "home" || key === "protocol-guide" || key === "about"
-    ? golerAttribution(locale)
+    ? await golerAttribution(locale)
     : "";
 
   const body = trs.body_html && trs.body_html.trim()
@@ -3642,7 +3642,7 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
   <p>Adults 18 and older only.</p>
 
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
 
@@ -4829,7 +4829,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>`;
 
   const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
-  ${golerAttribution(locale, false)}
+  ${await golerAttribution(locale, false)}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
