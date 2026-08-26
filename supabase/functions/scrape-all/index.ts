@@ -559,13 +559,22 @@ Deno.serve(async (req) => {
     const totalAdded = clinicalTrials.added + pubmed.added + psychedelicAlpha.added + erowid.added + retreatGuru.added;
     const totalFound = clinicalTrials.found + pubmed.found + psychedelicAlpha.found + erowid.found + retreatGuru.found;
 
+    // Final status: success only when every trials write landed.
+    const finalStatus = clinicalTrials.writeFailures === 0 ? 'success' : 'partial';
+    const errorMessage = clinicalTrials.errors.length > 0
+      ? clinicalTrials.errors.slice(0, 5).map(e => `${e.nctId}: ${e.code} ${e.message}`).join(' | ')
+      : null;
+
     // Update run status
     if (runId) {
       await supabase.from('scraper_runs').update({
-        status: 'success',
+        status: finalStatus,
         trials_found: totalFound,
         trials_added: totalAdded,
+        trials_updated: clinicalTrials.updated,
         new_trials_count: totalAdded,
+        write_failures: clinicalTrials.writeFailures,
+        error_message: errorMessage,
         email_sent: emailSent,
       }).eq('id', runId);
     }
