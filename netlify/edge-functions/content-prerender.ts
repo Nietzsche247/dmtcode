@@ -2487,7 +2487,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     bodyExtraHtml: `<section><h2>Roles</h2><dl>${[
       ["Recorder", "Recorders run the observation protocol and write down what they saw on the field sheet, in their own words. Nothing is required beyond care, honesty, and a completed record."],
       ["Translator", "Translators carry records, protocol documents, and site pages into Spanish, German, and other languages. Accuracy matters more than fluency, because a mistranslated report is worse than no translation."],
-      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it."],
+      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. Every submission carries a prior exposure flag, naive or exposed, recording whether the contributor had already seen symbols here before writing their own. The first real analyst job is splitting the submissions on that flag and reporting whether the split changes anything. That includes arguing against the claim when the numbers do not support it."],
       ["Developer", "Developers work on the site, the registry, and the export pipeline that keeps the data open. Most of the work is small, careful, and public."],
     ].map(([r, d]) => `<dt>${esc(r)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
     <p>Moderation, outreach, and peer support roles are filled from within these four.</p>
