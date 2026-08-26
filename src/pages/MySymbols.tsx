@@ -289,6 +289,16 @@ const MySymbols = () => {
     if (userSymbols.length > 0) payload.symbols = userSymbols;
     if (memories.length > 0) payload.sealed_memories = memories;
     if (annotations.length > 0) payload.annotations = annotations;
+    if (voiceLogs.length > 0) {
+      payload.voice_logs = voiceLogs.map(log => ({
+        id: log.id,
+        created_at: log.created_at,
+        duration_seconds: log.duration_seconds,
+        transcript: log.transcript,
+        storage_path: log.audio_url,
+        audio_note: 'Audio files are not included in this export. Play or delete them at dmtcode.com/my-symbols',
+      }));
+    }
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -458,6 +468,13 @@ const MySymbols = () => {
                 </div>
               )}
             </section>
+
+            {/* Voice recordings */}
+            {userId && (
+              <section className="max-w-3xl mx-auto mb-16">
+                <VoiceRecordingsList userId={userId} />
+              </section>
+            )}
 
             {/* Badges */}
             {userBadges.length > 0 && (
