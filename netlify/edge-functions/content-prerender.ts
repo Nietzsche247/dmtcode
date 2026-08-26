@@ -2059,6 +2059,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   <p>This is a screening collection, not a controlled experiment. Anyone can browse it before contributing, entries are self selected, and there is no randomization, no blinding, and no control over dose, setting, wavelength, or who chooses to take part. Seeing other people's symbols before recording your own can shape what you report. That effect is not ruled out here and it cannot be ruled out by a collection built this way.</p>
   <p>What a collection like this can do is tell us whether there is any hint of agreement worth digging into further, and whether it is convincing enough to bring institutions in to investigate properly. That is the whole claim. Nothing here settles the question.</p>
   <p>A separate blinded study is the channel that could settle it. It is designed and has not been run.</p>
+  <p>Reports of seeing nothing are wanted and counted. They are published on the <a href="${SITE}/null-reports">null reports dashboard</a> alongside the positive ones.</p>
 </section>`,
     index: { table: "symbol_submissions", filter: "status=eq.approved", select: "id,description,created_at", titleField: "description", linkPrefix: "/registry", label: "Recent symbols" },
     extraJsonLd: [REGISTRY_REPORT_LD],
