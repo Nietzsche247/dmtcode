@@ -31,6 +31,9 @@ import { IntelHub } from './IntelHub';
 import { TrendsTracker } from './TrendsTracker';
 
 import { MembersDirectory } from './MembersDirectory';
+import { PreregistrationQueue } from './PreregistrationQueue';
+import { WaitlistPanel } from './WaitlistPanel';
+import { DoorTapsPanel } from './DoorTapsPanel';
 import { Link } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useRoles } from '@/hooks/useRoles';
