@@ -383,8 +383,41 @@ export default async (request: Request) => {
     }
   } catch (_e) { /* skip */ }
 
+  // /agent/ is live English-only infrastructure advertised in llms.txt.
+  entries.push({
+    path: "/agent/",
+    changefreq: "monthly",
+    priority: "0.4",
+    localized: false,
+  });
 
-
+  // Every /downloads/*.pdf is a live, linked asset (including the DOI-bearing
+  // registry PDF) but a static file, so the list is read from llms.txt, which
+  // already enumerates them and is regenerated on each build. PDFs are
+  // English-only routes: no /es or /de mirrors and no hreflang alternates.
+  try {
+    const llmsRes = await fetch(new URL("/llms.txt", request.url).toString(), {
+      headers: { Accept: "text/plain" },
+    });
+    if (llmsRes.ok) {
+      const llmsText = await llmsRes.text();
+      const pdfs = [
+        ...new Set(
+          [...llmsText.matchAll(/\/downloads\/[A-Za-z0-9_.-]+\.pdf/g)].map(
+            (m) => m[0]
+          )
+        ),
+      ].sort();
+      for (const p of pdfs) {
+        entries.push({
+          path: xesc(p),
+          changefreq: "yearly",
+          priority: "0.5",
+          localized: false,
+        });
+      }
+    }
+  } catch (_e) { /* skip */ }
 
   return new Response(renderUrlset(entries, locale), {
     headers: {
