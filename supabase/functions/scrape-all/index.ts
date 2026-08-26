@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { normaliseStatus, classify, extractCompounds } from '../_shared/trials.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,14 +27,6 @@ function normalizeDate(dateStr: string | null | undefined): string | null {
   return null;
 }
 
-function mapTrialStatus(status: string): string {
-  const s = status.toLowerCase();
-  if (s.includes('recruiting') && !s.includes('not')) return 'recruiting';
-  if (s.includes('not yet recruiting')) return 'planned';
-  if (s.includes('active')) return 'active';
-  if (s.includes('completed') || s.includes('terminated') || s.includes('withdrawn')) return 'completed';
-  return 'planned';
-}
 
 function detectCompound(text: string): string {
   const t = text.toLowerCase();
