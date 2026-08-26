@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Navigation } from '@/components/Navigation';
+import { GolerAttribution } from '@/components/GolerAttribution';
 import { ConvergenceHero } from '@/components/home/ConvergenceHero';
 import { ExplainerSection } from '@/components/ExplainerSection';
 import { EmailCapture } from '@/components/EmailCapture';

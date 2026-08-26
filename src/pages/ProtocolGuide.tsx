@@ -2,6 +2,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { GolerAttribution } from '@/components/GolerAttribution';
 import { Link } from 'react-router-dom';
 
 const TITLE = '650 nm Laser Protocol Guide | DMT Code';

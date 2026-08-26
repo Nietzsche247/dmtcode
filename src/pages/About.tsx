@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/Navigation';
+import { GolerAttribution } from '@/components/GolerAttribution';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
