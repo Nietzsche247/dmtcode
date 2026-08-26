@@ -368,6 +368,24 @@ export const RegistryBrowser = () => {
 
   return (
     <section id="browse" className="container mx-auto px-4 py-16">
+      {/* Limitations note: always visible, above the grid. */}
+      <div className="mb-12 rounded-lg border border-border bg-card p-5">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
+          What this registry can and cannot show
+        </h3>
+        <div className="space-y-3 text-sm text-muted-foreground max-w-[65ch]">
+          <p>
+            This is a screening collection, not a controlled experiment. Anyone can browse it before contributing, entries are self selected, and there is no randomization, no blinding, and no control over dose, setting, wavelength, or who chooses to take part. Seeing other people's symbols before recording your own can shape what you report. That effect is not ruled out here and it cannot be ruled out by a collection built this way.
+          </p>
+          <p>
+            What a collection like this can do is tell us whether there is any hint of agreement worth digging into further, and whether it is convincing enough to bring institutions in to investigate properly. That is the whole claim. Nothing here settles the question.
+          </p>
+          <p>
+            A separate blinded study is the channel that could settle it. It is designed and has not been run.
+          </p>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-center md:text-left mb-2">
