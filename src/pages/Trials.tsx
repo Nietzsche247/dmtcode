@@ -18,7 +18,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { ExternalLink } from 'lucide-react';
+import ListRow from '@/components/list/ListRow';
+import { formatMonthYear } from '@/lib/formatDate';
+import { trialState } from '@/lib/trialState';
 
 interface Trial {
   id: string;
