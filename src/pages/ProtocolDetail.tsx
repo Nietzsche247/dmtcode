@@ -853,7 +853,11 @@ const ProtocolDetail = () => {
                 {card_related}
               </div>
             )}
-            <GolerAttribution className="mt-10 max-w-3xl" />
+            <p className="mt-10 text-sm text-muted-foreground">
+              Adults 18 and older only.
+            </p>
+            <GolerAttribution className="mt-4 max-w-3xl" />
+
           </section>
         </main>
 

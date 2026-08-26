@@ -172,6 +172,10 @@ function KitCard({ kit }: { kit: Kit }) {
         <div className="mt-2 text-xs text-muted-foreground">
           {copy.cardLine}
         </div>
+        <div className="mt-1 text-xs text-muted-foreground">
+          Your card statement will read MERIDIAN OPTICS LAB.
+        </div>
+
       </div>
 
     </Card>
