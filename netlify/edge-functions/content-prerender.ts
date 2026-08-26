@@ -3041,7 +3041,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
   };
 
   const theoryBlocks = rows
-    .map((r) => {
+    .map((r, ri) => {
       const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
       const summaryHtml = r.summary
         ? paragraphsFromText(String(r.summary))
@@ -3587,6 +3587,7 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   ${tagline ? `<p>${esc(tagline)}</p>` : ""}
   ${contentHtml || "<p>Protocol documentation is being prepared.</p>"}
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
+  ${golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
 
