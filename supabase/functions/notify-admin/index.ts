@@ -7,7 +7,10 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale';
+  type?: 'first_non_red' | 'null_report' | 'new_symbol_submission' | 'pipeline_stale' | 'preregistration';
+  preregistrationId?: string;
+  submissionIds?: string[];
+  bulk?: boolean;
   message?: string;
 
   symbolId?: string;
