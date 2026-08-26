@@ -186,7 +186,7 @@ async function translateJson(v: unknown, locale: "es" | "de", deadline: number, 
       if (Date.now() > deadline) throw new DeadlineError();
       const leaf = leaves[index];
       if (!leaf) return;
-      leaf.translated = await translate(leaf.source, locale);
+      leaf.translated = await translate(leaf.source, locale, st);
     }
   };
 
