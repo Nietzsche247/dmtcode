@@ -361,9 +361,15 @@ const ProtocolDetail = () => {
                           </ul>
                         </div>
                       )}
-                      <div className="pt-4">
-                        <Link to={`/log?protocol=${protocol.slug}`}>
+                      <div className="pt-4 flex flex-wrap gap-3">
+                        <Link to={localePath(locale, '/submit-symbol')}>
                           <Button className="gap-2">
+                            <ClipboardList className="w-4 h-4" />
+                            Submit to the Registry
+                          </Button>
+                        </Link>
+                        <Link to={`/log?protocol=${protocol.slug}`}>
+                          <Button variant="outline" className="gap-2">
                             <Mic className="w-4 h-4" />
                             Start Voice Logger with These Prompts
                           </Button>
