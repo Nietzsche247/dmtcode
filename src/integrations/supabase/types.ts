@@ -2167,6 +2167,51 @@ export type Database = {
           },
         ]
       }
+      research_preregistrations: {
+        Row: {
+          affiliation: string | null
+          contact_email: string
+          created_at: string
+          hypothesis: string
+          id: string
+          instruments: string | null
+          method_summary: string
+          orcid: string | null
+          reviewed_at: string | null
+          reviewer_note: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          affiliation?: string | null
+          contact_email: string
+          created_at?: string
+          hypothesis: string
+          id?: string
+          instruments?: string | null
+          method_summary: string
+          orcid?: string | null
+          reviewed_at?: string | null
+          reviewer_note?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          affiliation?: string | null
+          contact_email?: string
+          created_at?: string
+          hypothesis?: string
+          id?: string
+          instruments?: string | null
+          method_summary?: string
+          orcid?: string | null
+          reviewed_at?: string | null
+          reviewer_note?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       retreats: {
         Row: {
           contact_email: string | null
