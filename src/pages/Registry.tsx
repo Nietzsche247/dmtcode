@@ -6,6 +6,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { RegistryHero } from '@/components/registry/RegistryHero';
 import { RegistryRationale } from '@/components/registry/RegistryRationale';
 import { RegistryStatistics } from '@/components/registry/RegistryStatistics';
@@ -179,8 +180,10 @@ const Registry = () => {
         
         <main id="main-content" className="relative z-10 pt-20" role="main">
           <Breadcrumb />
-          <RegistryHero />
-          <RegistryRationale />
+          <LocalizedBody pageId="registry">
+            <RegistryHero />
+            <RegistryRationale />
+          </LocalizedBody>
           <RegistryStatistics />
           <p className="container mx-auto px-4 max-w-4xl text-sm text-muted-foreground">
             The registry shows every published record. The export at /data.json includes only records whose contributor granted publication consent, so its count is lower than the registry count.

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -206,9 +207,11 @@ const Trials = () => {
 
       <main className="container mx-auto px-4 pb-24 pt-6">
         <header className="mb-10 border-b border-border/60 pb-8">
-          <h1 className="font-display text-4xl md:text-6xl tracking-tight">
-            Clinical Trials
-          </h1>
+          <LocalizedBody pageId="trials">
+            <h1 className="font-display text-4xl md:text-6xl tracking-tight">
+              Clinical Trials
+            </h1>
+          </LocalizedBody>
           <p className="label-data mt-4 text-xs text-muted-foreground">
             {loading
               ? 'LOADING TRIALS…'

@@ -3,6 +3,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { supabase } from '@/integrations/supabase/client';
 import { FilterGuide } from '@/components/bibliography/FilterGuide';
 import { BibliographyCard } from '@/components/bibliography/BibliographyCard';
@@ -135,6 +136,7 @@ const Bibliography = () => {
           <Navigation />
 
           <section className="max-w-6xl mx-auto px-4 py-16 space-y-10">
+            <LocalizedBody pageId="bibliography">
             <header className="text-center space-y-3">
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.02em] text-foreground"
@@ -147,6 +149,7 @@ const Bibliography = () => {
                 papers, primary data releases, podcasts, and skeptical commentary.
               </p>
             </header>
+            </LocalizedBody>
 
             {!loading && !error && rows.length > 0 && <StanceDistribution rows={rows} />}
 

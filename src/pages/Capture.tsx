@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -7,13 +8,13 @@ import { LayeredSubmissionForm } from '@/components/registry/LayeredSubmissionFo
 const Capture = () => {
   return (
     <>
+      <SEO uiKey="capture" path="/capture" />
       <Helmet>
         <title>Capture a Memory | DMT Code</title>
         <meta
           name="description"
           content="Record and seal a first person account of a visual form seen during a DMT session, before viewing the catalogue."
         />
-        <link rel="canonical" href="https://dmtcode.com/capture" />
         <meta name="robots" content="index, follow" />
       </Helmet>
 

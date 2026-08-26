@@ -1,6 +1,8 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 import { ExternalLink } from 'lucide-react';
@@ -36,18 +38,9 @@ const FAQ_ENTRIES = [
 const Methods = () => {
   return (
     <>
+      <SEO uiKey="methods" path="/methods" />
       <Helmet>
-        <title>Experimental Methods | DMT Code</title>
-        <meta 
-          name="description" 
-          content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." 
-        />
-        <link rel="canonical" href="https://dmtcode.com/methods" />
-        <link rel="alternate" hrefLang="en" href="https://dmtcode.com/methods" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Experimental Methods | DMT Code" />
-        <meta property="og:description" content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." />
-        <meta property="og:url" content="https://dmtcode.com/methods" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -95,10 +88,12 @@ const Methods = () => {
         
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8">Research Methods: Replication Design</h1>
-            <p className="text-lg text-muted-foreground mb-12">
-              FAQ on experimental design for replicating the 650 nm laser protocol with rigorous controls and blinding procedures
-            </p>
+            <LocalizedBody pageId="methods">
+              <h1 className="text-4xl md:text-5xl font-bold mb-8">Research Methods: Replication Design</h1>
+              <p className="text-lg text-muted-foreground mb-12">
+                FAQ on experimental design for replicating the 650 nm laser protocol with rigorous controls and blinding procedures
+              </p>
+            </LocalizedBody>
 
             <div className="border border-gold/30 rounded-lg p-6 bg-gold/5 mb-6">
               <h2 className="text-xl font-semibold mb-3">Help us figure this out</h2>

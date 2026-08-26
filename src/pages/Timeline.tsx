@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { SEO } from '@/components/SEO';
+import { LocalizedBody } from '@/components/LocalizedBody';
 import { GolerAttribution } from '@/components/GolerAttribution';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -236,6 +237,7 @@ const Timeline = () => {
 
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-12 max-w-5xl">
+            <LocalizedBody pageId="timeline">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
               {file ? file.title.headline : 'A chronology of research into DMT visual phenomena'}
             </h1>
@@ -401,6 +403,7 @@ const Timeline = () => {
               </>
             )}
             <GolerAttribution className="mt-10 max-w-3xl" />
+            </LocalizedBody>
           </section>
         </main>
 

@@ -1,4 +1,7 @@
 import { Helmet } from "react-helmet";
+import { SEO } from "@/components/SEO";
+import { LocalizedBody } from "@/components/LocalizedBody";
+
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageHero } from "@/components/PageHero";
@@ -29,14 +32,9 @@ const Dataset = () => {
 
   return (
     <>
+      <SEO uiKey="dataset" path="/dataset" />
       <Helmet>
-        <title>Dataset | DMT Code Visual Symbol Catalogue</title>
-        <meta name="description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
-        <link rel="canonical" href="https://dmtcode.com/dataset" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Dataset | DMT Code Visual Symbol Catalogue" />
-        <meta property="og:description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
-        <meta property="og:url" content="https://dmtcode.com/dataset" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -76,11 +74,13 @@ const Dataset = () => {
           <div className="max-w-4xl mx-auto">
             <Breadcrumb />
             
-            <PageHero 
-              eyebrow="Open Data"
-              title="Dataset"
-              subtitle="Download the complete DMT Code Visual Symbol Catalogue"
-            />
+            <LocalizedBody pageId="dataset">
+              <PageHero 
+                eyebrow="Open Data"
+                title="Dataset"
+                subtitle="Download the complete DMT Code Visual Symbol Catalogue"
+              />
+            </LocalizedBody>
 
             {/* Zenodo DOI Badge */}
             <div className="flex flex-col items-center gap-6 mb-12">

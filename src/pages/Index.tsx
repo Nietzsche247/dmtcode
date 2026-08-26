@@ -12,17 +12,18 @@ import { ShopSection } from '@/components/ShopSection';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 
 const Index = () => {
   return (
     <>
+      <SEO uiKey="home" path="/" />
       <Helmet>
         <title>DMT Code Visual Symbol Catalogue | 650nm Laser Research Archive</title>
         <meta 
           name="description" 
           content="Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences. Contribute anonymously, download CSV/JSON research data." 
         />
-        <link rel="canonical" href="https://dmtcode.com/" />
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/" />
         <meta name="robots" content="index, follow" />
         
@@ -30,7 +31,6 @@ const Index = () => {
         <meta property="og:title" content="DMT Code Visual Symbol Catalogue | 650nm Laser Research Archive" />
         <meta property="og:description" content="Open catalogue of discrete visual symbols reported during 650 nm laser exposure and N,N-DMT experiences." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dmtcode.com" />
         
         {/* Schema.org structured data */}
         <script type="application/ld+json">

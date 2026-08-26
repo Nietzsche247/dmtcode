@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
@@ -140,10 +141,10 @@ const Join = () => {
 
   return (
     <>
+      <SEO uiKey="join" path="/join" />
       <Helmet>
         <title>Help build it | DMT Code</title>
         <meta name="description" content="Volunteer to help test whether independent reports of visual symbols actually converge. Recorders, translators, analysts, and developers welcome." />
-        <link rel="canonical" href="https://dmtcode.com/join" />
       </Helmet>
 
       <Navigation />
