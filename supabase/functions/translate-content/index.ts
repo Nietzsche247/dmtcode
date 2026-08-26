@@ -107,9 +107,10 @@ class GatewayPausedError extends Error {
   constructor() { super(`gateway paused after ${MAX_CONSECUTIVE_ABORTS} consecutive aborts`); }
 }
 
-// Tracks consecutive gateway aborts across the whole run. Once the cap is hit
-// the run stops calling the gateway and finishes cleanly.
-let abortStreak = 0;
+// Consecutive gateway aborts, held PER REQUEST. Deno reuses the isolate
+// between invocations, so a module-scope streak survived the run that set it
+// and poisoned the next request on its very first translate call.
+type RunState = { abortStreak: number };
 
 function isAbort(e: unknown): boolean {
   return (e as Error)?.name === "AbortError" || String(e).includes("aborted");
@@ -120,15 +121,15 @@ async function md5(s: string): Promise<string> {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function translate(text: string, locale: "es" | "de"): Promise<string> {
-  if (abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
+async function translate(text: string, locale: "es" | "de", st: RunState): Promise<string> {
+  if (st.abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
   const lang = locale === "es" ? "Spanish (es)" : "German (de)";
   const sys = `You are a professional translator for a scientific website. Translate the user's text into ${lang}. `
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), PER_CALL_TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), callTimeoutMs(text));
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -142,10 +143,10 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
     });
     if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const j = await res.json();
-    abortStreak = 0;
+    st.abortStreak = 0;
     return String(j.choices?.[0]?.message?.content ?? "").trim();
   } catch (e) {
-    if (isAbort(e)) abortStreak++;
+    if (isAbort(e)) st.abortStreak++;
     throw e;
   } finally {
     clearTimeout(timer);
