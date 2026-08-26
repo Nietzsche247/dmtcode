@@ -197,6 +197,19 @@ const EvidenceMap = () => {
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 A balanced, both-sides answer: 100 years of evidence, from Klüver's form constants (1926) to the 650 nm laser protocol (2025). Every record is labelled by the kind of evidence it is, and every DOI here has been resolved against Crossref.
               </p>
+              <div className="mt-6 max-w-3xl mx-auto rounded-lg border border-border bg-card p-5 text-left space-y-3">
+                <h2 className="text-base font-semibold text-foreground">Which stage each band of evidence belongs to</h2>
+                <p className="text-sm text-muted-foreground">
+                  Stage one is screening, not the experiment. The symbol registry is a screening collection, not a controlled experiment: it is open, self selected and unblinded, and priming is not ruled out. Screening can only show whether there is a hint of agreement worth digging into. Stage one cannot settle the question, and nothing on this page settles it either.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Stage two is capture before exposure. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses. Stage three is designed and has not been run.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Read each record against that scale. The peer reviewed and clinical records are prior literature on the wider phenomenon, not tests of this claim. The pilot report and the community submissions are stage one screening. No record on this timeline comes from stage three. Reports of seeing nothing are wanted and counted, and they are published at{' '}
+                  <Link to="/null-reports" className="text-gold hover:underline">/null-reports</Link>.
+                </p>
+              </div>
               {recordCount !== null && (
                 <p className="text-sm text-muted-foreground mt-2">
                   {recordCount} dated records.
