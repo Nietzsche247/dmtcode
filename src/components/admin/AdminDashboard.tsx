@@ -167,6 +167,12 @@ export const AdminDashboard = () => {
             <MembersDirectory />
           </TabsContent>
 
+          <TabsContent value="intake" className="space-y-4">
+            <PreregistrationQueue />
+            <WaitlistPanel />
+            <DoorTapsPanel />
+          </TabsContent>
+
 
           <TabsContent value="symbols" className="space-y-4">
             <Tabs defaultValue="submissions" className="space-y-4">
