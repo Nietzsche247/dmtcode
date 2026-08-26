@@ -1029,6 +1029,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   ).join("");
 
   const body = `<article data-prerender="prepare">
+  <!--tsrc:static:prepare-->
   <h1>Careful preparation over careless purchase</h1>
   <p>${esc(metaDesc)}</p>
   <section data-prerender="prepare-stage-framing">
@@ -1048,6 +1049,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
     <p>Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
+  <!--/tsrc-->
   <section data-block="shipping-returns">
     <h2>${esc(buy.eyebrow)}</h2>
     <h3>${esc(buy.shipping.title)}</h3>
@@ -1209,6 +1211,7 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
   };
 
   const body = `<article data-prerender="evidence-map">
+  <!--tsrc:static:evidence-map-->
   <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
   <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
   <section>
@@ -1237,6 +1240,7 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
     <h2>The dated record</h2>
     <p>Every source on this timeline also exists as a dated record with its own address at <a href="${SITE}/timeline">/timeline</a>, where the same set can be sorted by date, person, place or kind of evidence and filtered by tag. The underlying data is <a href="${SITE}/timeline.json">/timeline.json</a> and the schema for adding a paper is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>.</p>
   </section>
+  <!--/tsrc-->
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
 
@@ -4256,10 +4260,12 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
 
   const body = `<article data-prerender="articles-index">
+  <!--tsrc:static:articles-->
   <h1>${hubLabel("articles-h1", locale)}</h1>
   <section>
     <p>${hubLabel("articles-p1", locale)}</p>
   </section>
+  <!--/tsrc-->
   <section>
     <h2>${hubLabel("articles-all", locale)}</h2>
     ${items ? `<ul>${items}</ul>` : `<p>${hubLabel("articles-empty", locale)}</p>`}
