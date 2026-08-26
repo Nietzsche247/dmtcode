@@ -249,12 +249,28 @@ function lpath(locale: Loc, path: string): string {
 
 // Canonical full attribution statement. Required verbatim on every page that
 // names Danny Goler. On the person page itself the name link is omitted.
-function golerAttribution(locale: Loc, linkName = true): string {
+// The sentence itself is maintained by the translation pipeline as
+// static/global/goler_attribution; English below is the fallback.
+const GOLER_ATTRIBUTION_EN =
+  "First reported by {name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.";
+
+async function golerAttribution(locale: Loc, linkName = true): Promise<string> {
   const name = linkName
     ? `<a href="${lpath(locale, "/people/danny-goler")}">Danny Goler</a>`
     : "Danny Goler";
-  return `<p><small>First reported by ${name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.</small></p>`;
+  let text = GOLER_ATTRIBUTION_EN;
+  if (locale !== "en") {
+    const tr = await getTranslations("static", "global", locale);
+    if (tr.goler_attribution && tr.goler_attribution.trim()) text = tr.goler_attribution.trim();
+  }
+  // The translated string may or may not keep the {name} placeholder. When it
+  // does not, prepend nothing: the link is spliced in only where the token is.
+  const withName = text.includes("{name}")
+    ? text.replace("{name}", name)
+    : `${name}: ${text}`;
+  return `<p><small>${withName}</small></p>`;
 }
+
 
 
 export default async (request: Request, context: Context) => {
