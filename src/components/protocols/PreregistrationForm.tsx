@@ -1,184 +1,161 @@
 import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
 
-// Intake for the pre-registration open call on the physiological
-// instrumentation protocol. A pre-registration is a hypothesis and a method,
-// so it does not belong in the symbol wizard. Rows are readable by
-// administrators only.
+const optionalBounded = (max: number, label: string) =>
+  z.string().trim().max(max, `${label} must be ${max} characters or fewer`).optional();
 
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const preregistrationSchema = z.object({
+  title: z.string().trim().min(3, 'Title must be at least 3 characters').max(300, 'Title must be 300 characters or fewer'),
+  hypothesis: z.string().trim().min(10, 'Hypothesis must be at least 10 characters').max(4000, 'Hypothesis must be 4,000 characters or fewer'),
+  method_summary: z.string().trim().min(10, 'Method summary must be at least 10 characters').max(6000, 'Method summary must be 6,000 characters or fewer'),
+  instruments: optionalBounded(2000, 'Instruments'),
+  contact_email: z.string().trim().max(254, 'Email must be 254 characters or fewer').regex(/^[^@\s]+@[^@\s]+\.[^@\s]+$/, 'Enter a valid email address'),
+  orcid: optionalBounded(100, 'ORCID'),
+  affiliation: optionalBounded(300, 'Affiliation'),
+});
 
-export const PreregistrationForm = () => {
-  const [title, setTitle] = useState('');
-  const [hypothesis, setHypothesis] = useState('');
-  const [methodSummary, setMethodSummary] = useState('');
-  const [instruments, setInstruments] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
-  const [orcid, setOrcid] = useState('');
-  const [affiliation, setAffiliation] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+type PreregistrationValues = z.infer<typeof preregistrationSchema>;
+
+const emptyToNull = (value?: string) => value?.trim() || null;
+
+export function PreregistrationForm() {
   const [submitted, setSubmitted] = useState(false);
+  const form = useForm<PreregistrationValues>({
+    resolver: zodResolver(preregistrationSchema),
+    defaultValues: {
+      title: '',
+      hypothesis: '',
+      method_summary: '',
+      instruments: '',
+      contact_email: '',
+      orcid: '',
+      affiliation: '',
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (title.trim().length < 3) {
-      toast.error('Add a title of at least three characters.');
-      return;
-    }
-    if (hypothesis.trim().length < 10 || methodSummary.trim().length < 10) {
-      toast.error('The hypothesis and the method summary each need at least ten characters.');
-      return;
-    }
-    if (!EMAIL_RE.test(contactEmail.trim())) {
-      toast.error('Enter a contact email we can reply to.');
-      return;
-    }
-
-    setSubmitting(true);
-    const { data, error } = await supabase
-      .from('research_preregistrations')
-      .insert({
-        title: title.trim(),
-        hypothesis: hypothesis.trim(),
-        method_summary: methodSummary.trim(),
-        instruments: instruments.trim() || null,
-        contact_email: contactEmail.trim(),
-        orcid: orcid.trim() || null,
-        affiliation: affiliation.trim() || null,
-      })
-      .select('id')
-      .maybeSingle();
-    setSubmitting(false);
+  const onSubmit = async (values: PreregistrationValues) => {
+    const { error } = await supabase.from("research_preregistrations").insert({
+      title: values.title.trim(),
+      hypothesis: values.hypothesis.trim(),
+      method_summary: values.method_summary.trim(),
+      instruments: emptyToNull(values.instruments),
+      contact_email: values.contact_email.trim(),
+      orcid: emptyToNull(values.orcid),
+      affiliation: emptyToNull(values.affiliation),
+    });
 
     if (error) {
-      console.error('Pre-registration insert failed:', error);
-      toast.error('The pre-registration was not recorded. Please try again.');
+      form.setError('root', { message: 'The pre-registration could not be submitted. Please try again.' });
       return;
     }
 
-    supabase.functions
-      .invoke('notify-admin', {
-        body: { type: 'preregistration', preregistrationId: data?.id ?? null },
-      })
-      .catch(console.error);
+    await supabase.functions.invoke('notify-admin', {
+      body: { type: 'preregistration' },
+    }).catch(() => undefined);
 
     setSubmitted(true);
-    toast.success('Pre-registration recorded.');
+    form.reset();
   };
 
   if (submitted) {
     return (
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-3">Pre-registration recorded</h2>
-        <p className="text-muted-foreground text-sm">
-          Your pre-registration is stored and an administrator has been notified. It sits at status
-          "submitted" until a person reads it. We cannot promise a review date. If it is taken
-          further you will hear from the contact address you gave. If you hear nothing, the record
-          still exists and is still readable by the reviewers.
-        </p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Pre-registration received</CardTitle>
+          <CardDescription>
+            Your submission is now in the research intake queue. An administrator can inspect it and may contact you at the email address you provided.
+          </CardDescription>
+        </CardHeader>
       </Card>
     );
   }
 
   return (
-    <Card className="p-6">
-      <h2 className="text-xl font-semibold mb-2">Pre-register a planned instrumented arm</h2>
-      <p className="text-muted-foreground text-sm mb-6">
-        State the hypothesis and the method before you collect data. Nothing here is published
-        automatically. Only administrators can read what you submit.
-      </p>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="prereg-title">Title</Label>
-          <Input
-            id="prereg-title"
-            value={title}
-            maxLength={300}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="prereg-hypothesis">Hypothesis</Label>
-          <Textarea
-            id="prereg-hypothesis"
-            value={hypothesis}
-            maxLength={4000}
-            rows={4}
-            onChange={(e) => setHypothesis(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="prereg-method">Method summary</Label>
-          <Textarea
-            id="prereg-method"
-            value={methodSummary}
-            maxLength={6000}
-            rows={5}
-            onChange={(e) => setMethodSummary(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="prereg-instruments">Instruments</Label>
-          <Textarea
-            id="prereg-instruments"
-            value={instruments}
-            maxLength={2000}
-            rows={3}
-            onChange={(e) => setInstruments(e.target.value)}
-          />
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="prereg-email">Contact email</Label>
-            <Input
-              id="prereg-email"
-              type="email"
-              value={contactEmail}
-              maxLength={254}
-              onChange={(e) => setContactEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="prereg-orcid">ORCID</Label>
-            <Input
-              id="prereg-orcid"
-              value={orcid}
-              maxLength={100}
-              onChange={(e) => setOrcid(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="prereg-affiliation">Affiliation</Label>
-          <Input
-            id="prereg-affiliation"
-            value={affiliation}
-            maxLength={300}
-            onChange={(e) => setAffiliation(e.target.value)}
-          />
-        </div>
-
-        <Button type="submit" disabled={submitting}>
-          {submitting ? 'Submitting...' : 'Submit pre-registration'}
-        </Button>
-      </form>
+    <Card>
+      <CardHeader>
+        <CardTitle>Pre-register a physiological instrumentation study</CardTitle>
+        <CardDescription>
+          Submit a proposed hypothesis and method for the open research call. Required fields are marked.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" noValidate>
+            <FormField control={form.control} name="title" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title *</FormLabel>
+                <FormControl><Input {...field} maxLength={300} autoComplete="off" /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="hypothesis" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hypothesis *</FormLabel>
+                <FormControl><Textarea {...field} minLength={10} maxLength={4000} rows={5} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="method_summary" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Method summary *</FormLabel>
+                <FormControl><Textarea {...field} minLength={10} maxLength={6000} rows={7} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="instruments" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Instruments</FormLabel>
+                <FormControl><Textarea {...field} maxLength={2000} rows={4} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <div className="grid gap-5 md:grid-cols-2">
+              <FormField control={form.control} name="contact_email" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact email *</FormLabel>
+                  <FormControl><Input {...field} type="email" maxLength={254} autoComplete="email" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="orcid" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ORCID</FormLabel>
+                  <FormControl><Input {...field} maxLength={100} autoComplete="off" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+            <FormField control={form.control} name="affiliation" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Affiliation</FormLabel>
+                <FormControl><Input {...field} maxLength={300} autoComplete="organization" /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            {form.formState.errors.root?.message && (
+              <p className="text-sm font-medium text-destructive" role="alert">{form.formState.errors.root.message}</p>
+            )}
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Submitting...' : 'Submit pre-registration'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
   );
-};
+}

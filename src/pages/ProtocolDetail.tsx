@@ -1,5 +1,4 @@
 import { Navigation } from '@/components/Navigation';
-import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -14,6 +13,7 @@ import { useContentTranslations, overlay } from '@/hooks/useContentTranslations'
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { FollowButton } from '@/components/FollowButton';
 import { GolerAttribution } from '@/components/GolerAttribution';
+import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
 
 import { 
   FlaskConical, Stethoscope, Clock, ArrowLeft, Mic, 
@@ -649,15 +649,12 @@ const ProtocolDetail = () => {
               </div>
 
             </div>
+            {protocol.slug === 'physiological-instrumentation' && (
+              <div className="max-w-3xl">
+                <PreregistrationForm />
+              </div>
+            )}
           </section>
-
-          {/* Pre-registration intake. The open call on this protocol asks for
-              planned instrumented arms and until now had no receiver. */}
-          {protocol.slug === 'physiological-instrumentation' && (
-            <section className="container mx-auto px-4 pb-8">
-              <PreregistrationForm />
-            </section>
-          )}
 
           {/* Protocol Content */}
           <section className="container mx-auto px-4 pb-16">

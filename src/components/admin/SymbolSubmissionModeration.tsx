@@ -518,19 +518,11 @@ export const SymbolSubmissionModeration = () => {
       });
       await recordReviewActivity(currentUserId);
       toast.success(ids.length > 1 ? `${ids.length} rejected and hidden` : 'Rejected and hidden');
-      // Bulk rejection used to skip this call entirely, so a batch decision
-      // notified nobody. It now fires once, carrying every affected id.
-      supabase.functions
-        .invoke('notify-admin', {
-          body: {
-            submissionId: ids[0],
-            submissionIds: ids,
-            action: 'rejected',
-            bulk: rejectingBulk,
-            reason: rejectionReason.trim(),
-          },
-        })
-        .catch(console.error);
+      if (!rejectingBulk) {
+        supabase.functions
+          .invoke('notify-admin', { body: { submissionId: ids[0], action: 'rejected', reason: rejectionReason.trim() } })
+          .catch(console.error);
+      }
       setSelectedIds(new Set());
       setRejectModalOpen(false);
       setRejectingId(null);
