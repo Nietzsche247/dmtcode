@@ -4773,13 +4773,14 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>`;
 
   const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
+  ${golerAttribution(locale, false)}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
     locale,
-    title: tr.title ?? "Danny Goler, who described the DMT laser observation | DMT Code",
+    title: tr.title ?? "The person who first described the 650 nm laser observation | DMT Code",
     description: tr.description ??
       "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
     canonical,
