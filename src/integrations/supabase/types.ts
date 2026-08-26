@@ -3602,6 +3602,18 @@ export type Database = {
         Args: { p_target: string; p_target_id: string }
         Returns: Json
       }
+      translation_candidates: {
+        Args: {
+          p_after: string
+          p_fields: string[]
+          p_gate_sql: string
+          p_key: string
+          p_limit: number
+          p_locale: string
+          p_table: string
+        }
+        Returns: Json[]
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
