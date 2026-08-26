@@ -355,12 +355,23 @@ const Trials = () => {
           </div>
         ) : (
           <>
-            <ul className="grid gap-4">
+            <ul>
               {visible.map((t) => {
+                const stateInfo = trialState(t.status);
                 const showVerification =
                   t.confirmed_status && t.confirmed_status !== 'Confirmed';
-                const status = t.status;
-                const joinUrl = t.application_url || t.url;
+                // Country is the LAST comma separated segment of location.
+                const loc = (t.location || '').trim();
+                const parts = loc.split(',').map((p) => p.trim()).filter(Boolean);
+                const country = parts.length > 1 ? parts[parts.length - 1] : loc || null;
+                const action =
+                  t.status === 'recruiting' && t.application_url
+                    ? { label: 'How to apply', href: t.application_url, external: true }
+                    : t.status === 'recruiting' && t.url
+                      ? { label: 'Recruitment details', href: t.url, external: true }
+                      : t.status === 'enrolling by invitation' && t.url
+                        ? { label: 'Study record (enrols by invitation)', href: t.url, external: true }
+                        : undefined;
                 return (
                   <li key={t.id}>
                     <ListRow
