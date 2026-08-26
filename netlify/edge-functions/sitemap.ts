@@ -401,11 +401,15 @@ export default async (request: Request) => {
     });
     if (llmsRes.ok) {
       const llmsText = await llmsRes.text();
+      // Some entries name the localized files bare (no /downloads/ prefix),
+      // so match both full paths and known document filenames and normalize.
       const pdfs = [
         ...new Set(
-          [...llmsText.matchAll(/\/downloads\/[A-Za-z0-9_.-]+\.pdf/g)].map(
-            (m) => m[0]
-          )
+          [
+            ...llmsText.matchAll(
+              /(?:\/downloads\/)?((?:DMTCode|dmt-laser-code)[A-Za-z0-9_.-]*\.pdf)\b/g
+            ),
+          ].map((m) => `/downloads/${m[1]}`)
         ),
       ].sort();
       for (const p of pdfs) {
