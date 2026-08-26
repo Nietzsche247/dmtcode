@@ -721,7 +721,7 @@ export default async (request: Request, context: Context) => {
   }
   ${
     bodyText
-      ? `<section><h2>Full text</h2><p>${esc(bodyText).slice(0, 4000)}</p></section>`
+      ? `<section><h2>Full text</h2><details><summary>Full text</summary><p>${esc(bodyText)}</p></details></section>`
       : ""
   }
   <p>Indexed by the <a href="${SITE}/bibliography">DMT Code Research Bibliography</a>, an open, stance scored library (CC-BY-4.0).</p>
