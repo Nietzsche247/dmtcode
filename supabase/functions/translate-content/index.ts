@@ -7,8 +7,12 @@ const LOVABLE_KEY  = Deno.env.get("LOVABLE_API_KEY")!;
 const SHARED       = Deno.env.get("TRANSLATE_SHARED_SECRET")!;
 const LOCALES = ["es", "de"] as const;
 const TIME_BUDGET_MS = 100_000;
-const PER_CALL_TIMEOUT_MS = 8_000;
-const MAX_CONSECUTIVE_ABORTS = 3;
+// A flat 8s aborted every long field (body_html, body_md, content_jsonb,
+// clinical trial descriptions) before the model could answer. Scale with length.
+function callTimeoutMs(text: string): number {
+  return Math.min(75_000, Math.max(20_000, 12_000 + text.length * 6));
+}
+const MAX_CONSECUTIVE_ABORTS = 10;
 // Public origin whose prerendered English pages are the source of truth for
 // the "people" and "static" translation tables (see CONFIG below).
 const SITE_URL = "https://dmtcode.com";
