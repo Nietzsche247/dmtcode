@@ -1459,6 +1459,7 @@ ${items}
     <p>The data is <a href="${SITE}/timeline.json">/timeline.json</a>. The schema for adding a paper or article is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>. Append one object to entries that validates against the entry definition and it appears here.</p>
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+  ${golerAttribution(locale)}
 </article>`;
 
 
