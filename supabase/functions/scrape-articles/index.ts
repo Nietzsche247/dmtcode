@@ -4,10 +4,11 @@
 // and inserts NEW rows into article_leads with is_approved=false for moderation.
 // It never writes approved rows and never touches the editorial `articles` table.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { adminOrMachineAuthError } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-scrape-key",
 };
 
 const UA =
@@ -340,6 +341,9 @@ async function enrichPending(supabase: ReturnType<typeof createClient>, limit = 
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const authError = await adminOrMachineAuthError(req, "SCRAPE_SECRET", "x-scrape-key", corsHeaders);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",

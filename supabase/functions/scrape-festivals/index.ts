@@ -5,6 +5,12 @@
 // into events with is_approved=false for moderation. Never writes approved rows.
 // Rows with category='retreat' skip date extraction; they get a liveness check and are upserted into the retreats table as unapproved rows.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { adminOrMachineAuthError } from "../_shared/cronAuth.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-scrape-key",
+};
 
 const MONTH_MAP: Record<string, number> = {
   january:1, february:2, march:3, april:4, may:5, june:6, july:7, august:8, september:9, october:10, november:11, december:12,
@@ -194,7 +200,12 @@ function fromText(input: string): Found | null {
   return ok[0] ?? null;
 }
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const authError = await adminOrMachineAuthError(req, "SCRAPE_SECRET", "x-scrape-key", corsHeaders);
+  if (authError) return authError;
+
   const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const stats = { checked: 0, found: 0, inserted: 0, updated: 0, skipped: 0, errors: 0 };
   const detail: { festival: string; result: string }[] = [];

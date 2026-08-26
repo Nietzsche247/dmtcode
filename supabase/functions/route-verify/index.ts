@@ -9,6 +9,7 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { machineAuthError } from "../_shared/cronAuth.ts";
 
 const SITE = "https://dmtcode.com";
 const UA =
@@ -173,6 +174,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+
+  const authError = machineAuthError(req, "ROUTE_VERIFY_SECRET", "x-route-key", corsHeaders);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
