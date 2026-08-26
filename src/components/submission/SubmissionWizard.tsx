@@ -46,6 +46,10 @@ export const SubmissionWizard = () => {
   }, [currentStep, imageData, trackSubmissionAbandoned]);
 
   const handleCanvasSave = () => {
+    if (!priorExposure) {
+      toast.error('Please answer the prior exposure question before continuing');
+      return;
+    }
     if (!imageData) {
       toast.error('Please draw something before continuing');
       return;
@@ -148,6 +152,7 @@ export const SubmissionWizard = () => {
           vector_json: vectorJson,
           is_sober_baseline: metadata.isSoberBaseline ?? false,
           publication_consent: true,
+          prior_exposure: priorExposure,
         })
         .select()
         .single();
