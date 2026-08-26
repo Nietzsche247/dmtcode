@@ -249,12 +249,28 @@ function lpath(locale: Loc, path: string): string {
 
 // Canonical full attribution statement. Required verbatim on every page that
 // names Danny Goler. On the person page itself the name link is omitted.
-function golerAttribution(locale: Loc, linkName = true): string {
+// The sentence itself is maintained by the translation pipeline as
+// static/global/goler_attribution; English below is the fallback.
+const GOLER_ATTRIBUTION_EN =
+  "First reported by {name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.";
+
+async function golerAttribution(locale: Loc, linkName = true): Promise<string> {
   const name = linkName
     ? `<a href="${lpath(locale, "/people/danny-goler")}">Danny Goler</a>`
     : "Danny Goler";
-  return `<p><small>First reported by ${name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.</small></p>`;
+  let text = GOLER_ATTRIBUTION_EN;
+  if (locale !== "en") {
+    const tr = await getTranslations("static", "global", locale);
+    if (tr.goler_attribution && tr.goler_attribution.trim()) text = tr.goler_attribution.trim();
+  }
+  // The translated string may or may not keep the {name} placeholder. When it
+  // does not, prepend nothing: the link is spliced in only where the token is.
+  const withName = text.includes("{name}")
+    ? text.replace("{name}", name)
+    : `${name}: ${text}`;
+  return `<p><small>${withName}</small></p>`;
 }
+
 
 
 export default async (request: Request, context: Context) => {
@@ -1013,6 +1029,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   ).join("");
 
   const body = `<article data-prerender="prepare">
+  <!--tsrc:static:prepare-->
   <h1>Careful preparation over careless purchase</h1>
   <p>${esc(metaDesc)}</p>
   <section data-prerender="prepare-stage-framing">
@@ -1032,6 +1049,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
     <p>Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
+  <!--/tsrc-->
   <section data-block="shipping-returns">
     <h2>${esc(buy.eyebrow)}</h2>
     <h3>${esc(buy.shipping.title)}</h3>
@@ -1193,6 +1211,7 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
   };
 
   const body = `<article data-prerender="evidence-map">
+  <!--tsrc:static:evidence-map-->
   <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
   <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
   <section>
@@ -1221,6 +1240,7 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
     <h2>The dated record</h2>
     <p>Every source on this timeline also exists as a dated record with its own address at <a href="${SITE}/timeline">/timeline</a>, where the same set can be sorted by date, person, place or kind of evidence and filtered by tag. The underlying data is <a href="${SITE}/timeline.json">/timeline.json</a> and the schema for adding a paper is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>.</p>
   </section>
+  <!--/tsrc-->
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
 </article>`;
 
@@ -1347,7 +1367,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
     const body = `<article data-prerender="timeline">
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
 </article>`;
     return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
@@ -1450,7 +1470,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   };
 
   const body = trs.body_html?.trim()
-    ? `<article data-prerender="timeline">${trs.body_html}${golerAttribution(locale)}</article>`
+    ? `<article data-prerender="timeline">${trs.body_html}${await golerAttribution(locale)}</article>`
     : `<article data-prerender="timeline">
    <!--tsrc:static:timeline-->
    <h1>${esc(file.title.headline)}</h1>
@@ -1477,7 +1497,7 @@ ${items}
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
   <!--/tsrc-->
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
 </article>`;
 
 
@@ -1912,6 +1932,133 @@ const PROTOCOL_GUIDE_FAQ_LD = {
     "acceptedAnswer": { "@type": "Answer", "text": f.a },
   })),
 };
+
+// Ordered steps of the reported 650 nm observation procedure. Every step below
+// restates equipment or conditions already described in the protocol guide body
+// copy on this page; nothing is invented here.
+const PROTOCOL_GUIDE_HOWTO_STEPS: Array<{ name: string; text: string }> = [
+  {
+    name: "Have the setup reviewed for laser safety",
+    text: "Before any use, have the apparatus and the intended viewing geometry reviewed by someone qualified in laser safety. The beam must never be viewed directly. Adults 18 and older only.",
+  },
+  {
+    name: "Assemble the optical components",
+    text: "Mount a 650 nm red laser module so that its beam passes through a transmission diffraction grating, which spreads the beam into a speckle and interference field.",
+  },
+  {
+    name: "Place the diffusing element",
+    text: "Place a diffusing or refracting element, such as an acrylic tank or a lens, in the path so the field is projected onto a surface rather than viewed at the source.",
+  },
+  {
+    name: "Set the room conditions and posture",
+    text: "Darken the room and take a stable seated observation posture facing the projected field, not the laser aperture. Record the room conditions and posture used.",
+  },
+  {
+    name: "Observe and record",
+    text: "Observe the projected field and record what is seen, including seeing nothing structured. Null reports carry the same weight as positive ones and are published alongside them.",
+  },
+  {
+    name: "Submit the record to the registry",
+    text: "Submit the drawn or uploaded form with its description and tags, noting whether you had prior exposure to the catalogue, so convergence can be tested on unprimed records.",
+  },
+];
+
+const PROTOCOL_GUIDE_HOWTO_LD = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "@id": "https://dmtcode.com/protocol-guide#howto",
+  "url": "https://dmtcode.com/protocol-guide",
+  "name": "650 nm laser observation procedure",
+  "description":
+    "The reported 650 nm laser observation procedure as documented by contributors: equipment, room conditions, observation posture, and recording. Qualified laser safety review is required before use, and the beam must never be viewed directly.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "supply": [
+    { "@type": "HowToSupply", "name": "650 nm red laser module" },
+    { "@type": "HowToSupply", "name": "Transmission diffraction grating" },
+    { "@type": "HowToSupply", "name": "Diffusing or refracting element (acrylic tank or lens)" },
+  ],
+  "tool": [
+    { "@type": "HowToTool", "name": "Darkened room" },
+    { "@type": "HowToTool", "name": "Stable observation seat" },
+  ],
+  "step": PROTOCOL_GUIDE_HOWTO_STEPS.map((s, i) => ({
+    "@type": "HowToStep",
+    "position": i + 1,
+    "name": s.name,
+    "text": s.text,
+  })),
+};
+
+// Locale-aware rebuild of the two structured-data blocks on /protocol-guide.
+// Translated copy comes from content_translations (static/protocol-guide,
+// fields faq_ld and howto_ld, each a JSON string). English is the fallback
+// whenever the row is missing or unparseable, and identifiers always point at
+// the locale URL so the Spanish and German mirrors never claim the English one.
+function localizedProtocolGuideLd(
+  locale: Loc,
+  trs: Record<string, string>,
+): unknown[] {
+  const base = `${SITE}${locale !== "en" ? "/" + locale : ""}/protocol-guide`;
+
+  let faqEntities = PROTOCOL_GUIDE_FAQ_LD.mainEntity;
+  const faqRaw = trs.faq_ld;
+  if (faqRaw && faqRaw.trim()) {
+    try {
+      const parsed = JSON.parse(faqRaw) as Array<Record<string, unknown>>;
+      if (Array.isArray(parsed) && parsed.length) {
+        faqEntities = parsed.map((q) => ({
+          "@type": "Question",
+          name: String((q as { name?: unknown }).name ?? ""),
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: String(
+              ((q as { acceptedAnswer?: { text?: unknown } }).acceptedAnswer?.text) ??
+                (q as { text?: unknown }).text ??
+                "",
+            ),
+          },
+        })) as typeof PROTOCOL_GUIDE_FAQ_LD.mainEntity;
+      }
+    } catch { /* keep English */ }
+  }
+
+  const faqLd = {
+    ...PROTOCOL_GUIDE_FAQ_LD,
+    "@id": `${base}#faq`,
+    "url": base,
+    "mainEntityOfPage": base,
+    "inLanguage": locale,
+    "mainEntity": faqEntities,
+  };
+
+  let steps = PROTOCOL_GUIDE_HOWTO_STEPS;
+  const howRaw = trs.howto_ld;
+  if (howRaw && howRaw.trim()) {
+    try {
+      const parsed = JSON.parse(howRaw) as Array<{ name?: unknown; text?: unknown }>;
+      if (Array.isArray(parsed) && parsed.length) {
+        steps = parsed.map((s) => ({ name: String(s.name ?? ""), text: String(s.text ?? "") }));
+      }
+    } catch { /* keep English */ }
+  }
+
+  const howToLd = {
+    ...PROTOCOL_GUIDE_HOWTO_LD,
+    "@id": `${base}#howto`,
+    "url": base,
+    "mainEntityOfPage": base,
+    "inLanguage": locale,
+    "step": steps.map((s, i) => ({
+      "@type": "HowToStep",
+      "position": i + 1,
+      "name": s.name,
+      "text": s.text,
+    })),
+  };
+
+  return [faqLd, howToLd];
+}
+
 
 // Verbatim copy of the terms array in src/data/glossaryTerms.ts, which is the source of truth.
 // Netlify edge functions run in Deno and cannot import from src/.
@@ -2687,22 +2834,37 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
 
   const trs = await getTranslations("static", key, locale);
 
+  // Structured data on /protocol-guide is locale aware: the FAQ entities and
+  // the HowTo steps come from content_translations, English is the fallback,
+  // and every identifier points at the locale URL.
+  if (key === "protocol-guide") {
+    extraLd.length = 0;
+    extraLd.push(...localizedProtocolGuideLd(locale, trs));
+  }
+
+  // The extra body block is translated the same way body_html is; the English
+  // constant is used whenever the row is missing.
+  const bodyExtra = (trs.body_extra_html && trs.body_extra_html.trim())
+    ? trs.body_extra_html
+    : (page.bodyExtraHtml ?? "");
+
   const attribution = key === "home" || key === "protocol-guide" || key === "about"
-    ? golerAttribution(locale)
+    ? await golerAttribution(locale)
     : "";
 
   const body = trs.body_html && trs.body_html.trim()
-    ? `<article data-prerender="${esc(key)}">${trs.body_html}${page.bodyExtraHtml ?? ""}${recentList}${attribution}</article>`
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <!--tsrc:static:${key}-->
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   <!--/tsrc-->
-  ${page.bodyExtraHtml ?? ""}
+  ${bodyExtra}
   ${recentList}
   ${linksBlock}
   ${attribution}
 </article>`;
+
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -3626,7 +3788,7 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
   <p>Adults 18 and older only.</p>
 
-  ${golerAttribution(locale)}
+  ${await golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
 
@@ -4098,10 +4260,12 @@ async function renderArticlesIndex(context: Context, locale: Loc = "en"): Promis
 
 
   const body = `<article data-prerender="articles-index">
+  <!--tsrc:static:articles-->
   <h1>${hubLabel("articles-h1", locale)}</h1>
   <section>
     <p>${hubLabel("articles-p1", locale)}</p>
   </section>
+  <!--/tsrc-->
   <section>
     <h2>${hubLabel("articles-all", locale)}</h2>
     ${items ? `<ul>${items}</ul>` : `<p>${hubLabel("articles-empty", locale)}</p>`}
@@ -4813,7 +4977,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>`;
 
   const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
-  ${golerAttribution(locale, false)}
+  ${await golerAttribution(locale, false)}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;

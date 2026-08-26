@@ -63,6 +63,9 @@ const STATIC_PAGE_PATHS: PageSrc[] = [
   { id: "prepare", path: "/prepare" },
   { id: "evidence-map", path: "/evidence-map" },
   { id: "articles", path: "/articles" },
+  // Site-wide strings that are not a page of their own. The prerender reads
+  // static/global/goler_attribution for the localized attribution sentence.
+  { id: "global", path: "/about" },
 ];
 
 const PEOPLE_PAGE_PATHS: PageSrc[] = [
@@ -85,7 +88,7 @@ const PEOPLE_PAGE_PATHS: PageSrc[] = [
 // people and static are sourced from the live English prerender, not from
 // database tables.
 const CONFIG: Cfg[] = [
-  { table: "static",            key: "id",   fields: ["body_html"], pages: STATIC_PAGE_PATHS },
+  { table: "static",            key: "id",   fields: ["body_html","body_extra_html","faq_ld","howto_ld","goler_attribution"], pages: STATIC_PAGE_PATHS },
   { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
   { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
   { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
