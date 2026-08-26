@@ -254,6 +254,49 @@
   path = "/*"
   function = "spa-guard"
 
+# CDN caching for HTML responses. Crawlers and AI agents otherwise trigger an
+# origin render on every visit to every sitemap URL. The browser-facing
+# cache-control stays untouched (public/_headers and the edge functions own
+# it); this only tells the Netlify CDN it may hold a copy for an hour and serve
+# stale for a day. Prerendered responses set the same value in
+# content-prerender.ts; this rule covers the static shell and public assets.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "public, s-maxage=3600, stale-while-revalidate=86400, durable"
+
+# Authenticated and account routes are never CDN-cached. These specific rules
+# shadow the wildcard above for the same header name.
+[[headers]]
+  for = "/admin"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/auth"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/profile"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/dashboard"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
+[[headers]]
+  for = "/my-symbols"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "no-store"
+
 [[redirects]]
   from = "/danny-goler"
   to = "/people/danny-goler"
