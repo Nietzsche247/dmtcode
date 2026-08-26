@@ -157,7 +157,7 @@ async function translate(text: string, locale: "es" | "de", st: RunState): Promi
 // If the run deadline passes before a worker starts a leaf we throw: a
 // half-translated JSON must never be stored, because the prerender overlay
 // replaces the whole field with whatever is in content_translations.
-async function translateJson(v: unknown, locale: "es" | "de", deadline: number): Promise<unknown> {
+async function translateJson(v: unknown, locale: "es" | "de", deadline: number, st: RunState): Promise<unknown> {
   const TRANSLATE_JSON_CONCURRENCY = 5;
   type PathPart = string | number;
   type Leaf = { path: PathPart[]; source: string; translated?: string };
