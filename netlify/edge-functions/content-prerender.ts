@@ -1622,6 +1622,10 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     heading: "The project",
     items: [
       {
+        q: "Is this a controlled experiment?",
+        a: "No. Stage one, the public registry, is a screening collection, not a controlled experiment. It is open, self selected and unblinded, and priming is not ruled out, because people can browse other submissions before recording their own. All stage one can show is whether there is a hint of agreement worth digging into. Nothing here settles the question. Stage two is capture before exposure, where an account is recorded before the contributor sees the catalogue. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses; it is designed and has not been run. Reports of seeing nothing are wanted and counted, and they are published at <a href=\"/null-reports\">/null-reports</a>.",
+      },
+      {
         q: 'What is the "DMT code"?',
         a: "People who take N,N-DMT often report seeing structured visual forms, grids, glyphs, geometric symbols, and a smaller group describes something that reads almost like written characters. The DMT Code project collects those reports in one place so the overlaps can actually be measured instead of argued about. We are not claiming the forms are a message. We are asking a narrower question: do independent people, who have never spoken, keep drawing the same shapes?",
       },
