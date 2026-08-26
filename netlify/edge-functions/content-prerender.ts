@@ -241,6 +241,21 @@ function overlay(
 
 }
 
+// Locale-aware internal link path. English is unprefixed; other locales carry
+// their path prefix ("/es/...", "/de/...").
+function lpath(locale: Loc, path: string): string {
+  return `${locale !== "en" ? `/${locale}` : ""}${path}`;
+}
+
+// Canonical full attribution statement. Required verbatim on every page that
+// names Danny Goler. On the person page itself the name link is omitted.
+function golerAttribution(locale: Loc, linkName = true): string {
+  const name = linkName
+    ? `<a href="${lpath(locale, "/people/danny-goler")}">Danny Goler</a>`
+    : "Danny Goler";
+  return `<p><small>First reported by ${name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.</small></p>`;
+}
+
 
 export default async (request: Request, context: Context) => {
   try {
@@ -706,7 +721,7 @@ export default async (request: Request, context: Context) => {
   }
   ${
     bodyText
-      ? `<section><h2>Full text</h2><p>${esc(bodyText).slice(0, 4000)}</p></section>`
+      ? `<section><h2>Full text</h2><details><summary>Full text</summary><p>${esc(bodyText)}</p></details></section>`
       : ""
   }
   <p>Indexed by the <a href="${SITE}/bibliography">DMT Code Research Bibliography</a>, an open, stance scored library (CC-BY-4.0).</p>
@@ -1316,6 +1331,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
     const body = `<article data-prerender="timeline">
   <h1>Chronology</h1>
   <p>The chronology data is served from <a href="${SITE}/timeline.json">/timeline.json</a>.</p>
+  ${golerAttribution(locale)}
 </article>`;
     return new Response(renderShell(shellHtml, head, body, locale), { status: 200, headers: PRERENDER_RESP_HEADERS });
   }
@@ -1418,7 +1434,7 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   };
 
   const body = trs.body_html?.trim()
-    ? `<article data-prerender="timeline">${trs.body_html}</article>`
+    ? `<article data-prerender="timeline">${trs.body_html}${golerAttribution(locale)}</article>`
     : `<article data-prerender="timeline">
   <h1>${esc(file.title.headline)}</h1>
   <p>${esc(file.title.text)}</p>
@@ -1443,6 +1459,7 @@ ${items}
     <p>The data is <a href="${SITE}/timeline.json">/timeline.json</a>. The schema for adding a paper or article is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>. Append one object to entries that validates against the entry definition and it appears here.</p>
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+  ${golerAttribution(locale)}
 </article>`;
 
 
@@ -2549,6 +2566,36 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         });
       }
     } catch { /* ignore */ }
+  } else if (key === "protocols" && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/protocols?is_published=is.true&select=slug,title,tagline&order=title.asc&limit=50`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            Accept: "application/json",
+          },
+        },
+      );
+      const rows = res.ok ? await res.json() as Array<Record<string, unknown>> : [];
+      const trMap = await getTranslationsBulk("protocols", locale);
+      for (const r of rows) {
+        const t = trMap[String(r.slug ?? "")];
+        if (t) overlay(r, t, ["title", "tagline"]);
+      }
+      if (rows.length) {
+        const items = rows
+          .map((r) => {
+            const slug = String(r.slug || "");
+            const title = String(r.title || slug);
+            const tagline = String(r.tagline || "").trim();
+            return `<li><a href="${lpath(locale, `/protocols/${esc(slug)}`)}">${esc(clip(title, 140))}</a>${tagline ? `<p>${esc(clip(tagline, 240))}</p>` : ""}</li>`;
+          })
+          .join("");
+        recentList = `<section><h2>${esc(page.heading)}</h2><ul>${items}</ul></section>`;
+      }
+    } catch { /* ignore */ }
   } else if (key === "home" && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const res = await fetch(
@@ -2605,14 +2652,19 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
 
   const trs = await getTranslations("static", key, locale);
 
+  const attribution = key === "home" || key === "protocol-guide" || key === "about"
+    ? golerAttribution(locale)
+    : "";
+
   const body = trs.body_html && trs.body_html.trim()
-    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}</article>`
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   ${page.bodyExtraHtml ?? ""}
   ${recentList}
   ${linksBlock}
+  ${attribution}
 </article>`;
 
   const organizationLd = {
@@ -2989,7 +3041,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
   };
 
   const theoryBlocks = rows
-    .map((r) => {
+    .map((r, ri) => {
       const tags = Array.isArray(r.tags) ? (r.tags as string[]).filter(Boolean) : [];
       const summaryHtml = r.summary
         ? paragraphsFromText(String(r.summary))
@@ -3007,7 +3059,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         ? `<p><strong>${hubLabel("tags", locale)}</strong> ${tags.map((t) => esc(t)).join(", ")}</p>`
         : "";
       return `<article>
-  <h2>${esc(String(r.title || "Untitled theory"))}</h2>
+  <h2><a href="${lpath(locale, `/theories/${esc(slugs[ri])}`)}">${esc(String(r.title || "Untitled theory"))}</a></h2>
   <p><em>${esc(originLabel(r.origin, locale))}</em></p>
   ${proponentLine}
   ${summaryHtml}
@@ -3535,6 +3587,7 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   ${tagline ? `<p>${esc(tagline)}</p>` : ""}
   ${contentHtml || "<p>Protocol documentation is being prepared.</p>"}
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
+  ${golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
 
@@ -4721,13 +4774,14 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
   </ul>`;
 
   const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
+  ${golerAttribution(locale, false)}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
     locale,
-    title: tr.title ?? "Danny Goler, who described the DMT laser observation | DMT Code",
+    title: tr.title ?? "The person who first described the 650 nm laser observation | DMT Code",
     description: tr.description ??
       "Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place.",
     canonical,
