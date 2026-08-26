@@ -2976,6 +2976,7 @@ export type Database = {
           locale: string | null
           note: string | null
           pending: boolean
+          resume_cursor: Json | null
           skipped: number
           started_at: string
           table_name: string | null
@@ -2989,6 +2990,7 @@ export type Database = {
           locale?: string | null
           note?: string | null
           pending?: boolean
+          resume_cursor?: Json | null
           skipped?: number
           started_at: string
           table_name?: string | null
@@ -3002,6 +3004,7 @@ export type Database = {
           locale?: string | null
           note?: string | null
           pending?: boolean
+          resume_cursor?: Json | null
           skipped?: number
           started_at?: string
           table_name?: string | null

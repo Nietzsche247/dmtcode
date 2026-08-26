@@ -7,12 +7,64 @@ const LOVABLE_KEY  = Deno.env.get("LOVABLE_API_KEY")!;
 const SHARED       = Deno.env.get("TRANSLATE_SHARED_SECRET")!;
 const LOCALES = ["es", "de"] as const;
 const TIME_BUDGET_MS = 100_000;
+const PER_CALL_TIMEOUT_MS = 8_000;
+const MAX_CONSECUTIVE_ABORTS = 3;
+// Public origin whose prerendered English pages are the source of truth for
+// the "people" and "static" translation tables (see CONFIG below).
+const SITE_URL = "https://dmtcode.com";
 
 const GLOSSARY = [
   "DMT Code","Code of Reality","650nm","650 nm","N,N-DMT","DMT","Apple Vision Pro","ORCID",
 ].join(", ");
 
-type Cfg = { table: string; gate: string; key: "id" | "slug"; fields: string[]; json?: string[] };
+type PageSrc = { id: string; path: string };
+type Cfg = {
+  table: string;
+  gate?: string;
+  key: "id" | "slug";
+  fields: string[];
+  json?: string[];
+  // When set, rows are not read from a database table. Instead the English
+  // prerender of each page is fetched and the source text is extracted from
+  // it (body_html from <!--tsrc:TABLE:ID--> markers, title/description from
+  // the head). The English text is upserted as the locale='en' row, which is
+  // what the es/de hashes are compared against. This is how tables whose
+  // source lives in the prerender templates become hash-checkable.
+  pages?: PageSrc[];
+};
+
+const STATIC_PAGE_PATHS: PageSrc[] = [
+  { id: "home", path: "/" },
+  { id: "registry", path: "/registry" },
+  { id: "trials", path: "/trials" },
+  { id: "bibliography", path: "/bibliography" },
+  { id: "dataset", path: "/dataset" },
+  { id: "about", path: "/about" },
+  { id: "critiques", path: "/critiques" },
+  { id: "events", path: "/events" },
+  { id: "glossary", path: "/glossary" },
+  { id: "methods", path: "/methods" },
+  { id: "research", path: "/research" },
+  { id: "protocols", path: "/protocols" },
+  { id: "forecasts", path: "/forecasts" },
+  { id: "privacy", path: "/privacy" },
+  { id: "terms", path: "/terms" },
+  { id: "shipping", path: "/shipping" },
+  { id: "returns", path: "/returns" },
+  { id: "disclosure", path: "/disclosure" },
+  { id: "capture", path: "/capture" },
+  { id: "join", path: "/join" },
+  { id: "timeline", path: "/timeline" },
+  { id: "faq", path: "/faq" },
+];
+
+const PEOPLE_PAGE_PATHS: PageSrc[] = [
+  { id: "index", path: "/people" },
+  { id: "danny-goler", path: "/people/danny-goler" },
+  { id: "andrew-gallimore", path: "/people/andrew-gallimore" },
+  { id: "chase-hughes", path: "/people/chase-hughes" },
+];
+
 const CONFIG: Cfg[] = [
   { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
   { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
@@ -29,6 +81,13 @@ const CONFIG: Cfg[] = [
   // dialog, via the admin-translate-submission function, which stores nothing.
   // Operator decision, 2026-08-16.
   { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
+  // people and static are sourced from the live English prerender, not from
+  // database tables. Added ahead of clinical_trials (the largest backlog) so
+  // the 20 static pages currently serving English on /es/ and /de/ stop doing
+  // so within the first runs; the existing eight entries keep their relative
+  // order, gates, keys and field lists.
+  { table: "people",            key: "id",   fields: ["title","description","body_html"], pages: PEOPLE_PAGE_PATHS },
+  { table: "static",            key: "id",   fields: ["body_html"], pages: STATIC_PAGE_PATHS },
   { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
 ];
 
@@ -38,19 +97,32 @@ class DeadlineError extends Error {
   constructor() { super("deadline reached mid-field"); }
 }
 
+class GatewayPausedError extends Error {
+  constructor() { super(`gateway paused after ${MAX_CONSECUTIVE_ABORTS} consecutive aborts`); }
+}
+
+// Tracks consecutive gateway aborts across the whole run. Once the cap is hit
+// the run stops calling the gateway and finishes cleanly.
+let abortStreak = 0;
+
+function isAbort(e: unknown): boolean {
+  return (e as Error)?.name === "AbortError" || String(e).includes("aborted");
+}
+
 async function md5(s: string): Promise<string> {
   const buf = await crypto.subtle.digest("MD5", new TextEncoder().encode(s));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 async function translate(text: string, locale: "es" | "de"): Promise<string> {
+  if (abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
   const lang = locale === "es" ? "Spanish (es)" : "German (de)";
   const sys = `You are a professional translator for a scientific website. Translate the user's text into ${lang}. `
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20_000);
+  const timer = setTimeout(() => ctrl.abort(), PER_CALL_TIMEOUT_MS);
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -64,7 +136,11 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
     });
     if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const j = await res.json();
+    abortStreak = 0;
     return String(j.choices?.[0]?.message?.content ?? "").trim();
+  } catch (e) {
+    if (isAbort(e)) abortStreak++;
+    throw e;
   } finally {
     clearTimeout(timer);
   }
@@ -126,11 +202,67 @@ async function translateJson(v: unknown, locale: "es" | "de", deadline: number):
   return rebuilt;
 }
 
+function unescapeHtml(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
+
+// Extract the marked English source region from a prerendered page. Returns
+// null when the marker is absent so a render regression can never store an
+// empty source row.
+function extractMarked(html: string, table: string, id: string): string | null {
+  const re = new RegExp(`<!--tsrc:${table}:${id}-->([\\s\\S]*?)<!--/tsrc-->`);
+  const m = html.match(re);
+  return m ? m[1].trim() : null;
+}
+
+// Rows for page-sourced configs: fetch each live English prerender and pull
+// the source fields out of it. Pages that fail to fetch or lack the marker
+// are skipped by returning a row with empty fields (the field loop skips
+// empties, and the en-row upsert never fires for them).
+async function getPageRows(c: Cfg): Promise<Record<string, unknown>[]> {
+  const out: Record<string, unknown>[] = [];
+  for (const p of c.pages ?? []) {
+    const row: Record<string, unknown> = { id: p.id };
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 15_000);
+      const res = await fetch(`${SITE_URL}${p.path}`, {
+        headers: { "User-Agent": "dmtcode-translate-content/2.0", Accept: "text/html" },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) throw new Error(`page ${p.path} ${res.status}`);
+      const html = await res.text();
+      if (c.fields.includes("body_html")) {
+        row.body_html = extractMarked(html, c.table, p.id) ?? "";
+      }
+      if (c.fields.includes("title")) {
+        row.title = unescapeHtml(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "");
+      }
+      if (c.fields.includes("description")) {
+        row.description = unescapeHtml(
+          html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
+        );
+      }
+    } catch {
+      // leave fields empty; this page is skipped this run
+    }
+    out.push(row);
+  }
+  return out;
+}
+
 async function getRows(c: Cfg): Promise<Record<string, unknown>[]> {
+  if (c.pages) return await getPageRows(c);
   const cols = ["id", c.key, ...c.fields, ...(c.json ?? [])].join(",");
   const out: Record<string, unknown>[] = [];
   for (let offset = 0; ; offset += 1000) {
-    const url = `${SUPABASE_URL}/rest/v1/${c.table}?select=${cols}&${c.gate}&limit=1000&offset=${offset}`;
+    const url = `${SUPABASE_URL}/rest/v1/${c.table}?select=${cols}&${c.gate}&order=${c.key}.asc&limit=1000&offset=${offset}`;
     const r = await fetch(url, { headers: sbHeaders });
     if (!r.ok) throw new Error(`read ${c.table} ${r.status}`);
     const page = await r.json() as Record<string, unknown>[];
@@ -160,6 +292,22 @@ async function upsert(rows: Record<string, unknown>[]) {
   if (!r.ok) throw new Error(`upsert ${r.status}: ${await r.text()}`);
 }
 
+type Cursor = { table: string; locale: string; key: string };
+
+async function loadCursor(): Promise<Cursor | null> {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/translation_runs?select=resume_cursor&resume_cursor=not.is.null&order=started_at.desc&limit=1`;
+    const r = await fetch(url, { headers: sbHeaders });
+    if (!r.ok) return null;
+    const rows = await r.json() as Array<{ resume_cursor: Cursor }>;
+    const c = rows[0]?.resume_cursor;
+    if (c && typeof c.table === "string" && typeof c.locale === "string") return c;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.headers.get("X-Translate-Secret") !== SHARED) return new Response("forbidden", { status: 403 });
   const u = new URL(req.url);
@@ -174,6 +322,13 @@ Deno.serve(async (req) => {
     stats.errors++;
     if (stats.error_samples.length < 3) stats.error_samples.push(String(e).slice(0, 160));
   };
+
+  // Resume cursor: only full (unfiltered) runs read and advance it. A run
+  // that hits the deadline or the abort cap stores where it stopped; the next
+  // run starts there and wraps around to the beginning when it reaches the
+  // end. A run that completes a full pass clears the cursor.
+  const useCursor = !onlyTable && !onlyLocale;
+  let newCursor: Cursor | null = null;
 
   const logRun = async (fatal?: string) => {
     try {
@@ -192,6 +347,7 @@ Deno.serve(async (req) => {
           errors: stats.errors,
           pending: stats.pending,
           note,
+          resume_cursor: useCursor ? newCursor : null,
         }),
       });
     } catch (e) {
@@ -200,48 +356,104 @@ Deno.serve(async (req) => {
   };
 
   try {
-    for (const c of CONFIG.filter((c) => !onlyTable || c.table === onlyTable)) {
+    // Ordered work list: table major, locale minor, matching the original
+    // loop nesting (LOCALES iterate inside the table loop).
+    const configs = CONFIG.filter((c) => !onlyTable || c.table === onlyTable);
+    const locales = LOCALES.filter((l) => !onlyLocale || l === onlyLocale);
+    const units: Array<{ c: Cfg; locale: "es" | "de" }> = [];
+    for (const c of configs) for (const locale of locales) units.push({ c, locale });
+
+    let startUnit = 0;
+    let resumeKey: string | null = null;
+    if (useCursor) {
+      const cur = await loadCursor();
+      if (cur) {
+        const idx = units.findIndex((x) => x.c.table === cur.table && x.locale === cur.locale);
+        if (idx >= 0) {
+          startUnit = idx;
+          resumeKey = cur.key ?? null;
+        }
+      }
+    }
+    // Wrap-around order: from the cursor unit to the end, then from the start
+    // up to the cursor unit, so every unit is visited exactly once per run.
+    const order = [...units.slice(startUnit), ...units.slice(0, startUnit)];
+
+    for (const { c, locale } of order) {
       const rows = await getRows(c);
-      for (const locale of LOCALES.filter((l) => !onlyLocale || l === onlyLocale)) {
-        const have = await existingHashes(c.table, locale);
-        for (const row of rows) {
-          const batch: Record<string, unknown>[] = [];
-          const recId = String(row[c.key] ?? "");
-          if (!recId) continue;
-          for (const f of c.fields) {
-            const src = row[f]; if (src == null || String(src).trim() === "") continue;
-            const srcStr = String(src); const h = await md5(srcStr); stats.checked++;
-            if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
-            try { const t = await translate(srcStr, locale); batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, reviewed: false }); stats.translated++; } catch (e) { noteError(e); }
+      const have = await existingHashes(c.table, locale);
+      // The locale='en' rows are the source-of-truth record for page-sourced
+      // configs (people/static), whose English lives in prerender templates.
+      // Table-sourced configs read their source from the database directly,
+      // so they get no en rows.
+      const haveEn = c.pages ? await existingHashes(c.table, "en") : new Map<string, string>();
+
+      // Within the resumed unit, skip rows before the cursor key. The cursor
+      // row itself is reprocessed; hash equality skips its finished fields.
+      let startRow = 0;
+      if (resumeKey) {
+        const idx = rows.findIndex((r) => String(r[c.key] ?? "") === resumeKey);
+        startRow = idx >= 0 ? idx : 0;
+        resumeKey = null;
+      }
+
+      for (let ri = startRow; ri < rows.length; ri++) {
+        const row = rows[ri];
+        const batch: Record<string, unknown>[] = [];
+        const recId = String(row[c.key] ?? "");
+        if (!recId) continue;
+        newCursor = { table: c.table, locale, key: recId };
+        const nowIso = new Date().toISOString();
+        for (const f of c.fields) {
+          const src = row[f]; if (src == null || String(src).trim() === "") continue;
+          const srcStr = String(src); const h = await md5(srcStr); stats.checked++;
+          if (c.pages && haveEn.get(`${recId}|${f}`) !== h) {
+            batch.push({ table_name: c.table, record_id: recId, locale: "en", field: f, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
+          }
+          if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
+          try {
+            const t = await translate(srcStr, locale);
+            batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
+            stats.translated++;
+          } catch (e) {
+            if (e instanceof GatewayPausedError) { stats.pending = true; noteError(e); break; }
+            noteError(e);
+          }
+          if (Date.now() > deadline) { stats.pending = true; break; }
+        }
+        if (!stats.pending) {
+          for (const jf of c.json ?? []) {
+            const src = row[jf]; if (src == null) continue;
+            const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
+            if (c.pages && haveEn.get(`${recId}|${jf}`) !== h) {
+              batch.push({ table_name: c.table, record_id: recId, locale: "en", field: jf, translated_text: srcStr, source_hash: h, translated_at: nowIso, reviewed: false });
+            }
+            if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
+            try {
+              const t = JSON.stringify(await translateJson(src, locale, deadline));
+              batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
+              stats.translated++;
+            } catch (e) {
+              // Abandon a partially translated jsonb field entirely; never store half.
+              if (e instanceof DeadlineError || e instanceof GatewayPausedError) {
+                if (e instanceof GatewayPausedError) noteError(e);
+                stats.pending = true; break;
+              }
+              noteError(e);
+            }
             if (Date.now() > deadline) { stats.pending = true; break; }
           }
-          if (!stats.pending) {
-            for (const jf of c.json ?? []) {
-              const src = row[jf]; if (src == null) continue;
-              const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
-              if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
-              try {
-                const t = JSON.stringify(await translateJson(src, locale, deadline));
-                batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, reviewed: false });
-                stats.translated++;
-              } catch (e) {
-                // Abandon a partially translated jsonb field entirely; never store half.
-                if (e instanceof DeadlineError) { stats.pending = true; break; }
-                noteError(e);
-              }
-              if (Date.now() > deadline) { stats.pending = true; break; }
-            }
-          }
-          // Flush after every row so partial progress survives a kill.
-          if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
-          if (stats.pending) break;
         }
+        // Flush after every row so partial progress survives a kill.
+        if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
         if (stats.pending) break;
       }
       if (stats.pending) break;
     }
+
+    if (!stats.pending) newCursor = null; // full pass complete: start at the top next run
     await logRun();
-    return new Response(JSON.stringify(stats), { headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ ...stats, resume: newCursor }), { headers: { "Content-Type": "application/json" } });
   } catch (e) {
     await logRun(String(e).slice(0, 500));
     return new Response(JSON.stringify({ ...stats, fatal: String(e) }), { status: 500, headers: { "Content-Type": "application/json" } });

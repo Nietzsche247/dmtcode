@@ -381,7 +381,8 @@ export default async (request: Request, context: Context) => {
       const r = await getRow("symbol_submissions", id, "status=eq.approved", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Symbol not found | DMT Code", heading: "Symbol not found", text: "This symbol is not currently indexed or the link is out of date.", canonical: `${SITE}/registry`, backHref: `${SITE}/registry`, backLabel: "Visual symbol registry", marker: "registry-not-found" });
 
-      overlay(r, await getTranslations("symbol_submissions", String(r.id), locale));
+      // symbol_submissions is deliberately not translated: a first-person
+      // perceptual report stays in the observer's own words. No fetch here.
 
       const communityTags = await getCommunityTags(String(r.id));
 
@@ -1436,7 +1437,8 @@ async function renderTimelineIndex(context: Context, request: Request, locale: L
   const body = trs.body_html?.trim()
     ? `<article data-prerender="timeline">${trs.body_html}${golerAttribution(locale)}</article>`
     : `<article data-prerender="timeline">
-  <h1>${esc(file.title.headline)}</h1>
+   <!--tsrc:static:timeline-->
+   <h1>${esc(file.title.headline)}</h1>
   <p>${esc(file.title.text)}</p>
   <p>${entries.length} dated records, ${firstYear} to ${lastYear}. The interactive version of the same set is at <a href="${SITE}/evidence-map">/evidence-map</a>.</p>
   <section>
@@ -1459,6 +1461,7 @@ ${items}
     <p>The data is <a href="${SITE}/timeline.json">/timeline.json</a>. The schema for adding a paper or article is <a href="${SITE}/timeline.schema.json">/timeline.schema.json</a>. Append one object to entries that validates against the entry definition and it appears here.</p>
   </section>
   <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+  <!--/tsrc-->
   ${golerAttribution(locale)}
 </article>`;
 
@@ -1757,6 +1760,7 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
   const body = trs.body_html && trs.body_html.trim()
     ? `<article data-prerender="faq">${trs.body_html}</article>`
     : `<article data-prerender="faq">
+  <!--tsrc:static:faq-->
   <h1>Questions about the DMT Code project and preparing to observe</h1>
   ${FAQ_GROUPS.map(
     (g) => `<section><h2>${esc(g.heading)}</h2>
@@ -1764,6 +1768,7 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
   </section>`,
   ).join("\n  ")}
   <p>See the open data at <a href="${SITE}/registry">/registry</a>, <a href="${SITE}/dataset">/dataset</a>, and <a href="${SITE}/data.json">/data.json</a>. CC-BY-4.0.</p>
+  <!--/tsrc-->
 </article>`;
 
 
@@ -2665,8 +2670,10 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   const body = trs.body_html && trs.body_html.trim()
     ? `<article data-prerender="${esc(key)}">${trs.body_html}${page.bodyExtraHtml ?? ""}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
+  <!--tsrc:static:${key}-->
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
+  <!--/tsrc-->
   ${page.bodyExtraHtml ?? ""}
   ${recentList}
   ${linksBlock}
@@ -4779,7 +4786,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     <li>The <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the pilot study</a></li>
   </ul>`;
 
-  const body = `<article data-prerender="person-danny-goler">${tr.body_html ?? innerEn}
+  const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
   ${golerAttribution(locale, false)}
   <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
   <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
@@ -4848,7 +4855,7 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
     <li><a href="/people/chase-hughes">Chase Hughes</a>: popularizer of an unverified validation claim about the 650 nm laser protocol; not an author of the pilot study.</li>
   </ul>`;
 
-  const body = `<article data-prerender="people">${tr.body_html ?? innerEn}
+  const body = `<article data-prerender="people"><!--tsrc:people:index-->${tr.body_html ?? innerEn}<!--/tsrc-->
   <script type="application/ld+json">${jsonLd(itemListLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
@@ -4953,7 +4960,8 @@ async function renderSimplePersonPage(
   };
 
   const body = `<article data-prerender="person-${slug}">
-  <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}
+  <!--tsrc:people:${slug}-->
+  <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}<!--/tsrc-->
   <script type="application/ld+json">${jsonLd(personLd)}</script>
   <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;

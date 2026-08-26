@@ -1,0 +1,1 @@
+SELECT net.http_post(url := 'https://bbmhrgpsyiahefnxqwfg.supabase.co/functions/v1/translate-content?table=clinical_trials&locale=de', headers := jsonb_build_object('Content-Type','application/json','X-Translate-Secret',(select decrypted_secret from vault.decrypted_secrets where name='translate_shared_secret')), body := '{}'::jsonb);
