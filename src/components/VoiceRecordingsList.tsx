@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Loader2, Play, Trash2, Volume2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface VoiceLogRow {
@@ -135,7 +136,12 @@ export const VoiceRecordingsList = ({ userId }: { userId: string }) => {
       )}
 
       {!isLoading && (!logs || logs.length === 0) && (
-        <p className="text-sm text-muted-foreground">You have no recordings yet.</p>
+        <div className="space-y-4">
+          <p className="text-muted-foreground">You have not recorded a voice log yet.</p>
+          <Button asChild>
+            <Link to="/log">Record a voice log</Link>
+          </Button>
+        </div>
       )}
 
       <div className="space-y-3">
@@ -144,7 +150,9 @@ export const VoiceRecordingsList = ({ userId }: { userId: string }) => {
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium">
-                  {new Date(log.created_at).toLocaleString()}
+                  {new Date(log.created_at).toLocaleDateString(undefined, {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                  })}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {formatDuration(log.duration_seconds) && `${formatDuration(log.duration_seconds)} long`}
