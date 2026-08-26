@@ -13,6 +13,7 @@ import { useContentTranslations, overlay } from '@/hooks/useContentTranslations'
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { FollowButton } from '@/components/FollowButton';
 import { GolerAttribution } from '@/components/GolerAttribution';
+import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
 
 import { 
   FlaskConical, Stethoscope, Clock, ArrowLeft, Mic, 
@@ -648,6 +649,11 @@ const ProtocolDetail = () => {
               </div>
 
             </div>
+            {protocol.slug === 'physiological-instrumentation' && (
+              <div className="max-w-3xl">
+                <PreregistrationForm />
+              </div>
+            )}
           </section>
 
           {/* Protocol Content */}

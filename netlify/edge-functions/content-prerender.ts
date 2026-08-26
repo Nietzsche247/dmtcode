@@ -2219,6 +2219,10 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/methods", label: "Methods" },
     ],
     breadcrumbName: "Null reports",
+    bodyExtraHtml: `<section data-prerender="null-report-intake">
+  <p>This is stage one screening, not a controlled experiment.</p>
+  <p><a href="${SITE}/submit-symbol?null=true">Submit a null report</a>.</p>
+</section>`,
   },
   events: {
     title: "Research Timeline and Events | DMT Code",
