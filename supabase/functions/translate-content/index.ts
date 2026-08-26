@@ -60,6 +60,9 @@ const STATIC_PAGE_PATHS: PageSrc[] = [
   { id: "join", path: "/join" },
   { id: "timeline", path: "/timeline" },
   { id: "faq", path: "/faq" },
+  { id: "prepare", path: "/prepare" },
+  { id: "evidence-map", path: "/evidence-map" },
+  { id: "articles", path: "/articles" },
 ];
 
 const PEOPLE_PAGE_PATHS: PageSrc[] = [
