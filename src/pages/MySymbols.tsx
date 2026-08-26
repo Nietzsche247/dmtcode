@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from '@/components/registry/VisualFieldMap';
 import { BadgeIcon } from '@/components/badges/BadgeIcon';
+import { VoiceRecordingsList } from '@/components/VoiceRecordingsList';
 import { tagLabel } from '@/lib/tags';
 
 interface UserBadge {
@@ -52,6 +53,14 @@ interface SealedMemory {
   depth: string | null;
   offline_captured_at: string | null;
   created_at: string;
+}
+
+interface VoiceLogExport {
+  id: string;
+  created_at: string;
+  duration_seconds: number | null;
+  transcript: string | null;
+  audio_url: string | null;
 }
 
 interface FollowedSymbol {
@@ -150,6 +159,7 @@ const MySymbols = () => {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [followedSymbols, setFollowedSymbols] = useState<FollowedSymbol[]>([]);
+  const [voiceLogs, setVoiceLogs] = useState<VoiceLogExport[]>([]);
 
   useEffect(() => {
     checkAuth();
@@ -169,8 +179,19 @@ const MySymbols = () => {
       loadUserSymbols(user.id),
       loadMemories(user.id),
       loadFollowedSymbols(user.id),
+      loadVoiceLogs(user.id),
     ]);
     setLoading(false);
+  };
+
+  const loadVoiceLogs = async (uid: string) => {
+    const { data } = await supabase
+      .from('voice_logs')
+      .select('id, created_at, duration_seconds, transcript, audio_url')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false });
+
+    if (data) setVoiceLogs(data as VoiceLogExport[]);
   };
 
   const loadFollowedSymbols = async (uid: string) => {
