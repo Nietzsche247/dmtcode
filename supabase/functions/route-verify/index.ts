@@ -5,7 +5,9 @@
 // A status-code monitor cannot see this. This job fetches the page, reads the
 // canonical and alternates out of the head, and fetches THOSE.
 //
-// Read-only against crawler_hits. Writes only to route_health.
+// Work list comes from the site's own sitemaps only. crawler_hits is
+// attacker-writable (anon INSERT) and must never steer outbound traffic.
+// Writes only to route_health.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
