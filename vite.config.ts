@@ -22,32 +22,9 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null,
+      manifest: false,
       includeAssets: ['favicon.png'],
-      manifest: {
-        name: 'DMT Code Visual Symbol Catalogue',
-        short_name: 'DMT Code',
-        description: 'Open catalogue of visual symbols from 650 nm laser exposure and N,N-DMT experiences',
-        theme_color: '#ff0000',
-        background_color: '#000000',
-        display: 'standalone',
-        scope: '/',
-        start_url: '/?source=pwa',
-        orientation: 'portrait-primary',
-        icons: [
-          {
-            src: '/favicon.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
-          },
-          {
-            src: '/favicon.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
-          }
-        ]
-      },
       workbox: {
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB limit
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
