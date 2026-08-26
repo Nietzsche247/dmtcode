@@ -2564,6 +2564,36 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         });
       }
     } catch { /* ignore */ }
+  } else if (key === "protocols" && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/protocols?is_published=is.true&select=slug,title,tagline&order=title.asc&limit=50`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            Accept: "application/json",
+          },
+        },
+      );
+      const rows = res.ok ? await res.json() as Array<Record<string, unknown>> : [];
+      const trMap = await getTranslationsBulk("protocols", locale);
+      for (const r of rows) {
+        const t = trMap[String(r.slug ?? "")];
+        if (t) overlay(r, t, ["title", "tagline"]);
+      }
+      if (rows.length) {
+        const items = rows
+          .map((r) => {
+            const slug = String(r.slug || "");
+            const title = String(r.title || slug);
+            const tagline = String(r.tagline || "").trim();
+            return `<li><a href="${lpath(locale, `/protocols/${esc(slug)}`)}">${esc(clip(title, 140))}</a>${tagline ? `<p>${esc(clip(tagline, 240))}</p>` : ""}</li>`;
+          })
+          .join("");
+        recentList = `<section><h2>${esc(page.heading)}</h2><ul>${items}</ul></section>`;
+      }
+    } catch { /* ignore */ }
   } else if (key === "home" && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const res = await fetch(
