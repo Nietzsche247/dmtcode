@@ -59,6 +59,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to={to('/submit-symbol')} className="text-muted-foreground hover:text-primary transition-colors">
+                  {t('nav.contribute')}
+                </Link>
+              </li>
+              <li>
                 <Link to={to('/registry')} className="text-muted-foreground hover:text-primary transition-colors">
                   {t('footer.glyphRegistry')}
                 </Link>

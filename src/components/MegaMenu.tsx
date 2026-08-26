@@ -158,6 +158,22 @@ export const MegaMenu = () => {
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link
+              to={lp('/submit-symbol')}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-colors rounded-md inline-block",
+                isActive('/submit-symbol')
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              )}
+            >
+              {t('nav.contribute')}
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
