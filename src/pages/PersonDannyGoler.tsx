@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
+import { GolerAttribution } from '@/components/GolerAttribution';
 import { Helmet } from 'react-helmet';
 
 const VIDEO_ID = 'vB2-vIumXss';
@@ -146,7 +147,7 @@ const PersonDannyGoler = () => {
   return (
     <>
       <Helmet>
-        <title>Danny Goler, who described the DMT laser observation | DMT Code</title>
+        <title>The person who first described the 650 nm laser observation | DMT Code</title>
         <meta
           name="description"
           content="Danny Goler first described the DMT laser observation in August 2020 and published the pilot study in IPI Letters in 2025. The record, in one place."
@@ -353,6 +354,7 @@ const PersonDannyGoler = () => {
                   </a>
                 </li>
               </ul>
+              <GolerAttribution className="mt-6" />
             </div>
           </article>
         </main>

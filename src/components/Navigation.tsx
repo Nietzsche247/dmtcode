@@ -344,6 +344,18 @@ export const Navigation = () => {
                 {t('nav.about')}
               </button>
 
+              {/* Contribute */}
+              <button
+                onClick={() => handleNavigation('/submit-symbol')}
+                className={`block w-full text-left px-4 py-3 min-h-[44px] text-base rounded-lg transition-colors ${
+                  location.pathname === lp('/submit-symbol')
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                {t('nav.contribute')}
+              </button>
+
               {/* Auth Section */}
               <div className="pt-4 border-t border-border/50 mt-4">
                 {isAuthenticated ? (

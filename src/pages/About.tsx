@@ -1,4 +1,5 @@
 import { Navigation } from '@/components/Navigation';
+import { GolerAttribution } from '@/components/GolerAttribution';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
 import { Card } from '@/components/ui/card';
@@ -272,6 +273,7 @@ const About = () => {
               <p className="text-sm text-muted-foreground mt-6">
                 Last updated: 2026-07-29
               </p>
+              <GolerAttribution className="mt-6" />
             </div>
           </section>
         </main>
