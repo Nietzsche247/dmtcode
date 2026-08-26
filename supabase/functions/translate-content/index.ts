@@ -346,12 +346,15 @@ async function upsert(rows: Record<string, unknown>[]) {
 
 type Cursor = { table: string; locale: string; key: string };
 
+// Read the single most recent run, whatever it stored. The old query filtered
+// on resume_cursor=not.is.null, which cannot see the NULL a completed full
+// pass writes, so a stale cursor was resurrected forever.
 async function loadCursor(): Promise<Cursor | null> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/translation_runs?select=resume_cursor&resume_cursor=not.is.null&order=started_at.desc&limit=1`;
+    const url = `${SUPABASE_URL}/rest/v1/translation_runs?select=resume_cursor&order=started_at.desc&limit=1`;
     const r = await fetch(url, { headers: sbHeaders });
     if (!r.ok) return null;
-    const rows = await r.json() as Array<{ resume_cursor: Cursor }>;
+    const rows = await r.json() as Array<{ resume_cursor: Cursor | null }>;
     const c = rows[0]?.resume_cursor;
     if (c && typeof c.table === "string" && typeof c.locale === "string") return c;
     return null;
