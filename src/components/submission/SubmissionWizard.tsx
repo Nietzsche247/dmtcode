@@ -23,6 +23,7 @@ const STEPS = [
 
 export const SubmissionWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [priorExposure, setPriorExposure] = useState<'naive' | 'exposed' | ''>('');
   const [imageData, setImageData] = useState<string>('');
   const [metadata, setMetadata] = useState<SymbolMetadata | null>(null);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -45,6 +46,10 @@ export const SubmissionWizard = () => {
   }, [currentStep, imageData, trackSubmissionAbandoned]);
 
   const handleCanvasSave = () => {
+    if (!priorExposure) {
+      toast.error('Please answer the prior exposure question before continuing');
+      return;
+    }
     if (!imageData) {
       toast.error('Please draw something before continuing');
       return;
@@ -147,6 +152,7 @@ export const SubmissionWizard = () => {
           vector_json: vectorJson,
           is_sober_baseline: metadata.isSoberBaseline ?? false,
           publication_consent: true,
+          prior_exposure: priorExposure,
         })
         .select()
         .single();
@@ -211,7 +217,41 @@ export const SubmissionWizard = () => {
                 Create a visual representation of the symbol you observed.
               </p>
             </div>
-            
+
+            {/* Prior exposure question: required, shown before any symbol imagery. */}
+            <fieldset className="rounded-lg border border-border bg-card p-5 text-left">
+              <legend className="px-1 text-sm font-semibold text-foreground">
+                Before this observation, had you already looked at symbols in this registry?
+              </legend>
+              <div className="mt-3 space-y-2">
+                <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                  <input
+                    type="radio"
+                    name="prior-exposure"
+                    value="naive"
+                    checked={priorExposure === 'naive'}
+                    onChange={() => setPriorExposure('naive')}
+                    className="accent-current"
+                  />
+                  No, I had not seen them
+                </label>
+                <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                  <input
+                    type="radio"
+                    name="prior-exposure"
+                    value="exposed"
+                    checked={priorExposure === 'exposed'}
+                    onChange={() => setPriorExposure('exposed')}
+                    className="accent-current"
+                  />
+                  Yes, I had already seen them
+                </label>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Either answer is fine. Naive here means not previously exposed to the thing being tested. It is recorded so naive and exposed reports can be compared later. It changes nothing about your submission.
+              </p>
+            </fieldset>
+
             <CanvasErrorBoundary fallbackMessage="Canvas loading failed, please retry">
               <SymbolCanvas 
                 onImageChange={setImageData}
