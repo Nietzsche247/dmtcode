@@ -180,12 +180,40 @@ const NullReports = () => {
                 nothing, or nothing that matched, please submit that outcome so the record reflects
                 both sides of the ledger.
               </p>
+              <p>
+                Stage one is screening, not the experiment. The symbol registry is a screening
+                collection, not a controlled experiment. Null reports are part of that screening
+                record and are treated as evidence, not as failures.
+              </p>
               {soberBaselineCount !== null && (
                 <p className="text-muted-foreground">
                   {soberBaselineCount} record{soberBaselineCount === 1 ? '' : 's'} {soberBaselineCount === 1 ? 'is' : 'are'} marked
                   by their contributor as sober baseline sessions.
                 </p>
               )}
+
+              <div className="rounded-lg border border-border p-5 space-y-4">
+                <div>
+                  <p className="text-3xl font-bold">
+                    {submittedNullCount === null ? '-' : submittedNullCount}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Contributed null reports on record today.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button asChild size="lg">
+                    <Link to={localePath(locale, '/submit-symbol?null=true')}>
+                      Submit a null report
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <Link to={localePath(locale, '/registry?record=null_report')}>
+                      Browse null reports
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
 
