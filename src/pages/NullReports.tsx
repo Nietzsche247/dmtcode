@@ -9,6 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Download, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
+import { localePath, useLocale } from '@/i18n/LocaleProvider';
+
+// Tag variants the registry treats as a null report. Kept in step with
+// NULL_REPORT_TAGS in RegistryBrowser so the count and the filtered list agree.
+const NULL_REPORT_TAGS = ['null-report', 'null_report', 'nothing-seen', 'no-forms'];
 
 interface NullReport {
   wavelength: string;
