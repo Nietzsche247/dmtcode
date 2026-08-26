@@ -56,6 +56,16 @@ const NullReports = () => {
     };
   }, []);
 
+  // Live count of contributed null reports. Zero is rendered as zero.
+  const loadSubmittedNullCount = async () => {
+    const { count, error } = await supabase
+      .from('symbol_submissions')
+      .select('id', { count: 'exact', head: true })
+      .overlaps('tags', NULL_REPORT_TAGS);
+
+    setSubmittedNullCount(error ? null : count ?? 0);
+  };
+
   const loadSoberBaselineCount = async () => {
     const { count, error } = await supabase
       .from('symbol_submissions')
