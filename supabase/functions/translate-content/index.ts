@@ -72,30 +72,29 @@ const PEOPLE_PAGE_PATHS: PageSrc[] = [
   { id: "chase-hughes", path: "/people/chase-hughes" },
 ];
 
+// Ordered by crawl demand, not table size. static and clinical_trials are the
+// surfaces AI crawlers and search hit hardest on the /es/ and /de/ mirrors.
+// symbol_submissions is deliberately NOT translated here. A submission's
+// description and context_note are primary evidence: a first-person perceptual
+// report in the observer's own words. A machine translation of such a report is
+// a different object from a translated marketing page, and publishing one
+// unlabelled would make a paraphrase quotable as the record. Reports stay in the
+// language they were written in. Moderators translate on demand, in the admin
+// dialog, via the admin-translate-submission function, which stores nothing.
+// Operator decision, 2026-08-16.
+// people and static are sourced from the live English prerender, not from
+// database tables.
 const CONFIG: Cfg[] = [
-  { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
-  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
-  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
-  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
-  { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
-  { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
-  // symbol_submissions is deliberately NOT translated here. A submission's
-  // description and context_note are primary evidence: a first-person perceptual
-  // report in the observer's own words. A machine translation of such a report is
-  // a different object from a translated marketing page, and publishing one
-  // unlabelled would make a paraphrase quotable as the record. Reports stay in the
-  // language they were written in. Moderators translate on demand, in the admin
-  // dialog, via the admin-translate-submission function, which stores nothing.
-  // Operator decision, 2026-08-16.
-  { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
-  // people and static are sourced from the live English prerender, not from
-  // database tables. Added ahead of clinical_trials (the largest backlog) so
-  // the 20 static pages currently serving English on /es/ and /de/ stop doing
-  // so within the first runs; the existing eight entries keep their relative
-  // order, gates, keys and field lists.
-  { table: "people",            key: "id",   fields: ["title","description","body_html"], pages: PEOPLE_PAGE_PATHS },
   { table: "static",            key: "id",   fields: ["body_html"], pages: STATIC_PAGE_PATHS },
   { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
+  { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
+  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
+  { table: "people",            key: "id",   fields: ["title","description","body_html"], pages: PEOPLE_PAGE_PATHS },
+  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
+  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
+  { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
+  { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
+  { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
 ];
 
 const sbHeaders = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" };
