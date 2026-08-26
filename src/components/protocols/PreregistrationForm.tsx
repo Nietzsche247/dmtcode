@@ -78,7 +78,7 @@ export function PreregistrationForm() {
         <CardHeader>
           <CardTitle>Pre-registration received</CardTitle>
           <CardDescription>
-            Your submission is now in the research intake queue. An administrator can inspect it and may contact you at the email address you provided.
+            Your submission is now in the research intake queue. An administrator can inspect it and may contact you at the email address you provided. No review timeline is promised.
           </CardDescription>
         </CardHeader>
       </Card>
