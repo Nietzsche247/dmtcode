@@ -931,13 +931,15 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
       name: k.name,
       description: k.description,
       sku: k.sku,
-      brand: { "@type": "Brand", name: "DMT Code" },
+      brand: { "@type": "Brand", name: "Meridian Optics Lab" },
       offers: {
         "@type": "Offer",
-        url: canonical,
+        url: k.cart,
         price: k.priceNumber,
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
+        seller: { "@type": "Organization", name: "Meridian Optics Lab" },
+
         shippingDetails,
         hasMerchantReturnPolicy: {
           "@type": "MerchantReturnPolicy",
@@ -1005,6 +1007,8 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
     <p>Class 3R laser, under 5 mW. Do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
+    <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
+
   </section>`,
   ).join("");
 
@@ -3600,6 +3604,8 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   ${tagline ? `<p>${esc(tagline)}</p>` : ""}
   ${contentHtml || "<p>Protocol documentation is being prepared.</p>"}
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
+  <p>Adults 18 and older only.</p>
+
   ${golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
