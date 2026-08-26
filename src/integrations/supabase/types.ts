@@ -148,6 +148,7 @@ export type Database = {
       }
       articles: {
         Row: {
+          archived_at: string | null
           author: string
           body_md: string
           compounds: string[]
@@ -171,6 +172,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
           author?: string
           body_md: string
           compounds?: string[]
@@ -194,6 +196,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
           author?: string
           body_md?: string
           compounds?: string[]
