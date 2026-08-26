@@ -650,6 +650,14 @@ const ProtocolDetail = () => {
             </div>
           </section>
 
+          {/* Pre-registration intake. The open call on this protocol asks for
+              planned instrumented arms and until now had no receiver. */}
+          {protocol.slug === 'physiological-instrumentation' && (
+            <section className="container mx-auto px-4 pb-8">
+              <PreregistrationForm />
+            </section>
+          )}
+
           {/* Protocol Content */}
           <section className="container mx-auto px-4 pb-16">
             {/* Desktop: tabbed layout */}
