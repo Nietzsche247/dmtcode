@@ -28,19 +28,6 @@ function normalizeDate(dateStr: string | null | undefined): string | null {
 }
 
 
-function detectCompound(text: string): string {
-  const t = text.toLowerCase();
-  if (t.includes('psilocybin')) return 'Psilocybin';
-  if (t.includes('ketamine')) return 'Ketamine';
-  if (t.includes('mdma')) return 'MDMA';
-  if (t.includes('lsd') || t.includes('lysergic')) return 'LSD';
-  if (t.includes('dmt') || t.includes('dimethyltryptamine')) return 'DMT';
-  if (t.includes('ayahuasca')) return 'Ayahuasca';
-  if (t.includes('5-meo-dmt')) return '5-MeO-DMT';
-  if (t.includes('ibogaine')) return 'Ibogaine';
-  if (t.includes('salvinorin')) return 'Salvinorin A';
-  return 'Psychedelic';
-}
 
 function hasLaserOrGlyphMention(text: string): boolean {
   const t = text.toLowerCase();
