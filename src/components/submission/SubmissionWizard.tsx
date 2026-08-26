@@ -23,6 +23,7 @@ const STEPS = [
 
 export const SubmissionWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [priorExposure, setPriorExposure] = useState<'naive' | 'exposed' | ''>('');
   const [imageData, setImageData] = useState<string>('');
   const [metadata, setMetadata] = useState<SymbolMetadata | null>(null);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
