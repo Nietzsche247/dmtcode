@@ -2830,22 +2830,37 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
 
   const trs = await getTranslations("static", key, locale);
 
+  // Structured data on /protocol-guide is locale aware: the FAQ entities and
+  // the HowTo steps come from content_translations, English is the fallback,
+  // and every identifier points at the locale URL.
+  if (key === "protocol-guide") {
+    extraLd.length = 0;
+    extraLd.push(...localizedProtocolGuideLd(locale, trs));
+  }
+
+  // The extra body block is translated the same way body_html is; the English
+  // constant is used whenever the row is missing.
+  const bodyExtra = (trs.body_extra_html && trs.body_extra_html.trim())
+    ? trs.body_extra_html
+    : (page.bodyExtraHtml ?? "");
+
   const attribution = key === "home" || key === "protocol-guide" || key === "about"
     ? await golerAttribution(locale)
     : "";
 
   const body = trs.body_html && trs.body_html.trim()
-    ? `<article data-prerender="${esc(key)}">${trs.body_html}${page.bodyExtraHtml ?? ""}${recentList}${attribution}</article>`
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <!--tsrc:static:${key}-->
   <h1>${esc(page.heading)}</h1>
   ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
   <!--/tsrc-->
-  ${page.bodyExtraHtml ?? ""}
+  ${bodyExtra}
   ${recentList}
   ${linksBlock}
   ${attribution}
 </article>`;
+
 
   const organizationLd = {
     "@context": "https://schema.org",
