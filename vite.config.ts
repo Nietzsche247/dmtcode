@@ -22,6 +22,8 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null,
+      manifest: false,
       includeAssets: ['favicon.png'],
       manifest: {
         name: 'DMT Code Visual Symbol Catalogue',
