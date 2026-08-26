@@ -7,8 +7,12 @@ const LOVABLE_KEY  = Deno.env.get("LOVABLE_API_KEY")!;
 const SHARED       = Deno.env.get("TRANSLATE_SHARED_SECRET")!;
 const LOCALES = ["es", "de"] as const;
 const TIME_BUDGET_MS = 100_000;
-const PER_CALL_TIMEOUT_MS = 8_000;
-const MAX_CONSECUTIVE_ABORTS = 3;
+// A flat 8s aborted every long field (body_html, body_md, content_jsonb,
+// clinical trial descriptions) before the model could answer. Scale with length.
+function callTimeoutMs(text: string): number {
+  return Math.min(75_000, Math.max(20_000, 12_000 + text.length * 6));
+}
+const MAX_CONSECUTIVE_ABORTS = 10;
 // Public origin whose prerendered English pages are the source of truth for
 // the "people" and "static" translation tables (see CONFIG below).
 const SITE_URL = "https://dmtcode.com";
@@ -56,6 +60,9 @@ const STATIC_PAGE_PATHS: PageSrc[] = [
   { id: "join", path: "/join" },
   { id: "timeline", path: "/timeline" },
   { id: "faq", path: "/faq" },
+  { id: "prepare", path: "/prepare" },
+  { id: "evidence-map", path: "/evidence-map" },
+  { id: "articles", path: "/articles" },
 ];
 
 const PEOPLE_PAGE_PATHS: PageSrc[] = [
@@ -65,30 +72,29 @@ const PEOPLE_PAGE_PATHS: PageSrc[] = [
   { id: "chase-hughes", path: "/people/chase-hughes" },
 ];
 
+// Ordered by crawl demand, not table size. static and clinical_trials are the
+// surfaces AI crawlers and search hit hardest on the /es/ and /de/ mirrors.
+// symbol_submissions is deliberately NOT translated here. A submission's
+// description and context_note are primary evidence: a first-person perceptual
+// report in the observer's own words. A machine translation of such a report is
+// a different object from a translated marketing page, and publishing one
+// unlabelled would make a paraphrase quotable as the record. Reports stay in the
+// language they were written in. Moderators translate on demand, in the admin
+// dialog, via the admin-translate-submission function, which stores nothing.
+// Operator decision, 2026-08-16.
+// people and static are sourced from the live English prerender, not from
+// database tables.
 const CONFIG: Cfg[] = [
-  { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
-  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
-  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
-  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
-  { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
-  { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
-  // symbol_submissions is deliberately NOT translated here. A submission's
-  // description and context_note are primary evidence: a first-person perceptual
-  // report in the observer's own words. A machine translation of such a report is
-  // a different object from a translated marketing page, and publishing one
-  // unlabelled would make a paraphrase quotable as the record. Reports stay in the
-  // language they were written in. Moderators translate on demand, in the admin
-  // dialog, via the admin-translate-submission function, which stores nothing.
-  // Operator decision, 2026-08-16.
-  { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
-  // people and static are sourced from the live English prerender, not from
-  // database tables. Added ahead of clinical_trials (the largest backlog) so
-  // the 20 static pages currently serving English on /es/ and /de/ stop doing
-  // so within the first runs; the existing eight entries keep their relative
-  // order, gates, keys and field lists.
-  { table: "people",            key: "id",   fields: ["title","description","body_html"], pages: PEOPLE_PAGE_PATHS },
   { table: "static",            key: "id",   fields: ["body_html"], pages: STATIC_PAGE_PATHS },
   { table: "clinical_trials",   gate: "is_approved=eq.true",        key: "id",   fields: ["description","eligibility","notes"] },
+  { table: "bibliography",      gate: "is_approved=eq.true",        key: "id",   fields: ["summary"] },
+  { table: "articles",          gate: "is_published=eq.true",       key: "slug", fields: ["title","dek","body_md"] },
+  { table: "people",            key: "id",   fields: ["title","description","body_html"], pages: PEOPLE_PAGE_PATHS },
+  { table: "guides",            gate: "is_published=eq.true",       key: "slug", fields: ["question","short_answer","evidence_grade_note","safety_note","body_md"], json: ["what_supports","what_weakens","what_is_unknown","what_would_change"] },
+  { table: "protocols",         gate: "is_published=eq.true",       key: "slug", fields: ["title","tagline"], json: ["content_jsonb"] },
+  { table: "theories",          gate: "is_approved=eq.true",        key: "id",   fields: ["title","summary","content"] },
+  { table: "events",            gate: "is_approved=eq.true",        key: "id",   fields: ["title","description","details"] },
+  { table: "retreats",          gate: "is_approved=eq.true",        key: "id",   fields: ["description","details"] },
 ];
 
 const sbHeaders = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" };
@@ -101,9 +107,10 @@ class GatewayPausedError extends Error {
   constructor() { super(`gateway paused after ${MAX_CONSECUTIVE_ABORTS} consecutive aborts`); }
 }
 
-// Tracks consecutive gateway aborts across the whole run. Once the cap is hit
-// the run stops calling the gateway and finishes cleanly.
-let abortStreak = 0;
+// Consecutive gateway aborts, held PER REQUEST. Deno reuses the isolate
+// between invocations, so a module-scope streak survived the run that set it
+// and poisoned the next request on its very first translate call.
+type RunState = { abortStreak: number };
 
 function isAbort(e: unknown): boolean {
   return (e as Error)?.name === "AbortError" || String(e).includes("aborted");
@@ -114,15 +121,15 @@ async function md5(s: string): Promise<string> {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function translate(text: string, locale: "es" | "de"): Promise<string> {
-  if (abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
+async function translate(text: string, locale: "es" | "de", st: RunState): Promise<string> {
+  if (st.abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
   const lang = locale === "es" ? "Spanish (es)" : "German (de)";
   const sys = `You are a professional translator for a scientific website. Translate the user's text into ${lang}. `
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), PER_CALL_TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), callTimeoutMs(text));
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -136,10 +143,10 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
     });
     if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const j = await res.json();
-    abortStreak = 0;
+    st.abortStreak = 0;
     return String(j.choices?.[0]?.message?.content ?? "").trim();
   } catch (e) {
-    if (isAbort(e)) abortStreak++;
+    if (isAbort(e)) st.abortStreak++;
     throw e;
   } finally {
     clearTimeout(timer);
@@ -150,7 +157,7 @@ async function translate(text: string, locale: "es" | "de"): Promise<string> {
 // If the run deadline passes before a worker starts a leaf we throw: a
 // half-translated JSON must never be stored, because the prerender overlay
 // replaces the whole field with whatever is in content_translations.
-async function translateJson(v: unknown, locale: "es" | "de", deadline: number): Promise<unknown> {
+async function translateJson(v: unknown, locale: "es" | "de", deadline: number, st: RunState): Promise<unknown> {
   const TRANSLATE_JSON_CONCURRENCY = 5;
   type PathPart = string | number;
   type Leaf = { path: PathPart[]; source: string; translated?: string };
@@ -179,7 +186,7 @@ async function translateJson(v: unknown, locale: "es" | "de", deadline: number):
       if (Date.now() > deadline) throw new DeadlineError();
       const leaf = leaves[index];
       if (!leaf) return;
-      leaf.translated = await translate(leaf.source, locale);
+      leaf.translated = await translate(leaf.source, locale, st);
     }
   };
 
@@ -220,56 +227,101 @@ function extractMarked(html: string, table: string, id: string): string | null {
   return m ? m[1].trim() : null;
 }
 
-// Rows for page-sourced configs: fetch each live English prerender and pull
-// the source fields out of it. Pages that fail to fetch or lack the marker
+// Rows for page-sourced configs: fetch the live English prerenders and pull
+// the source fields out of them. Pages that fail to fetch or lack the marker
 // are skipped by returning a row with empty fields (the field loop skips
-// empties, and the en-row upsert never fires for them).
-async function getPageRows(c: Cfg): Promise<Record<string, unknown>[]> {
+// empties, and the en-row upsert never fires for them). Fetched in batches of
+// six with a short per-page timeout, and abandoned at the run deadline, so
+// page fetching can never consume the whole budget before any translating.
+const PAGE_FETCH_CONCURRENCY = 6;
+const PAGE_FETCH_TIMEOUT_MS = 8_000;
+
+async function getPageRows(c: Cfg, deadline: number): Promise<Record<string, unknown>[]> {
+  const pages = c.pages ?? [];
   const out: Record<string, unknown>[] = [];
-  for (const p of c.pages ?? []) {
-    const row: Record<string, unknown> = { id: p.id };
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 15_000);
-      const res = await fetch(`${SITE_URL}${p.path}`, {
-        headers: { "User-Agent": "dmtcode-translate-content/2.0", Accept: "text/html" },
-        signal: ctrl.signal,
-      });
-      clearTimeout(timer);
-      if (!res.ok) throw new Error(`page ${p.path} ${res.status}`);
-      const html = await res.text();
-      if (c.fields.includes("body_html")) {
-        row.body_html = extractMarked(html, c.table, p.id) ?? "";
+  for (let i = 0; i < pages.length; i += PAGE_FETCH_CONCURRENCY) {
+    if (Date.now() > deadline) return out;
+    const batch = pages.slice(i, i + PAGE_FETCH_CONCURRENCY);
+    const rows = await Promise.all(batch.map(async (p) => {
+      const row: Record<string, unknown> = { id: p.id };
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), PAGE_FETCH_TIMEOUT_MS);
+        try {
+          const res = await fetch(`${SITE_URL}${p.path}`, {
+            headers: { "User-Agent": "dmtcode-translate-content/2.0", Accept: "text/html" },
+            signal: ctrl.signal,
+          });
+          if (!res.ok) throw new Error(`page ${p.path} ${res.status}`);
+          const html = await res.text();
+          if (c.fields.includes("body_html")) {
+            row.body_html = extractMarked(html, c.table, p.id) ?? "";
+          }
+          if (c.fields.includes("title")) {
+            row.title = unescapeHtml(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "");
+          }
+          if (c.fields.includes("description")) {
+            row.description = unescapeHtml(
+              html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
+            );
+          }
+        } finally {
+          clearTimeout(timer);
+        }
+      } catch {
+        // leave fields empty; this page is skipped this run
       }
-      if (c.fields.includes("title")) {
-        row.title = unescapeHtml(html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "");
-      }
-      if (c.fields.includes("description")) {
-        row.description = unescapeHtml(
-          html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "",
-        );
-      }
-    } catch {
-      // leave fields empty; this page is skipped this run
-    }
-    out.push(row);
+      return row;
+    }));
+    out.push(...rows);
   }
   return out;
 }
 
-async function getRows(c: Cfg): Promise<Record<string, unknown>[]> {
-  if (c.pages) return await getPageRows(c);
-  const cols = ["id", c.key, ...c.fields, ...(c.json ?? [])].join(",");
-  const out: Record<string, unknown>[] = [];
-  for (let offset = 0; ; offset += 1000) {
-    const url = `${SUPABASE_URL}/rest/v1/${c.table}?select=${cols}&${c.gate}&order=${c.key}.asc&limit=1000&offset=${offset}`;
-    const r = await fetch(url, { headers: sbHeaders });
-    if (!r.ok) throw new Error(`read ${c.table} ${r.status}`);
+// The PostgREST gate expressed as the SQL predicate the candidates function
+// accepts. Anything unrecognised falls back to no filter rather than being
+// interpolated, so the dynamic SQL stays closed.
+function gateSql(gate?: string): string {
+  if (gate === "is_approved=eq.true") return "is_approved is true";
+  if (gate === "is_published=eq.true") return "is_published is true";
+  return "true";
+}
+
+// Table-sourced rows come from public.translation_candidates, which does the
+// "still needs translating" test in Postgres. Previously the whole table plus
+// every translation row was pulled over PostgREST and compared in JS, so a run
+// could check 1,110 fields and skip 1,105 of them.
+async function getRows(
+  c: Cfg,
+  locales: readonly string[],
+  after: string | null,
+  deadline: number,
+): Promise<Record<string, unknown>[]> {
+  if (c.pages) return await getPageRows(c, deadline);
+  const fields = [...c.fields, ...(c.json ?? [])];
+  const merged = new Map<string, Record<string, unknown>>();
+  for (const locale of locales) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/translation_candidates`, {
+      method: "POST",
+      headers: sbHeaders,
+      body: JSON.stringify({
+        p_table: c.table,
+        p_key: c.key,
+        p_fields: fields,
+        p_locale: locale,
+        p_gate_sql: gateSql(c.gate),
+        p_after: after,
+        p_limit: 200,
+      }),
+    });
+    if (!r.ok) throw new Error(`candidates ${c.table} ${r.status}: ${(await r.text()).slice(0, 200)}`);
     const page = await r.json() as Record<string, unknown>[];
-    out.push(...page);
-    if (page.length < 1000) break;
+    for (const row of page) {
+      const k = String(row[c.key] ?? "");
+      if (k && !merged.has(k)) merged.set(k, row);
+    }
   }
-  return out;
+  return [...merged.values()].sort((a, b) => String(a[c.key]).localeCompare(String(b[c.key])));
 }
 
 async function existingHashes(table: string, locale: string): Promise<Map<string, string>> {
@@ -294,12 +346,15 @@ async function upsert(rows: Record<string, unknown>[]) {
 
 type Cursor = { table: string; locale: string; key: string };
 
+// Read the single most recent run, whatever it stored. The old query filtered
+// on resume_cursor=not.is.null, which cannot see the NULL a completed full
+// pass writes, so a stale cursor was resurrected forever.
 async function loadCursor(): Promise<Cursor | null> {
   try {
-    const url = `${SUPABASE_URL}/rest/v1/translation_runs?select=resume_cursor&resume_cursor=not.is.null&order=started_at.desc&limit=1`;
+    const url = `${SUPABASE_URL}/rest/v1/translation_runs?select=resume_cursor&order=started_at.desc&limit=1`;
     const r = await fetch(url, { headers: sbHeaders });
     if (!r.ok) return null;
-    const rows = await r.json() as Array<{ resume_cursor: Cursor }>;
+    const rows = await r.json() as Array<{ resume_cursor: Cursor | null }>;
     const c = rows[0]?.resume_cursor;
     if (c && typeof c.table === "string" && typeof c.locale === "string") return c;
     return null;
@@ -316,6 +371,8 @@ Deno.serve(async (req) => {
   const started = Date.now();
   const startedAtIso = new Date(started).toISOString();
   const deadline = started + TIME_BUDGET_MS;
+  // Per-request abort state. Starts at 0 on every request, always.
+  const st: RunState = { abortStreak: 0 };
   const stats = { checked: 0, translated: 0, skipped: 0, errors: 0, pending: false, error_samples: [] as string[] };
 
   const noteError = (e: unknown) => {
@@ -324,9 +381,9 @@ Deno.serve(async (req) => {
   };
 
   // Resume cursor: only full (unfiltered) runs read and advance it. A run
-  // that hits the deadline or the abort cap stores where it stopped; the next
-  // run starts there and wraps around to the beginning when it reaches the
-  // end. A run that completes a full pass clears the cursor.
+  // that hits the deadline stores where it stopped; the next run starts there
+  // and wraps around to the beginning when it reaches the end. A run that
+  // completes a full pass clears the cursor.
   const useCursor = !onlyTable && !onlyLocale;
   let newCursor: Cursor | null = null;
 
@@ -339,8 +396,10 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           started_at: startedAtIso,
           finished_at: new Date().toISOString(),
-          table_name: onlyTable,
-          locale: onlyLocale,
+          // Record where the run actually was when it stopped, not the query
+          // params the cron never sets.
+          table_name: newCursor?.table ?? onlyTable,
+          locale: newCursor?.locale ?? onlyLocale,
           checked: stats.checked,
           translated: stats.translated,
           skipped: stats.skipped,
@@ -358,13 +417,19 @@ Deno.serve(async (req) => {
   try {
     // Ordered work list: one unit per table. Locales are interleaved at row
     // level inside the unit, so es and de advance together instead of one
-    // locale draining a large table before the other starts.
+    // locale draining a large table before the other starts. The base locale
+    // order rotates per run (start-minute parity, no extra state) so de leads
+    // roughly half the time instead of es always restarting first.
     const configs = CONFIG.filter((c) => !onlyTable || c.table === onlyTable);
-    const locales = LOCALES.filter((l) => !onlyLocale || l === onlyLocale);
+    const base = new Date(started).getUTCMinutes() % 2 === 0
+      ? [...LOCALES]
+      : [...LOCALES].reverse();
+    const locales = base.filter((l) => !onlyLocale || l === onlyLocale);
     const units: Array<{ c: Cfg }> = configs.map((c) => ({ c }));
 
     let startUnit = 0;
     let resumeKey: string | null = null;
+    let resumeLocale: string | null = null;
     if (useCursor) {
       const cur = await loadCursor();
       if (cur) {
@@ -372,6 +437,7 @@ Deno.serve(async (req) => {
         if (idx >= 0) {
           startUnit = idx;
           resumeKey = cur.key ?? null;
+          resumeLocale = cur.locale ?? null;
         }
       }
     }
@@ -380,7 +446,15 @@ Deno.serve(async (req) => {
     const order = [...units.slice(startUnit), ...units.slice(0, startUnit)];
 
     for (const { c } of order) {
-      const rows = await getRows(c);
+      if (Date.now() > deadline) { stats.pending = true; break; }
+
+      // The cursor only applies to the unit it was written for.
+      const tableResumeKey = resumeKey;
+      const tableResumeLocale = resumeLocale;
+      resumeKey = null;
+      resumeLocale = null;
+
+      const rows = await getRows(c, locales, c.pages ? null : tableResumeKey, deadline);
       const haveByLocale = new Map<string, Map<string, string>>();
       for (const locale of locales) haveByLocale.set(locale, await existingHashes(c.table, locale));
       // The locale='en' rows are the source-of-truth record for page-sourced
@@ -389,14 +463,17 @@ Deno.serve(async (req) => {
       // so they get no en rows.
       const haveEn = c.pages ? await existingHashes(c.table, "en") : new Map<string, string>();
 
-      // Within the resumed unit, skip rows before the cursor key. The cursor
-      // row itself is reprocessed; hash equality skips its finished fields.
+      // Page-sourced configs always return the full page list, so the cursor
+      // row is located here. Table-sourced configs were already filtered in SQL.
       let startRow = 0;
-      if (resumeKey) {
-        const idx = rows.findIndex((r) => String(r[c.key] ?? "") === resumeKey);
+      if (c.pages && tableResumeKey) {
+        const idx = rows.findIndex((r) => String(r[c.key] ?? "") === tableResumeKey);
         startRow = idx >= 0 ? idx : 0;
-        resumeKey = null;
       }
+
+      // Set when the abort cap trips: abandon the rest of THIS table only,
+      // reset the streak, and carry on with the next table.
+      let skipTable = false;
 
       for (let ri = startRow; ri < rows.length; ri++) {
         const row = rows[ri];
@@ -404,13 +481,20 @@ Deno.serve(async (req) => {
         const recId = String(row[c.key] ?? "");
         if (!recId) continue;
         const nowIso = new Date().toISOString();
+        // Resume honours the locale, not just the key: the row the cursor
+        // stopped on picks up at the locale it stopped on.
+        let startLocale = 0;
+        if (tableResumeLocale && recId === tableResumeKey) {
+          const li0 = locales.indexOf(tableResumeLocale as typeof locales[number]);
+          if (li0 > 0) startLocale = li0;
+        }
         // Both locales are done for this row before moving to the next row.
-        for (let li = 0; li < locales.length; li++) {
+        for (let li = startLocale; li < locales.length; li++) {
           const locale = locales[li];
           const have = haveByLocale.get(locale)!;
           // The en source row is written once per field, on the first locale
           // pass, so a single upsert payload never carries the same key twice.
-          const writeEn = li === 0;
+          const writeEn = li === startLocale;
           newCursor = { table: c.table, locale, key: recId };
           for (const f of c.fields) {
             const src = row[f]; if (src == null || String(src).trim() === "") continue;
@@ -420,16 +504,16 @@ Deno.serve(async (req) => {
             }
             if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
             try {
-              const t = await translate(srcStr, locale);
+              const t = await translate(srcStr, locale, st);
               batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
               stats.translated++;
             } catch (e) {
-              if (e instanceof GatewayPausedError) { stats.pending = true; noteError(e); break; }
+              if (e instanceof GatewayPausedError) { skipTable = true; noteError(e); break; }
               noteError(e);
             }
             if (Date.now() > deadline) { stats.pending = true; break; }
           }
-          if (!stats.pending) {
+          if (!skipTable && !stats.pending) {
             for (const jf of c.json ?? []) {
               const src = row[jf]; if (src == null) continue;
               const srcStr = JSON.stringify(src); const h = await md5(srcStr); stats.checked++;
@@ -438,29 +522,28 @@ Deno.serve(async (req) => {
               }
               if (have.get(`${recId}|${jf}`) === h) { stats.skipped++; continue; }
               try {
-                const t = JSON.stringify(await translateJson(src, locale, deadline));
+                const t = JSON.stringify(await translateJson(src, locale, deadline, st));
                 batch.push({ table_name: c.table, record_id: recId, locale, field: jf, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
                 stats.translated++;
               } catch (e) {
                 // Abandon a partially translated jsonb field entirely; never store half.
-                if (e instanceof DeadlineError || e instanceof GatewayPausedError) {
-                  if (e instanceof GatewayPausedError) noteError(e);
-                  stats.pending = true; break;
-                }
+                if (e instanceof GatewayPausedError) { skipTable = true; noteError(e); break; }
+                if (e instanceof DeadlineError) { stats.pending = true; break; }
                 noteError(e);
               }
               if (Date.now() > deadline) { stats.pending = true; break; }
             }
           }
-          if (stats.pending) break;
+          if (skipTable || stats.pending) break;
         }
         // Flush after every row so partial progress survives a kill.
         if (batch.length) { try { await upsert(batch); } catch (e) { noteError(e); } }
-        if (stats.pending) break;
+        if (skipTable || stats.pending) break;
       }
+
+      if (skipTable) { st.abortStreak = 0; continue; }
       if (stats.pending) break;
     }
-
 
     if (!stats.pending) newCursor = null; // full pass complete: start at the top next run
     await logRun();
