@@ -272,6 +272,7 @@ const About = () => {
               <p className="text-sm text-muted-foreground mt-6">
                 Last updated: 2026-07-29
               </p>
+              <GolerAttribution className="mt-6" />
             </div>
           </section>
         </main>

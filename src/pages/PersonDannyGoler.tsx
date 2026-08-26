@@ -353,6 +353,7 @@ const PersonDannyGoler = () => {
                   </a>
                 </li>
               </ul>
+              <GolerAttribution className="mt-6" />
             </div>
           </article>
         </main>

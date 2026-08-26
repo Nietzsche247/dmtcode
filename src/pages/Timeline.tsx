@@ -399,6 +399,7 @@ const Timeline = () => {
                 </div>
               </>
             )}
+            <GolerAttribution className="mt-10 max-w-3xl" />
           </section>
         </main>
 

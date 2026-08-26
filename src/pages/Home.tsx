@@ -338,6 +338,9 @@ const Home = () => {
             </AnimatedSection>
           </section>
 
+          <div className="max-w-3xl mx-auto px-4 pb-12">
+            <GolerAttribution />
+          </div>
         </main>
 
         <Footer />

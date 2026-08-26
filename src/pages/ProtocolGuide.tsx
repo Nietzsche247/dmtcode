@@ -198,6 +198,7 @@ const ProtocolGuide = () => {
                 qualified professional before making decisions about your health.
               </p>
               <p className="mt-3">Last updated: 2026-07-23</p>
+              <GolerAttribution className="mt-6" />
             </div>
           </article>
         </main>
