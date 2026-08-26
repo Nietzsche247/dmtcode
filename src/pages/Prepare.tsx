@@ -217,6 +217,26 @@ const Prepare = () => {
             subtitle="Four laser diffraction research kits: one observer, one to two, two to three, or up to six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
           />
 
+          {/* STAGE FRAMING */}
+          <section className="max-w-4xl mx-auto px-4 mt-8">
+            <div className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-3">
+              <h2 className="font-serif text-2xl">What a kit is for</h2>
+              <p className="text-sm text-muted-foreground">
+                Stage one is screening, not the experiment. The public registry is a screening
+                collection, not a controlled experiment: it is open, self selected and unblinded,
+                and priming is not ruled out. It can only show whether there is a hint of agreement
+                worth digging into. Nothing here settles the question.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Stage two is capture before exposure. Stage three is a randomized blinded arm with
+                control conditions, blind scoring and pre registered hypotheses. Stage three is
+                designed and has not been run. A kit lets you run the observation carefully and add
+                a record. It does not turn a personal session into a controlled result.
+              </p>
+            </div>
+          </section>
+
+
           {/* SAFETY */}
           <section className="max-w-4xl mx-auto px-4 -mt-6">
             <Card className="p-6 md:p-8 rounded-2xl border-destructive/40 bg-destructive/5">
@@ -264,7 +284,7 @@ const Prepare = () => {
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece spreads it into a continuous line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser and move it closer to the laser for a longer line. Arbor&apos;s ray box guide (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Instructional_Guide_38e60437-4f8e-44a7-825f-112f77b20baa.pdf" className="underline hover:text-foreground">PDF</a>) and student handout (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Student_Handout.pdf" className="underline hover:text-foreground">PDF</a>) cover the optics set.
+                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece stretches the dot into a short bright horizontal line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser. Line length depends on the piece and on how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m the line is a few centimetres long, not a line across the wall. Arbor&apos;s ray box guide (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Instructional_Guide_38e60437-4f8e-44a7-825f-112f77b20baa.pdf" className="underline hover:text-foreground">PDF</a>) and student handout (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Student_Handout.pdf" className="underline hover:text-foreground">PDF</a>) cover the optics set.
               </p>
               <div className="mt-4 max-w-2xl">
                 <p className="text-sm text-muted-foreground">

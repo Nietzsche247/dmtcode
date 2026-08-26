@@ -33,7 +33,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 155,
     availability: AVAIL,
     description:
-      'One observer. Contents: 650 nm deluxe red laser pointer, under 5 mW (Arbor Scientific P2-7500); adjustable laser pointer stand (92-7660); three window diffraction grating, 100, 300 and 600 lines per mm (P3-6405); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The 75 mm semicircle in the acrylic set is the piece that turns the laser dot into a continuous line on the wall: flat face toward the laser. Observation documents are free PDF downloads.',
+      'One observer. Contents: 650 nm deluxe red laser pointer, under 5 mW (Arbor Scientific P2-7500); adjustable laser pointer stand (92-7660); three window diffraction grating, 100, 300 and 600 lines per mm (P3-6405); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads.',
   },
   {
     id: 'dual',
@@ -49,7 +49,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 215,
     availability: AVAIL,
     description:
-      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes stand, three window grating, holographic gratings and the acrylic set with the semicircle line maker. Observation documents are free PDF downloads.",
+      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes stand, three window grating, holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. Observation documents are free PDF downloads.",
   },
   {
     id: 'triad',
@@ -65,7 +65,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 342,
     availability: AVAIL,
     description:
-      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); two adjustable stands; three window grating; holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case is the line maker. The ray box is under 1 mW, so dim the room for the wall line. Observation documents are free PDF downloads.',
+      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); two adjustable stands; three window grating; holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. The ray box is under 1 mW, so dim the room. Observation documents are free PDF downloads.',
   },
   {
     id: 'circle',
@@ -81,7 +81,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 442,
     availability: AVAIL,
     description:
-      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679), a third stand, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case is the line maker. Observation documents are free PDF downloads.',
+      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679), a third stand, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
   },
 ];
 

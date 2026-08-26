@@ -383,6 +383,11 @@ export const RegistryBrowser = () => {
           <p>
             A separate blinded study is the channel that could settle it. It is designed and has not been run.
           </p>
+          <p>
+            Reports of seeing nothing are wanted and counted. They are published on the{' '}
+            <a href="/null-reports" className="underline hover:text-foreground">null reports dashboard</a>
+            {' '}alongside the positive ones.
+          </p>
         </div>
       </div>
 

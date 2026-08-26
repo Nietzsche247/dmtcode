@@ -38,6 +38,7 @@ const KNOWN_PEOPLE = [
 
 // Mirrors the live /faq page grouping in content-prerender.ts. Keep in sync.
 const FAQ_ITEMS: Array<{ q: string; a: string; group: string }> = [
+  { group: "The project", q: "Is this a controlled experiment?", a: "No. Stage one, the public registry, is a screening collection, not a controlled experiment. It is open, self selected and unblinded, and priming is not ruled out, because people can browse other submissions before recording their own. All stage one can show is whether there is a hint of agreement worth digging into. Nothing here settles the question. Stage two is capture before exposure, where an account is recorded before the contributor sees the catalogue. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses; it is designed and has not been run. Reports of seeing nothing are wanted and counted, and they are published at /null-reports." },
   { group: "The project", q: 'What is the "DMT code"?', a: "People who take N,N-DMT often report seeing structured visual forms, grids, glyphs, geometric symbols, and a smaller group describes something that reads almost like written characters. The DMT Code project collects those reports in one place so the overlaps can actually be measured instead of argued about. We are not claiming the forms are a message. We are asking a narrower question: do independent people, who have never spoken, keep drawing the same shapes?" },
   { group: "The project", q: "Is the code real? Are you saying reality is made of code?", a: "No. We hold that question open on purpose. Our job is to gather the observations, keep the method honest, and publish everything so anyone can judge for themselves. If the overlaps turn out to be coincidence or shared cultural imagery, the data should show that too. A result that cannot fail is not worth much, so we built this to be able to fail." },
   { group: "The project", q: "Is this a religion, or are you telling people what to believe?", a: "Neither. Nobody here is asking you to believe anything. Plenty of people who take this seriously think it will turn out to be pattern-matching or shared imagery, and that is a fine place to stand. We care about the observations and the method. What you conclude from them is yours." },
@@ -64,6 +65,7 @@ interface UnifiedItem {
   content_type: string;
   title: string;
   url?: string;
+  page_url?: string;
   doi?: string;
   compounds: string[];
   topic: string[];
@@ -317,6 +319,7 @@ export default async (req: Request): Promise<Response> => {
       id: `bib_${r.id}`,
       content_type: (r.content_type as string) || "Paper",
       title,
+      page_url: `${SITE}/bibliography/${r.id}`,
       url: (r.url as string) || (r.doi ? `https://doi.org/${r.doi}` : `${SITE}/bibliography/${r.id}`),
       doi: (r.doi as string) || undefined,
       compounds: normalizeCompounds(r.compounds),
@@ -347,6 +350,7 @@ export default async (req: Request): Promise<Response> => {
       id: `trial_${r.id}`,
       content_type: "Trial",
       title,
+      page_url: `${SITE}/trials/${r.id}`,
       url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
       compounds: (r.compounds as string[]) || [],
       topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
@@ -363,6 +367,7 @@ export default async (req: Request): Promise<Response> => {
     id: `symbol_${r.id}`,
     content_type: "Symbol",
     title: (r.description as string) || "Untitled symbol",
+    page_url: `${SITE}/registry/${r.id}`,
     url: `${SITE}/registry/${r.id}`,
     compounds: [],
     topic: (r.tags as string[]) || [],
@@ -389,6 +394,7 @@ export default async (req: Request): Promise<Response> => {
     id: `article_${r.id}`,
     content_type: "Article",
     title: (r.title as string) || "",
+    page_url: `${SITE}/articles/${r.slug}`,
     url: `${SITE}/articles/${r.slug}`,
     compounds: (r.compounds as string[]) || [],
     topic: (r.topic_tags as string[]) || [],
@@ -548,6 +554,7 @@ export default async (req: Request): Promise<Response> => {
   // Published verbatim from the column comments on symbol_submissions so the
   // export and the database can never drift apart in what they claim a field means.
   const FIELD_DEFINITIONS: Record<string, string> = {
+    page_url: "The absolute URL of this record's own detail page on dmtcode.com. The id field carries a prefix, for example bib_<uuid>, that is not part of any URL, and the url field may point at an external source or a DOI. page_url is the on-site page and is always safe to follow.",
     status: "LEGACY. Kept because row level security policies and existing queries depend on it. It is now kept in sync with visibility_status by the sync_symbol_submission_status trigger. New code should read visibility_status, moderation_status and evidence_status instead.",
     visibility_status: "Who can see this row. private = only the author. public = published and readable by anyone. hidden = withdrawn from public view but never deleted.",
     moderation_status: "What a human moderator has actually done. unreviewed = nobody has looked at it yet. reviewed = a moderator looked and let it stand. denied = a moderator rejected it. reported = a reader flagged it and it awaits a decision. There is deliberately no stored overdue value. Overdue is derived as moderation_status = unreviewed and review_due_at < now(), so it can never go stale.",

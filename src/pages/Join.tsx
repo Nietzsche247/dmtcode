@@ -198,7 +198,7 @@ const Join = () => {
                   },
                   {
                     title: 'Analyst',
-                    body: "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it.",
+                    body: "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. Every submission carries a prior exposure flag, naive or exposed, recording whether the contributor had already seen symbols here before writing their own. The first real analyst job is splitting the submissions on that flag and reporting whether the split changes anything. That includes arguing against the claim when the numbers do not support it.",
                   },
                   {
                     title: 'Developer',

@@ -97,7 +97,7 @@ function buildSellerLine(kits) {
     .join('; ');
   return (
     `Wavelengths by kit: ${perKit}. ` +
-    'Every kit includes diffraction optics and the semicircle line maker that turns the laser dot into a continuous line on the wall; observation documents are free PDF downloads. ' +
+    'Every kit includes diffraction optics and a semicircle acrylic piece that stretches the laser dot into a short bright horizontal line, a few centimetres long at typical bench distances, not a line across the wall; line length depends on the piece and on its distance from the laser, and moving the optic away from the laser lengthens the line while moving it closer shortens it; observation documents are free PDF downloads. ' +
     'Sold and shipped by Meridian Optics Lab (the name on the card statement and parcel); ' +
     'support info@dmtcode.com. Free US shipping, processed within 2 business days, arrives in 7 to 10 business days. ' +
     'Unopened kits returnable within 30 days. Policies: /shipping, /returns, /store-terms, /store-contact. ' +

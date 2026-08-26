@@ -1191,6 +1191,12 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
   <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
   <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
   <section>
+    <h2>Which stage each band of evidence belongs to</h2>
+    <p>Stage one is screening, not the experiment. The symbol registry is a screening collection, not a controlled experiment: it is open, self selected and unblinded, and priming is not ruled out. Screening can only show whether there is a hint of agreement worth digging into. It cannot settle the question, and nothing on this page settles it either.</p>
+    <p>Stage two is capture before exposure, where an account is recorded before the contributor sees the catalogue. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses. Stage three is designed and has not been run.</p>
+    <p>Read each record below against that scale. The peer reviewed and clinical records are prior literature on the wider phenomenon, not tests of this claim. The pilot report, the community submissions and the registry counts are stage one screening. No record on this timeline comes from stage three. Reports of seeing nothing are wanted and counted, and they are published at <a href="${SITE}/null-reports">/null-reports</a>.</p>
+  </section>
+  <section>
     <h2>What the claim is, and what it is not</h2>
     <p>The claim is convergence: strangers who have never spoken landing on the same forms. It is not a claim that the forms carry a message, that reality is literally coded, or that the phenomenon has a known cause. Each of those is a separate question and is treated separately in the record.</p>
   </section>
@@ -1622,6 +1628,10 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     heading: "The project",
     items: [
       {
+        q: "Is this a controlled experiment?",
+        a: "No. Stage one, the public registry, is a screening collection, not a controlled experiment. It is open, self selected and unblinded, and priming is not ruled out, because people can browse other submissions before recording their own. All stage one can show is whether there is a hint of agreement worth digging into. Nothing here settles the question. Stage two is capture before exposure, where an account is recorded before the contributor sees the catalogue. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses; it is designed and has not been run. Reports of seeing nothing are wanted and counted, and they are published at /null-reports.",
+      },
+      {
         q: 'What is the "DMT code"?',
         a: "People who take N,N-DMT often report seeing structured visual forms, grids, glyphs, geometric symbols, and a smaller group describes something that reads almost like written characters. The DMT Code project collects those reports in one place so the overlaps can actually be measured instead of argued about. We are not claiming the forms are a message. We are asking a narrower question: do independent people, who have never spoken, keep drawing the same shapes?",
       },
@@ -2049,6 +2059,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   <p>This is a screening collection, not a controlled experiment. Anyone can browse it before contributing, entries are self selected, and there is no randomization, no blinding, and no control over dose, setting, wavelength, or who chooses to take part. Seeing other people's symbols before recording your own can shape what you report. That effect is not ruled out here and it cannot be ruled out by a collection built this way.</p>
   <p>What a collection like this can do is tell us whether there is any hint of agreement worth digging into further, and whether it is convincing enough to bring institutions in to investigate properly. That is the whole claim. Nothing here settles the question.</p>
   <p>A separate blinded study is the channel that could settle it. It is designed and has not been run.</p>
+  <p>Reports of seeing nothing are wanted and counted. They are published on the <a href="${SITE}/null-reports">null reports dashboard</a> alongside the positive ones.</p>
 </section>`,
     index: { table: "symbol_submissions", filter: "status=eq.approved", select: "id,description,created_at", titleField: "description", linkPrefix: "/registry", label: "Recent symbols" },
     extraJsonLd: [REGISTRY_REPORT_LD],
@@ -2483,7 +2494,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     bodyExtraHtml: `<section><h2>Roles</h2><dl>${[
       ["Recorder", "Recorders run the observation protocol and write down what they saw on the field sheet, in their own words. Nothing is required beyond care, honesty, and a completed record."],
       ["Translator", "Translators carry records, protocol documents, and site pages into Spanish, German, and other languages. Accuracy matters more than fluency, because a mistranslated report is worse than no translation."],
-      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. That includes arguing against the claim when the numbers do not support it."],
+      ["Analyst", "Analysts look at the registry as data and test whether the reported forms actually converge or only appear to. Every submission carries a prior exposure flag, naive or exposed, recording whether the contributor had already seen symbols here before writing their own. The first real analyst job is splitting the submissions on that flag and reporting whether the split changes anything. That includes arguing against the claim when the numbers do not support it."],
       ["Developer", "Developers work on the site, the registry, and the export pipeline that keeps the data open. Most of the work is small, careful, and public."],
     ].map(([r, d]) => `<dt>${esc(r)}</dt><dd>${esc(d)}</dd>`).join("")}</dl>
     <p>Moderation, outreach, and peer support roles are filled from within these four.</p>
