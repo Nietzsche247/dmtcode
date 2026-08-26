@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useContentTranslations, overlay } from '@/hooks/useContentTranslations';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { FollowButton } from '@/components/FollowButton';
+import { GolerAttribution } from '@/components/GolerAttribution';
 
 import { 
   FlaskConical, Stethoscope, Clock, ArrowLeft, Mic, 
