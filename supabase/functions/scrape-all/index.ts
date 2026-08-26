@@ -582,7 +582,8 @@ Deno.serve(async (req) => {
     console.log(`\n🎉 Scraper complete! Total: ${totalAdded} added from ${totalFound} found`);
 
     return new Response(JSON.stringify({
-      success: true,
+      success: finalStatus === 'success',
+      status: finalStatus,
       totalFound,
       totalAdded,
       emailSent,
@@ -600,6 +601,8 @@ Deno.serve(async (req) => {
       await supabase.from('scraper_runs').update({
         status: 'error',
         error_message: errorMessage,
+        write_failures: 0,
+        trials_updated: 0,
       }).eq('id', runId);
     }
 
