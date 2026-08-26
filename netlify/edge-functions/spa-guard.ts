@@ -29,6 +29,18 @@ const VALID_FIRST_SEGMENT = new Set<string>([
 
 const ASSET_RE = /\.[a-z0-9]{2,5}$/i;
 
+// /products/:handle is a branded detail page backed by the Shopify Storefront
+// API. Only these live storefront handles resolve to a product; anything else
+// must 404 instead of serving the SPA shell with a 200.
+// Mirrored from src/hooks/useBundleAvailability.tsx (bundleShopifyHandles).
+// Edge functions run in Deno and cannot import from src/, so keep this list in
+// sync with that map when a kit handle changes.
+const PRODUCT_HANDLES = new Set<string>([
+  "650nm-laser-diffraction-research-kit-solo",
+  "multi-wavelength-laser-diffraction-kit-triad",
+  "multi-wavelength-laser-diffraction-kit-circle",
+]);
+
 // Prefixes served by another edge function or static asset the SPA fallback
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
@@ -41,6 +53,9 @@ function isDetailPatternValid(path: string): boolean {
   // /people/:slug is a static profile set, not a table
   const pe = path.match(/^\/people\/([^/]+)$/i);
   if (pe) return ["danny-goler", "andrew-gallimore", "chase-hughes"].includes(pe[1].toLowerCase());
+  // /products/:handle must match a live Shopify handle
+  const pr = path.match(/^\/products\/([^/]+)$/i);
+  if (pr) return PRODUCT_HANDLES.has(pr[1].toLowerCase());
   // /card/:uuid.png
   const c = path.match(/^\/card\/([^/]+)\.png$/i);
   if (c) return UUID_RE.test(c[1]);
