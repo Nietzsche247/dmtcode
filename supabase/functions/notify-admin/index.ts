@@ -41,6 +41,54 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Auth gate. Must precede req.json(), getUserById, and every email send.
+  // Path A: shared-secret header (machine callers, e.g. the staleness cron).
+  // Path B: any authenticated user JWT. The moderation path below
+  // additionally requires the admin role when the caller is not using the
+  // secret, so only admins can trigger submitter-facing moderation emails.
+  const accepted = [Deno.env.get('NOTIFY_ADMIN_SECRET'), Deno.env.get('INTEL_CRON_SECRET')]
+    .filter((v): v is string => typeof v === 'string' && v.trim() !== '');
+  const providedKey = req.headers.get('x-notify-key');
+  const viaSecret = !!providedKey && accepted.length > 0 && accepted.includes(providedKey);
+
+  let callerUserId: string | null = null;
+  let callerIsAdmin = false;
+
+  if (!viaSecret) {
+    const authHeader = req.headers.get('Authorization') ?? '';
+    if (authHeader.startsWith('Bearer ')) {
+      try {
+        const userClient = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const token = authHeader.replace('Bearer ', '');
+        const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
+        if (!claimsErr && claimsData?.claims?.sub) {
+          callerUserId = claimsData.claims.sub as string;
+          const adminClient = createClient(
+            Deno.env.get('SUPABASE_URL') ?? '',
+            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+          );
+          const { data: isAdmin } = await adminClient.rpc('has_role', {
+            _user_id: callerUserId,
+            _role: 'admin',
+          });
+          callerIsAdmin = !!isAdmin;
+        }
+      } catch (e) {
+        console.error('Auth check failed:', e);
+      }
+    }
+    if (!callerUserId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+  }
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
