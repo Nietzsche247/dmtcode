@@ -58,7 +58,7 @@ evidence_class values, and what each one means: peer_reviewed, book, legal, lett
 - /dataset: HTML index of the machine readable corpus with schema.org Dataset metadata. CC-BY-4.0.
 - /prepare: HTML page of the four research kits with Organization, WebSite, BreadcrumbList, ItemList and Product JSON-LD (each Product carries shippingDetails and hasMerchantReturnPolicy). CC-BY-4.0.
 - /bibliography: HTML index. Head emits a schema.org Dataset with an ItemList of featured rows. Each list item carries stanceScore and authority as additionalProperty.
-- /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. Where the source was published under CC BY or CC0, the article's full text is included in the "text" property so language models can quote it directly, with the required attribution carried inside the text itself. 45 of 194 approved records currently carry full text. Filter for them with /data.json?has_full_text=true, and read the licence from each row's full_text_license field. Records under non-commercial or ShareAlike licences are deliberately not reproduced.
+- /bibliography/:id: HTML detail. Head emits ScholarlyArticle or CreativeWork. Where the source was published under CC BY or CC0, the article's full text is included in the "text" property so language models can quote it directly, with the required attribution carried inside the text itself. <!-- corpus-counts:start -->45 of 236 approved records currently carry full text<!-- corpus-counts:end -->. Filter for them with /data.json?has_full_text=true, and read the licence from each row's full_text_license field. Records under non-commercial or ShareAlike licences are deliberately not reproduced.
 - /trials: HTML index of clinical trials.
 - /trials/:id: HTML detail. Head emits schema.org MedicalStudy with sponsor, phase, status, and application URL.
 - /registry: HTML index of community submitted symbols. Per symbol pages at /registry/:id are server prerendered with CreativeWork JSON-LD.
@@ -83,7 +83,7 @@ All kits: 650 nm laser module and diffraction optics; observation documents are 
 
 ## Free protocol documents
 
-Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
+<!-- pdf-count:start -->Thirteen PDF documents under /downloads/<!-- pdf-count:end -->, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
 
 - Screening Card (pre-observation self-check): https://dmtcode.com/downloads/DMTCode_Screening_Card_v1.pdf (ES: DMTCode_Tarjeta_de_Cribado_v1_ES.pdf, DE: DMTCode_Screening_Karte_v1_DE.pdf)
 - /downloads/DMTCode_Observation_Field_Sheet_v1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_DE.pdf (DE)
@@ -99,6 +99,7 @@ Nine PDF documents under /downloads/, CC-BY-4.0, no account needed. The observat
 - [Home](/): Mission and dataset status.
 - [Capture](/capture): Record what you saw before you browse anything else, so the record is not shaped by what you already read here.
 - [Symbol Registry](/registry): Browse and submit symbols with structured metadata and community validation.
+- [Submit a Symbol](/submit-symbol): Contribution wizard for recording a symbol observation, with prior exposure disclosure.
 - [Chronology](/timeline): Every source as a dated record, sortable by date, person, place or kind of evidence.
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
 - [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.
