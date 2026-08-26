@@ -98,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.error('Auth check failed:', e);
       }
     }
-    if (!callerUserId) {
+    if (!callerUserId && !isPublicIntake) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
@@ -112,8 +112,68 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const body: NotificationRequest = await req.json();
-    const { type, symbolId, wavelength, surface, metadata, submission, submissionId, action, reason } = body;
+    const { type, symbolId, wavelength, surface, metadata, submission, submissionId, submissionIds, bulk, action, reason } = body;
+
+    // Research pre-registration intake. Writes one admin notice and nothing
+    // else. The row itself was already inserted by the form under RLS.
+    if (type === 'preregistration') {
+      const preregId = typeof body.preregistrationId === 'string' ? body.preregistrationId : null;
+      let title = '';
+      if (preregId) {
+        const { data: row } = await supabase
+          .from('research_preregistrations')
+          .select('title')
+          .eq('id', preregId)
+          .maybeSingle();
+        title = row?.title ?? '';
+      }
+
+      const { error: preregNotifError } = await supabase
+        .from('admin_notifications')
+        .insert({
+          type: 'preregistration',
+          message: `NEW RESEARCH PRE-REGISTRATION\n\nTitle: ${title || 'Not recorded'}\nSubmitted: ${new Date().toISOString()}\n\nReview at: https://dmtcode.com/admin`,
+          metadata: { preregistration_id: preregId },
+        });
+
+      if (preregNotifError) {
+        console.error('Failed to store pre-registration notification:', preregNotifError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Pre-registration notification stored' }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Bulk moderation decision. One notice carrying every affected id. No
+    // submitter email is sent on this path.
+    if (action && Array.isArray(submissionIds) && (bulk || submissionIds.length > 1)) {
+      if (!viaSecret && !callerIsAdmin) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      const ids = submissionIds.filter((v): v is string => typeof v === 'string');
+      const { error: bulkNotifError } = await supabase
+        .from('admin_notifications')
+        .insert({
+          type: 'bulk_moderation',
+          message: `BULK MODERATION DECISION\n\nAction: ${action}\nSubmissions: ${ids.length}\nReason: ${reason || 'Not provided'}\nIDs: ${ids.join(', ')}\nTimestamp: ${new Date().toISOString()}`,
+          metadata: { action, reason, submission_ids: ids, batch_size: ids.length },
+        });
+
+      if (bulkNotifError) {
+        console.error('Failed to store bulk moderation notification:', bulkNotifError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Bulk moderation notification stored', count: ids.length }),
+        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
 
     // Handle moderation status change notification to submitter
     if (submissionId && action) {
