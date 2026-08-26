@@ -49,15 +49,16 @@ function hasLaserOrGlyphMention(text: string): boolean {
 
 // ============= SOURCE 1: CLINICALTRIALS.GOV =============
 
-async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; updated: number; found: number }> {
+async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; updated: number; found: number; writeFailures: number; errors: { nctId: string; code: string; message: string }[] }> {
   console.log('📊 Scraping ClinicalTrials.gov...');
-  let added = 0, updated = 0, found = 0;
+  let added = 0, updated = 0, found = 0, writeFailures = 0;
+  const errors: { nctId: string; code: string; message: string }[] = [];
 
   for (const term of CLINICAL_TRIALS_COMPOUNDS) {
     try {
       const statusFilter = 'RECRUITING,ACTIVE_NOT_RECRUITING,NOT_YET_RECRUITING';
       const apiUrl = `https://clinicaltrials.gov/api/v2/studies?query.cond=${encodeURIComponent(term)}&filter.overallStatus=${statusFilter}&pageSize=100&format=json`;
-      
+
       const response = await fetch(apiUrl);
       if (!response.ok) continue;
 
@@ -73,9 +74,18 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
 
         found++;
         const nctId = proto.identificationModule?.nctId;
+        if (!nctId) continue;
         const title = proto.identificationModule?.officialTitle || proto.identificationModule?.briefTitle || 'Untitled';
-        const status = mapTrialStatus(proto.statusModule?.overallStatus || '');
-        const compound = detectCompound(title + ' ' + (proto.conditionsModule?.conditions || []).join(' '));
+        const briefSummary: string | null = proto.descriptionModule?.briefSummary || null;
+
+        const { value: status, mapped } = normaliseStatus(proto.statusModule?.overallStatus || '');
+        if (!mapped) console.warn(`Unmapped status "${proto.statusModule?.overallStatus}" for ${nctId}`);
+
+        // Label everything the API returns; nothing is dropped. Off-domain
+        // rows stay unapproved but carry their verdict.
+        const classText = `${title} ${briefSummary || ''}`;
+        const relevance = classify(classText);
+        const compounds = extractCompounds(classText);
 
         const { data: existing } = await supabase
           .from('clinical_trials')
@@ -84,23 +94,43 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
           .maybeSingle();
 
         if (existing) {
+          // Only update when the NORMALISED status differs from the stored one.
           if (existing.status !== status) {
-            await supabase.from('clinical_trials').update({ status, updated_at: new Date().toISOString() }).eq('id', existing.id);
-            updated++;
+            const { error: updateError } = await supabase.from('clinical_trials').update({
+              status,
+              relevance,
+              compounds,
+              updated_at: new Date().toISOString(),
+            }).eq('id', existing.id);
+            if (updateError) {
+              writeFailures++;
+              errors.push({ nctId, code: updateError.code || 'unknown', message: updateError.message || 'update failed' });
+              console.error(`Update failed for ${nctId}:`, updateError);
+            } else {
+              updated++;
+            }
           }
         } else {
           const { error } = await supabase.from('clinical_trials').insert({
             title,
-            description: proto.descriptionModule?.briefSummary || null,
+            description: briefSummary,
             institution: proto.sponsorCollaboratorsModule?.leadSponsor?.name || null,
             start_date: normalizeDate(startDateStr) || null,
             end_date: normalizeDate(proto.statusModule?.completionDateStruct?.date),
             status,
             trial_registry_id: nctId,
             url: `https://clinicaltrials.gov/study/${nctId}`,
+            relevance,
+            compounds,
             is_approved: false,
           });
-          if (!error) added++;
+          if (error) {
+            writeFailures++;
+            errors.push({ nctId, code: error.code || 'unknown', message: error.message || 'insert failed' });
+            console.error(`Insert failed for ${nctId}:`, error);
+          } else {
+            added++;
+          }
         }
       }
     } catch (e) {
@@ -108,8 +138,8 @@ async function scrapeClinicalTrials(supabase: any): Promise<{ added: number; upd
     }
   }
 
-  console.log(`✅ ClinicalTrials.gov: ${added} added, ${updated} updated`);
-  return { added, updated, found };
+  console.log(`✅ ClinicalTrials.gov: ${added} added, ${updated} updated, ${writeFailures} write failures`);
+  return { added, updated, found, writeFailures, errors };
 }
 
 // ============= SOURCE 2: PUBMED =============
