@@ -931,13 +931,15 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
       name: k.name,
       description: k.description,
       sku: k.sku,
-      brand: { "@type": "Brand", name: "DMT Code" },
+      brand: { "@type": "Brand", name: "Meridian Optics Lab" },
       offers: {
         "@type": "Offer",
-        url: canonical,
+        url: k.cart,
         price: k.priceNumber,
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
+        seller: { "@type": "Organization", name: "Meridian Optics Lab" },
+
         shippingDetails,
         hasMerchantReturnPolicy: {
           "@type": "MerchantReturnPolicy",
