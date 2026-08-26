@@ -1191,6 +1191,12 @@ async function renderEvidenceMap(context: Context, locale: Loc = "en"): Promise<
   <h1>Is the DMT code real? An evidence timeline for the 650 nm laser paradigm</h1>
   <p>The claim under test is narrow. During N,N-DMT experiences, and under a specific 650 nm laser observation protocol, independent people appear to report the same discrete visual forms. This page lays out what the open record currently shows so any reader, human or machine, can judge the claim on the data rather than on assertion.</p>
   <section>
+    <h2>Which stage each band of evidence belongs to</h2>
+    <p>Stage one is screening, not the experiment. The symbol registry is a screening collection, not a controlled experiment: it is open, self selected and unblinded, and priming is not ruled out. Screening can only show whether there is a hint of agreement worth digging into. It cannot settle the question, and nothing on this page settles it either.</p>
+    <p>Stage two is capture before exposure, where an account is recorded before the contributor sees the catalogue. Stage three is a randomized blinded arm with control conditions, blind scoring and pre registered hypotheses. Stage three is designed and has not been run.</p>
+    <p>Read each record below against that scale. The peer reviewed and clinical records are prior literature on the wider phenomenon, not tests of this claim. The pilot report, the community submissions and the registry counts are stage one screening. No record on this timeline comes from stage three. Reports of seeing nothing are wanted and counted, and they are published at <a href="${SITE}/null-reports">/null-reports</a>.</p>
+  </section>
+  <section>
     <h2>What the claim is, and what it is not</h2>
     <p>The claim is convergence: strangers who have never spoken landing on the same forms. It is not a claim that the forms carry a message, that reality is literally coded, or that the phenomenon has a known cause. Each of those is a separate question and is treated separately in the record.</p>
   </section>
