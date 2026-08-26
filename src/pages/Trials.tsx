@@ -132,13 +132,17 @@ const Trials = () => {
       }
       return true;
     });
-    rows = [...rows].sort((a, b) => {
+    const byChosen = (a: Trial, b: Trial) => {
       if (sort === 'title') return a.title.localeCompare(b.title);
       const av = new Date(a.start_date || a.created_at).getTime();
       const bv = new Date(b.start_date || b.created_at).getTime();
       return sort === 'newest' ? bv - av : av - bv;
-    });
-    return rows;
+    };
+    // Suspended and terminated sink to the bottom; never removed, never
+    // filtered out by default. Everything else stays in chronological order.
+    const sunk = rows.filter((t) => trialState(t.status).sinksToBottom).sort(byChosen);
+    const afloat = rows.filter((t) => !trialState(t.status).sinksToBottom).sort(byChosen);
+    return [...afloat, ...sunk];
   }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   useEffect(() => {
