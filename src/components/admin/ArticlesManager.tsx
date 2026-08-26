@@ -625,6 +625,7 @@ export const ArticlesManager = () => {
       source_published_at: draft.source_published_at || null,
       is_published: draft.is_published,
     };
+    if (payload.is_published) payload.archived_at = null;
 
     if (draft.id) {
       const original = articles.find((a) => a.id === draft.id);
