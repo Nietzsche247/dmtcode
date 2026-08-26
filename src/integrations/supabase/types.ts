@@ -2530,6 +2530,7 @@ export type Database = {
           moderated_at: string | null
           moderated_by: string | null
           moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
+          prior_exposure: string | null
           privacy_level: string | null
           publication_consent: boolean
           published_at: string | null
@@ -2567,6 +2568,7 @@ export type Database = {
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
           published_at?: string | null
@@ -2604,6 +2606,7 @@ export type Database = {
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
           published_at?: string | null
