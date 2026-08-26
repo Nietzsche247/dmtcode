@@ -241,6 +241,21 @@ function overlay(
 
 }
 
+// Locale-aware internal link path. English is unprefixed; other locales carry
+// their path prefix ("/es/...", "/de/...").
+function lpath(locale: Loc, path: string): string {
+  return `${locale !== "en" ? `/${locale}` : ""}${path}`;
+}
+
+// Canonical full attribution statement. Required verbatim on every page that
+// names Danny Goler. On the person page itself the name link is omitted.
+function golerAttribution(locale: Loc, linkName = true): string {
+  const name = linkName
+    ? `<a href="${lpath(locale, "/people/danny-goler")}">Danny Goler</a>`
+    : "Danny Goler";
+  return `<p><small>First reported by ${name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.</small></p>`;
+}
+
 
 export default async (request: Request, context: Context) => {
   try {
