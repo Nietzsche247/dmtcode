@@ -155,9 +155,28 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         
         toast.success('Vote removed');
       } else {
+        // Claim any recognition recorded anonymously on this device before
+        // inserting, so one human is never counted twice.
+        if (userId) {
+          try {
+            const { data: claimed, error: claimError } = await (supabase as any).rpc(
+              'claim_anon_vote',
+              { p_symbol_id: symbolId, p_session_id: sessionId },
+            );
+            if (!claimError && typeof claimed === 'number' && claimed > 0) {
+              await Promise.all([loadVoteCounts(), loadUserVotes()]);
+              return true;
+            }
+          } catch (e) {
+            // Non-blocking: fall through to the normal insert path.
+            console.warn('claim_anon_vote failed', e);
+          }
+        }
+
         // One stance per user per symbol: seen_it, similar and downvote are
         // fully mutually exclusive. Cleanup deletes require an authenticated user.
         if (userId) {
+
           const conflicting = ALL_VOTE_TYPES.filter((t) => t !== voteType && held(t));
 
           if (conflicting.length > 0) {
