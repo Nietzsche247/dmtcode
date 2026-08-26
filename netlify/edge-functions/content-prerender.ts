@@ -3604,6 +3604,8 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   ${tagline ? `<p>${esc(tagline)}</p>` : ""}
   ${contentHtml || "<p>Protocol documentation is being prepared.</p>"}
   <p><em>Reference material only. Nothing on this page is medical advice or a personal recommendation.</em></p>
+  <p>Adults 18 and older only.</p>
+
   ${golerAttribution(locale)}
   <p><a href="${SITE}/protocols">Back to the protocol catalogue</a></p>
 </article>`;
