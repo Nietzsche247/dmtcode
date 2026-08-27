@@ -2318,6 +2318,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "Is it the film on Netflix? No, and this is a common mix-up worth clearing up. There is a 2017 Netflix feature also called The Discovery, directed by Charlie McDowell and starring Rooney Mara, Jason Segel and Robert Redford. It is a fiction film about a scientist who proves an afterlife exists. It has nothing to do with DMT, lasers, or this documentary.",
       "Who made it. The film is directed by Aaron Vanden and was funded independently, including a public crowdfunding campaign. Danny Goler is its subject rather than its director.",
       "The observation at the centre of the film was first reported by Danny Goler in August 2020: that under a 650 nm laser, some people report seeing discrete, repeating visual forms during an N,N-DMT experience. A pilot study was published in IPI Letters in 2025 (DOI 10.59973/ipil.158). What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. That is what this site is. We do not know whether the phenomenon is real. We built the instrument that could find out.",
+      "The reported symbol set is also available as a citable PDF: DMT Laser Code Symbols (PDF).",
       "Attribution. Danny Goler made the observation, and the written protocol grew out of it. He is not a founder of this site, holds no editorial role, and has no part in the store. He has not reviewed or approved any page, kit or claim here. This site is not affiliated with the film, its production, or its distribution.",
       "Last checked 23 August 2026.",
     ],
@@ -2329,6 +2330,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/bibliography", label: "Bibliography" },
       { href: "/critiques", label: "Critiques" },
       { href: "/people/danny-goler", label: "Danny Goler" },
+      { href: "/downloads/dmt-laser-code-symbols.pdf", label: "DMT Laser Code Symbols (PDF)" },
     ],
     breadcrumbName: "The Discovery",
     extraJsonLd: [{
@@ -5020,6 +5022,7 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
     <li>The <a href="/registry">visual symbol registry</a> where reported forms accumulate</li>
     <li>The <a href="/protocol-guide">650 nm laser protocol guide</a></li>
     <li>The <a href="/bibliography/56c88785-8efd-49b3-9471-0df15676be9a">bibliography entry for the pilot study</a></li>
+    <li><a href="/people/chase-hughes">Chase Hughes and the validation claim</a></li>
   </ul>`;
 
   const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
@@ -5152,6 +5155,7 @@ const SIMPLE_PEOPLE: Record<string, {
     sameAs: ["https://dmtcode.com/bibliography/f0f66690-8508-493f-ba93-bdc2bf810261"],
     bodyHtml: `
   <p>Chase Hughes is a podcaster and author who has publicly described the 650 nm laser protocol as validated, most visibly in interviews in 2025. This site has not been able to confirm a published, readable source for any validation he refers to, so the claim is listed as unverified in the bibliography (see the entry Chase Hughes Validation References). He is not an author of the pilot study, which is a single-author paper by Danny Goler (IPI Letters, 2025).</p>
+  <p>In podcast coverage and search the protocol is usually called the DMT laser experiment, and Hughes's name attaches to it mainly through the August 2025 video <a href="https://youtu.be/8OW5nwxvvyk" rel="noopener">Chase Hughes After The Laser Observation</a> on Danny Goler's YouTube channel, the most watched primary source for what he actually said.</p>
   <p>That is a statement about the state of the record, not a charge against anyone. Where his account is discussed on this site, it carries the same caveat: recognition after seeing imagery is not replication, and no controlled, blinded replication has been published.</p>
   <h2>Where his claim stands today</h2>
   <p>Independent controlled replication that isolates the 650 nm wavelength as a variable has not been published. Results that cut against the claim are filed in the <a href="/null-reports">null reports</a> in the same place, under the same license, as the ones that support it. The competing readings of the underlying observation are set out on the <a href="/critiques">critiques page</a>.</p>

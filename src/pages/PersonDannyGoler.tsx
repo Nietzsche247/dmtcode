@@ -353,6 +353,11 @@ const PersonDannyGoler = () => {
                     bibliography entry for the pilot study
                   </a>
                 </li>
+                <li>
+                  <a className={link} href="/people/chase-hughes">
+                    Chase Hughes and the validation claim
+                  </a>
+                </li>
               </ul>
               <GolerAttribution className="mt-6" />
             </div>
