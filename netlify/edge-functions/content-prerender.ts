@@ -2330,6 +2330,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/bibliography", label: "Bibliography" },
       { href: "/critiques", label: "Critiques" },
       { href: "/people/danny-goler", label: "Danny Goler" },
+      { href: "/downloads/dmt-laser-code-symbols.pdf", label: "DMT Laser Code Symbols (PDF)" },
     ],
     breadcrumbName: "The Discovery",
     extraJsonLd: [{

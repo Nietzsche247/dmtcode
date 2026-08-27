@@ -69,6 +69,20 @@ const PersonChaseHughes = () => {
                 study, which is a single-author paper by Danny Goler (IPI Letters, 2025).
               </p>
               <p>
+                In podcast coverage and search the protocol is usually called the DMT laser
+                experiment, and Hughes's name attaches to it mainly through the August 2025 video{' '}
+                <a
+                  className={link}
+                  href="https://youtu.be/8OW5nwxvvyk"
+                  rel="noopener"
+                  target="_blank"
+                >
+                  Chase Hughes After The Laser Observation
+                </a>{' '}
+                on Danny Goler's YouTube channel, the most watched primary source for what he
+                actually said.
+              </p>
+              <p>
                 That is a statement about the state of the record, not a charge against anyone.
                 Where his account is discussed on this site, it carries the same caveat:
                 recognition after seeing imagery is not replication, and no controlled, blinded
