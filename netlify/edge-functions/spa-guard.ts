@@ -38,8 +38,15 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats",
-  // Events module: country legal frames and the machine registry.
-  "legal", "for-agents",
+  // NOTE: the legal and for-agents segments are deliberately absent. The events
+  // module will add /legal/:country and /for-agents, but neither the React
+  // router nor content-prerender serves them today, so allowing them here
+  // returns the empty SPA shell with HTTP 200: a soft 404, which is worse for
+  // indexing than the honest 404 they get now. Add them in the same change that
+  // ships the pages, together with their content-prerender routes. The
+  // /legal/:country matcher below is already written and waiting.
+  // Keep segment names out of quotes in this comment: the route test parses
+  // every quoted string inside this literal.
   // Client only app routes that must stay 200 for humans
   "auth", "admin", "submit", "submit-symbol", "join", "preregister", "volunteer",
   "co-witnesses", "waitlist", "log", "assess", "leaderboard",

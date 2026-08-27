@@ -90,16 +90,14 @@ const CASES = [
   ["/events/conferences/europe", true, "geo hub"],
   ["/events/conferences/united-states", true, "geo hub"],
   ["/retreats/laser-protocol", true, "the 650 nm null-result table"],
-  ["/legal/mexico", true, "country frame"],
-  ["/legal/costa-rica", true, "country frame"],
-  ["/legal/peru", true, "country frame"],
-  ["/legal/united-states", true, "country frame"],
-  ["/legal/germany", true, "country frame"],
-  ["/legal/spain", true, "country frame"],
-  ["/for-agents", true, "machine registry landing"],
+  // /legal/* and /for-agents stay 404 until the pages actually ship. Allowing
+  // them before then returns the empty SPA shell at 200, a soft 404. Flip these
+  // to true in the same change that adds the pages and their prerender routes.
+  ["/legal/mexico", false, "page not shipped yet, honest 404 beats soft 404"],
+  ["/legal/peru", false, "page not shipped yet"],
+  ["/for-agents", false, "page not shipped yet"],
   // Locale mirrors of the same.
   ["/es/events/boom-festival-2026", true, "es mirror"],
-  ["/de/legal/mexico", true, "de mirror"],
   ["/es/retreats/laser-protocol", true, "es mirror"],
   // Legacy UUID records must keep resolving.
   ["/events/2742ec61-d88e-4f38-8efe-3cdbe049d91a", true, "legacy event uuid"],
@@ -112,6 +110,7 @@ const CASES = [
   ["/", true, "home"],
   // Things that must still 404.
   ["/legal/atlantis", false, "country not in the editorial set"],
+  ["/de/legal/mexico", false, "legal not shipped yet, locale mirror"],
   ["/trials/not-a-uuid", false, "trials are uuid-only"],
   ["/bibliography/some-slug", false, "bibliography is uuid-only"],
   ["/community/woo", false, "section does not exist"],
