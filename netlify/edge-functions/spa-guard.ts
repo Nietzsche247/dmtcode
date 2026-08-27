@@ -6,6 +6,30 @@ import type { Config, Context } from "@netlify/edge-functions";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Human-readable slug: lowercase words joined by single hyphens.
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+// Ids that are a null value stringified by a caller rather than a real record.
+// Observed live in crawler_hits: /de/null, and the all-zero UUID on
+// /bibliography, /trials and /registry (668 hits in 30 days). These match the
+// slug and UUID shapes above, so they need an explicit reject or they read as
+// valid ids.
+const NULLISH_ID = new Set<string>([
+  "null", "undefined", "nan", "none", "false", "true",
+  "object-object", "[object object]",
+  "00000000-0000-0000-0000-000000000000",
+]);
+
+function isNullishId(s: string): boolean {
+  return NULLISH_ID.has(s.toLowerCase());
+}
+
+// Country frames under /legal. A fixed editorial set, not a table, so an
+// unknown country 404s instead of rendering an empty legal page.
+const LEGAL_COUNTRIES = new Set<string>([
+  "mexico", "costa-rica", "peru", "united-states", "germany", "spain",
+]);
+
 // First-segment whitelist. Covers every path registered in the React router
 // (App.tsx), including client-only routes that are not server prerendered.
 const VALID_FIRST_SEGMENT = new Set<string>([
@@ -14,6 +38,8 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats",
+  // Events module: country legal frames and the machine registry.
+  "legal", "for-agents",
   // Client only app routes that must stay 200 for humans
   "auth", "admin", "submit", "submit-symbol", "join", "preregister", "volunteer",
   "co-witnesses", "waitlist", "log", "assess", "leaderboard",
@@ -44,12 +70,27 @@ const PRODUCT_HANDLES = new Set<string>([
 // Prefixes served by another edge function or static asset the SPA fallback
 // must still allow.
 function isDetailPatternValid(path: string): boolean {
+  // A stringified null in the id position is never a record, whatever the
+  // collection. Checked before the per-collection shapes below.
+  const last = path.split("/").pop() ?? "";
+  if (isNullishId(last)) return false;
   // /articles/:slug uses human-readable slugs, not UUIDs
   const a = path.match(/^\/(articles|guides)\/([^/]+)$/i);
-  if (a) return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(a[2]);
-  // /registry/:uuid, /trials/:uuid, /bibliography/:uuid, /events/:uuid, /retreats/:uuid
-  const m = path.match(/^\/(registry|trials|bibliography|events|retreats)\/([^/]+)$/i);
+  if (a) return SLUG_RE.test(a[2]);
+  // /registry/:uuid, /trials/:uuid, /bibliography/:uuid
+  const m = path.match(/^\/(registry|trials|bibliography)\/([^/]+)$/i);
   if (m) return UUID_RE.test(m[2]);
+  // /events/:x and /retreats/:x accept a UUID (legacy records) OR a slug. The
+  // events module addresses records by human slug; the UUID form stays valid so
+  // existing links and any un-migrated record keep resolving.
+  const ev = path.match(/^\/(events|retreats)\/([^/]+)$/i);
+  if (ev) return UUID_RE.test(ev[2]) || SLUG_RE.test(ev[2]);
+  // /events/festivals/:region and /events/conferences/:region geo hubs.
+  const hub = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i);
+  if (hub) return SLUG_RE.test(hub[2]);
+  // /legal/:country is a fixed set of country frames, not a table.
+  const lg = path.match(/^\/legal\/([^/]+)$/i);
+  if (lg) return LEGAL_COUNTRIES.has(lg[1].toLowerCase());
   // /people/:slug is a static profile set, not a table
   const pe = path.match(/^\/people\/([^/]+)$/i);
   if (pe) return ["danny-goler", "andrew-gallimore", "chase-hughes"].includes(pe[1].toLowerCase());
