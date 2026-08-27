@@ -2318,7 +2318,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "Is it the film on Netflix? No, and this is a common mix-up worth clearing up. There is a 2017 Netflix feature also called The Discovery, directed by Charlie McDowell and starring Rooney Mara, Jason Segel and Robert Redford. It is a fiction film about a scientist who proves an afterlife exists. It has nothing to do with DMT, lasers, or this documentary.",
       "Who made it. The film is directed by Aaron Vanden and was funded independently, including a public crowdfunding campaign. Danny Goler is its subject rather than its director.",
       "The observation at the centre of the film was first reported by Danny Goler in August 2020: that under a 650 nm laser, some people report seeing discrete, repeating visual forms during an N,N-DMT experience. A pilot study was published in IPI Letters in 2025 (DOI 10.59973/ipil.158). What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. That is what this site is. We do not know whether the phenomenon is real. We built the instrument that could find out.",
-      "The reported symbol set is also available as a citable PDF: <a href=\"/downloads/dmt-laser-code-symbols.pdf\">DMT Laser Code Symbols (PDF)</a>.",
+      "The reported symbol set is also available as a citable PDF: DMT Laser Code Symbols (PDF).",
       "Attribution. Danny Goler made the observation, and the written protocol grew out of it. He is not a founder of this site, holds no editorial role, and has no part in the store. He has not reviewed or approved any page, kit or claim here. This site is not affiliated with the film, its production, or its distribution.",
       "Last checked 23 August 2026.",
     ],
