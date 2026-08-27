@@ -187,12 +187,14 @@ const TheDiscovery = () => {
               find out.
             </p>
             <p className="text-base leading-relaxed mb-8">
+              The reported symbol set is also available as a citable PDF:{' '}
               <a
                 href="/downloads/dmt-laser-code-symbols.pdf"
                 className="text-gold hover:underline font-medium"
               >
-                The symbol set as a citable PDF
+                DMT Laser Code Symbols (PDF)
               </a>
+              .
             </p>
 
             <h3 className="text-xl font-semibold mb-4">Attribution</h3>
