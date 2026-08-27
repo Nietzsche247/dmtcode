@@ -3101,10 +3101,32 @@ type NotFoundOpts = {
   backHref?: string;
   backLabel?: string;
   marker?: string;
+  /** HTTP status. Defaults to 404. Pass 410 for content that was published and
+   *  has since been withdrawn, so search engines drop it instead of retrying. */
+  status?: number;
 };
 
-// Shared not-found prerender. Returns HTTP 404 with a noindex head so unknown
-// detail records stop being indexed as soft 404s.
+// Articles that were published at these slugs and have since been withdrawn.
+// They answer 410 Gone instead of 404 so search engines drop them rather than
+// retrying for months. Generated from:
+//   select slug from articles where archived_at is not null or is_published = false;
+// Verified against the database by scripts/check-withdrawn-articles-drift.mjs.
+// Last synced 2026-08-27.
+const WITHDRAWN_ARTICLE_SLUGS = new Set<string>([
+  "does-dmt-model-the-near-death-experience",
+  "extra-long-dmt-trips-could-help-researchers-study-entity-encounters",
+  "from-sonora-to-big-pharma-kimon-de-greef-traces-the-strange-rise-of-5-meo-dmt",
+  "he-tried-lsd-on-a-bike-ride-then-his-neighbor-became-a-witch",
+  "intranasal-5-meo-dmt-effects-peak-within-15-minutes-and-lack-strong-visuals-study-finds",
+  "maps-responds-to-report-of-progress-for-mdma-assisted-therapy-for-ptsd-with-fda",
+  "michael-pollan-on-psilocybin-i-felt-as-if-the-flowers-were-returning-my-gaze",
+  "phoenixs-barrow-neuro-gets-5m-to-test-psychedelic-ibogaine-on-brain-injuries",
+  "psychedelics-amplify-brain-connectivity-through-serotonin-receptors-study-suggests",
+  "smooth-sailing-definiums-lsd-voyage-hits-primary-and-key-secondary-endpoints-in-gad",
+]);
+
+// Shared not-found prerender. Returns HTTP 404 (or the status in opts) with a
+// noindex head so unknown detail records stop being indexed as soft 404s.
 function notFound404(shellHtml: string, o: NotFoundOpts = {}): Response {
   const head = buildHead({
     title: o.title || "Not found | DMT Code",
@@ -3119,7 +3141,7 @@ function notFound404(shellHtml: string, o: NotFoundOpts = {}): Response {
   <p><a href="${esc(backHref)}">${esc(backLabel)}</a></p>
 </article>`;
   return new Response(renderShell(shellHtml, head, body), {
-    status: 404,
+    status: o.status ?? 404,
     headers: PRERENDER_RESP_HEADERS,
   });
 }
@@ -4304,7 +4326,31 @@ async function renderArticleDetail(context: Context, rawSlug: string, locale: Lo
       `author,published_at,updated_at,source_url,source_outlet,source_published_at`,
   );
   const r = rows[0];
-  if (!r) return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
+  if (!r) {
+    // A slug that was published here and has since been withdrawn deserves 410
+    // Gone, not 404: Googlebot drops a 410 quickly and keeps retrying a 404 for
+    // months. A slug that never existed stays 404.
+    //
+    // The list is hardcoded because this function authenticates with
+    // SUPABASE_ANON_KEY, and the only anon-readable policy on `articles` is
+    // `is_published = true`. A withdrawn row is invisible to this key, so it
+    // cannot be looked up at request time. Widening RLS would expose body_md
+    // along with the slug, which is worse than maintaining ten strings.
+    // Kept honest by scripts/check-withdrawn-articles-drift.mjs.
+    if (WITHDRAWN_ARTICLE_SLUGS.has(slug)) {
+      return notFound404(await shellRes.text(), {
+        status: 410,
+        title: "Article withdrawn | DMT Code",
+        heading: "Article withdrawn",
+        text: "This article was published here and has since been withdrawn. It is not coming back at this address.",
+        canonical: `${SITE}/articles`,
+        backHref: `${SITE}/articles`,
+        backLabel: "Articles",
+        marker: "article-withdrawn",
+      });
+    }
+    return notFound404(await shellRes.text(), { title: "Article not found | DMT Code", heading: "Article not found", text: "This article is not currently indexed or the link is out of date.", canonical: `${SITE}/articles`, backHref: `${SITE}/articles`, backLabel: "Articles", marker: "article-not-found" });
+  }
 
   overlay(r, await getTranslations("articles", String(r.slug), locale));
 
