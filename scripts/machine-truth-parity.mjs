@@ -142,5 +142,187 @@ if (shopDown) {
   }
 }
 
+// 9. Locale parity across every prerendered static page, en / es / de.
+//
+// English is the source. /es and /de mirror it, and a page there is in one of
+// two states. Either it carries a translation from content_translations, or it
+// falls back to the English source, which the prerender leaves marked with
+// <!--tsrc:static:ID-->. Falling back is correct behaviour and passes here: a
+// page with no translation row is not a page that disagrees with itself.
+//
+// What must never happen is a locale stating a different fact from English: a
+// different effective date, a different count, or a laser class or power
+// figure English does not make. That is what a stale translation looks like
+// from the outside, and it is what these checks detect. The marker tells the
+// two apart, so every failure below is a translation that is present and
+// wrong, never a translation that is merely absent.
+const STATIC_LOCALE_PAGES = [
+  ['home', '/'], ['registry', '/registry'], ['trials', '/trials'], ['bibliography', '/bibliography'],
+  ['dataset', '/dataset'], ['about', '/about'], ['critiques', '/critiques'], ['events', '/events'],
+  ['glossary', '/glossary'], ['methods', '/methods'], ['research', '/research'], ['protocols', '/protocols'],
+  ['forecasts', '/forecasts'], ['privacy', '/privacy'], ['terms', '/terms'], ['shipping', '/shipping'],
+  ['returns', '/returns'], ['disclosure', '/disclosure'], ['capture', '/capture'], ['join', '/join'],
+  ['timeline', '/timeline'], ['faq', '/faq'], ['prepare', '/prepare'], ['evidence-map', '/evidence-map'],
+  ['articles', '/articles'],
+];
+const LOCALES = ['en', 'es', 'de'];
+const localePath = (loc, p) => (loc === 'en' ? p : `/${loc}${p === '/' ? '/' : p}`);
+
+// Month names in all three languages, mapped to a month number, so a date can
+// be compared as a value rather than as a string. "28 August 2026",
+// "28 de agosto de 2026" and "28. August 2026" are the same fact.
+const MONTH_NO = new Map();
+const addMonths = (names) => names.forEach((n, i) => MONTH_NO.set(n, i + 1));
+addMonths(['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']);
+addMonths(['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']);
+addMonths(['januar', 'februar', 'märz', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember']);
+MONTH_NO.set('marz', 3);
+MONTH_NO.set('setiembre', 9);
+
+const datesIn = (text) => {
+  const out = new Set();
+  const push = (d, mon, y) => {
+    const n = MONTH_NO.get(String(mon).toLowerCase());
+    if (n) out.add(`${y}-${String(n).padStart(2, '0')}-${String(Number(d)).padStart(2, '0')}`);
+  };
+  const W = '[A-Za-zÄÖÜäöüßÁÉÍÓÚáéíóú]+';
+  for (const m of text.matchAll(new RegExp(`\\b(\\d{1,2})\\s+(${W})\\s+(\\d{4})\\b`, 'g'))) push(m[1], m[2], m[3]);
+  for (const m of text.matchAll(new RegExp(`\\b(\\d{1,2})\\s+de\\s+(${W})\\s+de\\s+(\\d{4})\\b`, 'gi'))) push(m[1], m[2], m[3]);
+  for (const m of text.matchAll(new RegExp(`\\b(\\d{1,2})\\.\\s*(${W})\\s+(\\d{4})\\b`, 'g'))) push(m[1], m[2], m[3]);
+  for (const m of text.matchAll(new RegExp(`\\b(${W})\\s+(\\d{1,2}),\\s*(\\d{4})\\b`, 'g'))) push(m[2], m[1], m[3]);
+  return out;
+};
+
+// The live counts the prerender injects are the only numbers wrapped in
+// <strong>, which is what makes them separable from prose that happens to
+// contain a number.
+const countsIn = (html) => new Set(
+  [...html.matchAll(/<strong>\s*(\d[\d,]*)\s*<\/strong>/g)].map((m) => m[1].replace(/,/g, '')),
+);
+
+// A laser class is a standard designation. "Class 2" and "Class 3R" are the
+// names of the ratings, not English words, and translating one produces a
+// rating that does not exist. English pages name Class 3R deliberately, in
+// prose that explains how it differs from the Class 2 in Goler's paper, so the
+// designation itself is not the fault. A translated designation is.
+const TRANSLATED_CLASS = { es: /clase\s*3\s*r/i, de: /klasse\s*3\s*r/i };
+
+// The error that has shipped before is one power figure or one class attached
+// to a whole kit, dropping the per emitter detail and the ray box exception.
+// English says "vendor rated 5 mW, FDA Class IIIa, also written Class 3R; the
+// ray box in the Triad and Circle is under 1 mW". A translation that collapses
+// that to "the kit modules are under 5 mW" states something kits.ts does not.
+const KIT_WIDE_POWER = [
+  /\b(?:kit modules?|the kits?|every kit|all kits)\b[^.]{0,160}?\bunder 5 ?mW\b/i,
+  /\bm[oó]dulos del kit\b[^.]{0,160}?\b(?:por debajo de|menos de|inferior(?:es)? a|bajo)\s*5\s?mW\b/i,
+  /\bkit-?module\b[^.]{0,160}?\bunter\s*5\s?mW\b/i,
+];
+
+// Approval before publication is the wording the privacy policy carried before
+// 28 August 2026. A symbol is published immediately and reviewed inside 72
+// hours; saying it is published after approval misdescribes what happens to a
+// contributor's record.
+const APPROVAL_FIRST = [
+  /becomes public once it is approved/i,
+  /se (?:hace|vuelve) p[úu]blic[oa][^.]{0,60}?(?:una vez|cuando|tras)[^.]{0,40}?aprobad/i,
+  /wird[^.]{0,60}?(?:erst )?nach (?:der )?(?:Genehmigung|Freigabe|Pr[üu]fung)[^.]{0,40}?ver[öo]ffentlicht/i,
+];
+
+const getLocale = async (p) => {
+  try {
+    const r = await fetch(SITE + p, { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
+    if (!r.ok) return null;
+    return await r.text();
+  } catch {
+    return null;
+  }
+};
+
+const localeDocs = {};
+let localeDown = '';
+for (const [id, path] of STATIC_LOCALE_PAGES) {
+  if (localeDown) break;
+  for (const loc of LOCALES) {
+    const html = await getLocale(localePath(loc, path));
+    if (html === null) { localeDown = `${SITE}${localePath(loc, path)} did not serve`; break; }
+    const article = (html.match(/<article data-prerender="[^"]*"[\s\S]*?<\/article>/) || [''])[0];
+    localeDocs[`${id}|${loc}`] = {
+      html,
+      article,
+      text: article.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/\s+/g, ' '),
+      lang: (html.match(/<html[^>]*\blang="([^"]*)"/) || [, ''])[1],
+      englishFallback: html.includes(`<!--tsrc:static:${id}-->`),
+    };
+  }
+}
+
+if (localeDown) {
+  skip('locale parity checks', localeDown);
+} else {
+  const fallbackOnly = [];
+  for (const [id] of STATIC_LOCALE_PAGES) {
+    const en = localeDocs[`${id}|en`];
+
+    for (const loc of LOCALES) {
+      const d = localeDocs[`${id}|${loc}`];
+      check(`lang attribute on ${loc} /${id} is ${loc}`, d.lang === loc, d.lang);
+      check(`${loc} /${id} rendered a prerender body`, d.article.length > 0);
+    }
+
+    const translated = LOCALES.filter((loc) => loc !== 'en' && !localeDocs[`${id}|${loc}`].englishFallback);
+    const fellBack = LOCALES.filter((loc) => loc !== 'en' && localeDocs[`${id}|${loc}`].englishFallback);
+    if (fellBack.length) fallbackOnly.push(`${id}: ${fellBack.join(',')}`);
+
+    // Dates. Every date English states has to be stated by the mirrors too, in
+    // whatever form that language writes it.
+    const enDates = datesIn(en.text);
+    for (const loc of translated) {
+      const got = datesIn(localeDocs[`${id}|${loc}`].text);
+      const missing = [...enDates].filter((x) => !got.has(x));
+      check(`${loc} /${id} states every date English states`, missing.length === 0, missing.join(', '));
+    }
+
+    // Counts. A number the prerender injects is the same number in every
+    // language, so the sets have to be identical, not merely overlapping.
+    const enCounts = countsIn(en.article);
+    for (const loc of translated) {
+      const got = countsIn(localeDocs[`${id}|${loc}`].article);
+      const diff = [...new Set([...enCounts, ...got])].filter((x) => enCounts.has(x) !== got.has(x));
+      check(`${loc} /${id} carries the same injected counts as English`, diff.length === 0, diff.join(', '));
+    }
+
+    // Laser class and power.
+    for (const loc of LOCALES) {
+      const d = localeDocs[`${id}|${loc}`];
+      if (TRANSLATED_CLASS[loc]) {
+        check(`${loc} /${id} does not translate the laser class designation`, !TRANSLATED_CLASS[loc].test(d.text));
+      }
+      const blanket = KIT_WIDE_POWER.find((re) => re.test(d.text));
+      check(`${loc} /${id} makes no kit wide under 5 mW claim`, !blanket, blanket ? String(blanket) : '');
+    }
+
+    // Approval before publication, on the privacy policy, in every language.
+    if (id === 'privacy') {
+      for (const loc of LOCALES) {
+        const d = localeDocs[`${id}|${loc}`];
+        const hit = APPROVAL_FIRST.find((re) => re.test(d.text));
+        check(`${loc} /privacy has no approval-before-publication wording`, !hit, hit ? String(hit) : '');
+      }
+    }
+
+    // The two policy dates that were corrected on 28 August 2026 have to read
+    // the same in all three languages.
+    if (id === 'privacy' || id === 'terms') {
+      for (const loc of LOCALES) {
+        const got = datesIn(localeDocs[`${id}|${loc}`].text);
+        check(`${loc} /${id} shows the 28 August 2026 effective date`, got.has('2026-08-28'), [...got].join(', '));
+      }
+    }
+  }
+  if (fallbackOnly.length) {
+    console.log(`NOTE serving the English source, no translation applied :: ${fallbackOnly.join(' | ')}`);
+  }
+}
+
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL PASS');
 process.exit(fails.length ? 1 : 0);

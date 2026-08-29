@@ -140,13 +140,131 @@ function rowsToDl(pairs: Array<[string, unknown]>): string {
 type Loc = "en" | "es" | "de";
 const LOCALES = new Set(["es", "de"]);
 
+// MD5 of a UTF-8 string, lower case hex. Deno's Web Crypto has no MD5 and a
+// remote digest module would be fetched on every cold start, so it lives here.
+// The algorithm cannot be swapped for something better: content_translations
+// .source_hash is written by supabase/functions/translate-content/index.ts as
+// md5 of the English source text, and this has to reproduce that byte for byte
+// or the staleness gate below would never match and would suppress every
+// translation it guards.
+const MD5_K = new Uint32Array([
+  0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
+  0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
+  0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
+  0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
+  0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa,
+  0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+  0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed,
+  0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
+  0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
+  0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
+  0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05,
+  0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+  0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039,
+  0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
+  0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
+  0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
+]);
+const MD5_S = new Uint8Array([
+  7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+  5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+  4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+  6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
+]);
+
+function md5Hex(input: string): string {
+  const msg = new TextEncoder().encode(input);
+  const padded = (((msg.length + 8) >> 6) + 1) * 64;
+  const buf = new Uint8Array(padded);
+  buf.set(msg);
+  buf[msg.length] = 0x80;
+  const view = new DataView(buf.buffer);
+  const bits = msg.length * 8;
+  view.setUint32(padded - 8, bits >>> 0, true);
+  view.setUint32(padded - 4, Math.floor(bits / 4294967296), true);
+
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+  const m = new Uint32Array(16);
+  for (let off = 0; off < padded; off += 64) {
+    for (let j = 0; j < 16; j++) m[j] = view.getUint32(off + j * 4, true);
+    let a = a0, b = b0, c = c0, d = d0;
+    for (let i = 0; i < 64; i++) {
+      let f: number, g: number;
+      if (i < 16) { f = (b & c) | (~b & d); g = i; }
+      else if (i < 32) { f = (d & b) | (~d & c); g = (5 * i + 1) & 15; }
+      else if (i < 48) { f = b ^ c ^ d; g = (3 * i + 5) & 15; }
+      else { f = c ^ (b | ~d); g = (7 * i) & 15; }
+      f = (f + a + MD5_K[i] + m[g]) >>> 0;
+      a = d; d = c; c = b;
+      const s = MD5_S[i];
+      b = (b + (((f << s) | (f >>> (32 - s))) >>> 0)) >>> 0;
+    }
+    a0 = (a0 + a) >>> 0; b0 = (b0 + b) >>> 0;
+    c0 = (c0 + c) >>> 0; d0 = (d0 + d) >>> 0;
+  }
+  let out = "";
+  for (const w of [a0, b0, c0, d0]) {
+    for (let i = 0; i < 4; i++) out += ((w >>> (i * 8)) & 0xff).toString(16).padStart(2, "0");
+  }
+  return out;
+}
+
+// Static pages whose translation is served ONLY while it still matches the
+// English source it was made from.
+//
+// Every content_translations row carries source_hash, the md5 of the English
+// text at translation time. Nothing checked it at read time, so an edit to the
+// English copy left the old translation in place until a backfill ran. For
+// most pages that lag is cosmetic and a slightly old translation still beats
+// no translation at all.
+//
+// A page that states a fact about the reader's safety or their rights is
+// different. These five tell a reader what happens to the record they submit,
+// what they are agreeing to, who is paid for what, and which laser exposure
+// class the hardware in front of them is. A stale translation of one of those
+// states something that is no longer true, in the reader's own language, with
+// the authority of the page it sits on, and the reader has no way to know it
+// is out of date. English and correct beats translated and wrong here, so on a
+// hash mismatch these pages fall back to the English source instead of serving
+// the old translation.
+//
+// faq is on this list for the laser rating, not for the questions. On
+// 2026-08-29 the Spanish and German bodies read "Clase 3R, IIIa, por debajo de
+// 5 mW" and "Klasse 3R, IIIa, unter 5 mW", collapsing the per emitter ratings
+// into one kit-wide claim and dropping the ray box exception under 1 mW that
+// the English text states. That contradicts src/data/kits.ts, and a laser
+// class is a standard designation that is not translatable at all. An invented
+// safety rating in two languages is the same class of harm as a wrong
+// effective date, so faq is gated with the policy pages.
+//
+// Widening this is one line: add the static page key. Every page not listed
+// here keeps serving its existing translation exactly as before. One caution
+// before adding a page: four rows (protocol-guide es/de and timeline es/de)
+// store the sentinel "manual-2026-08-19" in source_hash instead of an md5.
+// Those are hand written translations flagged reviewed, they can never match a
+// computed hash, and gating either page would suppress them permanently and
+// serve English in their place. Give such a row a real md5 first.
+const HASH_GATED_STATIC_PAGES = new Set<string>([
+  "privacy",
+  "terms",
+  "disclosure",
+  "methods",
+  "faq",
+]);
+
 // Field-level translations for a single record. Returns {} for English, for a
 // missing table, or on any failure: a missing translation must NEVER blank the
 // source value.
+//
+// expectSourceHash, when given, is a field -> md5-of-current-English-source
+// map. A row for one of those fields is dropped when its stored source_hash
+// does not match, so the caller falls back to its English source. Fields not
+// named in the map, and every caller that passes nothing, are unaffected.
 async function getTranslations(
   table: string,
   recordId: string,
   locale: string,
+  expectSourceHash?: Record<string, string>,
 ): Promise<Record<string, string>> {
   if (locale === "en" || !locale || !recordId) return {};
   if (!SUPABASE_URL || !SUPABASE_KEY) return {};
@@ -156,7 +274,7 @@ async function getTranslations(
       `?table_name=eq.${encodeURIComponent(table)}` +
       `&record_id=eq.${encodeURIComponent(recordId)}` +
       `&locale=eq.${encodeURIComponent(locale)}` +
-      `&select=field,translated_text`;
+      `&select=field,translated_text,source_hash`;
     const res = await fetch(api, {
       headers: {
         apikey: SUPABASE_KEY,
@@ -170,7 +288,13 @@ async function getTranslations(
     for (const r of rows) {
       const f = String(r.field ?? "");
       const t = String(r.translated_text ?? "");
-      if (f && t.trim()) out[f] = t;
+      if (!f || !t.trim()) continue;
+      // Staleness gate. Only fields the caller named are checked, and a row
+      // whose stored hash does not match the English source it was made from
+      // is dropped so the caller serves English instead.
+      const want = expectSourceHash?.[f];
+      if (want && String(r.source_hash ?? "") !== want) continue;
+      out[f] = t;
     }
     return out;
   } catch {
@@ -1760,7 +1884,29 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
   const faqCopy = uiCopy("faq", locale);
   const title = faqCopy.title;
   const metaDesc = clip(faqCopy.description, 200);
-  const trs = await getTranslations("static", "faq", locale);
+
+  // The English source region, byte for byte what the translation pipeline
+  // extracts from between the tsrc markers below and hashes into
+  // content_translations.source_hash. Built once, used both for the hash and
+  // for the rendered fallback, so the value the gate tests and the value the
+  // page serves cannot drift apart. /faq renders here rather than through the
+  // shared static renderer, so it has to opt into the gate itself.
+  const faqEnSource = [
+    `<h1>Questions about the DMT Code project and preparing to observe</h1>`,
+    FAQ_GROUPS.map(
+      (g) => `<section><h2>${esc(g.heading)}</h2>
+    ${g.items.map((it) => `<section><h3>${esc(it.q)}</h3><p>${esc(it.a)}</p></section>`).join("\n    ")}
+  </section>`,
+    ).join("\n  "),
+    `<p>See the open data at <a href="${SITE}/registry">/registry</a>, <a href="${SITE}/dataset">/dataset</a>, and <a href="${SITE}/data.json">/data.json</a>. CC-BY-4.0.</p>`,
+  ].join("\n  ");
+
+  const trs = await getTranslations(
+    "static",
+    "faq",
+    locale,
+    HASH_GATED_STATIC_PAGES.has("faq") ? { body_html: md5Hex(faqEnSource) } : undefined,
+  );
 
   const organizationLd = {
     "@context": "https://schema.org",
@@ -1801,13 +1947,7 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
     ? `<article data-prerender="faq">${trs.body_html}</article>`
     : `<article data-prerender="faq">
   <!--tsrc:static:faq-->
-  <h1>Questions about the DMT Code project and preparing to observe</h1>
-  ${FAQ_GROUPS.map(
-    (g) => `<section><h2>${esc(g.heading)}</h2>
-    ${g.items.map((it) => `<section><h3>${esc(it.q)}</h3><p>${esc(it.a)}</p></section>`).join("\n    ")}
-  </section>`,
-  ).join("\n  ")}
-  <p>See the open data at <a href="${SITE}/registry">/registry</a>, <a href="${SITE}/dataset">/dataset</a>, and <a href="${SITE}/data.json">/data.json</a>. CC-BY-4.0.</p>
+  ${faqEnSource}
   <!--/tsrc-->
 </article>`;
 
@@ -2993,7 +3133,22 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         .join("")}</ul></section>`
     : "";
 
-  const trs = await getTranslations("static", key, locale);
+  // The English source region for this page, byte for byte what the
+  // translation pipeline extracts from between the tsrc markers below and
+  // hashes into content_translations.source_hash. Built once, used both for
+  // the hash and for the rendered fallback, so the value the gate tests and
+  // the value the page serves can never drift apart.
+  const enSource = [
+    `<h1>${esc(page.heading)}</h1>`,
+    ...page.paragraphs.map((p) => `<p>${esc(p)}</p>`),
+  ].join("\n  ");
+
+  const trs = await getTranslations(
+    "static",
+    key,
+    locale,
+    HASH_GATED_STATIC_PAGES.has(key) ? { body_html: md5Hex(enSource) } : undefined,
+  );
 
   // Structured data on /protocol-guide is locale aware: the FAQ entities and
   // the HowTo steps come from content_translations, English is the fallback,
@@ -3017,8 +3172,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <!--tsrc:static:${key}-->
-  <h1>${esc(page.heading)}</h1>
-  ${page.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("\n  ")}
+  ${enSource}
   <!--/tsrc-->
   ${bodyExtra}
   ${recentList}
