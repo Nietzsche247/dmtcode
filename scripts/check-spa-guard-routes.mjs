@@ -109,6 +109,9 @@ const CASES = [
   ["/registry", true, "index page"],
   ["/object-model", true, "published object model page"],
   ["/es/object-model", true, "object model, es mirror"],
+  ["/preregister", true, "prerendered research pre-registration page"],
+  ["/es/preregister", true, "pre-registration, es mirror"],
+  ["/de/preregister", true, "pre-registration, de mirror"],
   ["/", true, "home"],
   // Things that must still 404.
   ["/legal/atlantis", false, "country not in the editorial set"],

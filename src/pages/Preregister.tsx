@@ -1,22 +1,12 @@
-import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { PreregistrationForm } from '@/components/protocols/PreregistrationForm';
-import { localePath, useLocale } from '@/i18n/LocaleProvider';
+import { SEO } from '@/components/SEO';
 
 const Preregister = () => {
-  const locale = useLocale();
-
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Research pre-registration | DMT Code</title>
-        <meta
-          name="description"
-          content="Pre-register a proposed physiological instrumentation study for the DMT Code open research call."
-        />
-        <link rel="canonical" href={`https://dmtcode.com${localePath(locale, '/preregister')}`} />
-      </Helmet>
+      <SEO uiKey="preregister" path="/preregister" />
 
       <Navigation />
       <main id="main-content" className="container mx-auto max-w-4xl px-4 py-12 md:py-16">

@@ -599,6 +599,23 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Das Zeichenwerkzeug, um dem visuellen Register von DMT Code ein Symbol samt Beobachtungsmetadaten hinzuzufügen.",
     },
   },
+  preregister: {
+    en: {
+      title: "Research pre-registration | DMT Code",
+      description:
+        "Pre-register a proposed physiological instrumentation study for the DMT Code open research call.",
+    },
+    es: {
+      title: "Prerregistro de investigación | DMT Code",
+      description:
+        "Prerregistre un estudio propuesto de instrumentación fisiológica para la convocatoria abierta de investigación de DMT Code.",
+    },
+    de: {
+      title: "Forschungs-Präregistrierung | DMT Code",
+      description:
+        "Registrieren Sie eine geplante physiologische Instrumentierungsstudie vorab für den offenen Forschungsaufruf von DMT Code.",
+    },
+  },
   // Store policy pages. "Meridian Optics Lab" is the legal seller and is never
   // translated, and neither is the " | Meridian Optics Lab via DMT Code" suffix.
   shipping: {

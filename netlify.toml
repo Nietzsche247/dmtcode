@@ -227,6 +227,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/preregister"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/submit-symbol"
   function = "content-prerender"
 

@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const StoreContact = () => {
   return (
     <>
+      <SEO uiKey="store-contact" path="/store-contact" />
       <Helmet>
-        <title>Contact Information | Meridian Optics Lab via DMT Code</title>
-        <meta name="description" content="Contact details and response times for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <link rel="canonical" href="https://dmtcode.com/store-contact" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Contact Information | Meridian Optics Lab via DMT Code" />
-        <meta property="og:description" content="Contact details and response times for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <meta property="og:url" content="https://dmtcode.com/store-contact" />
         <meta property="og:type" content="website" />
       </Helmet>
 

@@ -37,7 +37,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
-  "dataset", "theories", "retreats",
+  "dataset", "theories", "retreats", "preregister",
   // NOTE: the legal and for-agents segments are deliberately absent. The events
   // module will add /legal/:country and /for-agents, but neither the React
   // router nor content-prerender serves them today, so allowing them here
@@ -48,7 +48,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   // Keep segment names out of quotes in this comment: the route test parses
   // every quoted string inside this literal.
   // Client only app routes that must stay 200 for humans
-  "auth", "admin", "submit", "submit-symbol", "join", "preregister", "volunteer",
+  "auth", "admin", "submit", "submit-symbol", "join", "volunteer",
   "co-witnesses", "waitlist", "log", "assess", "leaderboard",
   "correlations", "events", "dashboard", "profile", "my-symbols", "analysis",
   "tools", "bundles", "api", "contribute", "Elizabeth_Baker",

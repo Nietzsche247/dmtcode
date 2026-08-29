@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Returns = () => {
   return (
     <>
+      <SEO uiKey="returns" path="/returns" />
       <Helmet>
-        <title>Returns and Refunds | Meridian Optics Lab via DMT Code</title>
-        <meta name="description" content="Return eligibility, refund timelines and damaged item handling for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <link rel="canonical" href="https://dmtcode.com/returns" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Returns and Refunds | Meridian Optics Lab via DMT Code" />
-        <meta property="og:description" content="Return eligibility, refund timelines and damaged item handling for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <meta property="og:url" content="https://dmtcode.com/returns" />
         <meta property="og:type" content="website" />
       </Helmet>
 

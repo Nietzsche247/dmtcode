@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Privacy = () => {
   return (
     <>
+      <SEO uiKey="privacy" path="/privacy" />
       <Helmet>
-        <title>Privacy | DMT Code</title>
-        <meta name="description" content="What DMT Code collects, who processes it, and what becomes public." />
-        <link rel="canonical" href="https://dmtcode.com/privacy" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Privacy | DMT Code" />
-        <meta property="og:description" content="What DMT Code collects, who processes it, and what becomes public." />
-        <meta property="og:url" content="https://dmtcode.com/privacy" />
         <meta property="og:type" content="website" />
       </Helmet>
 

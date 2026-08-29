@@ -2790,6 +2790,25 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Help build it",
   },
+  preregister: {
+    title: "Research pre-registration | DMT Code",
+    description: "Pre-register a proposed physiological instrumentation study for the DMT Code open research call.",
+    heading: "Research pre-registration",
+    paragraphs: [
+      "A pre-registration records a study's hypothesis and methods before data collection. This open call is for researchers with ethics approval or access to physiological instrumentation who are planning relevant EEG, ECG, eye-tracking, or imaging work.",
+      "Writing the hypothesis and the method down first is what makes the result readable afterwards. A method described before the data exists cannot be rewritten to fit the data, so a null result stays a null result rather than becoming a different question that happened to work.",
+      "The form asks for a title, the hypothesis, a summary of the method, and a contact email. It also takes the instruments you plan to use, an ORCID, and an affiliation, and those three are optional. No account is needed to submit one.",
+      "A submitted pre-registration goes into the research intake queue. An administrator can inspect it and may contact you at the email address you gave. No review timeline is promised.",
+      "Submitting a pre-registration does not enrol you in a study, does not oblige you to run the work, and is not an approval, an endorsement, or an offer of funding or equipment. Ethics approval and instrument access remain yours to arrange.",
+    ],
+    links: [
+      { href: "/protocols", label: "Protocols" },
+      { href: "/methods", label: "Methods" },
+      { href: "/research", label: "Research" },
+      { href: "/trials", label: "Clinical trials" },
+    ],
+    breadcrumbName: "Pre-registration",
+  },
   "submit-symbol": {
     title: "Submit a symbol to the registry | DMT Code",
     description: "The drawing tool for adding a symbol to the DMT Code visual registry with its observation metadata. Open to anyone, with no account required.",
@@ -3105,6 +3124,7 @@ export const config: Config = {
     "/capture",
     "/co-witnesses",
     "/join",
+    "/preregister",
     "/submit-symbol",
     // Locale mirrors. Netlify honours this in-file config over netlify.toml,
     // so the /es and /de trees must be listed here or the function never runs

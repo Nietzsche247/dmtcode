@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
@@ -85,14 +86,9 @@ const BREADCRUMB_LD = {
 const TheDiscovery = () => {
   return (
     <>
+      <SEO uiKey="the-discovery" path="/the-discovery" />
       <Helmet>
-        <title>{PAGE_TITLE}</title>
-        <meta name="description" content={PAGE_DESCRIPTION} />
-        <link rel="canonical" href="https://dmtcode.com/the-discovery" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content={PAGE_TITLE} />
-        <meta property="og:description" content={PAGE_DESCRIPTION} />
-        <meta property="og:url" content="https://dmtcode.com/the-discovery" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={PAGE_TITLE} />

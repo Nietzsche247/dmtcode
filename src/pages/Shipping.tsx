@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Shipping = () => {
   return (
     <>
+      <SEO uiKey="shipping" path="/shipping" />
       <Helmet>
-        <title>Shipping Policy | Meridian Optics Lab via DMT Code</title>
-        <meta name="description" content="Shipping timelines, tracking, packaging and international terms for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <link rel="canonical" href="https://dmtcode.com/shipping" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Shipping Policy | Meridian Optics Lab via DMT Code" />
-        <meta property="og:description" content="Shipping timelines, tracking, packaging and international terms for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <meta property="og:url" content="https://dmtcode.com/shipping" />
         <meta property="og:type" content="website" />
       </Helmet>
 

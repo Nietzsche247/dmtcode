@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const StoreTerms = () => {
   return (
     <>
+      <SEO uiKey="store-terms" path="/store-terms" />
       <Helmet>
-        <title>Terms of Service | Meridian Optics Lab via DMT Code</title>
-        <meta name="description" content="Purchase terms, laser safety requirements, liability and governing law for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <link rel="canonical" href="https://dmtcode.com/store-terms" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Terms of Service | Meridian Optics Lab via DMT Code" />
-        <meta property="og:description" content="Purchase terms, laser safety requirements, liability and governing law for Meridian Optics Lab, the store of record for DMT Code kits." />
-        <meta property="og:url" content="https://dmtcode.com/store-terms" />
         <meta property="og:type" content="website" />
       </Helmet>
 

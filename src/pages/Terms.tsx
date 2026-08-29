@@ -1,19 +1,15 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Terms = () => {
   return (
     <>
+      <SEO uiKey="terms" path="/terms" />
       <Helmet>
-        <title>Terms | DMT Code</title>
-        <meta name="description" content="The terms you agree to when you use DMT Code or contribute to it." />
-        <link rel="canonical" href="https://dmtcode.com/terms" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Terms | DMT Code" />
-        <meta property="og:description" content="The terms you agree to when you use DMT Code or contribute to it." />
-        <meta property="og:url" content="https://dmtcode.com/terms" />
         <meta property="og:type" content="website" />
       </Helmet>
 

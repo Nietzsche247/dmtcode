@@ -9,11 +9,7 @@ const Disclosure = () => {
     <>
       <SEO uiKey="disclosure" path="/disclosure" />
       <Helmet>
-        <title>Disclosure | DMT Code</title>
-        <meta name="description" content="How this project makes money, who we have relationships with, and where the conflicts are." />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Disclosure | DMT Code" />
-        <meta property="og:description" content="How this project makes money, who we have relationships with, and where the conflicts are." />
         <meta property="og:type" content="website" />
       </Helmet>
 
