@@ -88,7 +88,11 @@ check('null reports page carries live counts', /Null reports: <strong>\d+<\/stro
 // the retired English claim must not survive in any language.
 const RETIRED_CLAIMS = [
   { path: '/trials', strings: ['Observatorio de Ensayos Clínicos', 'Klinische Studien Observatorium', 'seguimiento de los ensayos clínicos'], why: 'frames every record as a clinical trial' },
-  { path: '/events', strings: ['revisados por moderadores antes', 'von Moderatoren geprüft, bevor'], why: 'claims moderator review beside auto-discovered rows' },
+  // /events is checked below instead of here. The retired claim was that every
+  // listing is moderator reviewed. The current copy still says submitted events
+  // are reviewed before publication, which is true, and then states the scraper
+  // exception. Banning the review phrase would fail on correct copy, so the
+  // invariant is the exception clause, not the absence of the review clause.
   { path: '/privacy', strings: ['24 de julio', '24. Juli'], why: 'superseded effective date' },
   { path: '/methods', strings: ['Utilice una apertura bloqueada', 'Verwenden Sie eine blockierte Blende'], why: 'blocked-aperture sham' },
 ];
@@ -98,6 +102,16 @@ for (const { path, strings, why } of RETIRED_CLAIMS) {
     const hit = strings.find((s) => html.includes(s));
     check(`/${loc}${path} free of retired claim (${why})`, !hit, hit || '');
   }
+}
+
+// /events in every language has to carry the scraper exception, because the page
+// also says submitted events are reviewed before publication and it renders rows
+// that no editor has verified. One without the other is the contradiction the
+// audit found.
+for (const loc of ['en', 'es', 'de']) {
+  const html = await get(loc === 'en' ? '/events' : `/${loc}/events`);
+  const exception = /auto-discovered|auto-descubiert|candidato|automatisch entdeckt|Kandidat/i.test(html);
+  check(`${loc} /events states the auto-discovered exception`, exception);
 }
 
 // 9. Shopify. The store is the one surface whose copy is written by hand rather
@@ -259,9 +273,18 @@ const APPROVAL_FIRST = [
   /wird[^.]{0,60}?(?:erst )?nach (?:der )?(?:Genehmigung|Freigabe|Pr[üu]fung)[^.]{0,40}?ver[öo]ffentlicht/i,
 ];
 
+// The three locale mirrors of a page are compared against each other, so they
+// have to be rendered from the same moment. Netlify caches per full URL for an
+// hour, so without a per-run nonce one locale can answer from a cached render
+// made before an event was scraped while another renders fresh, and the diff
+// reports a drift that does not exist. A request-collapsing header does not
+// help: the cached copy is already stored. A nonce forces all three to origin.
+const RUN_NONCE = `pv${Date.now().toString(36)}`;
+const bust = (p) => p + (p.includes('?') ? '&' : '?') + RUN_NONCE + '=1';
+
 const getLocale = async (p) => {
   try {
-    const r = await fetch(SITE + p, { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
+    const r = await fetch(SITE + bust(p), { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
     if (!r.ok) return null;
     return await r.text();
   } catch {
@@ -309,7 +332,24 @@ if (localeDown) {
     const enDates = datesIn(en.text);
     for (const loc of translated) {
       const got = datesIn(localeDocs[`${id}|${loc}`].text);
-      const missing = [...enDates].filter((x) => !got.has(x));
+      let missing = [...enDates].filter((x) => !got.has(x));
+      // The list pages render a capped slice of a live table, so a row written
+      // between the English fetch and the mirror fetch moves the boundary and
+      // drops the last date from one of them. That is a race in this script,
+      // not drift on the site. Confirm a mismatch against a fresh pair before
+      // failing, and only report the dates that survive both reads.
+      if (missing.length) {
+        const [enFresh, locFresh] = await Promise.all([
+          getLocale(localePath('en', path)),
+          getLocale(localePath(loc, path)),
+        ]);
+        if (enFresh && locFresh) {
+          const strip = (h) => (h.match(/<article data-prerender="[^"]*"[\s\S]*?<\/article>/) || [''])[0]
+            .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+          const gotFresh = datesIn(strip(locFresh));
+          missing = [...datesIn(strip(enFresh))].filter((x) => !gotFresh.has(x));
+        }
+      }
       check(`${loc} /${id} states every date English states`, missing.length === 0, missing.join(', '));
     }
 
