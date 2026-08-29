@@ -499,6 +499,14 @@ export default async (request: Request, context: Context) => {
     if (kind === "people" && seg.length >= 2) {
       return await notFoundPrerender(context);
     }
+    // /products/:handle, keyed by the `handle` field in netlify/lib/kits.ts.
+    // An unknown handle 404s here rather than falling through to the SPA shell.
+    if (kind === "products" && seg.length === 2 && seg[1]) {
+      return await renderProductPage(context, seg[1], locale);
+    }
+    if (kind === "products" && seg.length >= 3) {
+      return await notFoundPrerender(context);
+    }
     if (seg.length === 0) {
       return await renderStatic(context, "home", locale);
     }
@@ -3312,6 +3320,7 @@ export const config: Config = {
     "/faq",
     "/people",
     "/people/*",
+    "/products/*",
     "/events",
     "/events/*",
     "/retreats",
@@ -5661,3 +5670,158 @@ async function renderSimplePersonPage(
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
+
+// ---------- Products: kit drill-down pages ----------
+// /products/:handle is a parameterised route, so it follows the same shape as
+// /people/:slug rather than the STATIC_PAGES table: one wildcard entry in
+// config.path and in netlify.toml, and a lookup here that 404s an unknown key.
+// The difference is that the key set is not a literal in this file. It is the
+// `handle` field on each kit in netlify/lib/kits.ts, the mirror of
+// src/data/kits.ts, so the prerendered pages and the catalogue cannot disagree
+// about which kits exist. The contents list and the per emitter table below are
+// rendered from that same array as real text, not injected by script, so a
+// crawler reads the bill of materials without executing anything.
+
+function observerPhrase(kit: (typeof KITS)[number]): string {
+  return kit.observers === "1" ? "1 observer" : `${kit.observers} observers`;
+}
+
+async function renderProductPage(
+  context: Context,
+  handle: string,
+  locale: Loc = "en",
+): Promise<Response> {
+  const kit = KITS.find((k) => k.handle === handle);
+  if (!kit) return await notFoundPrerender(context);
+
+  const shellRes = await context.next();
+  const canonicalPath = `/products/${kit.handle}`;
+  const canonical = `${SITE}${canonicalPath}`;
+  const copy = uiCopy(`product-${kit.id}`, locale);
+
+  const contentsRows = kit.contents
+    .map(
+      (c) => `      <tr>
+        <td>${esc(c.sku)}</td>
+        <td>${esc(c.name)}${c.note ? ` (${esc(c.note)})` : ""}</td>
+        <td>${c.qty}</td>
+      </tr>`,
+    )
+    .join("\n");
+
+  // One row per light source. A multi emitter kit has no single laser class, so
+  // this is never collapsed into a blanket line. Class designations are standard
+  // identifiers and are emitted exactly as the vendor states them.
+  const emitterRows = kit.emitters
+    .map(
+      (e) => `      <tr>
+        <td>${esc(e.name)} (${esc(e.sku)})</td>
+        <td>${esc(e.wavelength_nm)} nm</td>
+        <td>${esc(e.vendor_output)}</td>
+        <td translate="no">${esc(e.vendor_class)}</td>
+      </tr>`,
+    )
+    .join("\n");
+
+  const classSentence =
+    kit.emitters.length > 1
+      ? "This kit has more than one light source, so it has no single laser class. Each source is rated separately below."
+      : "Vendor rating for the single light source in this kit.";
+
+  const productLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${canonical}#product`,
+    name: kit.name,
+    description: kit.description,
+    sku: kit.sku,
+    url: canonical,
+    image: kit.photos.map((p) => p.url),
+    brand: { "@type": "Brand", name: "Meridian Optics Lab" },
+    offers: {
+      "@type": "Offer",
+      url: kit.cart,
+      price: kit.priceNumber,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      seller: { "@type": "Organization", name: "Meridian Optics Lab" },
+    },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Prepare", item: `${SITE}/prepare` },
+      { "@type": "ListItem", position: 3, name: kit.name, item: canonical },
+    ],
+  };
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE}#org`,
+    name: "DMT Code",
+    url: SITE,
+    logo: `${SITE}/favicon.svg`,
+  };
+
+  const body = `<article data-prerender="product-${esc(kit.id)}">
+  <h1>${esc(kit.name)}</h1>
+  <p>${esc(kit.shortName)}, ${esc(observerPhrase(kit))}, ${kit.emitters.length === 1 ? "1 light source" : `${kit.emitters.length} light sources`}.</p>
+  <p><strong>${esc(kit.price)}</strong></p>
+  <p>Parts at Arbor list: ${esc(kit.diyCost)}. The difference covers sourcing, one shipment and support.</p>
+  <p>${esc(kit.description)}</p>
+  <p>${esc(kit.availability)} Processed within 2 business days.</p>
+  <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
+  <section data-block="kit-contents">
+    <h2>What is in the box</h2>
+    <p>Every part shipped with this kit, with the Arbor Scientific part number and the quantity. This is the list the supplier order is placed from.</p>
+    <table>
+      <caption>${esc(kit.shortName)} kit bill of materials</caption>
+      <tr><th>Part</th><th>Item</th><th>Qty</th></tr>
+${contentsRows}
+    </table>
+  </section>
+  <section data-block="kit-emitters">
+    <h2>Laser safety, per emitter</h2>
+    <p>${classSentence}</p>
+    <table>
+      <caption>${esc(kit.shortName)} kit vendor laser ratings per emitter</caption>
+      <tr><th>Emitter</th><th>Wavelength</th><th>Vendor rated output</th><th>Vendor class</th></tr>
+${emitterRows}
+    </table>
+    <p>Do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path. Not for children 12 and under.</p>
+  </section>
+  <section data-block="kit-photos">
+    <h2>Photographs</h2>
+    <p>${kit.photos.length} photographs. Components are photographed individually as they ship.</p>
+${kit.photos
+  .map(
+    (p, i) =>
+      `    <img src="${esc(p.url)}" alt="${esc(p.alt)}" width="2048" height="2048"${i === 0 ? "" : ' loading="lazy"'} />`,
+  )
+  .join("\n")}
+  </section>
+  <p><a href="${esc(kit.cart)}">Buy now - secure Shopify checkout</a></p>
+  <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
+  <p><a href="${SITE}/prepare">Back to all four kits</a>, <a href="${SITE}/returns">shipping and returns</a>, machine readable catalogue at <a href="${SITE}/shop.json">/shop.json</a>.</p>
+  <script type="application/ld+json">${jsonLd(productLd)}</script>
+  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
+</article>`;
+
+  const head = buildHead({
+    locale,
+    title: copy.title,
+    description: copy.description,
+    canonical,
+    canonicalPath,
+    ogType: "website",
+    ogImage: kit.photos[0]?.url,
+    jsonLd: [organizationLd, breadcrumbLd, productLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}

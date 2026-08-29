@@ -106,7 +106,7 @@ function buildSellerLine(kits) {
 }
 
 const SHOP_JSON_LINE =
-  '- /shop.json: the four research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url, emitters with per emitter vendor rated output and class), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
+  '- /shop.json: the four research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url, product_url, emitters with per emitter vendor rated output and class, contents with the full bill of materials as part number, name, qty), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
 
 const PREPARE_PAGE_LINE =
   '- [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.';
@@ -115,7 +115,8 @@ function buildBlock(kits) {
   const bullets = kits
     .map(
       (k) =>
-        `- ${k.shortName} (${observerPhrase(k)}): ${k.price}. Sourcing the parts yourself ≈ ${k.diyCost}. Cart: ${k.cart}`,
+        `- ${k.shortName} (${observerPhrase(k)}): ${k.price}. Sourcing the parts yourself ≈ ${k.diyCost}. ` +
+        `Full contents, part numbers and photos: /products/${k.handle}. Cart: ${k.cart}`,
     )
     .join('\n');
   return `${START}\n## Kits\n\n${bullets}\n\n${buildSellerLine(kits)}\n${END}`;

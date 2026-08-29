@@ -21,10 +21,14 @@ export default async () => {
       diy_parts_usd: kit.diyCostNumber,
       emitters: kit.emitters,
       laser_class_note: "Per emitter vendor ratings. A multi emitter kit has no single class; read emitters[].",
+      // The full bill of materials. qty is the number of vendor units, so a
+      // pack counts as 1 and the pack size is stated in note.
+      contents: kit.contents,
       availability: kit.availability,
       cart_url: kit.cart,
       image: kit.image,
       url: `${SITE}/prepare#${kit.id}`,
+      product_url: `${SITE}/products/${kit.handle}`,
     })),
   };
 

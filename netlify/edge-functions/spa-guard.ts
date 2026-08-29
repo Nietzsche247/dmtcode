@@ -62,14 +62,17 @@ const VALID_FIRST_SEGMENT = new Set<string>([
 
 const ASSET_RE = /\.[a-z0-9]{2,5}$/i;
 
-// /products/:handle is a branded detail page backed by the Shopify Storefront
-// API. Only these live storefront handles resolve to a product; anything else
-// must 404 instead of serving the SPA shell with a 200.
-// Mirrored from src/hooks/useBundleAvailability.tsx (bundleShopifyHandles).
-// Edge functions run in Deno and cannot import from src/, so keep this list in
-// sync with that map when a kit handle changes.
+// /products/:handle is the kit drill-down page, rendered from the catalogue in
+// src/data/kits.ts. Only these live storefront handles resolve to a product;
+// anything else must 404 instead of serving the SPA shell with a 200.
+// Mirrored from the `handle` field on each kit in src/data/kits.ts, which is
+// the canonical catalogue. Edge functions run in Deno and cannot import from
+// src/, so keep this list in sync when a kit handle changes. Every handle here
+// must also be prerendered by content-prerender.ts, or the page returns the
+// empty SPA shell at 200, which is a soft 404 and worse than an honest one.
 const PRODUCT_HANDLES = new Set<string>([
   "650nm-laser-diffraction-research-kit-solo",
+  "dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm",
   "multi-wavelength-laser-diffraction-kit-triad",
   "multi-wavelength-laser-diffraction-kit-circle",
 ]);

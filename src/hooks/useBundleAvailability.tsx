@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { storefrontApiRequest } from '@/lib/shopify';
 
-// Shared source of truth for bundle availability, keyed by the Supabase bundle
-// slug used on /prepare and mapped to the real live Shopify product handles.
+// Live Shopify availability, keyed by the Supabase bundle slug used on /prepare.
+// NOT the source of truth for kit handles: that is the `handle` field on each
+// kit in src/data/kits.ts, which /products/:handle, spa-guard.ts, sitemap.ts and
+// content-prerender.ts all read. This map is a partial legacy list and is not
+// currently consumed by any page. Do not copy handles out of it.
 export const bundleShopifyHandles: Record<string, string> = {
   solo: '650nm-laser-diffraction-research-kit-solo',
   triad: 'multi-wavelength-laser-diffraction-kit-triad',

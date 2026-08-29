@@ -103,6 +103,18 @@ const CASES = [
   ["/events/2742ec61-d88e-4f38-8efe-3cdbe049d91a", true, "legacy event uuid"],
   ["/retreats/5de102fc-1ade-409c-bffc-75567033b5e5", true, "legacy retreat uuid"],
   ["/trials/3745de0d-0921-4fd7-b1ce-946459186115", true, "trial uuid"],
+  // Kit drill-down pages. One case per handle in src/data/kits.ts, because a
+  // handle the guard does not know about 404s no matter what the prerenderer
+  // or the React router do, and a missing handle is invisible until someone
+  // clicks "Full details and photos" on /prepare and lands on a 404.
+  ["/products/650nm-laser-diffraction-research-kit-solo", true, "Solo kit page"],
+  ["/products/dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm", true, "Dual kit page"],
+  ["/products/multi-wavelength-laser-diffraction-kit-triad", true, "Triad kit page"],
+  ["/products/multi-wavelength-laser-diffraction-kit-circle", true, "Circle kit page"],
+  ["/es/products/650nm-laser-diffraction-research-kit-solo", true, "Solo kit page, es mirror"],
+  ["/de/products/multi-wavelength-laser-diffraction-kit-circle", true, "Circle kit page, de mirror"],
+  ["/products/not-a-real-kit", false, "handle is not in the catalogue"],
+  ["/products/null", false, "stringified null in the handle position"],
   // Existing behaviour that must not regress.
   ["/articles/does-dmt-model-the-near-death-experience", true, "article slug"],
   ["/people/danny-goler", true, "static profile"],

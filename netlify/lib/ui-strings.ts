@@ -707,6 +707,78 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "The Discovery ist ein unabhängiger Dokumentarfilm über die von Danny Goler berichtete Laserbeobachtung mit 650 nm und N,N-DMT. Premierenzeitraum, Ticketstatus und was bestätigt ist und was nicht.",
     },
   },
+  // One key per kit drill-down page at /products/<handle>, keyed product-<kit.id>.
+  // Prices are deliberately absent: they live in src/data/kits.ts and would go
+  // stale here. Laser class designations are absent too, so nothing in this
+  // dictionary can restate a class in translated form.
+  "product-solo": {
+    en: {
+      title: "Solo kit: 650 nm laser diffraction research kit for one observer | DMT Code",
+      description:
+        "Every part in the Solo kit with Arbor part numbers and quantities, the full photo set, and the vendor laser rating. Built for a single observer at 650 nm.",
+    },
+    es: {
+      title: "Kit Solo: kit de investigación de difracción láser de 650 nm para un observador | DMT Code",
+      description:
+        "Todas las piezas del kit Solo con sus números de pieza Arbor y cantidades, el juego completo de fotos y la clasificación láser del fabricante. Para un solo observador a 650 nm.",
+    },
+    de: {
+      title: "Solo-Kit: 650 nm Laserbeugungs-Forschungskit für einen Beobachter | DMT Code",
+      description:
+        "Alle Teile des Solo-Kits mit Arbor-Teilenummern und Mengen, der vollständige Fotosatz und die Herstellerangabe zur Laserklasse. Für einen einzelnen Beobachter bei 650 nm.",
+    },
+  },
+  "product-dual": {
+    en: {
+      title: "Dual kit: 650 and 532 nm laser diffraction research kit for one to two observers | DMT Code",
+      description:
+        "Every part in the Dual kit with Arbor part numbers and quantities, the full photo set, and the vendor laser rating. One switchable source covering 650 and 532 nm.",
+    },
+    es: {
+      title: "Kit Dual: kit de investigación de difracción láser de 650 y 532 nm para uno o dos observadores | DMT Code",
+      description:
+        "Todas las piezas del kit Dual con sus números de pieza Arbor y cantidades, el juego completo de fotos y la clasificación láser del fabricante. Una fuente conmutable de 650 y 532 nm.",
+    },
+    de: {
+      title: "Dual-Kit: 650 und 532 nm Laserbeugungs-Forschungskit für ein bis zwei Beobachter | DMT Code",
+      description:
+        "Alle Teile des Dual-Kits mit Arbor-Teilenummern und Mengen, der vollständige Fotosatz und die Herstellerangabe zur Laserklasse. Eine umschaltbare Quelle für 650 und 532 nm.",
+    },
+  },
+  "product-triad": {
+    en: {
+      title: "Triad kit: 650 and 405 nm laser diffraction research kit for two to three observers | DMT Code",
+      description:
+        "Every part in the Triad kit with Arbor part numbers and quantities, the full photo set, and vendor ratings listed per emitter. Two light sources covering 650 and 405 nm.",
+    },
+    es: {
+      title: "Kit Triad: kit de investigación de difracción láser de 650 y 405 nm para dos o tres observadores | DMT Code",
+      description:
+        "Todas las piezas del kit Triad con sus números de pieza Arbor y cantidades, el juego completo de fotos y las clasificaciones del fabricante por cada emisor. Dos fuentes de luz: 650 y 405 nm.",
+    },
+    de: {
+      title: "Triad-Kit: 650 und 405 nm Laserbeugungs-Forschungskit für zwei bis drei Beobachter | DMT Code",
+      description:
+        "Alle Teile des Triad-Kits mit Arbor-Teilenummern und Mengen, der vollständige Fotosatz und die Herstellerangaben je Emitter. Zwei Lichtquellen mit 650 und 405 nm.",
+    },
+  },
+  "product-circle": {
+    en: {
+      title: "Circle kit: 650, 532 and 405 nm laser diffraction research kit for up to six observers | DMT Code",
+      description:
+        "Every part in the Circle kit with Arbor part numbers and quantities, the full photo set, and vendor ratings listed per emitter. Three light sources covering 650, 532 and 405 nm.",
+    },
+    es: {
+      title: "Kit Circle: kit de investigación de difracción láser de 650, 532 y 405 nm para hasta seis observadores | DMT Code",
+      description:
+        "Todas las piezas del kit Circle con sus números de pieza Arbor y cantidades, el juego completo de fotos y las clasificaciones del fabricante por cada emisor. Tres fuentes de luz: 650, 532 y 405 nm.",
+    },
+    de: {
+      title: "Circle-Kit: 650, 532 und 405 nm Laserbeugungs-Forschungskit für bis zu sechs Beobachter | DMT Code",
+      description:
+        "Alle Teile des Circle-Kits mit Arbor-Teilenummern und Mengen, der vollständige Fotosatz und die Herstellerangaben je Emitter. Drei Lichtquellen mit 650, 532 und 405 nm.",
+    },
+  },
 };
 
 /**
