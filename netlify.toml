@@ -103,6 +103,13 @@
   path = "/prepare"
   function = "content-prerender"
 
+# The document index. Only the bare path is registered: the PDF files under
+# /downloads/ are static assets and must keep being served as files, never
+# routed through the prerender.
+[[edge_functions]]
+  path = "/downloads"
+  function = "content-prerender"
+
 [[edge_functions]]
   path = "/evidence-map"
   function = "content-prerender"
