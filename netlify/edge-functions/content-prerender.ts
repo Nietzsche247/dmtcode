@@ -2542,7 +2542,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 <section data-prerender="research-mechanistic">
   <h2>Mechanistic science</h2>
   <p>What optics and vision science already know that could produce a repeatable form without anything exotic: laser speckle, the geometry of the visual cortex, predictive processing, and the classic hallucinatory form constants. If one of these accounts for the reports, that is the answer, and it would be a real one.</p>
-  <p>This is the thinnest strand in the research library and the part most worth filling. <a href="${SITE}/bibliography">Browse the library</a> and send additions to info@dmtcode.com.</p>
+  <p>Additions to this strand are the ones most worth having, since a conventional optical or cortical account would settle the question. <a href="${SITE}/bibliography">Browse the library</a> and send additions to info@dmtcode.com.</p>
 </section>
 <section data-prerender="research-dmt-science">
   <h2>DMT science</h2>
@@ -2561,12 +2561,12 @@ const STATIC_PAGES: Record<string, StaticPage> = {
 </section>
 <section data-prerender="research-open-projects">
   <h2>Open projects</h2>
-  <p>No external collaboration is recorded on this page yet. When one is agreed it will be listed here with the collaborator named, and not before.</p>
+  <p>Collaborations are listed on this page as they are agreed, with the collaborator named, and not before.</p>
   <ul>
     <li>Proposed studies: the blinded arm is designed and unfunded. The design is public on <a href="${SITE}/methods">Methods</a> and the questions it would settle are tracked on <a href="${SITE}/open-questions">open questions</a>.</li>
     <li>Research recruitment: analysts, recorders and translators can volunteer through <a href="${SITE}/join">join</a>. Observers who want to record before browsing start at <a href="${SITE}/capture">capture</a>.</li>
     <li>Datasets needing analysis: the corpus is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0, with field definitions on <a href="${SITE}/dataset">dataset</a>. The two symbol counts are not synonyms; the <a href="${SITE}/object-model">object model</a> explains what each one counts.</li>
-    <li>Active collaborations: none recorded. Write to info@dmtcode.com. The licence is CC-BY-4.0, so nothing here needs our permission.</li>
+    <li>Active collaborations: listed here as they are agreed. Researchers who want to use the corpus or run a study with it can write to info@dmtcode.com. The licence is CC-BY-4.0, so nothing here needs our permission.</li>
   </ul>
 </section>`,
   },

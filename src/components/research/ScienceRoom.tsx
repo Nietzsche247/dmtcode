@@ -233,8 +233,9 @@ export const ScienceRoom = () => {
             <CitationList rows={mechanism} />
             <p className="text-sm text-muted-foreground mt-4">
               {mechanism.length} of {bib.length} indexed records touch this
-              strand. It is the thinnest part of the library and the part most
-              worth filling.
+              strand. Additions here are the ones most worth having, since a
+              conventional optical or cortical account would settle the
+              question.
             </p>
           </>
         )}
@@ -314,7 +315,7 @@ export const ScienceRoom = () => {
         id="open-projects"
         n="05"
         title="Open projects"
-        lede="What is open to work on right now. No external collaboration is recorded on this page yet. When one is agreed it will be listed here with the collaborator named, and not before."
+        lede="What is open to work on right now. Collaborations are listed on this page as they are agreed, with the collaborator named, and not before."
       >
         <ul className="space-y-3 text-sm">
           <li>
@@ -359,8 +360,8 @@ export const ScienceRoom = () => {
           </li>
           <li>
             <strong className="text-foreground">Active collaborations.</strong>{' '}
-            None recorded. Researchers who want to use the corpus or run a study
-            with it can write to{' '}
+            Listed here as they are agreed. Researchers who want to use the
+            corpus or run a study with it can write to{' '}
             <a href="mailto:info@dmtcode.com" className="text-primary hover:underline">
               info@dmtcode.com
             </a>

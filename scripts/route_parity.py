@@ -20,7 +20,20 @@ PRERENDERED_NOT_IN_SITEMAP = {
     "/submit-symbol": "server rendered but deliberately noindex (see sitemap.ts comment)",
 }
 # Sitemap entries that are deliberately NOT literal prerender routes.
-SITEMAP_NOT_PRERENDERED = {}
+SITEMAP_NOT_PRERENDERED = {
+    "/agent/": "hand written static file at public/agent/index.html, served by "
+               "the CDN and never routed through content-prerender",
+}
+# Sitemap prefixes holding files rather than pages. A PDF is served straight from
+# the CDN, has no head tags, and is never routed through content-prerender, so
+# both the route diff and the head checks below have to leave it alone. Same
+# rule as the dicts above: every prefix needs a stated reason.
+SITEMAP_ASSET_PREFIXES = {
+    "/downloads/": "protocol and field sheet PDFs served from public/downloads/",
+}
+
+def is_sitemap_asset(p):
+    return any(p.startswith(pre) for pre in SITEMAP_ASSET_PREFIXES)
 
 results = []
 def check(name, ok, detail=""):
@@ -70,7 +83,23 @@ sm_paths = [u[len(SITE):] or "/" for u in sm_urls if u.startswith(SITE)]
 sm_set = set(sm_paths)
 check("sitemap has URLs", len(sm_paths) > 0, len(sm_paths))
 
+def is_locale_path(p):
+    """True for the /es and /de mirrors. Written out rather than using
+    startswith on a bare prefix, because "/dataset" starts with "/de"."""
+    return any(p == f"/{loc}" or p.startswith(f"/{loc}/") for loc in LOCALES)
+
 def covered_by_wildcard(p):
+    if is_locale_path(p):
+        # A locale URL is served when its mirror wildcard exists AND the English
+        # route behind it is itself prerendered. Checking the English route keeps
+        # the blind spot visible: /de/nonsense is still reported as uncovered.
+        loc = p[1:3]
+        if f"/{loc}/*" not in locale_mirrors:
+            return False
+        rest = p[len(loc) + 1:] or "/"
+        if rest == "/" or rest in literal:
+            return True
+        return any(rest.startswith(w + "/") for w in wildcard)
     return any(p.startswith(w + "/") for w in wildcard)
 
 # ---------- 3. the two-way diff ----------
@@ -87,6 +116,7 @@ missing_from_routes = [
     if p not in literal
     and not covered_by_wildcard(p)
     and p not in SITEMAP_NOT_PRERENDERED
+    and not is_sitemap_asset(p)
 ]
 check("every sitemap URL is served by the prerender route table",
       not missing_from_routes,
@@ -97,13 +127,21 @@ for p, reason in PRERENDERED_NOT_IN_SITEMAP.items():
     check(f"documented exclusion still applies: {p} is a prerender route", p in literal, reason)
 for p, reason in SITEMAP_NOT_PRERENDERED.items():
     check(f"documented exclusion still applies: {p} is in the sitemap", p in sm_set, reason)
+for pre, reason in SITEMAP_ASSET_PREFIXES.items():
+    check(f"documented exclusion still applies: {pre} holds sitemap entries",
+          any(p.startswith(pre) for p in sm_paths), reason)
 
 # ---------- 4. head correctness on real pages ----------
 # FULL (schedule / manual): every English sitemap URL, plus locale variants for
 # the index routes. Detail-page locale variants are deliberately not swept — the
 # title check excludes them anyway, and they triple the run for no new signal.
 # SAMPLE (push): the index routes plus a slice of detail pages, ~40s.
-targets = sm_paths if FULL else literal + [p for p in sm_paths if p.count("/") > 1][:12]
+# The locale mirrors are probed by prefixing an English route below, so they are
+# excluded from the English work list. Leaving them in probed /es/es/ and
+# asserted lang="en" on a Spanish page: two failures that were artefacts of the
+# work list, not defects on the site.
+en_sm_paths = [p for p in sm_paths if not is_locale_path(p) and not is_sitemap_asset(p)]
+targets = en_sm_paths if FULL else literal + [p for p in en_sm_paths if p.count("/") > 1][:12]
 # /agent/ and friends are static files, not prerendered pages. They are covered
 # by the diff above; asserting prerender head tags on them is a false positive.
 targets = [t for t in dict.fromkeys(targets) if t not in SITEMAP_NOT_PRERENDERED]

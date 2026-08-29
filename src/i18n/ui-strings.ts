@@ -605,6 +605,97 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Das Zeichenwerkzeug, um dem visuellen Register von DMT Code ein Symbol samt Beobachtungsmetadaten hinzuzufügen.",
     },
   },
+  // Store policy pages. "Meridian Optics Lab" is the legal seller and is never
+  // translated, and neither is the " | Meridian Optics Lab via DMT Code" suffix.
+  shipping: {
+    en: {
+      title: "Shipping Policy | Meridian Optics Lab via DMT Code",
+      description:
+        "Shipping timelines, tracking, packaging and international terms for Meridian Optics Lab, the store of record for DMT Code kits.",
+    },
+    es: {
+      title: "Política de envíos | Meridian Optics Lab via DMT Code",
+      description:
+        "Plazos de envío, seguimiento, embalaje y condiciones internacionales de Meridian Optics Lab, la tienda de registro de los kits de DMT Code.",
+    },
+    de: {
+      title: "Versandrichtlinie | Meridian Optics Lab via DMT Code",
+      description:
+        "Versandzeiten, Sendungsverfolgung, Verpackung und internationale Bedingungen von Meridian Optics Lab, dem Verkäufer der DMT-Code-Kits.",
+    },
+  },
+  returns: {
+    en: {
+      title: "Returns and Refunds | Meridian Optics Lab via DMT Code",
+      description:
+        "Return eligibility, refund timelines and damaged item handling for Meridian Optics Lab, the store of record for DMT Code kits.",
+    },
+    es: {
+      title: "Devoluciones y reembolsos | Meridian Optics Lab via DMT Code",
+      description:
+        "Condiciones de devolución, plazos de reembolso y gestión de artículos dañados de Meridian Optics Lab, la tienda de registro de los kits de DMT Code.",
+    },
+    de: {
+      title: "Rückgabe und Erstattung | Meridian Optics Lab via DMT Code",
+      description:
+        "Rückgabebedingungen, Erstattungsfristen und Umgang mit beschädigten Artikeln bei Meridian Optics Lab, dem Verkäufer der DMT-Code-Kits.",
+    },
+  },
+  "store-terms": {
+    en: {
+      title: "Terms of Service | Meridian Optics Lab via DMT Code",
+      description:
+        "Purchase terms, laser safety requirements, liability and governing law for Meridian Optics Lab, the store of record for DMT Code kits.",
+    },
+    es: {
+      title: "Términos del servicio | Meridian Optics Lab via DMT Code",
+      description:
+        "Condiciones de compra, requisitos de seguridad láser, responsabilidad y ley aplicable de Meridian Optics Lab, la tienda de registro de los kits de DMT Code.",
+    },
+    de: {
+      title: "Verkaufsbedingungen | Meridian Optics Lab via DMT Code",
+      description:
+        "Kaufbedingungen, Anforderungen an die Lasersicherheit, Haftung und anwendbares Recht von Meridian Optics Lab, dem Verkäufer der DMT-Code-Kits.",
+    },
+  },
+  "store-contact": {
+    en: {
+      title: "Contact Information | Meridian Optics Lab via DMT Code",
+      description:
+        "Contact details and response times for Meridian Optics Lab, the store of record for DMT Code kits.",
+    },
+    es: {
+      title: "Información de contacto | Meridian Optics Lab via DMT Code",
+      description:
+        "Datos de contacto y tiempos de respuesta de Meridian Optics Lab, la tienda de registro de los kits de DMT Code.",
+    },
+    de: {
+      title: "Kontaktinformationen | Meridian Optics Lab via DMT Code",
+      description:
+        "Kontaktdaten und Antwortzeiten von Meridian Optics Lab, dem Verkäufer der DMT-Code-Kits.",
+    },
+  },
+  // "The Discovery" is the film's title and is never translated.
+  "the-discovery": {
+    en: {
+      title:
+        "The Discovery (2026): release date, where to watch, and what the film claims",
+      description:
+        "The Discovery is an independent documentary about the DMT laser observation first reported by Danny Goler. Premiere window, ticket status, and what is and is not confirmed.",
+    },
+    es: {
+      title:
+        "The Discovery (2026): fecha de estreno, dónde verla y qué afirma la película",
+      description:
+        "The Discovery es un documental independiente sobre la observación con láser de 650 nm y N,N-DMT reportada por Danny Goler. Ventana de estreno, estado de las entradas y qué está confirmado y qué no.",
+    },
+    de: {
+      title:
+        "The Discovery (2026): Starttermin, wo man ihn sehen kann und was der Film behauptet",
+      description:
+        "The Discovery ist ein unabhängiger Dokumentarfilm über die von Danny Goler berichtete Laserbeobachtung mit 650 nm und N,N-DMT. Premierenzeitraum, Ticketstatus und was bestätigt ist und was nicht.",
+    },
+  },
 };
 
 /**
