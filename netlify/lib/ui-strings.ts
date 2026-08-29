@@ -190,7 +190,7 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Vier Laserbeugungs-Forschungskits fuer einen, ein bis zwei, zwei bis drei oder bis zu sechs Beobachter, mit 650, 532 und 405 nm, Beugungsoptik und einem Halbkreis-Linienmacher in jedem Kit; Beobachtungsdokumente sind kostenlose PDFs. Verkauft von Meridian Optics Lab.",
     },
   },
-  downloads: {
+  documents: {
     en: {
       title: "Free protocol documents and the symbol set | DMT Code",
       description:

@@ -329,11 +329,11 @@ export const AppRoutes = () => (
     <Route path="join" element={<Join />} />
     <Route path="preregister" element={<Preregister />} />
     <Route path="prepare" element={<Prepare />} />
-    {/* The PDF files themselves are static assets under public/downloads and are
-        served by Netlify before this router ever sees them. This route is the
-        index page at the bare /downloads path, which was a 404 while llms.txt
-        was already telling machines the documents lived there. */}
-    <Route path="downloads" element={<Downloads />} />
+    {/* The document index. It lives at /documents, not /downloads, because
+        public/downloads is a real directory in the publish output and Netlify
+        serves the static directory rather than routing that path to the
+        prerender. /downloads is redirected here in netlify.toml. */}
+    <Route path="documents" element={<Downloads />} />
     <Route path="products/:handle" element={
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>

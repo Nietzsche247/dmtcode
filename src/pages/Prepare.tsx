@@ -300,7 +300,7 @@ const Prepare = () => {
                   Field materials and protocols, free download, no account needed. Nothing here requires buying a kit.{' '}
                   {docCountWord()} PDF files in all. What each document is, what it is not, and when to
                   use it, is set out at{' '}
-                  <a href="/downloads" className="underline hover:text-foreground">/downloads</a>.
+                  <a href="/documents" className="underline hover:text-foreground">/documents</a>.
                 </p>
                 <div className="mt-3 rounded-lg border border-gold/30 bg-gold/5 p-4">
                   <a

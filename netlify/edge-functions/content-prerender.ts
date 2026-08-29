@@ -272,7 +272,7 @@ const HASH_GATED_STATIC_PAGES = new Set<string>([
   "faq",
   "trials",
   "events",
-  "downloads",
+  "documents",
 ]);
 
 // The second guard on the same pages. The hash gate proves a translation is
@@ -485,10 +485,10 @@ export default async (request: Request, context: Context) => {
     if (kind === "prepare" && seg.length === 1) {
       return await renderPrepare(context, request, locale);
     }
-    // /downloads is the document index. The PDF files under it are static
-    // assets served by Netlify before this function runs, so only the bare
-    // path reaches here.
-    if (kind === "downloads" && seg.length === 1) {
+    // /documents is the document index. It is not at /downloads because that
+    // path collides with the public/downloads directory and Netlify serves the
+    // static directory instead of running this function.
+    if (kind === "documents" && seg.length === 1) {
       return await renderDownloads(context, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
@@ -1351,8 +1351,8 @@ ${docListHtml()}
 // src/pages/Downloads.tsx renders from.
 async function renderDownloads(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
-  const canonical = `${SITE}/downloads`;
-  const copy = uiCopy("downloads", locale);
+  const canonical = `${SITE}/documents`;
+  const copy = uiCopy("documents", locale);
   const title = copy.title;
   const metaDesc = clip(copy.description, 200);
 
@@ -1396,8 +1396,8 @@ ${d.files.map((f) => `      <li><a href="${SITE}/downloads/${f.file}">${esc(d.ti
     </ul>
   </section>`).join("\n");
 
-  const body = `<article data-prerender="downloads">
-  <!--tsrc:static:downloads-->
+  const body = `<article data-prerender="documents">
+  <!--tsrc:static:documents-->
   <h1>Everything you need to run a session, free</h1>
   <p>${PREPARE_DOC_COUNT} PDF files, ${DOCUMENTS.length} documents, each one in English, Spanish and German where a translation exists. No account, no email, no kit. Licensed CC-BY-4.0, which means you can print them, hand them out, translate them and publish what you find.</p>
   <p>You do not need to buy anything to take part. The <a href="${SITE}/protocol-guide">protocol guide</a> describes how to build the rig from parts you can source yourself, and <a href="${SITE}/prepare">/prepare</a> sells an assembled version for people who would rather not.</p>

@@ -93,7 +93,8 @@ const CASES = [
   // The document index. This was a 404 while llms.txt was already telling
   // machines the documents lived under /downloads/, and the PDF files under it
   // are static assets Netlify serves before the guard ever runs.
-  ["/downloads", true, "document index page"],
+  ["/documents", true, "document index page"],
+  ["/downloads", true, "must pass through so the 301 to /documents can fire"],
   ["/downloads/dmt-laser-code-symbols.pdf", true, "static PDF asset"],
   ["/downloads/DMTCode_Screening_Card_v1.pdf", true, "static PDF asset"],
   // /legal/* and /for-agents stay 404 until the pages actually ship. Allowing

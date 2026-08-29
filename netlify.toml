@@ -103,11 +103,14 @@
   path = "/prepare"
   function = "content-prerender"
 
-# The document index. Only the bare path is registered: the PDF files under
-# /downloads/ are static assets and must keep being served as files, never
-# routed through the prerender.
+# The document index. It is served at /documents, not at /downloads, because
+# public/downloads is a real directory in the publish output and Netlify does
+# not route a path that collides with a static directory to an edge function:
+# the bare path returned the raw SPA shell at 200 no matter what was registered
+# here. /downloads is redirected to it below. The PDF files themselves stay
+# where they are and keep their published URLs.
 [[edge_functions]]
-  path = "/downloads"
+  path = "/documents"
   function = "content-prerender"
 
 [[edge_functions]]
@@ -345,6 +348,17 @@
 [[redirects]]
   from = "/tools/*"
   to = "/prepare"
+  status = 301
+  force = true
+
+# /downloads is the path people and machines guess, and llms.txt has pointed at
+# that directory for months, but it cannot host the index page: it collides with
+# the public/downloads directory, so Netlify serves the static directory and the
+# edge function never runs. The exact path redirects to the page. The wildcard is
+# deliberately absent so every published PDF URL under /downloads/ keeps working.
+[[redirects]]
+  from = "/downloads"
+  to = "/documents"
   status = 301
   force = true
 

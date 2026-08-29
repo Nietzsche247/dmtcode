@@ -10,6 +10,17 @@ const get = async (p, json = false) => {
   if (!r.ok) throw new Error(`${p} -> HTTP ${r.status}`);
   return json ? r.json() : r.text();
 };
+// Status and headers only, redirects not followed. Used where the answer is the
+// response itself rather than the body: a path that must redirect, a file that
+// must still serve as a file.
+const head = async (p) => {
+  const r = await fetch(SITE + p, {
+    method: 'HEAD',
+    redirect: 'manual',
+    headers: { 'user-agent': UA, 'cache-control': 'no-cache' },
+  });
+  return { status: r.status, location: r.headers.get('location'), type: r.headers.get('content-type') };
+};
 const fails = [];
 const check = (name, ok, detail = '') => { console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`); if (!ok) fails.push(name); };
 // A surface that cannot be reached is not a surface that disagrees. Skips are
@@ -78,8 +89,8 @@ check('prepare and llms.txt agree on the document count', !!wordCount && wordCou
 // statement of what the catalogue is, and no way to record an observation
 // before reading it. Every file in the manifest has to be reachable from here,
 // and the count has to agree with the other two surfaces.
-const downloads = await get('/downloads');
-check('downloads returns a page, not the 404 shell', /data-prerender="downloads"/.test(downloads));
+const downloads = await get('/documents');
+check('documents returns a page, not the SPA shell', /data-prerender="documents"/.test(downloads));
 const DOC_FILES = [
   'DMTCode_Screening_Card_v1.pdf', 'DMTCode_Tarjeta_de_Cribado_v1_ES.pdf', 'DMTCode_Screening_Karte_v1_DE.pdf',
   'DMTCode_Observation_Field_Sheet_v1.pdf', 'DMTCode_Hoja_de_Campo_v1_ES.pdf', 'DMTCode_Feldblatt_v1_DE.pdf',
@@ -88,20 +99,27 @@ const DOC_FILES = [
   'dmt-laser-code-symbols.pdf',
 ];
 for (const f of DOC_FILES) {
-  check(`downloads links ${f}`, downloads.includes(`/downloads/${f}`));
-  check(`downloads and prepare both link ${f}`, prepare.includes(`/downloads/${f}`));
+  check(`documents links ${f}`, downloads.includes(`/downloads/${f}`));
+  check(`documents and prepare both link ${f}`, prepare.includes(`/downloads/${f}`));
 }
 const downloadsCount = (downloads.match(/(\w+) PDF files, \d+ documents/) || [])[1];
 check(
-  'downloads and llms.txt agree on the file count',
+  'documents and llms.txt agree on the file count',
   !!wordCount && wordCount.toLowerCase() === (downloadsCount || '').toLowerCase(),
-  `llms.txt ${wordCount} vs downloads ${downloadsCount}`,
+  `llms.txt ${wordCount} vs documents ${downloadsCount}`,
 );
-check('downloads says what the symbol set is not', /not a key, not a translation/.test(downloads));
-check('downloads asks for the record before the catalogue', /\/capture/.test(downloads) && /write it down first/.test(downloads));
-check('downloads states no account is needed', /No account, no email, no kit/.test(downloads));
-check('downloads names the control condition as missing', /no sober baseline records/.test(downloads));
-check('llms.txt points at the document index', /dmtcode\.com\/downloads\b/.test(llms));
+check('documents says what the symbol set is not', /not a key, not a translation/.test(downloads));
+check('documents asks for the record before the catalogue', /\/capture/.test(downloads) && /write it down first/.test(downloads));
+check('documents states no account is needed', /No account, no email, no kit/.test(downloads));
+check('documents names the control condition as missing', /no sober baseline records/.test(downloads));
+check('llms.txt points at the document index', /dmtcode\.com\/documents\b/.test(llms));
+// The path people and machines guess has to land on the page, not on the SPA
+// shell and not on a directory listing. This is the check that would have caught
+// the collision straight away.
+const dlRedirect = await head('/downloads');
+check('the guessed /downloads path redirects to the index', dlRedirect.status === 301 && (dlRedirect.location || '').endsWith('/documents'), `status ${dlRedirect.status} to ${dlRedirect.location}`);
+const symbolPdf = await head('/downloads/dmt-laser-code-symbols.pdf');
+check('the symbol set PDF still serves as a file', symbolPdf.status === 200 && /pdf/i.test(symbolPdf.type || ''), `status ${symbolPdf.status} type ${symbolPdf.type}`);
 
 // 6. Policies.
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));
@@ -277,7 +295,7 @@ const STATIC_LOCALE_PAGES = [
   ['forecasts', '/forecasts'], ['privacy', '/privacy'], ['terms', '/terms'], ['shipping', '/shipping'],
   ['returns', '/returns'], ['disclosure', '/disclosure'], ['capture', '/capture'], ['join', '/join'],
   ['timeline', '/timeline'], ['faq', '/faq'], ['prepare', '/prepare'], ['evidence-map', '/evidence-map'],
-  ['articles', '/articles'], ['downloads', '/downloads'],
+  ['articles', '/articles'], ['documents', '/documents'],
 ];
 const LOCALES = ['en', 'es', 'de'];
 const localePath = (loc, p) => (loc === 'en' ? p : `/${loc}${p === '/' ? '/' : p}`);

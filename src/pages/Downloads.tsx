@@ -22,7 +22,7 @@ const SITE = 'https://dmtcode.com';
 
 const Downloads = () => (
   <>
-    <SEO uiKey="downloads" path="/downloads" />
+    <SEO uiKey="documents" path="/documents" />
     <Helmet>
       <meta name="robots" content="index, follow" />
       <script type="application/ld+json">
@@ -31,7 +31,7 @@ const Downloads = () => (
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
-            { '@type': 'ListItem', position: 2, name: 'Documents', item: `${SITE}/downloads` },
+            { '@type': 'ListItem', position: 2, name: 'Documents', item: `${SITE}/documents` },
           ],
         })}
       </script>
@@ -40,7 +40,7 @@ const Downloads = () => (
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: 'DMT Code protocol documents',
-          url: `${SITE}/downloads`,
+          url: `${SITE}/documents`,
           license: 'https://creativecommons.org/licenses/by/4.0/',
           isAccessibleForFree: true,
           hasPart: DOCUMENTS.map((d) => ({
