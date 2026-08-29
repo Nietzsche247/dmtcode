@@ -76,6 +76,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/object-model"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/research"
   function = "content-prerender"
 

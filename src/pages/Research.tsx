@@ -3,10 +3,12 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
 import { ResearchSection } from '@/components/ResearchSection';
 
-import { TheoriesDashboard } from '@/components/TheoriesDashboard';
+import { ScienceRoom } from '@/components/research/ScienceRoom';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { Helmet } from 'react-helmet';
+import { SEO } from '@/components/SEO';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Citation {
@@ -47,14 +49,8 @@ const Research = () => {
 
   return (
     <>
+      <SEO uiKey="research" path="/research" />
       <Helmet>
-        <title>Sources and references | DMT Code</title>
-        <meta
-          name="description"
-          content="Academic papers, studies, and publications related to the DMT laser code phenomenon."
-        />
-        <link rel="canonical" href="https://dmtcode.com/research" />
-        
         <meta name="robots" content="index, follow" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -70,9 +66,9 @@ const Research = () => {
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'ScholarlyArticle',
-            headline: 'DMT Code Scientific Research Repository',
+            headline: 'The Science Room: what has actually been measured',
             description:
-              'Live selection from the stance scored research library on N,N-DMT phenomenology, visual symbols, and the 650 nm laser protocol.',
+              'Direct tests, mechanistic science, DMT science, methodology and open projects, drawn from the stance scored research library and the typed trials table.',
             author: { '@type': 'Organization', name: 'DMT Code Project' },
             datePublished: '2025-01-01',
             dateModified,
@@ -89,20 +85,45 @@ const Research = () => {
           <Navigation />
           <Breadcrumb />
           <div className="pt-4">
-            <div className="container mx-auto px-4 space-y-4">
+            <div className="container mx-auto px-4 max-w-4xl space-y-5">
+              <p className="label-data text-xs text-primary">THE SCIENCE ROOM</p>
               <h1 className="font-display text-4xl md:text-5xl tracking-tight">
-                Sources and references
+                What has actually been measured
               </h1>
-              <a
-                href="/trials"
-                className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
-              >
-                &rarr; CLINICAL TRIALS OBSERVATORY
-              </a>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl">
+                The{' '}
+                <Link to="/theories" className="text-primary hover:underline">
+                  Theory Board
+                </Link>{' '}
+                is a library of proposals. This page is the other half of it: the
+                measurements, the published work, and the methods that would
+                settle the question. A theory sitting on this site is not
+                evidence, and nothing here is a finding until it has survived a
+                blinded test.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
+                Every record listed below comes from the research library or the
+                typed trials table, both of which anyone can download. Where a
+                section holds no records yet, it says so rather than filling the
+                space.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-1">
+                <a
+                  href="/trials"
+                  className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                >
+                  &rarr; CLINICAL TRIALS OBSERVATORY
+                </a>
+                <a
+                  href="/bibliography"
+                  className="label-data inline-flex items-center gap-2 rounded border border-border/60 px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
+                >
+                  &rarr; RESEARCH LIBRARY
+                </a>
+              </div>
             </div>
+            <ScienceRoom />
             <ResearchSection />
-            <TheoriesDashboard />
-
           </div>
         </main>
 

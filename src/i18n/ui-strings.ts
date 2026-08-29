@@ -419,19 +419,36 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
   },
   research: {
     en: {
-      title: "Active research projects | DMT Code",
+      title: "The Science Room: what has actually been measured | DMT Code",
       description:
-        "Ongoing research projects, collaborations, and findings related to the DMT Code paradigm.",
+        "The scientific counterpart to the theory board. Direct tests of the laser observation, mechanistic science, DMT science, methodology, and the projects open to work on.",
     },
     es: {
-      title: "Proyectos de investigación activos | DMT Code",
+      title: "La sala de ciencia: qué se ha medido realmente | DMT Code",
       description:
-        "Proyectos de investigación en curso, colaboraciones y hallazgos relacionados con el paradigma DMT Code.",
+        "La contraparte científica del tablero de teorías. Pruebas directas de la observación con láser, ciencia de mecanismos, ciencia del DMT, metodología y los proyectos abiertos.",
     },
     de: {
-      title: "Laufende Forschungsprojekte | DMT Code",
+      title: "Der Wissenschaftsraum: was tatsächlich gemessen wurde | DMT Code",
       description:
-        "Laufende Forschungsprojekte, Kooperationen und Befunde zum DMT-Code-Paradigma.",
+        "Das wissenschaftliche Gegenstück zum Theorie-Board. Direkte Tests der Laserbeobachtung, Mechanismusforschung, DMT-Forschung, Methodik und die offenen Projekte.",
+    },
+  },
+  "object-model": {
+    en: {
+      title: "Object model: how one experience becomes a record | DMT Code",
+      description:
+        "The seven levels between one person's experience and a canonical symbol candidate, and why the community symbol count and the registry glyph count are different numbers rather than two names for the same thing.",
+    },
+    es: {
+      title: "Modelo de objetos: cómo una experiencia se convierte en registro | DMT Code",
+      description:
+        "Los siete niveles entre la experiencia de una persona y un símbolo canónico candidato, y por qué el recuento de símbolos de la comunidad y el de glifos del registro son cifras distintas y no dos nombres para lo mismo.",
+    },
+    de: {
+      title: "Objektmodell: wie aus einer Erfahrung ein Datensatz wird | DMT Code",
+      description:
+        "Die sieben Ebenen zwischen der Erfahrung einer Person und einem kanonischen Symbolkandidaten, und warum die Zahl der Community-Symbole und die Zahl der Registerglyphen unterschiedliche Werte sind und nicht zwei Namen für dasselbe.",
     },
   },
   forecasts: {

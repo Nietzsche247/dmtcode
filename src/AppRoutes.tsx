@@ -24,6 +24,7 @@ import PersonAndrewGallimore from "./pages/PersonAndrewGallimore";
 import PersonChaseHughes from "./pages/PersonChaseHughes";
 import About from "./pages/About";
 import OpenQuestions from "./pages/OpenQuestions";
+import ObjectModel from "./pages/ObjectModel";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Disclosure from "./pages/Disclosure";
@@ -158,6 +159,7 @@ export const AppRoutes = () => (
     <Route path="people/chase-hughes" element={<PersonChaseHughes />} />
     <Route path="about" element={<About />} />
     <Route path="open-questions" element={<OpenQuestions />} />
+    <Route path="object-model" element={<ObjectModel />} />
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
     <Route path="disclosure" element={<Disclosure />} />

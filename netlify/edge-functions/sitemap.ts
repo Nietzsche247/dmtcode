@@ -38,7 +38,8 @@ const STATIC: Array<[string, string, string]> = [
 
   ["/open-questions", "0.6", "weekly"],
   ["/null-reports", "0.5", "weekly"],
-  ["/research", "0.6", "weekly"],
+  ["/research", "0.7", "weekly"],
+  ["/object-model", "0.6", "monthly"],
   ["/dataset", "0.6", "monthly"],
   ["/forecasts", "0.6", "weekly"],
   ["/join", "0.6", "monthly"],

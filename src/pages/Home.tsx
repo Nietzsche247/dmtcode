@@ -16,6 +16,7 @@ import { RecentContributions } from '@/components/registry/RecentContributions';
 import { CommunityStats } from '@/components/registry/CommunityStats';
 import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
+import { ExpeditionStrip } from '@/components/home/ExpeditionStrip';
 import { LatestArticle } from '@/components/home/LatestArticle';
 
 import { KITS } from '@/data/kits';
@@ -115,6 +116,8 @@ const Home = () => {
             <MissionFraming />
           </LocalizedBody>
           <GetInvolvedDoors variant="top" />
+
+          <ExpeditionStrip />
 
           {/* Voice Logger Callout */}
           <section className="container mx-auto px-4 py-4 max-w-4xl">

@@ -107,6 +107,8 @@ const CASES = [
   ["/articles/does-dmt-model-the-near-death-experience", true, "article slug"],
   ["/people/danny-goler", true, "static profile"],
   ["/registry", true, "index page"],
+  ["/object-model", true, "published object model page"],
+  ["/es/object-model", true, "object model, es mirror"],
   ["/", true, "home"],
   // Things that must still 404.
   ["/legal/atlantis", false, "country not in the editorial set"],

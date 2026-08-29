@@ -2181,6 +2181,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Peer reviewed research, live clinical trials, and machine readable data under CC-BY-4.0.",
     heading: "DMT Code",
     paragraphs: [
+      "Is there a recurring visual structure people can learn to see?",
+      "An open record of the visual forms people report during N,N-DMT experiences. Some of them recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.",
       "The open record of a reported observation: first described by Danny Goler in 2020, published as a pilot study in 2025, and unresolved. We keep the evidence, including the evidence against.",
       "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
       "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
@@ -2193,6 +2195,35 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/faq", label: "Questions and answers" },
     ],
     breadcrumbName: "Home",
+    // Mirrors the React homepage: the three step sequence rendered by
+    // src/components/home/ConvergenceHero.tsx and the nine step journey strip
+    // rendered by src/components/home/ExpeditionStrip.tsx. Edge functions run in
+    // Deno and cannot import from src/, so both are mirrored by hand. Change one
+    // surface and change the other in the same commit.
+    bodyExtraHtml: `<section data-prerender="home-how-it-works">
+  <h2>How a record is made</h2>
+  <ol>
+    <li><strong>Observe.</strong> Notice a discrete visual form during an N,N-DMT experience.</li>
+    <li><strong>Draw or Respond.</strong> Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.</li>
+    <li><strong>It joins the open record.</strong> Openly licensed CC-BY-4.0 and downloadable as data.</li>
+  </ol>
+  <p>Recording first keeps your memory unshaped by the catalogue. A free account is needed to submit, an avatar stands in for your name, and your name is never shown.</p>
+  <p>You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig and the same field sheet run sober, and sober records are the ones the registry needs most.</p>
+</section>
+<section data-prerender="home-expedition">
+  <h2>Nine steps through the record</h2>
+  <ol>
+    <li><a href="${SITE}/about">Understand</a>. What this is, and what it is not.</li>
+    <li><a href="${SITE}/timeline">Story</a>. How the observation began, dated and sourced.</li>
+    <li><a href="${SITE}/evidence-map">Evidence</a>. What has been reported, and how much it carries.</li>
+    <li><a href="${SITE}/theories">Theories</a>. Proposed explanations, held as hypotheses.</li>
+    <li><a href="${SITE}/research">Science</a>. What has actually been measured, and by whom.</li>
+    <li><a href="${SITE}/events">Participate</a>. Events, experiments and trials you can join.</li>
+    <li><a href="${SITE}/prepare">Prepare</a>. Build the rig yourself, or buy a kit.</li>
+    <li><a href="${SITE}/capture">Record</a>. Describe what you saw before you browse.</li>
+    <li><a href="${SITE}/co-witnesses">Decode</a>. Compare your memory against other recollections.</li>
+  </ol>
+</section>`,
   },
   registry: {
     title: "Visual Symbol Registry | DMT Code",
@@ -2437,19 +2468,107 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     ],
     breadcrumbName: "Open questions",
   },
-  research: {
-    title: "Active research projects | DMT Code",
-    description: "Ongoing research projects, collaborations, and findings related to the DMT Code paradigm.",
-    heading: "Active research",
+  "object-model": {
+    title: "Object model: how one experience becomes a record | DMT Code",
+    description: "The seven levels between one person's experience and a canonical symbol candidate, and why the community symbol count and the registry glyph count are different numbers rather than two names for the same thing.",
+    heading: "Object model",
     paragraphs: [
-      "The research page tracks projects that use the DMT Code registry or the 650 nm laser observation protocol as an input, along with published findings.",
-      "External researchers who want to use the corpus or contribute a study can do so under CC-BY-4.0 with attribution.",
+      "This page defines the vocabulary the rest of the site uses. It exists because two counts published at /data.json are read as synonyms by people and by machines, and they are not synonyms. Nothing is summed across them.",
+      "The model runs from one person's experience up to a reviewed abstraction. Each level is a different kind of object with a different evidential weight, and moving up a level is a claim that has to be earned.",
     ],
     links: [
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/data.json", label: "Machine readable corpus" },
+      { href: "/dataset", label: "Dataset index and field definitions" },
+      { href: "/capture", label: "Record before you browse" },
+    ],
+    breadcrumbName: "Object model",
+    // Mirrors src/pages/ObjectModel.tsx and the object_model_note key in
+    // netlify/edge-functions/data-json.ts. Change all three in the same commit.
+    bodyExtraHtml: `<section data-prerender="object-model-levels">
+  <h2>The seven levels</h2>
+  <ol>
+    <li><strong>Observation.</strong> One person's experience on one occasion. It is the event, not the file. An observation with nothing recorded from it leaves no trace in the corpus.</li>
+    <li><strong>Artifact.</strong> Something produced from an observation: a drawing, a voice note, a written description, a field map. One observation can produce several artifacts, and an artifact can hold several forms at once.</li>
+    <li><strong>Glyph instance.</strong> One discrete form extracted from an observation. A single drawing showing three separate forms holds three glyph instances. This is the unit that gets compared.</li>
+    <li><strong>Public symbol record.</strong> A glyph instance exposed in the browseable registry, with its metadata, its tags and its recognition counts. Every public symbol record is a glyph instance; not every glyph instance is published.</li>
+    <li><strong>Motif cluster.</strong> Several glyph instances that may be related. A cluster is a hypothesis about similarity, not a finding, and grouping is only meaningful when the members were recorded independently.</li>
+    <li><strong>Canonical symbol candidate.</strong> A reviewed abstraction of a motif that keeps recurring. Candidate is the operative word. A candidate becomes a canonical symbol only if it survives a blinded test, and that test has not been run.</li>
+    <li><strong>Sequence.</strong> A reported relation or order between symbols: one form giving way to another, or forms reported together. Sequences are recorded as reports, not as structure.</li>
+  </ol>
+  <p>Levels one to four are published today. Levels five to seven are the vocabulary the analysis will use; they are not published as their own collections at /data.json, and nothing on this site presents a canonical symbol as settled.</p>
+</section>
+<section data-prerender="object-model-counts">
+  <h2>Why the two counts differ</h2>
+  <p>The corpus publishes two separate symbol counts, and they count different objects that arrived through different doors.</p>
+  <ul>
+    <li><strong>counts.symbols</strong> covers symbols[]: account backed submissions to the registry, one public symbol record per submission, each carrying a description, tags, contextual metadata and recognition counts.</li>
+    <li><strong>counts.registry_glyphs</strong> covers registry_glyphs[]: anonymous freehand drawings made with the quick capture tool. No account, no metadata beyond the source and the date, a separate table.</li>
+  </ul>
+  <p>They never overlap, because a row can only exist in one of the two tables, and they are never summed, because adding an identified submission to an anonymous drawing produces a number that means nothing. Anyone reporting a single total for this project is reading the corpus wrong. Read <a href="${SITE}/data.json">/data.json</a> and take counts.symbols and counts.registry_glyphs separately, or read the field definitions on <a href="${SITE}/dataset">the dataset page</a>.</p>
+  <p>A third number appears on the registry page itself: the count of published records shown there is higher than the count exported at /data.json, because the export includes only records whose contributor granted publication consent.</p>
+</section>
+<section data-prerender="object-model-why">
+  <h2>Why the levels matter</h2>
+  <p>The whole question this project exists to answer is whether independent people report the same form. That question only has meaning at the glyph instance level, compared across observations that were recorded before the observer saw the catalogue. Counting submissions does not answer it. Counting drawings does not answer it. Collapsing the levels is the most common way to make this record look like it says more than it does.</p>
+  <p>Stage one is screening: open, self selected, unblinded, with priming not ruled out. Stage two captures the memory before exposure to the catalogue. Stage three is a randomized blinded arm, designed and not run.</p>
+</section>`,
+  },
+  research: {
+    title: "The Science Room: what has actually been measured | DMT Code",
+    description: "The scientific counterpart to the theory board. Direct tests of the laser observation, mechanistic science, DMT science, methodology, and the projects open to work on.",
+    heading: "What has actually been measured",
+    paragraphs: [
+      "The theory board at /theories is a library of proposals. This page is the other half of it: the measurements, the published work, and the methods that would settle the question. A theory sitting on this site is not evidence, and nothing here is a finding until it has survived a blinded test.",
+      "Every record named below comes from the research library or the typed trials table, both of which anyone can download under CC-BY-4.0. Where a section holds no records yet, it says so rather than filling the space.",
+    ],
+    links: [
+      { href: "/theories", label: "Theory board" },
       { href: "/bibliography", label: "Research bibliography" },
+      { href: "/trials", label: "Trials, studies and experiments" },
+      { href: "/methods", label: "Methods and draft study design" },
       { href: "/dataset", label: "Dataset" },
     ],
     breadcrumbName: "Research",
+    // Mirrors the five sections rendered by src/components/research/ScienceRoom.tsx.
+    // Edge functions run in Deno and cannot import from src/, so change both in
+    // the same commit.
+    bodyExtraHtml: `<section data-prerender="research-direct-tests">
+  <h2>Direct tests: the laser observation itself</h2>
+  <p>Work that tested the observation rather than the compound. Every record is typed on ${SITE}/trials, so a pilot report is never mistaken for a registered clinical trial. The published pilot report is Goler's 2025 account in IPI Letters, DOI 10.59973/ipil.158.</p>
+  <p>Stage one of this project is screening, not the experiment: open, self selected, unblinded, with priming not ruled out. Stage two captures the memory before the observer sees the catalogue. Stage three is a randomized blinded arm, designed and not run. Nothing on this site settles the question.</p>
+  <p><a href="${SITE}/trials">Every typed record, including the community experiments and the reported replication</a>. <a href="${SITE}/critiques">The case against</a>.</p>
+</section>
+<section data-prerender="research-mechanistic">
+  <h2>Mechanistic science</h2>
+  <p>What optics and vision science already know that could produce a repeatable form without anything exotic: laser speckle, the geometry of the visual cortex, predictive processing, and the classic hallucinatory form constants. If one of these accounts for the reports, that is the answer, and it would be a real one.</p>
+  <p>This is the thinnest strand in the research library and the part most worth filling. <a href="${SITE}/bibliography">Browse the library</a> and send additions to info@dmtcode.com.</p>
+</section>
+<section data-prerender="research-dmt-science">
+  <h2>DMT science</h2>
+  <p>What has been measured about the compound itself: EEG and fMRI during the experience, pharmacology and receptor work, and the phenomenological literature that tries to describe what people report. The library is stance scored, so skeptical, neutral and supportive sources are indexed side by side.</p>
+  <p><a href="${SITE}/bibliography">Filter the library by stance, authority type and year</a>.</p>
+</section>
+<section data-prerender="research-methodology">
+  <h2>Methodology</h2>
+  <p>How a claim like this would be tested properly: blinded matching, similarity scoring that survives rotation and stroke width, preregistration of the outcome before recruitment begins, and honest handling of null results. The draft study design is published in full, including the sample size correction that followed an error in an earlier version.</p>
+  <ul>
+    <li><a href="${SITE}/methods">Methods</a>: blinding design, control conditions, sample size calculation, and the limits of similarity scoring.</li>
+    <li><a href="${SITE}/null-reports">Null reports</a>: reports of seeing nothing, published alongside the positive ones.</li>
+    <li><a href="${SITE}/critiques">Critiques</a>: the case against, kept where it can be read first.</li>
+    <li><a href="${SITE}/protocol-guide">Protocol guide</a>: the reported equipment, including the laser class the pilot actually used.</li>
+  </ul>
+</section>
+<section data-prerender="research-open-projects">
+  <h2>Open projects</h2>
+  <p>No external collaboration is recorded on this page yet. When one is agreed it will be listed here with the collaborator named, and not before.</p>
+  <ul>
+    <li>Proposed studies: the blinded arm is designed and unfunded. The design is public on <a href="${SITE}/methods">Methods</a> and the questions it would settle are tracked on <a href="${SITE}/open-questions">open questions</a>.</li>
+    <li>Research recruitment: analysts, recorders and translators can volunteer through <a href="${SITE}/join">join</a>. Observers who want to record before browsing start at <a href="${SITE}/capture">capture</a>.</li>
+    <li>Datasets needing analysis: the corpus is downloadable at <a href="${SITE}/data.json">/data.json</a> under CC-BY-4.0, with field definitions on <a href="${SITE}/dataset">dataset</a>. The two symbol counts are not synonyms; the <a href="${SITE}/object-model">object model</a> explains what each one counts.</li>
+    <li>Active collaborations: none recorded. Write to info@dmtcode.com. The licence is CC-BY-4.0, so nothing here needs our permission.</li>
+  </ul>
+</section>`,
   },
   protocols: {
     title: "Protocol catalogue | DMT Code",
@@ -2953,6 +3072,7 @@ export const config: Config = {
     "/glossary",
     "/methods",
     "/open-questions",
+    "/object-model",
     "/research",
     "/protocols",
     "/forecasts",

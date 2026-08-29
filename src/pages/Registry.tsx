@@ -187,6 +187,9 @@ const Registry = () => {
           <RegistryStatistics />
           <p className="container mx-auto px-4 max-w-4xl text-sm text-muted-foreground">
             The registry shows every published record. The export at /data.json includes only records whose contributor granted publication consent, so its count is lower than the registry count.
+            Community symbol submissions and anonymous drawn glyph reports are counted separately and never summed. The{' '}
+            <a href="/object-model" className="underline hover:text-foreground">object model</a>{' '}
+            sets out the seven levels between one person's experience and a canonical symbol candidate, and says what each count actually counts.
           </p>
           
           {/* Voice Logger Callout */}

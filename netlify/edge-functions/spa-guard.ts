@@ -36,7 +36,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   // Prerendered pages
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
-  "open-questions", "research", "protocols", "forecasts", "protocol-guide",
+  "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats",
   // NOTE: the legal and for-agents segments are deliberately absent. The events
   // module will add /legal/:country and /for-agents, but neither the React
