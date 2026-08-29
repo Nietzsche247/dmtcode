@@ -88,6 +88,19 @@ check('publication_status uses the declared vocabulary', badStatus.length === 0,
 const missingOnline = data.items.filter((i) => i.publication_status === 'online_ahead_of_print' && !i.online_publication_date);
 check('online ahead of print rows carry the online date', missingOnline.length === 0, missingOnline.map((i) => i.title.slice(0, 40)).join(' | '));
 
+// A total without a composition is the defect one layer down from the copy: 51
+// records read as 51 laser observations when most do not state a method at all.
+const comp = data.corpus_composition;
+check('export publishes corpus_composition', !!comp);
+if (comp) {
+  check('composition symbol total matches counts.symbols', comp.symbols.total === data.counts.symbols, `${comp.symbols.total} vs ${data.counts.symbols}`);
+  check('composition names how many records declare the laser', typeof comp.records_declaring_650nm_laser === 'number', String(comp.records_declaring_650nm_laser));
+  check('laser declaring records cannot exceed the corpus', comp.records_declaring_650nm_laser <= comp.records_total, `${comp.records_declaring_650nm_laser} of ${comp.records_total}`);
+  // The claim the site is careful about: a record with no method is not laser evidence.
+  check('composition carries a reading guide', typeof comp.reading_guide === 'string' && comp.reading_guide.length > 40);
+}
+check('home states the method mix beside the counts', /declare the 650 nm laser protocol as their method/.test(home));
+
 // 7. Null reports show live counts.
 check('null reports page carries live counts', /Null reports: <strong>\d+<\/strong>/.test(nulls));
 

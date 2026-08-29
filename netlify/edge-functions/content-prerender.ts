@@ -3616,7 +3616,17 @@ async function liveCountsHtml(): Promise<string> {
   ];
   const lis = rows.filter(([, n]) => typeof n === "number").map(([l, n, note]) => `<li>${esc(l)}: <strong>${n}</strong> (${esc(note)})</li>`).join("");
   if (!lis) return "";
-  return `<section data-prerender="live-counts"><h2>Live counts</h2><p>Counted from the database when this page was generated, ${new Date().toISOString().slice(0, 10)}. A count that could not be fetched is omitted, never shown as zero. The same numbers are published under counts in <a href="/data.json">/data.json</a>.</p><ul>${lis}</ul></section>`;
+  // A total on its own reads as "this many laser observations", which is not what
+  // the registry holds. Most records do not declare the method, and the field that
+  // records whether the observer had already seen the catalogue was only added on
+  // 2026-08-26, so for older records it is unknown rather than negative. Saying so
+  // beside the counts is the difference between a corpus and a claim.
+  const laser = await sbCount("symbol_submissions", "status=eq.approved&source_method=eq.laser_650nm");
+  const naive = await sbCount("registry_glyphs", "prior_exposure=is.false");
+  const composition = typeof laser === "number"
+    ? `<p data-prerender="composition">Of the published symbol submissions, <strong>${laser}</strong> declare the 650 nm laser protocol as their method. The rest are accounts of a DMT experience that do not state a method, and they are not evidence about the laser specifically.${typeof naive === "number" ? ` Prior exposure to the catalogue is recorded on the anonymous glyph reports, <strong>${naive}</strong> of which state the observer had not seen it before; the submission form only began asking on 26 August 2026, so for earlier records it is unknown rather than no.` : ""} The full breakdown is published as corpus_composition in <a href="/data.json">/data.json</a>.</p>`
+    : "";
+  return `<section data-prerender="live-counts"><h2>Live counts</h2><p>Counted from the database when this page was generated, ${new Date().toISOString().slice(0, 10)}. A count that could not be fetched is omitted, never shown as zero. The same numbers are published under counts in <a href="/data.json">/data.json</a>.</p><ul>${lis}</ul>${composition}</section>`;
 }
 
 async function sbGetRows(

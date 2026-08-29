@@ -298,7 +298,7 @@ export default async (req: Request): Promise<Response> => {
     // export are separate grants; the consent filter keeps that claim true.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent",
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent,source_method,prior_exposure,wavelength",
       "status=eq.approved&publication_consent=eq.true"
     ),
     fetchAll(
@@ -318,7 +318,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "registry_glyphs",
-      "id,source,created_at,image_data",
+      "id,source,created_at,image_data,prior_exposure",
       "order=created_at.desc"
     ),
     fetchAll(
@@ -546,6 +546,7 @@ export default async (req: Request): Promise<Response> => {
     .map((r) => compact({
       id: String(r.id),
       source: (r.source as string) || undefined,
+      prior_exposure: typeof r.prior_exposure === "boolean" ? (r.prior_exposure ? "exposed" : "naive") : undefined,
       created_at: (r.created_at as string) || undefined,
     }));
 
@@ -574,6 +575,49 @@ export default async (req: Request): Promise<Response> => {
   const statusVocab = uniqSorted(trialItems.map((i) => i.status));
   const verificationVocab = uniqSorted(trialItems.map((i) => i.verification));
   const phaseVocab = uniqSorted(trialItems.map((i) => i.phase));
+
+  // Corpus composition. counts.symbols says how many records exist; on its own it
+  // invites the reading that all of them are observations of the 650 nm laser
+  // protocol, and they are not. Of the published symbols only a minority declare
+  // that method, prior_exposure was not asked before 2026-08-26 so the naive
+  // versus already-exposed split is unknown for every earlier record, and there
+  // are no sober baselines yet. Priming is the strongest ordinary explanation for
+  // convergence, so a record that cannot say whether its author had already seen
+  // the catalogue cannot be weighed on that question. Derived on every request,
+  // so it cannot drift from the rows above it.
+  const tally = (rows: Record<string, unknown>[], field: string) => {
+    const out: Record<string, number> = {};
+    for (const r of rows) {
+      const v = r[field];
+      const k = v === null || v === undefined || v === "" ? "not_stated" : String(v);
+      out[k] = (out[k] ?? 0) + 1;
+    }
+    return out;
+  };
+  const glyphRows = registryGlyphs.filter((r) => typeof r.image_data === "string" && (r.image_data as string).length > 0);
+  const symbolsLaser = symbols.filter((r) => String(r.source_method ?? "") === "laser_650nm").length;
+  const glyphsLaser = glyphRows.filter((r) => String(r.source ?? "") === "650nm_laser").length;
+  const corpusComposition = {
+    note: "What these records are, not just how many. Read this before treating any total here as evidence about the 650 nm laser protocol.",
+    symbols: {
+      total: symbols.length,
+      by_source_method: tally(symbols, "source_method"),
+      prior_exposure_recorded: symbols.filter((r) => r.prior_exposure !== null && r.prior_exposure !== undefined && r.prior_exposure !== "").length,
+      sober_baseline: symbols.filter((r) => r.is_sober_baseline === true).length,
+      wavelength_recorded: symbols.filter((r) => r.wavelength !== null && r.wavelength !== undefined && r.wavelength !== "").length,
+    },
+    registry_glyphs: {
+      total: glyphRows.length,
+      by_source: tally(glyphRows, "source"),
+      prior_exposure_recorded: glyphRows.filter((r) => typeof r.prior_exposure === "boolean").length,
+      naive: glyphRows.filter((r) => r.prior_exposure === false).length,
+      already_exposed: glyphRows.filter((r) => r.prior_exposure === true).length,
+    },
+    records_declaring_650nm_laser: symbolsLaser + glyphsLaser,
+    records_total: symbols.length + glyphRows.length,
+    prior_exposure_note: "The submission wizard has required prior_exposure since 2026-08-26. Records created before that date were never asked, which is why the field is absent rather than false on them.",
+    reading_guide: "records_declaring_650nm_laser over records_total is the denominator for any claim about the laser protocol specifically. A record whose source_method is not_stated is an account of a DMT experience, not a declared laser observation.",
+  };
 
   const symbolsCurated = symbols.filter((r) => isCurated(r)).length;
   const symbolsCommunity = symbols.length - symbolsCurated;
@@ -662,6 +706,7 @@ export default async (req: Request): Promise<Response> => {
     retreats: retreatsFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
+    corpus_composition: corpusComposition,
     object_model_note: "How to read the two symbol counts. symbols[] are account backed symbol_submissions, one public symbol record per submission (counts.symbols). registry_glyphs[] are anonymous drawn glyph reports from the quick capture tool, no account, a separate table (counts.registry_glyphs). They never overlap and are never summed. Object model: observation (one person's experience) -> artifact (drawing, voice, text, field map) -> glyph instance (one discrete form) -> public symbol record (a glyph exposed in the registry) -> motif cluster (possibly related instances) -> canonical symbol candidate (reviewed abstraction of a recurring motif) -> sequence (reported relation between symbols). The seven levels are defined in full, with worked examples and the reason the two counts differ, at https://dmtcode.com/object-model.",
     object_model_url: "https://dmtcode.com/object-model",
     publication_dates_note: "source_date is the date the record carries, which for a journal article is usually the issue date. An issue date can sit months after the day the paper became readable, so a source_date in the future does not mean the work is unavailable. Where that gap exists the row also carries publication_status (published, online_ahead_of_print, forthcoming, preprint) plus online_publication_date and issue_date, verified against Crossref. Rows without those keys carry no known gap; an absent key means unknown, not false.",
