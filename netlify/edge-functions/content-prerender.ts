@@ -59,22 +59,30 @@ function clip(s: string, n: number): string {
   return t.length > n ? t.slice(0, n - 1) + "\u2026" : t;
 }
 
+// `optional` names columns that may not exist yet. A select naming an unknown
+// column is a 400 for the whole query, which here would 404 a page that exists.
+// Code ships on push and migrations are applied by hand, so the two orders have
+// to both work: the optional columns are tried once and abandoned on failure.
 async function getRow(
   table: string,
   id: string,
   filter: string,
-  fields: string
+  fields: string,
+  optional: string[] = []
 ): Promise<Record<string, unknown> | null> {
-  const api =
-    `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}&${filter}&select=${fields}`;
-  const res = await fetch(api, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      Accept: "application/json",
-    },
-  });
-  if (!res.ok) return null;
+  const attempts = optional.length ? [`${fields},${optional.join(",")}`, fields] : [fields];
+  let res: Response | null = null;
+  for (const cols of attempts) {
+    res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}&${filter}&select=${cols}`, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Accept: "application/json",
+      },
+    });
+    if (res.ok) break;
+  }
+  if (!res || !res.ok) return null;
   const rows = (await res.json()) as Record<string, unknown>[];
   return rows[0] ?? null;
 }
@@ -798,7 +806,7 @@ export default async (request: Request, context: Context) => {
         "id,title,authors,journal,publication_date,doi,pmid,isbn,abstract,url," +
         "compounds,content_type,authority_type,stance_score,tags,summary," +
         "source_date,full_text,transcript,created_at,updated_at";
-      const r = await getRow("bibliography", id, "is_approved=eq.true", f);
+      const r = await getRow("bibliography", id, "is_approved=eq.true", f, ["online_publication_date", "issue_date", "publication_status"]);
       if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
 
       // Bibliography overlays translate ONLY `summary`. Title, authors,

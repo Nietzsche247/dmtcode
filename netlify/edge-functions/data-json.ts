@@ -115,17 +115,29 @@ function compact<T extends Record<string, unknown>>(obj: T): T {
   return out as T;
 }
 
+// `optional` names columns that may not exist yet. Code deploys the moment it is
+// pushed and a migration is applied by hand, so for a few minutes the export can
+// ask for a column the database does not have. PostgREST answers a select naming
+// an unknown column with 400 for the whole query, and this function used to turn
+// any failure into an empty array, so on 2026-08-29 three not-yet-created columns
+// removed all 236 bibliography records from /data.json. Dropping a whole table
+// from the corpus is far worse than omitting three keys, and the export already
+// says an absent key means unknown. So the optional columns are tried once and
+// abandoned on failure, which makes the deploy order stop mattering.
 async function fetchAll(
   table: string,
   select: string,
-  filter = ""
+  filter = "",
+  optional: string[] = []
 ): Promise<Record<string, unknown>[]> {
   const all: Record<string, unknown>[] = [];
   const pageSize = 1000;
   let from = 0;
+  let cols = optional.length ? `${select},${optional.join(",")}` : select;
+  let optionalDropped = false;
   // Cap pagination for safety.
   for (let i = 0; i < 10; i++) {
-    const url = `${SUPABASE_URL}/rest/v1/${table}?select=${select}${filter ? `&${filter}` : ""}`;
+    const url = `${SUPABASE_URL}/rest/v1/${table}?select=${cols}${filter ? `&${filter}` : ""}`;
     const res = await fetch(url, {
       headers: {
         apikey: SUPABASE_KEY,
@@ -135,6 +147,13 @@ async function fetchAll(
         Accept: "application/json",
       },
     });
+    if (!res.ok && !optionalDropped && optional.length) {
+      optionalDropped = true;
+      cols = select;
+      console.warn(`data-json: ${table} rejected optional columns ${optional.join(",")}, serving without them`);
+      i--;
+      continue;
+    }
     if (!res.ok) break;
     const rows = (await res.json()) as Record<string, unknown>[];
     all.push(...rows);
@@ -261,7 +280,8 @@ export default async (req: Request): Promise<Response> => {
     fetchAll(
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license",
-      "is_approved=eq.true"
+      "is_approved=eq.true",
+      ["online_publication_date", "issue_date", "publication_status"]
     ),
     fetchAll(
       "clinical_trials",
