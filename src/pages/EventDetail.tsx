@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
+import { stripAutoPrefix } from "@/lib/eventVerification";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -48,7 +49,7 @@ const EventDetail = () => {
 
   if (notFound) return <Navigate to="/events" replace />;
 
-  const paragraphs = (event?.details || event?.description || "")
+  const paragraphs = (event?.details || stripAutoPrefix(event?.description) || "")
     .split(/\n\s*\n/)
     .map((s) => s.trim())
     .filter(Boolean);
