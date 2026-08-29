@@ -65,6 +65,14 @@ check('prepare no blanket "under 5 mW" claim', !/under 5 mW \(Arbor/.test(prepar
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));
 check('privacy: immediate publication described', /published immediately, before any review/.test(privacy));
 check('privacy: no approval-before-publication wording', !/becomes public once it is approved/.test(privacy));
+// Voice is the one asset the page has described wrongly in both directions: it
+// once said voice notes sit in a public store, and a later edit said they were
+// published with the symbol. Neither was true. RegistrySubmissionForm uploads
+// to the private voice-logs bucket under the owner's own user id, playback goes
+// through createSignedUrl, and data-json.ts never selects voice_note_url. A page
+// that overstates exposure is as wrong as one that understates it.
+check('privacy: voice described as private', /never included in the open export/.test(privacy) && /Voice notes are not\./.test(privacy));
+check('privacy: no claim that voice sits in a public store', !/[Vv]oice notes are (currently in the same public store|held in a public store)/.test(privacy));
 
 // 7. Null reports show live counts.
 check('null reports page carries live counts', /Null reports: <strong>\d+<\/strong>/.test(nulls));
