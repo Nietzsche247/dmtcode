@@ -965,6 +965,7 @@ export type Database = {
           price_band: string | null
           promo_code: string | null
           referral_url: string | null
+          relevance_type: string | null
           scrape_confidence: string | null
           scraped_from: string | null
           submitted_by: string | null
@@ -975,6 +976,7 @@ export type Database = {
           title: string
           updated_at: string
           url: string | null
+          verification_status: string | null
           vetting_status: string
         }
         Insert: {
@@ -1003,6 +1005,7 @@ export type Database = {
           price_band?: string | null
           promo_code?: string | null
           referral_url?: string | null
+          relevance_type?: string | null
           scrape_confidence?: string | null
           scraped_from?: string | null
           submitted_by?: string | null
@@ -1013,6 +1016,7 @@ export type Database = {
           title: string
           updated_at?: string
           url?: string | null
+          verification_status?: string | null
           vetting_status?: string
         }
         Update: {
@@ -1041,6 +1045,7 @@ export type Database = {
           price_band?: string | null
           promo_code?: string | null
           referral_url?: string | null
+          relevance_type?: string | null
           scrape_confidence?: string | null
           scraped_from?: string | null
           submitted_by?: string | null
@@ -1051,6 +1056,7 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+          verification_status?: string | null
           vetting_status?: string
         }
         Relationships: [
