@@ -3,6 +3,7 @@
 // Edge functions cannot import from src/, so the catalogue is mirrored by hand.
 
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const SRC = 'src/data/kits.ts';
 const MIRROR = 'netlify/lib/kits.ts';
@@ -52,7 +53,10 @@ function diff(a, b) {
   return problems;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// On Windows `file://${process.argv[1]}` never matches import.meta.url, because
+// argv[1] is a backslash path and import.meta.url is file:///C:/... . That made
+// this gate a silent no-op locally while it still ran in CI on Linux.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const kits = extractKits(SRC);
   const problems = diff(kits, extractKits(MIRROR));
 
