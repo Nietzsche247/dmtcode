@@ -289,13 +289,20 @@ const bust = (p) => p + (p.includes('?') ? '&' : '?') + RUN_NONCE + '=1';
 let freshSeq = 0;
 const getLocale = async (p, fresh = false) => {
   const url = fresh ? p + (p.includes('?') ? '&' : '?') + `pvr${Date.now().toString(36)}${freshSeq++}=1` : bust(p);
-  try {
-    const r = await fetch(SITE + url, { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
-    if (!r.ok) return null;
-    return await r.text();
-  } catch {
-    return null;
+  // The nonce sends every read to the origin, so a sweep is a few hundred cold
+  // renders and the occasional socket drop is expected. One retry, because a
+  // harness that reports a network blip as drift teaches people to ignore it.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch(SITE + url, { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
+      if (!r.ok) return null;
+      return await r.text();
+    } catch (e) {
+      if (attempt === 1) return null;
+      await new Promise((res) => setTimeout(res, 750));
+    }
   }
+  return null;
 };
 
 const localeDocs = {};
