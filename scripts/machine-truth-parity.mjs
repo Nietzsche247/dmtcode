@@ -282,9 +282,15 @@ const APPROVAL_FIRST = [
 const RUN_NONCE = `pv${Date.now().toString(36)}`;
 const bust = (p) => p + (p.includes('?') ? '&' : '?') + RUN_NONCE + '=1';
 
-const getLocale = async (p) => {
+// fresh=true gives the call its own nonce. The run nonce is stable so the main
+// sweep reads one consistent snapshot, but a confirmation read has to defeat the
+// copy the sweep just put in the cache, or it re-reads the same bytes and
+// reproduces the very mismatch it is meant to test.
+let freshSeq = 0;
+const getLocale = async (p, fresh = false) => {
+  const url = fresh ? p + (p.includes('?') ? '&' : '?') + `pvr${Date.now().toString(36)}${freshSeq++}=1` : bust(p);
   try {
-    const r = await fetch(SITE + bust(p), { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
+    const r = await fetch(SITE + url, { headers: { 'user-agent': UA, 'cache-control': 'no-cache' } });
     if (!r.ok) return null;
     return await r.text();
   } catch {
@@ -314,7 +320,7 @@ if (localeDown) {
   skip('locale parity checks', localeDown);
 } else {
   const fallbackOnly = [];
-  for (const [id] of STATIC_LOCALE_PAGES) {
+  for (const [id, path] of STATIC_LOCALE_PAGES) {
     const en = localeDocs[`${id}|en`];
 
     for (const loc of LOCALES) {
@@ -329,9 +335,19 @@ if (localeDown) {
 
     // Dates. Every date English states has to be stated by the mirrors too, in
     // whatever form that language writes it.
-    const enDates = datesIn(en.text);
+    // List rows are excluded. Their blurbs are clipped to a fixed character
+    // count, and the same sentence is longer in Spanish and German, so the cut
+    // lands on a different word and a date inside the prose survives in one
+    // language and is severed in another: /events showed "on October 21, 2026"
+    // in English and "del 4 al 11 de octubre de 202" in Spanish, cut mid-year.
+    // That is truncation, not drift. The date a row actually asserts is in its
+    // time element, which every locale renders identically, and the counts check
+    // below covers the injected numbers. What is compared here is the authored
+    // body, where a differing date would be a real contradiction.
+    const stripRows = (a) => a.replace(/<li[\s\S]*?<\/li>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    const enDates = datesIn(stripRows(en.article));
     for (const loc of translated) {
-      const got = datesIn(localeDocs[`${id}|${loc}`].text);
+      const got = datesIn(stripRows(localeDocs[`${id}|${loc}`].article));
       let missing = [...enDates].filter((x) => !got.has(x));
       // The list pages render a capped slice of a live table, so a row written
       // between the English fetch and the mirror fetch moves the boundary and
@@ -340,12 +356,11 @@ if (localeDown) {
       // failing, and only report the dates that survive both reads.
       if (missing.length) {
         const [enFresh, locFresh] = await Promise.all([
-          getLocale(localePath('en', path)),
-          getLocale(localePath(loc, path)),
+          getLocale(localePath('en', path), true),
+          getLocale(localePath(loc, path), true),
         ]);
         if (enFresh && locFresh) {
-          const strip = (h) => (h.match(/<article data-prerender="[^"]*"[\s\S]*?<\/article>/) || [''])[0]
-            .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+          const strip = (h) => stripRows((h.match(/<article data-prerender="[^"]*"[\s\S]*?<\/article>/) || [''])[0]);
           const gotFresh = datesIn(strip(locFresh));
           missing = [...datesIn(strip(enFresh))].filter((x) => !gotFresh.has(x));
         }

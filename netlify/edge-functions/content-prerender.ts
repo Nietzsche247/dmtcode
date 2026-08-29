@@ -265,19 +265,56 @@ const HASH_GATED_STATIC_PAGES = new Set<string>([
   "events",
 ]);
 
+// The second guard on the same pages. The hash gate proves a translation is
+// CURRENT. It says nothing about whether it is CORRECT.
+//
+// Proved on 2026-08-29: a backfill regenerated static/faq for es and de. The
+// kit-wide power claim went away, so that half improved, the hash then matched,
+// and the gate passed the row through. The Spanish body still read "Clase 3R".
+// Before the backfill the gate was serving English and the page was right;
+// after it, Spanish served and was wrong, so running the backfill made that
+// page worse. The translation pipeline reproduces the defect on every run, so
+// currency and correctness need separate proofs and neither substitutes for the
+// other. A translation is served only when the hash matches AND nothing here
+// matches.
+//
+// A laser class is a standard designation, like a chemical formula or a DOI.
+// Class 2, Class 3R and FDA Class IIIa are the same strings in Spanish and
+// German. A translated one names a rating that does not exist, on a page a
+// reader consults for safety, so it can never be served whatever its hash says.
+const FORBIDDEN_IN_TRANSLATION: RegExp[] = [
+  // Translated laser class designations, numeric and Roman forms.
+  /\bclase\s*(?:1m|2m|1|2|3\s*[abr]|4|i{1,3}[ab]?|iv)\b/i,
+  /\bklasse\s*(?:1m|2m|1|2|3\s*[abr]|4|i{1,3}[ab]?|iv)\b/i,
+  // One power figure attached to a whole kit, dropping the per emitter ratings
+  // and the ray box exception under 1 mW. Same claims section 9 of
+  // scripts/machine-truth-parity.mjs detects from the outside.
+  /\b(?:m[oó]dulos del kit|los kits?|el kit|cada kit|todos los kits)\b[^.]{0,160}?\b(?:por debajo de|menos de|inferior(?:es)? a|bajo|hasta)\s*5\s?mW\b/i,
+  /\b(?:kit-?modul\w*|die kits?|das kit|jedes kit|alle kits)\b[^.]{0,160}?\bunter\s*5\s?mW\b/i,
+];
+
 // Field-level translations for a single record. Returns {} for English, for a
 // missing table, or on any failure: a missing translation must NEVER blank the
 // source value.
 //
+// Two independent guards, both optional, and a field has to clear both to be
+// served. Either one dropping a field means the caller falls back to English.
+//
 // expectSourceHash, when given, is a field -> md5-of-current-English-source
 // map. A row for one of those fields is dropped when its stored source_hash
-// does not match, so the caller falls back to its English source. Fields not
-// named in the map, and every caller that passes nothing, are unaffected.
+// does not match: the translation is out of date. Fields not named in the map,
+// and every caller that passes nothing, are unaffected.
+//
+// forbidden, when given, is a list of patterns that must not appear in the
+// translated text of any field. A row matching one is dropped however fresh it
+// is: the translation is current but wrong. See FORBIDDEN_IN_TRANSLATION for
+// why a fresh hash is not evidence of a correct translation.
 async function getTranslations(
   table: string,
   recordId: string,
   locale: string,
   expectSourceHash?: Record<string, string>,
+  forbidden?: RegExp[],
 ): Promise<Record<string, string>> {
   if (locale === "en" || !locale || !recordId) return {};
   if (!SUPABASE_URL || !SUPABASE_KEY) return {};
@@ -302,11 +339,14 @@ async function getTranslations(
       const f = String(r.field ?? "");
       const t = String(r.translated_text ?? "");
       if (!f || !t.trim()) continue;
-      // Staleness gate. Only fields the caller named are checked, and a row
+      // Guard 1, currency. Only fields the caller named are checked, and a row
       // whose stored hash does not match the English source it was made from
       // is dropped so the caller serves English instead.
       const want = expectSourceHash?.[f];
       if (want && String(r.source_hash ?? "") !== want) continue;
+      // Guard 2, correctness, independent of guard 1. A row carrying a claim
+      // that must never be translated is dropped even when its hash is fresh.
+      if (forbidden && forbidden.some((re) => re.test(t))) continue;
       out[f] = t;
     }
     return out;
@@ -1919,6 +1959,7 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
     "faq",
     locale,
     HASH_GATED_STATIC_PAGES.has("faq") ? { body_html: md5Hex(faqEnSource) } : undefined,
+    HASH_GATED_STATIC_PAGES.has("faq") ? FORBIDDEN_IN_TRANSLATION : undefined,
   );
 
   const organizationLd = {
@@ -3161,6 +3202,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     key,
     locale,
     HASH_GATED_STATIC_PAGES.has(key) ? { body_html: md5Hex(enSource) } : undefined,
+    HASH_GATED_STATIC_PAGES.has(key) ? FORBIDDEN_IN_TRANSLATION : undefined,
   );
 
   // Structured data on /protocol-guide is locale aware: the FAQ entities and
