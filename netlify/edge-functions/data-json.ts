@@ -260,7 +260,7 @@ export default async (req: Request): Promise<Response> => {
   const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides, retreats] = await Promise.all([
     fetchAll(
       "bibliography",
-      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license,online_publication_date,issue_date,publication_status",
+      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license",
       "is_approved=eq.true"
     ),
     fetchAll(
