@@ -39,6 +39,7 @@ import VolunteerDashboard from "./pages/VolunteerDashboard";
 import Join from "./pages/Join";
 import Preregister from "./pages/Preregister";
 import Prepare from "./pages/Prepare";
+import Downloads from "./pages/Downloads";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -328,6 +329,11 @@ export const AppRoutes = () => (
     <Route path="join" element={<Join />} />
     <Route path="preregister" element={<Preregister />} />
     <Route path="prepare" element={<Prepare />} />
+    {/* The PDF files themselves are static assets under public/downloads and are
+        served by Netlify before this router ever sees them. This route is the
+        index page at the bare /downloads path, which was a 404 while llms.txt
+        was already telling machines the documents lived there. */}
+    <Route path="downloads" element={<Downloads />} />
     <Route path="products/:handle" element={
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>

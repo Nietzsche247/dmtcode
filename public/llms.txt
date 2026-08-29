@@ -85,7 +85,7 @@ Wavelengths by kit: Solo at 650 nm; Dual at 650 and 532 nm; Triad at 650 and 405
 
 ## Free protocol documents
 
-<!-- pdf-count:start -->Thirteen PDF documents under /downloads/<!-- pdf-count:end -->, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German.
+<!-- pdf-count:start -->Thirteen PDF documents under /downloads/<!-- pdf-count:end -->, CC-BY-4.0, no account needed. The observation field sheet is the standard per-session record. The Sober Baseline Protocol is the control condition: same apparatus, sober observers, sobriety attestation, speckle characterization. The AVP Passthrough Protocol is an A-B-A comparison of direct vision versus camera passthrough vision of the same projected pattern, a substrate discriminator. Each document exists in English, Spanish, and German. The index page, with what each document is, what it is not, and when to use it, is at https://dmtcode.com/downloads.
 
 - Screening Card (pre-observation self-check): https://dmtcode.com/downloads/DMTCode_Screening_Card_v1.pdf (ES: DMTCode_Tarjeta_de_Cribado_v1_ES.pdf, DE: DMTCode_Screening_Karte_v1_DE.pdf)
 - /downloads/DMTCode_Observation_Field_Sheet_v1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_DE.pdf (DE)
@@ -105,6 +105,7 @@ Wavelengths by kit: Solo at 650 nm; Dual at 650 and 532 nm; Triad at 650 and 405
 - [Chronology](/timeline): Every source as a dated record, sortable by date, person, place or kind of evidence.
 - [Clinical Trials](/trials): Observatory of DMT related clinical trials with filters, search, and sort.
 - [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.
+- [Documents](/downloads): Index of every free PDF, with what each document is, what it is not, and when to use it. No account. The symbol set is listed here with the note that reading it counts as having seen the catalogue, so a record submitted afterwards should say so.
 - [Protocols](/protocols): Catalogue of psychedelic and laser protocols.
 - /protocols/wavelength-comparison: a pre-registered comparison of the protocol at 650, 532 and 405 nm. States the wavelength claim already in circulation, the absence of any published controlled test of it, and a commitment to publish the result whichever way it falls.
 - /protocols/sober-baseline: the control arm. Observation of the same apparatus with no substance. Requires no kit and no purchase.

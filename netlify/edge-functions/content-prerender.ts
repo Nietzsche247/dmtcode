@@ -1,6 +1,7 @@
 import type { Config, Context } from "@netlify/edge-functions";
 import { hubLabel, uiCopy } from "../lib/ui-strings.ts";
 import { KITS } from "../lib/kits.ts";
+import { DOCUMENTS, docCountWord } from "../lib/documents.ts";
 
 const SITE = "https://dmtcode.com";
 const SUPABASE_URL =
@@ -271,6 +272,7 @@ const HASH_GATED_STATIC_PAGES = new Set<string>([
   "faq",
   "trials",
   "events",
+  "downloads",
 ]);
 
 // The second guard on the same pages. The hash gate proves a translation is
@@ -482,6 +484,12 @@ export default async (request: Request, context: Context) => {
     // /prepare has no id segment; render from bundles table.
     if (kind === "prepare" && seg.length === 1) {
       return await renderPrepare(context, request, locale);
+    }
+    // /downloads is the document index. The PDF files under it are static
+    // assets served by Netlify before this function runs, so only the bare
+    // path reaches here.
+    if (kind === "downloads" && seg.length === 1) {
+      return await renderDownloads(context, locale);
     }
     if (kind === "evidence-map" && seg.length === 1) {
       return await renderEvidenceMap(context, locale);
@@ -1096,30 +1104,30 @@ function regionLabel(code: string, locale: Loc): string {
   }
 }
 
-// The number of PDFs offered on /prepare, spelled in words. Derived from the list
-// rendered below rather than typed, because it was typed once and drifted: the
-// page said "Twelve PDF documents" while /llms.txt, which counts the files in
-// public/downloads at build time, said thirteen. The thirteenth is the symbol set,
-// which is the single most searched document on the site.
-const PREPARE_DOC_FILES = [
-  "DMTCode_Screening_Card_v1.pdf",
-  "DMTCode_Tarjeta_de_Cribado_v1_ES.pdf",
-  "DMTCode_Screening_Karte_v1_DE.pdf",
-  "DMTCode_Observation_Field_Sheet_v1.pdf",
-  "DMTCode_Hoja_de_Campo_v1_ES.pdf",
-  "DMTCode_Feldblatt_v1_DE.pdf",
-  "DMTCode_Sober_Baseline_Protocol_v1.pdf",
-  "DMTCode_Protocolo_Base_Sobria_v1_ES.pdf",
-  "DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf",
-  "DMTCode_AVP_Passthrough_Protocol_v1.pdf",
-  "DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf",
-  "DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf",
-  "dmt-laser-code-symbols.pdf",
-];
-const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
-const PREPARE_DOC_COUNT = NUMBER_WORDS[PREPARE_DOC_FILES.length]
-  ? NUMBER_WORDS[PREPARE_DOC_FILES.length].charAt(0).toUpperCase() + NUMBER_WORDS[PREPARE_DOC_FILES.length].slice(1)
-  : String(PREPARE_DOC_FILES.length);
+// The documents offered on /prepare and on /downloads, and the count spelled in
+// words. Both come from netlify/lib/documents.ts, which mirrors
+// src/data/documents.ts and is checked against the files actually present in
+// public/downloads by scripts/check-docs-drift.mjs. This used to be a hand typed
+// list and a hand typed number, and they drifted: the page said "Twelve PDF
+// documents" while /llms.txt, which counts the directory, said thirteen, and the
+// file they disagreed about was the symbol set.
+const PREPARE_DOC_FILES = DOCUMENTS.flatMap((d) => d.files.map((f) => f.file));
+const PREPARE_DOC_COUNT = docCountWord(true);
+
+// Language suffix as the /prepare list has always written it.
+const DOC_LANG_TAG: Record<string, string> = { en: "EN", es: "ES", de: "DE" };
+
+function docListHtml(): string {
+  const rows: string[] = [];
+  for (const d of DOCUMENTS) {
+    for (const f of d.files) {
+      rows.push(
+        `      <li><a href="${SITE}/downloads/${f.file}">${d.title} (${DOC_LANG_TAG[f.lang] || f.lang.toUpperCase()})</a></li>`,
+      );
+    }
+  }
+  return rows.join("\n");
+}
 
 async function renderPrepare(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
@@ -1290,22 +1298,10 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   </section>
   <section>
     <h2>Field materials and protocols, free download</h2>
-    <p>${PREPARE_DOC_COUNT} PDF documents, no account needed. Each protocol is available in English, Spanish, and German. Nothing here requires buying a kit.</p>
+    <p>${PREPARE_DOC_COUNT} PDF documents, no account needed. Each protocol is available in English, Spanish, and German. Nothing here requires buying a kit. Full descriptions of what each document is and when to use it are at <a href="${SITE}/downloads">/downloads</a>.</p>
     <p><strong><a href="${SITE}/downloads/dmt-laser-code-symbols.pdf">DMT Laser Code Symbols (PDF)</a></strong>. The forms people have reported so far, printed for reference. It is a record of what observers drew, not a key, a translation, or a claim that the forms mean anything. If you saw something that is not in it, <a href="${SITE}/capture">add yours to the registry</a>. Reading it first counts as having seen the catalogue, and a record submitted afterwards should say so.</p>
     <ul>
-      <li><a href="${SITE}/downloads/DMTCode_Screening_Card_v1.pdf">Screening Card (EN)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Tarjeta_de_Cribado_v1_ES.pdf">Tarjeta de Cribado (ES)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Screening_Karte_v1_DE.pdf">Screening-Karte (DE)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Observation_Field_Sheet_v1.pdf">Observation Field Sheet (EN)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf">Hoja de Campo de Observacion (ES)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Feldblatt_v1_DE.pdf">Beobachtungs-Feldblatt (DE)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf">Sober Baseline Protocol (EN)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf">Protocolo de Linea Base Sobria (ES)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf">Nuechtern-Basisprotokoll (DE)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf">AVP Passthrough Observation Protocol (EN)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf">Protocolo de Observacion AVP Passthrough (ES)</a></li>
-      <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf">AVP-Passthrough-Beobachtungsprotokoll (DE)</a></li>
-      <li><a href="${SITE}/downloads/dmt-laser-code-symbols.pdf">DMT Laser Code Symbols (EN)</a></li>
+${docListHtml()}
     </ul>
   </section>
   <section>
@@ -1341,6 +1337,92 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
         }
       : { ...PRERENDER_RESP_HEADERS, "netlify-vary": "country" },
   });
+}
+
+
+// ---------- /downloads, the document index ----------
+//
+// This page exists because the highest click through query the site has,
+// "dmt laser code symbols pdf", was landing people on the PDF file itself: no
+// navigation, no statement of what the catalogue is and is not, and no way to
+// record an observation. Meanwhile /llms.txt was telling machines the documents
+// lived "under /downloads/" and the bare path returned 404. Every row here is
+// rendered from netlify/lib/documents.ts, the same manifest the React page at
+// src/pages/Downloads.tsx renders from.
+async function renderDownloads(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/downloads`;
+  const copy = uiCopy("downloads", locale);
+  const title = copy.title;
+  const metaDesc = clip(copy.description, 200);
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Documents", item: canonical },
+    ],
+  };
+  const collectionLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": canonical,
+    name: "DMT Code protocol documents",
+    url: canonical,
+    license: LICENSE,
+    isAccessibleForFree: true,
+    publisher: { "@id": `${SITE}#org` },
+    hasPart: DOCUMENTS.map((d) => ({
+      "@type": "DigitalDocument",
+      name: d.title,
+      description: d.summary,
+      url: `${SITE}/downloads/${d.files[0].file}`,
+      encodingFormat: "application/pdf",
+      license: LICENSE,
+      isAccessibleForFree: true,
+      inLanguage: d.files.map((f) => f.lang),
+    })),
+  };
+
+  const docSections = DOCUMENTS.map((d) => `  <section id="${d.id}">
+    <h2>${esc(d.title)}</h2>
+    <p><small>${esc(d.kind)}</small></p>
+    <p>${esc(d.summary)}</p>
+    <p><strong>What it is not.</strong> ${esc(d.notThis)}</p>
+    <p><strong>When to use it.</strong> ${esc(d.useWhen)}</p>
+    <ul>
+${d.files.map((f) => `      <li><a href="${SITE}/downloads/${f.file}">${esc(d.title)} (${esc(f.label)}) PDF</a></li>`).join("\n")}
+    </ul>
+  </section>`).join("\n");
+
+  const body = `<article data-prerender="downloads">
+  <!--tsrc:static:downloads-->
+  <h1>Everything you need to run a session, free</h1>
+  <p>${PREPARE_DOC_COUNT} PDF files, ${DOCUMENTS.length} documents, each one in English, Spanish and German where a translation exists. No account, no email, no kit. Licensed CC-BY-4.0, which means you can print them, hand them out, translate them and publish what you find.</p>
+  <p>You do not need to buy anything to take part. The <a href="${SITE}/protocol-guide">protocol guide</a> describes how to build the rig from parts you can source yourself, and <a href="${SITE}/prepare">/prepare</a> sells an assembled version for people who would rather not.</p>
+${docSections}
+  <section>
+    <h2>Read the catalogue after you record, not before</h2>
+    <p>The symbol set is the one document with an order attached to it. If you have seen something and have not written it down yet, write it down first. A description made before you look at what other people drew is worth more than the same description made after, and the registry keeps the two apart.</p>
+    <p><a href="${SITE}/capture">Record what you saw</a>, then come back and open the catalogue. If you have already read it, say so on the form. Nothing is thrown away for having been read first, it is only counted differently.</p>
+    <p>The underlying records are open too: the browseable <a href="${SITE}/registry">registry</a>, the <a href="${SITE}/dataset">dataset page</a> and the machine readable corpus at <a href="${SITE}/data.json">/data.json</a>, all CC-BY-4.0.</p>
+  </section>
+  <!--/tsrc-->
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}.</p>
+</article>`;
+
+  const head = buildHead({
+    locale,
+    title,
+    description: metaDesc,
+    canonical,
+    ogType: "article",
+    jsonLd: [breadcrumbLd, collectionLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
 

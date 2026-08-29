@@ -90,6 +90,12 @@ const CASES = [
   ["/events/conferences/europe", true, "geo hub"],
   ["/events/conferences/united-states", true, "geo hub"],
   ["/retreats/laser-protocol", true, "the 650 nm null-result table"],
+  // The document index. This was a 404 while llms.txt was already telling
+  // machines the documents lived under /downloads/, and the PDF files under it
+  // are static assets Netlify serves before the guard ever runs.
+  ["/downloads", true, "document index page"],
+  ["/downloads/dmt-laser-code-symbols.pdf", true, "static PDF asset"],
+  ["/downloads/DMTCode_Screening_Card_v1.pdf", true, "static PDF asset"],
   // /legal/* and /for-agents stay 404 until the pages actually ship. Allowing
   // them before then returns the empty SPA shell at 200, a soft 404. Flip these
   // to true in the same change that adds the pages and their prerender routes.

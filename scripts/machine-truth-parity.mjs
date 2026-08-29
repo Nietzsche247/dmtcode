@@ -72,6 +72,37 @@ const wordCount = (llms.match(/(\w+) PDF documents under \/downloads\//) || [])[
 const prepareCount = (prepare.match(/(\w+) PDF documents, no account needed/) || [])[1];
 check('prepare and llms.txt agree on the document count', !!wordCount && wordCount.toLowerCase() === (prepareCount || '').toLowerCase(), `llms.txt ${wordCount} vs prepare ${prepareCount}`);
 
+// 5b. /downloads, the document index. It was a 404 while llms.txt was already
+// telling machines the documents lived under /downloads/, and the query that
+// asks for the symbol set by name was landing on the raw PDF: no navigation, no
+// statement of what the catalogue is, and no way to record an observation
+// before reading it. Every file in the manifest has to be reachable from here,
+// and the count has to agree with the other two surfaces.
+const downloads = await get('/downloads');
+check('downloads returns a page, not the 404 shell', /data-prerender="downloads"/.test(downloads));
+const DOC_FILES = [
+  'DMTCode_Screening_Card_v1.pdf', 'DMTCode_Tarjeta_de_Cribado_v1_ES.pdf', 'DMTCode_Screening_Karte_v1_DE.pdf',
+  'DMTCode_Observation_Field_Sheet_v1.pdf', 'DMTCode_Hoja_de_Campo_v1_ES.pdf', 'DMTCode_Feldblatt_v1_DE.pdf',
+  'DMTCode_Sober_Baseline_Protocol_v1.pdf', 'DMTCode_Protocolo_Base_Sobria_v1_ES.pdf', 'DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf',
+  'DMTCode_AVP_Passthrough_Protocol_v1.pdf', 'DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf', 'DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf',
+  'dmt-laser-code-symbols.pdf',
+];
+for (const f of DOC_FILES) {
+  check(`downloads links ${f}`, downloads.includes(`/downloads/${f}`));
+  check(`downloads and prepare both link ${f}`, prepare.includes(`/downloads/${f}`));
+}
+const downloadsCount = (downloads.match(/(\w+) PDF files, \d+ documents/) || [])[1];
+check(
+  'downloads and llms.txt agree on the file count',
+  !!wordCount && wordCount.toLowerCase() === (downloadsCount || '').toLowerCase(),
+  `llms.txt ${wordCount} vs downloads ${downloadsCount}`,
+);
+check('downloads says what the symbol set is not', /not a key, not a translation/.test(downloads));
+check('downloads asks for the record before the catalogue', /\/capture/.test(downloads) && /write it down first/.test(downloads));
+check('downloads states no account is needed', /No account, no email, no kit/.test(downloads));
+check('downloads names the control condition as missing', /no sober baseline records/.test(downloads));
+check('llms.txt points at the document index', /dmtcode\.com\/downloads\b/.test(llms));
+
 // 6. Policies.
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));
 check('privacy: immediate publication described', /published immediately, before any review/.test(privacy));
@@ -246,7 +277,7 @@ const STATIC_LOCALE_PAGES = [
   ['forecasts', '/forecasts'], ['privacy', '/privacy'], ['terms', '/terms'], ['shipping', '/shipping'],
   ['returns', '/returns'], ['disclosure', '/disclosure'], ['capture', '/capture'], ['join', '/join'],
   ['timeline', '/timeline'], ['faq', '/faq'], ['prepare', '/prepare'], ['evidence-map', '/evidence-map'],
-  ['articles', '/articles'],
+  ['articles', '/articles'], ['downloads', '/downloads'],
 ];
 const LOCALES = ['en', 'es', 'de'];
 const localePath = (loc, p) => (loc === 'en' ? p : `/${loc}${p === '/' ? '/' : p}`);

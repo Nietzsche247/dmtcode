@@ -7,6 +7,7 @@ import { PageHero } from '@/components/PageHero';
 import { Card } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
 
+import { DOCUMENTS, docCountWord, DOC_PATH } from '@/data/documents';
 import { KITS, type Kit } from '@/data/kits';
 import { useLocale } from '@/i18n/LocaleProvider';
 
@@ -296,7 +297,10 @@ const Prepare = () => {
               </p>
               <div className="mt-4 max-w-2xl" id="documents">
                 <p className="text-sm text-muted-foreground">
-                  Field materials and protocols, free download, no account needed. Nothing here requires buying a kit.
+                  Field materials and protocols, free download, no account needed. Nothing here requires buying a kit.{' '}
+                  {docCountWord()} PDF files in all. What each document is, what it is not, and when to
+                  use it, is set out at{' '}
+                  <a href="/downloads" className="underline hover:text-foreground">/downloads</a>.
                 </p>
                 <div className="mt-3 rounded-lg border border-gold/30 bg-gold/5 p-4">
                   <a
@@ -316,30 +320,21 @@ const Prepare = () => {
                   </p>
                 </div>
                 <ul className="mt-3 space-y-3">
-                  <li className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Screening Card</span>
-                    <a href="/downloads/DMTCode_Screening_Card_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
-                    <a href="/downloads/DMTCode_Tarjeta_de_Cribado_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
-                    <a href="/downloads/DMTCode_Screening_Karte_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
-                  </li>
-                  <li className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Field Sheet</span>
-                    <a href="/downloads/DMTCode_Observation_Field_Sheet_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
-                    <a href="/downloads/DMTCode_Hoja_de_Campo_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
-                    <a href="/downloads/DMTCode_Feldblatt_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
-                  </li>
-                  <li className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Sober Baseline Protocol</span>
-                    <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
-                    <a href="/downloads/DMTCode_Protocolo_Base_Sobria_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
-                    <a href="/downloads/DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
-                  </li>
-                  <li className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted-foreground">AVP Passthrough Protocol</span>
-                    <a href="/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">EN</a>
-                    <a href="/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">ES</a>
-                    <a href="/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf" download className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground">DE</a>
-                  </li>
+                  {DOCUMENTS.map((d) => (
+                    <li key={d.id} className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm text-muted-foreground">{d.title}</span>
+                      {d.files.map((f) => (
+                        <a
+                          key={f.file}
+                          href={DOC_PATH(f.file)}
+                          download
+                          className="rounded-full border border-border/60 px-3 py-1 text-xs hover:text-foreground"
+                        >
+                          {f.lang.toUpperCase()}
+                        </a>
+                      ))}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </header>

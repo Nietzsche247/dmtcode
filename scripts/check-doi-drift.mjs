@@ -30,6 +30,8 @@ const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'netlify/edge-functions/content-prerender.ts', why: 'REGISTRY_REPORT_LD identifier, mirrors Registry.tsx' },
   { doi: '22101522', file: 'src/components/registry/RegistryBrowser.tsx', why: 'download block, names the Volume 1 file' },
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },
+  { doi: '22101522', file: 'src/data/documents.ts', why: 'document manifest, the entry states Version 1.0 and 51 records, so it cites one deposit' },
+  { doi: '22101522', file: 'netlify/lib/documents.ts', why: 'mirror of src/data/documents.ts' },
   { doi: '21987511', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, explains why the version DOI is not used' },
   { doi: '17816520', file: 'netlify/edge-functions/content-prerender.ts', why: 'version history list item, names the superseded v1.0 deposit' },
 ];

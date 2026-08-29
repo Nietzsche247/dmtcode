@@ -196,6 +196,23 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Vier Laserbeugungs-Forschungskits fuer einen, ein bis zwei, zwei bis drei oder bis zu sechs Beobachter, mit 650, 532 und 405 nm, Beugungsoptik und einem Halbkreis-Linienmacher in jedem Kit; Beobachtungsdokumente sind kostenlose PDFs. Verkauft von Meridian Optics Lab.",
     },
   },
+  downloads: {
+    en: {
+      title: "Free protocol documents and the symbol set | DMT Code",
+      description:
+        "Every DMT Code document as a free PDF: screening card, observation field sheet, sober baseline protocol, AVP passthrough protocol, and the full symbol set with DOI. No account, CC BY 4.0, English, Spanish and German.",
+    },
+    es: {
+      title: "Documentos de protocolo gratuitos y el conjunto de simbolos | DMT Code",
+      description:
+        "Todos los documentos de DMT Code en PDF gratuito: tarjeta de cribado, hoja de campo de observacion, protocolo de linea base sobria, protocolo AVP passthrough y el conjunto completo de simbolos con DOI. Sin cuenta, CC BY 4.0, en ingles, espanol y aleman.",
+    },
+    de: {
+      title: "Kostenlose Protokolldokumente und der Symbolsatz | DMT Code",
+      description:
+        "Alle DMT-Code-Dokumente als kostenloses PDF: Screening-Karte, Beobachtungs-Feldblatt, Nuechtern-Basisprotokoll, AVP-Passthrough-Protokoll und der vollstaendige Symbolsatz mit DOI. Kein Konto, CC BY 4.0, auf Englisch, Spanisch und Deutsch.",
+    },
+  },
   "evidence-map": {
     en: {
       title: "Is the DMT code real? Evidence Timeline and Analysis | DMT Code",

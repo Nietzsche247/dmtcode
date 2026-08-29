@@ -21,6 +21,12 @@ const STATIC: Array<[string, string, string]> = [
   ["/trials", "0.9", "daily"],
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
+  // The document index. Every protocol PDF is free and needs no account, and
+  // "dmt laser code symbols pdf" is one of the highest click through queries
+  // the site has, so the PDF itself was the landing page: a dead end with no
+  // navigation and no way to record an observation. /downloads is the page
+  // that query should land on.
+  ["/downloads", "0.8", "weekly"],
   // Kit drill-down pages. Listed literally rather than generated from the kit
   // catalogue: this function does not import netlify/lib/kits.ts, and a handle
   // is not something to derive. If a kit handle changes in src/data/kits.ts,
