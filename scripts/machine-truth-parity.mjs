@@ -69,7 +69,30 @@ check('privacy: no approval-before-publication wording', !/becomes public once i
 // 7. Null reports show live counts.
 check('null reports page carries live counts', /Null reports: <strong>\d+<\/strong>/.test(nulls));
 
-// 8. Shopify. The store is the one surface whose copy is written by hand rather
+// 8. Locale surfaces must not contradict English.
+//
+// The site stores one translated body per static page per locale, written when
+// the English was last translated. Editing the English does not touch those
+// rows, so a rewritten page keeps serving its old translation until a
+// translation run catches up. For pages that make a classification, safety or
+// rights claim the prerender gates the translation on a source hash and falls
+// back to English on a mismatch. These checks assert the gate is doing its job:
+// the retired English claim must not survive in any language.
+const RETIRED_CLAIMS = [
+  { path: '/trials', strings: ['Observatorio de Ensayos Clínicos', 'Klinische Studien Observatorium', 'seguimiento de los ensayos clínicos'], why: 'frames every record as a clinical trial' },
+  { path: '/events', strings: ['revisados por moderadores antes', 'von Moderatoren geprüft, bevor'], why: 'claims moderator review beside auto-discovered rows' },
+  { path: '/privacy', strings: ['24 de julio', '24. Juli'], why: 'superseded effective date' },
+  { path: '/methods', strings: ['Utilice una apertura bloqueada', 'Verwenden Sie eine blockierte Blende'], why: 'blocked-aperture sham' },
+];
+for (const { path, strings, why } of RETIRED_CLAIMS) {
+  for (const loc of ['es', 'de']) {
+    const html = await get(`/${loc}${path}`);
+    const hit = strings.find((s) => html.includes(s));
+    check(`/${loc}${path} free of retired claim (${why})`, !hit, hit || '');
+  }
+}
+
+// 9. Shopify. The store is the one surface whose copy is written by hand rather
 // than generated from src/data/kits.ts, so it is the one that drifts. It shipped
 // a contradicted laser class claim for a day before this check existed. The
 // public product JSON needs no authentication.

@@ -244,12 +244,25 @@ function md5Hex(input: string): string {
 // Those are hand written translations flagged reviewed, they can never match a
 // computed hash, and gating either page would suppress them permanently and
 // serve English in their place. Give such a row a real md5 first.
+// trials and events joined on 2026-08-29, after Repair Build 5 rewrote both
+// pages in English and left the 2026-08-27 translations in place. The Spanish
+// body of /trials still opened "Observatorio de Ensayos Clinicos ... el
+// observatorio realiza un seguimiento de los ensayos clinicos", describing all
+// 266 records as clinical trials, which is the precise claim the record_type
+// work exists to stop. The Spanish body of /events still said events "son
+// revisados por moderadores antes de su publicacion" on a page that was at the
+// same moment rendering 21 rows labelled auto-discovered candidate, so one page
+// asserted and denied moderator review in two languages at once. Both are
+// classification claims an AI agent reads as fact, so they fall back to English
+// until a translation run refreshes them.
 const HASH_GATED_STATIC_PAGES = new Set<string>([
   "privacy",
   "terms",
   "disclosure",
   "methods",
   "faq",
+  "trials",
+  "events",
 ]);
 
 // Field-level translations for a single record. Returns {} for English, for a
