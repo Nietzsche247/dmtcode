@@ -19,10 +19,13 @@ export function extractKits(path) {
   // Include those const declarations so the isolated array literal can evaluate.
   const before = text.slice(0, start);
   const constDecls = [];
-  const constRegex = /^const\s+\w+\s+=\s+['"`].*?['"`];$/gm;
+  // Strings (AVAIL) and single-line object literals (the per emitter vendor
+  // ratings, e.g. `const P2_7500: Emitter = { ... };`). The TypeScript type
+  // annotation is stripped so the declaration evaluates as plain JavaScript.
+  const constRegex = /^const\s+\w+(?:\s*:\s*\w+)?\s*=\s*(?:['"`].*?['"`]|\{.*\});$/gm;
   let match;
   while ((match = constRegex.exec(before)) !== null) {
-    constDecls.push(match[0]);
+    constDecls.push(match[0].replace(/^const\s+(\w+)\s*:\s*\w+\s*=/, 'const $1 ='));
   }
   const body = constDecls.length > 0 ? `${constDecls.join('\n')}\nreturn ${literal};` : `return ${literal};`;
   // eslint-disable-next-line no-new-func

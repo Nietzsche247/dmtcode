@@ -249,9 +249,9 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
   },
   trials: {
     en: {
-      title: "Clinical Trials Observatory | DMT Code",
+      title: "Trials, Studies and Experiments | DMT Code",
       description:
-        "Observatory of DMT related clinical trials with status, sponsor, phase, and application links. Updated from public trial registries.",
+        "Registered clinical trials involving DMT and related compounds, updated from public registries, listed alongside typed community experiments, pilot reports and claims. Only registered trials count as clinical evidence.",
     },
     es: {
       title: "Observatorio de ensayos clínicos | DMT Code",

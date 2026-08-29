@@ -19,6 +19,8 @@ export default async () => {
       observers: kit.observers,
       price_usd: kit.priceNumber,
       diy_parts_usd: kit.diyCostNumber,
+      emitters: kit.emitters,
+      laser_class_note: "Per emitter vendor ratings. A multi emitter kit has no single class; read emitters[].",
       availability: kit.availability,
       cart_url: kit.cart,
       image: kit.image,

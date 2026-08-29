@@ -509,22 +509,23 @@ export default async (request: Request, context: Context) => {
       if (!r) return notFound404(await shellRes.text(), { title: "Trial not found | DMT Code", heading: "Trial not found", text: "This trial is not currently indexed or the link is out of date.", canonical: `${SITE}/trials`, backHref: `${SITE}/trials`, backLabel: "Clinical trials", marker: "trial-not-found" });
       overlay(r, await getTranslations("clinical_trials", String(r.id), locale));
       const isRegisteredTrial =
-        r.record_type === "registered_trial" ||
+        isRegisteredTrialType(r.record_type) ||
         (typeof r.trial_registry_id === "string" &&
           /^NCT/i.test(r.trial_registry_id));
       noindex = !isRegisteredTrial;
 
       const desc =
         (r.description && String(r.description).trim()) ||
-        `A clinical trial tracked by the DMT Code Clinical Trials Observatory${
-          r.institution ? `, conducted at ${r.institution}` : ""
-        }.`;
+        (isRegisteredTrial
+          ? `A registered clinical trial tracked by DMT Code${r.institution ? `, conducted at ${r.institution}` : ""}.`
+          : `A ${trialTypeLabel(r.record_type).toLowerCase()} recorded by DMT Code. It is not a registered clinical trial and does not count as clinical evidence here.`);
 
-      title = `${String(r.title)} | DMT Code Clinical Trials`;
+      title = `${String(r.title)} | DMT Code Trials and Experiments`;
       metaDesc = clip(desc, 160);
       canonical = `${SITE}/trials/${r.id}`;
 
       const pairs: Array<[string, unknown]> = [
+        ["Record type", trialTypeLabel(r.record_type)],
         ["Status", r.status],
         ["Phase", r.phase],
         ["Institution", r.institution],
@@ -564,9 +565,9 @@ export default async (request: Request, context: Context) => {
             isPartOf: {
               "@type": "Dataset",
               "@id": `${SITE}/trials#dataset`,
-              name: "DMT Clinical Trials Observatory",
+              name: "DMT Code Trials and Experiments Observatory",
               description:
-                "Open observatory of clinical trials involving N,N-DMT and related compounds, indexed from public trial registries.",
+                "Open observatory of registered clinical trials involving N,N-DMT and related compounds, indexed from public trial registries, with typed community records listed separately.",
               url: `${SITE}/trials`,
               license: LICENSE,
               creator: { "@id": `${SITE}#org` },
@@ -605,7 +606,7 @@ export default async (request: Request, context: Context) => {
       ? `<p>DOI: <a href="https://doi.org/${esc(r.doi)}" rel="noopener">${esc(r.doi)}</a></p>`
       : ""
   }
-  <p>Tracked by the <a href="${SITE}/trials">DMT Code Clinical Trials Observatory</a>, an open record of DMT-related clinical research.</p>
+  <p>Listed in the <a href="${SITE}/trials">DMT Code trials, studies and experiments observatory</a>. Record type: ${esc(trialTypeLabel(r.record_type))}. Only registered clinical trials carry clinical authority in this record set.</p>
 </article>`;
     } else if (kind === "bibliography") {
       const f =
@@ -1021,7 +1022,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     <p>${esc(k.description)}</p>
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
-    <p>Class 3R laser, under 5 mW. Do not stare into beam.</p>
+    <p>Laser pointers in these kits are vendor rated 5 mW, FDA Class IIIa (Class 3R); the ray box in the Triad and Circle is under 1 mW. Ratings are listed per emitter on each kit. Do not stare into beam.</p>
     <p><a href="${esc(k.cart)}">Buy - secure Shopify checkout</a></p>
     <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
 
@@ -1047,7 +1048,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
       <li>Personal or family history of psychosis</li>
     </ul>
     <p>We publish no discontinuation windows. Timing decisions belong to a clinician who knows your history.</p>
-    <p>Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
+    <p>Pointers vendor rated 5 mW, FDA Class IIIa (Class 3R), ray box under 1 mW: do not stare into the beam, do not aim it at anyone, and treat every reflective surface in the room as part of the beam path.</p>
   </section>
   <!--/tsrc-->
   <section data-block="shipping-returns">
@@ -1691,7 +1692,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: "Is the laser safe for my eyes?",
-        a: "A laser is not a toy. The kit modules are low-power visible red lasers (Class 3R, IIIa, under 5 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.",
+        a: "A laser is not a toy. The kit modules are low-power visible red lasers (vendor rated 5 mW, FDA Class IIIa, also written Class 3R; the ray box in the Triad and Circle is under 1 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.",
       },
     ],
   },
@@ -1833,6 +1834,7 @@ type StaticPage = {
   breadcrumbName: string;
   robots?: string;
   index?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string };
+  index2?: { table: string; filter: string; select: string; titleField: string; linkPrefix: string; label: string; extraField?: string };
   bodyExtraHtml?: string;
   extraJsonLd?: unknown[];
 };
@@ -2138,7 +2140,7 @@ const GLOSSARY_TERMSET_LD = {
 const METHODS_FAQ: Array<{ q: string; a: string }> = [
   {
     q: "How do you design a blinded experiment for the 650 nm laser protocol?",
-    a: "Double-blind experimental design requires three critical components to eliminate expectation effects and observer bias: Sham laser device: Construct device with identical appearance, weight, and operation (button press, indicator LED) but no 650 nm coherent light output. Use a blocked aperture or another control that is not distinguishable by appearance, see the control device requirements below. Independent randomization: Third-party experimenter (not present during experience) randomizes real/sham assignment using sealed envelopes or electronic randomization. Maintains allocation concealment until data analysis. Blinded symbol recording: Both participant and symbol recorder remain unaware of real/sham condition. Post-experience drawing occurs before unblinding. Control for optical variables: wavelength (650 nm ± 5 nm), intensity (fixed in advance and recorded, see equipment specifications below), diffraction grating line density (500-1000 lines/mm). Control for pharmacological variables: N,N-DMT dose (route-matched baseline dose), set/setting standardization. Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4",
+    a: "Double-blind experimental design requires three critical components to eliminate expectation effects and observer bias: Sham laser device: Construct device with identical appearance, weight, and operation (button press, indicator LED) but no 650 nm coherent light output. The sham must not be distinguishable by appearance, which rules out a blocked aperture or a dark device: see the control device requirements below. Independent randomization: Third-party experimenter (not present during experience) randomizes real/sham assignment using sealed envelopes or electronic randomization. Maintains allocation concealment until data analysis. Blinded symbol recording: Both participant and symbol recorder remain unaware of real/sham condition. Post-experience drawing occurs before unblinding. Control for optical variables: wavelength (650 nm ± 5 nm), intensity (fixed in advance and recorded, see equipment specifications below), diffraction grating line density (500-1000 lines/mm). Control for pharmacological variables: N,N-DMT dose (route-matched baseline dose), set/setting standardization. Timmermann et al. (2019) Neural correlates of the DMT experience assessed with multivariate EEG. DOI: 10.1038/s41598-019-51974-4",
   },
   {
     q: "What control conditions are necessary?",
@@ -2154,7 +2156,7 @@ const METHODS_FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "What equipment specifications are required?",
-    a: "Standardized equipment ensures replicability: Laser: 650 nm plus or minus 5 nm, continuous wave, beam diameter 1 to 2 mm at aperture. Power and safety class are deliberately left open. The published report we have been able to verify describes a collimated 650 nm laser but does not state output power or safety class in the publicly accessible record, so any specific figure here would be invented rather than sourced. A replication should use the lowest output that produces a usable diffraction pattern at the intended viewing distance, that figure should be set by a qualified laser safety officer, recorded in the protocol, and verified with a calibrated power meter. For context, consumer pointers sold as Class 2 are limited to 1 mW, while Class 3R, labelled Class IIIa under older United States classification, spans 1 to 5 mW. Those are materially different exposure classes and they are not interchangeable. Diffraction grating: 500-1000 lines/mm transmission grating, mounted 2-5 cm from laser aperture. Holographic gratings preferred for uniform diffraction pattern. Control device: a credible optical control has to match everything the participant can perceive. Same housing, weight, button, indicator, apparent colour, apparent brightness, projected geometry, surface coverage and viewing distance. What it manipulates has to be something the participant cannot perceive directly, such as coherence, speckle structure or diffraction order. A 520 nm green LED fails this test, because green is visibly not red and the participant is unblinded the moment the device is switched on. Measurement tools: spectrometer to verify output wavelength, calibrated power meter to verify output power against the figure set in the protocol, beam profiler for spatial characterisation, and a photometer to confirm the control device matches the active device on apparent brightness.",
+    a: "Standardized equipment ensures replicability: Laser: 650 nm plus or minus 5 nm, continuous wave, beam diameter 1 to 2 mm at aperture. Goler's 2025 paper (IPI Letters, DOI 10.59973/ipil.158) states its equipment: a 650 nm refracted laser, Class 2, operating power 1 mW, on a tripod, with a diffraction grating lens, projected onto a non-reflective surface at 4 to 6 feet. It also states that only Class 2 lasers at 1 mW or less were used. A replication of the reported setup should match that: Class 2, 1 mW or less, verified with a calibrated power meter, recorded in the protocol, and reviewed by a qualified laser safety officer. The kits DMT Code sells use pointers the vendor rates at 5 mW, FDA Class IIIa (Class 3R). That is a later community adaptation, not the configuration in Goler's paper, and a study that uses it is testing a different exposure class and should say so. For context, Class 2 is limited to 1 mW, while Class 3R, labelled Class IIIa under older United States classification, spans 1 to 5 mW. Those are materially different exposure classes and they are not interchangeable. Diffraction grating: 500-1000 lines/mm transmission grating, mounted 2-5 cm from laser aperture. Holographic gratings preferred for uniform diffraction pattern. Control device: a credible optical control has to match everything the participant can perceive. Same housing, weight, button, indicator, apparent colour, apparent brightness, projected geometry, surface coverage and viewing distance. What it manipulates has to be something the participant cannot perceive directly, such as coherence, speckle structure or diffraction order. A 520 nm green LED fails this test, because green is visibly not red and the participant is unblinded the moment the device is switched on. Measurement tools: spectrometer to verify output wavelength, calibrated power meter to verify output power against the figure set in the protocol, beam profiler for spatial characterisation, and a photometer to confirm the control device matches the active device on apparent brightness.",
   },
   {
     q: "How do you handle ethical considerations?",
@@ -2217,19 +2219,22 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     extraJsonLd: [REGISTRY_REPORT_LD],
   },
   trials: {
-    title: "Clinical Trials Observatory | DMT Code",
-    description: "Observatory of DMT related clinical trials with status, sponsor, phase, and application links. Updated from public trial registries.",
-    heading: "Clinical Trials Observatory",
+    title: "Trials, Studies and Experiments | DMT Code",
+    description: "Registered clinical trials involving DMT and related compounds, updated from public registries, listed alongside typed community experiments, pilot reports and claims. Only registered trials count as clinical evidence.",
+    heading: "Trials, Studies and Experiments",
     paragraphs: [
-      "The observatory tracks clinical trials that involve N,N-DMT and related compounds. Each record links to the underlying trial registry entry so the primary source is one click away.",
-      "Filter by status, indication, and sponsor. Machine readable trial records are included in the unified corpus at /data.json.",
+      "Registered clinical trials that involve N,N-DMT and related compounds, indexed from public registries. Each registered record links to its registry entry so the primary source is one click away, and each one is typed registered_clinical_trial.",
+      "The same table also lists the community experiments, the 2025 pilot report, platform projects, media claims and rumours that make up the history of this observation. They are kept because they are part of the story, and they are typed and labelled so nobody mistakes them for clinical evidence. A record only carries clinical authority in /data.json when it is a registered clinical trial with a registry id.",
+      "Filter by status, type, indication, and sponsor. Machine readable records are included in the unified corpus at /data.json with record_type, relevance and registry_id on every row.",
     ],
     links: [
       { href: "/data.json", label: "Machine readable corpus" },
       { href: "/bibliography", label: "Related research library" },
     ],
     breadcrumbName: "Trials",
-    index: { table: "clinical_trials", filter: "is_approved=is.true", select: "id,title,updated_at", titleField: "title", linkPrefix: "/trials", label: "Tracked trials" },
+    index: { table: "clinical_trials", filter: "is_approved=is.true&record_type=eq.registered_clinical_trial&relevance=eq.core", select: "id,title,updated_at", titleField: "title", linkPrefix: "/trials", label: "Registered clinical trials, recently added" },
+    index2: { table: "clinical_trials", filter: "is_approved=is.true&record_type=neq.registered_clinical_trial", select: "id,title,record_type,confirmed_status,updated_at", titleField: "title", linkPrefix: "/trials", label: "Community experiments, reports and claims, typed", extraField: "record_type" },
+    bodyExtraHtml: `<section data-prerender="trial-record-types"><h2>Record types used here</h2><ul><li>registered_clinical_trial: a trial with a public registry id, the only type that carries clinical authority.</li><li>registered_observational_study and academic_experiment: formal studies that are not interventional trials.</li><li>published_pilot_report: Goler's 2025 pilot study in IPI Letters.</li><li>community_experiment, citizen_science_project and reported_replication: work done outside institutions, recorded as such.</li><li>platform_project: things DMT Code itself runs, such as the registry launch and the null report programme.</li><li>media_claim and rumored_report: claims made in podcasts or forums that nobody has documented.</li><li>retreat_or_facilitated_session: sessions run by a facilitator, usually undisclosed.</li></ul></section>`,
   },
   bibliography: {
     title: "Research Bibliography | DMT Code",
@@ -2380,10 +2385,10 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "This page aggregates community reported events and publicly available clinical trial data into one scholarly reference timeline. Inclusion does not constitute endorsement.",
       "We know of no legal retreat or public event that runs this laser observation protocol with inhaled N,N-DMT. The listings below are for context only and do not run it. If that changes, it will be stated here first.",
-      "Events and trials are sourced from the community and from public registries, and are reviewed by moderators before publication. A listing is not an endorsement. Verify legal status, medical screening and staff credentials directly with any organizer or retreat center before you book.",
+      "Events submitted by people are reviewed by moderators before publication. Events our scrapers find can appear first as auto-discovered candidates and are labelled as such until an editor verifies them; every listing carries a verification status. Registered trials come from public registries. A listing is not an endorsement. Verify legal status, medical screening and staff credentials directly with any organizer or retreat center before you book.",
     ],
     links: [
-      { href: "/trials", label: "Clinical trials observatory" },
+      { href: "/trials", label: "Trials, studies and experiments" },
       { href: "/evidence-map", label: "Evidence timeline (1926 to present)" },
       { href: "/bibliography", label: "Research bibliography" },
     ],
@@ -2492,18 +2497,18 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "What DMT Code collects, who processes it, and what becomes public.",
     heading: "Privacy",
     paragraphs: [
-      "Effective 24 July 2026.",
+      "Effective 28 August 2026.",
       "This page describes what this site collects, where it goes, and what becomes public. It was written by reading our own code and database rather than from a template, so it describes what actually happens here.",
     ],
     breadcrumbName: "Privacy",
-    bodyExtraHtml: `<section><h2>The short version</h2><p>You can read almost everything on this site without an account and without telling us anything. If you make an account and contribute, the content you contribute is meant to become public, because a convergence dataset that nobody can check is worth nothing. Your identity is not part of what becomes public.</p></section>
-<section><h2>What we collect</h2><p><strong>If you create an account.</strong> Your email address and a password, or a Google or Apple sign in if you choose that instead. Passwords are handled by our authentication provider and never reach us in readable form. On sign up we generate a pseudonym for you automatically, in the form of a two word handle. You can change the display name attached to it. We do not ask for your real name at any point, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p><p><strong>If you submit a symbol.</strong> The image you draw or upload, your written description, the tags you choose, and, if you fill them in, the route of administration and approximate dose. If you record a voice note, we store the audio.</p><p><strong>If you complete an assessment.</strong> Your responses to the PHQ-9, GAD-7, MEQ-4 and CEQ-7 questionnaires, and your before and after mood ratings. These are mental health questions and we treat the answers accordingly. They are stored in a private area that is not readable by other visitors. If you upload imaging, that is stored in the same private area.</p><p><strong>If you join a list.</strong> For the general waiting list and for the clinical trial watch list, your email address, and nothing else.</p><p><strong>If you volunteer.</strong> The email address, handle, roles, experience level, languages, skills and motivation you enter on the volunteer form, and whether you consented to being contacted.</p><p><strong>If you buy something.</strong> Nothing about the payment. Checkout happens on Shopify's own systems. Card numbers never touch this site or our database. Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases.</p></section>
+    bodyExtraHtml: `<section><h2>The short version</h2><p>You can read almost everything on this site without an account and without telling us anything. An account is not needed to browse. It is needed to seal a memory or submit a record. If you make an account and contribute, the content you contribute is meant to become public, because a convergence dataset that nobody can check is worth nothing. Your identity is not part of what becomes public.</p></section>
+<section><h2>What we collect</h2><p><strong>If you create an account.</strong> Your email address and a password, or a Google or Apple sign in if you choose that instead. Passwords are handled by our authentication provider and never reach us in readable form. On sign up we generate a pseudonym for you automatically, in the form of a two word handle. You can change the display name attached to it. We do not ask for your real name at any point, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p><p><strong>If you submit a symbol.</strong> The image you draw or upload, your written description, the tags you choose, and, if you fill them in, the route of administration and approximate dose. If you record a voice note, we store the audio, and today it is published with the symbol. A voice can identify a person in a way a drawing cannot, so raw audio is moving to private by default with a separate, off by default option to publish it. Until that ships, treat a voice note as public.</p><p><strong>If you complete an assessment.</strong> Your responses to the PHQ-9, GAD-7, MEQ-4 and CEQ-7 questionnaires, and your before and after mood ratings. These are mental health questions and we treat the answers accordingly. They are stored in a private area that is not readable by other visitors. If you upload imaging, that is stored in the same private area.</p><p><strong>If you join a list.</strong> For the general waiting list and for the clinical trial watch list, your email address, and nothing else.</p><p><strong>If you volunteer.</strong> The email address, handle, roles, experience level, languages, skills and motivation you enter on the volunteer form, and whether you consented to being contacted.</p><p><strong>If you buy something.</strong> Nothing about the payment. Checkout happens on Shopify's own systems. Card numbers never touch this site or our database. Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases.</p></section>
 <section><h2>What we deliberately do not collect</h2><p>We do not log the IP addresses of visitors. Our server side logging records only automated crawlers, and for those it records only the page requested, the crawler's name, and its user agent string. There is no visitor identifier, no fingerprint and no IP address in that log.</p><p>We do not ask for your real name, your date of birth, your address or your phone number anywhere on this site, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p></section>
 <section><h2>Who processes data for us</h2><ul><li>Supabase, for the database, sign in and file storage.</li><li>Netlify, for hosting and for the code that runs at the edge.</li><li>Resend, for the emails we send you.</li><li>Shopify, for the shop and for checkout.</li><li>Google Analytics, for measuring which pages get read.</li><li>Google Fonts and Zenodo, which see a request from your browser when a page loads a font or the citation badge in our footer.</li></ul></section>
-<section><h2>What becomes public</h2><p>Handles and display names are readable by anyone. That is deliberate, because contributions are attributed to a handle.</p><p>A symbol submission becomes public once it is approved: the image, the description, the tags and the vote count. Theories and events you submit become public once approved, in full.</p><p>Your email address never becomes public. Your assessment answers never become public. Your account identifier is not displayed anywhere on the site.</p></section>
-<section><h2>The open data export</h2><p>We publish an export of the site at /data.json under a Creative Commons Attribution 4.0 licence, and we explicitly invite AI crawlers to read it. This is the point of the project. Data that cannot be independently checked is not evidence.</p><p>The export includes approved symbol submissions, approved theories and approved events. For a symbol that means the description, the tags, the vote count, the date and the web address of the image. It does not include your email address.</p><p>If you would rather your contribution were not in that export, tell us and we will take it out of the next one. We cannot recall copies that other people have already downloaded, which is what a Creative Commons licence means in practice, so please decide before you submit rather than after.</p></section>
+<section><h2>What becomes public</h2><p>Handles and display names are readable by anyone. That is deliberate, because contributions are attributed to a handle.</p><p>A symbol you submit is published immediately, before any review: the image, the description, the tags, the conditions you chose to record, and the recognition and non-match counts. Administrators have 72 hours to review it and can hide it. Theories, events, retreats and trial records you submit are reviewed first and become public once approved, in full.</p><p>Your email address never becomes public. Your assessment answers never become public. Your account identifier is not displayed anywhere on the site.</p></section>
+<section><h2>The open data export</h2><p>We publish an export of the site at /data.json under a Creative Commons Attribution 4.0 licence, and we explicitly invite AI crawlers to read it. This is the point of the project. Data that cannot be independently checked is not evidence.</p><p>The export includes every published symbol submission whose contributor granted publication consent, carrying its visibility, moderation and evidence status fields, plus approved theories and approved events. For a symbol that means the description, the tags, the recognition and non-match counts, the date and the web address of the image. It does not include your email address, and it does not include raw voice audio.</p><p>If you would rather your contribution were not in that export, tell us and we will take it out of the next one. We cannot recall copies that other people have already downloaded, which is what a Creative Commons licence means in practice, so please decide before you submit rather than after.</p></section>
 <section><h2>Cookies and analytics</h2><p>Google Analytics loads on every page of this site and sets cookies in your browser. We see aggregate reports: which pages were read, roughly where in the world readers were, which pages were read next. We do not use it to build a profile of you and we do not sell anything to advertisers.</p><p>It currently loads without asking you first. If you would rather not be measured, you can install Google's own opt out browser add on, or block analytics cookies in your browser settings, or use a browser that blocks them by default. Both work on this site and neither breaks anything.</p></section>
-<section><h2>Where things are stored</h2><p>Assessment responses and any imaging you upload are held in a private store that requires authentication to read. Symbol images, drawings and voice notes are held in a public store, because they are published on the site.</p></section>
+<section><h2>Where things are stored</h2><p>Assessment responses and any imaging you upload are held in a private store that requires authentication to read. Symbol images and drawings are held in a public store, because they are published on the site. Voice notes are currently in the same public store; see the voice note paragraph above for where that is going.</p></section>
 <section><h2>Getting your data, or getting rid of it</h2><p>Write to info@dmtcode.com and ask. You can ask us for a copy of what we hold about you, for a correction, or for deletion. If you ask us to delete your account we will remove the account and the personal details attached to it.</p><p>For a published contribution, tell us whether you want it removed entirely or kept and detached from your account. We will do either. Where we remove a research record rather than delete it, we hide it from the site rather than destroying it, and we will tell you which we did.</p></section>
 <section><h2>Children</h2><p>This site is for adults. It is not intended for anyone under 18 and we do not knowingly collect anything from anyone under 18.</p></section>
 <section><h2>Changes</h2><p>If we change this page we will change the date at the top. Material changes will be noted on the page rather than made quietly.</p></section>
@@ -2514,14 +2519,14 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     description: "The terms you agree to when you use DMT Code or contribute to it.",
     heading: "Terms",
     paragraphs: [
-      "Effective 16 August 2026.",
+      "Effective 28 August 2026.",
     ],
     breadcrumbName: "Terms",
     bodyExtraHtml: `<section><h2>What this site is</h2><p>DMT Code is a research project that collects and publishes reports of a visual phenomenon, alongside clinical trial records, a bibliography, and competing explanations for what the phenomenon might be. It takes no position on whether the phenomenon is real. Nothing here asserts that it is, and nothing here asserts that it is not.</p></section>
 <section><h2>This is not medical advice</h2><p>Nothing on this site is medical advice, therapeutic advice or legal advice. It is not intended to diagnose, treat, cure or prevent anything. DMT is a controlled substance in many countries. This site does not encourage or condone the use of any illegal substance, does not provide sourcing information, and does not provide dosing guidance. Requests for any of those will not receive a reply. Speak to a qualified clinician about anything to do with your health, and check your own local law.</p><p>You must be 18 or older to use this site.</p></section>
-<section><h2>Your account</h2><p>An account is optional. You get an automatically generated pseudonym, and you are welcome to keep it. Keep your password to yourself. Tell us at info@dmtcode.com if you think someone else is using your account.</p></section>
+<section><h2>Your account</h2><p>An account is optional for browsing. An account is required to seal or submit a record, to respond to a symbol, to follow, or to volunteer. You get an automatically generated pseudonym, and you are welcome to keep it. Keep your password to yourself. Tell us at info@dmtcode.com if you think someone else is using your account.</p></section>
 <section><h2>What you contribute, and how it is licensed</h2><p>This is the most important section on this page, so it is written plainly.</p><p>When you submit a symbol, a theory or an event, and it is published on this site, you are giving us permission to publish it on this site and to include it in our open data export at /data.json. That export is licensed under Creative Commons Attribution 4.0. In practice this means that anyone, including companies that train AI systems, may copy and reuse the content you contributed as long as they credit DMT Code.</p><p>This is deliberate rather than incidental. The only thing that makes a convergence dataset worth anything is that other people can check it, and that requires them to be able to hold a copy.</p><p>What this does not include: your email address, and your assessment responses, neither of which are ever published or exported.</p><p>You keep ownership of what you contribute. You are giving us a licence, not signing it away.</p><p>You can ask us to withdraw a contribution at any time by writing to info@dmtcode.com. We will remove it from the site and from the next export. We cannot retrieve copies that other people have already taken, which is the nature of an open licence.</p><p>Only submit material that is yours to submit.</p></section>
-<section><h2>Moderation</h2><p>Symbols you draw and submit appear in the public registry immediately. There is no queue in front of them. Administrators then have 72 hours from publication to review a submission and deny it. A denied submission is hidden rather than deleted, so a record of what was submitted survives. After that window it stands, unless it is later reported and found to break the rules below.</p><p>Events, retreats, clinical trial records and theories work the other way around. Those are reviewed before they appear.</p><p>Anyone signed in can mark a symbol as echoing their memory, or as not resembling what they saw. Both responses are recorded and both are published in our open data export. Neither one reorders the registry for anybody else. The browse list follows whichever sort the reader picked. One of those sorts does weigh community responses, but the reader has to choose it and it ranks only symbols carrying at least five responses. A response never removes a symbol and never hides one.</p><p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p></section>
+<section><h2>Moderation</h2><p>Symbols you draw and submit appear in the public registry immediately. There is no queue in front of them. Administrators then have 72 hours from publication to review a submission and deny it. A denied submission is hidden rather than deleted, so a record of what was submitted survives. After that window it stands, unless it is later reported and found to break the rules below.</p><p>Events, retreats, trial records and theories that people submit work the other way around: those are reviewed before they appear. Events and retreats found by our own scrapers can appear before an editor has verified them, and are labelled as auto-discovered candidates until one has. The label is the review status; read it.</p><p>Anyone signed in can mark a symbol as echoing their memory, or as not resembling what they saw. Both responses are recorded and both are published in our open data export. Neither one reorders the registry for anybody else. The browse list follows whichever sort the reader picked. One of those sorts does weigh community responses, but the reader has to choose it and it ranks only symbols carrying at least five responses. A response never removes a symbol and never hides one.</p><p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p></section>
 <section><h2>Buying equipment</h2><p>Kits are sold and shipped by Meridian Optics Lab, the store of record operated by the same owner as DMT Code Project; its refund, shipping and terms policies govern purchases. Those policies are mirrored at /shipping, /returns, /store-terms and /store-contact. This site does not currently carry affiliate links. If that changes, /disclosure will name them before they go live.</p><p>Equipment listed here is ordinary optical equipment. We do not sell, source or explain how to obtain any controlled substance.</p></section>
 <section><h2>Accuracy</h2><p>We correct errors publicly rather than quietly. Where a record turns out to be wrong or unverifiable, we hide it and say so. Where a citation is wrong, we fix it. If you find something wrong, tell us at info@dmtcode.com and we would rather hear it than not.</p></section>
 <section><h2>No warranty</h2><p>This site is provided as it is. We do not promise it will be available, complete or free of errors. We do not promise that the phenomenon described here is real, and we say so throughout the site. Decisions you make about your own health and your own conduct are yours.</p></section>
@@ -2708,8 +2713,8 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       };
       const todayIso = new Date().toISOString().slice(0, 10);
       const [upRes, pastRes, reRes] = await Promise.all([
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.asc&limit=50`, { headers }),
-        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer&order=event_date.desc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=gte.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer,verification_status,relevance_type&order=event_date.asc&limit=50`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/events?is_approved=eq.true&event_date=lt.${todayIso}&select=id,title,description,event_date,end_date,location,event_type,organizer,verification_status,relevance_type&order=event_date.desc&limit=50`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/retreats?is_approved=eq.true&select=id,name,description,location,country,website_url&order=created_at.desc&limit=12`, { headers }),
       ]);
       const ups = upRes.ok ? await upRes.json() as Array<Record<string, string>> : [];
@@ -2727,7 +2732,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         if (t) overlay(r as unknown as Record<string, unknown>, t, ["description"]);
       }
 
-      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` - ${esc(String(r.organizer))}` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
+      const renderEv = (r: Record<string, string>) => `<li><time datetime="${esc(r.event_date)}">${esc(String(r.event_date || "").slice(0,10))}</time>: <a href="/events/${esc(r.id)}">${esc(clip(String(r.title || ""), 140))}</a>${r.location ? ` (${esc(String(r.location))})` : ""}${r.organizer ? ` - ${esc(String(r.organizer))}` : ""}${r.verification_status ? ` [${esc(evVerLabel(String(r.verification_status)))}]` : ""}${r.description ? `<p>${esc(clip(stripAuto(String(r.description)), 240))}</p>` : ""}</li>`;
       const renderRe = (r: Record<string, string>) => `<li><a href="/retreats/${esc(r.id)}">${esc(clip(String(r.name || ""), 140))}</a>${r.location || r.country ? ` (${esc([r.location, r.country].filter(Boolean).join(", "))})` : ""}${r.description ? `<p>${esc(clip(String(r.description), 240))}</p>` : ""}</li>`;
 
       const sections: string[] = [];
@@ -2803,6 +2808,9 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         }
       }
     } catch { /* ignore */ }
+    recentList = (await liveCountsHtml()) + recentList;
+  } else if (key === "null-reports" && SUPABASE_URL && SUPABASE_KEY) {
+    recentList = await liveCountsHtml();
   } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
@@ -2824,6 +2832,19 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
             .join("");
           recentList = `<section><h2>${esc(page.index.label)}</h2><ul>${items}</ul></section>`;
         }
+      }
+    } catch { /* ignore */ }
+  }
+  if (page.index2 && SUPABASE_URL && SUPABASE_KEY) {
+    try {
+      const rows = await sbGetRows(page.index2.table, `${page.index2.filter}&select=${page.index2.select}&order=created_at.desc&limit=12`);
+      if (rows.length) {
+        const items = rows.map((r) => {
+          const t = String(r[page.index2!.titleField] ?? "").trim() || String(r.id).slice(0, 8);
+          const extra = page.index2!.extraField && r[page.index2!.extraField] ? ` (${esc(trialTypeLabel(r[page.index2!.extraField]))})` : "";
+          return `<li><a href="${page.index2!.linkPrefix}/${esc(r.id)}">${esc(clip(t, 120))}</a>${extra}</li>`;
+        }).join("");
+        recentList += `<section><h2>${esc(page.index2.label)}</h2><ul>${items}</ul></section>`;
       }
     } catch { /* ignore */ }
   }
@@ -3157,6 +3178,76 @@ async function notFoundPrerender(
 }
 
 
+
+// ---- Repair Build 5 helpers: typed trial records, event verification, live counts ----
+const TRIAL_TYPE_LABELS: Record<string, string> = {
+  registered_clinical_trial: "Registered clinical trial",
+  registered_trial: "Registered clinical trial",
+  registered_observational_study: "Registered observational study",
+  academic_experiment: "Academic experiment",
+  published_pilot_report: "Published pilot report",
+  community_experiment: "Community experiment",
+  citizen_science_project: "Citizen science project",
+  reported_replication: "Reported replication",
+  platform_project: "Platform project",
+  media_claim: "Media claim",
+  rumored_report: "Rumoured report",
+  retreat_or_facilitated_session: "Retreat or facilitated session",
+  internal_session: "Community record",
+};
+function trialTypeLabel(v: unknown): string {
+  const k = String(v ?? "").trim();
+  return TRIAL_TYPE_LABELS[k] ?? (k ? k.replace(/_/g, " ") : "Untyped record");
+}
+function isRegisteredTrialType(v: unknown): boolean {
+  return v === "registered_clinical_trial" || v === "registered_trial";
+}
+const EV_VER_LABELS: Record<string, string> = {
+  verified: "Verified",
+  organizer_confirmed: "Organizer confirmed",
+  public_source_confirmed: "Public source confirmed",
+  auto_discovered_candidate: "Auto-discovered candidate, not yet verified",
+  unverified: "Unverified",
+  cancelled: "Cancelled",
+  past_outcome_unknown: "Past, outcome unknown",
+};
+function evVerLabel(v: string): string { return EV_VER_LABELS[v] ?? v.replace(/_/g, " "); }
+function stripAuto(s: string): string { return s.replace(/^\s*\[Auto-discovered\]\s*/i, ""); }
+
+async function sbCount(table: string, query: string): Promise<number | null> {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=id${query ? "&" + query : ""}`, {
+      method: "HEAD",
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, Prefer: "count=exact", Range: "0-0" },
+    });
+    if (!res.ok) return null;
+    const m = (res.headers.get("content-range") || "").match(/\/(\d+)$/);
+    return m ? Number(m[1]) : null;
+  } catch { return null; }
+}
+
+// Live counts for crawler bodies. A count that cannot be fetched is omitted,
+// never rendered as zero. Definitions match CommunityStats.tsx and /data.json.
+async function liveCountsHtml(): Promise<string> {
+  const [community, glyphs, nulls, sober, recog] = await Promise.all([
+    sbCount("symbol_submissions", "status=eq.approved&is_curated_example=eq.false"),
+    sbCount("registry_glyphs", ""),
+    sbCount("symbol_submissions", "status=eq.approved&tags=ov.{null-report,null_report,nothing-seen,no-forms}"),
+    sbCount("symbol_submissions", "status=eq.approved&is_sober_baseline=eq.true"),
+    sbCount("symbol_votes", "vote_type=eq.seen_it"),
+  ]);
+  const rows: Array<[string, number | null, string]> = [
+    ["Published community symbol submissions", community, "account backed, published immediately, curated examples excluded"],
+    ["Anonymous drawn glyph reports", glyphs, "quick capture with no account, a separate table, never summed with the line above"],
+    ["Null reports", nulls, "ran the observation and saw nothing structured, or nothing that matched"],
+    ["Sober baseline records", sober, "same apparatus, no substance"],
+    ["Recognition responses", recog, "readers saying a published form echoed their memory after seeing it here, not independent matches"],
+  ];
+  const lis = rows.filter(([, n]) => typeof n === "number").map(([l, n, note]) => `<li>${esc(l)}: <strong>${n}</strong> (${esc(note)})</li>`).join("");
+  if (!lis) return "";
+  return `<section data-prerender="live-counts"><h2>Live counts</h2><p>Counted from the database when this page was generated, ${new Date().toISOString().slice(0, 10)}. A count that could not be fetched is omitted, never shown as zero. The same numbers are published under counts in <a href="/data.json">/data.json</a>.</p><ul>${lis}</ul></section>`;
+}
 
 async function sbGetRows(
   table: string,

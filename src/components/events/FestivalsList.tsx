@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, ExternalLink } from "lucide-react";
+import { verificationLabel, stripAutoPrefix } from "@/lib/eventVerification";
 
 interface FestivalRow {
   id: string;
@@ -16,6 +17,7 @@ interface FestivalRow {
   location: string | null;
   organizer: string | null;
   url: string | null;
+  verification_status: string | null;
 }
 
 const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => {
@@ -43,7 +45,7 @@ const paragraphs = (text: string | null) =>
     .filter(Boolean);
 
 const FestivalCard = ({ f, muted }: { f: FestivalRow; muted?: boolean }) => {
-  const prose = [...paragraphs(f.description), ...paragraphs(f.details)];
+  const prose = [...paragraphs(stripAutoPrefix(f.description)), ...paragraphs(f.details)];
   const subtitle = [f.location, f.organizer].filter(Boolean).join(" \u00b7 ");
 
   return (
@@ -53,7 +55,7 @@ const FestivalCard = ({ f, muted }: { f: FestivalRow; muted?: boolean }) => {
           <p className="text-xs font-medium tracking-wide text-muted-foreground">
             {formatRange(f.event_date, f.end_date)}
           </p>
-          <Badge variant="secondary" className="text-xs shrink-0">festival</Badge>
+          <Badge variant="secondary" className="text-xs shrink-0">{["festival", verificationLabel(f.verification_status)].filter(Boolean).join(" \u00b7 ")}</Badge>
         </div>
         <CardTitle className="text-lg leading-snug">
           <Link to={`/events/${f.id}`} className="hover:text-primary transition-colors">
@@ -100,12 +102,12 @@ const FestivalsList = () => {
     (async () => {
       const { data, error } = await supabase
         .from("events")
-        .select("id, title, description, details, event_date, end_date, location, organizer, url")
+        .select("id, title, description, details, event_date, end_date, location, organizer, url, verification_status")
         .eq("is_approved", true)
         .eq("event_type", "festival")
         .order("event_date", { ascending: true });
       if (error) console.error("Error fetching festivals:", error);
-      else setFestivals((data as FestivalRow[]) || []);
+      else setFestivals((data as unknown as FestivalRow[]) || []);
       setLoading(false);
     })();
   }, []);

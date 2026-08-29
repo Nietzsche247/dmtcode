@@ -24,17 +24,17 @@ const Privacy = () => {
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy</h1>
-            <p className="text-lg text-muted-foreground mb-10">Effective 24 July 2026.</p>
+            <p className="text-lg text-muted-foreground mb-10">Effective 28 August 2026.</p>
 
             <div className="space-y-6 text-base leading-relaxed">
               <p>This page describes what this site collects, where it goes, and what becomes public. It was written by reading our own code and database rather than from a template, so it describes what actually happens here.</p>
 
               <h2 className="text-2xl font-semibold mt-8">The short version</h2>
-              <p>You can read almost everything on this site without an account and without telling us anything. If you make an account and contribute, the content you contribute is meant to become public, because a convergence dataset that nobody can check is worth nothing. Your identity is not part of what becomes public.</p>
+              <p>You can read almost everything on this site without an account and without telling us anything. An account is not needed to browse. It is needed to seal a memory or submit a record. If you make an account and contribute, the content you contribute is meant to become public, because a convergence dataset that nobody can check is worth nothing. Your identity is not part of what becomes public.</p>
 
               <h2 className="text-2xl font-semibold mt-8">What we collect</h2>
               <p><strong>If you create an account.</strong> Your email address and a password, or a Google or Apple sign in if you choose that instead. Passwords are handled by our authentication provider and never reach us in readable form. On sign up we generate a pseudonym for you automatically, in the form of a two word handle. You can change the display name attached to it. We do not ask for your real name at any point, except at checkout, where Meridian Optics Lab receives the shipping details you enter.</p>
-              <p><strong>If you submit a symbol.</strong> The image you draw or upload, your written description, the tags you choose, and, if you fill them in, the route of administration and approximate dose. If you record a voice note, we store the audio.</p>
+              <p><strong>If you submit a symbol.</strong> The image you draw or upload, your written description, the tags you choose, and, if you fill them in, the route of administration and approximate dose. If you record a voice note, we store the audio, and today it is published with the symbol. A voice can identify a person in a way a drawing cannot, so raw audio is moving to private by default with a separate, off by default option to publish it. Until that ships, treat a voice note as public.</p>
               <p><strong>If you complete an assessment.</strong> Your responses to the PHQ-9, GAD-7, MEQ-4 and CEQ-7 questionnaires, and your before and after mood ratings. These are mental health questions and we treat the answers accordingly. They are stored in a private area that is not readable by other visitors. If you upload imaging, that is stored in the same private area.</p>
               <p><strong>If you join a list.</strong> For the general waiting list and for the clinical trial watch list, your email address, and nothing else.</p>
               <p><strong>If you volunteer.</strong> The email address, handle, roles, experience level, languages, skills and motivation you enter on the volunteer form, and whether you consented to being contacted.</p>
@@ -56,12 +56,12 @@ const Privacy = () => {
 
               <h2 className="text-2xl font-semibold mt-8">What becomes public</h2>
               <p>Handles and display names are readable by anyone. That is deliberate, because contributions are attributed to a handle.</p>
-              <p>A symbol submission becomes public once it is approved: the image, the description, the tags and the vote count. Theories and events you submit become public once approved, in full.</p>
+              <p>A symbol you submit is published immediately, before any review: the image, the description, the tags, the conditions you chose to record, and the recognition and non-match counts. Administrators have 72 hours to review it and can hide it. Theories, events, retreats and trial records you submit are reviewed first and become public once approved, in full.</p>
               <p>Your email address never becomes public. Your assessment answers never become public. Your account identifier is not displayed anywhere on the site.</p>
 
               <h2 className="text-2xl font-semibold mt-8">The open data export</h2>
               <p>We publish an export of the site at /data.json under a Creative Commons Attribution 4.0 licence, and we explicitly invite AI crawlers to read it. This is the point of the project. Data that cannot be independently checked is not evidence.</p>
-              <p>The export includes approved symbol submissions, approved theories and approved events. For a symbol that means the description, the tags, the vote count, the date and the web address of the image. It does not include your email address.</p>
+              <p>The export includes every published symbol submission whose contributor granted publication consent, carrying its visibility, moderation and evidence status fields, plus approved theories and approved events. For a symbol that means the description, the tags, the recognition and non-match counts, the date and the web address of the image. It does not include your email address, and it does not include raw voice audio.</p>
               <p>If you would rather your contribution were not in that export, tell us and we will take it out of the next one. We cannot recall copies that other people have already downloaded, which is what a Creative Commons licence means in practice, so please decide before you submit rather than after.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Cookies and analytics</h2>
@@ -69,7 +69,7 @@ const Privacy = () => {
               <p>It currently loads without asking you first. If you would rather not be measured, you can install Google's own opt out browser add on, or block analytics cookies in your browser settings, or use a browser that blocks them by default. Both work on this site and neither breaks anything.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Where things are stored</h2>
-              <p>Assessment responses and any imaging you upload are held in a private store that requires authentication to read. Symbol images, drawings and voice notes are held in a public store, because they are published on the site.</p>
+              <p>Assessment responses and any imaging you upload are held in a private store that requires authentication to read. Symbol images and drawings are held in a public store, because they are published on the site. Voice notes are currently in the same public store; see the voice note paragraph above for where that is going.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Getting your data, or getting rid of it</h2>
               <p>Write to info@dmtcode.com and ask. You can ask us for a copy of what we hold about you, for a correction, or for deletion. If you ask us to delete your account we will remove the account and the personal details attached to it.</p>

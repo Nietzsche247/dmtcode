@@ -910,7 +910,7 @@
         "sort_key": "2025-01-08"
       },
       "headline": "The Code of Reality pilot is published",
-      "summary": "The first published description of the 650 nm laser and diffraction grating protocol, reporting consistency across observers. It is filed as News and Views in a venue outside mainstream peer review, with a small documented sample and no blinding. It is the reference document for the protocol this site catalogues. It is not a controlled trial and should not be read as one.",
+      "summary": "The first published description of the 650 nm laser and diffraction grating protocol, reporting consistency across observers. It is filed as News and Views in a venue outside mainstream peer review, with no blinding. The paper claims observations from more than 1,000 participants but publishes no participant-level dataset, recruitment description, null denominator or statistical recurrence analysis. It is the reference document for the protocol this site catalogues. It is not a controlled trial and should not be read as one.",
       "people": [
         {
           "name": "Danny Goler",
@@ -984,7 +984,7 @@
         "sort_key": "2025-11-24"
       },
       "headline": "First glyph recorded in this registry",
-      "summary": "The earliest record in the public registry on this site. A curated starter set was entered first so the catalogue had a shape people could argue with. Those entries are labelled as a starter set and are not participant submissions.",
+      "summary": "The earliest record in the public registry on this site. A curated starter set was entered first so the catalogue had a shape people could argue with. Those entries were labelled as a starter set and were not participant submissions. That starter set no longer sits in the active registry: as of August 2026 the export at /data.json reports symbols_curated as 0 and every published symbol as a participant submission, and any operator-added example is flagged is_curated_example and excluded from evidence totals.",
       "tags": [
         "registry",
         "dmtcode",

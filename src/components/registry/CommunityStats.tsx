@@ -16,6 +16,8 @@ export const CommunityStats = () => {
     totalValidations: 0,
   });
   const [loading, setLoading] = useState(true);
+  // A failed fetch must never read as zero. Zero is a real number here.
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     loadStats();
@@ -56,9 +58,12 @@ export const CommunityStats = () => {
       });
     } catch (error) {
       console.error('Failed to load stats:', error);
+      setFailed(true);
     }
     setLoading(false);
   };
+
+  const fmt = (n: number) => (loading ? '\u2026' : failed ? 'unavailable' : n.toLocaleString());
 
   const statItems: {
     value: string;
@@ -68,14 +73,14 @@ export const CommunityStats = () => {
     note?: string;
   }[] = [
     {
-      value: stats.totalSymbols.toLocaleString(),
+      value: fmt(stats.totalSymbols),
       label: 'Community Submissions',
       icon: Image,
       // Backed by a real filtered query: the explorer loads exactly these rows.
       href: '/registry?set=submissions#browse',
     },
     {
-      value: stats.totalContributors.toLocaleString(),
+      value: fmt(stats.totalContributors),
       label: 'Independent Contributors',
       icon: Users,
       // NOT LINKED ON PURPOSE. This is a count of distinct submitting accounts.
@@ -85,7 +90,7 @@ export const CommunityStats = () => {
       note: 'Distinct submitting accounts. No registry view lists contributors, so this number is not linked.',
     },
     {
-      value: stats.totalValidations.toLocaleString(),
+      value: fmt(stats.totalValidations),
       label: 'Community Validations',
       icon: Eye,
       // NOT LINKED ON PURPOSE. This counts rows in symbol_votes, not symbols.

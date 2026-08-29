@@ -139,7 +139,7 @@ const Events = () => {
             </h1>
 
             <p className="text-lg md:text-xl font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>
-              Community sourced and moderator reviewed. Inclusion is not an endorsement.
+              Community sourced, scraper discovered, and labelled by verification status. Inclusion is not an endorsement.
             </p>
 
             <p className="text-base md:text-lg font-light text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-blur-in-up animation-delay-200" style={{ animationFillMode: 'forwards' }}>

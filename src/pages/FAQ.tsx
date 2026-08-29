@@ -84,7 +84,7 @@ const FAQ_GROUPS: Array<{
       },
       {
         q: 'Is the laser safe for my eyes?',
-        a: 'A laser is not a toy. The kit modules are low-power visible red lasers (Class 3R, IIIa, under 5 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.',
+        a: 'A laser is not a toy. The kit modules are low-power visible red lasers (vendor rated 5 mW, FDA Class IIIa, also written Class 3R; the ray box in the Triad and Circle is under 1 mW). Never look into the beam or aim it at anyone, keep reflective surfaces out of the beam path, follow the safety card that ships with the kit, and keep it away from children. This is for adults 18 and older. If you are unsure how to handle optical equipment safely, do not improvise with it.',
       },
     ],
   },

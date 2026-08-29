@@ -70,6 +70,9 @@ interface UnifiedItem {
   compounds: string[];
   topic: string[];
   authority_type?: string;
+  record_type?: string;
+  relevance?: string;
+  registry_id?: string;
   stance_score?: number;
   people: string[];
   status?: string;
@@ -259,7 +262,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "clinical_trials",
-      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at,compounds",
+      "id,title,institution,organizer_lead,location,trial_type,phase,status,confirmed_status,application_url,url,notes,eligibility,created_at,compounds,record_type,relevance,trial_registry_id",
       "is_approved=is.true"
     ),
     // The status=eq.approved filter is retained because the row level security
@@ -346,15 +349,20 @@ export default async (req: Request): Promise<Response> => {
     );
     const confirmed = (r.confirmed_status as string) || "";
     const verification = confirmed && confirmed !== "Confirmed" ? confirmed : undefined;
+    const rt = (r.record_type as string) || "";
+    const isReg = rt === "registered_clinical_trial" || rt === "registered_trial";
     return compact<UnifiedItem>({
       id: `trial_${r.id}`,
-      content_type: "Trial",
+      content_type: isReg ? "Trial" : "Experiment or report",
       title,
       page_url: `${SITE}/trials/${r.id}`,
       url: (r.application_url as string) || (r.url as string) || `${SITE}/trials/${r.id}`,
       compounds: (r.compounds as string[]) || [],
       topic: ((r.trial_type as string) ? [r.trial_type as string] : []),
-      authority_type: "Clinical",
+      authority_type: isReg ? "Clinical" : (rt === "media_claim" || rt === "rumored_report" ? "Media" : "Community"),
+      record_type: rt || undefined,
+      relevance: (r.relevance as string) || undefined,
+      registry_id: (r.trial_registry_id as string) || undefined,
       people,
       status: (r.status as string) || undefined,
       verification,
@@ -628,6 +636,9 @@ export default async (req: Request): Promise<Response> => {
     retreats: retreatsFeed,
     guides_note: "Canonical answer pages. Each guide states a short answer plus the structured evidence for and against it, what is still unknown, and what would change the answer. Keys are omitted when empty.",
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
+    object_model_note: "How to read the two symbol counts. symbols[] are account backed symbol_submissions, one public symbol record per submission (counts.symbols). registry_glyphs[] are anonymous drawn glyph reports from the quick capture tool, no account, a separate table (counts.registry_glyphs). They never overlap and are never summed. Object model: observation (one person's experience) -> artifact (drawing, voice, text, field map) -> glyph instance (one discrete form) -> public symbol record (a glyph exposed in the registry) -> motif cluster (possibly related instances) -> canonical symbol candidate (reviewed abstraction of a recurring motif) -> sequence (reported relation between symbols).",
+    trials_note: "items[] with content_type Trial and authority_type Clinical are registered clinical trials with a registry_id. Community experiments, pilot reports, platform projects, media claims and rumours from the same table carry content_type Experiment or report, a record_type, and authority_type Community or Media. Do not describe those as clinical trials.",
+    equipment_note: "Goler's 2025 paper (DOI 10.59973/ipil.158) reports a 650 nm Class 2 laser at 1 mW. The kits in /shop.json use pointers the vendor rates at 5 mW, FDA Class IIIa (Class 3R), a later community adaptation that is not the paper's configuration; read shop.json bundles[].emitters for per emitter ratings.",
     symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
     faq: FAQ_ITEMS,
   };

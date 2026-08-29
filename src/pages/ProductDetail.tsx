@@ -184,7 +184,7 @@ const ProductDetail = () => {
   const isMulti = handle.includes('multi-wavelength');
   const specParts = [
     isMulti ? 'Multi-wavelength' : '650 nm',
-    'Class 3R, under 5 mW',
+    'Pointers vendor rated 5 mW, FDA Class IIIa (Class 3R); ray box under 1 mW',
     bundle
       ? `${bundle.people} ${bundle.people === 1 ? 'observer' : 'observers'}`
       : null,

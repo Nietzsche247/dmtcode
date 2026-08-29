@@ -157,7 +157,7 @@ function KitCard({ kit }: { kit: Kit }) {
         </div>
       )}
       <div className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-        Class 3R laser, under 5 mW. Do not stare into beam.
+        Laser pointers in these kits are vendor rated 5 mW, FDA Class IIIa (Class 3R); the ray box in the Triad and Circle is under 1 mW. Ratings are listed per emitter on each kit. Do not stare into beam.
       </div>
 
       <div className="mt-auto pt-6">
@@ -259,7 +259,7 @@ const Prepare = () => {
                     who knows your history.
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Class 3R laser, under 5 mW: do not stare into the beam, do not aim it at
+                    Pointers vendor rated 5 mW, FDA Class IIIa (Class 3R), ray box under 1 mW: do not stare into the beam, do not aim it at
                     anyone, and treat every reflective surface in the room as part of the beam
                     path.
                   </p>

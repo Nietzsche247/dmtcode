@@ -24,7 +24,7 @@ const Terms = () => {
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-16 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms</h1>
-            <p className="text-lg text-muted-foreground mb-10">Effective 16 August 2026.</p>
+            <p className="text-lg text-muted-foreground mb-10">Effective 28 August 2026.</p>
 
             <div className="space-y-6 text-base leading-relaxed">
               <h2 className="text-2xl font-semibold mt-8">What this site is</h2>
@@ -35,7 +35,7 @@ const Terms = () => {
               <p>You must be 18 or older to use this site.</p>
 
               <h2 className="text-2xl font-semibold mt-8">Your account</h2>
-              <p>An account is optional. You get an automatically generated pseudonym, and you are welcome to keep it. Keep your password to yourself. Tell us at info@dmtcode.com if you think someone else is using your account.</p>
+              <p>An account is optional for browsing. An account is required to seal or submit a record, to respond to a symbol, to follow, or to volunteer. You get an automatically generated pseudonym, and you are welcome to keep it. Keep your password to yourself. Tell us at info@dmtcode.com if you think someone else is using your account.</p>
 
               <h2 className="text-2xl font-semibold mt-8">What you contribute, and how it is licensed</h2>
               <p>This is the most important section on this page, so it is written plainly.</p>
@@ -48,7 +48,7 @@ const Terms = () => {
 
               <h2 className="text-2xl font-semibold mt-8">Moderation</h2>
               <p>Symbols you draw and submit appear in the public registry immediately. There is no queue in front of them. Administrators then have 72 hours from publication to review a submission and deny it. A denied submission is hidden rather than deleted, so a record of what was submitted survives. After that window it stands, unless it is later reported and found to break the rules below.</p>
-              <p>Events, retreats, clinical trial records and theories work the other way around. Those are reviewed before they appear.</p>
+              <p>Events, retreats, trial records and theories that people submit work the other way around: those are reviewed before they appear. Events and retreats found by our own scrapers can appear before an editor has verified them, and are labelled as auto-discovered candidates until one has. The label is the review status; read it.</p>
               <p>Anyone signed in can mark a symbol as echoing their memory, or as not resembling what they saw. Both responses are recorded and both are published in our open data export. Neither one reorders the registry for anybody else. The browse list follows whichever sort the reader picked. One of those sorts does weigh community responses, but the reader has to choose it and it ranks only symbols carrying at least five responses. A response never removes a symbol and never hides one.</p>
               <p>We remove: requests for sourcing, dosing instructions, anything that identifies another person without their consent, spam, and reports we have reason to believe were invented. That last one matters more here than it would elsewhere. A dataset of reported experiences is only worth reading if the reports are real. Submitting one that is not is the one thing that damages this project irreparably.</p>
 

@@ -104,7 +104,7 @@ const OpenQuestions = () => {
               <Card className="p-6 border-border">
                 <h3 className="text-xl font-semibold mb-3 text-gold">3. What is the minimum effective laser power (1 mW vs. 5 mW vs. 10 mW)?</h3>
                 <p className="text-base text-muted-foreground leading-relaxed mb-4">
-                  Current recommendations specify ≤5 mW (Class 3R / IIIa). Dose-response relationship between laser power and symbol clarity remains unquantified. Lower power reduces ocular safety concerns but may reduce signal intensity.
+                  Goler's 2025 paper used a Class 2 laser at 1 mW; the DMT Code kit configuration uses pointers vendor rated at 5 mW (FDA Class IIIa / 3R), a different exposure class. Dose-response relationship between laser power and symbol clarity remains unquantified. Lower power reduces ocular safety concerns but may reduce signal intensity.
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Experimental design: Double-blind trial with three power levels (1 mW, 5 mW, 10 mW) measuring symbol appearance frequency and participant-rated clarity scores.

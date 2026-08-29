@@ -90,7 +90,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
         </h2>
         
         <p className="text-muted-foreground font-light mb-8 max-w-lg mx-auto">
-          Get protocol updates, new glyph discoveries, and research announcements.
+          Hear when a sealed report resembles yours, when new symbols, events and trials appear, and when the evidence changes, including nulls and corrections.
         </p>
 
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
@@ -114,7 +114,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-4">
-            No spam. One notification, then nothing. Reply to any email from us to be removed.
+            No spam. We write only when there is something new. Reply to any email from us to be removed.
           </p>
         </form>
       </div>

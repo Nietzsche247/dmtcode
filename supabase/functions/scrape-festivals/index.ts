@@ -254,6 +254,7 @@ Deno.serve(async (req) => {
             website_url: w.official_url ?? w.source_url,
             is_approved: false,
             vetting_status: "unvetted",
+            verification_status: "auto_discovered_candidate",
           });
           if (rErr) throw new Error(rErr.message);
           stats.inserted++;
@@ -375,6 +376,7 @@ Deno.serve(async (req) => {
               organizer: w.festival_name,
               url: w.official_url ?? w.source_url,
               is_approved: false,
+              verification_status: "auto_discovered_candidate",
               scraped_from: w.source_url,
               scrape_confidence: found.confidence,
               last_scraped_at: new Date().toISOString(),

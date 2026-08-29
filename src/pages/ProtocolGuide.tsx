@@ -58,7 +58,7 @@ const ProtocolGuide = () => {
                 The apparatus, described in general terms, consists of:
               </p>
               <ul className="list-disc list-inside space-y-2 text-base">
-                <li>A 650 nm red laser pointer, Class 3R (IIIa), under 5 mW, on a stand.</li>
+                <li>A 650 nm red laser pointer on a stand. Goler's 2025 paper used a Class 2 pointer at 1 mW; the kits sold here use a pointer the vendor rates at 5 mW, FDA Class IIIa (3R), which is a later adaptation, not the paper's setup.</li>
                 <li>The beam is never viewed directly; it is aimed through a diffraction grating at a matte surface 3 to 5 m away.</li>
                 <li>A diffraction grating in the beam path, close to the aperture.</li>
                 <li>A diffraction or refraction element used to structure the beam.</li>

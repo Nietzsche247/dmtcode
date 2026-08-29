@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import SharedTimeline, { TimelineItem } from "@/components/timeline/SharedTimeline";
+import { verificationLabel, stripAutoPrefix } from "@/lib/eventVerification";
 
 interface Event {
   id: string;
@@ -15,6 +16,8 @@ interface Event {
   location: string | null;
   organizer: string | null;
   url: string | null;
+  verification_status: string | null;
+  relevance_type: string | null;
 }
 
 interface Props {
@@ -72,7 +75,7 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types, excl
       }
       const { data, error } = await query;
       if (error) console.error("Error fetching events:", error);
-      else setEvents((data as Event[]) || []);
+      else setEvents((data as unknown as Event[]) || []);
       setLoading(false);
     })();
   }, [filter, typesKey, excludeKey]);
@@ -86,8 +89,8 @@ const EventsTimeline = ({ filter = "all", muted = false, emptyLabel, types, excl
     dateLabel: formatRange(e.event_date, e.end_date),
     title: e.title,
     subtitle: [e.location, e.organizer].filter(Boolean).join(" \u00b7 ") || undefined,
-    body: [e.description, e.details].filter(Boolean).join("\n\n") || undefined,
-    badge: e.event_type,
+    body: [stripAutoPrefix(e.description), e.details].filter(Boolean).join("\n\n") || undefined,
+    badge: [e.event_type, verificationLabel(e.verification_status)].filter(Boolean).join(" \u00b7 "),
     onClick: () => navigate(`/events/${e.id}`),
   }));
 

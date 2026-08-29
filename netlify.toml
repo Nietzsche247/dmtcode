@@ -296,6 +296,19 @@
   for = "/my-symbols"
   [headers.values]
     Netlify-CDN-Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, follow"
+
+# Personal and signup routes render client side only. Tell crawlers so at the
+# edge rather than leaving them an empty shell to index.
+[[headers]]
+  for = "/log"
+  [headers.values]
+    X-Robots-Tag = "noindex, follow"
+
+[[headers]]
+  for = "/waitlist"
+  [headers.values]
+    X-Robots-Tag = "noindex, follow"
 
 [[redirects]]
   from = "/danny-goler"

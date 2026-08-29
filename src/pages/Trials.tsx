@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import ListRow from '@/components/list/ListRow';
 import { formatMonthYear } from '@/lib/formatDate';
 import { trialState } from '@/lib/trialState';
+import { recordTypeLabel, isRegisteredClinicalTrial } from '@/lib/trialRecordType';
 
 interface Trial {
   id: string;
@@ -32,6 +33,8 @@ interface Trial {
   status: string | null;
   confirmed_status: string | null;
   trial_type: string | null;
+  record_type: string | null;
+  relevance: string | null;
   phase: string | null;
   location: string | null;
   source: string | null;
@@ -143,7 +146,10 @@ const Trials = () => {
     // filtered out by default. Everything else stays in chronological order.
     const sunk = rows.filter((t) => trialState(t.status).sinksToBottom).sort(byChosen);
     const afloat = rows.filter((t) => !trialState(t.status).sinksToBottom).sort(byChosen);
-    return [...afloat, ...sunk];
+    // Registered clinical trials lead. Typed community records follow, in the same order, then the sunk rows.
+    const reg = afloat.filter((t) => isRegisteredClinicalTrial(t.record_type));
+    const other = afloat.filter((t) => !isRegisteredClinicalTrial(t.record_type));
+    return [...reg, ...other, ...sunk];
   }, [trials, q, statusFilter, verificationFilter, typeFilter, phaseFilter, locationFilter, institutionFilter, sourceFilter, compoundFilter, sort]);
 
   useEffect(() => {
@@ -168,7 +174,8 @@ const Trials = () => {
 
 
   const total = trials.length;
-  const description = `Live registry of ${total} DMT and psychedelic clinical trials tracked across institutions worldwide.`;
+  const registeredCount = useMemo(() => trials.filter((t) => isRegisteredClinicalTrial(t.record_type)).length, [trials]);
+  const description = `Live registry of ${registeredCount} registered DMT and psychedelic clinical trials, plus ${total - registeredCount} typed community experiments, pilot reports and claims.`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -176,7 +183,7 @@ const Trials = () => {
       <Helmet>
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Clinical Trials: DMT Research Observatory" />
+        <meta name="twitter:title" content="Trials, Studies and Experiments | DMT Code" />
         <meta name="twitter:description" content={description} />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -184,7 +191,7 @@ const Trials = () => {
             '@graph': [
               {
                 '@type': 'Dataset',
-                name: 'DMT Clinical Trials Observatory',
+                name: 'DMT Code Trials and Experiments Observatory',
                 description,
                 url: 'https://dmtcode.com/trials',
                 license: 'https://creativecommons.org/licenses/by/4.0/',
@@ -194,7 +201,7 @@ const Trials = () => {
                 '@type': 'BreadcrumbList',
                 itemListElement: [
                   { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://dmtcode.com/' },
-                  { '@type': 'ListItem', position: 2, name: 'Clinical Trials', item: 'https://dmtcode.com/trials' },
+                  { '@type': 'ListItem', position: 2, name: 'Trials', item: 'https://dmtcode.com/trials' },
                 ],
               },
             ],
@@ -209,14 +216,15 @@ const Trials = () => {
         <header className="mb-10 border-b border-border/60 pb-8">
           <LocalizedBody pageId="trials">
             <h1 className="font-display text-4xl md:text-6xl tracking-tight">
-              Clinical Trials
+              Trials, Studies and Experiments
             </h1>
           </LocalizedBody>
           <p className="label-data mt-4 text-xs text-muted-foreground">
             {loading
               ? 'LOADING TRIALS…'
               : [
-                  `${total} TRIALS TRACKED`,
+                  `${registeredCount} REGISTERED TRIALS`,
+                  total - registeredCount > 0 ? `${total - registeredCount} EXPERIMENTS AND REPORTS` : null,
                   recruitingCount > 0 ? `${recruitingCount} RECRUITING` : null,
                   latestUpdated ? `UPDATED ${format(new Date(latestUpdated), 'yyyy-MM-dd')}` : null,
                 ]
@@ -227,6 +235,9 @@ const Trials = () => {
           <p className="mt-4 max-w-2xl text-muted-foreground">
             An open atlas of psychedelic clinical trials: DMT, 5-MeO-DMT, ayahuasca, psilocybin, ketamine, MDMA, LSD, ibogaine.
             Filter by status, type, location or institution to explore the current research frontier.
+          </p>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+            Every record carries a type. Registered clinical trials link to their registry entry and are the only records that count as clinical evidence here. Community experiments, pilot reports, platform projects, media claims and rumours are listed beside them, typed and labelled, because they are part of the story.
           </p>
         </header>
 
@@ -381,8 +392,8 @@ const Trials = () => {
                       gutterPrimary={stateInfo.state}
                       gutterTone={stateInfo.tone}
                       gutterSecondary={t.start_date ? formatMonthYear(t.start_date) : undefined}
-                      pill={t.phase || undefined}
-                      meta={[country, showVerification ? t.confirmed_status : null]}
+                      pill={recordTypeLabel(t.record_type)}
+                      meta={[t.phase, country, showVerification ? t.confirmed_status : null]}
                       title={t.title}
                       href={`/trials/${t.id}`}
                       owner={t.institution || undefined}
