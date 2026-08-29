@@ -60,6 +60,17 @@ for (const b of shop.bundles) {
   check(`${b.name} has per emitter ratings`, Array.isArray(b.emitters) && b.emitters.length > 0);
 }
 check('prepare no blanket "under 5 mW" claim', !/under 5 mW \(Arbor/.test(prepare));
+// "dmt laser code symbols pdf" is the highest intent query the site receives:
+// 186 clicks at a 35% CTR in August 2026, roughly six times the site average.
+// The document it asks for was absent from the store page while /llms.txt, which
+// counts the files on disk, advertised it. A document nobody can find from the
+// page that lists documents is not published.
+check('prepare offers the symbol set PDF', /dmt-laser-code-symbols\.pdf/.test(prepare));
+check('prepare says what the symbol set is not', /not a key, a translation/.test(prepare));
+const llms = await get('/llms.txt');
+const wordCount = (llms.match(/(\w+) PDF documents under \/downloads\//) || [])[1];
+const prepareCount = (prepare.match(/(\w+) PDF documents, no account needed/) || [])[1];
+check('prepare and llms.txt agree on the document count', !!wordCount && wordCount.toLowerCase() === (prepareCount || '').toLowerCase(), `llms.txt ${wordCount} vs prepare ${prepareCount}`);
 
 // 6. Policies.
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));

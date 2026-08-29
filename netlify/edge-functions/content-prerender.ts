@@ -1096,6 +1096,31 @@ function regionLabel(code: string, locale: Loc): string {
   }
 }
 
+// The number of PDFs offered on /prepare, spelled in words. Derived from the list
+// rendered below rather than typed, because it was typed once and drifted: the
+// page said "Twelve PDF documents" while /llms.txt, which counts the files in
+// public/downloads at build time, said thirteen. The thirteenth is the symbol set,
+// which is the single most searched document on the site.
+const PREPARE_DOC_FILES = [
+  "DMTCode_Screening_Card_v1.pdf",
+  "DMTCode_Tarjeta_de_Cribado_v1_ES.pdf",
+  "DMTCode_Screening_Karte_v1_DE.pdf",
+  "DMTCode_Observation_Field_Sheet_v1.pdf",
+  "DMTCode_Hoja_de_Campo_v1_ES.pdf",
+  "DMTCode_Feldblatt_v1_DE.pdf",
+  "DMTCode_Sober_Baseline_Protocol_v1.pdf",
+  "DMTCode_Protocolo_Base_Sobria_v1_ES.pdf",
+  "DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf",
+  "DMTCode_AVP_Passthrough_Protocol_v1.pdf",
+  "DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf",
+  "DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf",
+  "dmt-laser-code-symbols.pdf",
+];
+const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+const PREPARE_DOC_COUNT = NUMBER_WORDS[PREPARE_DOC_FILES.length]
+  ? NUMBER_WORDS[PREPARE_DOC_FILES.length].charAt(0).toUpperCase() + NUMBER_WORDS[PREPARE_DOC_FILES.length].slice(1)
+  : String(PREPARE_DOC_FILES.length);
+
 async function renderPrepare(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
 
@@ -1265,7 +1290,8 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   </section>
   <section>
     <h2>Field materials and protocols, free download</h2>
-    <p>Twelve PDF documents, no account needed. Each protocol is available in English, Spanish, and German.</p>
+    <p>${PREPARE_DOC_COUNT} PDF documents, no account needed. Each protocol is available in English, Spanish, and German. Nothing here requires buying a kit.</p>
+    <p><strong><a href="${SITE}/downloads/dmt-laser-code-symbols.pdf">DMT Laser Code Symbols (PDF)</a></strong>. The forms people have reported so far, printed for reference. It is a record of what observers drew, not a key, a translation, or a claim that the forms mean anything. If you saw something that is not in it, <a href="${SITE}/capture">add yours to the registry</a>. Reading it first counts as having seen the catalogue, and a record submitted afterwards should say so.</p>
     <ul>
       <li><a href="${SITE}/downloads/DMTCode_Screening_Card_v1.pdf">Screening Card (EN)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_Tarjeta_de_Cribado_v1_ES.pdf">Tarjeta de Cribado (ES)</a></li>
@@ -1279,6 +1305,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
       <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf">AVP Passthrough Observation Protocol (EN)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf">Protocolo de Observacion AVP Passthrough (ES)</a></li>
       <li><a href="${SITE}/downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf">AVP-Passthrough-Beobachtungsprotokoll (DE)</a></li>
+      <li><a href="${SITE}/downloads/dmt-laser-code-symbols.pdf">DMT Laser Code Symbols (EN)</a></li>
     </ul>
   </section>
   <section>

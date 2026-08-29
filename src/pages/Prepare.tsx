@@ -294,10 +294,27 @@ const Prepare = () => {
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece stretches the dot into a short bright horizontal line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser. Line length depends on the piece and on how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m the line is a few centimetres long, not a line across the wall. Arbor&apos;s ray box guide (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Instructional_Guide_38e60437-4f8e-44a7-825f-112f77b20baa.pdf" className="underline hover:text-foreground">PDF</a>) and student handout (<a href="https://cdn.shopify.com/s/files/1/0030/6207/1369/files/P2-7680_Student_Handout.pdf" className="underline hover:text-foreground">PDF</a>) cover the optics set.
               </p>
-              <div className="mt-4 max-w-2xl">
+              <div className="mt-4 max-w-2xl" id="documents">
                 <p className="text-sm text-muted-foreground">
-                  Field materials and protocols, free download, no account needed:
+                  Field materials and protocols, free download, no account needed. Nothing here requires buying a kit.
                 </p>
+                <div className="mt-3 rounded-lg border border-gold/30 bg-gold/5 p-4">
+                  <a
+                    href="/downloads/dmt-laser-code-symbols.pdf"
+                    download
+                    className="text-sm font-medium text-gold hover:underline"
+                  >
+                    DMT Laser Code Symbols (PDF)
+                  </a>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    The forms people have reported so far, printed for reference. It is a record of what
+                    observers drew, not a key, a translation, or a claim that the forms mean anything.
+                    If you saw something that is not in it,{' '}
+                    <a href="/capture" className="text-gold hover:underline">add yours to the registry</a>.
+                    Reading it first counts as having seen the catalogue, and a record submitted afterwards
+                    should say so.
+                  </p>
+                </div>
                 <ul className="mt-3 space-y-3">
                   <li className="flex flex-wrap items-center gap-2">
                     <span className="text-sm text-muted-foreground">Screening Card</span>
