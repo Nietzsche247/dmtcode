@@ -139,6 +139,8 @@ async function translate(text: string, locale: "es" | "de", st: RunState): Promi
   const sys = `You are a professional translator for a scientific website. Translate the user's text into ${lang}. `
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
     + `NEVER translate these terms or any proper names, DOIs, registry/trial IDs, URLs, emails, unit strings, or specimen/symbol IDs - keep them verbatim: ${GLOSSARY}. `
+    + `Do-not-translate rule: these tokens are standard identifiers, not words, and must appear in your output byte for byte, unchanged, wherever they occur, in every target language: ${PROTECTED_TOKENS}, and any Arbor part number of the form P2-#### (for example P2-7500). `
+    + `Never render a laser class designation in the target language (for example never write "Clase 3R" or "Klasse IIIa"). Translate the surrounding prose normally, so "vendor rated 5 mW, FDA Class IIIa" becomes "clasificados por el fabricante en 5 mW, FDA Class IIIa". `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), callTimeoutMs(text));
