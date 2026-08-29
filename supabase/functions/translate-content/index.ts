@@ -21,6 +21,15 @@ const GLOSSARY = [
   "DMT Code","Code of Reality","650nm","650 nm","N,N-DMT","DMT","Apple Vision Pro","ORCID",
 ].join(", ");
 
+// Laser class designations, regulator names, units and part numbers are
+// identifiers, not words. "Class IIIa" is the FDA's name for the rating and
+// "Class 3R" is the IEC name; rendering either as "Clase IIIa" or "Klasse 3R"
+// names a rating that does not exist. They pass through byte for byte in every
+// target language; only the prose around them translates.
+const PROTECTED_TOKENS = [
+  "Class 2","Class 3R","Class IIIa","IIIa","3R","FDA","nm","mW",
+].join(", ");
+
 type PageSrc = { id: string; path: string };
 type Cfg = {
   table: string;
