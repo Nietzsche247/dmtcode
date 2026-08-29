@@ -74,6 +74,20 @@ check('privacy: no approval-before-publication wording', !/becomes public once i
 check('privacy: voice described as private', /never included in the open export/.test(privacy) && /Voice notes are not\./.test(privacy));
 check('privacy: no claim that voice sits in a public store', !/[Vv]oice notes are (currently in the same public store|held in a public store)/.test(privacy));
 
+// A bibliography row dated in the future reads, to an agent, as DMT Code citing
+// research that has not happened. Most of them are ordinary: a journal assigns an
+// issue date months after the paper is readable online. The rule is not that the
+// date must be in the past, it is that a future date has to say which kind it is.
+const futureDated = data.items.filter((i) => i.id.startsWith('bib_') && i.source_date && i.source_date.slice(0, 10) > new Date().toISOString().slice(0, 10));
+const unexplained = futureDated.filter((i) => !i.publication_status);
+check('every future dated bibliography row declares a publication status', unexplained.length === 0, unexplained.map((i) => `${i.source_date.slice(0, 10)} ${i.title.slice(0, 40)}`).join(' | '));
+const STATUSES = new Set(['published', 'online_ahead_of_print', 'forthcoming', 'preprint']);
+const badStatus = data.items.filter((i) => i.publication_status && !STATUSES.has(i.publication_status));
+check('publication_status uses the declared vocabulary', badStatus.length === 0, badStatus.map((i) => i.publication_status).join(', '));
+// online_ahead_of_print asserts the work is readable now, so it needs the date it became readable.
+const missingOnline = data.items.filter((i) => i.publication_status === 'online_ahead_of_print' && !i.online_publication_date);
+check('online ahead of print rows carry the online date', missingOnline.length === 0, missingOnline.map((i) => i.title.slice(0, 40)).join(' | '));
+
 // 7. Null reports show live counts.
 check('null reports page carries live counts', /Null reports: <strong>\d+<\/strong>/.test(nulls));
 

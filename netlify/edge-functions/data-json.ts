@@ -84,6 +84,9 @@ interface UnifiedItem {
   verification?: string;
   phase?: string;
   source_date?: string;
+  online_publication_date?: string;
+  issue_date?: string;
+  publication_status?: string;
   record_class?: string;
   counts_toward_evidence?: boolean;
 }
@@ -257,7 +260,7 @@ export default async (req: Request): Promise<Response> => {
   const [bib, trials, symbols, theories, events, articles, registryGlyphs, guides, retreats] = await Promise.all([
     fetchAll(
       "bibliography",
-      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license",
+      "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license,online_publication_date,issue_date,publication_status",
       "is_approved=eq.true"
     ),
     fetchAll(
@@ -331,6 +334,9 @@ export default async (req: Request): Promise<Response> => {
       stance_score: (r.stance_score as number) ?? undefined,
       people,
       source_date: (r.source_date as string) || (r.publication_date as string) || undefined,
+      online_publication_date: (r.online_publication_date as string) || undefined,
+      issue_date: (r.issue_date as string) || undefined,
+      publication_status: (r.publication_status as string) || undefined,
       has_full_text: typeof r.full_text === "string" && (r.full_text as string).trim().length > 0,
       full_text_license: (r.full_text_license as string) || undefined,
     });
@@ -638,6 +644,7 @@ export default async (req: Request): Promise<Response> => {
     registry_glyphs_note: "Anonymous drawn glyph reports. Image data is viewable on the site at /registry but is not included in this export.",
     object_model_note: "How to read the two symbol counts. symbols[] are account backed symbol_submissions, one public symbol record per submission (counts.symbols). registry_glyphs[] are anonymous drawn glyph reports from the quick capture tool, no account, a separate table (counts.registry_glyphs). They never overlap and are never summed. Object model: observation (one person's experience) -> artifact (drawing, voice, text, field map) -> glyph instance (one discrete form) -> public symbol record (a glyph exposed in the registry) -> motif cluster (possibly related instances) -> canonical symbol candidate (reviewed abstraction of a recurring motif) -> sequence (reported relation between symbols). The seven levels are defined in full, with worked examples and the reason the two counts differ, at https://dmtcode.com/object-model.",
     object_model_url: "https://dmtcode.com/object-model",
+    publication_dates_note: "source_date is the date the record carries, which for a journal article is usually the issue date. An issue date can sit months after the day the paper became readable, so a source_date in the future does not mean the work is unavailable. Where that gap exists the row also carries publication_status (published, online_ahead_of_print, forthcoming, preprint) plus online_publication_date and issue_date, verified against Crossref. Rows without those keys carry no known gap; an absent key means unknown, not false.",
     trials_note: "items[] with content_type Trial and authority_type Clinical are registered clinical trials with a registry_id. Community experiments, pilot reports, platform projects, media claims and rumours from the same table carry content_type Experiment or report, a record_type, and authority_type Community or Media. Do not describe those as clinical trials.",
     equipment_note: "Goler's 2025 paper (DOI 10.59973/ipil.158) reports a 650 nm Class 2 laser at 1 mW. The kits in /shop.json use pointers the vendor rates at 5 mW, FDA Class IIIa (Class 3R), a later community adaptation that is not the paper's configuration; read shop.json bundles[].emitters for per emitter ratings.",
     symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",

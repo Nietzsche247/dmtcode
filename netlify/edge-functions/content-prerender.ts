@@ -797,7 +797,7 @@ export default async (request: Request, context: Context) => {
       const f =
         "id,title,authors,journal,publication_date,doi,pmid,isbn,abstract,url," +
         "compounds,content_type,authority_type,stance_score,tags,summary," +
-        "source_date,full_text,transcript,created_at,updated_at";
+        "source_date,online_publication_date,issue_date,publication_status,full_text,transcript,created_at,updated_at";
       const r = await getRow("bibliography", id, "is_approved=eq.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
 
@@ -877,6 +877,9 @@ export default async (request: Request, context: Context) => {
         ["Authors", r.authors],
         ["Journal", r.journal],
         ["Published", r.publication_date || r.source_date],
+        ["Published online", r.online_publication_date],
+        ["Issue date", r.issue_date],
+        ["Publication status", r.publication_status ? String(r.publication_status).replace(/_/g, " ") : undefined],
         ["DOI", r.doi],
         ["PMID", r.pmid],
         ["ISBN", r.isbn],

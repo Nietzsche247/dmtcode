@@ -23,6 +23,25 @@ const stanceChip = (row: Row) => {
 
 const displayDate = (row: Row) => row.source_date || (row.publication_date ? new Date(row.publication_date).getFullYear().toString() : null);
 
+// A journal issue date can sit months ahead of the day the paper became
+// readable. Showing only the issue date makes a published paper look
+// unpublished, and showing nothing makes a forthcoming one look available.
+const PUB_STATUS_LABEL: Record<string, string> = {
+  published: 'Published',
+  online_ahead_of_print: 'Published online ahead of print',
+  forthcoming: 'Forthcoming, issue dated',
+  preprint: 'Preprint',
+};
+const pubStatusLine = (row: Row): string | null => {
+  if (!row.publication_status) return null;
+  const label = PUB_STATUS_LABEL[row.publication_status] ?? row.publication_status.replace(/_/g, ' ');
+  if (row.publication_status === 'online_ahead_of_print' && row.online_publication_date) {
+    return `${label} on ${row.online_publication_date}${row.issue_date ? `, issue dated ${row.issue_date}` : ''}`;
+  }
+  if (row.publication_status === 'forthcoming' && row.issue_date) return `${label} ${row.issue_date}`;
+  return label;
+};
+
 const BibliographyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [row, setRow] = useState<Row | null>(null);
@@ -50,6 +69,7 @@ const BibliographyDetail = () => {
 
   const stance = row ? stanceChip(row) : null;
   const date = row ? displayDate(row) : null;
+  const pubStatus = row ? pubStatusLine(row) : null;
   const href = row?.url || (row?.doi ? `https://doi.org/${row.doi}` : null);
   const canonical = row ? `${SITE}/bibliography/${row.id}` : `${SITE}/bibliography`;
   const bodyText = row?.full_text || row?.transcript || '';
@@ -115,6 +135,9 @@ const BibliographyDetail = () => {
                       </span>
                     )}
                     {date && <span className="text-muted-foreground ml-auto">{date}</span>}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {pubStatus && <span className="text-sm text-muted-foreground">{pubStatus}</span>}
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold leading-tight">{row.title}</h1>
                   {row.authors && <p className="text-muted-foreground">{row.authors}</p>}

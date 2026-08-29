@@ -18,6 +18,12 @@ export interface BibliographyRow {
   featured: boolean;
   summary: string | null;
   source_date: string | null;
+  // Crossref verified. A journal issue date can sit months after the day a
+  // paper became readable, so source_date alone cannot say whether the work
+  // is available. Absent means unknown, never false.
+  online_publication_date?: string | null;
+  issue_date?: string | null;
+  publication_status?: string | null;
   stance_unverified: boolean;
 }
 
