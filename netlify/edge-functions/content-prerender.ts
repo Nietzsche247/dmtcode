@@ -3232,7 +3232,8 @@ async function sbCount(table: string, query: string): Promise<number | null> {
 async function liveCountsHtml(): Promise<string> {
   const [community, glyphs, nulls, sober, recog] = await Promise.all([
     sbCount("symbol_submissions", "status=eq.approved&is_curated_example=eq.false"),
-    sbCount("registry_glyphs", ""),
+    // Same predicate as the registry_glyphs feed in data-json.ts: a row with no image is not a report.
+    sbCount("registry_glyphs", "image_data=not.is.null&image_data=neq."),
     sbCount("symbol_submissions", "status=eq.approved&tags=ov.{null-report,null_report,nothing-seen,no-forms}"),
     sbCount("symbol_submissions", "status=eq.approved&is_sober_baseline=eq.true"),
     sbCount("symbol_votes", "vote_type=eq.seen_it"),
