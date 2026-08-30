@@ -37,6 +37,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { theoryAttribution, theoryClassLabel } from "@/lib/theoryAttribution";
+
 type Theory = {
   id: string;
   user_id: string | null;
@@ -49,6 +51,10 @@ type Theory = {
   source_title: string | null;
   source_url: string | null;
   source_type: string | null;
+  theory_class: string | null;
+  framework_originator: string | null;
+  applied_to_dmtcode_by: string | null;
+  directly_addresses_dmt_laser: boolean | null;
   tags: string[] | null;
   created_at: string;
 };
@@ -417,6 +423,8 @@ export default function TheoriesPage() {
                   "summary",
                   "content",
                 ]) ?? t) as Theory;
+                const attribution = theoryAttribution(t);
+                const classLabel = theoryClassLabel(t.theory_class);
                 const proponentLine = t.proponent
                   ? `Proposed by ${t.proponent}`
                   : t.user_id && handles[t.user_id]
@@ -442,8 +450,18 @@ export default function TheoriesPage() {
                               {shown.title}
                             </Link>
                           </CardTitle>
-                          {proponentLine && (
-                            <p className="text-xs text-muted-foreground">{proponentLine}</p>
+                          {attribution && (
+                            <div className="space-y-0.5">
+                              <p className="text-xs text-muted-foreground">{attribution.primary}</p>
+                              {attribution.secondary && (
+                                <p className="text-xs text-muted-foreground">{attribution.secondary}</p>
+                              )}
+                              {classLabel && (
+                                <p className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
+                                  {classLabel}
+                                </p>
+                              )}
+                            </div>
                           )}
                         </div>
                         <Button

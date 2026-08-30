@@ -6,14 +6,14 @@ import { Users, Image, Eye } from 'lucide-react';
 interface Stats {
   totalSymbols: number;
   totalContributors: number;
-  totalValidations: number;
+  totalRecognitions: number;
 }
 
 export const CommunityStats = () => {
   const [stats, setStats] = useState<Stats>({
     totalSymbols: 0,
     totalContributors: 0,
-    totalValidations: 0,
+    totalRecognitions: 0,
   });
   const [loading, setLoading] = useState(true);
   // A failed fetch must never read as zero. Zero is a real number here.
@@ -46,7 +46,7 @@ export const CommunityStats = () => {
         (contributors || []).map(c => c.user_id).filter(Boolean)
       );
 
-      const { count: validationCount } = await supabase
+      const { count: recognitionCount } = await supabase
         .from('symbol_votes')
         .select('*', { count: 'exact', head: true })
         .eq('vote_type', 'seen_it');
@@ -54,7 +54,7 @@ export const CommunityStats = () => {
       setStats({
         totalSymbols: submissionCount || 0,
         totalContributors: uniqueContributors.size,
-        totalValidations: validationCount || 0,
+        totalRecognitions: recognitionCount || 0,
       });
     } catch (error) {
       console.error('Failed to load stats:', error);
@@ -81,7 +81,7 @@ export const CommunityStats = () => {
     },
     {
       value: fmt(stats.totalContributors),
-      label: 'Independent Contributors',
+      label: 'Account-backed contributors',
       icon: Users,
       // NOT LINKED ON PURPOSE. This is a count of distinct submitting accounts.
       // The registry explorer lists symbols, not contributors, so no filtered
@@ -90,8 +90,8 @@ export const CommunityStats = () => {
       note: 'Distinct submitting accounts. No registry view lists contributors, so this number is not linked.',
     },
     {
-      value: fmt(stats.totalValidations),
-      label: 'Community Validations',
+      value: fmt(stats.totalRecognitions),
+      label: 'Recognition responses',
       icon: Eye,
       // NOT LINKED ON PURPOSE. This counts rows in symbol_votes, not symbols.
       // A link to a symbol list would return a different row count, and these

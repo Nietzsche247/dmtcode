@@ -4028,17 +4028,26 @@ async function priorExposureHtml(): Promise<string> {
 }
 
 async function liveCountsHtml(): Promise<string> {
-  const [community, glyphs, nulls, sober, recog] = await Promise.all([
+  const [community, glyphs, glyphsNoAccount, nulls, sober, recog] = await Promise.all([
     sbCount("symbol_submissions", "status=eq.approved&is_curated_example=eq.false"),
     // Same predicate as the registry_glyphs feed in data-json.ts: a row with no image is not a report.
     sbCount("registry_glyphs", "image_data=not.is.null&image_data=neq."),
+    // The table now holds account-backed sealed captures as well as the legacy
+    // anonymous rows, so the total may not be called anonymous.
+    sbCount("registry_glyphs", "image_data=not.is.null&image_data=neq.&user_id=is.null"),
     sbCount("symbol_submissions", "status=eq.approved&tags=ov.{null-report,null_report,nothing-seen,no-forms}"),
     sbCount("symbol_submissions", "status=eq.approved&is_sober_baseline=eq.true"),
     sbCount("symbol_votes", "vote_type=eq.seen_it"),
   ]);
   const rows: Array<[string, number | null, string]> = [
     ["Published community symbol submissions", community, "account backed, published immediately, curated examples excluded"],
-    ["Anonymous drawn glyph reports", glyphs, "captured before accounts were required, that submission path is now closed, a separate table, never summed with the line above"],
+    [
+      "Glyph memory records",
+      glyphs,
+      typeof glyphsNoAccount === "number"
+        ? `legacy capture table, ${glyphsNoAccount} of them with no account link from before accounts were required; that anonymous submission path is now closed and later rows are account backed. A separate table, never summed with the line above`
+        : "legacy capture table, mixed anonymous and account-backed rows, a separate table, never summed with the line above",
+    ],
     ["Null reports", nulls, "ran the observation and saw nothing structured, or nothing that matched"],
     ["Sober baseline records", sober, "same apparatus, no substance"],
     ["Recognition responses", recog, "readers saying a published form echoed their memory after seeing it here, not independent matches"],
@@ -4107,7 +4116,7 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
 
   const rows = await sbGetRows(
     "theories",
-    "is_approved=eq.true&select=id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at&order=upvotes.desc",
+    "is_approved=eq.true&select=id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at,theory_class,framework_originator,applied_to_dmtcode_by,directly_addresses_dmt_laser&order=upvotes.desc",
   );
 
   const slugs = rows.map((r) => theorySlug(String(r.title || "")));
@@ -4155,8 +4164,13 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
         text: r.summary || "",
       };
 
-      if (r.proponent) {
-        item.author = { "@type": "Person", name: String(r.proponent) };
+      // A borrowed framework must not list its originator as author of this
+      // record: on this page that reads as authoring the DMT-laser application.
+      if (r.directly_addresses_dmt_laser === true && (r.framework_originator || r.proponent)) {
+        item.author = { "@type": "Person", name: String(r.framework_originator || r.proponent) };
+      } else if (r.framework_originator) {
+        item.citation = `Framework by ${String(r.framework_originator)}`;
+        item.creator = { "@type": "Organization", name: String(r.applied_to_dmtcode_by || "DMT Code") };
       }
       return { "@type": "ListItem", position: i + 1, item };
     }),
@@ -4172,9 +4186,13 @@ async function renderTheories(context: Context, locale: Loc = "en"): Promise<Res
       const contentHtml = r.content
         ? `<section><h3>${hubLabel("full-argument", locale)}</h3>${paragraphsFromText(String(r.content))}</section>`
         : "";
-      const proponentLine = r.proponent
-        ? `<p><strong>${hubLabel("proponent", locale)}</strong> ${esc(String(r.proponent))}</p>`
-        : "";
+      const originator = String(r.framework_originator || "").trim();
+      const applier = String(r.applied_to_dmtcode_by || "").trim();
+      const proponentLine = originator && r.directly_addresses_dmt_laser === false
+        ? `<p><strong>Framework by:</strong> ${esc(originator)}. Applied to the DMT-laser question here by ${esc(applier || "DMT Code")}. ${esc(originator)} did not propose this as an explanation of the DMT-laser phenomenon.</p>`
+        : originator
+          ? `<p><strong>Proposed for this phenomenon by:</strong> ${esc(originator)}</p>`
+          : (r.proponent ? `<p><strong>${hubLabel("proponent", locale)}</strong> ${esc(String(r.proponent))}</p>` : "");
       const sourceLine = r.source_url
         ? `<p><strong>${hubLabel("source", locale)}</strong> <a href="${esc(String(r.source_url))}" rel="noopener">${esc(String(r.source_title || r.source_url))}</a>${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>`
         : (r.source_title ? `<p><strong>${hubLabel("source", locale)}</strong> ${esc(String(r.source_title))}${r.source_type ? ` (${esc(String(r.source_type))})` : ""}</p>` : "");
@@ -4808,9 +4826,14 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
 
   const summaryHtml = match.summary ? paragraphsFromText(String(match.summary)) : "";
   const contentHtml = match.content ? paragraphsFromText(String(match.content)) : "";
-  const proponentLine = match.proponent
-    ? `<p><strong>Proposed by:</strong> ${esc(String(match.proponent))}</p>`
-    : "";
+  // The provenance list below already states originator and applier. Asserting
+  // "Proposed by" above it would contradict the row it sits on.
+  const proponentLine =
+    prov && prov.directly_addresses_dmt_laser === false
+      ? ""
+      : match.proponent
+        ? `<p><strong>Proposed by:</strong> ${esc(String(match.proponent))}</p>`
+        : "";
   const provRows: string[] = [];
   if (prov) {
     const cls = theoryClassLabel(prov.theory_class);
@@ -4882,7 +4905,12 @@ ${provRows.map((r) => "      " + r).join("\n")}
   };
   if (match.summary) creativeWorkLd.abstract = String(match.summary);
   if (match.content) creativeWorkLd.text = String(match.content);
-  if (match.proponent) creativeWorkLd.author = { "@type": "Person", name: String(match.proponent) };
+  if (match.proponent && !(prov && prov.directly_addresses_dmt_laser === false)) {
+    creativeWorkLd.author = { "@type": "Person", name: String(match.proponent) };
+  } else if (prov && prov.framework_originator) {
+    creativeWorkLd.citation = `Framework by ${String(prov.framework_originator)}`;
+    creativeWorkLd.creator = { "@type": "Organization", name: String(prov.applied_to_dmtcode_by || "DMT Code") };
+  }
   if (match.source_url) creativeWorkLd.isBasedOn = String(match.source_url);
   if (tags.length > 0) creativeWorkLd.keywords = tags.join(", ");
 

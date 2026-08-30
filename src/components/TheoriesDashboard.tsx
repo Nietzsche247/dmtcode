@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { theoryAttribution } from "@/lib/theoryAttribution";
 
 type Theory = {
   id: string;
@@ -13,6 +14,10 @@ type Theory = {
   upvotes: number;
   origin: "curated" | "community";
   proponent: string | null;
+  framework_originator?: string | null;
+  applied_to_dmtcode_by?: string | null;
+  directly_addresses_dmt_laser?: boolean | null;
+  theory_class?: string | null;
   source_title: string | null;
   source_url: string | null;
   user_id: string | null;
@@ -26,7 +31,7 @@ export const TheoriesDashboard = () => {
     (async () => {
       const { data } = await supabase
         .from("theories")
-        .select("id,title,summary,upvotes,origin,proponent,source_title,source_url,user_id")
+        .select("id,title,summary,upvotes,origin,proponent,source_title,source_url,user_id,framework_originator,applied_to_dmtcode_by,directly_addresses_dmt_laser,theory_class")
         .eq("is_approved", true)
         .order("upvotes", { ascending: false })
         .order("created_at", { ascending: false })
@@ -61,7 +66,8 @@ export const TheoriesDashboard = () => {
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-8">
               {theories.map((t) => {
-                const proponentLine = t.proponent ? `Proposed by ${t.proponent}` : null;
+                const attribution = theoryAttribution(t);
+                const proponentLine = attribution ? attribution.primary : null;
                 return (
                   <Card key={t.id}>
                     <CardHeader className="pb-2">

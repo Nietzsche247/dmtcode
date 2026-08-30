@@ -11,6 +11,12 @@ import { theorySlug, resolveTheoryBySlug } from "@/lib/theorySlug";
 import { FollowButton } from "@/components/FollowButton";
 import { useContentTranslations, overlay } from "@/hooks/useContentTranslations";
 import { useLocale, localePath } from "@/i18n/LocaleProvider";
+import {
+  theoryAttribution,
+  applyTheoryJsonLdAttribution,
+  theoryClassLabel,
+  theoryClassBlurb,
+} from "@/lib/theoryAttribution";
 
 
 type Theory = {
@@ -26,6 +32,12 @@ type Theory = {
   source_url: string | null;
   source_type: string | null;
   tags: string[] | null;
+  theory_class: string | null;
+  framework_originator: string | null;
+  applied_to_dmtcode_by: string | null;
+  directly_addresses_dmt_laser: boolean | null;
+  original_publication_year: number | null;
+  primary_source: string | null;
   created_at: string;
 };
 
@@ -129,11 +141,16 @@ export default function TheoryDetail() {
   };
   if (display.summary) creativeWorkLd.abstract = display.summary;
   if (display.content) creativeWorkLd.text = display.content;
-  if (theory.proponent) creativeWorkLd.author = { "@type": "Person", name: theory.proponent };
+  if (theory.proponent && theory.directly_addresses_dmt_laser !== false) {
+    creativeWorkLd.author = { "@type": "Person", name: theory.proponent };
+  }
   if (theory.source_url) creativeWorkLd.isBasedOn = theory.source_url;
+  applyTheoryJsonLdAttribution(creativeWorkLd, theory);
   if (theory.tags && theory.tags.length > 0) creativeWorkLd.keywords = theory.tags.join(", ");
 
   const originText = originLabel(theory.origin);
+  const attribution = theoryAttribution(theory);
+  const classLabel = theoryClassLabel(theory.theory_class);
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,6 +181,11 @@ export default function TheoryDetail() {
                   {originText}
                 </Badge>
               )}
+              {classLabel && (
+                <Badge variant="secondary" className="text-xs" title={theoryClassBlurb(theory.theory_class)}>
+                  {classLabel}
+                </Badge>
+              )}
               {theory.tags?.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
               ))}
@@ -173,8 +195,16 @@ export default function TheoryDetail() {
             </div>
 
             <h1 className="text-3xl md:text-4xl font-bold leading-tight">{display.title}</h1>
-            {theory.proponent && (
-              <p className="text-sm text-muted-foreground">Proposed by {theory.proponent}</p>
+            {attribution && (
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">{attribution.primary}</p>
+                {attribution.secondary && (
+                  <p className="text-sm text-muted-foreground">{attribution.secondary}</p>
+                )}
+                {attribution.note && (
+                  <p className="text-xs text-amber-600 dark:text-amber-400">{attribution.note}</p>
+                )}
+              </div>
             )}
             {theory.upvotes > 0 && (
               <p className="text-xs text-muted-foreground">Agree: {theory.upvotes}</p>

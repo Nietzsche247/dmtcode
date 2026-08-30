@@ -21,7 +21,7 @@ export const ConvergenceHero = () => {
   const [recent, setRecent] = useState<TopSymbol[]>([]);
   const [confirmCount, setConfirmCount] = useState<number>(0);
   const [libraryCount, setLibraryCount] = useState<number>(0);
-  const [verifiedCount, setVerifiedCount] = useState<number>(0);
+  const [recognizedByThreeCount, setRecognizedByThreeCount] = useState<number>(0);
 
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const ConvergenceHero = () => {
           .select('*', { count: 'exact', head: true })
           .eq('status', 'approved')
           .gte('upvotes', 3);
-        if (!cancelled) setVerifiedCount(verified ?? 0);
+        if (!cancelled) setRecognizedByThreeCount(verified ?? 0);
 
       } catch (e) {
         // fail silently - render fallback
@@ -110,8 +110,8 @@ export const ConvergenceHero = () => {
   if (libraryCount > 0) {
     countSegments.push(`${libraryCount} SYMBOL${libraryCount === 1 ? '' : 'S'} IN THE RECORD`);
   }
-  if (verifiedCount > 0) {
-    countSegments.push(`${verifiedCount} RECOGNIZED BY 3 OR MORE READERS`);
+  if (recognizedByThreeCount > 0) {
+    countSegments.push(`${recognizedByThreeCount} RECOGNIZED BY 3 OR MORE READERS`);
   }
 
   return (
@@ -130,7 +130,7 @@ export const ConvergenceHero = () => {
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl"
              style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif", fontWeight: 400 }}>
-            An open record of the visual forms people report during N,N-DMT experiences. Some of them recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.
+            An open record of the visual forms people report during N,N-DMT experiences. Some of them appear to recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">

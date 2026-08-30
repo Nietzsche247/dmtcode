@@ -10,6 +10,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 import FollowButton from '@/components/FollowButton';
+import {
+  recordTypeLabel,
+  isRegisteredClinicalTrial,
+  piMayRender,
+  trialSchemaType,
+  trialLinkLabel,
+  needsVerificationBadge,
+  TRIALS_PARENT_LABEL,
+} from '@/lib/trialRecordType';
 
 interface Trial {
   id: string;
@@ -33,6 +42,8 @@ interface Trial {
   doi: string | null;
   url: string | null;
   compounds: string[] | null;
+  record_type: string | null;
+  relevance: string | null;
   updated_at: string;
   created_at: string;
 }
@@ -88,7 +99,7 @@ const TrialDetail = () => {
             This trial may have been removed or is not yet approved.
           </p>
           <Button asChild className="mt-6" variant="outline">
-            <Link to="/trials">← Back to Clinical Trials</Link>
+            <Link to="/trials">← Back to trials, studies and experiments</Link>
           </Button>
         </main>
         <Footer />
@@ -96,17 +107,20 @@ const TrialDetail = () => {
     );
   }
 
-  const metaDesc = (trial.description || `Clinical trial: ${trial.title}`)
+  const metaDesc = (trial.description || `${recordTypeLabel(trial.record_type)}: ${trial.title}`)
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 160);
   const doiUrl = trial.doi ? `https://doi.org/${trial.doi}` : null;
 
+  const isClinical = isRegisteredClinicalTrial(trial.record_type);
+  const typeLabel = recordTypeLabel(trial.record_type);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'MedicalStudy',
+        '@type': trialSchemaType(trial.record_type),
         name: trial.title,
         description: trial.description || undefined,
         status: trial.status || undefined,
@@ -114,6 +128,12 @@ const TrialDetail = () => {
         endDate: trial.end_date || undefined,
         sameAs: trial.url || undefined,
         identifier: trial.trial_registry_id || undefined,
+        additionalProperty: [
+          { '@type': 'PropertyValue', name: 'record_type', value: trial.record_type || 'untyped' },
+          trial.confirmed_status
+            ? { '@type': 'PropertyValue', name: 'verification_status', value: trial.confirmed_status }
+            : undefined,
+        ].filter(Boolean),
         sponsor: trial.institution
           ? { '@type': 'Organization', name: trial.institution }
           : undefined,
@@ -125,7 +145,7 @@ const TrialDetail = () => {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://dmtcode.com/' },
-          { '@type': 'ListItem', position: 2, name: 'Clinical Trials', item: 'https://dmtcode.com/trials' },
+          { '@type': 'ListItem', position: 2, name: TRIALS_PARENT_LABEL, item: 'https://dmtcode.com/trials' },
           { '@type': 'ListItem', position: 3, name: trial.title, item: `https://dmtcode.com/trials/${trial.id}` },
         ],
       },
@@ -154,8 +174,19 @@ const TrialDetail = () => {
       <main className="container mx-auto max-w-3xl px-4 pb-24 pt-6">
         <header className="mb-8 border-b border-border/60 pb-6">
           <p className="label-data mb-3 text-[11px] text-muted-foreground">
-            CLINICAL TRIAL{trial.status ? ` · ${trial.status.toUpperCase()}` : ''}
+            {typeLabel.toUpperCase()}{trial.status ? ` · ${trial.status.toUpperCase()}` : ''}
           </p>
+          {needsVerificationBadge(trial.record_type) && (
+            <p className="mt-3 rounded border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+              <strong>
+                {trial.confirmed_status && trial.confirmed_status !== 'Confirmed'
+                  ? `Verification: ${trial.confirmed_status.toLowerCase()}.`
+                  : 'Not independently verified.'}
+              </strong>{' '}
+              This is a {typeLabel.toLowerCase()} recorded for transparency. It is not a
+              registered clinical trial and carries no clinical authority.
+            </p>
+          )}
           <h1 className="font-display text-3xl leading-tight md:text-5xl">
             {trial.title}
           </h1>
@@ -182,7 +213,8 @@ const TrialDetail = () => {
             ['Type', trial.trial_type],
             ['Institution', trial.institution],
             ['Location', trial.location],
-            ['Principal investigator', trial.principal_investigator],
+            ['Record type', typeLabel],
+            ['Principal investigator', piMayRender(trial.record_type) ? trial.principal_investigator : null],
             ['Organizer / lead', trial.organizer_lead],
             ['Start date', trial.start_date ? format(new Date(trial.start_date), 'yyyy-MM-dd') : null],
             ['End date', trial.end_date ? format(new Date(trial.end_date), 'yyyy-MM-dd') : null],
@@ -223,6 +255,7 @@ const TrialDetail = () => {
         <div className="flex flex-wrap gap-3">
           {(() => {
             const status = trial.status;
+            if (!isClinical) return null;
             if (status === 'recruiting') {
               if (trial.application_url) {
                 return (
@@ -259,10 +292,10 @@ const TrialDetail = () => {
             }
             return null;
           })()}
-          {trial.url && trial.status !== 'recruiting' && trial.status !== 'enrolling by invitation' && (
+          {trial.url && (!isClinical || (trial.status !== 'recruiting' && trial.status !== 'enrolling by invitation')) && (
             <Button asChild variant="outline">
               <a href={trial.url} target="_blank" rel="noopener noreferrer">
-                View trial record <ExternalLink className="ml-2 h-4 w-4" />
+                {trialLinkLabel(trial.record_type)} <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
           )}
@@ -274,7 +307,7 @@ const TrialDetail = () => {
             </Button>
           )}
           <Button asChild variant="ghost">
-            <Link to="/trials">← All trials</Link>
+            <Link to="/trials">← All trials, studies and experiments</Link>
           </Button>
         </div>
 
