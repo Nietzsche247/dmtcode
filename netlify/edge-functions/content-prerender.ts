@@ -768,7 +768,7 @@ export default async (request: Request, context: Context) => {
         ["Status", r.status],
         ["Phase", r.phase],
         ["Institution", r.institution],
-        ["Principal investigator", isRegisteredTrialType(r.record_type) ? r.principal_investigator : null],
+        ["Principal investigator", piMayRender(r.record_type) ? r.principal_investigator : null],
         ["Start date", r.start_date],
         ["End date", r.end_date],
         ["Registry ID", r.trial_registry_id],
@@ -3969,6 +3969,17 @@ function trialTypeLabel(v: unknown): string {
 }
 function isRegisteredTrialType(v: unknown): boolean {
   return v === "registered_clinical_trial" || v === "registered_trial";
+}
+// A principal investigator is a real, sourced role on a registered trial or a
+// published pilot report. On a media claim or a community record it invents an
+// authority the source does not establish, so it is not rendered there. This
+// mirrors the trials_pi_only_on_sourced_types constraint on the database.
+function piMayRender(v: unknown): boolean {
+  return (
+    isRegisteredTrialType(v) ||
+    v === "registered_observational_study" ||
+    v === "published_pilot_report"
+  );
 }
 const EV_VER_LABELS: Record<string, string> = {
   verified: "Verified",

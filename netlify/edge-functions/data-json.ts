@@ -150,8 +150,35 @@ async function fetchAll(
     });
     if (!res.ok && !optionalDropped && optional.length) {
       optionalDropped = true;
-      cols = select;
-      console.warn(`data-json: ${table} rejected optional columns ${optional.join(",")}, serving without them`);
+      // Previously this dropped every optional column at once. That is how a
+      // single never-created column (relation_to_core_question) silently removed
+      // publication_status, online_publication_date and issue_date from all 236
+      // bibliography rows for weeks: the export looked healthy and simply told
+      // machines nothing. Probe each optional column once and keep the ones the
+      // database actually has, so a missing column costs only itself.
+      const usable: string[] = [];
+      for (const col of optional) {
+        try {
+          const probe = await fetch(
+            `${SUPABASE_URL}/rest/v1/${table}?select=${col}&limit=1`,
+            {
+              headers: {
+                apikey: SUPABASE_KEY,
+                Authorization: `Bearer ${SUPABASE_KEY}`,
+                Accept: "application/json",
+              },
+            },
+          );
+          if (probe.ok) usable.push(col);
+        } catch (_e) {
+          // treat an unreachable probe as unusable and carry on
+        }
+      }
+      cols = usable.length ? `${select},${usable.join(",")}` : select;
+      const missing = optional.filter((c) => !usable.includes(c));
+      if (missing.length) {
+        console.warn(`data-json: ${table} is missing optional columns ${missing.join(",")}, serving the rest`);
+      }
       i--;
       continue;
     }
