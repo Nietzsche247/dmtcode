@@ -13,6 +13,7 @@ import { useCanvasTracking } from '@/hooks/useCanvasTracking';
 import { useUgcTracking } from '@/hooks/useUgcTracking';
 import { CanvasErrorBoundary } from '@/components/registry/CanvasErrorBoundary';
 import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { hasSeenCatalogue, catalogueSeenAt } from '@/lib/catalogueExposure';
 
 const STEPS = [
   { id: 1, name: 'Draw', description: 'Create your symbol' },
@@ -24,6 +25,19 @@ const STEPS = [
 export const SubmissionWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [priorExposure, setPriorExposure] = useState<'naive' | 'exposed' | ''>('');
+  // The browser knows something the contributor may not think to mention: it
+  // served them the catalogue. Pre-fill from that, then tell them it was
+  // pre-filled and why. Captured once on mount so that changing the answer
+  // does not make the explanation disappear, and so the explanation keeps
+  // standing next to an answer the contributor has overridden.
+  const [prefilledFromCatalogue, setPrefilledFromCatalogue] = useState(false);
+  const [catalogueSeenOn, setCatalogueSeenOn] = useState<string | null>(null);
+  useEffect(() => {
+    if (!hasSeenCatalogue()) return;
+    setPrefilledFromCatalogue(true);
+    setCatalogueSeenOn(catalogueSeenAt());
+    setPriorExposure((current) => (current === '' ? 'exposed' : current));
+  }, []);
   const [imageData, setImageData] = useState<string>('');
   const [metadata, setMetadata] = useState<SymbolMetadata | null>(null);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -247,6 +261,15 @@ export const SubmissionWizard = () => {
                   Yes, I had already seen them
                 </label>
               </div>
+              {prefilledFromCatalogue && (
+                <p className="mt-3 rounded border border-primary/30 bg-primary/5 p-3 text-xs text-foreground">
+                  We filled this in as <strong>yes</strong> because this browser opened the
+                  symbol catalogue
+                  {catalogueSeenOn ? ` on ${new Date(catalogueSeenOn).toLocaleDateString()}` : ''}.
+                  Change it if that is wrong. You know what you read; the site only knows what
+                  it served you.
+                </p>
+              )}
               <p className="mt-3 text-xs text-muted-foreground">
                 Either answer is fine. Naive here means not previously exposed to the thing being tested. It is recorded so naive and exposed reports can be compared later. It changes nothing about your submission.
               </p>

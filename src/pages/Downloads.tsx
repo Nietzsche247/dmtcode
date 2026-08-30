@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { SEO } from '@/components/SEO';
 import { DOCUMENTS, docCountWord, DOC_PATH } from '@/data/documents';
+import { markCatalogueSeen, RECORD_AFTER_CATALOGUE_PATH } from '@/lib/catalogueExposure';
 
 // The document index. Before this page existed, /downloads was a 404 while
 // /llms.txt told machines that the documents lived "under /downloads/", and the
@@ -111,12 +112,17 @@ const Downloads = () => (
               <p className="text-sm text-muted-foreground leading-relaxed" style={sans}>
                 <span className="text-foreground">When to use it.</span> {d.useWhen}
               </p>
+              {/* Opening the symbol catalogue is the one download that changes how a
+                  later observation should be read, so it is the one that gets
+                  remembered. Nothing is sent anywhere: the note lives in this browser
+                  and its only use is to pre-fill one field on the submission form. */}
               <ul className="flex flex-wrap gap-3 pt-1">
                 {d.files.map((f) => (
                   <li key={f.file}>
                     <a
                       href={DOC_PATH(f.file)}
                       download
+                      onClick={d.id === 'symbol-set' ? markCatalogueSeen : undefined}
                       className="inline-block rounded border border-primary/40 px-3 py-1.5 text-sm text-primary hover:bg-primary/10"
                     >
                       {f.label} PDF
@@ -143,9 +149,12 @@ const Downloads = () => (
             <Link to="/capture" className="text-primary hover:underline">
               Record what you saw
             </Link>
-            , then come back and open the catalogue. If you have already read it,
-            say so on the form. Nothing is thrown away for having been read
-            first, it is only counted differently.
+            , then come back and open the catalogue. If you have already read it,{' '}
+            <Link to={RECORD_AFTER_CATALOGUE_PATH} className="text-primary hover:underline">
+              record it anyway
+            </Link>{' '}
+            and the form will already be marked as read. Nothing is thrown away
+            for having been read first, it is only counted differently.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed" style={sans}>
             The underlying records are open too: the browseable{' '}

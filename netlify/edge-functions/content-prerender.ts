@@ -3350,9 +3350,9 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         }
       }
     } catch { /* ignore */ }
-    recentList = (await liveCountsHtml()) + recentList;
+    recentList = (await liveCountsHtml()) + (await priorExposureHtml()) + recentList;
   } else if (key === "null-reports" && SUPABASE_URL && SUPABASE_KEY) {
-    recentList = await liveCountsHtml();
+    recentList = (await liveCountsHtml()) + (await priorExposureHtml());
   } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
@@ -3790,6 +3790,25 @@ async function sbCount(table: string, query: string): Promise<number | null> {
 
 // Live counts for crawler bodies. A count that cannot be fetched is omitted,
 // never rendered as zero. Definitions match CommunityStats.tsx and /data.json.
+// The naive versus exposed split, stated wherever the registry totals are stated.
+// Priming is the strongest ordinary explanation for convergence, so this is the
+// number that decides how much any total is worth. It is rendered as a sentence
+// rather than a figure because the honest reading of a zero here is "nobody was
+// asked", not "nobody had seen it", and a bare 0 says the opposite.
+async function priorExposureHtml(): Promise<string> {
+  const [naive, exposed, total] = await Promise.all([
+    sbCount("symbol_submissions", "status=eq.approved&prior_exposure=eq.naive"),
+    sbCount("symbol_submissions", "status=eq.approved&prior_exposure=eq.exposed"),
+    sbCount("symbol_submissions", "status=eq.approved"),
+  ]);
+  if (naive === null || exposed === null || total === null) return "";
+  const answered = naive + exposed;
+  if (answered === 0) {
+    return `<p><strong>Prior exposure is unrecorded on all ${total} published records.</strong> The submission form has required the question since 26 August 2026, and no record created since then has been published yet. Until that changes, nothing here can be weighed on whether its author had already seen the catalogue, which is the strongest ordinary explanation for any apparent agreement between records. Treat every total on this page accordingly.</p>`;
+  }
+  return `<p><strong>Prior exposure:</strong> ${naive} recorded as naive, ${exposed} as already exposed, out of ${total} published records. The remaining ${total - answered} were submitted before the question was required and were never asked, so the field is absent on them rather than false. Naive means the contributor had not seen this registry before the observation. Comparisons between the two groups are the point of the field; a total that mixes them is not evidence about convergence.</p>`;
+}
+
 async function liveCountsHtml(): Promise<string> {
   const [community, glyphs, nulls, sober, recog] = await Promise.all([
     sbCount("symbol_submissions", "status=eq.approved&is_curated_example=eq.false"),

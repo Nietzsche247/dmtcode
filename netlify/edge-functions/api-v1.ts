@@ -121,6 +121,15 @@ function declaredFields(name: string, records: Row[]): Record<string, unknown> |
   if (!fields || records.length === 0) return undefined;
   const out: Record<string, unknown> = {};
   for (const f of fields) {
+    // A boolean is populated on every record the moment the column exists, so
+    // reporting "populated 51 of 51" for is_sober_baseline invites reading it as
+    // fifty-one sober baselines when the true count is zero. For a boolean the
+    // useful number is how many are true.
+    if (records.some((r) => typeof r[f] === "boolean")) {
+      const yes = records.filter((r) => r[f] === true).length;
+      out[f] = { true: yes, of: records.length };
+      continue;
+    }
     const n = records.filter((r) => {
       const v = r[f];
       return v !== undefined && v !== null && v !== "" && v !== "not_stated";

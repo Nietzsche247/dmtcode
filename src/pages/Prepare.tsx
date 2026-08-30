@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
 
 import { DOCUMENTS, docCountWord, DOC_PATH } from '@/data/documents';
+import { markCatalogueSeen } from '@/lib/catalogueExposure';
 import { KITS, type Kit } from '@/data/kits';
 import { useLocale } from '@/i18n/LocaleProvider';
 
@@ -306,6 +307,7 @@ const Prepare = () => {
                   <a
                     href="/downloads/dmt-laser-code-symbols.pdf"
                     download
+                    onClick={markCatalogueSeen}
                     className="text-sm font-medium text-gold hover:underline"
                   >
                     DMT Laser Code Symbols (PDF)
