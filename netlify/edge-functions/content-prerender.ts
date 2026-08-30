@@ -3377,6 +3377,13 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
       }
     } catch { /* ignore */ }
   }
+  // The registry is where the symbol totals are read, so it is where the
+  // qualifier on those totals has to sit. A count of published symbols with no
+  // statement about prior exposure beside it is the shape of claim this whole
+  // repair exists to stop.
+  if (key === "registry" && SUPABASE_URL && SUPABASE_KEY) {
+    recentList = (await priorExposureHtml()) + recentList;
+  }
   if (page.index2 && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const rows = await sbGetRows(page.index2.table, `${page.index2.filter}&select=${page.index2.select}&order=created_at.desc&limit=12`);
