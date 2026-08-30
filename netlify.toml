@@ -19,6 +19,13 @@
   path = "/shop.json"
   function = "shop-json"
 
+# Typed endpoints. Declared here as well as in the function's own config, because
+# a netlify.toml declaration runs before a function that relies only on in-source
+# config, and spa-guard is one of those. Both declarations must stay in sync.
+[[edge_functions]]
+  path = "/api/v1*"
+  function = "api-v1"
+
 [[edge_functions]]
   path = "/"
   function = "content-prerender"
