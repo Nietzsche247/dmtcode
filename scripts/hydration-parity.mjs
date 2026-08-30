@@ -28,6 +28,13 @@ const check = (label, ok, detail = '') => {
 };
 
 const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
+
+// Phrase matching compares meaning, not punctuation. The prerender writes
+// "Framework by: Donald Hoffman" as a definition list and React writes
+// "Framework by Donald Hoffman" as a sentence. Same fact, so a colon must not
+// fail the run. Anything beyond punctuation and case still counts as drift.
+const flat = (s) => (s || '').replace(/[:;,]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+const has = (text, phrase) => flat(text).includes(flat(phrase));
 const stripTags = (html) =>
   norm(
     html
@@ -87,14 +94,16 @@ const ROUTES = [
   {
     path: `/trials/${MEDIA_CLAIM}`,
     label: 'trial detail, media claim',
-    forbidden: ['CLINICAL TRIAL', 'Principal investigator', 'View trial record', 'Clinical Trials Observatory'],
+    forbidden: ['Principal investigator', 'View trial record', 'Clinical Trials Observatory'],
+    forbiddenExact: ['CLINICAL TRIAL'],
     required: ['Media claim'],
     ldForbidden: ['MedicalStudy'],
   },
   {
     path: `/trials/${CROSS_SESSION}`,
     label: 'trial detail, reported replication',
-    forbidden: ['CLINICAL TRIAL', 'Principal investigator', 'near-identical', 'Documented case of two independent'],
+    forbidden: ['Principal investigator', 'near-identical', 'Documented case of two independent'],
+    forbiddenExact: ['CLINICAL TRIAL'],
     ldForbidden: ['MedicalStudy'],
   },
   {
@@ -189,17 +198,26 @@ async function run() {
 
     // 3. Facts that must hold in BOTH views.
     for (const phrase of route.forbidden || []) {
-      const inRaw = rawText.includes(phrase);
-      const inHyd = hydText.includes(phrase);
+      const inRaw = has(rawText, phrase);
+      const inHyd = has(hydText, phrase);
       check(
         `${route.label}: "${phrase}" absent from both views`,
         !inRaw && !inHyd,
         inRaw && inHyd ? 'present in both' : inRaw ? 'present in crawler HTML only' : inHyd ? 'present after hydration only' : '',
       );
     }
-    for (const phrase of route.required || []) {
+    for (const phrase of route.forbiddenExact || []) {
       const inRaw = rawText.includes(phrase);
       const inHyd = hydText.includes(phrase);
+      check(
+        `${route.label}: literal "${phrase}" absent from both views`,
+        !inRaw && !inHyd,
+        inRaw && inHyd ? 'present in both' : inRaw ? 'crawler HTML only' : inHyd ? 'after hydration only' : '',
+      );
+    }
+    for (const phrase of route.required || []) {
+      const inRaw = has(rawText, phrase);
+      const inHyd = has(hydText, phrase);
       check(
         `${route.label}: "${phrase}" present in both views`,
         inRaw && inHyd,
