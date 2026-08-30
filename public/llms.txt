@@ -94,7 +94,7 @@ Wavelengths by kit: Solo at 650 nm; Dual at 650 and 532 nm; Triad at 650 and 405
 
 ## Citable registry PDF
 
-- /downloads/dmt-laser-code-symbols.pdf: every public registry record in one citable PDF, with drawings, identifiers, contributor handles and confirmation counts. Version 1.0, 51 records, CC BY 4.0. DOI 10.5281/zenodo.22101522.
+- /downloads/dmt-laser-code-symbols.pdf: every public registry record in one citable PDF, with drawings, identifiers, contributor handles and recognition counts. Version 1.0, 51 records, CC BY 4.0. DOI 10.5281/zenodo.22101522.
 
 ## Pages
 

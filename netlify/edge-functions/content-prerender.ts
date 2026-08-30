@@ -768,7 +768,7 @@ export default async (request: Request, context: Context) => {
         ["Status", r.status],
         ["Phase", r.phase],
         ["Institution", r.institution],
-        ["Principal investigator", r.principal_investigator],
+        ["Principal investigator", isRegisteredTrialType(r.record_type) ? r.principal_investigator : null],
         ["Start date", r.start_date],
         ["End date", r.end_date],
         ["Registry ID", r.trial_registry_id],
@@ -837,7 +837,7 @@ export default async (request: Request, context: Context) => {
   }
   ${
     r.url
-      ? `<p><a href="${esc(r.url)}" rel="noopener">View trial record</a></p>`
+      ? `<p><a href="${esc(r.url)}" rel="noopener">${isRegisteredTrialType(r.record_type) ? "View trial record" : "View source"}</a></p>`
       : ""
   }
   ${
@@ -1556,7 +1556,7 @@ async function renderAnswers(context: Context, request: Request, locale: Loc = "
 
   const relationSentence = relationRecorded > 0 && directTests && adjacent
     ? `Of ${or(bibTotal, "the bibliography")} records, ${adjacent} are classified adjacent, meaning real psychedelic literature that does not bear on this question, and ${directTests} are a direct test of it.`
-    : `Every record now carries a relation_to_core_question field, and it is not yet populated: corpus_composition.bibliography.relation_recorded reads ${relationRecorded}. Until it is filled, treat the bibliography total as a reading list, not as a body of evidence for the claim.`;
+    : `No bibliography record carries a relation_to_core_question value yet: corpus_composition.bibliography.relation_recorded reads ${relationRecorded}. The field is defined in field_definitions and its tally is published in the export, but it is unfilled. Until it is filled, treat the bibliography total as a reading list, not as a body of evidence for the claim.`;
 
   const body = `<article data-prerender="answers">
   <!--tsrc:static:answers-->
@@ -2496,7 +2496,7 @@ const PROTOCOL_GUIDE_FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "What equipment does the reported protocol use?",
-    a: "Three ordinary optical components: a 650nm red laser module, a transmission diffraction grating that spreads the beam into a speckle and interference field, and a diffusing or refracting element such as an acrylic tank or lens. None are specific to this claim. DMT Code publishes no substances, sourcing, doses, or medication discontinuation windows. The beam should never be viewed directly.",
+    a: "As reported, three ordinary optical components: a 650 nm red laser module rated Class 2 at 1 mW on a tripod, a transmission diffraction grating that spreads the beam into a speckle and interference field, and a non-reflective projection surface at 4 to 6 feet. Some community setups add a diffusing or refracting element such as an acrylic tank or lens. That is a later variant and was not part of the originally reported apparatus. None are specific to this claim. DMT Code publishes no substances, sourcing, doses, or medication discontinuation windows. The beam should never be viewed directly.",
   },
   {
     q: "Why 650nm specifically?",
@@ -2550,8 +2550,8 @@ const PROTOCOL_GUIDE_HOWTO_STEPS: Array<{ name: string; text: string }> = [
     text: "Mount a 650 nm red laser module so that its beam passes through a transmission diffraction grating, which spreads the beam into a speckle and interference field.",
   },
   {
-    name: "Place the diffusing element",
-    text: "Place a diffusing or refracting element, such as an acrylic tank or a lens, in the path so the field is projected onto a surface rather than viewed at the source.",
+    name: "Place the diffusing element (later community variant)",
+    text: "Optionally place a diffusing or refracting element, such as an acrylic tank or a lens, in the path so the field is projected onto a surface rather than viewed at the source. This step is a later community variant and was not part of the originally reported apparatus.",
   },
   {
     name: "Set the room conditions and posture",
@@ -2579,7 +2579,7 @@ const PROTOCOL_GUIDE_HOWTO_LD = {
   "supply": [
     { "@type": "HowToSupply", "name": "650 nm red laser module" },
     { "@type": "HowToSupply", "name": "Transmission diffraction grating" },
-    { "@type": "HowToSupply", "name": "Diffusing or refracting element (acrylic tank or lens)" },
+    { "@type": "HowToSupply", "name": "Diffusing or refracting element (acrylic tank or lens), later community variant" },
   ],
   "tool": [
     { "@type": "HowToTool", "name": "Darkened room" },
@@ -2784,7 +2784,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     heading: "DMT Code",
     paragraphs: [
       "Is there a recurring visual structure people can learn to see?",
-      "An open record of the visual forms people report during N,N-DMT experiences. Some of them recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.",
+      "An open record of the visual forms people report during N,N-DMT experiences. Some of them appear to recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.",
       "The open record of a reported observation: first described by Danny Goler in 2020, published as a pilot study in 2025, and unresolved. We keep the evidence, including the evidence against.",
       "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
       "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
@@ -2886,12 +2886,13 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   },
   dataset: {
     title: "Machine Readable Dataset | DMT Code",
-    description: "The unified DMT Code corpus. Bibliography, clinical trials, and approved symbols in one JSON document under CC-BY-4.0. Filterable by facet.",
+    description: "The unified DMT Code corpus. Bibliography, typed trials and studies, and public symbol records in one JSON document under CC-BY-4.0. Filterable by facet.",
     heading: "Machine Readable Dataset",
     paragraphs: [
-      "The unified corpus is available at /data.json. It merges every bibliography row, every tracked clinical trial, and every approved symbol into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
+      "The unified corpus is available at /data.json. It merges every bibliography row, every registered clinical trial alongside the separately typed studies, community experiments, reports and platform projects, and every public symbol record with visibility, moderation and evidence status preserved as separate fields, into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
       "License is CC-BY-4.0. Attribute to DMT Code, https://dmtcode.com. An archived, citable version is available by DOI.",
       "Current release: DMT Code Open Dataset v4.1, published 17 August 2026. DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) is the concept DOI and always resolves to the latest version.",
+      "Live corpus and archived release are not the same artifact. /data.json is continuously updated and carries its own dateModified. The Zenodo release is an immutable dated snapshot. Treat them as byte equivalent only when their checksums match.",
       "Cite as: DMT Code Project (2026). DMT Code Open Dataset [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17816519",
     ],
     links: [
@@ -4026,7 +4027,7 @@ async function liveCountsHtml(): Promise<string> {
   ]);
   const rows: Array<[string, number | null, string]> = [
     ["Published community symbol submissions", community, "account backed, published immediately, curated examples excluded"],
-    ["Anonymous drawn glyph reports", glyphs, "quick capture with no account, a separate table, never summed with the line above"],
+    ["Anonymous drawn glyph reports", glyphs, "captured before accounts were required, that submission path is now closed, a separate table, never summed with the line above"],
     ["Null reports", nulls, "ran the observation and saw nothing structured, or nothing that matched"],
     ["Sober baseline records", sober, "same apparatus, no substance"],
     ["Recognition responses", recog, "readers saying a published form echoed their memory after seeing it here, not independent matches"],
@@ -4650,10 +4651,12 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   overlay(r, await getTranslations("protocols", String(r.slug ?? cleanSlug), locale));
 
   const canonical = `${SITE}/protocols/${cleanSlug}`;
-  const title = `${String(r.title)} protocol | DMT Code`;
+  const protoName = String(r.title).trim();
+  const protoLabel = /protocols?$/i.test(protoName) ? protoName : `${protoName} protocol`;
+  const title = `${protoLabel} | DMT Code`;
   const tagline = String(r.tagline || "").trim();
   const metaDesc = clip(
-    tagline || `${String(r.title)} protocol documentation indexed by DMT Code. Reference material, not medical advice.`,
+    tagline || `${protoLabel} documentation indexed by DMT Code. Reference material, not medical advice.`,
     160,
   );
 
@@ -4692,7 +4695,7 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
   };
 
   const body = `<article data-prerender="protocol">
-  <h1>${esc(String(r.title))} protocol</h1>
+  <h1>${esc(protoLabel)}</h1>
   ${r.compound ? `<p><strong>Compound:</strong> ${esc(String(r.compound))}</p>` : ""}
   ${r.status ? `<p><strong>Status:</strong> ${esc(String(r.status))}</p>` : ""}
   ${tagline ? `<p>${esc(tagline)}</p>` : ""}

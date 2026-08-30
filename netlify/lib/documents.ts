@@ -101,7 +101,7 @@ export const DOCUMENTS: DocRecord[] = [
     title: "DMT Laser Code Symbols",
     kind: "Catalogue",
     summary:
-      "Every public registry record in one citable PDF, with drawings, identifiers, contributor handles and confirmation counts. Version 1.0, 51 records, CC BY 4.0, DOI 10.5281/zenodo.22101522.",
+      "Every public registry record in one citable PDF, with drawings, identifiers, contributor handles and recognition counts. Version 1.0, 51 records, CC BY 4.0, DOI 10.5281/zenodo.22101522.",
     notThis:
       "It is a record of what observers drew. It is not a key, not a translation, and not a claim that the forms mean anything.",
     useWhen:
