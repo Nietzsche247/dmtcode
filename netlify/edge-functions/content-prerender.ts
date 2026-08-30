@@ -3434,6 +3434,7 @@ export const config: Config = {
     "/forecasts",
     "/protocol-guide",
     "/prepare",
+    "/documents",
     "/evidence-map",
     "/timeline",
     "/timeline/*",

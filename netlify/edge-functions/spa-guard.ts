@@ -139,6 +139,16 @@ export default async (request: Request, context: Context) => {
     return Response.redirect(`${url.origin}/people/danny-goler`, 301);
   }
 
+  // The document index cannot live at /downloads: that path collides with the
+  // public/downloads directory in the publish output, so Netlify serves the
+  // static directory and content-prerender never runs. /downloads is still the
+  // path people and machines guess, so it redirects to the page. Redirected
+  // here for the same reason as the line above, and matched on the bare path
+  // only, so every published PDF URL under /downloads/ keeps resolving.
+  if (/^\/downloads\/?$/i.test(path)) {
+    return Response.redirect(`${url.origin}${locale ? "/" + locale : ""}/documents`, 301);
+  }
+
   // Referral redirect prefix: proxied to the Supabase go function by a
   // redirect rule, which runs after edge functions. Pass through untouched.
   if (/^\/go(\/|$)/i.test(path)) {
