@@ -87,6 +87,7 @@ interface UnifiedItem {
   online_publication_date?: string;
   issue_date?: string;
   publication_status?: string;
+  relation_to_core_question?: string;
   record_class?: string;
   counts_toward_evidence?: boolean;
 }
@@ -281,7 +282,7 @@ export default async (req: Request): Promise<Response> => {
       "bibliography",
       "id,title,authors,journal,publication_date,doi,pmid,url,compounds,source,content_type,authority_type,stance_score,tags,featured,summary,source_date,is_approved,full_text,full_text_license",
       "is_approved=eq.true",
-      ["online_publication_date", "issue_date", "publication_status"]
+      ["online_publication_date", "issue_date", "publication_status", "relation_to_core_question"]
     ),
     fetchAll(
       "clinical_trials",
@@ -304,7 +305,16 @@ export default async (req: Request): Promise<Response> => {
     fetchAll(
       "theories",
       "id,title,summary,content,proponent,source_title,source_url,source_type,origin,tags,upvotes,created_at",
-      "is_approved=eq.true"
+      "is_approved=eq.true",
+      [
+        "theory_class",
+        "framework_originator",
+        "applied_to_dmtcode_by",
+        "directly_addresses_dmt_laser",
+        "original_publication_year",
+        "dmtcode_application_year",
+        "primary_source",
+      ]
     ),
     fetchAll(
       "events",
@@ -357,6 +367,7 @@ export default async (req: Request): Promise<Response> => {
       online_publication_date: (r.online_publication_date as string) || undefined,
       issue_date: (r.issue_date as string) || undefined,
       publication_status: (r.publication_status as string) || undefined,
+      relation_to_core_question: (r.relation_to_core_question as string) || undefined,
       has_full_text: typeof r.full_text === "string" && (r.full_text as string).trim().length > 0,
       full_text_license: (r.full_text_license as string) || undefined,
     });
@@ -475,7 +486,19 @@ export default async (req: Request): Promise<Response> => {
     title: (r.title as string) || undefined,
     summary: (r.summary as string) || undefined,
     content: (r.content as string) || undefined,
+    // proponent is retained for compatibility and is deliberately ambiguous: it
+    // mixed the person who built the framework with the person who pointed it at
+    // this phenomenon. The two fields below separate them. Read those.
     proponent: (r.proponent as string) || undefined,
+    theory_class: (r.theory_class as string) || undefined,
+    framework_originator: (r.framework_originator as string) || undefined,
+    applied_to_dmtcode_by: (r.applied_to_dmtcode_by as string) || undefined,
+    directly_addresses_dmt_laser: typeof r.directly_addresses_dmt_laser === "boolean"
+      ? (r.directly_addresses_dmt_laser as boolean)
+      : undefined,
+    original_publication_year: (r.original_publication_year as number) ?? undefined,
+    dmtcode_application_year: (r.dmtcode_application_year as number) ?? undefined,
+    primary_source: (r.primary_source as string) || undefined,
     source_title: (r.source_title as string) || undefined,
     source_url: (r.source_url as string) || undefined,
     source_type: (r.source_type as string) || undefined,
@@ -613,6 +636,25 @@ export default async (req: Request): Promise<Response> => {
       naive: glyphRows.filter((r) => r.prior_exposure === false).length,
       already_exposed: glyphRows.filter((r) => r.prior_exposure === true).length,
     },
+    // The same problem one level up. counts.bibliography says 236, and a corpus of
+    // 236 sources reads as a body of evidence for the laser claim until you can see
+    // how little of it is about the laser claim. Most of it is real psychedelic
+    // literature that bears on other questions entirely, which is why every record
+    // now carries relation_to_core_question and why the tally is published beside
+    // the total rather than left for a reader to compute.
+    bibliography: {
+      total: bib.length,
+      by_relation_to_core_question: tally(bib, "relation_to_core_question"),
+      relation_recorded: bib.filter((r) => typeof r.relation_to_core_question === "string" && (r.relation_to_core_question as string).length > 0).length,
+    },
+    theories: {
+      total: theories.length,
+      by_theory_class: tally(theories, "theory_class"),
+      // A framework borrowed from another field is not a claim anyone made about
+      // this phenomenon. Jung, Wheeler and Hoffman never wrote about a laser.
+      directly_addresses_dmt_laser: theories.filter((r) => r.directly_addresses_dmt_laser === true).length,
+      applied_by_dmtcode_editors: theories.filter((r) => String(r.applied_to_dmtcode_by ?? "") === "DMT Code editors").length,
+    },
     records_declaring_650nm_laser: symbolsLaser + glyphsLaser,
     records_total: symbols.length + glyphRows.length,
     prior_exposure_note: "The submission wizard has required prior_exposure since 2026-08-26. Records created before that date were never asked, which is why the field is absent rather than false on them.",
@@ -640,6 +682,14 @@ export default async (req: Request): Promise<Response> => {
     published_at: "When the row first became publicly visible. Null means it has never been public. Never backfilled with a guess.",
     review_due_at: "published_at plus 72 hours. The deadline by which a moderator was meant to look at it. Null where no review clock applies.",
     review_overdue: "Computed at request time, never stored. True when moderation_status is unreviewed and review_due_at is in the past. A symbol nobody reviewed inside the window is overdue, not approved.",
+    relation_to_core_question: "On a bibliography record: how the source relates to the convergence claim, not how strong the source is. direct_test = it tests or attempts to falsify the claim or the 650 nm protocol itself. mechanistic = it proposes or evidences a mechanism that could produce recurring visual FORM. phenomenological_baseline = it describes what the experience contains as people report it. comparison_condition = a non-DMT state producing comparable visuals, which bears on whether the forms are specific to this protocol. methodological = how to run, blind, score or report such research. historical = the documented record and lineage of this specific claim. adjacent = real psychedelic literature that does not bear on the question. adjacent is the default and is the correct answer for most of this corpus. Read the by_relation_to_core_question tally in corpus_composition before treating the bibliography total as a body of evidence for the claim.",
+    theory_class: "What kind of claim a theory makes, ordered by what it would take to support it. deflationary = the forms come from the observer or the apparatus and nothing external is required. neurocognitive = a brain mechanism produces the recurring structure. psychological = a shared feature of mind, not of the world. phenomenological = a description of the structure of the experience with no cause claimed. ontological = the forms indicate something real outside the observer. metaphysical = a claim about the nature of reality itself. cultural_historical = the forms situated in a human record.",
+    framework_originator: "Who built the framework, in its own context and usually for another purpose entirely. The legacy proponent field mixed this person with the next one, which let a borrowed framework read as though its author had endorsed this phenomenon.",
+    applied_to_dmtcode_by: "Who pointed the framework at the 650 nm laser phenomenon. DMT Code editors means this site made the connection and the originator did not.",
+    directly_addresses_dmt_laser: "True only where the source material is itself about this phenomenon. False for a framework borrowed from another field. Jung, Wheeler and Hoffman never wrote about a laser.",
+    original_publication_year: "The year the framework was FIRST published, which for several is decades before the edition cited in source_title. Null where it could not be established from a source that was actually checked.",
+    dmtcode_application_year: "The year this site started carrying the framework. Derived from the row's own created_at, never typed.",
+    primary_source: "A DOI, publisher page or institutional record for the framework. Six theories cited Wikipedia, which is not a primary source for a framework its author published elsewhere. source_url is unchanged and may still be secondary; primary_source is what a citation should use.",
     is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
     is_sober_baseline: "True when the contributor marked the session as a sober baseline run: the full rig, no substance.",
     recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",

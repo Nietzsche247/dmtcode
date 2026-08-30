@@ -121,6 +121,63 @@ check('the guessed /downloads path redirects to the index', dlRedirect.status ==
 const symbolPdf = await head('/downloads/dmt-laser-code-symbols.pdf');
 check('the symbol set PDF still serves as a file', symbolPdf.status === 200 && /pdf/i.test(symbolPdf.type || ''), `status ${symbolPdf.status} type ${symbolPdf.type}`);
 
+// 5c. B71, the AI authority layer. These checks are written so they are honest
+// before the migration lands as well as after: an absent column is a SKIP, a
+// present column that disagrees with itself is a FAIL. The one thing they will
+// not do is pass quietly on missing data.
+const RELATIONS = ['direct_test','mechanistic','phenomenological_baseline','comparison_condition','methodological','historical','adjacent'];
+const THEORY_CLASSES = ['deflationary','neurocognitive','psychological','phenomenological','ontological','metaphysical','cultural_historical'];
+const BIB_TYPES = new Set(['Paper','Review','Clinical Trial','Media','Book','Letter','Editorial','Podcast','Erratum','Preprint','Platform','Essay','Dataset']);
+const bibRows = (data.items || []).filter((i) => BIB_TYPES.has(i.content_type));
+const withRelation = bibRows.filter((r) => typeof r.relation_to_core_question === 'string' && r.relation_to_core_question);
+const cc = data.corpus_composition || {};
+
+if (withRelation.length === 0) {
+  skip('bibliography carries relation_to_core_question', 'column not live yet, migration pending');
+} else {
+  check('every bibliography record is classified', withRelation.length === bibRows.length, `${withRelation.length} of ${bibRows.length}`);
+  const bad = withRelation.filter((r) => !RELATIONS.includes(r.relation_to_core_question));
+  check('no bibliography record uses a value outside the vocabulary', bad.length === 0, bad.slice(0, 3).map((r) => r.relation_to_core_question).join(', '));
+  // The published tally has to be derived from the same rows the export carries.
+  // A hand maintained summary beside a live list is the exact defect class this
+  // whole build exists to remove.
+  const tally = {};
+  for (const r of bibRows) {
+    const k = r.relation_to_core_question || 'not_stated';
+    tally[k] = (tally[k] || 0) + 1;
+  }
+  const published = (cc.bibliography || {}).by_relation_to_core_question || {};
+  const agree = RELATIONS.concat(['not_stated']).every((k) => (tally[k] || 0) === (published[k] || 0));
+  check('the published relation tally matches the rows it summarises', agree, `derived ${JSON.stringify(tally)} vs published ${JSON.stringify(published)}`);
+  check('corpus_composition states the bibliography total', (cc.bibliography || {}).total === bibRows.length);
+  // The reason this field exists. If most of the corpus were direct tests the
+  // site would be claiming something it cannot support, so the ratio is asserted
+  // rather than left as a number nobody reads.
+  const directs = tally.direct_test || 0;
+  check('direct tests are a small minority of the corpus', directs <= 10, `${directs} of ${bibRows.length}`);
+  check('field_definitions explains relation_to_core_question', typeof (data.field_definitions || {}).relation_to_core_question === 'string');
+}
+
+const theoryRows = data.theories || [];
+const withClass = theoryRows.filter((r) => typeof r.theory_class === 'string' && r.theory_class);
+if (withClass.length === 0) {
+  skip('theories carry provenance', 'columns not live yet, migration pending');
+} else {
+  check('every theory is classified', withClass.length === theoryRows.length, `${withClass.length} of ${theoryRows.length}`);
+  const badC = withClass.filter((r) => !THEORY_CLASSES.includes(r.theory_class));
+  check('no theory uses a class outside the vocabulary', badC.length === 0, badC.slice(0, 3).map((r) => r.theory_class).join(', '));
+  check('every theory names who built the framework', theoryRows.every((r) => !!r.framework_originator));
+  check('every theory names who applied it here', theoryRows.every((r) => !!r.applied_to_dmtcode_by));
+  // The whole point of splitting the field. A framework borrowed from another
+  // discipline must not read as though its author endorsed this phenomenon.
+  const borrowed = theoryRows.filter((r) => r.directly_addresses_dmt_laser === false);
+  check('borrowed frameworks are marked as not about this phenomenon', borrowed.length > 0, `${borrowed.length} of ${theoryRows.length}`);
+  const wikiPrimary = theoryRows.filter((r) => typeof r.primary_source === 'string' && /wikipedia\.org/i.test(r.primary_source));
+  check('no theory cites Wikipedia as its primary source', wikiPrimary.length === 0, wikiPrimary.map((r) => r.title).join(', '));
+  check('field_definitions explains theory_class', typeof (data.field_definitions || {}).theory_class === 'string');
+  check('field_definitions separates originator from applier', typeof (data.field_definitions || {}).framework_originator === 'string' && typeof (data.field_definitions || {}).applied_to_dmtcode_by === 'string');
+}
+
 // 6. Policies.
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));
 check('privacy: immediate publication described', /published immediately, before any review/.test(privacy));

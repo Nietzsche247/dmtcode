@@ -441,6 +441,40 @@ function lpath(locale: Loc, path: string): string {
 const GOLER_ATTRIBUTION_EN =
   "First reported by {name} in August 2020; the written protocol grew out of that observation. He has no part in Meridian Optics Lab, this store, or this site, is not a founder and holds no editorial role, and has not reviewed or endorsed any kit, page, or claim published here.";
 
+// relation_to_core_question, rendered for a person rather than for a parser. The
+// label has to carry the meaning, because the risk here is asymmetric: a reader
+// who sees a bare "adjacent" may read it as a knock on the paper, and a reader
+// who sees a bare "mechanistic" may read it as support for the claim. Neither is
+// what the field says.
+const RELATION_LABELS: Record<string, string> = {
+  direct_test: "Direct test. This source tests or attempts to falsify the convergence claim itself.",
+  mechanistic: "Mechanism. Proposes or evidences something that could produce recurring visual form. It is not a test of the claim.",
+  phenomenological_baseline: "Phenomenological baseline. Describes what the experience contains as people report it.",
+  comparison_condition: "Comparison condition. A non-DMT state producing comparable visuals, which bears on whether the forms are specific to this protocol.",
+  methodological: "Method. How to run, blind, score or report research of this kind.",
+  historical: "Record of the claim. Documents the claim and the people in it rather than testing it.",
+  adjacent: "Adjacent. Real psychedelic literature that does not bear on whether independent observers report the same forms. Most of this bibliography is adjacent, and that is not a criticism of the source.",
+};
+function relationLabel(v: unknown): string | undefined {
+  const k = String(v ?? "");
+  return RELATION_LABELS[k] || (k ? k.replace(/_/g, " ") : undefined);
+}
+
+const THEORY_CLASS_LABELS: Record<string, string> = {
+  deflationary: "Deflationary. The forms come from the observer or the apparatus; nothing external is required.",
+  neurocognitive: "Neurocognitive. A brain mechanism produces the recurring structure.",
+  psychological: "Psychological. A shared feature of mind, not of the world.",
+  phenomenological: "Phenomenological. Describes the structure of the experience without claiming a cause.",
+  ontological: "Ontological. The forms indicate something real outside the observer.",
+  metaphysical: "Metaphysical. A claim about the nature of reality itself.",
+  cultural_historical: "Cultural and historical. Situates the forms in a human record.",
+};
+function theoryClassLabel(v: unknown): string | undefined {
+  const k = String(v ?? "");
+  return THEORY_CLASS_LABELS[k] || (k ? k.replace(/_/g, " ") : undefined);
+}
+
+
 async function golerAttribution(locale: Loc, linkName = true): Promise<string> {
   const name = linkName
     ? `<a href="${lpath(locale, "/people/danny-goler")}">Danny Goler</a>`
@@ -814,7 +848,7 @@ export default async (request: Request, context: Context) => {
         "id,title,authors,journal,publication_date,doi,pmid,isbn,abstract,url," +
         "compounds,content_type,authority_type,stance_score,tags,summary," +
         "source_date,full_text,transcript,created_at,updated_at";
-      const r = await getRow("bibliography", id, "is_approved=eq.true", f, ["online_publication_date", "issue_date", "publication_status"]);
+      const r = await getRow("bibliography", id, "is_approved=eq.true", f, ["online_publication_date", "issue_date", "publication_status", "relation_to_core_question"]);
       if (!r) return notFound404(await shellRes.text(), { title: "Record not found | DMT Code", heading: "Record not found", text: "This bibliography record is not currently indexed or the link is out of date.", canonical: `${SITE}/bibliography`, backHref: `${SITE}/bibliography`, backLabel: "Research bibliography", marker: "bibliography-not-found" });
 
       // Bibliography overlays translate ONLY `summary`. Title, authors,
@@ -900,6 +934,7 @@ export default async (request: Request, context: Context) => {
         ["PMID", r.pmid],
         ["ISBN", r.isbn],
         ["Content type", r.content_type],
+        ["Relation to the core question", relationLabel(r.relation_to_core_question)],
         ["Authority", r.authority_type],
         ["Stance score", stance],
       ];
@@ -4471,6 +4506,16 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
 
   const canonicalSlug = theorySlug(sourceTitle);
   const canonical = `${SITE}/theories/${canonicalSlug}`;
+  const prov = await getRow("theories", String(match.id), "is_approved=eq.true", "id", [
+    "theory_class",
+    "framework_originator",
+    "applied_to_dmtcode_by",
+    "directly_addresses_dmt_laser",
+    "original_publication_year",
+    "dmtcode_application_year",
+    "primary_source",
+  ]);
+
   const title = `${String(match.title)} | DMT Code`;
   const metaDesc = match.summary ? clip(String(match.summary), 160) : "";
   const tags = Array.isArray(match.tags) ? (match.tags as string[]).filter(Boolean) : [];
@@ -4479,6 +4524,37 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
   const contentHtml = match.content ? paragraphsFromText(String(match.content)) : "";
   const proponentLine = match.proponent
     ? `<p><strong>Proposed by:</strong> ${esc(String(match.proponent))}</p>`
+    : "";
+  const provRows: string[] = [];
+  if (prov) {
+    const cls = theoryClassLabel(prov.theory_class);
+    if (cls) provRows.push(`<li><strong>Kind of claim:</strong> ${esc(cls)}</li>`);
+    if (prov.framework_originator) {
+      const yr = prov.original_publication_year ? `, first published ${esc(String(prov.original_publication_year))}` : "";
+      provRows.push(`<li><strong>Framework built by:</strong> ${esc(String(prov.framework_originator))}${yr}</li>`);
+    }
+    if (prov.applied_to_dmtcode_by) {
+      const yr = prov.dmtcode_application_year ? ` (${esc(String(prov.dmtcode_application_year))})` : "";
+      provRows.push(`<li><strong>Applied to this phenomenon by:</strong> ${esc(String(prov.applied_to_dmtcode_by))}${yr}</li>`);
+    }
+    if (typeof prov.directly_addresses_dmt_laser === "boolean") {
+      provRows.push(
+        prov.directly_addresses_dmt_laser
+          ? `<li><strong>Written about this phenomenon:</strong> yes, the source material is itself about the 650 nm laser observation.</li>`
+          : `<li><strong>Written about this phenomenon:</strong> no. This framework was built for another purpose and is applied here by this site. Its author made no claim about a laser.</li>`,
+      );
+    }
+    if (prov.primary_source) {
+      provRows.push(`<li><strong>Primary source:</strong> <a href="${esc(String(prov.primary_source))}" rel="noopener">${esc(String(prov.primary_source))}</a></li>`);
+    }
+  }
+  const provenanceBlock = provRows.length
+    ? `<section data-block="theory-provenance">
+    <h2>Where this comes from</h2>
+    <ul>
+${provRows.map((r) => "      " + r).join("\n")}
+    </ul>
+  </section>`
     : "";
   const originLine = match.origin
     ? `<p><em>${esc(originLabel(match.origin))}</em></p>`
@@ -4529,6 +4605,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
   <h1>${esc(String(match.title))}</h1>
   ${originLine}
   ${proponentLine}
+  ${provenanceBlock}
   ${agreeLine}
   ${summaryHtml}
   ${contentHtml}
