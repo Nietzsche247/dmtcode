@@ -93,6 +93,11 @@ const BibliographyDetail = () => {
       row.stance_score != null && { '@type': 'PropertyValue', name: 'stanceScore', value: row.stance_score },
       row.authority_type && { '@type': 'PropertyValue', name: 'authority', value: row.authority_type },
       row.content_type && { '@type': 'PropertyValue', name: 'contentType', value: row.content_type },
+    row.relation_to_core_question && {
+      '@type': 'PropertyValue',
+      name: 'relation_to_core_question',
+      value: row.relation_to_core_question,
+    },
     ].filter(Boolean),
   } : null;
 
@@ -129,6 +134,11 @@ const BibliographyDetail = () => {
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     {row.content_type && <Badge variant="outline">{row.content_type}</Badge>}
                     {row.authority_type && <Badge variant="secondary">{row.authority_type}</Badge>}
+        {relationLabel(row.relation_to_core_question) && (
+          <Badge variant={row.relation_to_core_question === 'direct_test' ? 'default' : 'outline'}>
+            {relationLabel(row.relation_to_core_question)}
+          </Badge>
+        )}
                     {stance && (
                       <span className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium ${stance.className}`}>
                         {stance.label}

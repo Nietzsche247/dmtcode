@@ -79,7 +79,7 @@ interface RelatedSymbol {
   upvotes: number;
 }
 
-interface Validator {
+interface Recognizer {
   user_id: string;
   handle: string | null;
   avatar_seed: string | null;
@@ -113,10 +113,10 @@ const SymbolDetail = () => {
   const [symbol, setSymbol] = useState<SymbolData | null>(null);
   const [communityTags, setCommunityTags] = useState<Array<{ name: string; count: number }>>([]);
   const [contributor, setContributor] = useState<ContributorData | null>(null);
-  const [validators, setValidators] = useState<Validator[]>([]);
-  const [memberValidatorCount, setMemberValidatorCount] = useState(0);
+  const [recognizers, setRecognizers] = useState<Recognizer[]>([]);
+  const [memberRecognizerCount, setMemberRecognizerCount] = useState(0);
   const [relatedSymbols, setRelatedSymbols] = useState<RelatedSymbol[]>([]);
-  const [validationCount, setValidationCount] = useState(0);
+  const [recognitionCount, setRecognitionCount] = useState(0);
   const [viewCount, setViewCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -198,7 +198,7 @@ const SymbolDetail = () => {
       .eq('symbol_id', symbolId)
       .eq('vote_type', 'seen_it');
 
-    setValidationCount(count || 0);
+    setRecognitionCount(count || 0);
 
     // Load all votes for view count
     const { count: totalVotes } = await supabase
@@ -208,7 +208,7 @@ const SymbolDetail = () => {
 
     setViewCount(totalVotes || 0);
 
-    // Load validators (users who marked "seen_it")
+    // Load recognizers (users who marked "seen_it")
     const { data: votes } = await supabase
       .from('symbol_votes')
       .select('user_id')
@@ -224,7 +224,7 @@ const SymbolDetail = () => {
       .eq('vote_type', 'seen_it')
       .not('user_id', 'is', null);
 
-    setMemberValidatorCount(memberCount || 0);
+    setMemberRecognizerCount(memberCount || 0);
 
     const userIds = (votes || []).map(v => v.user_id).filter((v): v is string => !!v);
     if (userIds.length > 0) {
@@ -234,7 +234,7 @@ const SymbolDetail = () => {
         .in('id', userIds);
 
       if (profiles) {
-        setValidators(profiles.map(p => ({
+        setRecognizers(profiles.map(p => ({
           user_id: p.id,
           handle: p.handle,
           avatar_seed: p.avatar_seed,
@@ -313,14 +313,14 @@ const SymbolDetail = () => {
         <title>{pageTitle}</title>
         <meta
           name="description"
-          content={symbol.description || 'View symbol details, metadata, and community validations'}
+          content={symbol.description || 'View symbol details, metadata, and community recognition responses'}
         />
         <link rel="canonical" href={`https://dmtcode.com/registry/${symbol.id}`} />
         <meta property="og:type" content="article" />
         <meta property="og:title" content={`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`} />
         <meta
           property="og:description"
-          content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
+          content={symbol.description || 'View symbol details, metadata, and community recognition responses on DMT Code.'}
         />
         <meta property="og:url" content={`https://dmtcode.com/registry/${symbol.id}`} />
         <meta property="og:image" content={`https://dmtcode.com/card/${symbol.id}.png`} />
@@ -330,7 +330,7 @@ const SymbolDetail = () => {
         <meta name="twitter:title" content={`Symbol ${symbol.id.slice(0, 8)} | DMT Code Registry`} />
         <meta
           name="twitter:description"
-          content={symbol.description || 'View symbol details, metadata, and community validations on DMT Code.'}
+          content={symbol.description || 'View symbol details, metadata, and community recognition responses on DMT Code.'}
         />
         <meta name="twitter:image" content={`https://dmtcode.com/card/${symbol.id}.png`} />
         <script type="application/ld+json">
@@ -457,11 +457,11 @@ const SymbolDetail = () => {
                 </div>
 
                 {/* Stats */}
-                {validationCount > 0 && (
+                {recognitionCount > 0 && (
                   <div className="grid grid-cols-2 gap-4">
                     <Card className="p-4 bg-card/50 text-center">
                       <Eye className="w-5 h-5 mx-auto mb-1 text-primary" />
-                      <div className="text-2xl font-bold">{validationCount}</div>
+                      <div className="text-2xl font-bold">{recognitionCount}</div>
                       <div className="text-xs text-muted-foreground">recognized this after seeing it here</div>
                     </Card>
                   </div>
@@ -552,21 +552,21 @@ const SymbolDetail = () => {
                 )}
 
                 {/* Validators */}
-                {validators.length > 0 && (
+                {recognizers.length > 0 && (
                   <div>
                     <h3 className="text-sm font-medium mb-1">
-                      Recognized after seeing it here ({validationCount})
+                      Recognized after seeing it here ({recognitionCount})
                     </h3>
                     <p className="text-xs text-muted-foreground mb-2">
-                      {memberValidatorCount} of these confirmations are from signed in members. The rest were recorded anonymously.
+                      {memberRecognizerCount} of these confirmations are from signed in members. The rest were recorded anonymously.
                     </p>
                     <div className="flex -space-x-2">
-                      {validators.slice(0, 8).map((v, i) => (
+                      {recognizers.slice(0, 8).map((v, i) => (
                         <AvatarGlyph key={i} seed={v.avatar_seed || v.user_id} handle={v.handle || undefined} size={32} className="border-2 border-background" />
                       ))}
-                      {validationCount > 8 && (
+                      {recognitionCount > 8 && (
                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
-                          +{validationCount - 8}
+                          +{recognitionCount - 8}
                         </div>
                       )}
                     </div>

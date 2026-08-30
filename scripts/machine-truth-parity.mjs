@@ -225,7 +225,9 @@ check('answers points at the sober baseline as the useful contribution',
 check('answers never prints a bare zero for an unreadable count',
   !/\b0 published symbol records\b/.test(answers) || aSymbols === 0);
 // A count of events labelled auto-discovered, recomputed rather than trusted.
-const autoNow = (data.events || []).filter((e) => /\[auto-discovered\]/i.test(String(e.description || '') + String(e.details || ''))).length;
+const autoNow = (data.events || []).filter((e) => e.verification_status
+  ? e.verification_status === 'auto_discovered_candidate'
+  : /\[auto-discovered\]/i.test(String(e.description || '') + String(e.details || ''))).length;
 check('answers states the auto-discovered event count from the aggregate',
   answers.includes(`${withCommas(aEvents)} events, ${autoNow} are labelled auto-discovered`),
   `expected ${aEvents} / ${autoNow}`);

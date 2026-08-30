@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
-import { stripAutoPrefix } from "@/lib/eventVerification";
+import { stripAutoPrefix, verificationLabel, relevanceLabel } from "@/lib/eventVerification";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -23,6 +23,8 @@ interface EventRow {
   location: string | null;
   organizer: string | null;
   url: string | null;
+  verification_status: string | null;
+  relevance_type: string | null;
   is_approved: boolean;
 }
 
@@ -67,6 +69,14 @@ const EventDetail = () => {
     ? {
         "@context": "https://schema.org",
         "@type": "Event",
+        additionalProperty: [
+          event.verification_status
+            ? { "@type": "PropertyValue", name: "verification_status", value: event.verification_status }
+            : undefined,
+          event.relevance_type
+            ? { "@type": "PropertyValue", name: "relevance_type", value: event.relevance_type }
+            : undefined,
+        ].filter(Boolean),
         name: event.title,
         startDate: event.event_date,
         description: event.description || undefined,
@@ -126,7 +136,24 @@ const EventDetail = () => {
           <article className="space-y-6">
             <header className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <Badge variant="secondary">{event.event_type}</Badge>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="secondary">{event.event_type}</Badge>
+                  {relevanceLabel(event.relevance_type) && (
+                    <Badge variant="outline">{relevanceLabel(event.relevance_type)}</Badge>
+                  )}
+                  {verificationLabel(event.verification_status) && (
+                    <Badge
+                      variant={
+                        event.verification_status === 'verified' ||
+                        event.verification_status === 'organizer_confirmed'
+                          ? 'default'
+                          : 'outline'
+                      }
+                    >
+                      {verificationLabel(event.verification_status)}
+                    </Badge>
+                  )}
+                </div>
                 <FollowButton entityType="event" entityId={event.id} />
               </div>
               <h1 className="text-3xl md:text-5xl font-black tracking-tight">{event.title}</h1>
@@ -137,6 +164,13 @@ const EventDetail = () => {
                 )}
                 {event.organizer && <span>Organizer: {event.organizer}</span>}
               </div>
+              {(event.verification_status === 'auto_discovered_candidate' ||
+                event.verification_status === 'unverified') && (
+                <p className="rounded border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+                  This listing has not yet been editorially confirmed. Verify the details with the
+                  organizer before relying on it.
+                </p>
+              )}
             </header>
 
 

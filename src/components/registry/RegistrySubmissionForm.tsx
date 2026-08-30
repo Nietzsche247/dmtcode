@@ -83,7 +83,7 @@ export const RegistrySubmissionForm = () => {
           .eq('id', matchedId);
       }
 
-      toast.success('Added validation to existing symbol!');
+      toast.success('Recognition added to the existing symbol.');
       resetForm();
       return;
     }

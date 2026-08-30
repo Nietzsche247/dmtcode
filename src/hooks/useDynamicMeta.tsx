@@ -46,7 +46,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
   registry: {
     research: {
       title: 'Visual Symbol Registry | DMT Code Research Database',
-      description: 'Submit and browse discrete visual symbols. Structured metadata, validation voting, CSV/JSON exports for academic analysis.',
+      description: 'Submit and browse discrete visual symbols. Structured metadata, recognition responses, CSV/JSON exports for academic analysis.',
     },
     explorer: {
       title: 'Symbol Registry | Discover & Contribute | DMT Code',

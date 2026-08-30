@@ -1546,8 +1546,13 @@ async function renderAnswers(context: Context, request: Request, locale: Loc = "
            String(r.evidence_status ?? "") === "controlled_replication",
   ).length;
 
+  // Read the typed field. The [Auto-discovered] prose prefix is legacy display
+  // text and is stripped at render time, so counting it would drift the moment a
+  // description is edited. Fall back to the prefix only for rows not yet typed.
   const autoDiscovered = events.filter((e) =>
-    /\[auto-discovered\]/i.test(String(e.description ?? "") + String(e.details ?? "")),
+    e.verification_status
+      ? e.verification_status === "auto_discovered_candidate"
+      : /\[auto-discovered\]/i.test(String(e.description ?? "") + String(e.details ?? "")),
   ).length;
 
   const kitLines = KITS.map(

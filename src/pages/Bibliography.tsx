@@ -28,6 +28,7 @@ const yearOf = (r: BibliographyRow): string | null => {
 
 const matchesFilters = (r: BibliographyRow, f: FilterState): boolean => {
   if (f.contentType !== 'all' && r.content_type !== f.contentType) return false;
+  if (f.relation !== 'all' && r.relation_to_core_question !== f.relation) return false;
   if (f.authorityType !== 'all' && r.authority_type !== f.authorityType) return false;
   if (f.tag !== 'all' && !(r.tags || []).includes(f.tag)) return false;
   if (f.year !== 'all' && yearOf(r) !== f.year) return false;
@@ -79,6 +80,7 @@ const Bibliography = () => {
 
   const contentTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.content_type).filter(Boolean) as string[])).sort(), [rows]);
   const authorityTypes = useMemo(() => Array.from(new Set(rows.map((r) => r.authority_type).filter(Boolean) as string[])).sort(), [rows]);
+  const relations = useMemo(() => Array.from(new Set(rows.map((r) => r.relation_to_core_question).filter(Boolean) as string[])).sort(), [rows]);
   const tags = useMemo(() => Array.from(new Set(rows.flatMap((r) => r.tags || []))).sort(), [rows]);
   const years = useMemo(() => Array.from(new Set(rows.map(yearOf).filter(Boolean) as string[])).sort((a, b) => b.localeCompare(a)), [rows]);
   const people = useMemo(() => {
@@ -181,6 +183,7 @@ const Bibliography = () => {
                   <BibliographyFilters
                     value={filters}
                     onChange={setFilters}
+                    relations={relations}
                     contentTypes={contentTypes}
                     authorityTypes={authorityTypes}
                     tags={tags}

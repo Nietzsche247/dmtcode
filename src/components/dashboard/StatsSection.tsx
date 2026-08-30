@@ -3,15 +3,15 @@ import { FileImage, CheckCircle, ThumbsUp, Award } from 'lucide-react';
 
 interface StatsSectionProps {
   totalSubmissions: number;
-  validationsGiven: number;
-  validationsReceived: number;
+  recognitionsGiven: number;
+  recognitionsReceived: number;
   reputationScore: number;
 }
 
 export const StatsSection = ({
   totalSubmissions,
-  validationsGiven,
-  validationsReceived,
+  recognitionsGiven,
+  recognitionsReceived,
   reputationScore,
 }: StatsSectionProps) => {
   const stats = [
@@ -22,16 +22,16 @@ export const StatsSection = ({
       description: 'Symbols you\'ve submitted',
     },
     {
-      label: 'Validations Given',
-      value: validationsGiven,
+      label: 'Recognitions given',
+      value: recognitionsGiven,
       icon: CheckCircle,
-      description: 'Symbols you\'ve validated',
+      description: 'Symbols you have recognized',
     },
     {
-      label: 'Validations Received',
-      value: validationsReceived,
+      label: 'Recognitions received',
+      value: recognitionsReceived,
       icon: ThumbsUp,
-      description: 'Validations on your symbols',
+      description: 'Recognition responses on your symbols',
     },
     {
       label: 'Reputation',

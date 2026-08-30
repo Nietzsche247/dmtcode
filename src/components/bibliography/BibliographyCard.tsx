@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { BibliographyRow } from './types';
 
+import { relationLabel } from './types';
+
 interface Props {
   row: BibliographyRow;
 }
@@ -32,6 +34,14 @@ export const BibliographyCard = ({ row }: Props) => {
       <div className="flex flex-wrap items-center gap-2 text-xs">
         {row.content_type && <Badge variant="outline">{row.content_type}</Badge>}
         {row.authority_type && <Badge variant="secondary">{row.authority_type}</Badge>}
+        {relationLabel(row.relation_to_core_question) && (
+          <Badge
+            variant={row.relation_to_core_question === 'direct_test' ? 'default' : 'outline'}
+            title="How this source relates to the convergence claim, not how strong it is"
+          >
+            {relationLabel(row.relation_to_core_question)}
+          </Badge>
+        )}
         {stance && (
           <span className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium ${stance.className}`}>
             {stance.label}

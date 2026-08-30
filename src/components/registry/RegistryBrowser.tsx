@@ -54,7 +54,7 @@ export const RegistryBrowser = () => {
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
   const [loading, setLoading] = useState(true);
-  const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
+  const [recognitionCounts, setRecognitionCounts] = useState<Record<string, number>>({});
   const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
   const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
 
@@ -156,7 +156,7 @@ export const RegistryBrowser = () => {
               similar[v.symbol_id] = (similar[v.symbol_id] || 0) + 1;
             }
           });
-          setValidationCounts(counts);
+          setRecognitionCounts(counts);
           setSimilarCounts(similar);
         }
 
@@ -186,9 +186,9 @@ export const RegistryBrowser = () => {
     let filtered = [...symbols];
 
     const responseTotal = (s: SymbolSubmission) =>
-      (s.upvotes || 0) + (s.downvotes || 0) + (validationCounts[s.id] || 0);
+      (s.upvotes || 0) + (s.downvotes || 0) + (recognitionCounts[s.id] || 0);
     const resonanceScore = (s: SymbolSubmission) =>
-      (s.upvotes || 0) + (validationCounts[s.id] || 0) - (s.downvotes || 0);
+      (s.upvotes || 0) + (recognitionCounts[s.id] || 0) - (s.downvotes || 0);
 
     // Search filter
     if (searchQuery.trim()) {
@@ -243,7 +243,7 @@ export const RegistryBrowser = () => {
         break;
       case 'most_validated':
         filtered.sort((a, b) => 
-          (validationCounts[b.id] || 0) - (validationCounts[a.id] || 0)
+          (recognitionCounts[b.id] || 0) - (recognitionCounts[a.id] || 0)
         );
         break;
       case 'most_responses':
@@ -272,7 +272,7 @@ export const RegistryBrowser = () => {
     // saw keeps its place, because a rare form only a few people recognize is
     // exactly the kind of thing this registry exists to find.
     return filtered;
-  }, [symbols, searchQuery, sourceFilter, doseFilter, recordFilter, selectedTags.join(','), sortBy, validationCounts]);
+  }, [symbols, searchQuery, sourceFilter, doseFilter, recordFilter, selectedTags.join(','), sortBy, recognitionCounts]);
 
   // Count for the sober-baseline chip. Contributor declared, not verified.
   const soberBaselineCount = useMemo(
@@ -311,7 +311,7 @@ export const RegistryBrowser = () => {
       source_method: s.source_method || '',
       dose_level: s.dose_level || '',
       wavelength: s.wavelength || '',
-      recognitions_after_exposure: validationCounts[s.id] || 0,
+      recognitions_after_exposure: recognitionCounts[s.id] || 0,
       similar_responses: similarCounts[s.id] || 0,
       upvotes: s.upvotes || 0,
       downvotes: s.downvotes || 0,
@@ -412,7 +412,7 @@ export const RegistryBrowser = () => {
         </h3>
         <p className="text-sm text-muted-foreground mb-3">
           Every public record in this registry, with drawings, identifiers, contributor handles and
-          confirmation counts. Version 1.0, 51 records, CC BY 4.0.
+          recognition counts. Version 1.0, 51 records, CC BY 4.0.
         </p>
         <a
           href="/downloads/dmt-laser-code-symbols.pdf"
@@ -537,7 +537,7 @@ export const RegistryBrowser = () => {
                 description={symbol.description}
                 tags={symbol.tags}
                 upvotes={symbol.upvotes}
-                validationCount={validationCounts[symbol.id] || 0}
+                recognitionCount={recognitionCounts[symbol.id] || 0}
                 status={symbol.status}
                 contributor={profiles[symbol.user_id] ? {
                   id: profiles[symbol.user_id].id,

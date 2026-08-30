@@ -219,12 +219,12 @@ export const useSymbolVoting = (symbolId: string, submitterId?: string) => {
         const eventName = 
           voteType === 'downvote' ? 'symbol_downvoted' :
           voteType === 'similar' ? 'symbol_marked_similar' :
-          'symbol_validated';
+          'symbol_recognized';
 
         window.posthog?.capture(eventName, { symbol_id: symbolId });
         
         toast.success(
-          voteType === 'seen_it' ? 'Validation recorded' :
+          voteType === 'seen_it' ? 'Recognition recorded' :
           voteType === 'similar' ? 'Recorded.' : 'Vote recorded'
         );
 

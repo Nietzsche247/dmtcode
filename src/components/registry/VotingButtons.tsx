@@ -39,7 +39,7 @@ export const VotingButtons = ({
   const handleSelfVoteAttempt = (voteType: 'similar' | 'downvote' | 'seen_it') => {
     trackSelfVoteAttempted({ symbol_id: symbolId, vote_type: voteType as any });
     toast.error("Can't vote on your own submission", {
-      description: "Community validation requires votes from other users.",
+      description: "Recognition requires responses from other people.",
       icon: <Ban className="h-4 w-4" />,
     });
   };

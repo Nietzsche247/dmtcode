@@ -2,19 +2,20 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import type { FilterState } from './types';
-import { emptyFilters } from './types';
+import { emptyFilters, relationLabel } from './types';
 
 interface Props {
   value: FilterState;
   onChange: (next: FilterState) => void;
   contentTypes: string[];
   authorityTypes: string[];
+  relations: string[];
   tags: string[];
   years: string[];
   people: string[];
 }
 
-export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTypes, tags, years, people }: Props) => {
+export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTypes, relations, tags, years, people }: Props) => {
   const update = (patch: Partial<FilterState>) => onChange({ ...value, ...patch });
 
   return (
@@ -40,6 +41,16 @@ export const BibliographyFilters = ({ value, onChange, contentTypes, authorityTy
           <SelectContent>
             <SelectItem value="all">All authorities</SelectItem>
             {authorityTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+          </SelectContent>
+        </Select>
+
+        <Select value={value.relation} onValueChange={(v) => update({ relation: v })}>
+          <SelectTrigger><SelectValue placeholder="Relation to the question" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Any relation to the question</SelectItem>
+            {relations.map((t) => (
+              <SelectItem key={t} value={t}>{relationLabel(t)}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
 

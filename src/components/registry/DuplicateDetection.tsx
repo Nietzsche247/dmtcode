@@ -115,7 +115,7 @@ export const DuplicateDetection = ({ currentImage, onDecision }: DuplicateDetect
       </div>
 
       <p className="text-xs text-center text-muted-foreground">
-        Click on any symbol above if yours is the same to add validation
+        Click any symbol above if yours is the same to record a recognition
       </p>
     </div>
   );

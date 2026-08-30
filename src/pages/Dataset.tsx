@@ -39,8 +39,8 @@ const Dataset = () => {
         <meta property="og:image" content="https://dmtcode.com/favicon.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://dmtcode.com/dataset" />
-        <meta name="twitter:title" content="Dataset | DMT Code Visual Symbol Catalogue" />
-        <meta name="twitter:description" content="Download the complete DMT Code Visual Symbol Catalogue dataset. CC-BY-4.0 licensed, DOI-registered on Zenodo for academic citation." />
+        <meta name="twitter:title" content="Dataset | DMT Code open corpus" />
+        <meta name="twitter:description" content="Download the full DMT Code open corpus: bibliography, typed trials and studies, public symbol records, theories, events and articles. CC-BY-4.0, DOI-registered on Zenodo." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         <script type="application/ld+json">
           {JSON.stringify({
@@ -78,7 +78,7 @@ const Dataset = () => {
               <PageHero 
                 eyebrow="Open Data"
                 title="Dataset"
-                subtitle="Download the complete DMT Code Visual Symbol Catalogue"
+                subtitle="Download the DMT Code open corpus"
               />
             </LocalizedBody>
 
@@ -190,7 +190,7 @@ const Dataset = () => {
               </CardHeader>
               <CardContent className="prose prose-sm dark:prose-invert max-w-none">
                 <p className="text-muted-foreground">
-                  The DMT Code Visual Symbol Catalogue is an open, community-maintained collection of discrete visual symbols 
+                  The DMT Code open corpus is an open, community-maintained record whose symbol catalogue is one part. It also carries the bibliography with each record's relation to the core question, registered clinical trials alongside separately typed studies, community experiments, reports and platform projects, theories with their provenance, events with verification status, articles and retreats. Visibility, moderation and evidence status are preserved as separate fields. The symbol catalogue itself is a collection of discrete visual symbols 
                   reported during 650 nm laser exposure and N,N-DMT experiences. This dataset supports independent replication 
                   and academic research into reported visual phenomena.
                 </p>
@@ -203,7 +203,7 @@ const Dataset = () => {
                 <ul className="text-muted-foreground space-y-1">
                   <li>Symbol images (100×100 px PNG)</li>
                   <li>Structured metadata (source method, surface, wavelength where recorded, duration, priming tag where set)</li>
-                  <li>Community validation counts</li>
+                  <li>Recognition, non-match, moderation and evidence-status fields</li>
                   <li>Motif tags and classifications</li>
                   <li>Browse the symbol corpus in your browser at <a href="/api/symbols" className="text-primary hover:underline">/api/symbols</a></li>
                 </ul>
@@ -224,7 +224,7 @@ const Dataset = () => {
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Version History</h4>
                 <ul className="text-muted-foreground space-y-1">
-                  <li><strong>v4.1 (17 August 2026):</strong> Current version. DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> (concept DOI, always resolves to the latest version).</li>
+                  <li><strong>v4.1 (17 August 2026):</strong> Latest archived release, an immutable Zenodo snapshot. The live corpus at /data.json is continuously updated and carries its own dateModified; the two are byte-equivalent only when their checksums match. DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> (concept DOI, always resolves to the latest version).</li>
                   <li><strong>v1.0 (December 2025):</strong> Initial public release</li>
                 </ul>
               </CardContent>

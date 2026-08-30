@@ -24,8 +24,25 @@ export interface BibliographyRow {
   online_publication_date?: string | null;
   issue_date?: string | null;
   publication_status?: string | null;
+  // How this source relates to the convergence claim, not how strong it is.
+  // Only 2 of 236 records are a direct test, which is the single most useful
+  // fact the library can tell a reader, so it is shown rather than buried.
+  relation_to_core_question?: string | null;
   stance_unverified: boolean;
 }
+
+export const RELATION_LABELS: Record<string, string> = {
+  direct_test: 'Direct test',
+  mechanistic: 'Mechanistic',
+  phenomenological_baseline: 'Phenomenological baseline',
+  comparison_condition: 'Comparison condition',
+  methodological: 'Methodological',
+  historical: 'Historical',
+  adjacent: 'Adjacent',
+};
+
+export const relationLabel = (v: string | null | undefined): string | null =>
+  v ? (RELATION_LABELS[v] ?? v.replace(/_/g, ' ')) : null;
 
 export type StanceBucket = 'all' | 'supportive' | 'balanced' | 'skeptical' | 'unverified';
 
@@ -36,6 +53,7 @@ export interface FilterState {
   tag: string;
   year: string;
   person: string;
+  relation: string;
   search: string;
 }
 
@@ -46,6 +64,7 @@ export const emptyFilters: FilterState = {
   tag: 'all',
   year: 'all',
   person: 'all',
+  relation: 'all',
   search: '',
 };
 

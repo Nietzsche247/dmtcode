@@ -36,7 +36,7 @@ const TagHub = () => {
 
   const [symbols, setSymbols] = useState<SymbolSubmission[]>([]);
   const [profiles, setProfiles] = useState<Record<string, ProfileData>>({});
-  const [validationCounts, setValidationCounts] = useState<Record<string, number>>({});
+  const [recognitionCounts, setRecognitionCounts] = useState<Record<string, number>>({});
   const [similarCounts, setSimilarCounts] = useState<Record<string, number>>({});
   const [communityTagsMap, setCommunityTagsMap] = useState<Record<string, { name: string; count: number }[]>>({});
   const [loading, setLoading] = useState(true);
@@ -116,7 +116,7 @@ const TagHub = () => {
             similar[v.symbol_id] = (similar[v.symbol_id] || 0) + 1;
           }
         });
-        setValidationCounts(counts);
+        setRecognitionCounts(counts);
         setSimilarCounts(similar);
       }
 
@@ -197,7 +197,7 @@ const TagHub = () => {
                     description={symbol.description}
                     tags={symbol.tags}
                     upvotes={symbol.upvotes}
-                    validationCount={validationCounts[symbol.id] || 0}
+                    recognitionCount={recognitionCounts[symbol.id] || 0}
                     status={symbol.status}
                     contributor={profiles[symbol.user_id] ? {
                       id: profiles[symbol.user_id].id,

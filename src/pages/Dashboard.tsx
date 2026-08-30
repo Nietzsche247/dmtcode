@@ -65,8 +65,8 @@ interface AssessmentHistory {
 
 interface Stats {
   totalSubmissions: number;
-  validationsGiven: number;
-  validationsReceived: number;
+  recognitionsGiven: number;
+  recognitionsReceived: number;
   reputationScore: number;
 }
 
@@ -83,8 +83,8 @@ const Dashboard = () => {
   const [assessments, setAssessments] = useState<AssessmentHistory[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalSubmissions: 0,
-    validationsGiven: 0,
-    validationsReceived: 0,
+    recognitionsGiven: 0,
+    recognitionsReceived: 0,
     reputationScore: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -205,10 +205,10 @@ const Dashboard = () => {
       .eq('user_id', userId);
 
     const totalSubmissions = submissions?.length || 0;
-    const validationsReceived = submissions?.reduce((sum, s) => sum + s.upvotes, 0) || 0;
+    const recognitionsReceived = submissions?.reduce((sum, s) => sum + s.upvotes, 0) || 0;
 
     // Get validations given (seen_it votes)
-    const { count: validationsGiven } = await supabase
+    const { count: recognitionsGiven } = await supabase
       .from('symbol_votes')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
@@ -223,8 +223,8 @@ const Dashboard = () => {
 
     setStats({
       totalSubmissions,
-      validationsGiven: validationsGiven || 0,
-      validationsReceived,
+      recognitionsGiven: recognitionsGiven || 0,
+      recognitionsReceived,
       reputationScore: profileData?.reputation_score || 0,
     });
   };
@@ -297,8 +297,8 @@ const Dashboard = () => {
 
             <StatsSection
               totalSubmissions={stats.totalSubmissions}
-              validationsGiven={stats.validationsGiven}
-              validationsReceived={stats.validationsReceived}
+              recognitionsGiven={stats.recognitionsGiven}
+              recognitionsReceived={stats.recognitionsReceived}
               reputationScore={stats.reputationScore}
             />
 

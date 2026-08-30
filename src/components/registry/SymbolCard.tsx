@@ -12,7 +12,7 @@ interface SymbolCardProps {
   description?: string | null;
   tags?: string[] | null;
   upvotes: number;
-  validationCount: number;
+  recognitionCount: number;
   status?: 'pending' | 'approved' | 'rejected';
   contributor?: {
     id: string;
@@ -31,7 +31,7 @@ export const SymbolCard = ({
   imageUrl,
   description,
   upvotes,
-  validationCount,
+  recognitionCount,
   status,
   contributor,
   createdAt,
@@ -109,12 +109,12 @@ export const SymbolCard = ({
         <div className="flex items-center justify-between gap-2">
           <SaveButton symbolId={id} size="sm" className="shrink-0" />
           <p className="text-right font-mono text-[11px] text-muted-foreground">
-            {validationCount > 0 && (
+            {recognitionCount > 0 && (
               <span title="These people saw this symbol on this page and then marked that it echoes their memory. That is recognition after exposure to the catalogue, which is not the same as an independent record made before seeing it.">
-                {validationCount} seen
+                {recognitionCount} seen
               </span>
             )}
-            {validationCount > 0 && similarCount > 0 ? '  ' : null}
+            {recognitionCount > 0 && similarCount > 0 ? '  ' : null}
             {similarCount > 0 && <span>{similarCount} similar</span>}
           </p>
         </div>

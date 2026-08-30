@@ -35,7 +35,7 @@ interface UserSymbol {
 
 interface UserStats {
   totalSubmissions: number;
-  totalValidations: number;
+  totalRecognitions: number;
   totalSaved: number;
 }
 
@@ -129,7 +129,7 @@ const Profile = () => {
   const [savedSymbols, setSavedSymbols] = useState<UserSymbol[]>([]);
   const [confirmationsGiven, setConfirmationsGiven] = useState<ConfirmationGiven[]>([]);
   const [voiceLogs, setVoiceLogs] = useState<VoiceLog[]>([]);
-  const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalValidations: 0, totalSaved: 0 });
+  const [stats, setStats] = useState<UserStats>({ totalSubmissions: 0, totalRecognitions: 0, totalSaved: 0 });
   const [allBadges, setAllBadges] = useState<BadgeRow[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<EarnedBadge[]>([]);
   const [canon, setCanon] = useState<{ symbols: number; confirmations: number }>({ symbols: 0, confirmations: 0 });
@@ -269,7 +269,7 @@ const Profile = () => {
       .select('id, upvotes')
       .eq('user_id', uid);
 
-    const totalValidations = mine?.reduce((sum, g) => sum + (g.upvotes || 0), 0) || 0;
+    const totalRecognitions = mine?.reduce((sum, g) => sum + (g.upvotes || 0), 0) || 0;
 
     const { count: savedCount } = await supabase
       .from('saved_symbols')
@@ -278,7 +278,7 @@ const Profile = () => {
 
     setStats({
       totalSubmissions: mine?.length || 0,
-      totalValidations,
+      totalRecognitions,
       totalSaved: savedCount || 0,
     });
   };
@@ -393,7 +393,7 @@ const Profile = () => {
               />
               <StatCell
                 label="Recognitions Received"
-                value={stats.totalValidations}
+                value={stats.totalRecognitions}
                 nextMove={{ to: '/registry', text: 'Share a symbol to invite recognition' }}
               />
               <StatCell
