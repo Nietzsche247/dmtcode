@@ -2786,7 +2786,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   home: {
     title: "DMT Code | 650nm Laser Visual Symbol Research",
     description: "Open, community maintained record of visual forms reported during N,N-DMT experiences and 650 nm laser exposure. Peer reviewed research, live clinical trials, and machine readable data under CC-BY-4.0.",
-    heading: "DMT Code",
+    heading: "Is there a recurring visual structure people can learn to see?",
     paragraphs: [
       "Is there a recurring visual structure people can learn to see?",
       "An open record of the visual forms people report during N,N-DMT experiences. Some of them appear to recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.",
@@ -4713,9 +4713,11 @@ async function renderProtocolDetail(context: Context, slug: string, locale: Loc 
       { "@type": "ListItem", position: 3, name: String(r.title), item: canonical },
     ],
   };
+  const protocolIsClinical =
+    (r.content_jsonb as Record<string, unknown> | null)?.clinical_mode === true;
   const medicalLd: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "MedicalWebPage",
+    "@type": protocolIsClinical ? "MedicalWebPage" : "TechArticle",
     "@id": canonical,
     name: String(r.title),
     url: canonical,
@@ -4845,7 +4847,7 @@ async function renderTheoryDetail(context: Context, rawSlug: string, locale: Loc
     if (cls) provRows.push(`<li><strong>Kind of claim:</strong> ${esc(cls)}</li>`);
     if (prov.framework_originator) {
       const yr = prov.original_publication_year ? `, first published ${esc(String(prov.original_publication_year))}` : "";
-      provRows.push(`<li><strong>Framework built by:</strong> ${esc(String(prov.framework_originator))}${yr}</li>`);
+      provRows.push(`<li><strong>Framework by:</strong> ${esc(String(prov.framework_originator))}${yr}</li>`);
     }
     if (prov.applied_to_dmtcode_by) {
       const yr = prov.dmtcode_application_year ? ` (${esc(String(prov.dmtcode_application_year))})` : "";
