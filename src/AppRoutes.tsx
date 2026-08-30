@@ -40,6 +40,7 @@ import Join from "./pages/Join";
 import Preregister from "./pages/Preregister";
 import Prepare from "./pages/Prepare";
 import Downloads from "./pages/Downloads";
+import Answers from "./pages/Answers";
 const CoWitnesses = lazy(() => import("./pages/CoWitnesses"));
 // Lazy load Dashboard
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -334,6 +335,10 @@ export const AppRoutes = () => (
         serves the static directory rather than routing that path to the
         prerender. /downloads is redirected here in netlify.toml. */}
     <Route path="documents" element={<Downloads />} />
+    {/* The acceptance test from the 2026-08-28 audit, answered from live data.
+        Every figure is read from /data.json on load rather than written into the
+        page, because a canonical answer that has gone stale is worse than none. */}
+    <Route path="answers" element={<Answers />} />
     <Route path="products/:handle" element={
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>

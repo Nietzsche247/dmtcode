@@ -207,6 +207,23 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
         "Alle DMT-Code-Dokumente als kostenloses PDF: Screening-Karte, Beobachtungs-Feldblatt, Nuechtern-Basisprotokoll, AVP-Passthrough-Protokoll und der vollstaendige Symbolsatz mit DOI. Kein Konto, CC BY 4.0, auf Englisch, Spanisch und Deutsch.",
     },
   },
+  answers: {
+    en: {
+      title: "Ten questions about the DMT laser claim, answered from the record | DMT Code",
+      description:
+        "How many observations exist, what Danny Goler's published setup actually used, whether the kits match it, how many independently validated matches there are, what a recognition means, which records are registered clinical trials, and the strongest evidence on both sides. Every figure computed from the live dataset.",
+    },
+    es: {
+      title: "Diez preguntas sobre la afirmacion del laser DMT, respondidas desde el registro | DMT Code",
+      description:
+        "Cuantas observaciones existen, que uso realmente el montaje publicado de Danny Goler, si los kits coinciden con el, cuantas coincidencias validadas de forma independiente hay, que significa un reconocimiento, que registros son ensayos clinicos registrados, y la evidencia mas solida de ambos lados. Cada cifra se calcula a partir del conjunto de datos en vivo.",
+    },
+    de: {
+      title: "Zehn Fragen zur DMT-Laser-Behauptung, aus dem Datenbestand beantwortet | DMT Code",
+      description:
+        "Wie viele Beobachtungen es gibt, was Danny Golers veroeffentlichter Aufbau tatsaechlich verwendete, ob die Kits dem entsprechen, wie viele unabhaengig bestaetigte Uebereinstimmungen existieren, was eine Wiedererkennung bedeutet, welche Datensaetze registrierte klinische Studien sind, und die staerksten Belege auf beiden Seiten. Jede Zahl wird aus dem Live-Datensatz berechnet.",
+    },
+  },
   "evidence-map": {
     en: {
       title: "Is the DMT code real? Evidence Timeline and Analysis | DMT Code",

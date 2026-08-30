@@ -94,6 +94,7 @@ const CASES = [
   // machines the documents lived under /downloads/, and the PDF files under it
   // are static assets Netlify serves before the guard ever runs.
   ["/documents", true, "document index page"],
+  ["/answers", true, "the acceptance test, answered from live data"],
   ["/downloads", true, "must pass through so the 301 to /documents can fire"],
   ["/downloads/dmt-laser-code-symbols.pdf", true, "static PDF asset"],
   ["/downloads/DMTCode_Screening_Card_v1.pdf", true, "static PDF asset"],

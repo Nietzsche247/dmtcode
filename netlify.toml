@@ -120,6 +120,11 @@
   path = "/documents"
   function = "content-prerender"
 
+# The acceptance test from the 2026-08-28 audit, answered from live data.
+[[edge_functions]]
+  path = "/answers"
+  function = "content-prerender"
+
 [[edge_functions]]
   path = "/evidence-map"
   function = "content-prerender"

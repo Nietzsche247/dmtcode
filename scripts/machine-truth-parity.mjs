@@ -178,6 +178,60 @@ if (withClass.length === 0) {
   check('field_definitions separates originator from applier', typeof (data.field_definitions || {}).framework_originator === 'string' && typeof (data.field_definitions || {}).applied_to_dmtcode_by === 'string');
 }
 
+// 5d. /answers. The audit's acceptance test, answered from live data. This page
+// makes more quotable claims than any other on the site, so it gets the
+// strictest checks: every figure it prints has to equal the figure in the
+// aggregate it says it read, and the two answers that must never soften are
+// asserted literally.
+const answers = await get('/answers');
+check('answers renders a prerender body', /data-prerender="answers"/.test(answers));
+
+// Numbers, compared as values against /data.json rather than as strings against
+// each other. A page that states a count is a place a count goes stale.
+const withCommas = (v) => Number(v).toLocaleString('en-US');
+const aSymbols = data.counts.symbols;
+const aGlyphs = data.counts.registry_glyphs;
+const aTrials = data.counts.trials;
+const aEvents = data.counts.events;
+check('answers states the symbol count from the aggregate', answers.includes(`${withCommas(aSymbols)} published symbol records`), `expected ${aSymbols}`);
+check('answers states the glyph count from the aggregate', answers.includes(`${withCommas(aGlyphs)} anonymous drawn glyph reports`), `expected ${aGlyphs}`);
+const cc2 = data.corpus_composition || {};
+check('answers states the laser denominator from the aggregate',
+  answers.includes(`${withCommas(cc2.records_declaring_650nm_laser)} of ${withCommas(cc2.records_total)} records declare`),
+  `expected ${cc2.records_declaring_650nm_laser} of ${cc2.records_total}`);
+
+// Registered trials, recomputed here from the same items the aggregate serves.
+const registeredNow = (data.items || []).filter((i) => i.content_type === 'Trial' && i.authority_type === 'Clinical').length;
+check('answers states the registered trial count from the aggregate',
+  answers.includes(`${registeredNow} of ${withCommas(aTrials)} records in the trials table are registered`),
+  `expected ${registeredNow} of ${aTrials}`);
+
+// Independence. This is the number the whole site is built to keep honest, so it
+// is recomputed rather than trusted, and the page must state it as a bare figure
+// with no softening around it.
+const independentNow = (data.symbols || []).filter(
+  (r) => r.evidence_status === 'reviewed_convergence' || r.evidence_status === 'controlled_replication',
+).length;
+check('answers states the independent match count from the aggregate',
+  new RegExp(`<strong>${independentNow}</strong>`).test(answers), `expected ${independentNow}`);
+check('answers does not call a recognition a match',
+  /not an independent match, it is not a replication/.test(answers));
+check('answers says the kits are not the published apparatus',
+  /Is the equipment sold here identical to Goler/.test(answers) && /<strong>No\.<\/strong>/.test(answers));
+check('answers carries the Class 2 and 1 mW figures',
+  /Class 2, operating at 1 mW/.test(answers) && /5 mW, FDA Class IIIa/.test(answers));
+check('answers points at the sober baseline as the useful contribution',
+  /Run the sober baseline/.test(answers));
+check('answers never prints a bare zero for an unreadable count',
+  !/\b0 published symbol records\b/.test(answers) || aSymbols === 0);
+// A count of events labelled auto-discovered, recomputed rather than trusted.
+const autoNow = (data.events || []).filter((e) => /\[auto-discovered\]/i.test(String(e.description || '') + String(e.details || ''))).length;
+check('answers states the auto-discovered event count from the aggregate',
+  answers.includes(`${withCommas(aEvents)} events, ${autoNow} are labelled auto-discovered`),
+  `expected ${aEvents} / ${autoNow}`);
+check('sitemap lists the answers page', (await get('/sitemap.xml')).includes(`${SITE}/answers`));
+check('llms.txt points at the answers page', /\/answers\)/.test(llms));
+
 // 6. Policies.
 check('terms: account required for contribution', /required to seal or submit a record/.test(terms));
 check('privacy: immediate publication described', /published immediately, before any review/.test(privacy));

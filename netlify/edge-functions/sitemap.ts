@@ -27,6 +27,9 @@ const STATIC: Array<[string, string, string]> = [
   // navigation and no way to record an observation. /downloads is the page
   // that query should land on.
   ["/documents", "0.8", "weekly"],
+  // Ten questions with live-computed answers. High priority on purpose: it is the
+  // page an agent should land on before quoting any count from this site.
+  ["/answers", "0.9", "daily"],
   // Kit drill-down pages. Listed literally rather than generated from the kit
   // catalogue: this function does not import netlify/lib/kits.ts, and a handle
   // is not something to derive. If a kit handle changes in src/data/kits.ts,

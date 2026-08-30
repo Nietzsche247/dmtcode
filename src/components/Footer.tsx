@@ -84,6 +84,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to={to('/answers')} className="text-muted-foreground hover:text-primary transition-colors">
+                  {t('footer.answers')}
+                </Link>
+              </li>
+              <li>
                 <Link to={to('/bibliography')} className="text-muted-foreground hover:text-primary transition-colors">
                   {t('footer.bibliography')}
                 </Link>

@@ -37,7 +37,7 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
-  "dataset", "theories", "retreats", "preregister", "documents",
+  "dataset", "theories", "retreats", "preregister", "documents", "answers",
   // The bare downloads path must pass through, not 404 here. Edge functions run
   // before Netlify redirect rules, so blocking it would kill the 301 that sends
   // it to /documents. The PDF files under it take the asset branch above.

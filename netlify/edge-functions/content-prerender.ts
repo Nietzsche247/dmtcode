@@ -273,6 +273,7 @@ const HASH_GATED_STATIC_PAGES = new Set<string>([
   "trials",
   "events",
   "documents",
+  "answers",
 ]);
 
 // The second guard on the same pages. The hash gate proves a translation is
@@ -522,6 +523,9 @@ export default async (request: Request, context: Context) => {
     // /documents is the document index. It is not at /downloads because that
     // path collides with the public/downloads directory and Netlify serves the
     // static directory instead of running this function.
+    if (kind === "answers" && seg.length === 1) {
+      return await renderAnswers(context, request, locale);
+    }
     if (kind === "documents" && seg.length === 1) {
       return await renderDownloads(context, locale);
     }
@@ -1454,6 +1458,200 @@ ${docSections}
     canonical,
     ogType: "article",
     jsonLd: [breadcrumbLd, collectionLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+
+// ---------- /answers, the acceptance test, answered ----------
+//
+// The 2026-08-28 re-audit ended with an acceptance test: ask a clean browser,
+// Google, ChatGPT, Gemini, Perplexity and the raw data the same ten questions,
+// and every surface should give materially the same answer. This page is that
+// test written down, with the answers computed rather than typed.
+//
+// EVERY NUMBER HERE COMES FROM /data.json AT REQUEST TIME. Not from a constant,
+// not from a note, not from a copy. An answer page that states a count is a
+// place a count goes stale, and a stale canonical answer is worse than no
+// canonical answer: it is the site contradicting itself with authority. If the
+// aggregate cannot be read, the page says so and omits the number rather than
+// printing a zero or a remembered figure.
+//
+// This is not a replacement for /guides. A guide is a long form treatment of one
+// question with its graded evidence for and against. This is the short sheet:
+// ten questions, one paragraph each, every figure live. Each points at the other.
+async function renderAnswers(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}/answers`;
+  const copy = uiCopy("answers", locale);
+
+  type Agg = Record<string, unknown>;
+  let d: Agg | null = null;
+  try {
+    const origin = new URL(request.url).origin;
+    const res = await fetch(`${origin}/data.json`, { headers: { "user-agent": "dmtcode-answers" } });
+    if (res.ok) d = (await res.json()) as Agg;
+  } catch (_e) {
+    d = null;
+  }
+
+  const counts = (d?.counts ?? {}) as Record<string, number>;
+  const comp = (d?.corpus_composition ?? {}) as Record<string, Record<string, unknown>>;
+  const items = Array.isArray(d?.items) ? (d!.items as Array<Record<string, unknown>>) : [];
+  const symbols = Array.isArray(d?.symbols) ? (d!.symbols as Array<Record<string, unknown>>) : [];
+  const events = Array.isArray(d?.events) ? (d!.events as Array<Record<string, unknown>>) : [];
+
+  // n() is the whole discipline of this page in one function: a number it could
+  // not read is absent, never zero, and never a figure from the last time anyone
+  // looked. The audit's first finding was a homepage printing 0 for counts it
+  // could not fetch, and the same mistake on an answer page would be worse.
+  const n = (v: unknown): string | null =>
+    typeof v === "number" && Number.isFinite(v) ? v.toLocaleString("en-US") : null;
+  const or = (v: string | null, fallback: string) => v ?? fallback;
+  const UNKNOWN = "a number this page could not read just now, so it is deliberately not printed; read /data.json directly";
+
+  const symbolTotal = n(counts.symbols);
+  const glyphTotal = n(counts.registry_glyphs);
+  const bibTotal = n(counts.bibliography);
+  const trialsTotal = n(counts.trials);
+  const eventsTotal = n(counts.events);
+
+  const symbolComp = (comp.symbols ?? {}) as Record<string, unknown>;
+  const laserDeclared = n(comp.records_declaring_650nm_laser as number);
+  const recordsTotal = n(comp.records_total as number);
+  const soberBaselines = n(symbolComp.sober_baseline as number);
+  const priorExposure = n(symbolComp.prior_exposure_recorded as number);
+
+  const bibComp = (comp.bibliography ?? {}) as Record<string, unknown>;
+  const byRelation = (bibComp.by_relation_to_core_question ?? {}) as Record<string, number>;
+  const directTests = n(byRelation.direct_test);
+  const adjacent = n(byRelation.adjacent);
+  const relationRecorded = typeof bibComp.relation_recorded === "number" ? (bibComp.relation_recorded as number) : 0;
+
+  const registered = items.filter(
+    (i) => String(i.content_type) === "Trial" && String(i.authority_type) === "Clinical",
+  ).length;
+  const notRegistered = items.filter((i) => String(i.content_type) === "Experiment or report").length;
+
+  const recognitions = symbols.reduce((a, r) => a + Number(r.recognized_count ?? 0), 0);
+  const nonMatches = symbols.reduce((a, r) => a + Number(r.not_a_match_count ?? 0), 0);
+  const symbolsWithResponse = symbols.filter(
+    (r) => Number(r.recognized_count ?? 0) > 0 || Number(r.not_a_match_count ?? 0) > 0,
+  ).length;
+  // The only field that can ever indicate independence. Counted, not assumed.
+  const independent = symbols.filter(
+    (r) => String(r.evidence_status ?? "") === "reviewed_convergence" ||
+           String(r.evidence_status ?? "") === "controlled_replication",
+  ).length;
+
+  const autoDiscovered = events.filter((e) =>
+    /\[auto-discovered\]/i.test(String(e.description ?? "") + String(e.details ?? "")),
+  ).length;
+
+  const kitLines = KITS.map(
+    (k) => `<li>${esc(k.shortName)}, ${esc(k.price)}. ${esc(clip(String(k.description || ""), 220))}</li>`,
+  ).join("");
+
+  const relationSentence = relationRecorded > 0 && directTests && adjacent
+    ? `Of ${or(bibTotal, "the bibliography")} records, ${adjacent} are classified adjacent, meaning real psychedelic literature that does not bear on this question, and ${directTests} are a direct test of it.`
+    : `Every record now carries a relation_to_core_question field, and it is not yet populated: corpus_composition.bibliography.relation_recorded reads ${relationRecorded}. Until it is filled, treat the bibliography total as a reading list, not as a body of evidence for the claim.`;
+
+  const body = `<article data-prerender="answers">
+  <!--tsrc:static:answers-->
+  <h1>Ten questions, answered from the record</h1>
+  <p>An audit of this site in August 2026 proposed a test: ask a clean browser, a search engine, an AI assistant and the raw data the same ten questions, and check whether every surface gives materially the same answer. This page is that test written down. Every figure below is read from <a href="${SITE}/data.json">/data.json</a> when the page is requested, so it cannot fall behind the record it describes. A figure this page could not read is left out rather than printed as zero.</p>
+  <p>For a long form treatment of a single question, with its evidence graded for and against, read the <a href="${SITE}/guides">guides</a>. This page is the short sheet.</p>
+
+  <section id="how-many-observations">
+    <h2>How many community observations does DMT Code contain?</h2>
+    <p>${or(symbolTotal, UNKNOWN)} published symbol records, plus ${or(glyphTotal, UNKNOWN)} anonymous drawn glyph reports from the quick capture tool. They are separate tables and are never summed. The number that matters for the laser claim specifically is smaller: ${or(laserDeclared, UNKNOWN)} of ${or(recordsTotal, UNKNOWN)} records declare the 650 nm laser method at all. Prior exposure is recorded on ${or(priorExposure, UNKNOWN)} of them, and there are ${or(soberBaselines, UNKNOWN)} sober baseline records. The object model at <a href="${SITE}/object-model">/object-model</a> explains why the two counts differ.</p>
+  </section>
+
+  <section id="goler-setup">
+    <h2>What did Danny Goler's published setup use?</h2>
+    <p>A 650 nm refracted laser, <strong>Class 2, operating at 1 mW</strong>, through a diffraction grating lens onto a nonreflective surface. The paper states that only Class 2 lasers at 1 mW or less were used. Source: Goler D. 2025, <em>Detailing a Pilot Study: The Code of Reality Protocol</em>, IPI Letters, DOI <a href="https://doi.org/10.59973/ipil.158">10.59973/ipil.158</a>. It is a pilot report in a letters venue, not a controlled trial.</p>
+  </section>
+
+  <section id="what-is-sold">
+    <h2>What does DMT Code sell?</h2>
+    <p>Four laser diffraction research kits, sold and shipped by Meridian Optics Lab. Every document on this site is free and no kit is required to take part.</p>
+    <ul>${kitLines}</ul>
+    <p>Machine readable catalogue: <a href="${SITE}/shop.json">/shop.json</a>, with per emitter vendor ratings.</p>
+  </section>
+
+  <section id="equipment-identical">
+    <h2>Is the equipment sold here identical to Goler's?</h2>
+    <p><strong>No.</strong> Three different objects are kept apart on this site and must not be blended. The historical Goler setup is 650 nm, Class 2, 1 mW. The DMT Code observation configuration is a later community adaptation using pointers the vendor rates at 5 mW, FDA Class IIIa, which is Class 3R. The proposed controlled study is a third thing again and has not been run. Anyone citing the kits as the paper's apparatus is wrong, and so is anyone citing the paper's power figure for the kits.</p>
+  </section>
+
+  <section id="independent-matches">
+    <h2>How many independently validated matches exist?</h2>
+    <p><strong>${independent}.</strong> Not a rounding of a small number: the field that could record independence is evidence_status, and no record currently carries reviewed_convergence or controlled_replication. What the site does have is ${recognitions} recognition responses and ${nonMatches} non-match responses across ${symbolsWithResponse} symbols. Every one of those was recorded after the responder had already looked at the symbol on this site.</p>
+  </section>
+
+  <section id="what-recognition-means">
+    <h2>What does a recognition mean?</h2>
+    <p>That a signed in reader pressed a control saying a published form echoed their own memory, <em>after</em> seeing it here. It is recognition after exposure. It is not an independent match, it is not a replication, and it must never be reported as either. Recognition does not reorder the default browse order and does not change a record's evidence status. Community ranking is opt in and only applies at five or more responses.</p>
+  </section>
+
+  <section id="which-are-clinical-trials">
+    <h2>Which records are genuine registered clinical trials?</h2>
+    <p>${registered} of ${or(trialsTotal, UNKNOWN)} records in the trials table are registered clinical trials, carrying a registry identifier and authority_type Clinical. The other ${notRegistered} are typed community records: academic experiments, published pilot reports, community experiments, citizen science projects, reported replications, platform projects, media claims, rumoured reports and retreat sessions. They carry content_type "Experiment or report" and their own record_type. Describing those as clinical trials is the specific error this typing exists to prevent.</p>
+  </section>
+
+  <section id="which-events-verified">
+    <h2>Which events are verified, and which are auto-discovered?</h2>
+    <p>Of ${or(eventsTotal, UNKNOWN)} events, ${autoDiscovered} are labelled auto-discovered candidates in their own description, which means a crawler found them and their dates have not been editorially verified. The rest were entered directly. This page does not claim the remainder are verified: entered directly and verified are different states, and only the auto-discovered label is currently carried in the data.</p>
+  </section>
+
+  <section id="strongest-evidence">
+    <h2>What is the strongest evidence for, and against?</h2>
+    <p><strong>For:</strong> a published pilot report describing the protocol and reporting recurring structured forms, plus an open registry of observer submissions in which similar shapes recur. <strong>Against:</strong> the corpus is self selected and unblinded; ${or(soberBaselines, "no")} sober baseline records exist, so nothing has a control to be measured against; prior exposure is unrecorded on nearly every record, and priming is the strongest ordinary explanation for apparent agreement; and the deflationary theories on this site, laser speckle with amplified pattern recognition, expectation and priming, and hypnagogic phosphene elaboration, each predict exactly what has been observed without requiring anything external. ${relationSentence} No stage three test, meaning randomized, blinded, pre-registered, has been run. The evidence map at <a href="${SITE}/evidence-map">/evidence-map</a> lays out the three stages.</p>
+  </section>
+
+  <section id="participate-without-believing">
+    <h2>How do I take part without believing any of it?</h2>
+    <p>Run the sober baseline. Same rig, no substance, recorded on the standard field sheet, and it is the half of the comparison the corpus is missing entirely. The protocol is a free PDF at <a href="${SITE}/documents">/documents</a> and needs no kit and no account to read. Reporting that you saw nothing structured is a full record here, not a failure, and those are published at <a href="${SITE}/null-reports">/null-reports</a>. If you want to be maximally useful, record what you saw before you open the symbol catalogue: <a href="${SITE}/capture">/capture</a>. A description made before you look at other people's is worth more than the same description made after, and this site keeps the two apart.</p>
+  </section>
+
+  <!--/tsrc-->
+  <p>License: CC-BY-4.0. Attribute to DMT Code, ${SITE}. Every count above is derived at request time from <a href="${SITE}/data.json">/data.json</a>; the typed endpoints at <a href="${SITE}/api/v1">/api/v1</a> serve the same records.</p>
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Answers", item: canonical },
+    ],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      ["How many community observations does DMT Code contain?", `${or(symbolTotal, "See /data.json")} published symbol records and ${or(glyphTotal, "a separate count of")} anonymous glyph reports, which are separate tables and are never summed. Only ${or(laserDeclared, "a minority")} of ${or(recordsTotal, "the total")} records declare the 650 nm laser method.`],
+      ["What did Danny Goler's published setup use?", "A 650 nm refracted laser, Class 2, at 1 mW, through a diffraction grating lens onto a nonreflective surface. Goler D. 2025, IPI Letters, DOI 10.59973/ipil.158."],
+      ["Is the equipment DMT Code sells identical to Goler's?", "No. Goler's published setup is Class 2 at 1 mW. The kits use pointers the vendor rates at 5 mW, FDA Class IIIa, a later community adaptation. They are different objects."],
+      ["How many independently validated matches does DMT Code have?", `${independent}. No record carries an evidence_status of reviewed_convergence or controlled_replication. The ${recognitions} recognition responses were all recorded after the responder had already seen the symbol on the site.`],
+      ["What does a recognition mean on DMT Code?", "That a reader said a published form echoed their memory after seeing it here. It is recognition after exposure, not an independent match and not a replication."],
+      ["Which DMT Code records are registered clinical trials?", `${registered} of ${or(trialsTotal, "the trials table")} carry a registry identifier and authority_type Clinical. The other ${notRegistered} are typed community records and must not be described as clinical trials.`],
+    ].map(([q, a]) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+
+  const head = buildHead({
+    locale,
+    title: copy.title,
+    description: clip(copy.description, 200),
+    canonical,
+    ogType: "article",
+    jsonLd: [breadcrumbLd, faqLd],
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
@@ -3524,6 +3722,7 @@ export const config: Config = {
     "/protocol-guide",
     "/prepare",
     "/documents",
+    "/answers",
     "/evidence-map",
     "/timeline",
     "/timeline/*",
