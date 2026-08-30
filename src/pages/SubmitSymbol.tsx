@@ -9,6 +9,11 @@ import { SignInToContribute } from '@/components/SignInToContribute';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  markCatalogueSeen,
+  CATALOGUE_QUERY_FLAG,
+  CATALOGUE_QUERY_VALUE,
+} from '@/lib/catalogueExposure';
 
 /**
  * Reading is open to everyone. Writing is not. Submitting a symbol requires an
@@ -20,6 +25,18 @@ const SubmitSymbol = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
+
+  // Absorb the catalogue flag HERE, before the auth gate, not in the wizard.
+  // Someone arriving from the symbol catalogue without an account is sent to
+  // sign in and comes back on a fresh URL, so a flag that lived only in the
+  // query string would be gone by the time the wizard mounts, and the exposure
+  // it records is exactly the kind that must not be quietly lost. Persisting it
+  // on this render means the round trip through /auth cannot erase it.
+  useEffect(() => {
+    if (searchParams.get(CATALOGUE_QUERY_FLAG) === CATALOGUE_QUERY_VALUE) {
+      markCatalogueSeen();
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;
