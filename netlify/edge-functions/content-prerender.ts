@@ -1588,7 +1588,7 @@ async function renderAnswers(context: Context, request: Request, locale: Loc = "
 
   <section id="independent-matches">
     <h2>How many independently validated matches exist?</h2>
-    <p><strong>${independent}.</strong> Not a rounding of a small number: the field that could record independence is evidence_status, and no record currently carries reviewed_convergence or controlled_replication. What the site does have is ${recognitions} recognition responses and ${nonMatches} non-match responses across ${symbolsWithResponse} symbols. Every one of those was recorded after the responder had already looked at the symbol on this site.</p>
+    <p><strong>${independent}</strong>. Not a rounding of a small number: the field that could record independence is evidence_status, and no record currently carries reviewed_convergence or controlled_replication. What the site does have is ${recognitions} recognition responses and ${nonMatches} non-match responses across ${symbolsWithResponse} symbols. Every one of those was recorded after the responder had already looked at the symbol on this site.</p>
   </section>
 
   <section id="what-recognition-means">
