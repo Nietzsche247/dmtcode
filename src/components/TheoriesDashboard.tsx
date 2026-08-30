@@ -36,7 +36,7 @@ export const TheoriesDashboard = () => {
         .order("upvotes", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(4);
-      setTheories((data ?? []) as Theory[]);
+      setTheories((data ?? []) as unknown as Theory[]);
       setLoaded(true);
     })();
   }, []);

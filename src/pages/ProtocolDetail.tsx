@@ -108,7 +108,7 @@ const ProtocolDetail = () => {
 
   const card_overview = (
     <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Clinical Overview</h2>
+                  <h2 className="text-xl font-semibold mb-4">{isClinicalMode ? 'Clinical Overview' : 'Overview'}</h2>
                   {content.overview ? (
                     <div className="space-y-6">
                       <div>
@@ -156,7 +156,7 @@ const ProtocolDetail = () => {
                   {content.preparation ? (
                     <div className="space-y-6">
                       <div>
-                        <h3 className="font-medium mb-2">Clinical Setting Requirements</h3>
+                        <h3 className="font-medium mb-2">{isClinicalMode ? 'Clinical Setting Requirements' : 'Observation setting'}</h3>
                         <p className="text-muted-foreground">{setSettingText}</p>
                       </div>
                       <div>
@@ -587,7 +587,11 @@ const ProtocolDetail = () => {
         <title>{protocol.slug === 'dmt-laser' ? `${shown.title} - 650 nm DMT laser protocol | DMT Code` : `${shown.title} | DMT Code Protocols`}</title>
         <meta 
           name="description" 
-          content={`${shown.tagline || shown.title} - Evidence-based protocol with preparation, dosing, and integration guidelines.`} 
+          content={
+            isClinicalMode
+              ? `${shown.tagline || shown.title} - Evidence-based protocol with preparation, dosing, and integration guidelines.`
+              : `${shown.tagline || shown.title} - Reported observation protocol. Reference material, not medical advice and not dosing guidance.`
+          } 
         />
         <link rel="canonical" href={canonicalUrl} />
         <meta name="robots" content="index, follow" />
@@ -595,7 +599,7 @@ const ProtocolDetail = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "MedicalWebPage",
+            "@type": isClinicalMode ? "MedicalWebPage" : "TechArticle",
             "name": shown.title,
             "description": shown.tagline,
             "lastReviewed": protocol.updated_at,

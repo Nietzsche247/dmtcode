@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import type { BibliographyRow } from '@/components/bibliography/types';
+import { relationLabel } from '@/components/bibliography/types';
 
 type Row = BibliographyRow & { full_text: string | null; transcript: string | null };
 
