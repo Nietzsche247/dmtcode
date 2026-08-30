@@ -2216,8 +2216,55 @@ const DATASET_PAGE_LD = {
       "@type": "DataDownload",
       encodingFormat: "application/json",
       contentUrl: `${SITE}/data.json`,
+      name: "Full corpus, single document",
+    },
+    {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `${SITE}/api/v1/openapi.json`,
+      name: "OpenAPI 3.1 description of the typed endpoints",
     },
   ],
+  includedInDataCatalog: { "@id": `${SITE}/dataset#catalog` },
+};
+
+// The typed endpoints described as a catalogue rather than as eight loose URLs,
+// so an agent that finds one finds the rest and finds the caveat attached to
+// each. Every entry names what its records are NOT, because that is the sentence
+// that stops a rumour, a recognition or an adjacent paper being quoted as
+// something stronger. Mirrors ENDPOINTS in netlify/edge-functions/api-v1.ts.
+const API_CATALOG_LD = {
+  "@context": "https://schema.org",
+  "@type": "DataCatalog",
+  "@id": `${SITE}/dataset#catalog`,
+  name: "DMT Code typed API",
+  url: `${SITE}/api/v1`,
+  license: LICENSE,
+  isAccessibleForFree: true,
+  provider: { "@type": "Organization", name: "DMT Code", url: SITE },
+  dataset: [
+    ["observations", "Community symbol observations", "Self selected and unblinded. Not confirmed or replicated forms."],
+    ["nulls", "Reports of seeing nothing structured", "Counted the same as any other record, not a failure state."],
+    ["matches", "Recognition responses", "Every response was made after the responder had already seen the symbol. Not independent confirmation."],
+    ["theories", "Explanatory frameworks", "Candidate explanations, not findings, and not claims their originators made."],
+    ["trials", "Trials, experiments and reports", "Not all clinical trials. Community experiments, media claims and rumoured reports are included and labelled."],
+    ["events", "Events and gatherings", "Includes auto-discovered candidates whose dates are not editorially verified."],
+    ["sources", "Bibliography", "Most of this corpus is adjacent: real psychedelic literature that does not bear on the convergence claim."],
+    ["stats", "Counts and composition", "A total with no composition beside it is how this dataset gets misread."],
+  ].map(([slug, name, caveat]) => ({
+    "@type": "Dataset",
+    "@id": `${SITE}/api/v1/${slug}`,
+    name,
+    description: `${name}. What this is not: ${caveat}`,
+    url: `${SITE}/api/v1/${slug}`,
+    license: LICENSE,
+    isAccessibleForFree: true,
+    distribution: {
+      "@type": "DataDownload",
+      encodingFormat: "application/json",
+      contentUrl: `${SITE}/api/v1/${slug}`,
+    },
+  })),
 };
 
 // Canonical Report JSON-LD for /registry. Mirrors the block rendered client
@@ -2663,7 +2710,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
   </ul>
   <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a>. License: CC BY 4.0.</p>
 </section>`,
-    extraJsonLd: [DATASET_PAGE_LD],
+    extraJsonLd: [DATASET_PAGE_LD, API_CATALOG_LD],
   },
   about: {
     title: "About the DMT Code project | DMT Code",

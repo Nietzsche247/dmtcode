@@ -220,6 +220,14 @@ export default async (request: Request, _context: Context) => {
 
   const records = slice(data, name);
   const extra: Record<string, unknown> = {};
+  // A bare zero is the exact thing the audit told this site to stop publishing.
+  // A reader cannot tell "none exist" from "the query found nothing", and the two
+  // support opposite conclusions. Where a count can legitimately be zero, say
+  // which one it is in the response itself.
+  if (records.length === 0) {
+    extra.zero_means =
+      "This is a real zero, not a failed query: the corpus was read successfully and holds no records of this kind. A read failure returns HTTP 503, never an empty list. Do not report this as evidence of absence without reading what_this_is first.";
+  }
   if (name === "sources" || name === "observations" || name === "theories") {
     extra.composition = (data.corpus_composition as Row) ?? {};
   }
