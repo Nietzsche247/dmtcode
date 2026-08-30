@@ -105,10 +105,35 @@ function envelope(
   };
 }
 
+// Fields each endpoint's prose refers to. Reported as populated or not on every
+// response, computed from the records being returned rather than from intent.
+const DECLARED_FIELDS: Record<string, string[]> = {
+  observations: ["source_method", "prior_exposure", "wavelength", "is_sober_baseline"],
+  theories: ["theory_class", "framework_originator", "applied_to_dmtcode_by", "directly_addresses_dmt_laser", "primary_source"],
+  sources: ["relation_to_core_question", "publication_status", "online_publication_date"],
+  matches: ["recognized_count", "not_a_match_count"],
+  trials: ["record_type", "authority_type"],
+  events: ["event_date", "event_type"],
+};
+
+function declaredFields(name: string, records: Row[]): Record<string, unknown> | undefined {
+  const fields = DECLARED_FIELDS[name];
+  if (!fields || records.length === 0) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const f of fields) {
+    const n = records.filter((r) => {
+      const v = r[f];
+      return v !== undefined && v !== null && v !== "" && v !== "not_stated";
+    }).length;
+    out[f] = { populated: n, of: records.length };
+  }
+  return out;
+}
+
 const ENDPOINTS: Record<string, { summary: string; what: string; notThis: string }> = {
   observations: {
     summary: "Community symbol observations",
-    what: "Every published observer submission: one person's account of what they saw, with the method they declared and whether they had already seen the catalogue.",
+    what: "Every published observer submission: one person's account of what they saw. Where a record declares a source_method or a prior_exposure they are carried on the record; check declared_fields below for how many actually do.",
     notThis: "Not a set of confirmed or replicated forms. These are self selected, unblinded reports. Read corpus_composition on the aggregate before treating the total as evidence: only a minority declare the 650 nm laser method and there are no sober baselines.",
   },
   nulls: {
@@ -123,7 +148,7 @@ const ENDPOINTS: Record<string, { summary: string; what: string; notThis: string
   },
   theories: {
     summary: "Explanatory frameworks",
-    what: "Candidate explanations, each carrying who built the framework, who pointed it at this phenomenon, and whether the source material is about this phenomenon at all.",
+    what: "Candidate explanations. Where provenance is recorded, framework_originator is who built the framework and applied_to_dmtcode_by is who pointed it at this phenomenon; check declared_fields below for how many carry it.",
     notThis: "Not findings, not endorsements, and not claims their originators made. Most of these frameworks were built for another purpose; directly_addresses_dmt_laser says which.",
   },
   trials: {
@@ -133,12 +158,12 @@ const ENDPOINTS: Record<string, { summary: string; what: string; notThis: string
   },
   events: {
     summary: "Events and gatherings",
-    what: "Events relevant to this work, each carrying how it was verified and how it relates to the project.",
+    what: "Events relevant to this work. Auto-discovered candidates are included and say so in their own description; a structured verification field is not yet carried on these records.",
     notThis: "Not a curated or endorsed list. Auto-discovered candidates are included and labelled as such; their dates have not been editorially verified.",
   },
   sources: {
     summary: "Bibliography",
-    what: "The literature this project reads, each record carrying relation_to_core_question: how it relates to the convergence claim.",
+    what: "The literature this project reads. relation_to_core_question says how a record relates to the convergence claim where it is recorded; check declared_fields below for how many carry it.",
     notThis: "Not a body of evidence for the claim. Most of this corpus is adjacent, meaning real psychedelic literature that does not bear on whether independent observers report the same visual forms. The tally is published beside the total.",
   },
   stats: {
@@ -152,7 +177,7 @@ function slice(data: Corpus, name: string): unknown[] {
   const items = data.items ?? [];
   switch (name) {
     case "observations":
-      return items.filter((i) => i.content_type === "Symbol");
+      return data.symbols ?? [];
     case "nulls": {
       const isNull = (r: Row) => {
         const tags = Array.isArray(r.tags) ? (r.tags as string[]) : [];
@@ -220,13 +245,32 @@ export default async (request: Request, _context: Context) => {
 
   const records = slice(data, name);
   const extra: Record<string, unknown> = {};
+  if (name === "matches") {
+    const rows = records as Row[];
+    const sum = (f: string) => rows.reduce((n, r) => n + Number(r[f] ?? 0), 0);
+    extra.response_totals = {
+      symbols_with_any_response: rows.length,
+      recognitions: sum("recognized_count"),
+      non_matches: sum("not_a_match_count"),
+      note: "count is a count of SYMBOLS, not of responses. recognitions and non_matches are the response totals. A non_matches total of zero means nobody has recorded a disagreement, which is a fact about participation, not about the forms.",
+    };
+  }
   // A bare zero is the exact thing the audit told this site to stop publishing.
   // A reader cannot tell "none exist" from "the query found nothing", and the two
   // support opposite conclusions. Where a count can legitimately be zero, say
   // which one it is in the response itself.
-  if (records.length === 0) {
+  if (records.length === 0 && name === "nulls") {
+    extra.zero_means =
+      "A real zero, not a failed query. But read it narrowly: this counts records tagged as null reports, and no such tag exists on any published record yet. It is an absence of the tag, which is not the same as an established absence of null observations. A read failure would return HTTP 503, never an empty list.";
+  } else if (records.length === 0) {
     extra.zero_means =
       "This is a real zero, not a failed query: the corpus was read successfully and holds no records of this kind. A read failure returns HTTP 503, never an empty list. Do not report this as evidence of absence without reading what_this_is first.";
+  }
+  const declared = declaredFields(name, records as Row[]);
+  if (declared) {
+    extra.declared_fields = declared;
+    extra.declared_fields_note =
+      "How many of the returned records actually carry each field this endpoint's description mentions, counted on the records in this response. A field at 0 is defined and not yet populated: do not read its absence as a value, and do not read the description as a promise that it is there.";
   }
   if (name === "sources" || name === "observations" || name === "theories") {
     extra.composition = (data.corpus_composition as Row) ?? {};

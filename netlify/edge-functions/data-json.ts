@@ -477,6 +477,16 @@ export default async (req: Request): Promise<Response> => {
       updated_at: (r.updated_at as string) || undefined,
       record_class: isCurated(r) ? "curated_starter" : "community_observation",
       counts_toward_evidence: isCurated(r) ? false : true,
+      // These three were tallied in corpus_composition but never published on the
+      // records themselves, which made the site's single most load-bearing number
+      // impossible to check: records_declaring_650nm_laser over records_total is
+      // built on source_method, and source_method appeared nowhere in the export.
+      // A denominator a reader cannot audit is an assertion, not a denominator.
+      // Emitted as an explicit "not_stated" rather than omitted, because a missing
+      // key reads as "no value exists" and the honest reading is "nobody asked".
+      source_method: (r.source_method as string) || "not_stated",
+      prior_exposure: (r.prior_exposure as string) || "not_stated",
+      wavelength: (r.wavelength as string) || "not_stated",
     });
   });
 
@@ -689,7 +699,7 @@ export default async (req: Request): Promise<Response> => {
     directly_addresses_dmt_laser: "True only where the source material is itself about this phenomenon. False for a framework borrowed from another field. Jung, Wheeler and Hoffman never wrote about a laser.",
     original_publication_year: "The year the framework was FIRST published, which for several is decades before the edition cited in source_title. Null where it could not be established from a source that was actually checked.",
     dmtcode_application_year: "The year this site started carrying the framework. Derived from the row's own created_at, never typed.",
-    primary_source: "A DOI, publisher page or institutional record for the framework. Six theories cited Wikipedia, which is not a primary source for a framework its author published elsewhere. source_url is unchanged and may still be secondary; primary_source is what a citation should use.",
+    primary_source: "A DOI, publisher page or institutional record for the framework, where one has been established. Wikipedia is not a primary source for a framework its author published elsewhere, and several theories still carry a Wikipedia source_url. source_url is left unchanged and may be secondary; primary_source is what a citation should use where it is present. Count how many records actually carry it before relying on it: a defined field is not a populated one.",
     is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
     is_sober_baseline: "True when the contributor marked the session as a sober baseline run: the full rig, no substance.",
     recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",
@@ -759,7 +769,12 @@ export default async (req: Request): Promise<Response> => {
     corpus_composition: corpusComposition,
     object_model_note: "How to read the two symbol counts. symbols[] are account backed symbol_submissions, one public symbol record per submission (counts.symbols). registry_glyphs[] are anonymous drawn glyph reports from the quick capture tool, no account, a separate table (counts.registry_glyphs). They never overlap and are never summed. Object model: observation (one person's experience) -> artifact (drawing, voice, text, field map) -> glyph instance (one discrete form) -> public symbol record (a glyph exposed in the registry) -> motif cluster (possibly related instances) -> canonical symbol candidate (reviewed abstraction of a recurring motif) -> sequence (reported relation between symbols). The seven levels are defined in full, with worked examples and the reason the two counts differ, at https://dmtcode.com/object-model.",
     object_model_url: "https://dmtcode.com/object-model",
-    publication_dates_note: "source_date is the date the record carries, which for a journal article is usually the issue date. An issue date can sit months after the day the paper became readable, so a source_date in the future does not mean the work is unavailable. Where that gap exists the row also carries publication_status (published, online_ahead_of_print, forthcoming, preprint) plus online_publication_date and issue_date, verified against Crossref. Rows without those keys carry no known gap; an absent key means unknown, not false.",
+    publication_dates_note: "source_date is the date the record carries, which for a journal article is usually the issue date. An issue date can sit months after the day the paper became readable, so a source_date in the future does not mean the work is unavailable. The fields that resolve this are publication_status (published, online_ahead_of_print, forthcoming, preprint), online_publication_date and issue_date, and where they are present they were verified against Crossref rather than inferred. They are not yet populated on every row that needs them: future_dated_without_status below counts the rows where the gap exists and the status has not been recorded. An absent key means nobody has established the value, not that there is no gap.",
+    future_dated_without_status: bib.filter(
+      (r) =>
+        String(r.source_date ?? r.publication_date ?? "") > new Date().toISOString().slice(0, 10) &&
+        !r.publication_status,
+    ).length,
     trials_note: "items[] with content_type Trial and authority_type Clinical are registered clinical trials with a registry_id. Community experiments, pilot reports, platform projects, media claims and rumours from the same table carry content_type Experiment or report, a record_type, and authority_type Community or Media. Do not describe those as clinical trials.",
     equipment_note: "Goler's 2025 paper (DOI 10.59973/ipil.158) reports a 650 nm Class 2 laser at 1 mW. The kits in /shop.json use pointers the vendor rates at 5 mW, FDA Class IIIa (Class 3R), a later community adaptation that is not the paper's configuration; read shop.json bundles[].emitters for per emitter ratings.",
     symbols_note: "Symbols with is_curated_example true were added by the site operator as illustrative examples. They are not observer submissions and they are excluded from every evidence and convergence total. Publication on this site is immediate and does not mean a moderator has reviewed the symbol. Read moderation_status and review_overdue before describing anything here as reviewed, and read field_definitions before treating any count as evidence.",
