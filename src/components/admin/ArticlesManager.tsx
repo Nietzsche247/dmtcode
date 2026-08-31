@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { Database } from "@/integrations/supabase/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -496,7 +497,7 @@ export const ArticlesManager = () => {
 
   const writeStatus = async (
     a: Article,
-    patch: Record<string, unknown>,
+    patch: Database["public"]["Tables"]["articles"]["Update"],
     successMessage: string,
   ) => {
     const { data, error } = await supabase

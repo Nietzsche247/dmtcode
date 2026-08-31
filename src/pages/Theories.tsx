@@ -120,7 +120,7 @@ export default function TheoriesPage() {
       console.error(error);
       return;
     }
-    const rows = (data ?? []) as unknown as Theory[];
+    const rows = (data ?? []) as Theory[];
     setTheories(rows);
 
     const userIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean))) as string[];

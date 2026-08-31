@@ -348,6 +348,10 @@ export type Database = {
       }
       bibliography: {
         Row: {
+          issue_date: string | null
+          online_publication_date: string | null
+          publication_status: string | null
+          relation_to_core_question: string | null
           abstract: string | null
           authority_type: string | null
           authors: string | null
@@ -383,6 +387,10 @@ export type Database = {
           url: string | null
         }
         Insert: {
+          issue_date?: string | null
+          online_publication_date?: string | null
+          publication_status?: string | null
+          relation_to_core_question?: string | null
           abstract?: string | null
           authority_type?: string | null
           authors?: string | null
@@ -418,6 +426,10 @@ export type Database = {
           url?: string | null
         }
         Update: {
+          issue_date?: string | null
+          online_publication_date?: string | null
+          publication_status?: string | null
+          relation_to_core_question?: string | null
           abstract?: string | null
           authority_type?: string | null
           authors?: string | null
@@ -2922,6 +2934,13 @@ export type Database = {
       }
       theories: {
         Row: {
+          applied_to_dmtcode_by: string | null
+          directly_addresses_dmt_laser: boolean | null
+          dmtcode_application_year: number | null
+          framework_originator: string | null
+          original_publication_year: number | null
+          primary_source: string | null
+          theory_class: string | null
           content: string
           created_at: string
           id: string
@@ -2940,6 +2959,13 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          applied_to_dmtcode_by?: string | null
+          directly_addresses_dmt_laser?: boolean | null
+          dmtcode_application_year?: number | null
+          framework_originator?: string | null
+          original_publication_year?: number | null
+          primary_source?: string | null
+          theory_class?: string | null
           content: string
           created_at?: string
           id?: string
@@ -2958,6 +2984,13 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          applied_to_dmtcode_by?: string | null
+          directly_addresses_dmt_laser?: boolean | null
+          dmtcode_application_year?: number | null
+          framework_originator?: string | null
+          original_publication_year?: number | null
+          primary_source?: string | null
+          theory_class?: string | null
           content?: string
           created_at?: string
           id?: string

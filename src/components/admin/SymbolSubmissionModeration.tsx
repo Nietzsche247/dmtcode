@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
+import type { Database } from "@/integrations/supabase/types";
 import { supabase } from '@/integrations/supabase/client';
 import { recordAuditEvent, recordAuditEvents } from '@/lib/auditEvents';
 import { Card } from '@/components/ui/card';
@@ -364,7 +365,7 @@ export const SymbolSubmissionModeration = () => {
   // FAILURE, not a success. Never toast success on a write that changed nothing.
   const writeModeration = async (
     ids: string[],
-    patch: Record<string, unknown>,
+    patch: Database["public"]["Tables"]["symbol_submissions"]["Update"],
     verb: string,
   ): Promise<boolean> => {
     const { data, error } = await supabase

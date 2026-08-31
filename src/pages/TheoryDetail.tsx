@@ -71,7 +71,7 @@ export default function TheoryDetail() {
         .from("theories")
         .select("*")
         .eq("is_approved", true);
-      const rows = (data ?? []) as unknown as Theory[];
+      const rows = (data ?? []) as Theory[];
       const resolved = resolveTheoryBySlug(rows, slug);
       setTheory(resolved);
       setLoading(false);

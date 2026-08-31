@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { Database } from "@/integrations/supabase/types";
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,7 +80,11 @@ export const SymbolModeration = () => {
 
   // A write filtered out by a row-level permission rule comes back as success
   // with an empty array. Zero rows changed is a FAILURE, never a success.
-  const writeGlyph = async (symbolId: string, patch: Record<string, unknown>, verb: string) => {
+  const writeGlyph = async (
+    symbolId: string,
+    patch: Database["public"]["Tables"]["registry_glyphs"]["Update"],
+    verb: string,
+  ) => {
     const { data, error } = await supabase
       .from('registry_glyphs')
       .update(patch)
