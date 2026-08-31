@@ -16,16 +16,25 @@
 // Usage: node scripts/hydration-parity.mjs [baseUrl]
 // Requires playwright-core and a local Chrome or Edge. No browser download.
 
+import fs from 'node:fs';
 import { chromium } from 'playwright-core';
 
 const BASE = (process.argv[2] || 'https://dmtcode.com').replace(/\/$/, '');
 
 let pass = 0;
 const failures = [];
+// Same report shape as the other audit jobs so CI can aggregate it.
+const results = [];
 const check = (label, ok, detail = '') => {
+  results.push({ check: label, ok: !!ok, detail: String(detail).slice(0, 300) });
   if (ok) { pass++; console.log(`PASS ${label}${detail ? ` :: ${detail}` : ''}`); }
   else { failures.push(`${label}${detail ? ` :: ${detail}` : ''}`); console.log(`FAIL ${label}${detail ? ` :: ${detail}` : ''}`); }
 };
+function writeReport() {
+  if (!process.env.PARITY_JSON) return;
+  fs.writeFileSync(process.env.PARITY_JSON, JSON.stringify({ job: 'hydration-parity', results }, null, 1));
+  console.log(`report written to ${process.env.PARITY_JSON}`);
+}
 
 const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
 
@@ -145,13 +154,23 @@ const ROUTES = [
 async function run() {
   let browser;
   const tried = [];
-  for (const channel of ['chrome', 'msedge']) {
-    try { browser = await chromium.launch({ channel, headless: true }); break; }
-    catch (e) { tried.push(`${channel}: ${String(e.message).split('\n')[0]}`); }
+  // PARITY_BROWSER_PATH wins when set, for CI images that ship a browser at a
+  // known path. Otherwise use an installed Chrome or Edge via channel.
+  if (process.env.PARITY_BROWSER_PATH) {
+    try { browser = await chromium.launch({ executablePath: process.env.PARITY_BROWSER_PATH, headless: true }); }
+    catch (e) { tried.push(`PARITY_BROWSER_PATH: ${String(e.message).split('\n')[0]}`); }
   }
   if (!browser) {
-    console.error('Could not launch a local browser. playwright-core needs Chrome or Edge installed.');
+    for (const channel of ['chrome', 'msedge', 'chromium']) {
+      try { browser = await chromium.launch({ channel, headless: true }); break; }
+      catch (e) { tried.push(`${channel}: ${String(e.message).split('\n')[0]}`); }
+    }
+  }
+  if (!browser) {
+    console.error('Could not launch a browser. playwright-core needs Chrome, Edge or Chromium installed.');
     tried.forEach((t) => console.error('  ' + t));
+    check('hydration suite could launch a browser', false, tried.join(' | '));
+    writeReport();
     process.exit(2);
   }
 
@@ -248,6 +267,7 @@ async function run() {
   await browser.close();
 
   console.log(`\n${pass} passed, ${failures.length} failed`);
+  writeReport();
   if (failures.length) {
     console.log('\nFailures:');
     failures.forEach((f) => console.log('  - ' + f));

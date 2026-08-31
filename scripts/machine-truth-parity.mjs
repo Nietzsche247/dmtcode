@@ -22,10 +22,14 @@ const head = async (p) => {
   return { status: r.status, location: r.headers.get('location'), type: r.headers.get('content-type') };
 };
 const fails = [];
-const check = (name, ok, detail = '') => { console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`); if (!ok) fails.push(name); };
+// Every result is recorded so CI can aggregate this suite into the same
+// drift-report and rolling issue the other audit jobs already feed.
+// Set PARITY_JSON to a path to write it.
+const results = [];
+const check = (name, ok, detail = '') => { console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`); results.push({ check: name, ok: !!ok, detail: String(detail).slice(0, 300) }); if (!ok) fails.push(name); };
 // A surface that cannot be reached is not a surface that disagrees. Skips are
 // printed so an offline run reads as incomplete rather than as clean.
-const skip = (name, why) => console.log(`SKIP ${name} :: ${why}`);
+const skip = (name, why) => { console.log(`SKIP ${name} :: ${why}`); results.push({ check: name, ok: true, skipped: true, detail: String(why).slice(0, 300) }); };
 
 const data = await get('/data.json', true);
 const shop = await get('/shop.json', true);
@@ -618,4 +622,9 @@ if (localeDown) {
 }
 
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL PASS');
+if (process.env.PARITY_JSON) {
+  const fsm = await import('node:fs');
+  fsm.writeFileSync(process.env.PARITY_JSON, JSON.stringify({ job: 'machine-parity', results }, null, 1));
+  console.log(`report written to ${process.env.PARITY_JSON}`);
+}
 process.exit(fails.length ? 1 : 0);
