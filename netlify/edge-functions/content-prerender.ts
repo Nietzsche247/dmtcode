@@ -3652,22 +3652,9 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   // Telling the reader is the point. A page that silently serves English under
   // /es is the same defect class as a count that means something other than its
   // label: the surface claims one thing and delivers another.
-  const untranslatedNotice = servingEnglishSource
-    ? `<p data-prerender="untranslated" lang="en"><strong>${
-        locale === "es"
-          ? "Esta página aún no está traducida. Está leyendo el original en inglés."
-          : "Diese Seite ist noch nicht übersetzt. Sie lesen das englische Original."
-      }</strong> ${
-        locale === "es"
-          ? "El resto del sitio sí está traducido; esta página todavía no."
-          : "Der Rest der Website ist übersetzt, diese Seite noch nicht."
-      }</p>`
-    : "";
-
   const body = trs.body_html && trs.body_html.trim()
     ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
-  ${untranslatedNotice}
   <!--tsrc:static:${key}-->
   ${enSource}
   <!--/tsrc-->
@@ -3826,6 +3813,19 @@ type HeadOpts = {
   jsonLd?: unknown[];
 };
 
+// These paths are rendered from hardcoded English and never consult
+// content_translations, so a locale URL for them always serves English. The
+// parity suite verifies this against the live pages rather than trusting the
+// list: a page carrying the English-source marker while advertising its own
+// hreflang fails, so the set cannot silently go stale.
+const NO_TRANSLATION_UNDER_LOCALE = new Set([
+  "/prepare",
+  "/documents",
+  "/answers",
+  "/evidence-map",
+  "/articles",
+]);
+
 function buildHead(o: HeadOpts): string {
   const desc = (o.description || "").trim();
   const img = (o.ogImage || "").trim() || DEFAULT_OG_IMAGE;
@@ -3844,7 +3844,8 @@ function buildHead(o: HeadOpts): string {
   // canonical at English consolidates them honestly; advertising an hreflang
   // alternate for a translation that does not exist is what let /es/answers
   // compete with /answers as an English result.
-  const servingEnglishUnderLocale = !!o.untranslated && locale !== "en";
+  const servingEnglishUnderLocale =
+    locale !== "en" && (o.untranslated ?? NO_TRANSLATION_UNDER_LOCALE.has(path));
   const canonical = localizable
     ? (servingEnglishUnderLocale
         ? `${SITE}${path === "/" ? "/" : path}`
@@ -3900,9 +3901,10 @@ function buildHead(o: HeadOpts): string {
 function renderShell(
   html: string,
   head: string,
-  body: string,
+  bodyIn: string,
   locale: Loc = "en",
 ): string {
+  let body = bodyIn;
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/gi, "")
     .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
@@ -3910,10 +3912,24 @@ function renderShell(
     .replace(/<meta[^>]+name=["']twitter:[a-z:]+["'][^>]*>\s*/gi, "")
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+name=["']robots["'][^>]*>\s*/gi, "");
+  // If the head does not advertise an alternate for this locale, buildHead has
+  // already judged the page to be the English source under a locale URL. The
+  // lang attribute must agree with that judgement, because it describes the text
+  // actually served and a wrong value misleads a screen reader as much as a
+  // crawler.
+  const claimsThisLocale = new RegExp(`hreflang="${locale}"`).test(head);
+  const servingEnglishUnderLocale = locale !== "en" && !claimsThisLocale;
+  const langAttr = servingEnglishUnderLocale ? "en" : (locale || "en");
   out = out.replace(/<html([^>]*)>/i, (_m, attrs: string) => {
     const cleaned = String(attrs).replace(/\s+lang=["'][^"']*["']/gi, "");
-    return `<html lang="${locale || "en"}"${cleaned}>`;
+    return `<html lang="${langAttr}"${cleaned}>`;
   });
+  if (servingEnglishUnderLocale) {
+    const notice = locale === "es"
+      ? `<p data-prerender="untranslated" lang="es"><strong>Esta página aún no está traducida. Está leyendo el original en inglés.</strong> El resto del sitio sí está traducido; esta página todavía no.</p>`
+      : `<p data-prerender="untranslated" lang="de"><strong>Diese Seite ist noch nicht übersetzt. Sie lesen das englische Original.</strong> Der Rest der Website ist übersetzt, diese Seite noch nicht.</p>`;
+    body = notice + body;
+  }
   out = out.replace(/<\/head>/i, `${head}\n</head>`);
   if (/<div id="root">\s*<\/div>/i.test(out)) {
     out = out.replace(/<div id="root">\s*<\/div>/i, `<div id="root">${body}</div>`);
