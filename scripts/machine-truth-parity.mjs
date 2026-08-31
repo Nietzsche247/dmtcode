@@ -523,6 +523,9 @@ for (const [id, path] of STATIC_LOCALE_PAGES) {
       text: article.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/\s+/g, ' '),
       lang: (html.match(/<html[^>]*\blang="([^"]*)"/) || [, ''])[1],
       englishFallback: html.includes(`<!--tsrc:static:${id}-->`),
+      canonical: (html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]*)"/) || [, ''])[1],
+      altLocales: [...html.matchAll(/<link[^>]+rel="alternate"[^>]+hreflang="([^"]*)"/g)].map((m) => m[1]),
+      untranslatedNotice: /data-prerender="untranslated"/.test(html),
     };
   }
 }
@@ -536,8 +539,37 @@ if (localeDown) {
 
     for (const loc of LOCALES) {
       const d = localeDocs[`${id}|${loc}`];
-      check(`lang attribute on ${loc} /${id} is ${loc}`, d.lang === loc, d.lang);
+      const fellBackHere = loc !== 'en' && d.englishFallback;
+      // Serving the English source under /es is allowed. Claiming it is Spanish
+      // is not. lang must describe the text actually served, the canonical must
+      // point at the English original rather than compete with it, the page must
+      // not advertise an hreflang alternate for a translation that does not
+      // exist, and the reader must be told.
+      check(
+        `lang attribute on ${loc} /${id} describes what is served`,
+        fellBackHere ? d.lang === 'en' : d.lang === loc,
+        `${d.lang}${fellBackHere ? ' (English fallback)' : ''}`,
+      );
       check(`${loc} /${id} rendered a prerender body`, d.article.length > 0);
+      if (fellBackHere) {
+        check(
+          `${loc} /${id} canonicalises to the English original`,
+          d.canonical === `${SITE}${path === '/' ? '/' : path}`,
+          d.canonical,
+        );
+        check(
+          `${loc} /${id} does not advertise a ${loc} translation it lacks`,
+          !d.altLocales.includes(loc),
+          d.altLocales.join(','),
+        );
+        check(`${loc} /${id} tells the reader it is untranslated`, d.untranslatedNotice);
+      } else if (loc !== 'en') {
+        check(
+          `${loc} /${id} advertises its own translation`,
+          d.altLocales.includes(loc),
+          d.altLocales.join(','),
+        );
+      }
     }
 
     const translated = LOCALES.filter((loc) => loc !== 'en' && !localeDocs[`${id}|${loc}`].englishFallback);

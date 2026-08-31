@@ -3640,13 +3640,34 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     ? trs.body_extra_html
     : (page.bodyExtraHtml ?? "");
 
+  // The single fact the rest of this function needs: did a translation actually
+  // apply, or is this the English source wearing a locale URL? The body below
+  // already branches on exactly this condition, so reuse it rather than guess.
+  const servingEnglishSource = locale !== "en" && !(trs.body_html && trs.body_html.trim());
+
   const attribution = key === "home" || key === "protocol-guide" || key === "about"
     ? await golerAttribution(locale)
+    : "";
+
+  // Telling the reader is the point. A page that silently serves English under
+  // /es is the same defect class as a count that means something other than its
+  // label: the surface claims one thing and delivers another.
+  const untranslatedNotice = servingEnglishSource
+    ? `<p data-prerender="untranslated" lang="en"><strong>${
+        locale === "es"
+          ? "Esta página aún no está traducida. Está leyendo el original en inglés."
+          : "Diese Seite ist noch nicht übersetzt. Sie lesen das englische Original."
+      }</strong> ${
+        locale === "es"
+          ? "El resto del sitio sí está traducido; esta página todavía no."
+          : "Der Rest der Website ist übersetzt, diese Seite noch nicht."
+      }</p>`
     : "";
 
   const body = trs.body_html && trs.body_html.trim()
     ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
+  ${untranslatedNotice}
   <!--tsrc:static:${key}-->
   ${enSource}
   <!--/tsrc-->
@@ -3692,10 +3713,13 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     canonical,
     ogType: "website",
     robots: page.robots,
+    untranslated: servingEnglishSource,
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, ...extraLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body, locale);
+  // lang must describe the text actually served. Declaring lang="es" over
+  // English prose misleads screen readers as much as it misleads a crawler.
+  const html = renderShell(await shellRes.text(), head, body, servingEnglishSource ? "en" : locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
@@ -3793,6 +3817,12 @@ type HeadOpts = {
   ogImageWidth?: number;
   ogImageHeight?: number;
   robots?: string;
+  // True when the requested locale is not English and no translation exists, so
+  // the page is serving the English source. A page in that state must not claim
+  // to be a translation: it canonicalises to the English URL, drops its own
+  // locale from the alternate set, and declares lang="en", because that is what
+  // the reader is actually being served.
+  untranslated?: boolean;
   jsonLd?: unknown[];
 };
 
@@ -3810,10 +3840,17 @@ function buildHead(o: HeadOpts): string {
   }
   // /agent is English-only infrastructure: no locale mirrors, no alternates.
   const localizable = !!path && !path.startsWith("/agent");
+  // An untranslated locale page is a duplicate of the English one. Pointing its
+  // canonical at English consolidates them honestly; advertising an hreflang
+  // alternate for a translation that does not exist is what let /es/answers
+  // compete with /answers as an English result.
+  const servingEnglishUnderLocale = !!o.untranslated && locale !== "en";
   const canonical = localizable
-    ? `${SITE}${locale !== "en" ? "/" + locale : ""}${path === "/" ? "/" : path}`
+    ? (servingEnglishUnderLocale
+        ? `${SITE}${path === "/" ? "/" : path}`
+        : `${SITE}${locale !== "en" ? "/" + locale : ""}${path === "/" ? "/" : path}`)
     : o.canonical;
-  const alternates = localizable
+  const alternates = localizable && !servingEnglishUnderLocale
     ? [
         `<link rel="alternate" hreflang="en" href="${esc(SITE + path)}" />`,
         // Locale roots keep the trailing slash so the alternate matches the
@@ -3822,7 +3859,12 @@ function buildHead(o: HeadOpts): string {
         `<link rel="alternate" hreflang="de" href="${esc(SITE + "/de" + (path === "/" ? "/" : path))}" />`,
         `<link rel="alternate" hreflang="x-default" href="${esc(SITE + path)}" />`,
       ]
-    : [];
+    : localizable
+      ? [
+          `<link rel="alternate" hreflang="en" href="${esc(SITE + path)}" />`,
+          `<link rel="alternate" hreflang="x-default" href="${esc(SITE + path)}" />`,
+        ]
+      : [];
   const dims =
     o.ogImageWidth && o.ogImageHeight
       ? [
