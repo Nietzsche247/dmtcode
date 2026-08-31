@@ -12,13 +12,24 @@
 #                    and locale index-title coverage on live pages. It exists because
 #                    a sitemap-derived work list cannot see routes missing from the
 #                    sitemap (scripts/route_parity.py; FULL sweep off-push).
-#   4. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
+#   4. machine-parity : runs scripts/machine-truth-parity.mjs against production.
+#                    521 assertions over crawler HTML, /data.json, the Shopify
+#                    product JSON, the database invariants and the policy pages,
+#                    in English, Spanish and German.
+#   5. hydration-parity : runs scripts/hydration-parity.mjs against production.
+#                    Reads each evidence-critical route twice, raw HTML and the DOM
+#                    after React hydrates, and fails when the two disagree about a
+#                    fact. It exists because the machine suite reported 523 green
+#                    on 2026-08-30 while ConvergenceHero.tsx was rendering the
+#                    pre-migration claim back over correct prerendered HTML.
+#                    Needs a browser; uses the runner's Chrome via playwright-core.
+#   6. graph-refresh (nightly/manual only): CI-installs graphify, rebuilds the code
 #                    graph, repackages ONLY the generated agent-map artifacts and
 #                    commits them. The commit carries [skip actions], which stops
 #                    GitHub Actions re-triggering this workflow but is NOT recognized
 #                    by Netlify, so the push still deploys the committed docs/agent/*
 #                    assets. Degrades to verify-only if graphify cannot run.
-#   5. report      : merges everything into drift-report.md + a Lovable-ready
+#   7. report      : merges everything into drift-report.md + a Lovable-ready
 #                    fix-prompt.md (artifacts), and maintains ONE rolling issue
 #                    labeled geo-drift. Fix prompts are never auto-sent.
 #
@@ -301,8 +312,65 @@ jobs:
         if: always()
         with: { name: graph-report, path: graph_report.json }
 
+  machine-parity:
+    # The crawler-facing contract: 521 assertions across HTML, JSON feeds, the
+    # Shopify product data, database invariants and all three locales.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Wait for Netlify deploy (push events race the build)
+        if: github.event_name == 'push'
+        run: sleep 240
+      - name: Machine truth parity
+        env:
+          PARITY_JSON: machine_parity_report.json
+        run: node scripts/machine-truth-parity.mjs "$SITE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: machine-parity-report, path: machine_parity_report.json }
+
+  hydration-parity:
+    # What a person actually sees. Compares raw prerendered HTML against the DOM
+    # after React hydrates and fails when they disagree about a fact, not about
+    # markup. Without this, a component can render the pre-migration meaning back
+    # over correct HTML and every other job still passes.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Locate a browser on the runner
+        run: |
+          for c in google-chrome google-chrome-stable chromium-browser chromium; do
+            p=$(command -v "$c" || true)
+            if [ -n "$p" ]; then
+              echo "PARITY_BROWSER_PATH=$p" >> "$GITHUB_ENV"
+              echo "using $p"
+              exit 0
+            fi
+          done
+          echo "no browser binary found on PATH; the suite will try playwright channels"
+      - name: Wait for Netlify deploy (push events race the build)
+        if: github.event_name == 'push'
+        run: sleep 240
+      - name: Hydrated React parity
+        env:
+          PARITY_JSON: hydration_parity_report.json
+        run: node scripts/hydration-parity.mjs "$SITE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: hydration-parity-report, path: hydration_parity_report.json }
+
   report:
-    needs: [prod-checks, repo-drift, route-parity, graph-refresh]
+    needs: [prod-checks, repo-drift, route-parity, machine-parity, hydration-parity, graph-refresh]
     if: always()
     runs-on: ubuntu-latest
     permissions:
