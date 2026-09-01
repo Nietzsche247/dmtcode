@@ -348,10 +348,6 @@ export type Database = {
       }
       bibliography: {
         Row: {
-          issue_date: string | null
-          online_publication_date: string | null
-          publication_status: string | null
-          relation_to_core_question: string | null
           abstract: string | null
           authority_type: string | null
           authors: string | null
@@ -367,9 +363,13 @@ export type Database = {
           id: string
           is_approved: boolean
           isbn: string | null
+          issue_date: string | null
           journal: string | null
+          online_publication_date: string | null
           pmid: string | null
           publication_date: string | null
+          publication_status: string | null
+          relation_to_core_question: string | null
           source: string
           source_date: string | null
           stance_score: number | null
@@ -387,10 +387,6 @@ export type Database = {
           url: string | null
         }
         Insert: {
-          issue_date?: string | null
-          online_publication_date?: string | null
-          publication_status?: string | null
-          relation_to_core_question?: string | null
           abstract?: string | null
           authority_type?: string | null
           authors?: string | null
@@ -406,9 +402,13 @@ export type Database = {
           id?: string
           is_approved?: boolean
           isbn?: string | null
+          issue_date?: string | null
           journal?: string | null
+          online_publication_date?: string | null
           pmid?: string | null
           publication_date?: string | null
+          publication_status?: string | null
+          relation_to_core_question?: string | null
           source?: string
           source_date?: string | null
           stance_score?: number | null
@@ -426,10 +426,6 @@ export type Database = {
           url?: string | null
         }
         Update: {
-          issue_date?: string | null
-          online_publication_date?: string | null
-          publication_status?: string | null
-          relation_to_core_question?: string | null
           abstract?: string | null
           authority_type?: string | null
           authors?: string | null
@@ -445,9 +441,13 @@ export type Database = {
           id?: string
           is_approved?: boolean
           isbn?: string | null
+          issue_date?: string | null
           journal?: string | null
+          online_publication_date?: string | null
           pmid?: string | null
           publication_date?: string | null
+          publication_status?: string | null
+          relation_to_core_question?: string | null
           source?: string
           source_date?: string | null
           stance_score?: number | null
@@ -2935,17 +2935,16 @@ export type Database = {
       theories: {
         Row: {
           applied_to_dmtcode_by: string | null
+          content: string
+          created_at: string
           directly_addresses_dmt_laser: boolean | null
           dmtcode_application_year: number | null
           framework_originator: string | null
-          original_publication_year: number | null
-          primary_source: string | null
-          theory_class: string | null
-          content: string
-          created_at: string
           id: string
           is_approved: boolean
           origin: string
+          original_publication_year: number | null
+          primary_source: string | null
           probability_percentage: number | null
           proponent: string | null
           source_title: string | null
@@ -2953,6 +2952,7 @@ export type Database = {
           source_url: string | null
           summary: string
           tags: string[] | null
+          theory_class: string | null
           title: string
           updated_at: string
           upvotes: number
@@ -2960,17 +2960,16 @@ export type Database = {
         }
         Insert: {
           applied_to_dmtcode_by?: string | null
+          content: string
+          created_at?: string
           directly_addresses_dmt_laser?: boolean | null
           dmtcode_application_year?: number | null
           framework_originator?: string | null
-          original_publication_year?: number | null
-          primary_source?: string | null
-          theory_class?: string | null
-          content: string
-          created_at?: string
           id?: string
           is_approved?: boolean
           origin?: string
+          original_publication_year?: number | null
+          primary_source?: string | null
           probability_percentage?: number | null
           proponent?: string | null
           source_title?: string | null
@@ -2978,6 +2977,7 @@ export type Database = {
           source_url?: string | null
           summary: string
           tags?: string[] | null
+          theory_class?: string | null
           title: string
           updated_at?: string
           upvotes?: number
@@ -2985,17 +2985,16 @@ export type Database = {
         }
         Update: {
           applied_to_dmtcode_by?: string | null
+          content?: string
+          created_at?: string
           directly_addresses_dmt_laser?: boolean | null
           dmtcode_application_year?: number | null
           framework_originator?: string | null
-          original_publication_year?: number | null
-          primary_source?: string | null
-          theory_class?: string | null
-          content?: string
-          created_at?: string
           id?: string
           is_approved?: boolean
           origin?: string
+          original_publication_year?: number | null
+          primary_source?: string | null
           probability_percentage?: number | null
           proponent?: string | null
           source_title?: string | null
@@ -3003,6 +3002,7 @@ export type Database = {
           source_url?: string | null
           summary?: string
           tags?: string[] | null
+          theory_class?: string | null
           title?: string
           updated_at?: string
           upvotes?: number
@@ -3555,6 +3555,57 @@ export type Database = {
       }
     }
     Views: {
+      crawler_bot_health: {
+        Row: {
+          active_days: number | null
+          bot_name: string | null
+          days_silent: number | null
+          prev_week: number | null
+          status: string | null
+          this_week: number | null
+          typical_gap_days: number | null
+        }
+        Relationships: []
+      }
+      crawler_hits_clean: {
+        Row: {
+          bot_class: string | null
+          bot_name: string | null
+          id: string | null
+          ip_address: string | null
+          path: string | null
+          referer: string | null
+          status_code: number | null
+          ts: string | null
+          user_agent: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          bot_class?: string | null
+          bot_name?: string | null
+          id?: string | null
+          ip_address?: string | null
+          path?: string | null
+          referer?: string | null
+          status_code?: number | null
+          ts?: string | null
+          user_agent?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          bot_class?: string | null
+          bot_name?: string | null
+          id?: string | null
+          ip_address?: string | null
+          path?: string | null
+          referer?: string | null
+          status_code?: number | null
+          ts?: string | null
+          user_agent?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       retreat_referral_stats: {
         Row: {
           clicks_human: number | null
