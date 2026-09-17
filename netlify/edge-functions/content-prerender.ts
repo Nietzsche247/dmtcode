@@ -6358,7 +6358,6 @@ async function renderProductPage(
   <h1>${esc(kit.name)}</h1>
   <p>${esc(kit.shortName)}, ${esc(observerPhrase(kit))}, ${kit.emitters.length === 1 ? "1 light source" : `${kit.emitters.length} light sources`}.</p>
   <p><strong>${esc(kit.price)}</strong></p>
-  <p>Parts at Arbor list: ${esc(kit.diyCost)}. The difference covers sourcing, one shipment and support.</p>
   <p>${esc(kit.description)}</p>
   <p>${esc(kit.availability)} Processed within 2 business days.</p>
   <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>

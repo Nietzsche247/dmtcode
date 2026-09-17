@@ -139,9 +139,6 @@ function KitCard({ kit }: { kit: Kit }) {
       <div className="mt-4 text-3xl font-black tracking-tight tabular-nums">
         {usd(kit.priceNumber)}
       </div>
-      <div className="text-xs text-muted-foreground mt-1">
-        Parts at Arbor list: {kit.diyCost}. The difference covers sourcing, one shipment and support.
-      </div>
 
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
         {kit.description}
