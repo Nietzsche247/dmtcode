@@ -273,9 +273,6 @@ const ProductDetail = () => {
             </div>
 
             <div className="text-3xl font-black tracking-tight tabular-nums mt-5">{kit.price}</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Parts at Arbor list: {kit.diyCost}. The difference covers sourcing, one shipment and support.
-            </div>
 
             <p className="text-sm text-muted-foreground mt-6 leading-relaxed">{kit.description}</p>
 
