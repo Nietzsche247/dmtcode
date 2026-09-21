@@ -42,6 +42,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/faq", "0.7", "monthly"],
   ["/events", "0.7", "weekly"],
   ["/retreats", "0.7", "weekly"],
+  ["/retreats/laser-protocol", "0.8", "monthly"],
   ["/protocols", "0.8", "weekly"],
   ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],
