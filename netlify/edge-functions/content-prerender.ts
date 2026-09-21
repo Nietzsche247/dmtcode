@@ -586,6 +586,10 @@ export default async (request: Request, context: Context) => {
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderEventDetail(context, id, locale);
     }
+    // Matched BEFORE the UUID branch: this slug is a page, not a record id.
+    if (kind === "retreats" && seg.length === 2 && seg[1] === "laser-protocol") {
+      return await renderRetreatLaserProtocol(context, locale);
+    }
     if (kind === "retreats" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderRetreatDetail(context, id, locale);
     }
@@ -4716,6 +4720,116 @@ async function renderRetreats(context: Context, locale: Loc = "en"): Promise<Res
     canonical,
     ogType: "website",
     jsonLd: jsonLdArr,
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- /retreats/laser-protocol : the honest negative ----------
+// The answer sentence carries its own date on purpose: a reader must be able to
+// see how old the claim is without opening any JSON. The count line is omitted
+// entirely when the rows cannot be fetched, never rendered as a zero.
+
+const LASER_PROTOCOL_TITLE = "Which retreats use a 650 nm laser protocol? (2026)";
+const LASER_PROTOCOL_ANSWER =
+  "As of 21 September 2026, no listed retreat is verified as running inhaled N,N-DMT with a 650 nm diffraction protocol.";
+const LASER_PROTOCOL_FAQ: { q: string; a: string }[] = [
+  {
+    q: "Which retreats use a 650 nm laser protocol?",
+    a: "As of 21 September 2026, none that this registry has verified. Every listed center reads No.",
+  },
+  {
+    q: "Does the Code of Reality Retreat run the protocol?",
+    a: "That is a dated third-party event, not a standing center. Its laser flag is Unverified and it is not a row in this table.",
+  },
+  {
+    q: "How do I get a center added?",
+    a: "A new row needs the same public-identity bar the existing list meets, plus a source URL if the laser cell is anything other than No.",
+  },
+];
+
+async function renderRetreatLaserProtocol(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}${lpath(locale, "/retreats/laser-protocol")}`;
+  const metaDesc = `${LASER_PROTOCOL_ANSWER} The checklist, with sources and last-verified dates.`;
+
+  const rows = await sbGetRows(
+    "retreats",
+    "is_approved=is.true&select=id,name,location,country,website_url,laser_protocol," +
+      "laser_protocol_source,laser_protocol_last_verified",
+  );
+
+  const sorted = [...rows].sort((a, b) => {
+    const ca = String(a.country || a.location || "").toLowerCase();
+    const cb = String(b.country || b.location || "").toLowerCase();
+    if (ca !== cb) return ca < cb ? -1 : 1;
+    return String(a.name || "").localeCompare(String(b.name || ""));
+  });
+  const yesCount = sorted.filter((r) => String(r.laser_protocol) === "Yes").length;
+
+  const tableRows = sorted
+    .map((r) => {
+      const site = r.website_url ? String(r.website_url) : "";
+      return `<tr>
+  <td>${esc(String(r.name || ""))}</td>
+  <td>${esc(String(r.country || r.location || ""))}</td>
+  <td>${esc(String(r.laser_protocol || "No"))}</td>
+  <td>${esc(String(r.laser_protocol_last_verified || "—"))}</td>
+  <td>${site ? `<a href="${esc(site)}" rel="nofollow noopener">Official site</a>` : "—"}</td>
+</tr>`;
+    })
+    .join("\n");
+
+  const body = `<article data-prerender="retreats-laser-protocol">
+  <h1>${esc(LASER_PROTOCOL_TITLE)}</h1>
+  <p>${esc(LASER_PROTOCOL_ANSWER)}</p>
+  <p>The table below is the checklist, not a ranking and not a booking engine.</p>
+  ${sorted.length ? `<p>${sorted.length} centers listed. ${yesCount} verified Yes.</p>` : ""}
+  <table>
+    <thead><tr><th>Center</th><th>Country</th><th>Laser protocol</th><th>Last verified</th><th>Official source</th></tr></thead>
+    <tbody>${tableRows}</tbody>
+  </table>
+  <section>
+    <h2>How a row becomes Yes</h2>
+    <p>Yes requires a source on this page: a public page, protocol PDF, or dated organizer statement that the retreat runs inhaled N,N-DMT with a specified 650 nm diffraction setup. Marketing language such as "laser experience", "code", or "matrix" is not enough. A past private experiment is not enough. A 5-MeO-DMT programme is not the protocol. Psilocybin is not the protocol. Default is No.</p>
+  </section>
+  <section>
+    <h2>What this page is not</h2>
+    <p>It is not a "best DMT retreats" list. It does not rank safety, cuisine, or price. A listing is not an endorsement. These centers have not been inspected. Legal status is a country-level frame, not a license for any one operator. The Code of Reality Retreat 2026 in Nosara is a dated third-party event, not a standing center, so it is not a row in this table.</p>
+  </section>
+  <section>
+    <h2>Questions</h2>
+    ${LASER_PROTOCOL_FAQ.map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join("\n    ")}
+  </section>
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Retreat centers", item: `${SITE}/retreats` },
+      { "@type": "ListItem", position: 3, name: LASER_PROTOCOL_TITLE, item: canonical },
+    ],
+  };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: LASER_PROTOCOL_FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  const head = buildHead({
+    locale,
+    title: LASER_PROTOCOL_TITLE,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [breadcrumbLd, faqLd],
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
