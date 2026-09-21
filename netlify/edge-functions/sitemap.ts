@@ -43,6 +43,13 @@ const STATIC: Array<[string, string, string]> = [
   ["/events", "0.7", "weekly"],
   ["/retreats", "0.7", "weekly"],
   ["/retreats/laser-protocol", "0.8", "monthly"],
+  // Standing answer pages under /events. Slugs, not records: they answer a query
+  // where the open web currently has a wrong answer.
+  ["/events/boom-festival-2026", "0.8", "monthly"],
+  ["/events/ozora-vs-boom-2026", "0.7", "monthly"],
+  ["/events/how-dates-are-checked", "0.6", "monthly"],
+  // The index of the machine surface.
+  ["/for-agents", "0.8", "monthly"],
   ["/protocols", "0.8", "weekly"],
   ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],
