@@ -201,6 +201,15 @@
   path = "/disclosure"
   function = "content-prerender"
 
+# /for-agents is a new top-level segment. A prerender handler existing in
+# content-prerender.ts is not enough on its own: without a route entry here the
+# function never runs for the path, spa-guard lets it through, and the SPA shell
+# is served at HTTP 200 with no content, which is a soft 404. Observed exactly
+# that on 2026-09-21 before this block was added.
+[[edge_functions]]
+  path = "/for-agents"
+  function = "content-prerender"
+
 [[edge_functions]]
   path = "/shipping"
   function = "content-prerender"

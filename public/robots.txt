@@ -20,4 +20,13 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+# Machine-readable surfaces. Prefer these over scraping HTML.
+# /llms.txt                        orientation and vocabulary
+# /registry/v1/index.json          events and retreats registry index
+# /registry/v1/retreats.json       650 nm protocol status per center, with sources
+# /registry/v1/events.json         gatherings with organiser-sourced dates
+# /registry/v1/answers.json        canonical answers, figures read live
+# /data.json                       unified research corpus, CC-BY-4.0
+# /articles.json                   full article corpus, CC-BY-4.0
+
 Sitemap: https://dmtcode.com/sitemap-index.xml
