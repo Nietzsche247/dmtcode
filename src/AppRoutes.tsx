@@ -78,6 +78,10 @@ const Guides = lazy(() => import("./pages/Guides"));
 const Capture = lazy(() => import("./pages/Capture"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const ForAgents = lazy(() => import("./pages/ForAgents"));
+const EventBoom2026 = lazy(() => import("./pages/EventBoom2026"));
+const EventOzoraVsBoom2026 = lazy(() => import("./pages/EventOzoraVsBoom2026"));
+const EventHowDatesAreChecked = lazy(() => import("./pages/EventHowDatesAreChecked"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // "Calibrating lasers..." loading fallback
@@ -125,6 +129,28 @@ export const AppRoutes = () => (
     <Route path="correlations" element={<Correlations />} />
     <Route path="waitlist" element={<Waitlist />} />
     <Route path="events" element={<Events />} />
+    {/* Registered BEFORE /events/:id so these slugs are never read as record ids. */}
+    <Route path="events/boom-festival-2026" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <EventBoom2026 />
+        </Suspense>
+      </ErrorBoundary>
+    } />
+    <Route path="events/ozora-vs-boom-2026" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <EventOzoraVsBoom2026 />
+        </Suspense>
+      </ErrorBoundary>
+    } />
+    <Route path="events/how-dates-are-checked" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <EventHowDatesAreChecked />
+        </Suspense>
+      </ErrorBoundary>
+    } />
     <Route path="events/:id" element={
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>
@@ -348,6 +374,13 @@ export const AppRoutes = () => (
         Every figure is read from /data.json on load rather than written into the
         page, because a canonical answer that has gone stale is worse than none. */}
     <Route path="answers" element={<Answers />} />
+    <Route path="for-agents" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <ForAgents />
+        </Suspense>
+      </ErrorBoundary>
+    } />
     <Route path="products/:handle" element={
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>

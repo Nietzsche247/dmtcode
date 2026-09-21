@@ -38,13 +38,16 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
   "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats", "preregister", "documents", "answers",
+  // The index of the machine surface. Shipped together with its
+  // content-prerender handler, so this is a real 200 and not a soft 404.
+  "for-agents",
   // The bare downloads path must pass through, not 404 here. Edge functions run
   // before Netlify redirect rules, so blocking it would kill the 301 that sends
   // it to /documents. The PDF files under it take the asset branch above.
   "downloads",
-  // NOTE: the legal and for-agents segments are deliberately absent. The events
-  // module will add /legal/:country and /for-agents, but neither the React
-  // router nor content-prerender serves them today, so allowing them here
+  // NOTE: the legal segment is deliberately absent. The events
+  // module will add /legal/:country, but neither the React
+  // router nor content-prerender serves it today, so allowing it here
   // returns the empty SPA shell with HTTP 200: a soft 404, which is worse for
   // indexing than the honest 404 they get now. Add them in the same change that
   // ships the pages, together with their content-prerender routes. The
@@ -101,6 +104,12 @@ function isDetailPatternValid(path: string): boolean {
   // /retreats/laser-protocol is a standing page, not a record. Named explicitly
   // so a future tightening of the slug rule cannot silently 404 it.
   if (ev && ev[1].toLowerCase() === "retreats" && ev[2].toLowerCase() === "laser-protocol") return true;
+  // Standing answer pages under /events. Named explicitly for the same reason:
+  // they are pages, not record ids.
+  if (
+    ev && ev[1].toLowerCase() === "events" &&
+    ["boom-festival-2026", "ozora-vs-boom-2026", "how-dates-are-checked"].includes(ev[2].toLowerCase())
+  ) return true;
   if (ev) return UUID_RE.test(ev[2]) || SLUG_RE.test(ev[2]);
   // /events/festivals/:region and /events/conferences/:region geo hubs.
   const hub = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i);

@@ -574,6 +574,9 @@ export default async (request: Request, context: Context) => {
     if (seg.length === 0) {
       return await renderStatic(context, "home", locale);
     }
+    if (kind === "for-agents" && seg.length === 1) {
+      return await renderForAgents(context, locale);
+    }
     if (seg.length === 1 && STATIC_PAGES[kind]) {
       return await renderStatic(context, kind, locale);
     }
@@ -593,6 +596,11 @@ export default async (request: Request, context: Context) => {
     if (kind === "guides" && seg.length === 2 && seg[1]) { return await renderGuideDetail(context, seg[1], locale); }
     if (kind === "theories" && seg.length === 2 && seg[1]) { return await renderTheoryDetail(context, seg[1], locale); }
 
+    // Matched BEFORE the events UUID branch: these slugs are standing pages,
+    // not record ids.
+    if (kind === "events" && seg.length === 2 && EVENT_ANSWER_PAGES[seg[1]]) {
+      return await renderEventAnswerPage(context, seg[1], locale);
+    }
     if (kind === "events" && seg.length === 2 && UUID_RE.test(id)) {
       return await renderEventDetail(context, id, locale);
     }
@@ -4840,6 +4848,229 @@ async function renderRetreatLaserProtocol(context: Context, locale: Loc = "en"):
     canonical,
     ogType: "website",
     jsonLd: [breadcrumbLd, faqLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- /for-agents : the index of the machine surface ----------
+
+const FOR_AGENTS_TITLE = "Machine-readable endpoints for agents";
+const FOR_AGENTS_RULES: string[] = [
+  "Every /registry/v1/ endpoint is computed from the database at request time. There are no checked-in JSON files behind those URLs.",
+  "generated_at is when the response was computed. last_verified on a row is when a human last clicked that row's source. They are different fields and must not be conflated.",
+  "A count that could not be read is omitted, never reported as zero. An absent value means unknown, not none.",
+  "Do not report a laser_protocol of Yes that is not present in retreats.json. The database has a CHECK constraint making a Yes without a source URL unwritable.",
+  "Inclusion in any list here is not an endorsement.",
+];
+const FOR_AGENTS_ENDPOINTS: { path: string; purpose: string }[] = [
+  { path: "/registry/v1/index.json", purpose: "Entry point. Lists every endpoint below with its shape and freshness." },
+  { path: "/registry/v1/collections.json", purpose: "The collections this registry publishes and what each one counts." },
+  { path: "/registry/v1/events.json", purpose: "Dated third-party events, with organiser source URLs and last_verified dates." },
+  { path: "/registry/v1/retreats.json", purpose: "Standing retreat centers and the laser_protocol field, source-required for any Yes." },
+  { path: "/registry/v1/answers.json", purpose: "Short answers to the questions this site is most often asked, computed live." },
+  { path: "/registry/v1/queries.json", purpose: "The queries these pages are written to answer, with the canonical URL for each." },
+  { path: "/data.json", purpose: "The full corpus: symbols, bibliography, trials, protocols and counts, under CC BY 4.0." },
+  { path: "/articles.json", purpose: "Published articles with slugs, dates and source attribution." },
+  { path: "/llms.txt", purpose: "Prose orientation for language models: what this site claims and what it does not." },
+  { path: "/sitemap.xml", purpose: "Every canonical URL, including the /es/ and /de/ mirrors." },
+];
+
+async function renderForAgents(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}${lpath(locale, "/for-agents")}`;
+  const metaDesc =
+    "The index of the machine surface: every /registry/v1/ endpoint, computed from the database at request time, with the reading rules that keep a quote from this site accurate.";
+
+  const body = `<article data-prerender="for-agents">
+  <h1>${esc(FOR_AGENTS_TITLE)}</h1>
+  <p>This is the index of the machine surface. Read these rules before quoting any figure from this site.</p>
+  <section>
+    <h2>How to read these responses</h2>
+    <ul>${FOR_AGENTS_RULES.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
+  </section>
+  <section>
+    <h2>Endpoints</h2>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Purpose</th></tr></thead>
+      <tbody>${FOR_AGENTS_ENDPOINTS.map(
+        (e) => `<tr><td><a href="${esc(e.path)}">${esc(e.path)}</a></td><td>${esc(e.purpose)}</td></tr>`,
+      ).join("")}</tbody>
+    </table>
+  </section>
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: FOR_AGENTS_TITLE, item: canonical },
+    ],
+  };
+
+  const head = buildHead({
+    locale,
+    title: FOR_AGENTS_TITLE,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    jsonLd: [breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- Standing answer pages under /events ----------
+// Each of these answers a query where the open web currently carries a wrong
+// answer. Every date was verified against the organiser's own site on
+// 2026-09-21. Matched before the /events/:uuid branch.
+
+interface EventAnswerPage {
+  title: string;
+  description: string;
+  lead: string;
+  sections: { h: string; ps: string[] }[];
+  faq?: { q: string; a: string }[];
+}
+
+const EVENT_ANSWER_PAGES: Record<string, EventAnswerPage> = {
+  "boom-festival-2026": {
+    title: "There is no Boom Festival in 2026",
+    description:
+      "Boom is biennial. The previous edition was 2025 and the next is 18 to 25 July 2027 at Boomland, Idanha-a-Nova, Portugal. Verified against boomfestival.org on 21 September 2026.",
+    lead: "Boom is biennial. The previous edition was 2025, and the next is 18 to 25 July 2027 at Boomland, Idanha-a-Nova, Portugal. The official source is boomfestival.org.",
+    sections: [
+      {
+        h: "What actually happened in 2026",
+        ps: [
+          "Boomland itself was not dark in 2026. The same organisation ran Being Gathering there from 1 to 5 July 2026, which was not a Boom Festival edition.",
+          "The European gathering that filled that summer slot was Ozora, 27 July to 4 August 2026 at Dadpuszta, Hungary. That is a different organiser and a different site.",
+          "Buy nothing that claims to be Boom 2026.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Is there a Boom Festival in 2026?", a: "No. Boom is biennial and 2026 is an off year." },
+      {
+        q: "When is the next Boom Festival?",
+        a: "18 to 25 July 2027, Boomland, Idanha-a-Nova, Portugal. Confirm on boomfestival.org.",
+      },
+      {
+        q: "Did anything happen at Boomland in 2026?",
+        a: "Yes. Being Gathering, 1 to 5 July 2026, run by the same organisation on the same land. It was not a Boom Festival edition.",
+      },
+    ],
+  },
+  "ozora-vs-boom-2026": {
+    title: "Ozora vs Boom in 2026",
+    description:
+      "They are not the same gathering and only one of them happened. Ozora ran 27 July to 4 August 2026 in Hungary. Boom had no 2026 edition; the next is 18 to 25 July 2027 in Portugal.",
+    lead: "They are not the same gathering, and only one of them happened.",
+    sections: [
+      {
+        h: "Two organisers, two countries, two sites",
+        ps: [
+          "Ozora 2026 ran 27 July to 4 August at Dadpuszta, Hungary. Boom had no 2026 edition; the next one is 18 to 25 July 2027 at Boomland, Idanha-a-Nova, Portugal.",
+          "A page selling \"Boom 2026\" tickets is wrong.",
+          "Neither gathering is verified as running a 650 nm protocol.",
+        ],
+      },
+    ],
+  },
+  "how-dates-are-checked": {
+    title: "How these dates are checked",
+    description:
+      "The method behind every event date on this site: organiser sites only, a human last_verified date, and rows pulled when a source stops resolving. With the worked examples from the 21 September 2026 pass.",
+    lead: "This is the method page for every event and retreat date published here.",
+    sections: [
+      {
+        h: "The rules",
+        ps: [
+          "Every date is taken from the organiser's own site. Aggregators and ticket resellers are never the source of record.",
+          "last_verified is the date a human opened that source, not the date the page was generated.",
+          "A source that stops resolving means the row is marked TBA or pulled. Two rows were pulled on 2026-09-21 for exactly this reason.",
+        ],
+      },
+      {
+        h: "What the 21 September 2026 pass found",
+        ps: [
+          "A listed festival domain that no longer resolved at all.",
+          "A festival domain that had been taken over by an unrelated content farm.",
+          "Two events misattributed to the wrong organiser.",
+          "Two festivals still listed as upcoming that had in fact been cancelled.",
+        ],
+      },
+      {
+        h: "Corrections",
+        ps: [
+          "Corrections are welcome. If a date here disagrees with an organiser's own site, tell us at /join and include the source URL.",
+        ],
+      },
+    ],
+  },
+};
+
+async function renderEventAnswerPage(
+  context: Context,
+  slug: string,
+  locale: Loc = "en",
+): Promise<Response> {
+  const page = EVENT_ANSWER_PAGES[slug];
+  if (!page) return await notFoundPrerender(context);
+  const shellRes = await context.next();
+  const canonical = `${SITE}${lpath(locale, `/events/${slug}`)}`;
+
+  const body = `<article data-prerender="events-${esc(slug)}">
+  <h1>${esc(page.title)}</h1>
+  <p>${esc(page.lead)}</p>
+  ${page.sections
+    .map(
+      (s) =>
+        `<section><h2>${esc(s.h)}</h2>${s.ps.map((p) => `<p>${esc(p)}</p>`).join("")}</section>`,
+    )
+    .join("\n  ")}
+  ${
+    page.faq
+      ? `<section><h2>Questions</h2>${page.faq
+          .map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`)
+          .join("")}</section>`
+      : ""
+  }
+</article>`;
+
+  const jsonLd: Record<string, unknown>[] = [
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+        { "@type": "ListItem", position: 2, name: "Events", item: `${SITE}/events` },
+        { "@type": "ListItem", position: 3, name: page.title, item: canonical },
+      ],
+    },
+  ];
+  if (page.faq) {
+    jsonLd.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: page.faq.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    });
+  }
+
+  const head = buildHead({
+    locale,
+    title: page.title,
+    description: page.description,
+    canonical,
+    ogType: "website",
+    jsonLd,
   });
 
   const html = renderShell(await shellRes.text(), head, body, locale);
