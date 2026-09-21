@@ -67,6 +67,18 @@ const clinicalNonReg = data.items.filter((i) => i.authority_type === 'Clinical' 
 check('no non registered record carries Clinical authority', clinicalNonReg.length === 0, `${clinicalNonReg.length} offenders`);
 const regNoId = data.items.filter((i) => i.record_type === 'registered_clinical_trial' && !i.registry_id);
 check('every registered clinical trial has a registry_id', regNoId.length === 0, `${regNoId.length} missing`);
+// 4b. The crawler facing /trials page has to state the totals, not only list
+// eight recent records. On 2026-09-01 a search grounded engine read the list
+// as "8 of about 20 are registered" because the page never said 254 of 266.
+// The number on the page must be the number in data.json, or the page is a
+// second, disagreeing source of truth.
+const registeredCount = data.items.filter((i) => i.record_type === 'registered_clinical_trial' && i.registry_id).length;
+const tc = trials.match(/holds <strong>(\d+)<\/strong> published records\. <strong>(\d+)<\/strong> of them are registered clinical trials/);
+check('trials page states the record totals', !!tc, tc ? `${tc[2]} of ${tc[1]}` : 'trials-counts section missing');
+if (tc) {
+  check('trials page total equals data.json counts.trials', Number(tc[1]) === data.counts.trials, `${tc[1]} vs ${data.counts.trials}`);
+  check('trials page registered count equals data.json', Number(tc[2]) === registeredCount, `${tc[2]} vs ${registeredCount}`);
+}
 
 // 5. Commerce: shop.json equals the Prepare page.
 for (const b of shop.bundles) {
@@ -154,6 +166,16 @@ if (withRelation.length === 0) {
   const agree = RELATIONS.concat(['not_stated']).every((k) => (tally[k] || 0) === (published[k] || 0));
   check('the published relation tally matches the rows it summarises', agree, `derived ${JSON.stringify(tally)} vs published ${JSON.stringify(published)}`);
   check('corpus_composition states the bibliography total', (cc.bibliography || {}).total === bibRows.length);
+  // Same rule as /trials: the composition has to be readable where the total
+  // is read, which is the crawler facing /bibliography index, not only the JSON.
+  const bibPage = await get('/bibliography');
+  const bc = bibPage.match(/holds <strong>(\d+)<\/strong> published records\. Of the (\d+) records classified[^<]*<strong>(\d+)<\/strong> are direct tests[^<]*<strong>(\d+)<\/strong> are adjacent/);
+  check('bibliography page states the composition', !!bc, bc ? `${bc[3]} direct, ${bc[4]} adjacent of ${bc[1]}` : 'bibliography-counts section missing');
+  if (bc) {
+    check('bibliography page total equals data.json', Number(bc[1]) === bibRows.length, `${bc[1]} vs ${bibRows.length}`);
+    check('bibliography page direct test count equals derived tally', Number(bc[3]) === (tally.direct_test || 0), `${bc[3]} vs ${tally.direct_test || 0}`);
+    check('bibliography page adjacent count equals derived tally', Number(bc[4]) === (tally.adjacent || 0), `${bc[4]} vs ${tally.adjacent || 0}`);
+  }
   // The reason this field exists. If most of the corpus were direct tests the
   // site would be claiming something it cannot support, so the ratio is asserted
   // rather than left as a number nobody reads.
