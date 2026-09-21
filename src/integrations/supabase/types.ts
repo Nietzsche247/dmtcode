@@ -2245,6 +2245,9 @@ export type Database = {
           intake_enabled: boolean
           is_approved: boolean
           jurisdiction_legal_status: string | null
+          laser_protocol: string
+          laser_protocol_last_verified: string | null
+          laser_protocol_source: string | null
           location: string
           medical_screening: boolean
           name: string
@@ -2270,6 +2273,9 @@ export type Database = {
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
+          laser_protocol?: string
+          laser_protocol_last_verified?: string | null
+          laser_protocol_source?: string | null
           location: string
           medical_screening?: boolean
           name: string
@@ -2295,6 +2301,9 @@ export type Database = {
           intake_enabled?: boolean
           is_approved?: boolean
           jurisdiction_legal_status?: string | null
+          laser_protocol?: string
+          laser_protocol_last_verified?: string | null
+          laser_protocol_source?: string | null
           location?: string
           medical_screening?: boolean
           name?: string
