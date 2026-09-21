@@ -210,6 +210,16 @@
   path = "/for-agents"
   function = "content-prerender"
 
+# /legal and /legal/:country. Shipped together with their renderers and with
+# the legal segment in spa-guard, so these are real 200s and not soft 404s.
+[[edge_functions]]
+  path = "/legal"
+  function = "content-prerender"
+
+[[edge_functions]]
+  path = "/legal/*"
+  function = "content-prerender"
+
 [[edge_functions]]
   path = "/shipping"
   function = "content-prerender"

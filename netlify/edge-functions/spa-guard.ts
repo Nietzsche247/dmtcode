@@ -45,15 +45,14 @@ const VALID_FIRST_SEGMENT = new Set<string>([
   // before Netlify redirect rules, so blocking it would kill the 301 that sends
   // it to /documents. The PDF files under it take the asset branch above.
   "downloads",
-  // NOTE: the legal segment is deliberately absent. The events
-  // module will add /legal/:country, but neither the React
-  // router nor content-prerender serves it today, so allowing it here
-  // returns the empty SPA shell with HTTP 200: a soft 404, which is worse for
-  // indexing than the honest 404 they get now. Add them in the same change that
-  // ships the pages, together with their content-prerender routes. The
-  // /legal/:country matcher below is already written and waiting.
+  // Country frames. Added 2026-09-21 in the same change that shipped the
+  // renderers and both route declarations, which is the only safe way to add a
+  // segment here: allowing one before its pages exist returns the empty SPA
+  // shell at HTTP 200, a soft 404, which is worse for indexing than the honest
+  // 404. The country matcher below is what keeps an unknown country a 404.
   // Keep segment names out of quotes in this comment: the route test parses
   // every quoted string inside this literal.
+  "legal",
   // Client only app routes that must stay 200 for humans
   "auth", "admin", "submit", "submit-symbol", "join", "volunteer",
   "co-witnesses", "waitlist", "log", "assess", "leaderboard",
@@ -114,9 +113,14 @@ function isDetailPatternValid(path: string): boolean {
   // /events/festivals/:region and /events/conferences/:region geo hubs.
   const hub = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i);
   if (hub) return SLUG_RE.test(hub[2]);
-  // /legal/:country is a fixed set of country frames, not a table.
+  // /legal/:country is a fixed set of country frames, not a table. The depth
+  // check comes first: without it a third segment fell through to the valid
+  // first segment branch at the end of this function and returned 200 for
+  // anything under a country, which content-prerender then 404s. The two must
+  // agree, so the guard rejects it here.
   const lg = path.match(/^\/legal\/([^/]+)$/i);
   if (lg) return LEGAL_COUNTRIES.has(lg[1].toLowerCase());
+  if (/^\/legal\/[^/]+\/.+$/i.test(path)) return false;
   // /people/:slug is a static profile set, not a table
   const pe = path.match(/^\/people\/([^/]+)$/i);
   if (pe) return ["danny-goler", "andrew-gallimore", "chase-hughes"].includes(pe[1].toLowerCase());

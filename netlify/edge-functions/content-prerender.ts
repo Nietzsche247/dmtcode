@@ -2,6 +2,7 @@ import type { Config, Context } from "@netlify/edge-functions";
 import { hubLabel, uiCopy } from "../lib/ui-strings.ts";
 import { KITS } from "../lib/kits.ts";
 import { DOCUMENTS, docCountWord } from "../lib/documents.ts";
+import { INCB_BASELINE, LEGAL_COUNTRIES, LEGAL_SLUGS } from "../lib/legal.ts";
 
 const SITE = "https://dmtcode.com";
 const SUPABASE_URL =
@@ -576,6 +577,18 @@ export default async (request: Request, context: Context) => {
     }
     if (kind === "for-agents" && seg.length === 1) {
       return await renderForAgents(context, locale);
+    }
+    // /legal and /legal/:country. Both branches sit above the SUPABASE guard
+    // because these pages are editorial and read no database. An unknown
+    // country, or any extra segment, 404s rather than reaching the SPA shell.
+    if (kind === "legal" && seg.length === 1) {
+      return await renderLegalIndex(context, locale);
+    }
+    if (kind === "legal" && seg.length === 2 && seg[1]) {
+      return await renderLegalCountry(context, seg[1].toLowerCase(), locale);
+    }
+    if (kind === "legal") {
+      return await notFoundPrerender(context);
     }
     if (seg.length === 1 && STATIC_PAGES[kind]) {
       return await renderStatic(context, kind, locale);
@@ -3795,6 +3808,10 @@ export const config: Config = {
     // /es/for-agents and /de/for-agents prerendered correctly because the locale
     // mirrors are listed here. That asymmetry is the signature of this mistake.
     "/for-agents",
+    // /legal and its country frames. Same rule as the line above: the toml
+    // entry alone does nothing.
+    "/legal",
+    "/legal/*",
     "/shipping",
     "/returns",
     "/store-terms",
@@ -4799,8 +4816,8 @@ async function renderRetreatLaserProtocol(context: Context, locale: Loc = "en"):
   <td>${esc(String(r.name || ""))}</td>
   <td>${esc(String(r.country || r.location || ""))}</td>
   <td>${esc(String(r.laser_protocol || "No"))}</td>
-  <td>${esc(String(r.laser_protocol_last_verified || "—"))}</td>
-  <td>${site ? `<a href="${esc(site)}" rel="nofollow noopener">Official site</a>` : "—"}</td>
+  <td>${esc(String(r.laser_protocol_last_verified || "Not verified"))}</td>
+  <td>${site ? `<a href="${esc(site)}" rel="nofollow noopener">Official site</a>` : "None on file"}</td>
 </tr>`;
     })
     .join("\n");
@@ -4922,6 +4939,189 @@ async function renderForAgents(context: Context, locale: Loc = "en"): Promise<Re
     description: metaDesc,
     canonical,
     ogType: "website",
+    jsonLd: [breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+// ---------- /legal and /legal/:country : country frames ----------
+//
+// A country frame is a frame. It is not a licence for any one operator, it is
+// not legal advice, and the page says both on its face. Every claim carries the
+// source it came from, and the named gaps are printed rather than hidden.
+
+const LEGAL_INDEX_TITLE = "Legal status by country";
+const LEGAL_STANDING_CAVEAT =
+  "This is a country-level frame. It is not legal advice, it is not a licence for any operator, and it does not " +
+  "make any listing on this site an endorsement. Laws change and enforcement changes faster. Check your own " +
+  "jurisdiction, and check it again before you act on anything here.";
+
+function legalSourcesHtml(sources: { label: string; url: string }[]): string {
+  return `<ul>${sources
+    .map((s) => `<li><a href="${esc(s.url)}" rel="nofollow noopener">${esc(s.label)}</a></li>`)
+    .join("")}</ul>`;
+}
+
+function legalParasHtml(ps: string[]): string {
+  return ps.map((p) => `<p>${esc(p)}</p>`).join("");
+}
+
+async function renderLegalIndex(context: Context, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  const canonical = `${SITE}${lpath(locale, "/legal")}`;
+  const metaDesc =
+    "Where DMT and ayahuasca stand in six countries, with the statute behind each answer and the gaps named. " +
+    "A country frame, not legal advice.";
+
+  const rows = LEGAL_SLUGS.map((slug) => {
+    const c = LEGAL_COUNTRIES[slug];
+    return (
+      `<tr><td><a href="${esc(lpath(locale, `/legal/${c.slug}`))}">${esc(c.name)}</a></td>` +
+      `<td>${esc(c.stanceLabel)}</td><td>${esc(c.verified)}</td></tr>`
+    );
+  }).join("");
+
+  const body = `<article data-prerender="legal-index">
+  <h1>${esc(LEGAL_INDEX_TITLE)}</h1>
+  <p>${esc(LEGAL_STANDING_CAVEAT)}</p>
+  <section>
+    <h2>The international baseline</h2>
+    <p>${esc(INCB_BASELINE.text)}</p>
+    <p>${esc(INCB_BASELINE.caution)}</p>
+    <p><a href="${esc(INCB_BASELINE.source.url)}" rel="nofollow noopener">${esc(INCB_BASELINE.source.label)}</a></p>
+  </section>
+  <section>
+    <h2>Countries</h2>
+    <table>
+      <thead><tr><th>Country</th><th>Where it stands</th><th>Sources last read</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </section>
+  <section>
+    <h2>How to read these pages</h2>
+    <p>Each page states the statute that schedules the molecule, how the brew is treated as something separate from the molecule where it is, whether any religious or traditional exemption exists, what has actually happened in the last few years, and what that means in practice.</p>
+    <p>Where sources disagree, the page says so and names both. Where a document could not be obtained, the page says that too rather than filling the gap. A claim with no source behind it does not appear.</p>
+  </section>
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: LEGAL_INDEX_TITLE, item: canonical },
+    ],
+  };
+
+  const head = buildHead({
+    locale,
+    title: LEGAL_INDEX_TITLE,
+    description: metaDesc,
+    canonical,
+    ogType: "website",
+    untranslated: locale !== "en",
+    jsonLd: [breadcrumbLd],
+  });
+
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
+
+async function renderLegalCountry(
+  context: Context,
+  slug: string,
+  locale: Loc = "en",
+): Promise<Response> {
+  const c = LEGAL_COUNTRIES[slug];
+  // An unknown country 404s here rather than falling through to the SPA shell.
+  if (!c) return await notFoundPrerender(context);
+
+  const shellRes = await context.next();
+  const canonical = `${SITE}${lpath(locale, `/legal/${c.slug}`)}`;
+  const title = `DMT and ayahuasca in ${c.name}: what the law actually says`;
+
+  const recentRows = c.recent
+    .map(
+      (e) =>
+        `<tr><td>${esc(e.date)}</td><td>${esc(e.what)} <a href="${esc(e.source.url)}" rel="nofollow noopener">${esc(
+          e.source.label,
+        )}</a></td></tr>`,
+    )
+    .join("");
+
+  const gapsHtml = c.gaps.length
+    ? `<section>
+    <h2>What this page does not know</h2>
+    <p>These are the gaps in the sourcing, stated rather than smoothed over.</p>
+    <ul>${c.gaps.map((g) => `<li>${esc(g)}</li>`).join("")}</ul>
+  </section>`
+    : "";
+
+  const body = `<article data-prerender="legal-country" data-country="${esc(c.slug)}">
+  <h1>${esc(title)}</h1>
+  <p><strong>${esc(c.verdict)}</strong></p>
+  <p>${esc(LEGAL_STANDING_CAVEAT)}</p>
+  <section>
+    <h2>Is the molecule scheduled</h2>
+    ${legalParasHtml(c.molecule)}
+  </section>
+  <section>
+    <h2>The brew and the molecule</h2>
+    ${legalParasHtml(c.brew)}
+  </section>
+  <section>
+    <h2>Religious and traditional use</h2>
+    ${legalParasHtml(c.exemption)}
+  </section>
+  <section>
+    <h2>What has actually happened</h2>
+    <table>
+      <thead><tr><th>Date</th><th>What</th></tr></thead>
+      <tbody>${recentRows}</tbody>
+    </table>
+  </section>
+  <section>
+    <h2>What this means in practice</h2>
+    ${legalParasHtml(c.reality)}
+  </section>
+  <section>
+    <h2>The claim to be careful about</h2>
+    <p><em>${esc(c.wrongClaim.claim)}</em></p>
+    <p>${esc(c.wrongClaim.correction)}</p>
+  </section>
+  ${gapsHtml}
+  <section>
+    <h2>The international baseline</h2>
+    <p>${esc(INCB_BASELINE.text)}</p>
+    <p>${esc(INCB_BASELINE.caution)}</p>
+  </section>
+  <section>
+    <h2>Sources</h2>
+    <p>Every source below was fetched and read on ${esc(c.verified)}. That date is when a human last read them. It is not a computed timestamp and it does not refresh on its own.</p>
+    ${legalSourcesHtml([...c.sources, INCB_BASELINE.source])}
+  </section>
+  <p><a href="${esc(lpath(locale, "/legal"))}">All country frames</a></p>
+</article>`;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: LEGAL_INDEX_TITLE, item: `${SITE}${lpath(locale, "/legal")}` },
+      { "@type": "ListItem", position: 3, name: c.name, item: canonical },
+    ],
+  };
+
+  const head = buildHead({
+    locale,
+    title,
+    description: c.summary,
+    canonical,
+    ogType: "article",
+    untranslated: locale !== "en",
     jsonLd: [breadcrumbLd],
   });
 

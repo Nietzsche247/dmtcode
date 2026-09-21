@@ -50,6 +50,15 @@ const STATIC: Array<[string, string, string]> = [
   ["/events/how-dates-are-checked", "0.6", "monthly"],
   // The index of the machine surface.
   ["/for-agents", "0.8", "monthly"],
+  // Country frames. The slug set here is the same set as in netlify/lib/legal.ts
+  // and in spa-guard. Adding a country means adding it in all three.
+  ["/legal", "0.7", "monthly"],
+  ["/legal/mexico", "0.6", "monthly"],
+  ["/legal/costa-rica", "0.6", "monthly"],
+  ["/legal/peru", "0.6", "monthly"],
+  ["/legal/united-states", "0.6", "monthly"],
+  ["/legal/germany", "0.6", "monthly"],
+  ["/legal/spain", "0.6", "monthly"],
   ["/protocols", "0.8", "weekly"],
   ["/protocol-guide", "0.7", "monthly"],
   ["/glossary", "0.6", "monthly"],

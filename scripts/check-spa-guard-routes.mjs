@@ -70,6 +70,7 @@ function allows(path) {
   if ((m = path.match(/^\/(events|retreats)\/([^/]+)$/i))) return UUID_RE.test(m[2]) || SLUG_RE.test(m[2]);
   if ((m = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i))) return SLUG_RE.test(m[2]);
   if ((m = path.match(/^\/legal\/([^/]+)$/i))) return LEGAL_COUNTRIES.has(m[1].toLowerCase());
+  if (/^\/legal\/[^/]+\/.+$/i.test(path)) return false;
   if ((m = path.match(/^\/people\/([^/]+)$/i)))
     return ["danny-goler", "andrew-gallimore", "chase-hughes"].includes(m[1].toLowerCase());
   if ((m = path.match(/^\/products\/([^/]+)$/i))) return PRODUCT_HANDLES.has(m[1].toLowerCase());
@@ -98,15 +99,23 @@ const CASES = [
   ["/downloads", true, "must pass through so the 301 to /documents can fire"],
   ["/downloads/dmt-laser-code-symbols.pdf", true, "static PDF asset"],
   ["/downloads/DMTCode_Screening_Card_v1.pdf", true, "static PDF asset"],
-  // /legal/* and /for-agents stay 404 until the pages actually ship. Allowing
-  // them before then returns the empty SPA shell at 200, a soft 404. Flip these
-  // to true in the same change that adds the pages and their prerender routes.
-  ["/legal/mexico", false, "page not shipped yet, honest 404 beats soft 404"],
-  ["/legal/peru", false, "page not shipped yet"],
+  // /legal/* and /for-agents shipped on 2026-09-21, together with their
+  // renderers and both route declarations. Before that they were expected 404s
+  // here on purpose: allowing a segment before its pages exist returns the
+  // empty SPA shell at 200, a soft 404, which is worse than an honest 404.
+  ["/legal", true, "country frame index, page and prerender shipped"],
+  ["/legal/mexico", true, "country frame, page and prerender shipped"],
+  ["/legal/peru", true, "country frame, page and prerender shipped"],
+  ["/legal/costa-rica", true, "hyphenated country slug must match"],
+  ["/legal/united-states", true, "hyphenated country slug must match"],
+  ["/legal/MEXICO", true, "country matching is case insensitive"],
+  ["/legal/mexico/extra", false, "no third segment under a country frame"],
   ["/for-agents", true, "machine-surface index, page and prerender shipped"],
   // Locale mirrors of the same.
   ["/es/events/boom-festival-2026", true, "es mirror"],
   ["/es/retreats/laser-protocol", true, "es mirror"],
+  ["/de/legal/mexico", true, "country frame, de mirror"],
+  ["/es/legal", true, "country frame index, es mirror"],
   // Legacy UUID records must keep resolving.
   ["/events/2742ec61-d88e-4f38-8efe-3cdbe049d91a", true, "legacy event uuid"],
   ["/retreats/5de102fc-1ade-409c-bffc-75567033b5e5", true, "legacy retreat uuid"],
@@ -135,7 +144,7 @@ const CASES = [
   ["/", true, "home"],
   // Things that must still 404.
   ["/legal/atlantis", false, "country not in the editorial set"],
-  ["/de/legal/mexico", false, "legal not shipped yet, locale mirror"],
+  ["/es/legal/atlantis", false, "unknown country still 404s under a locale"],
   ["/trials/not-a-uuid", false, "trials are uuid-only"],
   ["/bibliography/some-slug", false, "bibliography is uuid-only"],
   ["/community/woo", false, "section does not exist"],
