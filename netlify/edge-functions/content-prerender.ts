@@ -3789,6 +3789,12 @@ export const config: Config = {
     "/privacy",
     "/terms",
     "/disclosure",
+    // /for-agents. Read the note at the top of this array before assuming a
+    // netlify.toml entry is enough: it is not. On 2026-09-21 the toml entry was
+    // added alone and the path kept serving the empty SPA shell at 200, while
+    // /es/for-agents and /de/for-agents prerendered correctly because the locale
+    // mirrors are listed here. That asymmetry is the signature of this mistake.
+    "/for-agents",
     "/shipping",
     "/returns",
     "/store-terms",
