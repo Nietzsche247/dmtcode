@@ -98,6 +98,9 @@ function isDetailPatternValid(path: string): boolean {
   // events module addresses records by human slug; the UUID form stays valid so
   // existing links and any un-migrated record keep resolving.
   const ev = path.match(/^\/(events|retreats)\/([^/]+)$/i);
+  // /retreats/laser-protocol is a standing page, not a record. Named explicitly
+  // so a future tightening of the slug rule cannot silently 404 it.
+  if (ev && ev[1].toLowerCase() === "retreats" && ev[2].toLowerCase() === "laser-protocol") return true;
   if (ev) return UUID_RE.test(ev[2]) || SLUG_RE.test(ev[2]);
   // /events/festivals/:region and /events/conferences/:region geo hubs.
   const hub = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i);
