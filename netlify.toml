@@ -30,6 +30,13 @@
   path = "/"
   function = "content-prerender"
 
+# The /registry/v1/* machine surface. MUST stay above the content-prerender
+# entries for /registry and /registry/*, or the prerender swallows these and
+# serves HTML to agents asking for JSON.
+[[edge_functions]]
+  path = "/registry/v1/*"
+  function = "registry-json"
+
 [[edge_functions]]
   path = "/registry"
   function = "content-prerender"
