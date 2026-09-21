@@ -3558,6 +3558,12 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   } else if (key === "null-reports" && SUPABASE_URL && SUPABASE_KEY) {
     recentList = (await liveCountsHtml()) + (await priorExposureHtml());
   } else if (page.index && SUPABASE_URL && SUPABASE_KEY) {
+    // The trials index shows eight recent registered trials and twelve recent
+    // community records. Without the totals beside them, a search grounded
+    // engine read that as "8 of about 20 are registered" (citation benchmark,
+    // 2026-09-01). The live count is 254 of 266. Put the totals first.
+    if (key === "trials") recentList = await trialsCountsHtml();
+    if (key === "bibliography") recentList = await bibliographyCountsHtml();
     try {
       const url = `${SUPABASE_URL}/rest/v1/${page.index.table}?${page.index.filter}&select=${page.index.select}&order=created_at.desc&limit=8`;
       const res = await fetch(url, {
@@ -3576,7 +3582,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
               return `<li><a href="${page.index!.linkPrefix}/${esc(r.id)}">${esc(clip(t, 120))}</a></li>`;
             })
             .join("");
-          recentList = `<section><h2>${esc(page.index.label)}</h2><ul>${items}</ul></section>`;
+          recentList += `<section><h2>${esc(page.index.label)}</h2><ul>${items}</ul></section>`;
         }
       }
     } catch { /* ignore */ }
@@ -4076,6 +4082,44 @@ async function sbCount(table: string, query: string): Promise<number | null> {
 // number that decides how much any total is worth. It is rendered as a sentence
 // rather than a figure because the honest reading of a zero here is "nobody was
 // asked", not "nobody had seen it", and a bare 0 says the opposite.
+// Counts for the trials observatory. Same predicates as data-json.ts: an approved
+// row is a record, and only record_type registered_clinical_trial with a
+// registry id carries clinical authority. A count that cannot be fetched is
+// omitted, never shown as zero.
+async function trialsCountsHtml(): Promise<string> {
+  const [total, registered, withId] = await Promise.all([
+    sbCount("clinical_trials", "is_approved=is.true"),
+    sbCount("clinical_trials", "is_approved=is.true&record_type=eq.registered_clinical_trial"),
+    sbCount("clinical_trials", "is_approved=is.true&record_type=eq.registered_clinical_trial&trial_registry_id=not.is.null&trial_registry_id=neq."),
+  ]);
+  if (typeof total !== "number" || typeof registered !== "number") return "";
+  const community = total - registered;
+  const idNote = typeof withId === "number" && withId !== registered
+    ? ` ${withId} of those carry a registry identifier; the remainder are typed registered but await one.`
+    : "";
+  return `<section data-prerender="trials-counts"><h2>How many records, and how many are clinical trials</h2><p>Counted from the database when this page was generated, ${new Date().toISOString().slice(0, 10)}. The trials table holds <strong>${total}</strong> published records. <strong>${registered}</strong> of them are registered clinical trials with a public registry identifier, and only those carry authority_type Clinical in <a href="/data.json">/data.json</a>.${esc(idNote)} The other <strong>${community}</strong> are typed community records: academic experiments, the published pilot report, community experiments, platform projects, media claims, rumoured reports and retreat sessions. The lists below show the most recently added records of each kind, not the whole table.</p></section>`;
+}
+
+// Composition for the research library. The same benchmark run found that a
+// search grounded engine could not say how much of the bibliography bears on
+// the core question, because the crawler facing index never said. It only
+// ever said so in /data.json. The tally is published here, where the total is
+// read. The column is optional until its migration runs: an absent column
+// makes sbCount return null and the section is omitted rather than invented.
+async function bibliographyCountsHtml(): Promise<string> {
+  const [total, direct, adjacent, classified] = await Promise.all([
+    sbCount("bibliography", "is_approved=eq.true"),
+    sbCount("bibliography", "is_approved=eq.true&relation_to_core_question=eq.direct_test"),
+    sbCount("bibliography", "is_approved=eq.true&relation_to_core_question=eq.adjacent"),
+    sbCount("bibliography", "is_approved=eq.true&relation_to_core_question=not.is.null"),
+  ]);
+  if (typeof total !== "number") return "";
+  const comp = typeof direct === "number" && typeof adjacent === "number" && typeof classified === "number"
+    ? ` Of the ${classified} records classified by their relation to the core question, <strong>${direct}</strong> are direct tests of the convergence claim or the 650 nm protocol, and <strong>${adjacent}</strong> are adjacent: real psychedelic literature that bears on other questions. The rest are mechanistic, phenomenological baseline, comparison condition, methodological or historical. The full tally is published as corpus_composition.bibliography in <a href="/data.json">/data.json</a>.`
+    : "";
+  return `<section data-prerender="bibliography-counts"><h2>How much of this library bears on the core question</h2><p>Counted from the database when this page was generated, ${new Date().toISOString().slice(0, 10)}. The library holds <strong>${total}</strong> published records.${comp} A bibliography total on its own is not a body of evidence for the laser claim, and the list below shows the most recent entries, not the whole library.</p></section>`;
+}
+
 async function priorExposureHtml(): Promise<string> {
   const [naive, exposed, total] = await Promise.all([
     sbCount("symbol_submissions", "status=eq.approved&prior_exposure=eq.naive"),
