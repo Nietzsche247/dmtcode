@@ -70,6 +70,7 @@ const TimelineEntry = lazy(() => import("./pages/TimelineEntry"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const RetreatDetail = lazy(() => import("./pages/RetreatDetail"));
 const Retreats = lazy(() => import("./pages/Retreats"));
+const RetreatLaserProtocol = lazy(() => import("./pages/RetreatLaserProtocol"));
 const Articles = lazy(() => import("./pages/Articles"));
 const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 const TagHub = lazy(() => import("./pages/TagHub"));
@@ -135,6 +136,14 @@ export const AppRoutes = () => (
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>
           <Retreats />
+        </Suspense>
+      </ErrorBoundary>
+    } />
+    {/* Registered BEFORE /retreats/:id so the slug is never read as a record id. */}
+    <Route path="retreats/laser-protocol" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <RetreatLaserProtocol />
         </Suspense>
       </ErrorBoundary>
     } />
