@@ -103,7 +103,7 @@ const CASES = [
   // to true in the same change that adds the pages and their prerender routes.
   ["/legal/mexico", false, "page not shipped yet, honest 404 beats soft 404"],
   ["/legal/peru", false, "page not shipped yet"],
-  ["/for-agents", false, "page not shipped yet"],
+  ["/for-agents", true, "machine-surface index, page and prerender shipped"],
   // Locale mirrors of the same.
   ["/es/events/boom-festival-2026", true, "es mirror"],
   ["/es/retreats/laser-protocol", true, "es mirror"],
