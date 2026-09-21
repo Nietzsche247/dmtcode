@@ -514,6 +514,16 @@ export default async (request: Request, context: Context) => {
     if (MACHINE_ENDPOINTS.has(url.pathname)) {
       return context.next();
     }
+    // The whole /registry/v1/ prefix belongs to registry-json. This is a prefix
+    // rather than a leaf list because that function owns every path under it and
+    // answers an unknown leaf with its own JSON 404, so passing the prefix
+    // through cannot produce a soft 404 the way a blanket extension regex would.
+    // Observed 2026-09-21 without this: registry-json produced the correct JSON
+    // body and content-prerender re-wrapped it with a 404 and text/html headers,
+    // which is the exact failure the note above describes.
+    if (url.pathname.startsWith("/registry/v1/")) {
+      return context.next();
+    }
 
 
     // /prepare has no id segment; render from bundles table.
