@@ -1,4 +1,6 @@
 // Mirror of src/data/kits.ts. Edge functions cannot import from src/. scripts/check-kits-drift.mjs fails the build if these drift. Edit src/data/kits.ts first, then copy here.
+// netlify/lib/kits.ts is a byte-equivalent mirror for edge functions.
+// scripts/check-kits-drift.mjs fails the build if these two drift.
 
 export type Kit = {
   id: 'protocol' | 'solo' | 'dual' | 'triad' | 'circle';
@@ -83,7 +85,16 @@ export const KITS: Kit[] = [
       { ...PART_92_7660, qty: 2 },
       { ...PART_62_1010, qty: 1 },
     ],
-    photos: [],
+    photos: [
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/KIT-PROTOCOL-650-hero-v3.jpg?v=1790699074', alt: 'Protocol kit contents in two panels: the 650 nm laser pointer in its case with two AAA cells beside the adjustable stand, and the twelve pack of glass rods with a rod clamped in a second stand' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, with the latex caution label' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_in_case_03ae9e95-d563-40cb-9afe-c550a4078681.jpg?v=1790698363', alt: 'Alpec Spectra 650 nm laser pointer in its hinged presentation case' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660_02fa3603-8997-4740-ab80-fe9442e19002.jpg?v=1790698363', alt: 'Adjustable laser pointer stand, Arbor Scientific 92-7660, shown holding a pointer for scale' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_fda_label_0d1e44b6-e1f6-4981-b1fa-41f04f356313.jpg?v=1790698364', alt: 'Laser pointer showing the FDA 21 CFR 1040.10 compliance label, under 5 mW at 650 nm' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_battery_card_a1fb15a8-4146-4e10-8d72-943017fc3b10.jpg?v=1790698364', alt: 'Battery installation card showing two AAA cells, included in the pointer case' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label_35364bc1-05c0-4946-8d3c-3c9d3a51764c.jpg?v=1790698363', alt: 'Arbor Scientific product label reading Deluxe Red Laser Pointer, item P2-7500' },
+    ],
     name: '650 nm Laser Protocol Kit (1 Observer)',
     shortName: 'Protocol',
     observers: '1',
@@ -111,21 +122,17 @@ export const KITS: Kit[] = [
       { ...PART_92_1460, qty: 1 },
     ],
     photos: [
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit_flatlay_v3.jpg?v=1787290393', alt: 'Solo kit components shown at true relative scale: 650 nm laser pointer in its case, three-window diffraction grating, and two AAA batteries' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_unboxed.jpg?v=1787330115', alt: 'Solo kit unboxed: laser pointer in its case with batteries, adjustable laser stand, and the 100, 300 and 600 lines per mm diffraction grating' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_stand_in_use.jpg?v=1787330115', alt: 'Solo kit in use: red laser pointer clamped in the adjustable stand, which holds the button down, with the three-window diffraction grating in the beam' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/kit-solo-contents.jpg?v=1786944866', alt: 'Solo kit contents: every component photographed as shipped' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892', alt: 'Deluxe Red Laser Pointer, Arbor Scientific P2-7500, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_in_case.jpg?v=1787290392', alt: 'Alpec Spectra 650 nm laser pointer in its hinged presentation case' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_fda_label.jpg?v=1787290392', alt: 'Laser pointer showing the FDA 21 CFR 1040.10 compliance label, under 5 mW at 650 nm' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label.jpg?v=1787290393', alt: 'Arbor Scientific product label reading Deluxe Red Laser Pointer, item P2-7500' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_battery_card.jpg?v=1787290392', alt: 'Battery installation card showing two AAA cells, included in the pointer case' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660.jpg?v=1787290393', alt: 'Adjustable laser pointer stand, Arbor Scientific 92-7660, shown holding a pointer for scale' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/grating_face.jpg?v=1787290393', alt: 'Educational diffraction grating slide with three windows ruled at 100, 300 and 600 lines per millimetre' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/grating_back.jpg?v=1787290393', alt: 'Reverse of the diffraction grating slide showing moulded handling text' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/prism_set_92-1460.jpg?v=1787290392', alt: 'Giant acrylic lens and prism set of seven pieces, Arbor Scientific 92-1460' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Solo kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],
     name: '650 nm Laser Diffraction Research Kit, Solo (1 Observer)',
     shortName: 'Solo',
@@ -133,7 +140,7 @@ export const KITS: Kit[] = [
     price: '$289',
     priceNumber: 289,
     cart: 'https://shop.dmtcode.com/cart/54376696709430:1',
-    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_unboxed.jpg',
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892',
     diyCost: '$136',
     diyCostNumber: 136,
     availability: AVAIL,
@@ -166,6 +173,8 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet2048x2048_e40ec1fc-e126-4781-b3e8-565e0a36d983.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-022048x2048_15df7fe7-d5f2-461f-97e6-6613f18d3fff.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-032048x2048_a569cded-e72e-464f-8fa6-3daeeabe04a6.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],
     name: 'Laser Diffraction Research Kit, Dual (650 and 532 nm, 1 to 2 Observers)',
     shortName: 'Dual',
