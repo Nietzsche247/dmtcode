@@ -19,7 +19,7 @@ export type Kit = {
   emitters: Emitter[];
   // Live Shopify product handle. /products/<handle> is the drill-down page.
   handle: string;
-  // The bill of materials. This is the published list of what the kit ships.
+  // Internal bill of materials used by supplier tooling.
   contents: KitItem[];
   // Product photography, Shopify CDN URLs with their stored alt text.
   photos: KitPhoto[];
@@ -27,8 +27,7 @@ export type Kit = {
 
 // One supplier order line. qty is the number of vendor units to order, so a
 // pack counts as 1 and the pack size is stated in note. scripts/check-kits-drift.mjs
-// asserts every part number named in a kit description also appears here, so the
-// prose and this list cannot promise different parts.
+// validates the rows and keeps their supplier identifiers out of descriptions.
 export type KitItem = {
   sku: string;
   name: string;

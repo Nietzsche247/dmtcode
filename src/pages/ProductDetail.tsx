@@ -13,9 +13,8 @@ const SITE = 'https://dmtcode.com';
 
 // The drill-down page for one kit. Everything on it comes from src/data/kits.ts,
 // which is the same array /prepare, shop.json, llms.txt and the prerenderer read.
-// The contents table and the per emitter safety table are rendered from that
-// data rather than retyped, so the page cannot state a bill of materials that
-// disagrees with the catalogue.
+// The component and per-emitter safety tables are rendered from that data rather
+// than retyped, while internal supplier identifiers remain undisclosed.
 
 function Gallery({ kit }: { kit: Kit }) {
   const [active, setActive] = useState(0);

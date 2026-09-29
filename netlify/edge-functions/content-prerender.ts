@@ -6870,9 +6870,8 @@ async function renderSimplePersonPage(
 // The difference is that the key set is not a literal in this file. It is the
 // `handle` field on each kit in netlify/lib/kits.ts, the mirror of
 // src/data/kits.ts, so the prerendered pages and the catalogue cannot disagree
-// about which kits exist. The contents list and the per emitter table below are
-// rendered from that same array as real text, not injected by script, so a
-// crawler reads the bill of materials without executing anything.
+// about which kits exist. The component list and per-emitter table below are
+// rendered from that same array without exposing internal supplier identifiers.
 
 function observerPhrase(kit: (typeof KITS)[number]): string {
   return kit.observers === "1" ? "1 observer" : `${kit.observers} observers`;
