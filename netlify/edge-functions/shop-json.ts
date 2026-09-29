@@ -18,12 +18,13 @@ export default async () => {
       full_name: kit.name,
       observers: kit.observers,
       price_usd: kit.priceNumber,
-      diy_parts_usd: kit.diyCostNumber,
-      emitters: kit.emitters,
+      emitters: kit.emitters.map(({ name, wavelength_nm, vendor_output, vendor_class }) => ({
+        name,
+        wavelength_nm,
+        vendor_output,
+        vendor_class,
+      })),
       laser_class_note: "Per emitter vendor ratings. A multi emitter kit has no single class; read emitters[].",
-      // The full bill of materials. qty is the number of vendor units, so a
-      // pack counts as 1 and the pack size is stated in note.
-      contents: kit.contents,
       availability: kit.availability,
       cart_url: kit.cart,
       image: kit.image,

@@ -106,7 +106,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 84,
     availability: AVAIL,
     description:
-      'One observer. The smallest instrument set that runs the protocol as written. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The kit deliberately carries no diffraction gratings and no acrylic set; those are optical experimentation and are carried in the Solo and above. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
+      'One observer. The smallest instrument set that runs the protocol as written. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa; two adjustable laser pointer stands; glass rods with rubber policemen, 150 x 5 mm, twelve per pack. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The kit deliberately carries no diffraction gratings and no acrylic set; those are optical experimentation and are carried in the Solo and above. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
   },
   {
     id: 'solo',
@@ -145,7 +145,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 136,
     availability: AVAIL,
     description:
-      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
+      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa; two adjustable laser pointer stands; glass rods with rubber policemen, 150 x 5 mm, twelve per pack; holographic gratings, 500 and 1000 lines per mm, five of each; giant acrylic lens and prism set of 7. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
   },
   {
     id: 'dual',
@@ -187,7 +187,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 196,
     availability: AVAIL,
     description:
-      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679, vendor rated max 5 mW, FDA Class IIIa) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes two adjustable stands (92-7660), glass rods with rubber policemen, twelve per pack (62-1010), holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.",
+      "The Solo bench with a switchable 650 nm red and 532 nm green pointer, vendor rated max 5 mW, FDA Class IIIa, so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack. Includes two adjustable stands, glass rods with rubber policemen, twelve per pack, holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.",
   },
   {
     id: 'triad',
@@ -230,7 +230,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 292,
     availability: AVAIL,
     description:
-      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); one adjustable stand for the violet pointer (92-7660); holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box P2-7680, 650 nm, under 1 mW, laser class 3a; violet pointer P2-7678, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
+      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set; 405 nm violet pointer; one adjustable stand for the violet pointer; holographic gratings; Young\'s slit cards; slide carrier; 50 slide mounted polarizers. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box, 650 nm, under 1 mW, laser class 3a; violet pointer, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
   },
   {
     id: 'circle',
@@ -278,7 +278,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 392,
     availability: AVAIL,
     description:
-      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679, vendor rated max 5 mW, FDA Class IIIa), a second stand for that pointer, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
+      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer, vendor rated max 5 mW, FDA Class IIIa, a second stand for that pointer, a second slide carrier and a handheld quantitative spectroscope, so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
   },
 ];
 

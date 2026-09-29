@@ -30,7 +30,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: 'Journey Equipment | From Entry-Level to Premium | DMT Code',
-      description: `Kits for one observer or for groups of two to three or six observers, ${KIT_PRICE_RANGE}. Each card prints what the same parts cost if you sourced them yourself.`,
+      description: `Kits for one observer or for groups of two to three or six observers, ${KIT_PRICE_RANGE}. Sold by Meridian Optics Lab.`,
     },
   },
   bibliography: {
@@ -70,7 +70,7 @@ const pageMetaConfig: Record<string, MetaConfig> = {
     },
     explorer: {
       title: `Kits & Group Bundles | ${KIT_PRICE_RANGE} | DMT Code`,
-      description: `Equipment packages for one observer or for groups of two to three or six observers. From ${KIT_PRICE_RANGE}. Each kit costs more than sourcing the same parts yourself, and each card prints the difference.`,
+      description: `Equipment packages for one observer or for groups of two to three or six observers. From ${KIT_PRICE_RANGE}. Sold by Meridian Optics Lab.`,
     },
   },
 };

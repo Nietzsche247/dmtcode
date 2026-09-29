@@ -118,7 +118,7 @@ const FAQ_GROUPS: Array<{
     items: [
       {
         q: 'What do I need to get started?',
-        a: 'Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German. You can also source every part yourself. We show the do-it-yourself figure next to each kit so you know exactly what you are paying for.',
+        a: 'Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German.',
       },
       {
         q: 'Why a 650nm laser?',

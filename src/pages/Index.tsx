@@ -7,7 +7,6 @@ import { ResearchSection } from '@/components/ResearchSection';
 
 import { ResearchPapersSection } from '@/components/ResearchPapersSection';
 import { TheoriesDashboard } from '@/components/TheoriesDashboard';
-import { LaserGuide } from '@/components/LaserGuide';
 import { ShopSection } from '@/components/ShopSection';
 import { EmailCapture } from '@/components/EmailCapture';
 import { Footer } from '@/components/Footer';
@@ -92,7 +91,6 @@ const Index = () => {
           <ResearchSection />
           
           
-          <LaserGuide />
           <ShopSection />
           <EmailCapture source="homepage" />
         </main>

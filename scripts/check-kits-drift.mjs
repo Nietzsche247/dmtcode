@@ -53,23 +53,12 @@ function diff(a, b) {
   return problems;
 }
 
-// Arbor part numbers as they are written in the kit prose and on the Shopify
-// product bodies: P2-7500, P3-6405, 92-7660, 33-0985. Matched case sensitively
-// so ordinary numbers in the copy ("100, 300 and 600 lines per mm") never read
-// as part numbers.
+// Supplier part numbers belong in internal catalogue fields, never descriptions.
+// Matched case sensitively so ordinary measurements never read as part numbers.
 const PART_NUMBER_RE = /\b(?:P\d-\d{4}|\d{2}-\d{4})\b/g;
 
-// `contents` is the published bill of materials, so it gets checked in its own
-// right, not only mirror against mirror. Two failures matter here. First, a
-// malformed row, which would render as a blank line on the product page and as
-// a blank line on the supplier order. Second, and this is the one that actually
-// burned a customer: prose that names a part the shipped list does not carry.
-// The description stays hand written, but every part number it names must
-// appear in contents, so the blurb can never promise a part the kit does not
-// ship. The reverse is deliberately not asserted: the Dual and Circle blurbs
-// name shared parts by description rather than by number ("includes stand,
-// three window grating"), which is correct copy and carries no part number to
-// match on.
+// `contents` is the internal bill of materials, so it remains validated in its
+// own right. Descriptions are customer-facing and must not expose its SKUs.
 function checkContents(kits, path) {
   const problems = [];
   for (const kit of kits) {
@@ -96,14 +85,9 @@ function checkContents(kits, path) {
       }
       seen.add(item.sku);
     }
-    const promised = new Set(String(kit.description || '').match(PART_NUMBER_RE) || []);
-    for (const sku of promised) {
-      if (!seen.has(sku)) {
-        problems.push(
-          `${label}: description names part ${sku}, which is not in contents. ` +
-            `Either ship it and add the row, or take it out of the description.`,
-        );
-      }
+    const exposed = new Set(String(kit.description || '').match(PART_NUMBER_RE) || []);
+    for (const sku of exposed) {
+      problems.push(`${label}: description exposes supplier part number ${sku}`);
     }
   }
   return problems;
@@ -141,6 +125,12 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const LLMS = 'public/llms.txt';
   const llms = readFileSync(LLMS, 'utf8');
   const stale = [];
+  if (/Sourcing the parts yourself/i.test(llms)) {
+    stale.push('contains forbidden "Sourcing the parts yourself" copy');
+  }
+  if (/(?:self[- ]assembly|DIY|do-it-yourself|parts yourself)[^\n$]{0,80}(?:≈\s*)?\$[\d,]+/i.test(llms)) {
+    stale.push('contains a forbidden self-assembly cost figure');
+  }
   for (const kit of kits) {
     if (!llms.includes(kit.price)) stale.push(`${kit.shortName}: price ${kit.price} missing`);
     if (!llms.includes(kit.cart)) stale.push(`${kit.shortName}: cart permalink missing`);
