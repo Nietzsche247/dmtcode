@@ -140,7 +140,7 @@ export const KITS: Kit[] = [
     price: '$289',
     priceNumber: 289,
     cart: 'https://shop.dmtcode.com/cart/54376696709430:1',
-    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_unboxed.jpg',
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892',
     diyCost: '$136',
     diyCostNumber: 136,
     availability: AVAIL,
