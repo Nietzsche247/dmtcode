@@ -102,6 +102,7 @@ export const KITS: Kit[] = [
     priceNumber: 199,
     cart: 'https://shop.dmtcode.com/cart/67602202526006:1',
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/KIT-PROTOCOL-650-hero-v3.jpg?v=1790699074',
+    diyCost: '$84',
     diyCostNumber: 84,
     availability: AVAIL,
     description:
