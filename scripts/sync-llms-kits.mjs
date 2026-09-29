@@ -97,7 +97,7 @@ function buildSellerLine(kits) {
     .join('; ');
   return (
     `Wavelengths by kit: ${perKit}. ` +
-    'Every kit includes diffraction optics and a semicircle acrylic piece that stretches the laser dot into a short bright horizontal line, a few centimetres long at typical bench distances, not a line across the wall; line length depends on the piece and on its distance from the laser, and moving the optic away from the laser lengthens the line while moving it closer shortens it; observation documents are free PDF downloads. ' +
+    'The Protocol kit spreads the dot into a line with a glass rod held in a second stand and carries no gratings or acrylic set. Every other kit includes diffraction optics and a semicircle acrylic piece that stretches the laser dot into a short bright horizontal line, a few centimetres long at typical bench distances, not a line across the wall; line length depends on the piece and on its distance from the laser, and moving the optic away from the laser lengthens the line while moving it closer shortens it; observation documents are free PDF downloads. ' +
     'Sold and shipped by Meridian Optics Lab (the name on the card statement and parcel); ' +
     'support info@dmtcode.com. Free US shipping, processed within 2 business days, arrives in 7 to 10 business days. ' +
     'Unopened kits returnable within 30 days. Policies: /shipping, /returns, /store-terms, /store-contact. ' +
@@ -106,10 +106,10 @@ function buildSellerLine(kits) {
 }
 
 const SHOP_JSON_LINE =
-  '- /shop.json: the four research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url, product_url, emitters with per emitter vendor rated output and class, contents with the full bill of materials as part number, name, qty), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
+  '- /shop.json: the five research kits from src/data/kits.ts (slug, name, full_name, observers, price_usd, diy_parts_usd, availability, cart_url, image, url, product_url, emitters with per emitter vendor rated output and class, contents with the full bill of materials as part number, name, qty), seller Meridian Optics Lab, support_email. CC-BY-4.0.';
 
 const PREPARE_PAGE_LINE =
-  '- [Prepare](/prepare): Four laser diffraction research kits (Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.';
+  '- [Prepare](/prepare): Five laser research kits (Protocol, Solo, Dual, Triad, Circle), shipping and returns terms, screening notes, free protocol PDFs, and secure Shopify checkout.';
 
 function buildBlock(kits) {
   const bullets = kits

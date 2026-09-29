@@ -1,7 +1,7 @@
 // Mirror of src/data/kits.ts. Edge functions cannot import from src/. scripts/check-kits-drift.mjs fails the build if these drift. Edit src/data/kits.ts first, then copy here.
 
 export type Kit = {
-  id: 'solo' | 'dual' | 'triad' | 'circle';
+  id: 'protocol' | 'solo' | 'dual' | 'triad' | 'circle';
   sku?: string;
   name: string;
   shortName: string;
@@ -61,7 +61,7 @@ const PART_P2_7679 = { sku: 'P2-7679', name: 'Dual Red-Green Laser Pointer, 650 
 const PART_P2_7680 = { sku: 'P2-7680', name: 'Laser Ray Box and Lenses, 650 nm', vendor_url: 'https://www.arborsci.com/products/laser-ray-box-and-lenses', note: 'includes its own 8 piece acrylic optics set' };
 const PART_P2_7678 = { sku: 'P2-7678', name: 'Violet Laser Pointer, 405 nm', vendor_url: 'https://www.arborsci.com/products/violet-laser-pointer' };
 const PART_92_7660 = { sku: '92-7660', name: 'Adjustable Laser Pointer Stand' };
-const PART_P3_6405 = { sku: 'P3-6405', name: 'Three Window Diffraction Grating, 100, 300 and 600 lines per mm' };
+const PART_62_1010 = { sku: '62-1010', name: 'Glass Rods with Rubber Policemen, 150 x 5 mm', note: '12 per pack' };
 const PART_33_0985 = { sku: '33-0985', name: 'Holographic Diffraction Grating, 500 lines per mm', note: '5 per pack' };
 const PART_33_0990 = { sku: '33-0990', name: 'Holographic Diffraction Grating, 1000 lines per mm', note: '5 per pack' };
 const PART_33_0240 = { sku: '33-0240', name: "Young's Slit Cards, varying dimensions", note: '3 per pack' };
@@ -74,14 +74,38 @@ const AVAIL = 'Arrives in 7 to 10 business days. Free US shipping. 18+, for rese
 
 export const KITS: Kit[] = [
   {
+    id: 'protocol',
+    sku: 'KIT-PROTOCOL-650',
+    emitters: [P2_7500],
+    handle: '650-nm-laser-protocol-kit-1-observer',
+    contents: [
+      { ...PART_P2_7500, qty: 1 },
+      { ...PART_92_7660, qty: 2 },
+      { ...PART_62_1010, qty: 1 },
+    ],
+    photos: [],
+    name: '650 nm Laser Protocol Kit (1 Observer)',
+    shortName: 'Protocol',
+    observers: '1',
+    price: '$199',
+    priceNumber: 199,
+    cart: 'https://shop.dmtcode.com/cart/67602202526006:1',
+    image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892',
+    diyCost: '$84',
+    diyCostNumber: 84,
+    availability: AVAIL,
+    description:
+      'One observer. The smallest instrument set that runs the protocol as written. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The kit deliberately carries no diffraction gratings and no acrylic set; those are optical experimentation and are carried in the Solo and above. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
+  },
+  {
     id: 'solo',
     sku: 'KIT-SOLO-650',
     emitters: [P2_7500],
     handle: '650nm-laser-diffraction-research-kit-solo',
     contents: [
       { ...PART_P2_7500, qty: 1 },
-      { ...PART_92_7660, qty: 1 },
-      { ...PART_P3_6405, qty: 1 },
+      { ...PART_92_7660, qty: 2 },
+      { ...PART_62_1010, qty: 1 },
       { ...PART_33_0985, qty: 1 },
       { ...PART_33_0990, qty: 1 },
       { ...PART_92_1460, qty: 1 },
@@ -110,11 +134,11 @@ export const KITS: Kit[] = [
     priceNumber: 289,
     cart: 'https://shop.dmtcode.com/cart/54376696709430:1',
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/solo_unboxed.jpg',
-    diyCost: '$155',
-    diyCostNumber: 155,
+    diyCost: '$136',
+    diyCostNumber: 136,
     availability: AVAIL,
     description:
-      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); adjustable laser pointer stand (92-7660); three window diffraction grating, 100, 300 and 600 lines per mm (P3-6405); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads.',
+      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
   },
   {
     id: 'dual',
@@ -123,8 +147,8 @@ export const KITS: Kit[] = [
     handle: 'dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm',
     contents: [
       { ...PART_P2_7679, qty: 1 },
-      { ...PART_92_7660, qty: 1 },
-      { ...PART_P3_6405, qty: 1 },
+      { ...PART_92_7660, qty: 2 },
+      { ...PART_62_1010, qty: 1 },
       { ...PART_33_0985, qty: 1 },
       { ...PART_33_0990, qty: 1 },
       { ...PART_33_0240, qty: 1 },
@@ -134,8 +158,6 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer2048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048.jpg?v=1787331914', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating2048x2048.jpg?v=1787331914', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating-022048x2048.jpg?v=1787331914', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_9ca0e159-e49a-458f-b841-9f71c7faead0.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_2f54ebec-b3b5-44d7-8105-bccfef29488b.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Dual kit" },
@@ -152,11 +174,11 @@ export const KITS: Kit[] = [
     priceNumber: 399,
     cart: 'https://shop.dmtcode.com/cart/54434179973430:1',
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048.jpg',
-    diyCost: '$215',
-    diyCostNumber: 215,
+    diyCost: '$196',
+    diyCostNumber: 196,
     availability: AVAIL,
     description:
-      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679, vendor rated max 5 mW, FDA Class IIIa) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes stand, three window grating, holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. Observation documents are free PDF downloads.",
+      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679, vendor rated max 5 mW, FDA Class IIIa) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes two adjustable stands (92-7660), glass rods with rubber policemen, twelve per pack (62-1010), holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.",
   },
   {
     id: 'triad',
@@ -166,8 +188,7 @@ export const KITS: Kit[] = [
     contents: [
       { ...PART_P2_7680, qty: 1 },
       { ...PART_P2_7678, qty: 1 },
-      { ...PART_92_7660, qty: 2 },
-      { ...PART_P3_6405, qty: 1 },
+      { ...PART_92_7660, qty: 1 },
       { ...PART_33_0985, qty: 1 },
       { ...PART_33_0990, qty: 1 },
       { ...PART_33_0240, qty: 1 },
@@ -181,8 +202,6 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_1052120b-d4dc-4bc2-9197-b5ae16566636.jpg?v=1787331935', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Triad kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_c99cf06e-75ea-490b-a866-eb38919e1998.jpg?v=1787331934', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Triad kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_30957516-6e15-487d-9546-74c6966dbd26.jpg?v=1787331934', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating2048x2048_8d8b90a1-45a8-498e-95c4-d1d1a485cac1.jpg?v=1787331934', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating-022048x2048_ad1705ad-0e07-4869-92c5-b58496084ea3.jpg?v=1787331934', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Triad kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_d4dc633b-e280-4a03-86ed-c8b81b5c28ff.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Triad kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_02ffb9cd-ea0a-4e8a-937f-313db55581b3.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Triad kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_3e56c70e-bc88-4ba1-9e90-36b840be6c0f.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Triad kit" },
@@ -198,11 +217,11 @@ export const KITS: Kit[] = [
     priceNumber: 699,
     cart: 'https://shop.dmtcode.com/cart/54376697692470:1',
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_c5e1df26-5de3-492b-97a2-dc948b077723.jpg',
-    diyCost: '$342',
-    diyCostNumber: 342,
+    diyCost: '$292',
+    diyCostNumber: 292,
     availability: AVAIL,
     description:
-      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); two adjustable stands; three window grating; holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box P2-7680, 650 nm, under 1 mW, laser class 3a; violet pointer P2-7678, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
+      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); one adjustable stand for the violet pointer (92-7660); holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box P2-7680, 650 nm, under 1 mW, laser class 3a; violet pointer P2-7678, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
   },
   {
     id: 'circle',
@@ -213,8 +232,7 @@ export const KITS: Kit[] = [
       { ...PART_P2_7680, qty: 1 },
       { ...PART_P2_7679, qty: 1 },
       { ...PART_P2_7678, qty: 1 },
-      { ...PART_92_7660, qty: 3 },
-      { ...PART_P3_6405, qty: 1 },
+      { ...PART_92_7660, qty: 2 },
       { ...PART_33_0985, qty: 1 },
       { ...PART_33_0990, qty: 1 },
       { ...PART_33_0240, qty: 1 },
@@ -231,8 +249,6 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_dddb9ca6-695d-4c35-9d72-8413b03855c1.jpg?v=1787331957', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Circle kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_6d0d113b-25e4-4f16-90bd-63f693bf83d9.jpg?v=1787331957', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Circle kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_b4fecfd0-08bd-47db-91bb-8f6d3efb2d4b.jpg?v=1787331957', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating2048x2048_f262f231-e133-4e19-9a72-db759b6d9f34.jpg?v=1787331957', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P3-6405DiffractionGrating-022048x2048_7a2c4812-5976-4d3b-802f-2c001a43bd09.jpg?v=1787331957', alt: 'Demo Diffraction Grating, Arbor Scientific P3-6405, included in the Circle kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_dc80e341-fca0-4c25-a7ab-c518d2c2787c.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Circle kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_8d808c98-58df-41d9-8ee3-b003554e9664.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Circle kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_fbdeac29-d5dd-4487-ab3b-69b5b9aa51d9.jpg?v=1787331957', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Circle kit" },
@@ -249,11 +265,11 @@ export const KITS: Kit[] = [
     priceNumber: 1090,
     cart: 'https://shop.dmtcode.com/cart/54376698446134:1',
     image: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_5efaa11c-9785-4d65-bb76-6dff2034df3b.jpg',
-    diyCost: '$442',
-    diyCostNumber: 442,
+    diyCost: '$392',
+    diyCostNumber: 392,
     availability: AVAIL,
     description:
-      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679, vendor rated max 5 mW, FDA Class IIIa), a third stand, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
+      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679, vendor rated max 5 mW, FDA Class IIIa), a second stand for that pointer, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
   },
 ];
 
