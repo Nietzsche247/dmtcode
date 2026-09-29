@@ -173,6 +173,8 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet2048x2048_e40ec1fc-e126-4781-b3e8-565e0a36d983.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-022048x2048_15df7fe7-d5f2-461f-97e6-6613f18d3fff.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-032048x2048_a569cded-e72e-464f-8fa6-3daeeabe04a6.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],
     name: 'Laser Diffraction Research Kit, Dual (650 and 532 nm, 1 to 2 Observers)',
     shortName: 'Dual',
