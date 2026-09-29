@@ -1474,7 +1474,7 @@ ${d.files.map((f) => `      <li><a href="${SITE}/downloads/${f.file}">${esc(d.ti
   <!--tsrc:static:documents-->
   <h1>Everything you need to run a session, free</h1>
   <p>${PREPARE_DOC_COUNT} PDF files, ${DOCUMENTS.length} documents, each one in English, Spanish and German where a translation exists. No account, no email, no kit. Licensed CC-BY-4.0, which means you can print them, hand them out, translate them and publish what you find.</p>
-  <p>You do not need to buy anything to take part. The <a href="${SITE}/protocol-guide">protocol guide</a> describes how to build the rig from parts you can source yourself, and <a href="${SITE}/prepare">/prepare</a> sells an assembled version for people who would rather not.</p>
+  <p>You do not need to buy anything to take part. The <a href="${SITE}/protocol-guide">protocol guide</a> describes how to run the observation, and <a href="${SITE}/prepare">/prepare</a> offers prepared kits.</p>
 ${docSections}
   <section>
     <h2>Read the catalogue after you record, not before</h2>
@@ -2304,7 +2304,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     items: [
       {
         q: "What do I need to get started?",
-        a: "Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German. You can also source every part yourself. We show the do-it-yourself figure next to each kit so you know exactly what you are paying for.",
+        a: "Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German.",
       },
       {
         q: "Why a 650nm laser?",
@@ -6870,9 +6870,8 @@ async function renderSimplePersonPage(
 // The difference is that the key set is not a literal in this file. It is the
 // `handle` field on each kit in netlify/lib/kits.ts, the mirror of
 // src/data/kits.ts, so the prerendered pages and the catalogue cannot disagree
-// about which kits exist. The contents list and the per emitter table below are
-// rendered from that same array as real text, not injected by script, so a
-// crawler reads the bill of materials without executing anything.
+// about which kits exist. The component list and per-emitter table below are
+// rendered from that same array without exposing internal supplier identifiers.
 
 function observerPhrase(kit: (typeof KITS)[number]): string {
   return kit.observers === "1" ? "1 observer" : `${kit.observers} observers`;
@@ -6894,7 +6893,6 @@ async function renderProductPage(
   const contentsRows = kit.contents
     .map(
       (c) => `      <tr>
-        <td>${esc(c.sku)}</td>
         <td>${esc(c.name)}${c.note ? ` (${esc(c.note)})` : ""}</td>
         <td>${c.qty}</td>
       </tr>`,
@@ -6907,7 +6905,7 @@ async function renderProductPage(
   const emitterRows = kit.emitters
     .map(
       (e) => `      <tr>
-        <td>${esc(e.name)} (${esc(e.sku)})</td>
+        <td>${esc(e.name)}</td>
         <td>${esc(e.wavelength_nm)} nm</td>
         <td>${esc(e.vendor_output)}</td>
         <td translate="no">${esc(e.vendor_class)}</td>
@@ -6988,10 +6986,10 @@ async function renderProductPage(
   <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
   <section data-block="kit-contents">
     <h2>What is in the box</h2>
-    <p>Every part shipped with this kit, with the Arbor Scientific part number and the quantity. This is the list the supplier order is placed from.</p>
+    <p>Every component shipped with this kit and its quantity.</p>
     <table>
       <caption>${esc(kit.shortName)} kit bill of materials</caption>
-      <tr><th>Part</th><th>Item</th><th>Qty</th></tr>
+      <tr><th>Item</th><th>Qty</th></tr>
 ${contentsRows}
     </table>
   </section>

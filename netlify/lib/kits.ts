@@ -19,7 +19,7 @@ export type Kit = {
   emitters: Emitter[];
   // Live Shopify product handle. /products/<handle> is the drill-down page.
   handle: string;
-  // The bill of materials. This is the published list of what the kit ships.
+  // Internal bill of materials used by supplier tooling.
   contents: KitItem[];
   // Product photography, Shopify CDN URLs with their stored alt text.
   photos: KitPhoto[];
@@ -27,8 +27,7 @@ export type Kit = {
 
 // One supplier order line. qty is the number of vendor units to order, so a
 // pack counts as 1 and the pack size is stated in note. scripts/check-kits-drift.mjs
-// asserts every part number named in a kit description also appears here, so the
-// prose and this list cannot promise different parts.
+// validates the rows and keeps their supplier identifiers out of descriptions.
 export type KitItem = {
   sku: string;
   name: string;
@@ -88,12 +87,12 @@ export const KITS: Kit[] = [
     photos: [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/KIT-PROTOCOL-650-hero-v3.jpg?v=1790699074', alt: 'Protocol kit contents in two panels: the 650 nm laser pointer in its case with two AAA cells beside the adjustable stand, and the twelve pack of glass rods with a rod clamped in a second stand' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, with the latex caution label' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Glass rods with rubber policemen, twelve per pack, 150 by 5 mm, with the latex caution label' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_in_case_03ae9e95-d563-40cb-9afe-c550a4078681.jpg?v=1790698363', alt: 'Alpec Spectra 650 nm laser pointer in its hinged presentation case' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660_02fa3603-8997-4740-ab80-fe9442e19002.jpg?v=1790698363', alt: 'Adjustable laser pointer stand, Arbor Scientific 92-7660, shown holding a pointer for scale' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660_02fa3603-8997-4740-ab80-fe9442e19002.jpg?v=1790698363', alt: 'Adjustable laser pointer stand, shown holding a pointer for scale' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_fda_label_0d1e44b6-e1f6-4981-b1fa-41f04f356313.jpg?v=1790698364', alt: 'Laser pointer showing the FDA 21 CFR 1040.10 compliance label, under 5 mW at 650 nm' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_battery_card_a1fb15a8-4146-4e10-8d72-943017fc3b10.jpg?v=1790698364', alt: 'Battery installation card showing two AAA cells, included in the pointer case' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label_35364bc1-05c0-4946-8d3c-3c9d3a51764c.jpg?v=1790698363', alt: 'Arbor Scientific product label reading Deluxe Red Laser Pointer, item P2-7500' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label_35364bc1-05c0-4946-8d3c-3c9d3a51764c.jpg?v=1790698363', alt: 'Product label reading Deluxe Red Laser Pointer' },
     ],
     name: '650 nm Laser Protocol Kit (1 Observer)',
     shortName: 'Protocol',
@@ -106,7 +105,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 84,
     availability: AVAIL,
     description:
-      'One observer. The smallest instrument set that runs the protocol as written. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The kit deliberately carries no diffraction gratings and no acrylic set; those are optical experimentation and are carried in the Solo and above. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
+      'One observer. The smallest instrument set that runs the protocol as written. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa; two adjustable laser pointer stands; glass rods with rubber policemen, 150 x 5 mm, twelve per pack. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The kit deliberately carries no diffraction gratings and no acrylic set; those are optical experimentation and are carried in the Solo and above. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
   },
   {
     id: 'solo',
@@ -122,16 +121,16 @@ export const KITS: Kit[] = [
       { ...PART_92_1460, qty: 1 },
     ],
     photos: [
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892', alt: 'Deluxe Red Laser Pointer, Arbor Scientific P2-7500, included in the Solo kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7500DeluxeRedLaserPointer2048x2048.jpg?v=1787331892', alt: 'Deluxe Red Laser Pointer, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_in_case.jpg?v=1787290392', alt: 'Alpec Spectra 650 nm laser pointer in its hinged presentation case' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_fda_label.jpg?v=1787290392', alt: 'Laser pointer showing the FDA 21 CFR 1040.10 compliance label, under 5 mW at 650 nm' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label.jpg?v=1787290393', alt: 'Arbor Scientific product label reading Deluxe Red Laser Pointer, item P2-7500' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_box_arbor_label.jpg?v=1787290393', alt: 'Product label reading Deluxe Red Laser Pointer' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/pointer_battery_card.jpg?v=1787290392', alt: 'Battery installation card showing two AAA cells, included in the pointer case' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660.jpg?v=1787290393', alt: 'Adjustable laser pointer stand, Arbor Scientific 92-7660, shown holding a pointer for scale' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Solo kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Solo kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660.jpg?v=1787290393', alt: 'Adjustable laser pointer stand, shown holding a pointer for scale' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, included in the Solo kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/prism_set_92-1460.jpg?v=1787290392', alt: 'Giant acrylic lens and prism set of seven pieces, Arbor Scientific 92-1460' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Solo kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],
     name: '650 nm Laser Diffraction Research Kit, Solo (1 Observer)',
@@ -145,7 +144,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 136,
     availability: AVAIL,
     description:
-      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa (Arbor Scientific P2-7500); two adjustable laser pointer stands (92-7660); glass rods with rubber policemen, 150 x 5 mm, twelve per pack (62-1010); holographic gratings, 500 and 1000 lines per mm, five of each (33-0985, 33-0990); giant acrylic lens and prism set of 7 (92-1460). The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
+      'One observer. Contents: 650 nm deluxe red laser pointer, vendor rated 5 mW, FDA Class IIIa; two adjustable laser pointer stands; glass rods with rubber policemen, 150 x 5 mm, twelve per pack; holographic gratings, 500 and 1000 lines per mm, five of each; giant acrylic lens and prism set of 7. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. The 75 mm semicircle in the acrylic set stretches the laser dot into a short bright horizontal line, flat face toward the laser. Line length depends on which piece you use and how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m from the semicircle the line is roughly 2.5 to 3.6 cm long, not a line across the wall. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.',
   },
   {
     id: 'dual',
@@ -162,18 +161,18 @@ export const KITS: Kit[] = [
       { ...PART_92_1460, qty: 1 },
     ],
     photos: [
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer2048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048.jpg?v=1787331914', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_9ca0e159-e49a-458f-b841-9f71c7faead0.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_2f54ebec-b3b5-44d7-8105-bccfef29488b.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Dual kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_4bd36075-47fd-4087-977b-994b36fb4178.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Dual kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Dual kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet2048x2048_e40ec1fc-e126-4781-b3e8-565e0a36d983.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-022048x2048_15df7fe7-d5f2-461f-97e6-6613f18d3fff.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-032048x2048_a569cded-e72e-464f-8fa6-3daeeabe04a6.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, Arbor Scientific 92-1460, included in the Dual kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Arbor Scientific 62-1010 glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer2048x2048.jpg?v=1787331914', alt: 'Dual Red-Green Laser Pointer, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048.jpg?v=1787331914', alt: 'Adjustable Laser Pointer Stand, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_9ca0e159-e49a-458f-b841-9f71c7faead0.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_2f54ebec-b3b5-44d7-8105-bccfef29488b.jpg?v=1787331913', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Dual kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_4bd36075-47fd-4087-977b-994b36fb4178.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Dual kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048.jpg?v=1787331914', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Dual kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet2048x2048_e40ec1fc-e126-4781-b3e8-565e0a36d983.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-022048x2048_15df7fe7-d5f2-461f-97e6-6613f18d3fff.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-1460GiantAcrylicPrismSet-032048x2048_a569cded-e72e-464f-8fa6-3daeeabe04a6.jpg?v=1787331914', alt: 'Giant Acrylic Lens and Prism Set of 7, included in the Dual kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Dual kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],
     name: 'Laser Diffraction Research Kit, Dual (650 and 532 nm, 1 to 2 Observers)',
@@ -187,7 +186,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 196,
     availability: AVAIL,
     description:
-      "The Solo bench with a switchable 650 nm red and 532 nm green pointer (Arbor P2-7679, vendor rated max 5 mW, FDA Class IIIa) so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack (33-0240). Includes two adjustable stands (92-7660), glass rods with rubber policemen, twelve per pack (62-1010), holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.",
+      "The Solo bench with a switchable 650 nm red and 532 nm green pointer, vendor rated max 5 mW, FDA Class IIIa, so the same observation can be compared at two wavelengths. Adds Young's slit cards, three per pack. Includes two adjustable stands, glass rods with rubber policemen, twelve per pack, holographic gratings and the acrylic set with the semicircle that stretches the dot into a short bright horizontal line. The second stand is not a spare: one holds the pointer, the other holds a glass rod in the beam, which spreads the dot into a line so the observer scans a form rather than sampling one point. Twelve rods are included because glass breaks. Observation documents are free PDF downloads. Materials notice: contains latex (the rubber policemen fitted to the glass rods are latex) and contains small parts, not suitable for children.",
   },
   {
     id: 'triad',
@@ -205,19 +204,19 @@ export const KITS: Kit[] = [
       { ...PART_P2_9405, qty: 1 },
     ],
     photos: [
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_c5e1df26-5de3-492b-97a2-dc948b077723.jpg?v=1787331935', alt: 'Laser Ray Box and Lenses, Arbor Scientific P2-7680, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses-022048x2048_a370f73d-2953-4577-af4a-edd198a7e3ec.jpg?v=1787331935', alt: 'Laser Ray Box and Lenses, Arbor Scientific P2-7680, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer2048x2048_13b32252-8540-40c9-8f1e-1bd249e8616a.jpg?v=1787331935', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_1052120b-d4dc-4bc2-9197-b5ae16566636.jpg?v=1787331935', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_c99cf06e-75ea-490b-a866-eb38919e1998.jpg?v=1787331934', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_30957516-6e15-487d-9546-74c6966dbd26.jpg?v=1787331934', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_d4dc633b-e280-4a03-86ed-c8b81b5c28ff.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_02ffb9cd-ea0a-4e8a-937f-313db55581b3.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_3e56c70e-bc88-4ba1-9e90-36b840be6c0f.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Triad kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_e6a73e31-e324-4fb9-ac88-f7ca0be87977.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Triad kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048_54a5a203-51b4-488a-98a5-c68fe8ebce71.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Triad kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7671SlideCarrier2048x2048.jpg?v=1787331935', alt: 'Slide Carrier, Arbor Scientific 92-7671, included in the Triad kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-9405SlideMountedPolarizingFilters2048x2048.jpg?v=1787331935', alt: 'Slide Mounted Polarizing Filters 50/pack, Arbor Scientific P2-9405, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_c5e1df26-5de3-492b-97a2-dc948b077723.jpg?v=1787331935', alt: 'Laser Ray Box and Lenses, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses-022048x2048_a370f73d-2953-4577-af4a-edd198a7e3ec.jpg?v=1787331935', alt: 'Laser Ray Box and Lenses, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer2048x2048_13b32252-8540-40c9-8f1e-1bd249e8616a.jpg?v=1787331935', alt: 'Violet Laser Pointer, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_1052120b-d4dc-4bc2-9197-b5ae16566636.jpg?v=1787331935', alt: 'Violet Laser Pointer, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_c99cf06e-75ea-490b-a866-eb38919e1998.jpg?v=1787331934', alt: 'Violet Laser Pointer, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_30957516-6e15-487d-9546-74c6966dbd26.jpg?v=1787331934', alt: 'Adjustable Laser Pointer Stand, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_d4dc633b-e280-4a03-86ed-c8b81b5c28ff.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_02ffb9cd-ea0a-4e8a-937f-313db55581b3.jpg?v=1787331934', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_3e56c70e-bc88-4ba1-9e90-36b840be6c0f.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Triad kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_e6a73e31-e324-4fb9-ac88-f7ca0be87977.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Triad kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048_54a5a203-51b4-488a-98a5-c68fe8ebce71.jpg?v=1787331934', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Triad kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7671SlideCarrier2048x2048.jpg?v=1787331935', alt: 'Slide Carrier, included in the Triad kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-9405SlideMountedPolarizingFilters2048x2048.jpg?v=1787331935', alt: 'Slide Mounted Polarizing Filters 50/pack, included in the Triad kit' },
     ],
     name: 'Laser Diffraction Research Kit, Triad (650 and 405 nm, 2 to 3 Observers)',
     shortName: 'Triad',
@@ -230,7 +229,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 292,
     availability: AVAIL,
     description:
-      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set (Arbor P2-7680); 405 nm violet pointer (P2-7678); one adjustable stand for the violet pointer (92-7660); holographic gratings; Young\'s slit cards; slide carrier (92-7671); 50 slide mounted polarizers (P2-9405). The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box P2-7680, 650 nm, under 1 mW, laser class 3a; violet pointer P2-7678, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
+      'Two to three observers. Contents: 650 nm laser ray box with 1, 3 or 5 beams and its own 8 piece acrylic optics set; 405 nm violet pointer; one adjustable stand for the violet pointer; holographic gratings; Young\'s slit cards; slide carrier; 50 slide mounted polarizers. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Vendor ratings per emitter: ray box, 650 nm, under 1 mW, laser class 3a; violet pointer, spec sheet 401 nm (sold as 405 nm), under 5 mW, FDA Class IIIa. The ray box is dim, so darken the room. Observation documents are free PDF downloads.',
   },
   {
     id: 'circle',
@@ -250,22 +249,22 @@ export const KITS: Kit[] = [
       { ...PART_P2_7061, qty: 1 },
     ],
     photos: [
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_5efaa11c-9785-4d65-bb76-6dff2034df3b.jpg?v=1787331957', alt: 'Laser Ray Box and Lenses, Arbor Scientific P2-7680, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses-022048x2048_57f2cb5d-3287-4be2-a2e5-b3e9f86d380a.jpg?v=1787331957', alt: 'Laser Ray Box and Lenses, Arbor Scientific P2-7680, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048_cf21d998-06aa-4ed8-9ffd-3af818eb46a0.jpg?v=1787331957', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer2048x2048_eecc3ddf-ab96-431e-96be-95eb44b70a81.jpg?v=1787331957', alt: 'Dual Red-Green Laser Pointer, Arbor Scientific P2-7679, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer2048x2048_47e525ba-2b36-4ac5-ac37-6e15b5d7848e.jpg?v=1787331957', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_dddb9ca6-695d-4c35-9d72-8413b03855c1.jpg?v=1787331957', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_6d0d113b-25e4-4f16-90bd-63f693bf83d9.jpg?v=1787331957', alt: 'Violet Laser Pointer, Arbor Scientific P2-7678, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_b4fecfd0-08bd-47db-91bb-8f6d3efb2d4b.jpg?v=1787331957', alt: 'Adjustable Laser Pointer Stand, Arbor Scientific 92-7660, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_dc80e341-fca0-4c25-a7ab-c518d2c2787c.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, Arbor Scientific 33-0985, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_8d808c98-58df-41d9-8ee3-b003554e9664.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, Arbor Scientific 33-0990, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_fbdeac29-d5dd-4487-ab3b-69b5b9aa51d9.jpg?v=1787331957', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Circle kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_d20d6655-b139-4fff-821e-2e67b5c3fdeb.jpg?v=1787331956', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Circle kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048_6ede986e-3986-4ae7-932c-3f3811e95844.jpg?v=1787331957', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, Arbor Scientific 33-0240, included in the Circle kit" },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7671SlideCarrier2048x2048_e9bcc3b1-ee4f-49b3-9013-1d746bd9fdd2.jpg?v=1787331957', alt: 'Slide Carrier, Arbor Scientific 92-7671, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-9405SlideMountedPolarizingFilters2048x2048_0e3cf59a-6666-45ac-848f-1ca0f5fc52a1.jpg?v=1787331957', alt: 'Slide Mounted Polarizing Filters 50/pack, Arbor Scientific P2-9405, included in the Circle kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7061QuantitativeSpectroscope2048x2048.jpg?v=1787331957', alt: 'Quantitative Spectroscope, Arbor Scientific P2-7061, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses2048x2048_5efaa11c-9785-4d65-bb76-6dff2034df3b.jpg?v=1787331957', alt: 'Laser Ray Box and Lenses, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7680LaserRayBoxwithLenses-022048x2048_57f2cb5d-3287-4be2-a2e5-b3e9f86d380a.jpg?v=1787331957', alt: 'Laser Ray Box and Lenses, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer-022048x2048_cf21d998-06aa-4ed8-9ffd-3af818eb46a0.jpg?v=1787331957', alt: 'Dual Red-Green Laser Pointer, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7679DualRed-GreenLaserPointer2048x2048_eecc3ddf-ab96-431e-96be-95eb44b70a81.jpg?v=1787331957', alt: 'Dual Red-Green Laser Pointer, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer2048x2048_47e525ba-2b36-4ac5-ac37-6e15b5d7848e.jpg?v=1787331957', alt: 'Violet Laser Pointer, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-phosphoruspaper2048x2048_dddb9ca6-695d-4c35-9d72-8413b03855c1.jpg?v=1787331957', alt: 'Violet Laser Pointer, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7678VioletLaserPointer-tonicwater2048x2048_6d0d113b-25e4-4f16-90bd-63f693bf83d9.jpg?v=1787331957', alt: 'Violet Laser Pointer, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7660AdjustableLaserPointerStand2048x2048_b4fecfd0-08bd-47db-91bb-8f6d3efb2d4b.jpg?v=1787331957', alt: 'Adjustable Laser Pointer Stand, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048_dc80e341-fca0-4c25-a7ab-c518d2c2787c.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048_8d808c98-58df-41d9-8ee3-b003554e9664.jpg?v=1787331957', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_fbdeac29-d5dd-4487-ab3b-69b5b9aa51d9.jpg?v=1787331957', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Circle kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards2048x2048_d20d6655-b139-4fff-821e-2e67b5c3fdeb.jpg?v=1787331956', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Circle kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0240YoungsSlitCards-022048x2048_6ede986e-3986-4ae7-932c-3f3811e95844.jpg?v=1787331957', alt: "Young's Slit Cards, 3/pk, with Varying Dimensions, included in the Circle kit" },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/92-7671SlideCarrier2048x2048_e9bcc3b1-ee4f-49b3-9013-1d746bd9fdd2.jpg?v=1787331957', alt: 'Slide Carrier, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-9405SlideMountedPolarizingFilters2048x2048_0e3cf59a-6666-45ac-848f-1ca0f5fc52a1.jpg?v=1787331957', alt: 'Slide Mounted Polarizing Filters 50/pack, included in the Circle kit' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/P2-7061QuantitativeSpectroscope2048x2048.jpg?v=1787331957', alt: 'Quantitative Spectroscope, included in the Circle kit' },
     ],
     name: 'Laser Diffraction Research Kit, Circle (650, 532 and 405 nm, Up to 6 Observers)',
     shortName: 'Circle',
@@ -278,7 +277,7 @@ export const KITS: Kit[] = [
     diyCostNumber: 392,
     availability: AVAIL,
     description:
-      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer (P2-7679, vendor rated max 5 mW, FDA Class IIIa), a second stand for that pointer, a second slide carrier and a handheld quantitative spectroscope (P2-7061), so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
+      'Up to six observers. Everything in the Triad plus a switchable 650 and 532 nm pointer, vendor rated max 5 mW, FDA Class IIIa, a second stand for that pointer, a second slide carrier and a handheld quantitative spectroscope, so three sources cover 650, 532 and 405 nm. The semicircle lens in the ray box case stretches the dot into a short bright horizontal line, and moving it away from the laser lengthens that line. Observation documents are free PDF downloads.',
   },
 ];
 

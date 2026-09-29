@@ -79,8 +79,7 @@ const Downloads = () => (
             <Link to="/protocol-guide" className="text-primary hover:underline">
               protocol guide
             </Link>{' '}
-            describes how to build the rig from parts you can source yourself,
-            and{' '}
+            describes how to run the observation, and{' '}
             <Link to="/prepare" className="text-primary hover:underline">
               /prepare
             </Link>{' '}

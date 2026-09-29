@@ -13,9 +13,8 @@ const SITE = 'https://dmtcode.com';
 
 // The drill-down page for one kit. Everything on it comes from src/data/kits.ts,
 // which is the same array /prepare, shop.json, llms.txt and the prerenderer read.
-// The contents table and the per emitter safety table are rendered from that
-// data rather than retyped, so the page cannot state a bill of materials that
-// disagrees with the catalogue.
+// The component and per-emitter safety tables are rendered from that data rather
+// than retyped, while internal supplier identifiers remain undisclosed.
 
 function Gallery({ kit }: { kit: Kit }) {
   const [active, setActive] = useState(0);
@@ -102,15 +101,13 @@ function ContentsTable({ kit }: { kit: Kit }) {
     <div className="mt-10">
       <h2 className="font-serif text-2xl">What is in the box</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Every part shipped with this kit, with the Arbor Scientific part number and the
-        quantity. This is the list the supplier order is placed from.
+        Every component shipped with this kit and its quantity.
       </p>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <caption className="sr-only">{kit.shortName} kit bill of materials</caption>
           <thead>
             <tr className="border-b border-border/60 text-left font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-              <th scope="col" className="py-2 pr-4 font-normal">Part</th>
               <th scope="col" className="py-2 pr-4 font-normal">Item</th>
               <th scope="col" className="py-2 text-right font-normal">Qty</th>
             </tr>
@@ -118,21 +115,12 @@ function ContentsTable({ kit }: { kit: Kit }) {
           <tbody>
             {kit.contents.map((item) => (
               <tr key={item.sku} className="border-b border-border/30 align-top">
-                <th scope="row" className="py-3 pr-4 font-mono text-xs whitespace-nowrap font-normal text-muted-foreground">
-                  {item.vendor_url ? (
-                    <a href={item.vendor_url} rel="noopener" className="underline hover:text-foreground">
-                      {item.sku}
-                    </a>
-                  ) : (
-                    item.sku
-                  )}
-                </th>
-                <td className="py-3 pr-4 text-foreground">
+                <th scope="row" className="py-3 pr-4 text-left font-normal text-foreground">
                   {item.name}
                   {item.note && (
                     <span className="block text-xs text-muted-foreground">{item.note}</span>
                   )}
-                </td>
+                </th>
                 <td className="py-3 text-right tabular-nums text-muted-foreground">{item.qty}</td>
               </tr>
             ))}
@@ -172,7 +160,6 @@ function EmitterTable({ kit }: { kit: Kit }) {
               <tr key={e.sku} className="border-b border-border/30 align-top">
                 <th scope="row" className="py-3 pr-4 text-left font-normal text-foreground">
                   {e.name}
-                  <span className="block font-mono text-xs text-muted-foreground">{e.sku}</span>
                 </th>
                 <td className="py-3 pr-4 tabular-nums text-muted-foreground whitespace-nowrap">{e.wavelength_nm} nm</td>
                 <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">{e.vendor_output}</td>
