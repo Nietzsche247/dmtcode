@@ -71,6 +71,14 @@ serve(async (req) => {
 
   console.log('Starting Metaculus data update...');
 
+  const metaculusToken = Deno.env.get('METACULUS_API_TOKEN');
+  if (!metaculusToken) {
+    console.error('METACULUS_API_TOKEN is not configured');
+    return new Response(JSON.stringify({ error: 'METACULUS_API_TOKEN not configured' }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -88,7 +96,8 @@ serve(async (req) => {
           {
             headers: {
               'Accept': 'application/json',
-              'User-Agent': 'DMTCode-Forecasts/1.0'
+              'User-Agent': 'DMTCode-Forecasts/1.0',
+              'Authorization': `Token ${metaculusToken}`
             }
           }
         );

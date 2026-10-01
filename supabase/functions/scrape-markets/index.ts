@@ -24,7 +24,11 @@ async function fetchMetaculus(questionId: string) {
   const url = `https://www.metaculus.com/api2/questions/${questionId}/`
   try {
     const resp = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0", "Accept": "application/json" }
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json",
+        "Authorization": `Token ${Deno.env.get("METACULUS_API_TOKEN")}`,
+      }
     })
     if (!resp.ok) {
       console.error(`Metaculus fetch failed: ${resp.status}`)
@@ -117,6 +121,14 @@ serve(async (req) => {
   if (!authorized) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    })
+  }
+
+  if (!Deno.env.get("METACULUS_API_TOKEN")) {
+    console.error("METACULUS_API_TOKEN is not configured")
+    return new Response(JSON.stringify({ error: "METACULUS_API_TOKEN not configured" }), {
+      status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     })
   }

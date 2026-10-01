@@ -133,8 +133,52 @@ async function md5(s: string): Promise<string> {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function translate(text: string, locale: "es" | "de", st: RunState): Promise<string> {
+// Long string fields are split at blank lines into chunks of at most
+// CHUNK_MAX chars, translated with bounded concurrency, and joined with "\n\n".
+// The field is stored only if every chunk succeeded (any throw propagates).
+const LONG_FIELD_THRESHOLD = 8000;
+const CHUNK_MAX = 6000;
+const CHUNK_CONCURRENCY = 4;
+
+function splitChunks(text: string): string[] {
+  const paras = text.split(/\n\s*\n/);
+  const out: string[] = [];
+  let cur = "";
+  const push = () => { if (cur) { out.push(cur); cur = ""; } };
+  for (const p of paras) {
+    if (p.length > CHUNK_MAX) {
+      push();
+      for (let i = 0; i < p.length; i += CHUNK_MAX) out.push(p.slice(i, i + CHUNK_MAX));
+      continue;
+    }
+    const next = cur ? `${cur}\n\n${p}` : p;
+    if (next.length > CHUNK_MAX) { push(); cur = p; } else cur = next;
+  }
+  push();
+  return out;
+}
+
+async function translateString(text: string, locale: "es" | "de", deadline: number, st: RunState): Promise<string> {
+  if (text.length <= LONG_FIELD_THRESHOLD) return await translate(text, locale, st, deadline);
+  const chunks = splitChunks(text);
+  const results: string[] = new Array(chunks.length);
+  let next = 0;
+  const worker = async () => {
+    while (true) {
+      const i = next++;
+      if (i >= chunks.length) return;
+      results[i] = await translate(chunks[i], locale, st, deadline);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(CHUNK_CONCURRENCY, chunks.length) }, () => worker()));
+  return results.join("\n\n");
+}
+
+async function translate(text: string, locale: "es" | "de", st: RunState, deadline: number): Promise<string> {
   if (st.abortStreak >= MAX_CONSECUTIVE_ABORTS) throw new GatewayPausedError();
+  const remaining = deadline - Date.now();
+  if (remaining < 20000) throw new DeadlineError();
+  const timeoutMs = Math.min(callTimeoutMs(text), remaining - 5000);
   const lang = locale === "es" ? "Spanish (es)" : "German (de)";
   const sys = `You are a professional translator for a scientific website. Translate the user's text into ${lang}. `
     + `Preserve meaning, tone, and any Markdown/HTML/JSON structure exactly. `
@@ -143,7 +187,7 @@ async function translate(text: string, locale: "es" | "de", st: RunState): Promi
     + `Never render a laser class designation in the target language (for example never write "Clase 3R" or "Klasse IIIa"). Translate the surrounding prose normally, so "vendor rated 5 mW, FDA Class IIIa" becomes "clasificados por el fabricante en 5 mW, FDA Class IIIa". `
     + `Return ONLY the translation, no preamble, no quotes.`;
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), callTimeoutMs(text));
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -200,7 +244,7 @@ async function translateJson(v: unknown, locale: "es" | "de", deadline: number, 
       if (Date.now() > deadline) throw new DeadlineError();
       const leaf = leaves[index];
       if (!leaf) return;
-      leaf.translated = await translate(leaf.source, locale, st);
+      leaf.translated = await translate(leaf.source, locale, st, deadline);
     }
   };
 
@@ -518,11 +562,12 @@ Deno.serve(async (req) => {
             }
             if (have.get(`${recId}|${f}`) === h) { stats.skipped++; continue; }
             try {
-              const t = await translate(srcStr, locale, st);
+              const t = await translateString(srcStr, locale, deadline, st);
               batch.push({ table_name: c.table, record_id: recId, locale, field: f, translated_text: t, source_hash: h, translated_at: nowIso, reviewed: false });
               stats.translated++;
             } catch (e) {
               if (e instanceof GatewayPausedError) { skipTable = true; noteError(e); break; }
+              if (e instanceof DeadlineError) { stats.pending = true; break; }
               noteError(e);
             }
             if (Date.now() > deadline) { stats.pending = true; break; }
