@@ -89,6 +89,16 @@ function checkContents(kits, path) {
     for (const sku of exposed) {
       problems.push(`${label}: description exposes supplier part number ${sku}`);
     }
+    for (const [i, photo] of kit.photos.entries()) {
+      const alt = String(photo.alt || '');
+      const exposedPhotoSkus = new Set(alt.match(PART_NUMBER_RE) || []);
+      for (const sku of exposedPhotoSkus) {
+        problems.push(`${label} photos[${i}]: alt exposes supplier part number ${sku}`);
+      }
+      if (/\bArbor\b/i.test(alt)) {
+        problems.push(`${label} photos[${i}]: alt exposes supplier name Arbor`);
+      }
+    }
   }
   return problems;
 }

@@ -129,7 +129,7 @@ export const KITS: Kit[] = [
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/stand_92-7660.jpg?v=1787290393', alt: 'Adjustable laser pointer stand, shown holding a pointer for scale' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0985HolographicDiffractionGrating500lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 500 lines/mm 5 Pack, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/33-0990HolographicDiffractionGrating1000lines2048x2048.jpg?v=1787331892', alt: 'Holographic Diffraction Grating 1000 lines/mm 5 Pack, included in the Solo kit' },
-      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/prism_set_92-1460.jpg?v=1787290392', alt: 'Giant acrylic lens and prism set of seven pieces, Arbor Scientific 92-1460' },
+      { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/prism_set_92-1460.jpg?v=1787290392', alt: 'Giant acrylic lens and prism set of seven pieces' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-pack.jpg?v=1790699074', alt: 'Glass rods with rubber policemen, twelve per pack, 150 by 5 mm, included in the Solo kit' },
       { url: 'https://cdn.shopify.com/s/files/1/0957/0484/2550/files/rods-62-1010-in-stand.jpg?v=1790699074', alt: 'Glass rod clamped in the adjustable stand with its rubber policeman fitted, the configuration that spreads the beam into a line' },
     ],

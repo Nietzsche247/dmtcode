@@ -305,7 +305,7 @@ const ProductDetail = () => {
               </div>
               <div className="mt-3 text-xs text-muted-foreground">
                 <a href={localePath(locale, '/prepare')} className="underline hover:text-foreground">
-                  Back to all four kits
+                  Back to all five kits
                 </a>
                 {' '}&middot;{' '}
                 <a href={localePath(locale, '/returns')} className="underline hover:text-foreground">
