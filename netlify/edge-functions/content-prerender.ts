@@ -4085,10 +4085,10 @@ function trialTypeLabel(v: unknown): string {
 function isRegisteredTrialType(v: unknown): boolean {
   return v === "registered_clinical_trial" || v === "registered_trial";
 }
-// A principal investigator is a real, sourced role on a registered trial or a
-// published pilot report. On a media claim or a community record it invents an
-// authority the source does not establish, so it is not rendered there. This
-// mirrors the trials_pi_only_on_sourced_types constraint on the database.
+// A principal investigator is a real, sourced role on a registered study only.
+// Anywhere else it invents an authority the source does not establish, so it is
+// not rendered there. This mirrors piMayRender in src/lib/trialRecordType.ts
+// and the trials_pi_only_on_sourced_types constraint on the database.
 function piMayRender(v: unknown): boolean {
   return (
     isRegisteredTrialType(v) ||
