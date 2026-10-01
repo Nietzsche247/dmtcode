@@ -79,6 +79,8 @@ const Capture = lazy(() => import("./pages/Capture"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const ForAgents = lazy(() => import("./pages/ForAgents"));
+const LegalIndex = lazy(() => import("./pages/LegalIndex"));
+const LegalCountry = lazy(() => import("./pages/LegalCountry"));
 const EventBoom2026 = lazy(() => import("./pages/EventBoom2026"));
 const EventOzoraVsBoom2026 = lazy(() => import("./pages/EventOzoraVsBoom2026"));
 const EventHowDatesAreChecked = lazy(() => import("./pages/EventHowDatesAreChecked"));
@@ -378,6 +380,20 @@ export const AppRoutes = () => (
       <ErrorBoundary>
         <Suspense fallback={<CalibratingLasersLoader />}>
           <ForAgents />
+        </Suspense>
+      </ErrorBoundary>
+    } />
+    <Route path="legal" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <LegalIndex />
+        </Suspense>
+      </ErrorBoundary>
+    } />
+    <Route path="legal/:slug" element={
+      <ErrorBoundary>
+        <Suspense fallback={<CalibratingLasersLoader />}>
+          <LegalCountry />
         </Suspense>
       </ErrorBoundary>
     } />
