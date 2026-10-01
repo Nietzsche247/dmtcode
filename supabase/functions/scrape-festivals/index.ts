@@ -254,7 +254,6 @@ Deno.serve(async (req) => {
             website_url: w.official_url ?? w.source_url,
             is_approved: false,
             vetting_status: "unvetted",
-            verification_status: "auto_discovered_candidate",
           });
           if (rErr) throw new Error(rErr.message);
           stats.inserted++;
