@@ -285,13 +285,13 @@ const Prepare = () => {
                 Laser diffraction research kits
               </h2>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Four configurations, sized by the number of observers and wavelengths.
+                Five configurations, sized by the number of observers and wavelengths.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Every kit is built around the canonical 650 nm red baseline. Larger kits add comparative wavelengths so structured sessions can test whether observed patterns change with the light itself. The registry records wavelength on every submission.
               </p>
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
-                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece stretches the dot into a short bright horizontal line. Every kit includes one. Put the semicircle in the beam with its flat face toward the laser. Line length depends on the piece and on how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m the line is a few centimetres long, not a line across the wall.
+                Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece stretches the dot into a short bright horizontal line. Every kit except the Protocol includes one; the Protocol kit makes its line with a glass rod held in a second stand. Put the semicircle in the beam with its flat face toward the laser. Line length depends on the piece and on how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m the line is a few centimetres long, not a line across the wall.
               </p>
               <div className="mt-4 max-w-2xl" id="documents">
                 <p className="text-sm text-muted-foreground">

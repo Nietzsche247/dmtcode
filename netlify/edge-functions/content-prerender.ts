@@ -777,7 +777,7 @@ export default async (request: Request, context: Context) => {
 </article>`;
     } else if (kind === "trials") {
       const f =
-        "id,title,description,institution,principal_investigator,status,phase,confirmed_status," +
+        "id,title,description,institution,principal_investigator,organizer_lead,status,phase,confirmed_status," +
         "start_date,end_date,trial_registry_id,doi,url,record_type,created_at,updated_at";
       const r = await getRow("clinical_trials", id, "is_approved=is.true", f);
       if (!r) return notFound404(await shellRes.text(), { title: "Trial not found | DMT Code", heading: "Trial not found", text: "This trial is not currently indexed or the link is out of date.", canonical: `${SITE}/trials`, backHref: `${SITE}/trials`, backLabel: "Clinical trials", marker: "trial-not-found" });
@@ -804,6 +804,7 @@ export default async (request: Request, context: Context) => {
         ["Phase", r.phase],
         ["Institution", r.institution],
         ["Principal investigator", piMayRender(r.record_type) ? r.principal_investigator : null],
+        ["Organizer / lead", r.organizer_lead],
         ["Start date", r.start_date],
         ["End date", r.end_date],
         ["Registry ID", r.trial_registry_id],
@@ -2304,7 +2305,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
     items: [
       {
         q: "What do I need to get started?",
-        a: "Everything is on the Prepare page: four kits. Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module and diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German.",
+        a: "Everything is on the Prepare page: five kits. Protocol and Solo for one observer, Dual for one to two, Triad for two to three, Circle for up to six. The core of every kit is a 650 nm laser module, and every kit except Protocol adds diffraction optics; the exact contents of each kit are listed on its card. The same page has free downloads you can use before you buy anything: the Observation Field Sheet, the Sober Baseline Protocol, and the AVP Passthrough Protocol, each in English, Spanish, and German.",
       },
       {
         q: "Why a 650nm laser?",
@@ -4084,15 +4085,14 @@ function trialTypeLabel(v: unknown): string {
 function isRegisteredTrialType(v: unknown): boolean {
   return v === "registered_clinical_trial" || v === "registered_trial";
 }
-// A principal investigator is a real, sourced role on a registered trial or a
-// published pilot report. On a media claim or a community record it invents an
-// authority the source does not establish, so it is not rendered there. This
-// mirrors the trials_pi_only_on_sourced_types constraint on the database.
+// A principal investigator is a real, sourced role on a registered study only.
+// Anywhere else it invents an authority the source does not establish, so it is
+// not rendered there. This mirrors piMayRender in src/lib/trialRecordType.ts
+// and the trials_pi_only_on_sourced_types constraint on the database.
 function piMayRender(v: unknown): boolean {
   return (
     isRegisteredTrialType(v) ||
-    v === "registered_observational_study" ||
-    v === "published_pilot_report"
+    v === "registered_observational_study"
   );
 }
 const EV_VER_LABELS: Record<string, string> = {

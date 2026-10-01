@@ -120,19 +120,22 @@ const Auth = () => {
     }
   };
 
+  // The Lovable OAuth broker (/~oauth/*) is only intercepted on Lovable-hosted
+  // origins. Production is served from Netlify (dmtcode.com), where the broker
+  // path 404s and Google returns redirect_uri_mismatch. On any non-Lovable
+  // origin, go straight to Supabase's own /auth/v1/callback instead. Apple is
+  // not enabled on the direct path, so its button renders only on Lovable hosts.
+  const host = window.location.hostname;
+  const isLovableHost =
+    host.endsWith('.lovable.app') ||
+    host.endsWith('.lovableproject.com') ||
+    host === 'localhost' ||
+    host === '127.0.0.1';
+
   const handleOAuthLogin = async (provider: 'google' | 'apple') => {
     setIsLoading(true);
     try {
-      // The Lovable OAuth broker (/~oauth/*) is only intercepted on Lovable-hosted
-      // origins. Production is served from Netlify (dmtcode.com), where the broker
-      // path 404s and Google returns redirect_uri_mismatch. On any non-Lovable
-      // origin, go straight to Supabase's own /auth/v1/callback instead.
-      const host = window.location.hostname;
-      const isLovableHost =
-        host.endsWith('.lovable.app') ||
-        host.endsWith('.lovableproject.com') ||
-        host === 'localhost' ||
-        host === '127.0.0.1';
+
 
       if (!isLovableHost) {
         const { error } = await supabase.auth.signInWithOAuth({
@@ -216,6 +219,7 @@ const Auth = () => {
             Continue with Google
           </Button>
 
+          {isLovableHost && (
           <Button
             type="button"
             onClick={() => handleOAuthLogin('apple')}
@@ -227,6 +231,7 @@ const Auth = () => {
             </svg>
             Continue with Apple
           </Button>
+          )}
         </div>
 
 

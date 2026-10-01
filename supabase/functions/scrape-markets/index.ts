@@ -125,20 +125,19 @@ serve(async (req) => {
     })
   }
 
-  if (!Deno.env.get("METACULUS_API_TOKEN")) {
-    console.error("METACULUS_API_TOKEN is not configured")
-    return new Response(JSON.stringify({ error: "METACULUS_API_TOKEN not configured" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    })
-  }
+  const hasMetaculusToken = !!Deno.env.get("METACULUS_API_TOKEN")
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
   const results: any[] = []
 
   console.log("Starting market data scrape...")
 
-  for (const q of METACULUS_QUESTIONS) {
+  if (!hasMetaculusToken) {
+    console.error("METACULUS_API_TOKEN is not configured; skipping Metaculus, running Polymarket only")
+    results.push({ source: "metaculus", status: "skipped", error: "METACULUS_API_TOKEN not configured" })
+  }
+
+  for (const q of hasMetaculusToken ? METACULUS_QUESTIONS : []) {
     console.log(`Fetching Metaculus: ${q.id} -> ${q.mapped_event}`)
     const data = await fetchMetaculus(q.id)
     if (data) {

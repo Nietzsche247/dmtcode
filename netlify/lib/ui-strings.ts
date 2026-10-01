@@ -175,19 +175,19 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
     en: {
       title: "Prepare. Laser diffraction research kits. | DMT Code",
       description:
-        "Four laser diffraction research kits for one, one to two, two to three, or up to six observers, covering 650, 532 and 405 nm, with diffraction optics and a semicircle line maker in every kit; observation documents are free PDF downloads. Sold by Meridian Optics Lab.",
+        "Five laser diffraction research kits for one, one to two, two to three, or up to six observers, covering 650, 532 and 405 nm. The Protocol kit spreads the dot into a line with a glass rod; the other four add diffraction optics and a semicircle line maker; observation documents are free PDF downloads. Sold by Meridian Optics Lab.",
     },
     es: {
       title:
         "Preparación. Kits de investigación de difracción láser. | DMT Code",
       description:
-        "Cuatro kits de investigacion de difraccion laser para uno, uno o dos, dos o tres, o hasta seis observadores, que cubren 650, 532 y 405 nm, con optica de difraccion y un semicirculo generador de linea en cada kit; los documentos de observacion son PDF gratuitos. Vendidos por Meridian Optics Lab.",
+        "Cinco kits de investigacion de difraccion laser para uno, uno o dos, dos o tres, o hasta seis observadores, que cubren 650, 532 y 405 nm. El kit Protocol convierte el punto en una linea con una varilla de vidrio; los otros cuatro incluyen optica de difraccion y un semicirculo generador de linea; los documentos de observacion son PDF gratuitos. Vendidos por Meridian Optics Lab.",
     },
     de: {
       title:
         "Vorbereitung. Forschungskits zur Laserbeugung. | DMT Code",
       description:
-        "Vier Laserbeugungs-Forschungskits fuer einen, ein bis zwei, zwei bis drei oder bis zu sechs Beobachter, mit 650, 532 und 405 nm, Beugungsoptik und einem Halbkreis-Linienmacher in jedem Kit; Beobachtungsdokumente sind kostenlose PDFs. Verkauft von Meridian Optics Lab.",
+        "Fuenf Laserbeugungs-Forschungskits fuer einen, ein bis zwei, zwei bis drei oder bis zu sechs Beobachter, mit 650, 532 und 405 nm. Das Protocol-Kit macht den Punkt mit einem Glasstab zur Linie; die anderen vier enthalten Beugungsoptik und einen Halbkreis-Linienmacher; Beobachtungsdokumente sind kostenlose PDFs. Verkauft von Meridian Optics Lab.",
     },
   },
   documents: {
@@ -745,6 +745,23 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
   // Prices are deliberately absent: they live in src/data/kits.ts and would go
   // stale here. Laser class designations are absent too, so nothing in this
   // dictionary can restate a class in translated form.
+  "product-protocol": {
+    en: {
+      title: "Protocol kit: 650 nm laser kit for one observer | DMT Code",
+      description:
+        "Every component in the Protocol kit with quantities, the full photo set, and the vendor laser rating. The smallest set that runs the protocol as written, for one observer at 650 nm.",
+    },
+    es: {
+      title: "Kit Protocol: kit láser de 650 nm para un observador | DMT Code",
+      description:
+        "Todos los componentes del kit Protocol con sus cantidades, el juego completo de fotos y la clasificación láser del fabricante. El conjunto más pequeño que ejecuta el protocolo tal como está escrito, para un observador a 650 nm.",
+    },
+    de: {
+      title: "Protocol-Kit: 650 nm Laserkit für einen Beobachter | DMT Code",
+      description:
+        "Alle Komponenten des Protocol-Kits mit Mengen, der vollständige Fotosatz und die Herstellerangabe zur Laserklasse. Das kleinste Set, mit dem das Protokoll wie beschrieben läuft, für einen Beobachter bei 650 nm.",
+    },
+  },
   "product-solo": {
     en: {
       title: "Solo kit: 650 nm laser diffraction research kit for one observer | DMT Code",

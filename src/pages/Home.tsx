@@ -249,7 +249,7 @@ const Home = () => {
                 Instruments for careful observation
               </h2>
               <p className="text-muted-foreground mb-8">
-                Four kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
+                Five kits, one to six observers. Full details, screening notes and checkout on the Prepare page.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {INSTRUMENTS.map((kit) => (
