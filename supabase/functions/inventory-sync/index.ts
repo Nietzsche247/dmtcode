@@ -20,6 +20,8 @@ interface ShopifyProduct {
   variants: Array<{
     id: number;
     inventory_quantity: number;
+    inventory_management: string | null;
+    inventory_policy: string | null;
     price: string;
     compare_at_price: string | null;
     sku: string;
@@ -28,7 +30,7 @@ interface ShopifyProduct {
 }
 
 async function fetchShopifyProducts(): Promise<ShopifyProduct[]> {
-  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_API_VERSION}/products.json?limit=250`;
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_API_VERSION}/products.json?limit=250&status=active`;
 
   const response = await fetch(endpoint, {
     headers: {
@@ -79,7 +81,14 @@ const handler = async (req: Request): Promise<Response> => {
           0
         );
 
-        const isSoldOut = totalInventory <= 0;
+        // Drop-ship kits have inventory tracking off, so quantity alone is
+        // meaningless. A variant is available when Shopify does not track it,
+        // when it may oversell, or when it has stock.
+        const isSoldOut = !product.variants.some((v) =>
+          v.inventory_management !== "shopify" ||
+          v.inventory_policy === "continue" ||
+          (v.inventory_quantity || 0) > 0
+        );
         const primaryVariant = product.variants[0];
 
         // Upsert into store_products table
