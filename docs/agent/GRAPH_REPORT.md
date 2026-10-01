@@ -1,21 +1,21 @@
-# Graph Report - dmtcode  (2026-09-30)
+# Graph Report - dmtcode  (2026-10-01)
 
 ## Corpus Check
-- 624 files · ~884,422 words
+- 624 files · ~884,513 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3578 nodes · 7714 edges · 282 communities (183 shown, 99 thin omitted)
+- 3578 nodes · 7714 edges · 281 communities (182 shown, 99 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.61)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `64b5b434`
+- Built from commit: `c135ed88`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Communities (285 total, 102 thin omitted)
+- Communities (282 total, 99 thin omitted)
 - client.ts
 - cn
 - button.tsx
@@ -62,6 +62,7 @@
 - MarketOverlayTimeline.tsx
 - bibliography-fulltext/index.ts
 - SymbolSubmissionModeration.tsx
+- clip
 - IntelHub.tsx
 - select.tsx
 - Prepare.tsx
@@ -91,7 +92,6 @@
 - sync-llms-kits.mjs
 - tagLabel
 - Dataset.tsx
-- clip
 - data-json.ts
 - person
 - hydration-parity.mjs
@@ -108,13 +108,13 @@
 - Accessibility Audit Completed
 - route-verify/index.ts
 - devDependencies
+- renderStatic
 - timeline.schema.json
 - enum
 - properties
 - CartDrawer.tsx
 - carousel.tsx
 - scrape-pubmed/index.ts
-- renderStatic
 - required
 - check-docs-drift.mjs
 - MethodologyAccordion.tsx
@@ -122,8 +122,8 @@
 - calculate-cascade/index.ts
 - cronAuth.ts
 - trends-ingest/index.ts
-- Graph Report - dmtcode  (2026-09-29)
-- renderTheories
+- Graph Report - dmtcode  (2026-09-30)
+- renderGuideDetail
 - entries
 - Scale Preparation - Production Ready
 - kit-pick-list.mjs
@@ -153,7 +153,6 @@
 - WhatIfTimeline.tsx
 - TheDiscovery.tsx
 - 650 nm laser protocol page (honest negative)
-- renderGuideDetail
 - DMT Code Project, FINAL Logo (locked), Brand Sheet, 2026-08-18 1130 MST
 - Welcome to your Lovable project
 - check-withdrawn-articles-drift.mjs
@@ -285,7 +284,7 @@
 - transcribe-voice/index.ts
 
 ## God Nodes (most connected - your core abstractions)
-1. `Communities (285 total, 102 thin omitted)` - 170 edges
+1. `Communities (282 total, 99 thin omitted)` - 170 edges
 2. `cn()` - 150 edges
 3. `Button` - 144 edges
 4. `supabase` - 134 edges
@@ -311,11 +310,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (282 total, 99 thin omitted)
+## Communities (281 total, 99 thin omitted)
 
-### Community 0 - "Communities (285 total, 102 thin omitted)"
+### Community 0 - "Communities (282 total, 99 thin omitted)"
 Cohesion: 0.01
-Nodes (170): Communities (285 total, 102 thin omitted), Community 0 - "Communities (284 total, 102 thin omitted)", Community 100 - "scrape-pubmed/index.ts", Community 101 - "required", Community 102 - "check-docs-drift.mjs", Community 103 - "ActivityThread.tsx", Community 104 - "RegistryDoor.tsx", Community 105 - "menubar.tsx" (+162 more)
+Nodes (170): Communities (282 total, 99 thin omitted), Community 0 - "Communities (285 total, 102 thin omitted)", Community 100 - "required", Community 101 - "check-docs-drift.mjs", Community 102 - "MethodologyAccordion.tsx", Community 103 - "menubar.tsx", Community 104 - "calculate-cascade/index.ts", Community 105 - "cronAuth.ts" (+162 more)
 
 ### Community 1 - "client.ts"
 Cohesion: 0.04
@@ -331,7 +330,7 @@ Nodes (47): ArticleCard(), formatDate(), PreviewArticle, Props, DrilldownSource,
 
 ### Community 4 - "content-prerender.ts"
 Cohesion: 0.03
-Nodes (66): API_CATALOG_LD, BREADCRUMB_LD_DANNY_GOLER, config, DATASET_PAGE_LD, DOC_LANG_TAG, EV_VER_LABELS, EVENT_ANSWER_PAGES, EventAnswerPage (+58 more)
+Nodes (66): API_CATALOG_LD, BREADCRUMB_LD_DANNY_GOLER, config, DATASET_PAGE_LD, DOC_LANG_TAG, docListHtml(), EV_VER_LABELS, EVENT_ANSWER_PAGES (+58 more)
 
 ### Community 5 - "AppRoutes.tsx"
 Cohesion: 0.03
@@ -426,7 +425,7 @@ Cohesion: 0.09
 Nodes (22): callTimeoutMs(), Cfg, CONFIG, Cursor, DeadlineError, extractMarked(), gateSql(), GatewayPausedError (+14 more)
 
 ### Community 28 - "esc"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (28): buildHead(), esc(), getTranslations(), golerAttribution(), jsonLd(), legalParasHtml(), legalSourcesHtml(), lpath() (+20 more)
 
 ### Community 29 - "lib/kits.ts"
@@ -501,125 +500,125 @@ Nodes (20): authorsToString(), BibRow, BiocMeta, checkOa(), clean(), corsHeaders
 Cohesion: 0.16
 Nodes (20): CorpusFilter, languageLabel(), Profile, recordReviewActivity(), ReviewFilter, reviewLabel(), reviewVariant(), shortId() (+12 more)
 
-### Community 47 - "IntelHub.tsx"
+### Community 47 - "clip"
+Cohesion: 0.16
+Nodes (20): clip(), getRow(), getTranslationsBulk(), originLabel(), paragraphsFromText(), renderAnswers(), renderArticlesIndex(), renderDownloads() (+12 more)
+
+### Community 48 - "IntelHub.tsx"
 Cohesion: 0.13
 Nodes (16): formatDuration(), GA4Analytics(), GA4Report, RangeKey, RANGES, DataHealth, DOMAINS, formatValue() (+8 more)
 
-### Community 48 - "select.tsx"
+### Community 49 - "select.tsx"
 Cohesion: 0.16
 Nodes (16): hoursSince(), relative(), Run, ScraperRunHistory(), ScenarioInputPanel(), RegistryFiltersProps, TAG_PRESETS, SelectContent (+8 more)
 
-### Community 49 - "Prepare.tsx"
+### Community 50 - "Prepare.tsx"
 Cohesion: 0.16
 Nodes (18): DOC_FILE_COUNT, DOC_NUMBER_WORDS, DOC_PATH(), docCountWord(), DocFile, DocLang, DocRecord, DOCUMENTS (+10 more)
 
-### Community 50 - "properties"
+### Community 51 - "properties"
 Cohesion: 0.10
 Nodes (20): properties, maximum, minimum, type, maximum, minimum, type, description (+12 more)
 
-### Community 51 - "BarTimeline.tsx"
+### Community 52 - "BarTimeline.tsx"
 Cohesion: 0.18
 Nodes (18): BarTimeline(), buildSecondaryEventsMap(), getBarSpread(), getTimelinePosition(), matchEventName(), PRIMARY_EVENTS_ABOVE, PRIMARY_EVENTS_BELOW, ProcessedEvent (+10 more)
 
-### Community 52 - "date"
+### Community 53 - "date"
 Cohesion: 0.11
 Nodes (19): additionalProperties, allOf, description, required, type, definitions, date, source (+11 more)
 
-### Community 53 - "provenance"
+### Community 54 - "provenance"
 Cohesion: 0.11
 Nodes (19): provenance, rule, verified_against, verified_on, additionalProperties, description, properties, required (+11 more)
 
-### Community 54 - "CriticalPathTimeline.tsx"
+### Community 55 - "CriticalPathTimeline.tsx"
 Cohesion: 0.20
 Nodes (16): CriticalPathTimeline(), getCategoryColor(), QUARTER_OPTIONS, SPINE_EVENT_NAMES, EventCardsGrid(), getCategoryColor(), getEventMagnitude(), InteractiveTimeline() (+8 more)
 
-### Community 55 - "bibliography-triage/index.ts"
+### Community 56 - "bibliography-triage/index.ts"
 Cohesion: 0.14
 Nodes (17): anyHit(), buildUserPrompt(), classify(), clip(), corsHeaders, DMT_TERMS, evaluateGate(), extractJson() (+9 more)
 
-### Community 56 - "convergenceCard.ts"
+### Community 57 - "convergenceCard.ts"
 Cohesion: 0.22
 Nodes (14): buildCardSvg(), config, FONT_URLS, sbCount(), sbGet(), ConvergenceCardInput, esc(), extractInnerSvg() (+6 more)
 
-### Community 57 - "registry-json.ts"
+### Community 58 - "registry-json.ts"
 Cohesion: 0.25
 Nodes (17): answersJson(), collectionsJson(), compact(), config, eventActions(), EventRow, eventsJson(), HEADERS (+9 more)
 
-### Community 58 - "compilerOptions"
+### Community 59 - "compilerOptions"
 Cohesion: 0.11
 Nodes (17): ES2023, vite.config.ts, compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleDetection (+9 more)
 
-### Community 59 - "check-doi-drift.mjs"
+### Community 60 - "check-doi-drift.mjs"
 Cohesion: 0.12
 Nodes (14): constants, DOIS, files, notes, preText, problems, reactText, REPORT_FIELDS (+6 more)
 
-### Community 60 - "VoiceRecordingsList.tsx"
+### Community 61 - "VoiceRecordingsList.tsx"
 Cohesion: 0.22
 Nodes (15): Pending, RunRow, TrialsBackfillPanel(), AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter() (+7 more)
 
-### Community 61 - "RegistryDoor.tsx"
+### Community 62 - "RegistryDoor.tsx"
 Cohesion: 0.18
 Nodes (15): DoorSegment, isDoorSegment(), labelFor(), logTap(), OPTIONS, readStoredSegment(), RegistryDoor(), writeStoredSegment() (+7 more)
 
-### Community 62 - "ProductDetail.tsx"
+### Community 63 - "ProductDetail.tsx"
 Cohesion: 0.14
 Nodes (11): KITS, Loc, UI_STRINGS, uiCopy, Agg, Answers(), fmt(), sans (+3 more)
 
-### Community 63 - "dependencies"
+### Community 64 - "dependencies"
 Cohesion: 0.12
 Nodes (17): class-variance-authority, i18next, @lovable.dev/cloud-auth-js, dependencies, class-variance-authority, i18next, @lovable.dev/cloud-auth-js, @radix-ui/react-toggle (+9 more)
 
-### Community 64 - "components.json"
+### Community 65 - "components.json"
 Cohesion: 0.12
 Nodes (16): aliases, components, hooks, lib, ui, utils, rsc, $schema (+8 more)
 
-### Community 65 - "DMTCode — Essence & Experience Audit Handoff"
+### Community 66 - "DMTCode — Essence & Experience Audit Handoff"
 Cohesion: 0.12
 Nodes (16): 0. The essence, stated once (your rubric for Track 3), 1. How to use the graph for THIS audit, 2. Seeded findings — measured 2026-08-01, live DB [P], 3. The five tracks, 4. Rules of engagement, 5. Re-measurement SQL (Track 1 / Track 5), 6. Suggested order, Auth & access — state as of e7c951c (read before Track 4/5 testing) (+8 more)
 
-### Community 66 - "properties"
+### Community 67 - "properties"
 Cohesion: 0.12
 Nodes (17): type, type, type, properties, type, type, type, type (+9 more)
 
-### Community 67 - "properties"
+### Community 68 - "properties"
 Cohesion: 0.12
 Nodes (17): $ref, properties, description, maxLength, minLength, pattern, type, $ref (+9 more)
 
-### Community 68 - "ConversionFunnel.tsx"
+### Community 69 - "ConversionFunnel.tsx"
 Cohesion: 0.15
 Nodes (13): ConversionFunnel(), countOf(), fmt(), FOLLOW_PATHS, kitInterest(), KitRow, loadWindow(), Row (+5 more)
 
-### Community 69 - "MembersDirectory.tsx"
+### Community 70 - "MembersDirectory.tsx"
 Cohesion: 0.18
 Nodes (14): ACTIVITY_LABEL, activityState, ageInDays(), csvCell(), FilterKey, formatJoined(), formatMembershipAge(), formatRelative() (+6 more)
 
-### Community 70 - "Home.tsx"
+### Community 71 - "Home.tsx"
 Cohesion: 0.15
 Nodes (10): ExpeditionStrip(), STEPS, GetInvolvedDoors(), Props, LatestArticle, MissionFraming(), CommunityStats(), Stats (+2 more)
 
-### Community 71 - "place"
+### Community 72 - "place"
 Cohesion: 0.12
 Nodes (16): description, pattern, type, place, description, minLength, type, additionalProperties (+8 more)
 
-### Community 72 - "title"
+### Community 73 - "title"
 Cohesion: 0.12
 Nodes (16): description, maxLength, minLength, type, headline, text, title, minLength (+8 more)
 
-### Community 73 - "sync-llms-kits.mjs"
+### Community 74 - "sync-llms-kits.mjs"
 Cohesion: 0.15
 Nodes (10): block, buildBlock(), buildSellerLine(), env, kits, kitWavelengths(), observerPhrase(), TENS (+2 more)
 
-### Community 74 - "tagLabel"
+### Community 75 - "tagLabel"
 Cohesion: 0.23
 Nodes (11): ConvergenceHero(), TopSymbol, RecentContributions(), RecentSymbol, SymbolCard(), SymbolCardProps, isRenderableImage(), TAG_LABELS (+3 more)
 
-### Community 75 - "Dataset.tsx"
+### Community 76 - "Dataset.tsx"
 Cohesion: 0.20
 Nodes (12): PageHero(), PageHeroProps, CITATION_APA, CITATION_BIBTEX, ZENODO_CONCEPT_DOI, ZENODO_CONCEPT_URL, ZENODO_DATE_PUBLISHED, ZENODO_DOI (+4 more)
-
-### Community 76 - "clip"
-Cohesion: 0.17
-Nodes (14): clip(), docListHtml(), prepareBuyCopy(), regionLabel(), renderAnswers(), renderArticlesIndex(), renderDownloads(), renderEvidenceMap() (+6 more)
 
 ### Community 77 - "data-json.ts"
 Cohesion: 0.13
@@ -685,33 +684,33 @@ Nodes (8): fetchWithTimeout(), Issue, normalizePath(), parseSitemap(), Row, SITE
 Cohesion: 0.15
 Nodes (13): autoprefixer, @eslint/js, eslint-plugin-react-refresh, devDependencies, autoprefixer, @eslint/js, eslint-plugin-react-refresh, postgres (+5 more)
 
-### Community 93 - "timeline.schema.json"
+### Community 93 - "renderStatic"
+Cohesion: 0.21
+Nodes (13): bibliographyCountsHtml(), evVerLabel(), HASH_GATED_STATIC_PAGES, liveCountsHtml(), localizedProtocolGuideLd(), md5Hex(), priorExposureHtml(), renderFaq() (+5 more)
+
+### Community 94 - "timeline.schema.json"
 Cohesion: 0.15
 Nodes (12): additionalProperties, description, $id, required, $schema, title, type, entries (+4 more)
 
-### Community 94 - "enum"
+### Community 95 - "enum"
 Cohesion: 0.24
 Nodes (13): description, enum, type, required, evidence_class, book, commentary, community_report (+5 more)
 
-### Community 95 - "properties"
+### Community 96 - "properties"
 Cohesion: 0.15
 Nodes (13): additionalProperties, description, type, properties, evidence_classes, schema_url, schema_version, description (+5 more)
 
-### Community 96 - "CartDrawer.tsx"
+### Community 97 - "CartDrawer.tsx"
 Cohesion: 0.22
 Nodes (11): CartDrawer(), KIT_HANDLES, Window, SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetHeader() (+3 more)
 
-### Community 97 - "carousel.tsx"
+### Community 98 - "carousel.tsx"
 Cohesion: 0.15
 Nodes (12): Carousel, CarouselApi, CarouselContent, CarouselContext, CarouselContextProps, CarouselItem, CarouselNext, CarouselOptions (+4 more)
 
-### Community 98 - "scrape-pubmed/index.ts"
+### Community 99 - "scrape-pubmed/index.ts"
 Cohesion: 0.21
 Nodes (10): corsHeaders, decodeEntities(), decodeOrNull(), DMT_TERMS, esummaryAndAbstract(), EXCLUSIONS, mapContentType(), NON_DMT_TERMS (+2 more)
-
-### Community 99 - "renderStatic"
-Cohesion: 0.23
-Nodes (12): bibliographyCountsHtml(), evVerLabel(), HASH_GATED_STATIC_PAGES, liveCountsHtml(), localizedProtocolGuideLd(), md5Hex(), priorExposureHtml(), renderFaq() (+4 more)
 
 ### Community 100 - "required"
 Cohesion: 0.17
@@ -741,13 +740,13 @@ Nodes (10): corsHeaders, fetchShopifyProducts(), handler(), SHOPIFY_ACCESS_TOKEN
 Cohesion: 0.26
 Nodes (9): corsHeaders, isoDate(), MediaRow, MetricRow, nn(), numOrNull(), parseCsv(), parseMedia() (+1 more)
 
-### Community 107 - "Graph Report - dmtcode  (2026-09-29)"
+### Community 107 - "Graph Report - dmtcode  (2026-09-30)"
 Cohesion: 0.18
-Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - dmtcode  (2026-09-29), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
+Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - dmtcode  (2026-09-30), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
 
-### Community 108 - "renderTheories"
-Cohesion: 0.31
-Nodes (11): getRow(), getTranslationsBulk(), originLabel(), overlay(), paragraphsFromText(), renderRetreats(), renderTheories(), renderTheoryDetail() (+3 more)
+### Community 108 - "renderGuideDetail"
+Cohesion: 0.24
+Nodes (11): FIGURE_ATTRS, FIGURE_TAGS, gEntries(), gStrings(), gText(), guideDate(), guidePlainList(), guideSourceList() (+3 more)
 
 ### Community 109 - "entries"
 Cohesion: 0.18
@@ -865,127 +864,123 @@ Nodes (7): BREADCRUMB_LD, formatChecked(), INTERNAL_LINKS, LAST_CHECKED, MOVIE_L
 Cohesion: 0.29
 Nodes (6): 1. Migration (additive only), 2. Page `/retreats/laser-protocol`, 3. Edge functions, 4. Verification I will run, 650 nm laser protocol page (honest negative), Understanding
 
-### Community 138 - "renderGuideDetail"
-Cohesion: 0.43
-Nodes (7): gEntries(), gStrings(), gText(), guideDate(), guidePlainList(), guideSourceList(), renderGuideDetail()
-
-### Community 139 - "DMT Code Project, FINAL Logo (locked), Brand Sheet, 2026-08-18 1130 MST"
+### Community 138 - "DMT Code Project, FINAL Logo (locked), Brand Sheet, 2026-08-18 1130 MST"
 Cohesion: 0.29
 Nodes (6): DMT Code Project, FINAL Logo (locked), Brand Sheet, 2026-08-18 1130 MST, Files (svg + png each; 7 palette variants: color-on-light, color-on-paper, color-on-dark, mono-black, mono-white, red-on-light, red-on-black), Palette, Regenerate, Rules, The mark (LOCKED 2026-08-18)
 
-### Community 140 - "Welcome to your Lovable project"
+### Community 139 - "Welcome to your Lovable project"
 Cohesion: 0.29
 Nodes (6): Custom domain, How can I deploy this project?, How can I edit this code?, Project info, Welcome to your Lovable project, What technologies are used for this project?
 
-### Community 141 - "check-withdrawn-articles-drift.mjs"
+### Community 140 - "check-withdrawn-articles-drift.mjs"
 Cohesion: 0.29
 Nodes (4): hardcoded, missing, root, stale
 
-### Community 142 - "DeployButton.tsx"
+### Community 141 - "DeployButton.tsx"
 Cohesion: 0.38
 Nodes (6): DeployButton(), LogLine, NetlifyDeploy, stateVariant(), Target, TERMINAL
 
-### Community 143 - "ForecastEventCard.tsx"
+### Community 142 - "ForecastEventCard.tsx"
 Cohesion: 0.48
 Nodes (6): ForecastEventCard(), ForecastEventCardProps, formatDate(), getMonthsDiff(), parseOurMedian(), MetaculusComparison
 
-### Community 144 - "BibliographyDetail.tsx"
+### Community 143 - "BibliographyDetail.tsx"
 Cohesion: 0.43
 Nodes (6): BibliographyDetail(), displayDate(), PUB_STATUS_LABEL, pubStatusLine(), Row, stanceChip()
 
-### Community 145 - "bundle-onboarding-email/index.ts"
+### Community 144 - "bundle-onboarding-email/index.ts"
 Cohesion: 0.38
 Nodes (6): bundleEmailContent, corsHeaders, detectBundleTier(), handler(), resend, sendEmail()
 
-### Community 146 - "bundle-purchase-emails/index.ts"
+### Community 145 - "bundle-purchase-emails/index.ts"
 Cohesion: 0.33
 Nodes (6): bundleContent, BundlePurchaseRequest, corsHeaders, handler(), resend, sendEmail()
 
-### Community 147 - "og-image/index.ts"
+### Community 146 - "og-image/index.ts"
 Cohesion: 0.43
 Nodes (6): bundleInfo, corsHeaders, generateDefaultOGImage(), generateDiffractionPattern(), generateOGImageSVG(), handler()
 
-### Community 148 - "scrape-clinical-trials/index.ts"
+### Community 147 - "scrape-clinical-trials/index.ts"
 Cohesion: 0.29
 Nodes (4): corsHeaders, SEARCH_TERMS, TrialData, WriteError
 
-### Community 149 - "scrape-markets/index.ts"
+### Community 148 - "scrape-markets/index.ts"
 Cohesion: 0.29
 Nodes (3): corsHeaders, METACULUS_QUESTIONS, POLYMARKET_QUESTIONS
 
-### Community 150 - "Deployment"
+### Community 149 - "Deployment"
 Cohesion: 0.33
 Nodes (5): Credential changes must update callers in the same change, Deployment, Editing: Lovable → GitHub → Netlify, Forecasts / Earth 2 layer — DO NOT DELETE, Production hosting: Netlify
 
-### Community 151 - "Otis / Lovable Agent Prompt"
+### Community 150 - "Otis / Lovable Agent Prompt"
 Cohesion: 0.33
 Nodes (5): First Audit Task, Known Graph Blind Spots, Otis / Lovable Agent Prompt, Required Workflow, Start Here
 
-### Community 152 - "bot-logger.ts"
+### Community 151 - "bot-logger.ts"
 Cohesion: 0.33
 Nodes (3): BotClass, BOTS, config
 
-### Community 153 - "renderTimelineIndex"
+### Community 152 - "renderTimelineIndex"
 Cohesion: 0.47
 Nodes (6): renderTimelineEntry(), renderTimelineIndex(), rowsToDl(), tlLink(), tlLoad(), tlSorted()
 
-### Community 154 - "react"
+### Community 153 - "react"
 Cohesion: 0.33
 Nodes (6): react, react, useCarousel(), useChart(), useFormField(), useSidebar()
 
-### Community 155 - "check-prerender-routes-drift.mjs"
+### Community 154 - "check-prerender-routes-drift.mjs"
 Cohesion: 0.33
 Nodes (3): missing, src, toml
 
-### Community 156 - "CrawlerIntelligence.tsx"
+### Community 155 - "CrawlerIntelligence.tsx"
 Cohesion: 0.53
 Nodes (5): CrawlerHit, CrawlerIntelligence(), isProbe(), PROBE_PATTERNS, utcStamp()
 
-### Community 157 - "VisualFieldMap.tsx"
+### Community 156 - "VisualFieldMap.tsx"
 Cohesion: 0.47
 Nodes (5): clamp01(), FieldPin, round4(), VisualFieldMap(), VisualFieldMapProps
 
-### Community 158 - "Glossary.tsx"
+### Community 157 - "Glossary.tsx"
 Cohesion: 0.53
 Nodes (4): GlossaryTerm, terms, termSlug(), Glossary()
 
-### Community 159 - "upload-shopify-images/index.ts"
+### Community 158 - "upload-shopify-images/index.ts"
 Cohesion: 0.40
 Nodes (5): corsHeaders, handler(), ImageUploadRequest, SHOPIFY_ACCESS_TOKEN, uploadImageToShopify()
 
-### Community 160 - "volunteer-access/index.ts"
+### Community 159 - "volunteer-access/index.ts"
 Cohesion: 0.40
 Nodes (4): Action, corsHeaders, escapeHtml(), welcomeHtml()
 
-### Community 162 - "articles-json.ts"
+### Community 161 - "articles-json.ts"
 Cohesion: 0.50
 Nodes (4): config, fetchArr(), H, resolveCitations()
 
-### Community 163 - "package.json"
+### Community 162 - "package.json"
 Cohesion: 0.40
 Nodes (4): name, private, type, version
 
-### Community 164 - "symbols/manifest.json"
+### Community 163 - "symbols/manifest.json"
 Cohesion: 0.40
 Nodes (4): generated, license_note, set, symbols
 
-### Community 165 - "useInventoryStatus.tsx"
+### Community 164 - "useInventoryStatus.tsx"
 Cohesion: 0.50
 Nodes (4): InventoryStatus, slugToProductMapping, useInventoryStatus(), useSingleInventoryStatus()
 
-### Community 167 - "notify-admin/index.ts"
+### Community 166 - "notify-admin/index.ts"
 Cohesion: 0.50
 Nodes (4): corsHeaders, escapeHtml(), handler(), NotificationRequest
 
-### Community 168 - "update-metaculus/index.ts"
+### Community 167 - "update-metaculus/index.ts"
 Cohesion: 0.40
 Nodes (3): corsHeaders, METACULUS_QUESTIONS, MetaculusQuestionData
 
-### Community 169 - "AGENTS.md"
+### Community 168 - "AGENTS.md"
 Cohesion: 0.50
 Nodes (3): Commerce data boundary, Essence & Experience Audit, Graph Handoff
 
-### Community 172 - "productImages.ts"
+### Community 171 - "productImages.ts"
 Cohesion: 0.67
 Nodes (3): getProductImage(), getProductImageWithFallback(), productImageMap
 
@@ -999,13 +994,13 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dependencies` connect `dependencies` to `react`, `package.json`, `canvas-confetti`, `clsx`, `cmdk`, `d3`, `date-fns`, `dompurify`, `embla-carousel-react`, `fabric`, `@hookform/resolvers`, `i18next-browser-languagedetector`, `input-otp`, `lucide-react`, `next-themes`, `@radix-ui/react-accordion`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-aspect-ratio`, `@radix-ui/react-avatar`, `@radix-ui/react-checkbox`, `@radix-ui/react-collapsible`, `@radix-ui/react-context-menu`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-hover-card`, `@radix-ui/react-label`, `@radix-ui/react-menubar`, `@radix-ui/react-navigation-menu`, `@radix-ui/react-popover`, `@radix-ui/react-progress`, `@radix-ui/react-radio-group`, `@radix-ui/react-scroll-area`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-switch`, `@radix-ui/react-tabs`, `@radix-ui/react-toast`, `@radix-ui/react-toggle-group`, `@radix-ui/react-tooltip`, `react-day-picker`, `react-dom`, `react-helmet`, `react-i18next`, `react-markdown`, `react-resizable-panels`, `react-router-dom`, `recharts`, `rehype-sanitize`, `remark-gfm`, `sonner`, `swr`, `tailwind-merge`, `tailwindcss-animate`, `@tanstack/react-query`, `@types/d3`, `vaul`, `vis-timeline`, `vite-plugin-pwa`, `zod`, `zustand`?**
   _High betweenness centrality (0.083) - this node is a cross-community bridge._
-- **Why does `react` connect `react` to `hooks/use-toast.ts`, `WhatIfSliderPanel.tsx`, `dependencies`?**
+- **Why does `react` connect `react` to `dependencies`, `hooks/use-toast.ts`, `WhatIfSliderPanel.tsx`?**
   _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **Why does `cn()` connect `cn` to `client.ts`, `button.tsx`, `DependencyGraph.tsx`, `WhatIfTimeline.tsx`, `Dashboard.tsx`, `useLocale`, `Navigation.tsx`, `hooks/use-toast.ts`, `SubmissionWizard.tsx`, `ForecastChangelog.tsx`, `MetadataForm.tsx`, `ForecastEventCard.tsx`, `AvatarGlyph.tsx`, `ForecastEvent`, `AssessmentForm.tsx`, `SymbolDetail.tsx`, `LayeredSubmissionForm.tsx`, `forecasts-api.ts`, `SymbolResponsePanel.tsx`, `Profile.tsx`, `label.tsx`, `WhatIfSliderPanel.tsx`, `sidebar.tsx`, `useModeStore`, `MarketOverlayTimeline.tsx`, `IntelHub.tsx`, `select.tsx`, `BarTimeline.tsx`, `CriticalPathTimeline.tsx`, `VoiceRecordingsList.tsx`, `MegaMenu.tsx`, `CartDrawer.tsx`, `carousel.tsx`, `MethodologyAccordion.tsx`, `menubar.tsx`, `TimelineVisualization.tsx`, `HorizontalBarTimeline.tsx`, `chart.tsx`, `context-menu.tsx`?**
   _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
   _1644 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Communities (285 total, 102 thin omitted)` be split into smaller, more focused modules?**
+- **Should `Communities (282 total, 99 thin omitted)` be split into smaller, more focused modules?**
   _Cohesion score 0.011764705882352941 - nodes in this community are weakly interconnected._
 - **Should `client.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.04284958561100335 - nodes in this community are weakly interconnected._
