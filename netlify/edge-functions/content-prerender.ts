@@ -2408,16 +2408,21 @@ async function renderFaq(context: Context, locale: Loc = "en"): Promise<Response
 </article>`;
 
 
+  // Same fallback contract as renderStatic (/prepare, /documents): English
+  // source under a locale URL is declared English and canonicalised to /faq.
+  const servingEnglishSource = locale !== "en" && !(trs.body_html && trs.body_html.trim());
+
   const head = buildHead({
     locale,
     title,
     description: metaDesc,
     canonical,
     ogType: "website",
+    untranslated: servingEnglishSource,
     jsonLd: [organizationLd, websiteLd, breadcrumbLd, faqLd],
   });
 
-  const html = renderShell(await shellRes.text(), head, body, locale);
+  const html = renderShell(await shellRes.text(), head, body, servingEnglishSource ? "en" : locale);
   return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
 }
 
