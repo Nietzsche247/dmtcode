@@ -138,7 +138,10 @@ async function md5(s: string): Promise<string> {
 // The field is stored only if every chunk succeeded (any throw propagates).
 const LONG_FIELD_THRESHOLD = 8000;
 const CHUNK_MAX = 6000;
-const CHUNK_CONCURRENCY = 4;
+const CHUNK_CONCURRENCY = 16;
+// A chunked field is only started when at least this much run budget remains,
+// so all chunks can finish in one parallel round instead of being discarded.
+const CHUNKED_FIELD_MIN_REMAINING_MS = 80_000;
 
 function splitChunks(text: string): string[] {
   const paras = text.split(/\n\s*\n/);
@@ -160,6 +163,7 @@ function splitChunks(text: string): string[] {
 
 async function translateString(text: string, locale: "es" | "de", deadline: number, st: RunState): Promise<string> {
   if (text.length <= LONG_FIELD_THRESHOLD) return await translate(text, locale, st, deadline);
+  if (deadline - Date.now() < CHUNKED_FIELD_MIN_REMAINING_MS) throw new DeadlineError();
   const chunks = splitChunks(text);
   const results: string[] = new Array(chunks.length);
   let next = 0;
@@ -170,7 +174,7 @@ async function translateString(text: string, locale: "es" | "de", deadline: numb
       results[i] = await translate(chunks[i], locale, st, deadline);
     }
   };
-  await Promise.all(Array.from({ length: Math.min(CHUNK_CONCURRENCY, chunks.length) }, () => worker()));
+  await Promise.all(Array.from({ length: Math.min(CHUNK_CONCURRENCY, chunks.length, 16) }, () => worker()));
   return results.join("\n\n");
 }
 
