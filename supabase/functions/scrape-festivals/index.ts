@@ -146,7 +146,7 @@ function fromJsonLd(html: string): Found | null {
       const arr = p === undefined || p === null ? [] : (Array.isArray(p) ? p : [p]);
       const names = arr
         .map((x: any) => (typeof x === "string" ? x : (x && typeof x === "object" ? (pick(x, "name") as string) : null)))
-        .filter((x: any) => typeof x === "string" && x.trim().length > 0);
+        .filter((x: any): x is string => typeof x === "string" && x.trim().length > 0);
       lineup = names.length ? names : null;
     } catch { /* null-safe */ }
 
