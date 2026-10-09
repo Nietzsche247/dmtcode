@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, FlaskConical, Sparkles, SunMedium, ShoppingCart } from "lucide-react";
+import { Menu, X, ChevronDown, FlaskConical, Sparkles, SunMedium } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CartDrawer } from "./CartDrawer";
-import { useCartStore } from "@/stores/cartStore";
 import { useModeStore } from "@/stores/modeStore";
 import { useThemeStore } from "@/stores/themeStore";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,7 +28,6 @@ export const Navigation = () => {
   const [userHandle, setUserHandle] = useState<string | null>(null);
   const [avatarSeed, setAvatarSeed] = useState<string | null>(null);
   const [openSection, setOpenSection] = useState<string | null>(null);
-  const itemCount = useCartStore((state) => state.items.length);
   const { mode, setMode } = useModeStore();
   const { resolvedTheme, setTheme } = useThemeStore();
   const navigate = useNavigate();
@@ -161,7 +158,6 @@ export const Navigation = () => {
               <LanguageSwitcher />
               <ModeToggle />
               <ThemeToggle />
-              <CartDrawer />
               {isAuthenticated ? (
                 <UserDropdown 
                   handle={userHandle} 
@@ -187,7 +183,6 @@ export const Navigation = () => {
             <div className="flex items-center gap-1 lg:hidden">
               <ModeToggle />
               <ThemeToggle />
-              <CartDrawer />
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className="text-foreground hover:text-primary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -326,10 +321,6 @@ export const Navigation = () => {
                   <SunMedium className="h-4 w-4" aria-hidden="true" />
                   {mode === 'research' ? t('nav.themeLocked') : t('nav.themeSwitch')}
                 </button>
-                <p className="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground">
-                  <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-                  {t('nav.cart', { count: itemCount })}
-                </p>
               </div>
 
               {/* About */}

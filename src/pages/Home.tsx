@@ -25,7 +25,7 @@ import { KITS } from '@/data/kits';
 const INSTRUMENTS = KITS.map((kit) => ({
   slug: kit.id,
   id: kit.id,
-  href: '/prepare',
+  href: `/products/${kit.handle}`,
   name: kit.shortName,
   spec: `650 NM · ${kit.observers.toUpperCase()} OBSERVER${kit.observers === '1' ? '' : 'S'}`,
   price: kit.price,
@@ -299,7 +299,7 @@ const Home = () => {
                             }
                           }}
                         >
-                          See kit and buy
+                          Full details and photos
                         </Link>
                       </Button>
                     </div>
