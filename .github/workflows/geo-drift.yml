@@ -123,11 +123,12 @@ jobs:
               "https://shop.dmtcode.com/cart/54434179973430:1",
               "https://shop.dmtcode.com/cart/54376697692470:1",
               "https://shop.dmtcode.com/cart/54376698446134:1",
+              "https://shop.dmtcode.com/cart/67786715365686:1",
           ]
           _, _, prepare_bot = fetch("/prepare", GOOGLEBOT)
           _, _, llms_now = fetch("/llms.txt")
           for label, doc in (("/prepare (Googlebot)", prepare_bot), ("/llms.txt", llms_now)):
-              for token in ("$199", "$289", "$399", "$699", "$1,090"):
+              for token in ("$199", "$289", "$399", "$699", "$1,090", "$15"):
                   check(f"{label} lists {token}", token in doc, "kit price")
               for cart in CARTS:
                   check(f"{label} lists cart {cart.rsplit('/', 1)[1]}", cart in doc, "cart permalink")

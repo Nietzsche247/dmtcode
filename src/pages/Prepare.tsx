@@ -147,6 +147,7 @@ function KitCard({ kit }: { kit: Kit }) {
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
         {kit.description}
       </p>
+      {kit.id === 'protocol' && <p className="text-sm text-muted-foreground mt-4 leading-relaxed">The pilot study lists a diffraction grating lens; this kit uses a glass rod, a cylindrical optic that spreads the dot into a single line and produces no diffraction orders. Gratings ship in the Solo and above.</p>}
       {kit.id === 'triad' && <p className="text-sm text-muted-foreground mt-4 leading-relaxed">The vendor spec sheet lists this pointer at 401 nm, which falls within the 405 nm class it is sold under.</p>}
 
       <div className="mt-4 text-xs text-muted-foreground">
