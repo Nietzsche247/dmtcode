@@ -3828,6 +3828,13 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     ? trs.body_extra_html
     : (page.bodyExtraHtml ?? "");
 
+  // Symbols keeps its live list outside translated prose, between the PDF and how sections.
+  const symbolsHowStart = key === "symbols" ? bodyExtra.indexOf('<section data-prerender="symbols-how">') : -1;
+  const orderedExtra = symbolsHowStart >= 0
+    ? bodyExtra.slice(0, symbolsHowStart) + recentList + bodyExtra.slice(symbolsHowStart)
+    : bodyExtra;
+  const listAfterExtra = symbolsHowStart >= 0 ? "" : recentList;
+
   // The single fact the rest of this function needs: did a translation actually
   // apply, or is this the English source wearing a locale URL? The body below
   // already branches on exactly this condition, so reuse it rather than guess.
@@ -3841,13 +3848,13 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   // /es is the same defect class as a count that means something other than its
   // label: the surface claims one thing and delivers another.
   const body = trs.body_html && trs.body_html.trim()
-    ? `<article data-prerender="${esc(key)}">${trs.body_html}${bodyExtra}${recentList}${attribution}</article>`
+    ? `<article data-prerender="${esc(key)}">${trs.body_html}${orderedExtra}${listAfterExtra}${attribution}</article>`
     : `<article data-prerender="${esc(key)}">
   <!--tsrc:static:${key}-->
   ${enSource}
   <!--/tsrc-->
-  ${bodyExtra}
-  ${recentList}
+  ${orderedExtra}
+  ${listAfterExtra}
   ${linksBlock}
   ${attribution}
 </article>`;

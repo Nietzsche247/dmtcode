@@ -23,8 +23,8 @@
 
 ## Symbols and locale coherence
 
-- [ ] A. Symbols landing page, plate relocation, route and crawler wiring
-- [ ] B. Homepage experiment answer and Decode destination
-- [ ] C. Translation currency, completeness and hydrated canonical fallback
-- [ ] D. Drift, rule tests, lint, automatic build and browser verification
+- [x] A. Symbols landing page, plate relocation, route and crawler wiring
+- [x] B. Homepage experiment answer and Decode destination
+- [x] C. Translation currency, completeness and hydrated canonical fallback
+- [x] D. Drift, rule tests, lint, automatic build and browser verification (existing lint failures remain)
 - [ ] Post-deploy: Netlify main deployment, translation refresh and production parity suite
