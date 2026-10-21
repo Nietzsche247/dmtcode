@@ -722,24 +722,32 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
   },
   // "The Discovery" is the film's title and is never translated.
   "the-discovery": {
-    en: {
-      title:
-        "The Discovery (2026): release date, where to watch, and what the film claims",
-      description:
-        "The Discovery is an independent documentary about the DMT laser observation first reported by Danny Goler. Premiere window, ticket status, and what is and is not confirmed.",
+    "en": {
+      "title": "The Discovery",
+      "description": "The Discovery is a documentary film. Release window late October to November 2026, exact date to be announced. Where to watch, and what this site keeps on the open record."
     },
-    es: {
-      title:
-        "The Discovery (2026): fecha de estreno, dónde verla y qué afirma la película",
-      description:
-        "The Discovery es un documental independiente sobre la observación con láser de 650 nm y N,N-DMT reportada por Danny Goler. Ventana de estreno, estado de las entradas y qué está confirmado y qué no.",
+    "es": {
+      "title": "The Discovery",
+      "description": "The Discovery es un documental. Estreno entre finales de octubre y noviembre de 2026, con fecha exacta por anunciar. Dónde verlo y qué mantiene este sitio en el registro abierto."
     },
-    de: {
-      title:
-        "The Discovery (2026): Starttermin, wo man ihn sehen kann und was der Film behauptet",
-      description:
-        "The Discovery ist ein unabhängiger Dokumentarfilm über die von Danny Goler berichtete Laserbeobachtung mit 650 nm und N,N-DMT. Premierenzeitraum, Ticketstatus und was bestätigt ist und was nicht.",
+    "de": {
+      "title": "The Discovery",
+      "description": "The Discovery ist ein Dokumentarfilm. Veröffentlichung Ende Oktober bis November 2026, genaues Datum noch offen. Wo man ihn sehen kann und was diese Seite im offenen Verzeichnis festhält."
+    }
+  },
+  "build-your-own": {
+    "en": {
+      "title": "Build your own observation rig | DMT Code",
+      "description": "Components, sources and purpose for assembling the 650 nm observation setup yourself, as an alternative to the kits."
     },
+    "es": {
+      "title": "Monte su propio equipo de observación | DMT Code",
+      "description": "Componentes, proveedores y función para montar usted mismo el montaje de observación de 650 nm, como alternativa a los kits."
+    },
+    "de": {
+      "title": "Bauen Sie Ihren eigenen Beobachtungsaufbau | DMT Code",
+      "description": "Komponenten, Bezugsquellen und Zweck, um den 650 nm Beobachtungsaufbau selbst zusammenzustellen, als Alternative zu den Kits."
+    }
   },
   // One key per kit drill-down page at /products/<handle>, keyed product-<kit.id>.
   // Prices are deliberately absent: they live in src/data/kits.ts and would go

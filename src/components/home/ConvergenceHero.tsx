@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Eye, PencilLine } from 'lucide-react';
 import { tagLabel } from '@/lib/tags';
+import { KIT_MIN_PRICE } from '@/data/kits';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 interface TopSymbol {
   id: string;
@@ -16,6 +19,8 @@ interface TopSymbol {
 }
 
 export const ConvergenceHero = () => {
+  const locale = useLocale();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
   const [recent, setRecent] = useState<TopSymbol[]>([]);
@@ -153,6 +158,13 @@ export const ConvergenceHero = () => {
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
+
+          <Link to={localePath(locale, '/prepare')} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground" onClick={() => {
+            const analytics = window as Window & { gtag?: (command: string, event: string) => void };
+            if (typeof window !== 'undefined' && analytics.gtag) analytics.gtag('event', 'home_hero_kits_link');
+          }}>
+            {t('observationResources.heroKits', { price: `$${KIT_MIN_PRICE.toLocaleString('en-US')}` })} <ArrowRight className="w-3 h-3" aria-hidden="true" />
+          </Link>
 
           <p className="text-xs text-muted-foreground">
             Recording first keeps your memory unshaped by the catalogue. Free account, avatar only, your name is never shown.

@@ -91,6 +91,9 @@
     "rights": "Offene Forschung. Zitieren Sie die Zeile.",
     "resourcesHeading": "Ressourcen",
     "projectHeading": "Das Projekt",
+    "updatesHeading": "Neuigkeiten",
+    "updatesNote": "Neue Symbole, Nullbefunde und Korrekturen. Antworten Sie auf eine E-Mail, um sich abzumelden.",
+    "buildYourOwn": "Selbst bauen",
     "articles": "Artikel",
     "guides": "Leitfäden",
     "capture": "Erfassen",
@@ -120,6 +123,7 @@
     "copyright": "© {{year}} DMT Code Project. Websitetext und Design vorbehalten. Registerdaten und Protokolldokumente stehen unter CC-BY-4.0."
   },
   "breadcrumb": {
+    "build-your-own": "Selbst bauen",
     "home": "Start",
     "tools": "Werkzeuge",
     "registry": "Verzeichnis",
@@ -160,6 +164,9 @@
     "terms": "Nutzungsbedingungen",
     "privacy": "Datenschutz"
   },
+  "observationResources": {"heroKits": "Kits ab {{price}} für sorgfältige Beobachtung", "preferKit": "Lieber ein Kit? Kits ab {{price}}", "protocol": "Das Beobachtungsprotokoll", "documents": "Dokumente"},
+  "signupBar": {"text": "Erfahren Sie, wenn sich das Verzeichnis ändert: neue Symbole, Nullbefunde, Korrekturen."},
+  "emailCapture": {"emailLabel": "E-Mail-Adresse", "submit": "Anmelden"},
   "actions": {
     "submit": "Absenden",
     "cancel": "Abbrechen",

@@ -6,8 +6,15 @@ import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { EmailCapture } from '@/components/EmailCapture';
+import { GolerAttribution } from '@/components/GolerAttribution';
+import { LocalizedBody } from '@/components/LocalizedBody';
+import { useLocalizedBody } from '@/hooks/useLocalizedBody';
+import { uiCopy } from '@/i18n/ui-strings';
+import { KIT_MIN_PRICE } from '@/data/kits';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
-export const LAST_CHECKED = '2026-08-23';
+export const LAST_CHECKED = '2026-10-20';
 
 const formatChecked = (iso: string) => {
   const d = new Date(`${iso}T00:00:00Z`);
@@ -15,17 +22,15 @@ const formatChecked = (iso: string) => {
 };
 
 const PAGE_TITLE =
-  'The Discovery (2026): release date, where to watch, and what the film claims';
+  'The Discovery';
 const PAGE_DESCRIPTION =
-  'The Discovery is an independent documentary about the DMT laser observation first reported by Danny Goler. Premiere window, ticket status, and what is and is not confirmed.';
+  'The Discovery is a documentary film. Release window late October to November 2026, exact date to be announced. Where to watch, and what this site keeps on the open record.';
 
 const WATCH_ROWS: [string, string][] = [
-  ['Premiere', 'Los Angeles area, late October to early November 2026'],
-  ['Exact date and venue', 'Not announced'],
-  ['Format', 'A single ticketed screening event, with a live discussion'],
-  ['Tickets', "Presale open on the film's own site"],
-  ['Wider release', 'None announced'],
-  ['Streaming', 'No distributor and no streaming platform has been announced'],
+  ['Release window', 'Late October to November 2026'],
+  ['Exact date', 'To be announced'],
+  ['Where to watch', 'Not yet announced'],
+  ['Streaming', 'Nothing announced'],
 ];
 
 const INTERNAL_LINKS: [string, string][] = [
@@ -33,7 +38,7 @@ const INTERNAL_LINKS: [string, string][] = [
   ['Read what the evidence does and does not support', '/evidence-map'],
   ['Understand the observation setup', '/protocol-guide'],
   [
-    'Know what equipment a 650 nm observation involves, and the eyewear class it needs',
+    'Know what equipment a 650 nm observation involves',
     '/prepare',
   ],
   ['Read the published literature, with stance scores', '/bibliography'],
@@ -46,27 +51,9 @@ const MOVIE_LD = {
   name: 'The Discovery',
   url: 'https://dmtcode.com/the-discovery',
   sameAs: 'https://thediscoveryfilm.com',
-  director: {
-    '@type': 'Person',
-    name: 'Aaron Vanden',
-  },
   disambiguatingDescription:
-    'An independent documentary about the 650 nm laser observation reported during N,N-DMT experiences. Not to be confused with the unrelated 2017 Netflix feature The Discovery, directed by Charlie McDowell.',
-  subjectOf: {
-    '@type': 'Event',
-    name: 'The Discovery premiere screening',
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    location: {
-      '@type': 'Place',
-      name: 'Los Angeles area',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Los Angeles',
-        addressRegion: 'CA',
-        addressCountry: 'US',
-      },
-    },
-  },
+    'Not to be confused with the unrelated 2017 Netflix feature The Discovery.',
+
 };
 
 const BREADCRUMB_LD = {
@@ -84,6 +71,9 @@ const BREADCRUMB_LD = {
 };
 
 const TheDiscovery = () => {
+  const locale = useLocale();
+  const translatedBody = useLocalizedBody('the-discovery');
+  const pageCopy = uiCopy('the-discovery', locale);
   return (
     <>
       <SEO uiKey="the-discovery" path="/the-discovery" />
@@ -92,7 +82,7 @@ const TheDiscovery = () => {
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={PAGE_TITLE} />
-        <meta name="twitter:description" content={PAGE_DESCRIPTION} />
+        <meta name="twitter:description" content={pageCopy.description} />
         <script type="application/ld+json">{JSON.stringify(MOVIE_LD)}</script>
         <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
       </Helmet>
@@ -103,12 +93,10 @@ const TheDiscovery = () => {
 
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-12 md:py-16 max-w-4xl">
+            <LocalizedBody pageId="the-discovery">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">The Discovery</h1>
             <p className="text-lg text-muted-foreground mb-12">
-              The Discovery is an independent documentary about the visual forms some people
-              report seeing when a 650 nm laser is used during an N,N-DMT experience. This page
-              tracks what is confirmed about the film and what is not. It is not affiliated with
-              the production.
+              The Discovery is a documentary film. This page tracks the release window, where it can be watched once that is announced, and how it relates to the open record kept on this site. The page is not affiliated with the film, its production or its distribution.
             </p>
 
             <h2 className="text-2xl md:text-3xl font-semibold mb-6">When can you watch it</h2>
@@ -126,12 +114,11 @@ const TheDiscovery = () => {
               </dl>
             </Card>
 
-            <p className="text-base leading-relaxed mb-6">
-              If you are trying to work out whether you can watch it at home this year, the honest
-              answer today is that no one has said so. One screening has been announced and nothing
-              beyond it. We will update this page when that changes, and the date on it is the date
-              we last checked.
-            </p>
+            <Card className="p-6 bg-card border-border mb-8">
+              <h2 className="text-xl font-semibold mb-4">Get the release date</h2>
+              <EmailCapture variant="inline" source="the-discovery" />
+              <p className="text-xs text-muted-foreground mt-3">One email when the date is confirmed. Reply to be removed.</p>
+            </Card>
 
             <p className="mb-12">
               <a
@@ -156,36 +143,19 @@ const TheDiscovery = () => {
               Searches for "the discovery netflix" almost always land on that one.
             </p>
 
-            <h2 className="text-2xl md:text-3xl font-semibold mb-4">Who made it</h2>
-            <p className="text-base leading-relaxed mb-12">
-              The film is directed by Aaron Vanden and was funded independently, including a public
-              crowdfunding campaign. Danny Goler is its subject rather than its director.
-            </p>
-
             <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-              What the film is about, and what that has to do with this site
+              What this has to do with this site
             </h2>
             <p className="text-base leading-relaxed mb-4">
-              The observation at the centre of the film was first reported by Danny Goler in August
-              2020: that under a 650 nm laser, some people report seeing discrete, repeating visual
-              forms during an N,N-DMT experience. A pilot study was published in IPI Letters in
-              2025 (DOI 10.59973/ipil.158).
-            </p>
-            <p className="text-base leading-relaxed mb-4">
-              What did not exist was a place to accumulate the evidence in a form anyone could
-              inspect, including evidence that cuts against it. That is what this site is. Every
-              reported symbol is a dated, permanent, openly licensed record. Every source carries a
-              stance score. Negative results are published in the same place as positive ones,
-              under the same licence.
+              This site keeps an open record that anyone can inspect. Reported symbols are dated, openly licensed records. Some bibliography sources carry stance scores; unscored sources are not neutral. Null results are published alongside positive reports under the same licence.
             </p>
             <p className="text-base leading-relaxed mb-8">
-              We do not know whether the phenomenon is real. We built the instrument that could
-              find out.
+              We do not know whether the phenomenon is real.
             </p>
             <p className="text-base leading-relaxed mb-8">
               The reported symbol set is also available as a citable PDF:{' '}
               <a
-                href="/downloads/dmt-laser-code-symbols.pdf"
+                href={localePath(locale, '/downloads/dmt-laser-code-symbols.pdf')}
                 className="text-gold hover:underline font-medium"
               >
                 DMT Laser Code Symbols (PDF)
@@ -195,25 +165,9 @@ const TheDiscovery = () => {
 
             <h3 className="text-xl font-semibold mb-4">Attribution</h3>
             <Card className="p-6 bg-muted/30 border-border mb-12">
-              <ol className="list-decimal pl-5 space-y-2 text-sm text-muted-foreground">
-                <li>
-                  First reported by. Danny Goler made the observation, and the written protocol
-                  grew out of it.
-                </li>
-                <li>
-                  No part in. He is not a founder of this site, holds no editorial role, and has no
-                  part in the store.
-                </li>
-                <li>
-                  Endorses nothing. He has not reviewed or approved any page, kit or claim here.
-                </li>
-              </ol>
+              <GolerAttribution />
               <p className="text-sm text-muted-foreground mt-4">
-                The same three facts appear on{' '}
-                <Link to="/people/danny-goler" className="text-gold hover:underline">
-                  /people/danny-goler
-                </Link>
-                . This site is not affiliated with the film, its production, or its distribution.
+                This site is not affiliated with the film, its production, or its distribution.
               </p>
             </Card>
 
@@ -227,7 +181,7 @@ const TheDiscovery = () => {
                   >
                     <dt className="sm:col-span-2 text-base">{label}</dt>
                     <dd className="text-sm">
-                      <Link to={href} className="text-gold hover:underline font-medium">
+                      <Link to={localePath(locale, href)} className="text-gold hover:underline font-medium">
                         {href}
                       </Link>
                     </dd>
@@ -236,17 +190,26 @@ const TheDiscovery = () => {
               </dl>
             </Card>
 
+            <section className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-4">Preparing to observe</h2>
+              <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
+                <Link to={localePath(locale, '/prepare')} className="text-primary hover:underline">Kits from ${KIT_MIN_PRICE.toLocaleString('en-US')}, sold by Meridian Optics Lab</Link>
+                <Link to={localePath(locale, '/protocol-guide')} className="text-primary hover:underline">The observation protocol</Link>
+              </div>
+            </section>
+
             <h2 className="text-2xl md:text-3xl font-semibold mb-4">
               What we will update, and when
             </h2>
             <p className="text-base leading-relaxed mb-6">
               This page is a running record, not an announcement. It changes when one of these
-              changes: the exact premiere date, the venue, a distribution or streaming deal, a
-              festival selection, or a second screening.
+              changes: the exact release date, where to watch, or streaming availability.
             </p>
             <p className="text-sm text-muted-foreground">
               Last checked {formatChecked(LAST_CHECKED)}
             </p>
+            </LocalizedBody>
+            {translatedBody && <Card className="p-6 bg-card border-border mt-8"><EmailCapture variant="inline" source="the-discovery" /></Card>}
           </section>
         </main>
 

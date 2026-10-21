@@ -118,6 +118,7 @@ jobs:
           # list and the price tuple below whenever a kit is added, removed, or
           # repriced, otherwise this job fails on every run.
           CARTS = [
+              "https://shop.dmtcode.com/cart/67602202526006:1",
               "https://shop.dmtcode.com/cart/54376696709430:1",
               "https://shop.dmtcode.com/cart/54434179973430:1",
               "https://shop.dmtcode.com/cart/54376697692470:1",
@@ -126,7 +127,7 @@ jobs:
           _, _, prepare_bot = fetch("/prepare", GOOGLEBOT)
           _, _, llms_now = fetch("/llms.txt")
           for label, doc in (("/prepare (Googlebot)", prepare_bot), ("/llms.txt", llms_now)):
-              for token in ("$289", "$399", "$699", "$1,090"):
+              for token in ("$199", "$289", "$399", "$699", "$1,090"):
                   check(f"{label} lists {token}", token in doc, "kit price")
               for cart in CARTS:
                   check(f"{label} lists cart {cart.rsplit('/', 1)[1]}", cart in doc, "cart permalink")

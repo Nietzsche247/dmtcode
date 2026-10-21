@@ -54,6 +54,8 @@ const STATIC_PAGE_PATHS: PageSrc[] = [
   { id: "dataset", path: "/dataset" },
   { id: "about", path: "/about" },
   { id: "critiques", path: "/critiques" },
+  { id: "the-discovery", path: "/the-discovery" },
+  { id: "build-your-own", path: "/build-your-own" },
   { id: "events", path: "/events" },
   { id: "glossary", path: "/glossary" },
   { id: "methods", path: "/methods" },

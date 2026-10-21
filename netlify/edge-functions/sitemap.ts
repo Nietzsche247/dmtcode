@@ -21,6 +21,7 @@ const STATIC: Array<[string, string, string]> = [
   ["/trials", "0.9", "daily"],
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
+  ["/build-your-own", "0.6", "monthly"],
   // The document index. Every protocol PDF is free and needs no account, and
   // "dmt laser code symbols pdf" is one of the highest click through queries
   // the site has, so the PDF itself was the landing page: a dead end with no
@@ -35,6 +36,7 @@ const STATIC: Array<[string, string, string]> = [
   // is not something to derive. If a kit handle changes in src/data/kits.ts,
   // change it here, in spa-guard.ts and in scripts/check-spa-guard-routes.mjs
   // in the same commit.
+  ["/products/650-nm-laser-protocol-kit-1-observer", "0.7", "weekly"],
   ["/products/650nm-laser-diffraction-research-kit-solo", "0.7", "weekly"],
   ["/products/dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm", "0.7", "weekly"],
   ["/products/multi-wavelength-laser-diffraction-kit-triad", "0.7", "weekly"],

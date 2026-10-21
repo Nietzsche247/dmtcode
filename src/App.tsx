@@ -13,6 +13,7 @@ import { useGA4PageTracking } from "./hooks/useGA4PageTracking";
 import "./i18n";
 import { LocaleProvider } from "./i18n/LocaleProvider";
 import AppRoutes from "./AppRoutes";
+import { SignupBar } from "./components/SignupBar";
 
 const GA4Tracker = () => {
   useGA4PageTracking();
@@ -36,6 +37,7 @@ const App = () => (
           <BadgeToastListener />
           <HighFiveToastListener />
           <PWAInstallPrompt />
+          <SignupBar />
           <Routes>
             <Route
               path="/es/*"

@@ -6,6 +6,7 @@ import { Logo } from '@/components/Logo';
 import { ZENODO_DOI, CITATION_APA } from '@/lib/constants';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { EmailCapture } from '@/components/EmailCapture';
 
 export const Footer = () => {
   const locale = useLocale();
@@ -76,6 +77,11 @@ export const Footer = () => {
               <li>
                 <Link to={to('/prepare')} className="text-muted-foreground hover:text-primary transition-colors">
                   {t('footer.kits')}
+                </Link>
+              </li>
+              <li>
+                <Link to={to('/build-your-own')} className="text-muted-foreground hover:text-primary transition-colors">
+                  {t('footer.buildYourOwn')}
                 </Link>
               </li>
               <li>
@@ -177,6 +183,10 @@ export const Footer = () => {
                 </Link>
               </li>
             </ul>
+            <div className="space-y-3 pt-2">
+              <EmailCapture variant="compact" source="footer" />
+              <p className="text-xs text-muted-foreground leading-relaxed">{t('footer.updatesNote')}</p>
+            </div>
           </div>
         </div>
 

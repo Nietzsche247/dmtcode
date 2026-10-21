@@ -1,8 +1,18 @@
 import type { Config, Context } from "@netlify/edge-functions";
 import { hubLabel, uiCopy } from "../lib/ui-strings.ts";
-import { KITS } from "../lib/kits.ts";
+import { KITS, KIT_MIN_PRICE } from "../lib/kits.ts";
 import { DOCUMENTS, docCountWord } from "../lib/documents.ts";
 import { INCB_BASELINE, LEGAL_COUNTRIES, LEGAL_SLUGS } from "../lib/legal.ts";
+
+// Mirrored from src/data/fieldGuide.ts. Keep the publication gate identical.
+const FIELD_GUIDE = {
+  id: 'field-guide',
+  name: 'DMT Laser Code Field Guide (PDF)',
+  price: '{{FIELD_GUIDE_PRICE}}',
+  cart: 'https://shop.dmtcode.com/cart/{{FIELD_GUIDE_VARIANT_ID}}:1',
+  description: 'A printable field guide for running and recording an observation: screening, setup, the field sheet, and how to submit a record so it counts. Digital download, delivered by email after checkout. It is a procedure document, not a key to the symbols and not a claim about what they mean.',
+} as const;
+const FIELD_GUIDE_LIVE = !FIELD_GUIDE.price.includes('{{') && !FIELD_GUIDE.cart.includes('{{');
 
 const SITE = "https://dmtcode.com";
 const SUPABASE_URL =
@@ -1278,6 +1288,24 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     return ld;
   });
 
+  if (FIELD_GUIDE_LIVE) {
+    productLds.push({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${canonical}#field-guide`,
+      name: FIELD_GUIDE.name,
+      description: FIELD_GUIDE.description,
+      offers: {
+        "@type": "Offer",
+        url: FIELD_GUIDE.cart,
+        priceCurrency: "USD",
+        price: Number(FIELD_GUIDE.price.replace(/[^0-9.]/g, "")),
+        availability: "https://schema.org/InStock",
+        seller: { "@type": "Organization", name: "Meridian Optics Lab" },
+      },
+    });
+  }
+
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -1324,6 +1352,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.name)}" width="800" height="450" />` : ""}
     <p><strong>$${k.priceNumber.toLocaleString("en-US")}</strong></p>
     <p>${esc(k.description)}</p>
+    ${k.id === "triad" ? "<p>The vendor spec sheet lists this pointer at 401 nm, which falls within the 405 nm class it is sold under.</p>" : ""}
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
     <p>Laser pointers in these kits are vendor rated 5 mW, FDA Class IIIa (Class 3R); the ray box in the Triad and Circle is under 1 mW. Ratings are listed per emitter on each kit. Do not stare into beam.</p>
@@ -1332,6 +1361,16 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
 
   </section>`,
   ).join("");
+
+  const fieldGuideBlock = FIELD_GUIDE_LIVE ? `<section id="field-guide">
+    <h3>${esc(FIELD_GUIDE.name)}</h3>
+    <p><strong>${esc(FIELD_GUIDE.price)}</strong></p>
+    <p>${esc(FIELD_GUIDE.description)}</p>
+    <p>Digital product. No shipping. Delivered by email after checkout. Sold by Meridian Optics Lab.</p>
+    <p><a href="${esc(FIELD_GUIDE.cart)}">Buy. Secure Shopify checkout</a></p>
+    <p>Digital downloads are not refundable once delivered.</p>
+    <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
+  </section>` : "";
 
   const body = `<article data-prerender="prepare">
   <!--tsrc:static:prepare-->
@@ -1370,7 +1409,9 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
   <section>
     <h2>Laser diffraction research kits</h2>
     ${kitBlocks}
+    ${fieldGuideBlock}
   </section>
+  <p>Prefer to assemble the parts yourself? See <a href="${lpath(locale, "/build-your-own")}">Build your own</a>.</p>
   <section>
     <h2>Field materials and protocols, free download</h2>
     <p>${PREPARE_DOC_COUNT} PDF documents, no account needed. Each protocol is available in English, Spanish, and German. Nothing here requires buying a kit. Full descriptions of what each document is and when to use it are at <a href="${SITE}/downloads">/downloads</a>.</p>
@@ -1383,6 +1424,7 @@ ${docListHtml()}
     <h2>The open data behind this</h2>
     <p>The convergence registry (<a href="${SITE}/registry">/registry</a>) and the machine-readable corpus (<a href="${SITE}/dataset">/dataset</a>, <a href="${SITE}/data.json">/data.json</a>) are CC-BY-4.0.</p>
   </section>
+  ${await golerAttribution(locale)}
 </article>`;
 
   const head = buildHead({
@@ -2836,6 +2878,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
     ],
     links: [
+      { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
       { href: "/registry", label: "Visual symbol registry" },
       { href: "/people/danny-goler", label: "Danny Goler, who described the observation" },
       { href: "/prepare", label: "Prepare to observe" },
@@ -2993,30 +3036,32 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     breadcrumbName: "Critiques",
   },
   "the-discovery": {
-    title: "The Discovery (2026): release date, where to watch, and what the film claims",
-    description: "The Discovery is an independent documentary about the DMT laser observation first reported by Danny Goler. Premiere window, ticket status, and what is and is not confirmed.",
+    title: "The Discovery",
+    description: "The Discovery is a documentary film. Release window late October to November 2026, exact date to be announced. Where to watch, and what this site keeps on the open record.",
     heading: "The Discovery",
     paragraphs: [
-      "The Discovery is an independent documentary about the visual forms some people report seeing when a 650 nm laser is used during an N,N-DMT experience. This page tracks what is confirmed about the film and what is not. It is not affiliated with the production.",
-      "When can you watch it. Premiere: Los Angeles area, late October to early November 2026. Exact date and venue: not announced. Format: a single ticketed screening event, with a live discussion. Tickets: presale open on the film's own site. Wider release: none announced. Streaming: no distributor and no streaming platform has been announced.",
-      "If you are trying to work out whether you can watch it at home this year, the honest answer today is that no one has said so. One screening has been announced and nothing beyond it. We will update this page when that changes, and the date on it is the date we last checked.",
+      "The Discovery is a documentary film. This page tracks the release window, where it can be watched once that is announced, and how it relates to the open record kept on this site. The page is not affiliated with the film, its production or its distribution.",
+      "When can you watch it. Release window: Late October to November 2026. Exact date: To be announced. Where to watch: Not yet announced. Streaming: Nothing announced.",
       "Is it the film on Netflix? No, and this is a common mix-up worth clearing up. There is a 2017 Netflix feature also called The Discovery, directed by Charlie McDowell and starring Rooney Mara, Jason Segel and Robert Redford. It is a fiction film about a scientist who proves an afterlife exists. It has nothing to do with DMT, lasers, or this documentary.",
-      "Who made it. The film is directed by Aaron Vanden and was funded independently, including a public crowdfunding campaign. Danny Goler is its subject rather than its director.",
-      "The observation at the centre of the film was first reported by Danny Goler in August 2020: that under a 650 nm laser, some people report seeing discrete, repeating visual forms during an N,N-DMT experience. A pilot study was published in IPI Letters in 2025 (DOI 10.59973/ipil.158). What did not exist was a place to accumulate the evidence in a form anyone could inspect, including evidence that cuts against it. That is what this site is. We do not know whether the phenomenon is real. We built the instrument that could find out.",
-      "The reported symbol set is also available as a citable PDF: DMT Laser Code Symbols (PDF).",
-      "Attribution. Danny Goler made the observation, and the written protocol grew out of it. He is not a founder of this site, holds no editorial role, and has no part in the store. He has not reviewed or approved any page, kit or claim here. This site is not affiliated with the film, its production, or its distribution.",
-      "Last checked 23 August 2026.",
+      "What this has to do with this site. This site keeps an open record that anyone can inspect. Reported symbols are dated, openly licensed records. Some bibliography sources carry stance scores; unscored sources are not neutral. Null results are published alongside positive reports under the same licence. We do not know whether the phenomenon is real.",
+      "The reported symbol set is also available as a free, citable PDF: DMT Laser Code Symbols (PDF).",
+      "This site is not affiliated with the film, its production, or its distribution.",
+      "If the film brings you here. Inspect the symbol records, the evidence, the observation setup, the equipment, the published literature and the strongest arguments against.",
+      "Preparing to observe. Kits are sold by Meridian Optics Lab. The observation protocol is available on this site.",
+      "What we will update, and when. This page is a running record, not an announcement. It changes when one of these changes: the exact release date, where to watch, or streaming availability.",
+      "Last checked 20 October 2026.",
     ],
     links: [
-      { href: "/registry", label: "Registry" },
-      { href: "/evidence-map", label: "Evidence map" },
-      { href: "/protocol-guide", label: "Protocol guide" },
-      { href: "/prepare", label: "Prepare" },
-      { href: "/bibliography", label: "Bibliography" },
-      { href: "/critiques", label: "Critiques" },
+      { href: "/registry", label: "See what people have actually reported" },
+      { href: "/evidence-map", label: "Read what the evidence does and does not support" },
+      { href: "/protocol-guide", label: "The observation protocol" },
+      { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
+      { href: "/bibliography", label: "Read the published literature, with stance scores" },
+      { href: "/critiques", label: "Read the strongest arguments against" },
       { href: "/people/danny-goler", label: "Danny Goler" },
       { href: "/downloads/dmt-laser-code-symbols.pdf", label: "DMT Laser Code Symbols (PDF)" },
     ],
+    bodyExtraHtml: `<section data-prerender="the-discovery-notify"><h2>Get the release date</h2><p>Leave an email on this page and you will get one message when the date is confirmed.</p></section><p><a href="https://thediscoveryfilm.com" rel="noopener noreferrer nofollow">Official site: thediscoveryfilm.com</a></p>`,
     breadcrumbName: "The Discovery",
     extraJsonLd: [{
       "@context": "https://schema.org",
@@ -3024,20 +3069,23 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "name": "The Discovery",
       "url": "https://dmtcode.com/the-discovery",
       "sameAs": "https://thediscoveryfilm.com",
-      "director": { "@type": "Person", "name": "Aaron Vanden" },
-      "disambiguatingDescription":
-        "An independent documentary about the 650 nm laser observation reported during N,N-DMT experiences. Not to be confused with the unrelated 2017 Netflix feature The Discovery, directed by Charlie McDowell.",
-      "subjectOf": {
-        "@type": "Event",
-        "name": "The Discovery premiere screening",
-        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-        "location": {
-          "@type": "Place",
-          "name": "Los Angeles area",
-          "address": { "@type": "PostalAddress", "addressLocality": "Los Angeles", "addressRegion": "CA", "addressCountry": "US" },
-        },
-      },
+      "disambiguatingDescription": "Not to be confused with the unrelated 2017 Netflix feature The Discovery.",
     }],
+  },
+  "build-your-own": {
+    title: "Build your own observation rig | DMT Code",
+    description: "Components, sources and purpose for assembling the 650 nm observation setup yourself, as an alternative to the kits.",
+    heading: "Build your own observation rig",
+    paragraphs: [
+      "The kits on /prepare are one way to run the observation. This page is for people who would rather assemble the parts themselves. It will list the components, where they come from, and what each one is for. It makes no claim about what you will or will not see.",
+      "{{BUILD_YOUR_OWN_BODY}}",
+    ],
+    links: [
+      { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
+      { href: "/protocol-guide", label: "The observation protocol" },
+      { href: "/documents", label: "Documents" },
+    ],
+    breadcrumbName: "Build your own",
   },
   "null-reports": {
     title: "Null reports dashboard | DMT Code",
@@ -3692,7 +3740,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   // already branches on exactly this condition, so reuse it rather than guess.
   const servingEnglishSource = locale !== "en" && !(trs.body_html && trs.body_html.trim());
 
-  const attribution = key === "home" || key === "protocol-guide" || key === "about"
+  const attribution = key === "home" || key === "protocol-guide" || key === "about" || key === "the-discovery" || key === "build-your-own"
     ? await golerAttribution(locale)
     : "";
 
@@ -3775,6 +3823,7 @@ export const config: Config = {
     "/about",
     "/critiques",
     "/the-discovery",
+    "/build-your-own",
     "/null-reports",
     "/glossary",
     "/methods",
