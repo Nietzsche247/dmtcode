@@ -35,7 +35,7 @@ const LEGAL_COUNTRIES = new Set<string>([
 const VALID_FIRST_SEGMENT = new Set<string>([
   // Prerendered pages
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
-  "about", "critiques", "the-discovery", "build-your-own", "null-reports", "glossary", "methods",
+  "about", "critiques", "the-discovery", "build-your-own", "symbols", "null-reports", "glossary", "methods",
   "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats", "preregister", "documents", "answers",
   // The index of the machine surface. Shipped together with its
@@ -119,6 +119,7 @@ function isDetailPatternValid(path: string): boolean {
   // first segment branch at the end of this function and returned 200 for
   // anything under a country, which content-prerender then 404s. The two must
   // agree, so the guard rejects it here.
+  if (/^\/symbols\/.+$/i.test(path)) return false;
   const lg = path.match(/^\/legal\/([^/]+)$/i);
   if (lg) return LEGAL_COUNTRIES.has(lg[1].toLowerCase());
   if (/^\/legal\/[^/]+\/.+$/i.test(path)) return false;

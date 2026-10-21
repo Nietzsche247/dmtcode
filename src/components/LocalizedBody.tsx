@@ -12,12 +12,24 @@ export const LocalizedBody = ({
   pageId,
   children,
   className,
+  html,
 }: {
   pageId: string;
   children: ReactNode;
   className?: string;
+  html?: string | null;
 }) => {
+  return html !== undefined
+    ? <LocalizedMarkup html={html} className={className}>{children}</LocalizedMarkup>
+    : <LocalizedFromQuery pageId={pageId} className={className}>{children}</LocalizedFromQuery>;
+};
+
+function LocalizedFromQuery({ pageId, children, className }: { pageId: string; children: ReactNode; className?: string }) {
   const html = useLocalizedBody(pageId);
+  return <LocalizedMarkup html={html} className={className}>{children}</LocalizedMarkup>;
+}
+
+function LocalizedMarkup({ html, children, className }: { html: string | null; children: ReactNode; className?: string }) {
 
   const clean = useMemo(
     () =>
@@ -41,6 +53,6 @@ export const LocalizedBody = ({
       dangerouslySetInnerHTML={{ __html: clean }}
     />
   );
-};
+}
 
 export default LocalizedBody;

@@ -85,6 +85,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to={to('/symbols')} className="text-muted-foreground hover:text-primary transition-colors">
+                  {t('footer.symbols')}
+                </Link>
+              </li>
+              <li>
                 <Link to={to('/documents')} className="text-muted-foreground hover:text-primary transition-colors">
                   {t('footer.documents')}
                 </Link>

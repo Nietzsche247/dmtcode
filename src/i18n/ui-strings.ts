@@ -755,6 +755,20 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
       "description": "Komponenten, Bezugsquellen und Zweck, um den 650 nm Beobachtungsaufbau selbst zusammenzustellen, als Alternative zu den Kits."
     }
   },
+  "symbols": {
+    "en": {
+      "title": "DMT laser code symbols: the registry and the free PDF | DMT Code",
+      "description": "The DMT laser code symbols as observers drew them: a dated, attributed registry of reported visual forms, with the free citable PDF (version 1.0, 51 records, CC BY 4.0). Not a key and not a translation."
+    },
+    "es": {
+      "title": "Símbolos del código láser DMT: el registro y el PDF gratuito | DMT Code",
+      "description": "Los símbolos del código láser DMT tal como los dibujaron los observadores: un registro fechado y atribuido de formas visuales reportadas, con el PDF citable gratuito (versión 1.0, 51 registros, CC BY 4.0). No es una clave ni una traducción."
+    },
+    "de": {
+      "title": "DMT-Laser-Code-Symbole: das Verzeichnis und das kostenlose PDF | DMT Code",
+      "description": "Die DMT-Laser-Code-Symbole, wie Beobachter sie gezeichnet haben: ein datiertes, zugeordnetes Verzeichnis berichteter visueller Formen, mit dem kostenlosen zitierfähigen PDF (Version 1.0, 51 Einträge, CC BY 4.0). Kein Schlüssel und keine Übersetzung."
+    }
+  },
   // One key per kit drill-down page at /products/<handle>, keyed product-<kit.id>.
   // Prices are deliberately absent: they live in src/data/kits.ts and would go
   // stale here. Laser class designations are absent too, so nothing in this

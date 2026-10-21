@@ -84,6 +84,7 @@
     "nullReportsDesc": "Negative results and baseline data"
   },
   "footer": {
+    "symbols": "Symbols",
     "privacy": "Privacy",
     "terms": "Terms",
     "disclosure": "Disclosure",
@@ -123,6 +124,7 @@
     "copyright": "© {{year}} DMT Code Project. Site text and design reserved. Registry data and protocol documents CC-BY-4.0."
   },
   "breadcrumb": {
+    "symbols": "Symbols",
     "build-your-own": "Build your own",
     "home": "Home",
     "tools": "Tools",

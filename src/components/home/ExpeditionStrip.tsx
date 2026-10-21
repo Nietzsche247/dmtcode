@@ -15,7 +15,7 @@ const STEPS: Array<{ n: string; label: string; line: string; to: string }> = [
   { n: '06', label: 'Participate', line: 'Events, experiments and trials you can join.', to: '/events' },
   { n: '07', label: 'Prepare', line: 'Build the rig yourself, or buy a kit.', to: '/prepare' },
   { n: '08', label: 'Record', line: 'Describe what you saw before you browse.', to: '/capture' },
-  { n: '09', label: 'Decode', line: 'Compare your memory against other recollections.', to: '/co-witnesses' },
+  { n: '09', label: 'Decode', line: 'See what others drew, then compare your memory against theirs.', to: '/symbols' },
 ];
 
 export const ExpeditionStrip = () => (

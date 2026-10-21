@@ -675,6 +675,47 @@ if (localeDown) {
   }
 }
 
+// 21. Symbols landing, homepage answer and complete locale fallback. Run only after Netlify deploy.
+const symbolsPage = await get('/symbols');
+check('symbols returns a prerendered heading', /data-prerender="symbols"/.test(symbolsPage) && /<h1[^>]*>DMT laser code symbols<\/h1>/.test(symbolsPage));
+check('symbols links free PDF and states its limits', symbolsPage.includes('/downloads/dmt-laser-code-symbols.pdf') && symbolsPage.includes('not a key, not a translation'));
+check('symbols links live registry records', /\/registry\/[0-9a-f]{8}-/i.test(symbolsPage));
+check('symbols contains PDF and record-making sections', /data-prerender="symbols-pdf"/.test(symbolsPage) && /data-prerender="symbols-how"/.test(symbolsPage));
+const symbolsLd = [...symbolsPage.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap((match) => {
+  try { const parsed = JSON.parse(match[1]); return Array.isArray(parsed) ? parsed : [parsed]; } catch { return []; }
+});
+const symbolsCollection = symbolsLd.find((row) => row['@type'] === 'CollectionPage');
+check('symbols CollectionPage contains citable DigitalDocument and nonempty ItemList',
+  symbolsCollection?.hasPart?.some((part) => part['@type'] === 'DigitalDocument' && part.identifier === 'https://doi.org/10.5281/zenodo.22101522') &&
+  symbolsCollection?.mainEntity?.['@type'] === 'ItemList' && symbolsCollection.mainEntity.numberOfItems > 0);
+check('symbols carries Goler attribution', symbolsPage.includes('First reported by'));
+for (const locale of ['es', 'de']) {
+  const translatedSymbols = await get(`/${locale}/symbols`);
+  check(`${locale} symbols returns prerender body`, /data-prerender="symbols"/.test(translatedSymbols));
+  if (/<html[^>]*lang="en"/.test(translatedSymbols)) {
+    check(`${locale} symbols English fallback canonical`, translatedSymbols.includes('<link rel="canonical" href="https://dmtcode.com/symbols">'));
+  }
+  const own = await get(`/${locale}/build-your-own`);
+  check(`${locale} build-your-own retains ten affiliate links`, (own.match(/amazon\.com\/dp\//g) || []).length === 10);
+  if (/<html[^>]*lang="en"/.test(own)) {
+    check(`${locale} build-your-own English fallback is complete`, own.includes('Laser safety') && own.includes('Affiliate disclosure'));
+    check(`${locale} build-your-own English fallback canonical and language`, own.includes('<link rel="canonical" href="https://dmtcode.com/build-your-own">') && /<html[^>]*lang="en"/.test(own));
+  }
+}
+const [symbolsUnknown, platesManifest, oldPlate, symbolsPdf] = await Promise.all([
+  head('/symbols/anything'), head('/symbol-plates/manifest.json'),
+  head('/symbols/dmtc-sym-01-generative-rule.svg'), head('/downloads/dmt-laser-code-symbols.pdf'),
+]);
+check('symbols unknown subpage returns 404', symbolsUnknown.status === 404);
+check('relocated plate manifest returns 200', platesManifest.status === 200);
+check('old plate URL redirects to relocated asset', oldPlate.status === 301 && new URL(oldPlate.location || '/', SITE).pathname === '/symbol-plates/dmtc-sym-01-generative-rule.svg');
+check('symbols PDF remains a working PDF file', symbolsPdf.status === 200 && /application\/pdf/i.test(symbolsPdf.type || ''));
+check('home contains experiment answer and procedure links', home.includes('What is the DMT laser experiment') && /href="[^"]*\/protocol-guide"/.test(home) && /href="[^"]*\/prepare"/.test(home));
+check('home expedition Decode points to symbols', /<a href="[^"]*\/symbols">Decode<\/a>/.test(home));
+const symbolsSitemap = await get('/sitemap.xml');
+const symbolsSitemapEntry = symbolsSitemap.match(/<url>\s*<loc>https:\/\/dmtcode\.com\/symbols<\/loc>[\s\S]*?<\/url>/)?.[0] || '';
+check('symbols sitemap includes es and de alternates', !!symbolsSitemapEntry && /hreflang="es"/.test(symbolsSitemapEntry) && /hreflang="de"/.test(symbolsSitemapEntry));
+
 console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL PASS');
 if (process.env.PARITY_JSON) {
   const fsm = await import('node:fs');

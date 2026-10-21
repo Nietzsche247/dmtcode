@@ -288,6 +288,8 @@ const HASH_GATED_STATIC_PAGES = new Set<string>([
   "events",
   "documents",
   "answers",
+  "build-your-own",
+  "symbols",
 ]);
 
 // The second guard on the same pages. The hash gate proves a translation is
@@ -603,6 +605,7 @@ export default async (request: Request, context: Context) => {
     if (kind === "legal") {
       return await notFoundPrerender(context);
     }
+    if (kind === "symbols" && seg.length >= 2) return await notFoundPrerender(context);
     if (seg.length === 1 && STATIC_PAGES[kind]) {
       return await renderStatic(context, kind, locale);
     }
@@ -2890,11 +2893,15 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "Is there a recurring visual structure people can learn to see?",
       "An open record of the visual forms people report during N,N-DMT experiences. Some of them appear to recur across people who have never met. Whether that recurrence is real, or whether optics, shared neurobiology, expectation and memory explain it, is the open question this record exists to answer.",
+      // Mirrors src/components/home/ExperimentAnswer.tsx. Home is not hash gated; locale bodies refresh on the next pipeline run.
+      "What is the DMT laser experiment",
+      "The DMT laser experiment is a reported observation, first described by Danny Goler in August 2020, in which people under the influence of N,N-DMT look at a 650 nm red laser diffracted through a grating and report seeing code-like visual forms. A pilot study was published in IPI Letters in 2025 (DOI 10.59973/ipil.158); no controlled study has been run, and whether the reported forms recur across observers is unresolved. This site keeps the written procedure, a sober baseline version of it, the kits and free documents needed to run it, and the open record of what observers drew, with the four explanations that are actively defended held open and tested against that record.",
       "The open record of a reported observation: first described by Danny Goler in 2020, published as a pilot study in 2025, and unresolved. We keep the evidence, including the evidence against.",
       "DMT Code is a research surface for a narrow claim: that independent people report the same discrete visual forms during N,N-DMT experiences and under a specific 650 nm laser observation protocol. The site is built so anyone, human or machine, can inspect the raw evidence and judge for themselves.",
       "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
     ],
     links: [
+      { href: "/protocol-guide", label: "The observation protocol" },
       { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
       { href: "/registry", label: "Visual symbol registry" },
       { href: "/people/danny-goler", label: "Danny Goler, who described the observation" },
@@ -2929,7 +2936,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     <li><a href="${SITE}/events">Participate</a>. Events, experiments and trials you can join.</li>
     <li><a href="${SITE}/prepare">Prepare</a>. Build the rig yourself, or buy a kit.</li>
     <li><a href="${SITE}/capture">Record</a>. Describe what you saw before you browse.</li>
-    <li><a href="${SITE}/co-witnesses">Decode</a>. Compare your memory against other recollections.</li>
+    <li><a href="${SITE}/symbols">Decode</a>. See what others drew, then compare your memory against theirs.</li>
   </ol>
 </section>`,
   },
@@ -2942,6 +2949,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "Anyone can contribute. Anyone can download the full dataset. The corpus is CC-BY-4.0.",
     ],
     links: [
+      { href: "/symbols", label: "The symbols page and the free PDF" },
       { href: "/submit-symbol", label: "Submit a symbol" },
       { href: "/data.json", label: "Machine readable corpus" },
       { href: "/dataset", label: "Dataset index" },
@@ -3103,6 +3111,28 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       { href: "/documents", label: "Documents" },
     ],
     breadcrumbName: "Build your own",
+  },
+  // Mirrors src/pages/Symbols.tsx. Editorial HTML and Deno output stay in sync by hand.
+  symbols: {
+    title: "DMT laser code symbols: the registry and the free PDF | DMT Code",
+    description: "The DMT laser code symbols as observers drew them: a dated, attributed registry of reported visual forms, with the free citable PDF (version 1.0, 51 records, CC BY 4.0). Not a key and not a translation.",
+    heading: "DMT laser code symbols",
+    paragraphs: [
+      "The DMT laser code symbols are the visual forms that observers have reported and drawn after looking at a 650 nm laser diffracted through a grating, during an N,N-DMT experience or sober, kept here as a registry of dated, attributed, observer-submitted records. We do not know whether the phenomenon is real; the registry exists so that the raw reports can be read, cited and disputed by anyone.",
+      "It is a record of what observers drew. It is not a key, not a translation, and not a claim that the forms mean anything. Reading it counts as having seen the catalogue, so if you have seen something and have not recorded it yet, record it first and then come back.",
+    ],
+    bodyExtraHtml: `<section data-prerender="symbols-pdf"><h2>The symbols as a free, citable PDF</h2><div class="bg-card border border-border rounded-lg p-6 space-y-4"><h3>The DMT Code Symbol Registry: Reported Visual Forms in Altered and Baseline States</h3><p>Volume 1. N,N-DMT and the 650 nm laser protocol</p><p>Version 1.0, 25 August 2026. DOI <a href="https://doi.org/10.5281/zenodo.22101522">10.5281/zenodo.22101522</a>. 18 pages, A4. 51 records: 21 seed illustrations drawn for the registry and 30 contributor submissions from 11 contributors. Licence CC BY 4.0. Author: Aaron Baker.</p><a href="/downloads/dmt-laser-code-symbols.pdf" download>Download the PDF</a><p>Cite it, print it, argue with it. Nothing in it has been verified, replicated under controlled conditions, or established as a phenomenon.</p><a href="/capture">Record what you saw first</a></div></section>
+<section data-prerender="symbols-how"><h2>How a record is made</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div><h3>Observe</h3><p>Notice a discrete visual form during an N,N-DMT experience.</p></div><div><h3>Draw or Respond</h3><p>Reconstruct it on the canvas, or tell us whether one already recorded resembles what you saw.</p></div><div><h3>It joins the open record</h3><p>Openly licensed CC-BY-4.0 and downloadable as data.</p></div></div><p><a href="/capture">Record what you saw</a>, <a href="/protocol-guide">The observation protocol</a>, <a href="/co-witnesses">Compare your memory against other recollections</a>.</p></section>
+${FIELD_GUIDE_LIVE ? `<section data-prerender="symbols-field-guide"><h2>A printed guide to running and recording a session</h2><p>The free documents cover the procedure. The Field Guide is the same procedure as a 23 page printable, sold by Meridian Optics Lab.</p><div><h3>${esc(FIELD_GUIDE.name)}</h3><p>${esc(FIELD_GUIDE.price)}</p><p>${esc(FIELD_GUIDE.description)}</p><p>Digital product. No shipping. Delivered by email after checkout. Sold by Meridian Optics Lab.</p><a href="${esc(FIELD_GUIDE.cart)}">Buy. Secure Shopify checkout</a><p>Digital downloads are not refundable once delivered.</p><p>Your card statement will read MERIDIAN OPTICS LAB.</p></div></section>` : ""}`,
+    links: [
+      { href: "/registry", label: "Visual symbol registry" },
+      { href: "/documents", label: "All free documents" },
+      { href: "/capture", label: "Record what you saw" },
+      { href: "/protocol-guide", label: "The observation protocol" },
+      { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
+      { href: "/co-witnesses", label: "Compare recollections" },
+    ],
+    breadcrumbName: "Symbols",
   },
   "null-reports": {
     title: "Null reports dashboard | DMT Code",
@@ -3607,6 +3637,42 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
         });
       }
     } catch { /* ignore */ }
+  } else if (key === "symbols") {
+    // Labels, ordering and CollectionPage mirror src/lib/symbolRecords.ts and src/pages/Symbols.tsx.
+    const sourceLabels: Record<string, string> = { laser_650nm: "650 nm laser", closed_eye: "closed eye", open_eye: "open eye", other: "other" };
+    const evidenceLabels: Record<string, string> = { raw: "raw report", eligible: "eligible for convergence analysis", ineligible: "excluded from convergence analysis", candidate_match: "candidate match, awaiting assessment", reviewed_convergence: "reviewed convergence", controlled_replication: "controlled replication" };
+    const exposureLabels: Record<string, string> = { naive: "naive", exposed: "exposed" };
+    const label = (labels: Record<string, string>, value: unknown) => labels[String(value ?? "")] ?? "not stated";
+    const title = (r: Record<string, unknown>) => String(r.description ?? "").slice(0, 80) || `Symbol ${String(r.id).slice(0, 8)}`;
+    const intro = "Pulled from the registry when this page was generated. Records that declare the 650 nm laser method are listed first; the rest are accounts of a DMT experience that do not state a method, and they are not evidence about the laser specifically.";
+    let rows: Array<Record<string, unknown>> = [];
+    let total: number | null = null;
+    let readOk = false;
+    try {
+      const [readRows, count] = await Promise.all([
+        sbGetRows("symbol_submissions", "status=eq.approved&select=id,description,image_url,source_method,evidence_status,prior_exposure,is_curated_example,created_at&order=created_at.desc&limit=120"),
+        sbCount("symbol_submissions", "status=eq.approved"),
+      ]);
+      rows = readRows.sort((a, b) => Number(b.source_method === "laser_650nm") - Number(a.source_method === "laser_650nm") || String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")));
+      total = count;
+      // sbGetRows returns [] on failed reads. Do not turn a failed row read into a fictional zero.
+      readOk = Boolean(SUPABASE_URL && SUPABASE_KEY) && (rows.length > 0 || total === 0);
+    } catch { console.warn("Symbols registry read unavailable"); }
+    const cards = rows.map((r) => `<a href="${SITE}/registry/${esc(r.id)}" class="bg-card border border-border"><div class="aspect-square bg-primary-foreground p-4"><img src="${esc(r.image_url || "/placeholder-symbol-1.svg")}" alt="Symbol ${esc(String(r.id).slice(0, 8))}: ${esc(title(r))}" loading="lazy" class="object-contain" /></div><h3>${esc(title(r))}</h3><dl><dt>Source method</dt><dd>${esc(label(sourceLabels, r.source_method))}</dd><dt>Evidence status</dt><dd>${esc(label(evidenceLabels, r.evidence_status))}</dd><dt>Prior exposure</dt><dd>${esc(label(exposureLabels, r.prior_exposure))}</dd></dl>${r.is_curated_example === true ? "<p>Seed illustration, drawn for the registry</p>" : ""}</a>`).join("\n");
+    recentList = `<section data-prerender="symbols-records"><h2>The records, as submitted</h2><p>${esc(intro)}</p>${readOk && total !== null ? `<p>${rows.length} records shown of ${total} published.</p>` : ""}<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">${cards}</div>${readOk ? "" : `<p><a href="${SITE}/registry">Visual symbol registry</a></p>`}<p>Every record, with filters and submission, is at <a href="${SITE}/registry">/registry</a>. Reports of seeing nothing are counted too: <a href="${SITE}/null-reports">/null-reports</a>.</p></section>`;
+    const { "@context": nestedContext, ...report } = REGISTRY_REPORT_LD;
+    void nestedContext;
+    extraLd.push({
+      "@context": "https://schema.org", "@type": "CollectionPage", "@id": `${SITE}/symbols`, url: `${SITE}/symbols`,
+      name: "DMT laser code symbols", description: page.description, license: LICENSE, isAccessibleForFree: true,
+      publisher: { "@id": `${SITE}#org` },
+      hasPart: [{ ...report, "@type": "DigitalDocument", "@id": `${SITE}/downloads/dmt-laser-code-symbols.pdf`, isAccessibleForFree: true, inLanguage: "en" }],
+      ...(readOk ? { mainEntity: { "@type": "ItemList", name: "Registry symbol records", numberOfItems: rows.length,
+        itemListOrder: "https://schema.org/ItemListUnordered", itemListElement: rows.map((r, i) => ({
+          "@type": "ListItem", position: i + 1, url: `${SITE}/registry/${r.id}`,
+          item: { "@type": "CreativeWork", "@id": `${SITE}/registry/${r.id}`, name: title(r), image: r.image_url },
+        })) } } : {}),
+    });
   } else if (key === "protocols" && SUPABASE_URL && SUPABASE_KEY) {
     try {
       const res = await fetch(
@@ -3739,6 +3805,15 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     HASH_GATED_STATIC_PAGES.has(key) ? FORBIDDEN_IN_TRANSLATION : undefined,
   );
 
+  // Links are identifiers, not translated words. The 2026-10-21 Spanish build-your-own
+  // body lost all ten Amazon links, so even a current hash needs a completeness check.
+  const requiredHrefs = new Set(Array.from(enSource.matchAll(/href="([^"]+)"/g)).map((m) => m[1]));
+  const missingHref = trs.body_html ? [...requiredHrefs].find((href) => !trs.body_html.includes(href)) : undefined;
+  if (missingHref) {
+    delete trs.body_html;
+    console.warn(`Incomplete static translation: key=${key} locale=${locale} missing href=${missingHref}`);
+  }
+
   // Structured data on /protocol-guide is locale aware: the FAQ entities and
   // the HowTo steps come from content_translations, English is the fallback,
   // and every identifier points at the locale URL.
@@ -3758,7 +3833,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
   // already branches on exactly this condition, so reuse it rather than guess.
   const servingEnglishSource = locale !== "en" && !(trs.body_html && trs.body_html.trim());
 
-  const attribution = key === "home" || key === "protocol-guide" || key === "about" || key === "the-discovery" || key === "build-your-own"
+  const attribution = key === "home" || key === "protocol-guide" || key === "about" || key === "the-discovery" || key === "build-your-own" || key === "symbols"
     ? await golerAttribution(locale)
     : "";
 
@@ -3842,6 +3917,7 @@ export const config: Config = {
     "/critiques",
     "/the-discovery",
     "/build-your-own",
+    "/symbols",
     "/null-reports",
     "/glossary",
     "/methods",

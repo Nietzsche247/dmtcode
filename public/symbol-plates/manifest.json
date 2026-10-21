@@ -5,7 +5,7 @@
   "symbols": [
     {
       "symbol_id": "dmtc-sym-01-generative-rule",
-      "file": "symbols/dmtc-sym-01-generative-rule.svg",
+      "file": "symbol-plates/dmtc-sym-01-generative-rule.svg",
       "figure": 1,
       "title": "The generative rule: letter to ring-letter",
       "family": "standard charakteres",
@@ -19,7 +19,7 @@
     },
     {
       "symbol_id": "dmtc-sym-02-rectilinear-octet",
-      "file": "symbols/dmtc-sym-02-rectilinear-octet.svg",
+      "file": "symbol-plates/dmtc-sym-02-rectilinear-octet.svg",
       "figure": 2,
       "title": "The rectilinear octet, ringed",
       "family": "standard charakteres",
@@ -33,7 +33,7 @@
     },
     {
       "symbol_id": "dmtc-sym-03-autun-arrangement",
-      "file": "symbols/dmtc-sym-03-autun-arrangement.svg",
+      "file": "symbol-plates/dmtc-sym-03-autun-arrangement.svg",
       "figure": 3,
       "title": "Autun tablet arrangement: ABRASAX between ring-X",
       "family": "standard charakteres",
@@ -47,7 +47,7 @@
     },
     {
       "symbol_id": "dmtc-sym-04-aquincum-ka",
-      "file": "symbols/dmtc-sym-04-aquincum-ka.svg",
+      "file": "symbol-plates/dmtc-sym-04-aquincum-ka.svg",
       "figure": 4,
       "title": "Aquincum kA-type sign",
       "family": "boundary case, hieroglyphic",
@@ -61,7 +61,7 @@
     },
     {
       "symbol_id": "dmtc-sym-05-amathous-hourglass",
-      "file": "symbols/dmtc-sym-05-amathous-hourglass.svg",
+      "file": "symbol-plates/dmtc-sym-05-amathous-hourglass.svg",
       "figure": 5,
       "title": "Amathous hourglass sign",
       "family": "standard charakteres",
@@ -75,7 +75,7 @@
     },
     {
       "symbol_id": "dmtc-sym-06-spell-line",
-      "file": "symbols/dmtc-sym-06-spell-line.svg",
+      "file": "symbol-plates/dmtc-sym-06-spell-line.svg",
       "figure": 6,
       "title": "Spell line in the manner of PGM VII",
       "family": "standard charakteres",
@@ -89,7 +89,7 @@
     },
     {
       "symbol_id": "dmtc-sym-07-hebrew-gloss",
-      "file": "symbols/dmtc-sym-07-hebrew-gloss.svg",
+      "file": "symbol-plates/dmtc-sym-07-hebrew-gloss.svg",
       "figure": 7,
       "title": "Hebrew letters glossed above signs",
       "family": "Jewish adoption",
@@ -103,7 +103,7 @@
     },
     {
       "symbol_id": "dmtc-sym-08-ringed-name",
-      "file": "symbols/dmtc-sym-08-ringed-name.svg",
+      "file": "symbol-plates/dmtc-sym-08-ringed-name.svg",
       "figure": 8,
       "title": "Hebrew charakteres: the ringed Name",
       "family": "Judaization",
@@ -117,7 +117,7 @@
     },
     {
       "symbol_id": "dmtc-sym-09-chnoubis",
-      "file": "symbols/dmtc-sym-09-chnoubis.svg",
+      "file": "symbol-plates/dmtc-sym-09-chnoubis.svg",
       "figure": 9,
       "title": "Chnoubis triple-S and bar",
       "family": "figural sign with stated purpose",
@@ -131,7 +131,7 @@
     },
     {
       "symbol_id": "dmtc-sym-10-ouroboros",
-      "file": "symbols/dmtc-sym-10-ouroboros.svg",
+      "file": "symbol-plates/dmtc-sym-10-ouroboros.svg",
       "figure": 10,
       "title": "Ouroboros enclosure with IAO",
       "family": "figural sign with stated purpose",
@@ -145,7 +145,7 @@
     },
     {
       "symbol_id": "dmtc-sym-11-pentalpha",
-      "file": "symbols/dmtc-sym-11-pentalpha.svg",
+      "file": "symbol-plates/dmtc-sym-11-pentalpha.svg",
       "figure": 11,
       "title": "Pentalpha",
       "family": "figural sign with stated purpose",
@@ -159,7 +159,7 @@
     },
     {
       "symbol_id": "dmtc-sym-12-rotas-square",
-      "file": "symbols/dmtc-sym-12-rotas-square.svg",
+      "file": "symbol-plates/dmtc-sym-12-rotas-square.svg",
       "figure": 12,
       "title": "Rotas square, earliest form",
       "family": "letter square, outside the ring-letter family",
@@ -173,7 +173,7 @@
     },
     {
       "symbol_id": "dmtc-sym-13-seven-seals",
-      "file": "symbols/dmtc-sym-13-seven-seals.svg",
+      "file": "symbol-plates/dmtc-sym-13-seven-seals.svg",
       "figure": 13,
       "title": "Seven seals of Solomon, poem forms",
       "family": "Islamicate series, borrowed into Jewish books",
@@ -187,7 +187,7 @@
     },
     {
       "symbol_id": "dmtc-sym-14-kamea-sigil",
-      "file": "symbols/dmtc-sym-14-kamea-sigil.svg",
+      "file": "symbol-plates/dmtc-sym-14-kamea-sigil.svg",
       "figure": 14,
       "title": "Agrippa kamea sigil procedure",
       "family": "Renaissance procedure",
@@ -201,7 +201,7 @@
     },
     {
       "symbol_id": "dmtc-sym-15-one-sign-two-aims",
-      "file": "symbols/dmtc-sym-15-one-sign-two-aims.svg",
+      "file": "symbol-plates/dmtc-sym-15-one-sign-two-aims.svg",
       "figure": 15,
       "title": "One sign, opposite aims",
       "family": "verdict figure",

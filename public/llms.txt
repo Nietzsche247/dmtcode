@@ -102,12 +102,13 @@ Wavelengths by kit: Protocol at 650 nm; Solo at 650 nm; Dual at 650 and 532 nm; 
 
 ## Citable registry PDF
 
-- /downloads/dmt-laser-code-symbols.pdf: every public registry record in one citable PDF, with drawings, identifiers, contributor handles and recognition counts. Version 1.0, 51 records, CC BY 4.0. DOI 10.5281/zenodo.22101522.
+- /downloads/dmt-laser-code-symbols.pdf: every public registry record in one citable PDF, with drawings, identifiers, contributor handles and recognition counts. Version 1.0, 51 records, CC BY 4.0. DOI 10.5281/zenodo.22101522. Landing page: /symbols.
 
 ## Pages
 
 - [Home](/): Mission and dataset status.
 - [Capture](/capture): Record what you saw before you browse anything else, so the record is not shaped by what you already read here.
+- [Symbols](/symbols): The DMT laser code symbols as observers drew them, with the free citable PDF and every registry record linked. A record of what people drew, not a key or a translation.
 - [Symbol Registry](/registry): Browse and submit symbols with structured metadata and community validation.
 - [Submit a Symbol](/submit-symbol): Contribution wizard for recording a symbol observation, with prior exposure disclosure.
 - [Chronology](/timeline): Every source as a dated record, sortable by date, person, place or kind of evidence.
