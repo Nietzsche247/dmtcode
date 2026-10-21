@@ -8,6 +8,7 @@ import { KIT_MIN_PRICE } from '@/data/kits';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedBody } from '@/hooks/useLocalizedBody';
 
 // Trusted, hand-authored constant (no user input). Mirrored byte for byte in
 // netlify/edge-functions/content-prerender.ts as BUILD_YOUR_OWN_BODY_HTML.
@@ -16,14 +17,16 @@ const BUILD_YOUR_OWN_BODY = "<div class=\"space-y-4\"><p class=\"text-muted-fore
 export default function BuildYourOwn() {
   const locale = useLocale();
   const { t } = useTranslation();
+  const requireHrefs = Array.from(BUILD_YOUR_OWN_BODY.matchAll(/href="([^"]+)"/g)).map((m) => m[1]);
+  const html = useLocalizedBody('build-your-own', { requireHrefs });
   return (
     <div className="relative min-h-screen bg-background">
-      <SEO uiKey="build-your-own" path="/build-your-own" />
+      <SEO uiKey="build-your-own" path="/build-your-own" canonicalToEnglish={locale !== 'en' && !html} />
       <Navigation />
       <Breadcrumb />
       <main id="main-content" className="relative z-10 pt-4" role="main">
         <div className="container mx-auto px-4 py-12 md:py-16 max-w-4xl space-y-8">
-          <LocalizedBody pageId="build-your-own">
+          <LocalizedBody pageId="build-your-own" html={html}>
             <h1 className="text-4xl md:text-5xl font-bold">Build your own observation rig</h1>
             <p className="text-lg text-muted-foreground">The kits on /prepare are one way to run the observation. This page is for people who would rather assemble the parts themselves. It makes no claim about what you will or will not see.</p>
             <section data-block="build-your-own-body" dangerouslySetInnerHTML={{ __html: BUILD_YOUR_OWN_BODY }} />

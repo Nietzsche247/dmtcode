@@ -179,7 +179,7 @@
 - articles-feed.ts
 - articles-json.ts
 - package.json
-- symbols/manifest.json
+- symbol-plates/manifest.json
 - PWAInstallPrompt.tsx
 - glossaryTerms.ts
 - useInventoryStatus.tsx
@@ -967,7 +967,7 @@ Nodes (4): config, fetchArr(), H, resolveCitations()
 Cohesion: 0.40
 Nodes (4): name, private, type, version
 
-### Community 164 - "symbols/manifest.json"
+### Community 164 - "symbol-plates/manifest.json"
 Cohesion: 0.40
 Nodes (4): generated, license_note, set, symbols
 

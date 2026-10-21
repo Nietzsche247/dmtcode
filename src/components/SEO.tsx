@@ -12,14 +12,16 @@ export const SEO = ({
   uiKey,
   path,
   vars,
+  canonicalToEnglish = false,
 }: {
   uiKey: string;
   path: string;
   vars?: Record<string, string | number>;
+  canonicalToEnglish?: boolean;
 }) => {
   const locale = useLocale();
   const copy = uiCopy(uiKey, locale, vars);
-  const url = `${SITE}${localePath(locale, path)}`;
+  const url = `${SITE}${canonicalToEnglish ? path : localePath(locale, path)}`;
 
   return (
     <Helmet>

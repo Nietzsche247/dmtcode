@@ -22,6 +22,8 @@ const STATIC: Array<[string, string, string]> = [
   ["/bibliography", "0.9", "weekly"],
   ["/prepare", "0.8", "weekly"],
   ["/build-your-own", "0.6", "monthly"],
+  // Landing page for the "dmt laser code symbols" query cluster, formerly the bare PDF and /registry.
+  ["/symbols", "0.9", "weekly"],
   // The document index. Every protocol PDF is free and needs no account, and
   // "dmt laser code symbols pdf" is one of the highest click through queries
   // the site has, so the PDF itself was the landing page: a dead end with no

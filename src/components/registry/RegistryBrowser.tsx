@@ -2,7 +2,8 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, FileEdit } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { RegistryFilters } from './RegistryFilters';
 import { SymbolCard } from './SymbolCard';
 import { useRegistryTracking } from '@/hooks/useRegistryTracking';
@@ -47,6 +48,7 @@ interface ProfileData {
 }
 
 export const RegistryBrowser = () => {
+  const locale = useLocale();
   const navigate = useNavigate();
   const { trackRegistryFiltered, trackRegistrySearched } = useRegistryTracking();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -420,6 +422,7 @@ export const RegistryBrowser = () => {
         >
           Download the PDF
         </a>
+        <Link to={localePath(locale, '/symbols')} className="block mt-3 text-sm font-medium text-primary hover:underline">All symbols on one page</Link>
         <p className="mt-2 text-xs text-muted-foreground">DOI 10.5281/zenodo.22101522</p>
       </div>
 

@@ -14,6 +14,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useModeStore } from '@/stores/modeStore';
 import { RecentContributions } from '@/components/registry/RecentContributions';
 import { CommunityStats } from '@/components/registry/CommunityStats';
+import { ExperimentAnswer } from '@/components/home/ExperimentAnswer';
 import { MissionFraming } from '@/components/home/MissionFraming';
 import { GetInvolvedDoors } from '@/components/home/GetInvolvedDoors';
 import { ExpeditionStrip } from '@/components/home/ExpeditionStrip';
@@ -112,6 +113,7 @@ const Home = () => {
           <Navigation />
           <LocalizedBody pageId="home">
             <ConvergenceHero />
+              <ExperimentAnswer />
 
             <MissionFraming />
           </LocalizedBody>

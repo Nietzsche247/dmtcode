@@ -18,5 +18,13 @@
 - [x] 8. Prepare canonical attribution
 - [x] 9. Drift checks, lint, automatic build, browser verification and deployment handoff
 - [ ] Production verification: waits for Netlify deployment from main
-- [ ] Resource publication: waits for owner-supplied Field Guide price, variant ID and build-your-own body
+- [x] Resource publication: Field Guide and build-your-own body supplied
 - [ ] ES and DE bodies: waits for deployed English pages and the translation pipeline
+
+## Symbols and locale coherence
+
+- [x] A. Symbols landing page, plate relocation, route and crawler wiring
+- [x] B. Homepage experiment answer and Decode destination
+- [x] C. Translation currency, completeness and hydrated canonical fallback
+- [x] D. Drift, rule tests, lint, automatic build and browser verification (existing lint failures remain)
+- [ ] Post-deploy: Netlify main deployment, translation refresh and production parity suite

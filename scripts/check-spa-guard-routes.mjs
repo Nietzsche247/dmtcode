@@ -69,6 +69,7 @@ function allows(path) {
   if ((m = path.match(/^\/(registry|trials|bibliography)\/([^/]+)$/i))) return UUID_RE.test(m[2]);
   if ((m = path.match(/^\/(events|retreats)\/([^/]+)$/i))) return UUID_RE.test(m[2]) || SLUG_RE.test(m[2]);
   if ((m = path.match(/^\/events\/(festivals|conferences|workshops)\/([^/]+)$/i))) return SLUG_RE.test(m[2]);
+  if (/^\/symbols\/.+$/i.test(path)) return false;
   if ((m = path.match(/^\/legal\/([^/]+)$/i))) return LEGAL_COUNTRIES.has(m[1].toLowerCase());
   if (/^\/legal\/[^/]+\/.+$/i.test(path)) return false;
   if ((m = path.match(/^\/people\/([^/]+)$/i)))
@@ -80,6 +81,10 @@ function allows(path) {
 
 // [path, shouldBeAllowed, why]
 const CASES = [
+  ["/symbols", true, "symbols landing page"],
+  ["/es/symbols", true, "es mirror"],
+  ["/de/symbols", true, "de mirror"],
+  ["/symbols/anything", false, "no sub pages under symbols"],
   ["/build-your-own", true, "build your own rig page"],
   ["/es/build-your-own", true, "es mirror"],
   ["/de/build-your-own", true, "de mirror"],

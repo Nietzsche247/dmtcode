@@ -84,6 +84,7 @@
     "nullReportsDesc": "Negative Ergebnisse und Basisdaten"
   },
   "footer": {
+    "symbols": "Symbole",
     "privacy": "Datenschutz",
     "terms": "Nutzungsbedingungen",
     "disclosure": "Offenlegung",
@@ -123,6 +124,7 @@
     "copyright": "© {{year}} DMT Code Project. Websitetext und Design vorbehalten. Registerdaten und Protokolldokumente stehen unter CC-BY-4.0."
   },
   "breadcrumb": {
+    "symbols": "Symbole",
     "build-your-own": "Selbst bauen",
     "home": "Start",
     "tools": "Werkzeuge",

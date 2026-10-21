@@ -27,6 +27,7 @@ const DOIS = {
 // concept DOI. Add an entry only with a reason.
 const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'src/pages/Registry.tsx', why: 'Report block identifier, names one published deposit' },
+  { doi: '22101522', file: 'src/pages/Symbols.tsx', why: 'DigitalDocument and download card cite the fixed Volume 1 PDF, not the living registry' },
   { doi: '22101522', file: 'netlify/edge-functions/content-prerender.ts', why: 'REGISTRY_REPORT_LD identifier, mirrors Registry.tsx' },
   { doi: '22101522', file: 'src/components/registry/RegistryBrowser.tsx', why: 'download block, names the Volume 1 file' },
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },

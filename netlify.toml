@@ -78,6 +78,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/symbols"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/null-reports"
   function = "content-prerender"
 
@@ -404,7 +408,13 @@
   status = 301
   force = true
 
-
+# The Symbols landing page cannot share a static directory name. Historical
+# plate URLs redirect after edge rendering; the bare /symbols page is not redirected.
+[[redirects]]
+  from = "/symbols/*"
+  to = "/symbol-plates/:splat"
+  status = 301
+  force = false
 
 # SPA fallback for every other route.
 [[redirects]]
