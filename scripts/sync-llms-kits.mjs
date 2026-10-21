@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Regenerates the kit region and the live count regions of public/llms.txt
-// from src/data/kits.ts, the database, and the real file list. A static file
+// from src/data/kits.ts, the database, and the document manifest. A static file
 // cannot import the module or query the database at serve time, so the build
 // writes it instead. Idempotent: running twice produces no diff.
 //
@@ -11,11 +11,11 @@
 // Hardcoded counts outside these markers are forbidden: if a number cannot be
 // generated reliably at build time, the sentence is written without a number.
 
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { extractKits } from './check-kits-drift.mjs';
+import { listManifestFiles } from './check-docs-drift.mjs';
 
 const LLMS = 'public/llms.txt';
-const DOWNLOADS_DIR = 'public/downloads';
 const START = '<!-- kits:start -->';
 const END = '<!-- kits:end -->';
 const CORPUS_START = '<!-- corpus-counts:start -->';
@@ -179,14 +179,18 @@ if (base && key) {
 }
 text = replaceRegion(text, CORPUS_START, CORPUS_END, corpusSentence);
 
-// 5. PDF document count, measured from the real file list at build time.
+// 5. PDF document count, from the document manifest. check-docs-drift.mjs
+// has already proved the manifest equals the files on disk minus the retired
+// ones (old filenames kept only so links already sent out keep working), so
+// the manifest is the number every surface agrees on. Counting the directory
+// directly would count the retired files too.
 let pdfSentence;
 try {
-  const pdfCount = readdirSync(DOWNLOADS_DIR).filter((f) => f.toLowerCase().endsWith('.pdf')).length;
+  const pdfCount = listManifestFiles().length;
   pdfSentence = `${capitalize(intToWords(pdfCount))} PDF documents under /downloads/`;
 } catch {
   pdfSentence = 'PDF documents under /downloads/';
-  console.warn('llms.txt: could not list downloads directory, writing PDF sentence without a number.');
+  console.warn('llms.txt: could not read the document manifest, writing PDF sentence without a number.');
 }
 text = replaceRegion(text, PDF_START, PDF_END, pdfSentence);
 

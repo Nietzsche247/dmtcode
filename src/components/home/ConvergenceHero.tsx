@@ -291,7 +291,7 @@ export const ConvergenceHero = () => {
               Screening Card (PDF)
             </a>
             <a
-              href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf"
+              href="/downloads/DMTCode_Sober_Baseline_Protocol_v1_1.pdf"
               className="label-data text-[10px] text-primary hover:underline"
             >
               Sober Baseline Protocol (PDF)

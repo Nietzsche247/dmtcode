@@ -70,7 +70,7 @@ const ProtocolGuide = () => {
                 We do not link to third-party products from this guide.
               </p>
               <p className="mt-2">
-                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf" className="text-gold hover:underline">Sober Baseline Protocol (PDF)</a>
+                <a href="/downloads/DMTCode_Sober_Baseline_Protocol_v1_1.pdf" className="text-gold hover:underline">Sober Baseline Protocol (PDF)</a>
               </p>
             </section>
 

@@ -36,6 +36,30 @@ export function extractDocs(path) {
   return new Function(`return ${extractLiteral(path)};`)();
 }
 
+// RETIRED_FILES: files that stay on disk for links already sent out but are
+// offered nowhere and counted nowhere. Optional, so an older checkout of the
+// manifest without the array still passes.
+export function extractRetiredLiteral(path) {
+  const text = readFileSync(path, 'utf8');
+  const start = text.indexOf('export const RETIRED_FILES');
+  if (start === -1) return '[]';
+  const open = text.indexOf('[', start);
+  const close = text.indexOf('\n];', open);
+  if (open === -1 || close === -1) throw new Error(`Malformed RETIRED_FILES array in ${path}`);
+  return text.slice(open, close + 2);
+}
+
+export function extractRetired(path) {
+  // eslint-disable-next-line no-new-func
+  return new Function(`return ${extractRetiredLiteral(path)};`)();
+}
+
+// The files a page may offer and the count every surface publishes. The
+// directory minus the retired files has to equal this set.
+export function listManifestFiles(path = SRC) {
+  return extractDocs(path).flatMap((d) => d.files.map((f) => f.file));
+}
+
 const problems = [];
 
 const docs = extractDocs(SRC);
@@ -50,6 +74,12 @@ if (norm(extractLiteral(SRC)) !== norm(extractLiteral(MIRROR))) {
     `${SRC} and ${MIRROR} differ. Edit ${SRC}, then copy the DOCUMENTS array verbatim into ${MIRROR}.`,
   );
 }
+if (norm(extractRetiredLiteral(SRC)) !== norm(extractRetiredLiteral(MIRROR))) {
+  problems.push(
+    `RETIRED_FILES in ${SRC} and ${MIRROR} differ. Edit ${SRC}, then copy the array verbatim into ${MIRROR}.`,
+  );
+}
+const retired = new Set(extractRetired(SRC));
 
 // Shape.
 const ids = new Set();
@@ -78,16 +108,23 @@ for (const [i, d] of docs.entries()) {
   }
 }
 
-// 2 and 3. The directory is the denominator, in both directions.
+// 2 and 3. The directory is the denominator, in both directions. A retired
+// file is the one exception: it must still be on disk, so old links keep
+// working, and must not be in the manifest, so no page offers it.
 const onDisk = new Set(readdirSync(DIR).filter((n) => n.toLowerCase().endsWith('.pdf')));
 for (const f of manifestFiles) {
   if (!onDisk.has(f)) problems.push(`${SRC} lists ${f}, which is not in ${DIR}. Ship it or take it out of the manifest.`);
+  if (retired.has(f)) problems.push(`${SRC} lists ${f} both in DOCUMENTS and in RETIRED_FILES. Pick one.`);
+}
+for (const f of retired) {
+  if (!onDisk.has(f)) problems.push(`${SRC} retires ${f}, which is not in ${DIR}. Links already sent out would 404; restore the file or drop it from RETIRED_FILES.`);
 }
 for (const f of onDisk) {
+  if (retired.has(f)) continue;
   if (!manifestFiles.has(f)) {
     problems.push(
       `${DIR}/${f} is published but is in no manifest entry, so no page offers it and no count includes it. ` +
-        `Add it to ${SRC} or remove the file.`,
+        `Add it to ${SRC}, list it in RETIRED_FILES there if it only serves old links, or remove the file.`,
     );
   }
 }

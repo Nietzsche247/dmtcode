@@ -53,14 +53,14 @@ export const DOCUMENTS: DocRecord[] = [
     title: "Observation Field Sheet",
     kind: "Field material",
     summary:
-      "The standard per session record. Apparatus, wavelength, distance, observer state, and room to draw what you saw before you look at what anyone else saw.",
+      "The standard per session record. Apparatus, wavelength, distance, observer state, and room to draw what you saw before you look at what anyone else saw. Version 1.1, October 2026, aligned to the Field Guide and the pilot study.",
     notThis:
       "It is not a questionnaire about meaning. Nothing on it asks what a form represents.",
     useWhen: "Print one per session. This is the record the registry is built from.",
     files: [
-      { lang: "en", file: "DMTCode_Observation_Field_Sheet_v1.pdf", label: "English" },
-      { lang: "es", file: "DMTCode_Hoja_de_Campo_v1_ES.pdf", label: "Espanol" },
-      { lang: "de", file: "DMTCode_Feldblatt_v1_DE.pdf", label: "Deutsch" },
+      { lang: "en", file: "DMTCode_Observation_Field_Sheet_v1_1.pdf", label: "English" },
+      { lang: "es", file: "DMTCode_Hoja_de_Campo_v1_1_ES.pdf", label: "Espanol" },
+      { lang: "de", file: "DMTCode_Feldblatt_v1_1_DE.pdf", label: "Deutsch" },
     ],
   },
   {
@@ -68,15 +68,15 @@ export const DOCUMENTS: DocRecord[] = [
     title: "Sober Baseline Protocol",
     kind: "Protocol",
     summary:
-      "The control condition. Same apparatus, same room, sober observers, a sobriety attestation, and a speckle characterization step that describes what the optics do on their own.",
+      "The control condition. Same apparatus, same room, sober observers, a sobriety attestation, and a speckle characterization step that describes what the optics do on their own. Version 1.1, October 2026, aligned to the Field Guide and the pilot study.",
     notThis:
       "It is not a lesser version of the main protocol. It is the half of the comparison the corpus is missing.",
     useWhen:
       "The registry holds no sober baseline records at all. Until it holds some, nothing in the corpus has a control to be measured against, which makes this the single most useful session anyone can run today.",
     files: [
-      { lang: "en", file: "DMTCode_Sober_Baseline_Protocol_v1.pdf", label: "English" },
-      { lang: "es", file: "DMTCode_Protocolo_Base_Sobria_v1_ES.pdf", label: "Espanol" },
-      { lang: "de", file: "DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf", label: "Deutsch" },
+      { lang: "en", file: "DMTCode_Sober_Baseline_Protocol_v1_1.pdf", label: "English" },
+      { lang: "es", file: "DMTCode_Protocolo_Base_Sobria_v1_1_ES.pdf", label: "Espanol" },
+      { lang: "de", file: "DMTCode_Basisprotokoll_Nuechtern_v1_1_DE.pdf", label: "Deutsch" },
     ],
   },
   {
@@ -109,6 +109,19 @@ export const DOCUMENTS: DocRecord[] = [
       { lang: "en", file: "dmt-laser-code-symbols.pdf", label: "English" },
     ],
   },
+];
+
+// Files kept in public/downloads for links already sent out (welcome emails,
+// order confirmations) but no longer offered on any page or counted anywhere.
+// A file listed here must exist on disk and must not appear in DOCUMENTS;
+// scripts/check-docs-drift.mjs enforces both. Mirror this array too.
+export const RETIRED_FILES: string[] = [
+  "DMTCode_Observation_Field_Sheet_v1.pdf",
+  "DMTCode_Hoja_de_Campo_v1_ES.pdf",
+  "DMTCode_Feldblatt_v1_DE.pdf",
+  "DMTCode_Sober_Baseline_Protocol_v1.pdf",
+  "DMTCode_Protocolo_Base_Sobria_v1_ES.pdf",
+  "DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf",
 ];
 
 export const DOC_FILE_COUNT = DOCUMENTS.reduce((n, d) => n + d.files.length, 0);

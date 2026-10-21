@@ -109,8 +109,8 @@ const downloads = await get('/documents');
 check('documents returns a page, not the SPA shell', /data-prerender="documents"/.test(downloads));
 const DOC_FILES = [
   'DMTCode_Screening_Card_v1.pdf', 'DMTCode_Tarjeta_de_Cribado_v1_ES.pdf', 'DMTCode_Screening_Karte_v1_DE.pdf',
-  'DMTCode_Observation_Field_Sheet_v1.pdf', 'DMTCode_Hoja_de_Campo_v1_ES.pdf', 'DMTCode_Feldblatt_v1_DE.pdf',
-  'DMTCode_Sober_Baseline_Protocol_v1.pdf', 'DMTCode_Protocolo_Base_Sobria_v1_ES.pdf', 'DMTCode_Basisprotokoll_Nuechtern_v1_DE.pdf',
+  'DMTCode_Observation_Field_Sheet_v1_1.pdf', 'DMTCode_Hoja_de_Campo_v1_1_ES.pdf', 'DMTCode_Feldblatt_v1_1_DE.pdf',
+  'DMTCode_Sober_Baseline_Protocol_v1_1.pdf', 'DMTCode_Protocolo_Base_Sobria_v1_1_ES.pdf', 'DMTCode_Basisprotokoll_Nuechtern_v1_1_DE.pdf',
   'DMTCode_AVP_Passthrough_Protocol_v1.pdf', 'DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf', 'DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf',
   'dmt-laser-code-symbols.pdf',
 ];

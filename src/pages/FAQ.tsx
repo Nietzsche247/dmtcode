@@ -71,7 +71,7 @@ const FAQ_GROUPS: Array<{
         a: 'You do not need to take anything to contribute. The Sober Baseline Protocol is the same rig, the same field sheet, run sober, and sober records are the ones the registry needs most. Read the Screening Card first, then run a baseline tonight and record it.',
         links: [
           { label: 'Screening Card (PDF)', href: '/downloads/DMTCode_Screening_Card_v1.pdf' },
-          { label: 'Sober Baseline Protocol (PDF)', href: '/downloads/DMTCode_Sober_Baseline_Protocol_v1.pdf' },
+          { label: 'Sober Baseline Protocol (PDF)', href: '/downloads/DMTCode_Sober_Baseline_Protocol_v1_1.pdf' },
         ],
       },
       {
