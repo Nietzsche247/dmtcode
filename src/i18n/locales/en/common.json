@@ -123,6 +123,7 @@
     "copyright": "© {{year}} DMT Code Project. Site text and design reserved. Registry data and protocol documents CC-BY-4.0."
   },
   "breadcrumb": {
+    "build-your-own": "Build your own",
     "home": "Home",
     "tools": "Tools",
     "registry": "Registry",
@@ -163,6 +164,7 @@
     "terms": "Terms",
     "privacy": "Privacy"
   },
+  "observationResources": {"heroKits": "Kits from {{price}} for careful observation", "preferKit": "Prefer a kit? Kits from {{price}}", "protocol": "The observation protocol", "documents": "Documents"},
   "signupBar": {"text": "Hear when the record changes: new symbols, null results, corrections."},
   "emailCapture": {"emailLabel": "Email address", "submit": "Subscribe"},
   "actions": {

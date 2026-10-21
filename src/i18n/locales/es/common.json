@@ -123,6 +123,7 @@
     "copyright": "© {{year}} DMT Code Project. Texto y diseño del sitio reservados. Los datos del registro y los documentos de protocolo están bajo CC-BY-4.0."
   },
   "breadcrumb": {
+    "build-your-own": "Monte el suyo",
     "home": "Inicio",
     "tools": "Herramientas",
     "registry": "Registro",
@@ -163,6 +164,7 @@
     "terms": "Términos",
     "privacy": "Privacidad"
   },
+  "observationResources": {"heroKits": "Kits desde {{price}} para una observación cuidadosa", "preferKit": "¿Prefiere un kit? Kits desde {{price}}", "protocol": "El protocolo de observación", "documents": "Documentos"},
   "signupBar": {"text": "Entérese cuando cambie el registro: nuevos símbolos, resultados nulos, correcciones."},
   "emailCapture": {"emailLabel": "Correo electrónico", "submit": "Suscribirse"},
   "actions": {

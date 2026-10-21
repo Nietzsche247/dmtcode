@@ -7,11 +7,13 @@ import { LocalizedBody } from '@/components/LocalizedBody';
 import { KIT_MIN_PRICE } from '@/data/kits';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const BUILD_YOUR_OWN_BODY = '{{BUILD_YOUR_OWN_BODY}}';
 
 export default function BuildYourOwn() {
   const locale = useLocale();
+  const { t } = useTranslation();
   return (
     <div className="relative min-h-screen bg-background">
       <SEO uiKey="build-your-own" path="/build-your-own" />
@@ -25,9 +27,9 @@ export default function BuildYourOwn() {
             <section data-block="build-your-own-body">{BUILD_YOUR_OWN_BODY}</section>
           </LocalizedBody>
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-            <Link to={localePath(locale, '/prepare')} className="text-primary hover:underline">Prefer a kit? Kits from ${KIT_MIN_PRICE.toLocaleString('en-US')}</Link>
-            <Link to={localePath(locale, '/protocol-guide')} className="text-primary hover:underline">The observation protocol</Link>
-            <Link to={localePath(locale, '/documents')} className="text-primary hover:underline">Documents</Link>
+            <Link to={localePath(locale, '/prepare')} className="text-primary hover:underline">{t('observationResources.preferKit', { price: `$${KIT_MIN_PRICE.toLocaleString('en-US')}` })}</Link>
+            <Link to={localePath(locale, '/protocol-guide')} className="text-primary hover:underline">{t('observationResources.protocol')}</Link>
+            <Link to={localePath(locale, '/documents')} className="text-primary hover:underline">{t('observationResources.documents')}</Link>
           </div>
           <GolerAttribution />
         </div>

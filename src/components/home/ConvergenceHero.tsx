@@ -6,6 +6,7 @@ import { ArrowRight, Eye, PencilLine } from 'lucide-react';
 import { tagLabel } from '@/lib/tags';
 import { KIT_MIN_PRICE } from '@/data/kits';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 interface TopSymbol {
   id: string;
@@ -19,6 +20,7 @@ interface TopSymbol {
 
 export const ConvergenceHero = () => {
   const locale = useLocale();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [featured, setFeatured] = useState<TopSymbol | null>(null);
   const [recent, setRecent] = useState<TopSymbol[]>([]);
@@ -161,7 +163,7 @@ export const ConvergenceHero = () => {
             const analytics = window as Window & { gtag?: (command: string, event: string) => void };
             if (typeof window !== 'undefined' && analytics.gtag) analytics.gtag('event', 'home_hero_kits_link');
           }}>
-            Kits from ${KIT_MIN_PRICE.toLocaleString('en-US')} for careful observation <ArrowRight className="w-3 h-3" aria-hidden="true" />
+            {t('observationResources.heroKits', { price: `$${KIT_MIN_PRICE.toLocaleString('en-US')}` })} <ArrowRight className="w-3 h-3" aria-hidden="true" />
           </Link>
 
           <p className="text-xs text-muted-foreground">
