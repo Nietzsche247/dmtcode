@@ -1,8 +1,8 @@
 export const FIELD_GUIDE = {
   id: 'field-guide',
   name: 'DMT Laser Code Field Guide (PDF)',
-  price: '{{FIELD_GUIDE_PRICE}}',
-  cart: 'https://shop.dmtcode.com/cart/{{FIELD_GUIDE_VARIANT_ID}}:1',
-  description: 'A printable field guide for running and recording an observation: screening, setup, the field sheet, and how to submit a record so it counts. Digital download, delivered by email after checkout. It is a procedure document, not a key to the symbols and not a claim about what they mean.',
+  price: '$15',
+  cart: 'https://shop.dmtcode.com/cart/67786715365686:1',
+  description: 'A 23 page printable guide for running and recording the sober observation procedure: screening, laser class and eye safety, room setup, the step by step procedure, a printable session log sheet, and how to read and submit to the open symbol registry. It does not say what you will see and it does not describe substance use. PDF, US Letter, delivered by email after checkout.',
 } as const;
 export const FIELD_GUIDE_LIVE = !FIELD_GUIDE.price.includes('{{') && !FIELD_GUIDE.cart.includes('{{');

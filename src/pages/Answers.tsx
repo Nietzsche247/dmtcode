@@ -27,6 +27,7 @@ type Agg = {
   items?: Array<Record<string, unknown>>;
   symbols?: Array<Record<string, unknown>>;
   events?: Array<Record<string, unknown>>;
+  registry_glyphs?: Array<Record<string, unknown>>;
 };
 
 const UNREAD = 'not printed: this page could not read it just now';
@@ -53,6 +54,13 @@ const Answers = () => {
   const symbols = d?.symbols ?? [];
   const events = d?.events ?? [];
   const symbolComp = (comp.symbols ?? {}) as Record<string, unknown>;
+  const glyphs = d?.registry_glyphs ?? [];
+  const hasPrior = (v: unknown) => typeof v === 'string' && v !== '' && v !== 'not_stated';
+  const laserSymbols = symbols.filter((r) => String(r.source_method ?? '') === 'laser_650nm');
+  const laserGlyphs = glyphs.filter((r) => String(r.source ?? '') === '650nm_laser');
+  const priorSentence = d && Array.isArray(d.registry_glyphs)
+    ? `Of the ${(laserSymbols.length + laserGlyphs.length).toLocaleString('en-US')} records that declare the 650 nm laser method, ${laserSymbols.filter((r) => !hasPrior(r.prior_exposure)).length.toLocaleString('en-US')} symbol records carry no prior exposure value and ${laserGlyphs.filter((r) => hasPrior(r.prior_exposure)).length.toLocaleString('en-US')} of ${laserGlyphs.length.toLocaleString('en-US')} glyph records carry one.`
+    : `Prior exposure per table: ${UNREAD}.`;
 
   const registered = items.filter(
     (i) => String(i.content_type) === 'Trial' && String(i.authority_type) === 'Clinical',
@@ -130,8 +138,7 @@ const Answers = () => {
                 separate tables and are never summed. The number that matters for the
                 laser claim specifically is smaller: {fmt(comp.records_declaring_650nm_laser)} of{' '}
                 {fmt(comp.records_total)} records declare the 650 nm laser method at all.
-                Prior exposure is recorded on {fmt(symbolComp.prior_exposure_recorded)} of them,
-                and there are {fmt(symbolComp.sober_baseline)} sober baseline records.{' '}
+                {priorSentence} There are {fmt(symbolComp.sober_baseline)} sober baseline records.{' '}
                 <Link to="/object-model" className="text-primary hover:underline">The object model</Link>{' '}
                 explains why the two counts differ.
               </p>

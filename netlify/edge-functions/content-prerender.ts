@@ -11,9 +11,9 @@ const BUILD_YOUR_OWN_BODY_HTML = "<div class=\"space-y-4\"><p class=\"text-muted
 const FIELD_GUIDE = {
   id: 'field-guide',
   name: 'DMT Laser Code Field Guide (PDF)',
-  price: '{{FIELD_GUIDE_PRICE}}',
-  cart: 'https://shop.dmtcode.com/cart/{{FIELD_GUIDE_VARIANT_ID}}:1',
-  description: 'A printable field guide for running and recording an observation: screening, setup, the field sheet, and how to submit a record so it counts. Digital download, delivered by email after checkout. It is a procedure document, not a key to the symbols and not a claim about what they mean.',
+  price: '$15',
+  cart: 'https://shop.dmtcode.com/cart/67786715365686:1',
+  description: 'A 23 page printable guide for running and recording the sober observation procedure: screening, laser class and eye safety, room setup, the step by step procedure, a printable session log sheet, and how to read and submit to the open symbol registry. It does not say what you will see and it does not describe substance use. PDF, US Letter, delivered by email after checkout.',
 } as const;
 const FIELD_GUIDE_LIVE = !FIELD_GUIDE.price.includes('{{') && !FIELD_GUIDE.cart.includes('{{');
 
@@ -1355,6 +1355,7 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
     ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.name)}" width="800" height="450" />` : ""}
     <p><strong>$${k.priceNumber.toLocaleString("en-US")}</strong></p>
     <p>${esc(k.description)}</p>
+    ${k.id === "protocol" ? "<p>The pilot study lists a diffraction grating lens; this kit uses a glass rod, a cylindrical optic that spreads the dot into a single line and produces no diffraction orders. Gratings ship in the Solo and above.</p>" : ""}
     ${k.id === "triad" ? "<p>The vendor spec sheet lists this pointer at 401 nm, which falls within the 405 nm class it is sold under.</p>" : ""}
     <p>Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.</p>
     <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
@@ -1605,6 +1606,17 @@ async function renderAnswers(context: Context, request: Request, locale: Loc = "
   const soberBaselines = n(symbolComp.sober_baseline as number);
   const priorExposure = n(symbolComp.prior_exposure_recorded as number);
 
+  // Prior exposure is counted per table, because the two tables store it
+  // differently and a single pooled figure hid the glyph values entirely.
+  const glyphList = Array.isArray(d?.registry_glyphs) ? (d!.registry_glyphs as Array<Record<string, unknown>>) : null;
+  const hasPrior = (v: unknown) => typeof v === "string" && v !== "" && v !== "not_stated";
+  const laserSymbols = symbols.filter((r) => String(r.source_method ?? "") === "laser_650nm");
+  const laserGlyphs = (glyphList ?? []).filter((r) => String(r.source ?? "") === "650nm_laser");
+  const priorSentence = d && glyphList
+    ? `Of the ${(laserSymbols.length + laserGlyphs.length).toLocaleString("en-US")} records that declare the 650 nm laser method, ${laserSymbols.filter((r) => !hasPrior(r.prior_exposure)).length.toLocaleString("en-US")} symbol records carry no prior exposure value and ${laserGlyphs.filter((r) => hasPrior(r.prior_exposure)).length.toLocaleString("en-US")} of ${laserGlyphs.length.toLocaleString("en-US")} glyph records carry one.`
+    : `Prior exposure per table is ${UNKNOWN}.`;
+  void priorExposure;
+
   const bibComp = (comp.bibliography ?? {}) as Record<string, unknown>;
   const byRelation = (bibComp.by_relation_to_core_question ?? {}) as Record<string, number>;
   const directTests = n(byRelation.direct_test);
@@ -1652,7 +1664,7 @@ async function renderAnswers(context: Context, request: Request, locale: Loc = "
 
   <section id="how-many-observations">
     <h2>How many community observations does DMT Code contain?</h2>
-    <p>${or(symbolTotal, UNKNOWN)} published symbol records, plus ${or(glyphTotal, UNKNOWN)} anonymous drawn glyph reports from the quick capture tool. They are separate tables and are never summed. The number that matters for the laser claim specifically is smaller: ${or(laserDeclared, UNKNOWN)} of ${or(recordsTotal, UNKNOWN)} records declare the 650 nm laser method at all. Prior exposure is recorded on ${or(priorExposure, UNKNOWN)} of them, and there are ${or(soberBaselines, UNKNOWN)} sober baseline records. The object model at <a href="${SITE}/object-model">/object-model</a> explains why the two counts differ.</p>
+    <p>${or(symbolTotal, UNKNOWN)} published symbol records, plus ${or(glyphTotal, UNKNOWN)} anonymous drawn glyph reports from the quick capture tool. They are separate tables and are never summed. The number that matters for the laser claim specifically is smaller: ${or(laserDeclared, UNKNOWN)} of ${or(recordsTotal, UNKNOWN)} records declare the 650 nm laser method at all. ${priorSentence} There are ${or(soberBaselines, UNKNOWN)} sober baseline records. The object model at <a href="${SITE}/object-model">/object-model</a> explains why the two counts differ.</p>
   </section>
 
   <section id="goler-setup">
@@ -7042,6 +7054,7 @@ async function renderProductPage(
   <p>${esc(kit.shortName)}, ${esc(observerPhrase(kit))}, ${kit.emitters.length === 1 ? "1 light source" : `${kit.emitters.length} light sources`}.</p>
   <p><strong>${esc(kit.price)}</strong></p>
   <p>${esc(kit.description)}</p>
+  ${kit.id === "protocol" ? "<p>The pilot study lists a diffraction grating lens; this kit uses a glass rod, a cylindrical optic that spreads the dot into a single line and produces no diffraction orders. Gratings ship in the Solo and above.</p>" : ""}
   <p>${esc(kit.availability)} Processed within 2 business days.</p>
   <p>Ships from Arbor Scientific. Expect Arbor branding on the box, tape and packing slip. No prices on the packing slip. Meridian Optics Lab is the seller of record.</p>
   <section data-block="kit-contents">

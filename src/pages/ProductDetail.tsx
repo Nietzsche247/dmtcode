@@ -282,6 +282,7 @@ const ProductDetail = () => {
             <div className="text-3xl font-black tracking-tight tabular-nums mt-5">{kit.price}</div>
 
             <p className="text-sm text-muted-foreground mt-6 leading-relaxed">{kit.description}</p>
+            {kit.id === 'protocol' && <p className="text-sm text-muted-foreground mt-4 leading-relaxed">The pilot study lists a diffraction grating lens; this kit uses a glass rod, a cylindrical optic that spreads the dot into a single line and produces no diffraction orders. Gratings ship in the Solo and above.</p>}
 
             <div className="mt-6 space-y-1 text-xs text-muted-foreground">
               <p>{kit.availability} Processed within 2 business days.</p>
