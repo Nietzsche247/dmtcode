@@ -124,6 +124,8 @@ const CASES = [
   // handle the guard does not know about 404s no matter what the prerenderer
   // or the React router do, and a missing handle is invisible until someone
   // clicks "Full details and photos" on /prepare and lands on a 404.
+  ["/products/650-nm-laser-protocol-kit-1-observer", true, "Protocol kit page"],
+  ["/es/products/650-nm-laser-protocol-kit-1-observer", true, "Protocol kit page, es mirror"],
   ["/products/650nm-laser-diffraction-research-kit-solo", true, "Solo kit page"],
   ["/products/dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm", true, "Dual kit page"],
   ["/products/multi-wavelength-laser-diffraction-kit-triad", true, "Triad kit page"],

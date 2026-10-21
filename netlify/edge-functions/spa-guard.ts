@@ -77,6 +77,7 @@ const ASSET_RE = /\.[a-z0-9]{2,5}$/i;
 // must also be prerendered by content-prerender.ts, or the page returns the
 // empty SPA shell at 200, which is a soft 404 and worse than an honest one.
 const PRODUCT_HANDLES = new Set<string>([
+  "650-nm-laser-protocol-kit-1-observer",
   "650nm-laser-diffraction-research-kit-solo",
   "dual-wavelength-laser-diffraction-research-kit-dual-650-and-532-nm",
   "multi-wavelength-laser-diffraction-kit-triad",
