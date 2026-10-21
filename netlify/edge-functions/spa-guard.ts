@@ -180,6 +180,13 @@ export default async (request: Request, context: Context) => {
   // does not exist and the honest answer is 404, not a 200 that looks like a
   // page. .html paths are excluded because HTML is their correct content type.
   if (ASSET_RE.test(path)) {
+    // Historical symbol plate URLs moved to /symbol-plates/ when /symbols became
+    // a page (2026-10-21). The netlify.toml 301 does not fire from inside
+    // context.next(), so the redirect is issued here.
+    const plate = path.match(/^\/symbols\/(.+\.(?:svg|json))$/i);
+    if (plate) {
+      return Response.redirect(`${url.origin}/symbol-plates/${plate[1]}`, 301);
+    }
     const res = await context.next();
     if (
       res.status === 200 &&
