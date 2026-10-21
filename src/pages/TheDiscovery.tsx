@@ -8,6 +8,9 @@ import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { EmailCapture } from '@/components/EmailCapture';
 import { GolerAttribution } from '@/components/GolerAttribution';
+import { LocalizedBody } from '@/components/LocalizedBody';
+import { useLocalizedBody } from '@/hooks/useLocalizedBody';
+import { uiCopy } from '@/i18n/ui-strings';
 import { KIT_MIN_PRICE } from '@/data/kits';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
@@ -69,6 +72,8 @@ const BREADCRUMB_LD = {
 
 const TheDiscovery = () => {
   const locale = useLocale();
+  const translatedBody = useLocalizedBody('the-discovery');
+  const pageCopy = uiCopy('the-discovery', locale);
   return (
     <>
       <SEO uiKey="the-discovery" path="/the-discovery" />
@@ -77,7 +82,7 @@ const TheDiscovery = () => {
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={PAGE_TITLE} />
-        <meta name="twitter:description" content={PAGE_DESCRIPTION} />
+        <meta name="twitter:description" content={pageCopy.description} />
         <script type="application/ld+json">{JSON.stringify(MOVIE_LD)}</script>
         <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
       </Helmet>
@@ -88,6 +93,7 @@ const TheDiscovery = () => {
 
         <main id="main-content" className="relative z-10 pt-4" role="main">
           <section className="container mx-auto px-4 py-12 md:py-16 max-w-4xl">
+            <LocalizedBody pageId="the-discovery">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">The Discovery</h1>
             <p className="text-lg text-muted-foreground mb-12">
               The Discovery is a documentary film. This page tracks the release window, where it can be watched once that is announced, and how it relates to the open record kept on this site. The page is not affiliated with the film, its production or its distribution.
@@ -202,6 +208,8 @@ const TheDiscovery = () => {
             <p className="text-sm text-muted-foreground">
               Last checked {formatChecked(LAST_CHECKED)}
             </p>
+            </LocalizedBody>
+            {translatedBody && <Card className="p-6 bg-card border-border mt-8"><EmailCapture variant="inline" source="the-discovery" /></Card>}
           </section>
         </main>
 
