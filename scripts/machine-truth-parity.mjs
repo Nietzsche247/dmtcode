@@ -692,12 +692,12 @@ check('symbols carries Goler attribution', symbolsPage.includes('First reported 
 for (const locale of ['es', 'de']) {
   const translatedSymbols = await get(`/${locale}/symbols`);
   check(`${locale} symbols returns prerender body`, /data-prerender="symbols"/.test(translatedSymbols));
-  if (/<html[^>]*lang="en"/.test(translatedSymbols)) {
+  if (translatedSymbols.includes("<!--tsrc:static:symbols-->")) {
     check(`${locale} symbols English fallback canonical`, translatedSymbols.includes('<link rel="canonical" href="https://dmtcode.com/symbols">'));
   }
   const own = await get(`/${locale}/build-your-own`);
   check(`${locale} build-your-own retains ten affiliate links`, (own.match(/amazon\.com\/dp\//g) || []).length === 10);
-  if (/<html[^>]*lang="en"/.test(own)) {
+  if (own.includes("<!--tsrc:static:build-your-own-->")) {
     check(`${locale} build-your-own English fallback is complete`, own.includes('Laser safety') && own.includes('Affiliate disclosure'));
     check(`${locale} build-your-own English fallback canonical and language`, own.includes('<link rel="canonical" href="https://dmtcode.com/build-your-own">') && /<html[^>]*lang="en"/.test(own));
   }
