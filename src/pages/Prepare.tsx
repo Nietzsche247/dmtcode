@@ -9,8 +9,12 @@ import { ShieldAlert } from 'lucide-react';
 
 import { DOCUMENTS, docCountWord, DOC_PATH } from '@/data/documents';
 import { markCatalogueSeen } from '@/lib/catalogueExposure';
-import { KITS, type Kit } from '@/data/kits';
-import { useLocale } from '@/i18n/LocaleProvider';
+import { KITS, KIT_MIN_PRICE, type Kit } from '@/data/kits';
+import { FIELD_GUIDE, FIELD_GUIDE_LIVE } from '@/data/fieldGuide';
+import { GolerAttribution } from '@/components/GolerAttribution';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { useLocale, localePath } from '@/i18n/LocaleProvider';
 
 const PREPARE_BUY_COPY = {
   en: {
@@ -143,6 +147,7 @@ function KitCard({ kit }: { kit: Kit }) {
       <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
         {kit.description}
       </p>
+      {kit.id === 'triad' && <p className="text-sm text-muted-foreground mt-4 leading-relaxed">The vendor spec sheet lists this pointer at 401 nm, which falls within the 405 nm class it is sold under.</p>}
 
       <div className="mt-4 text-xs text-muted-foreground">
         Arrives in 7 to 10 business days, processed within 2. Free US shipping. 18+, for research use.
@@ -189,6 +194,26 @@ function KitCard({ kit }: { kit: Kit }) {
   );
 }
 
+function FieldGuideCard() {
+  const trackClick = () => {
+    const analytics = window as Window & { gtag?: (command: string, event: string) => void };
+    if (typeof window !== 'undefined' && analytics.gtag) analytics.gtag('event', 'field_guide_cta_click');
+  };
+  return (
+    <Card id={FIELD_GUIDE.id} className="flex flex-col p-6 md:p-8 rounded-2xl border border-border/60">
+      <h3 className="font-serif text-2xl md:text-3xl leading-tight">{FIELD_GUIDE.name}</h3>
+      <div className="mt-4 text-3xl font-black tabular-nums">{FIELD_GUIDE.price}</div>
+      <p className="text-sm text-muted-foreground mt-4 leading-relaxed">{FIELD_GUIDE.description}</p>
+      <p className="mt-4 text-xs text-muted-foreground">Digital product. No shipping. Delivered by email after checkout. Sold by Meridian Optics Lab.</p>
+      <div className="mt-auto pt-6">
+        <Button asChild className="w-full"><a href={FIELD_GUIDE.cart} onClick={trackClick}>Buy. Secure Shopify checkout</a></Button>
+        <p className="mt-2 text-xs text-muted-foreground">Digital downloads are not refundable once delivered.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Your card statement will read MERIDIAN OPTICS LAB.</p>
+      </div>
+    </Card>
+  );
+}
+
 const Prepare = () => {
   const locale = useLocale();
   const copy = buyCopy(locale);
@@ -221,7 +246,7 @@ const Prepare = () => {
             eyebrow="Prepare"
             title="Careful preparation"
             titleAccent="over careless purchase"
-            subtitle="Four laser diffraction research kits: one observer, one to two, two to three, or up to six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
+            subtitle="Five laser diffraction research kits: one observer, one to two, two to three, or up to six. Every kit ships with optical components and diffraction optics; observation documents are free PDF downloads. Checkout runs on secure Shopify."
           />
 
           {/* STAGE FRAMING */}
@@ -293,6 +318,7 @@ const Prepare = () => {
               <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
                 Making the line: the diffraction gratings split the beam into ordered points; a curved acrylic piece stretches the dot into a short bright horizontal line. Every kit except the Protocol includes one; the Protocol kit makes its line with a glass rod held in a second stand. Put the semicircle in the beam with its flat face toward the laser. Line length depends on the piece and on how far it sits from the laser: moving the optic away from the laser lengthens the line, moving it closer shortens it. At about 3 m the line is a few centimetres long, not a line across the wall.
               </p>
+              <p className="text-sm text-muted-foreground mt-2">Prefer to assemble the parts yourself? See <Link to={localePath(locale, '/build-your-own')} className="underline hover:text-foreground">Build your own</Link>.</p>
               <div className="mt-4 max-w-2xl" id="documents">
                 <p className="text-sm text-muted-foreground">
                   Field materials and protocols, free download, no account needed. Nothing here requires buying a kit.{' '}
@@ -374,6 +400,7 @@ const Prepare = () => {
               {KITS.map((k) => (
                 <KitCard key={k.id} kit={k} />
               ))}
+              {FIELD_GUIDE_LIVE && <FieldGuideCard />}
             </div>
           </section>
 
@@ -422,6 +449,7 @@ const Prepare = () => {
 
         {/* DISCLAIMER */}
         <section className="max-w-4xl mx-auto px-4 mt-16 mb-24">
+            <GolerAttribution />
             <p className="text-xs text-muted-foreground leading-relaxed">
               For educational and harm reduction purposes only. Does not encourage or condone use
               of any illegal substance. Not medical or legal advice. Not intended to diagnose,

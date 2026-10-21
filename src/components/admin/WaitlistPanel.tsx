@@ -8,6 +8,8 @@ interface WaitlistRow {
   id: string;
   email: string;
   source: string | null;
+  source_path: string | null;
+  locale: string | null;
   created_at: string;
 }
 
@@ -20,7 +22,7 @@ export const WaitlistPanel = () => {
     (async () => {
       const { data, error } = await supabase
         .from('waitlist')
-        .select('id, email, source, created_at')
+        .select('id, email, source, source_path, locale, created_at')
         .order('created_at', { ascending: false });
       if (cancelled) return;
       if (error) console.error('Waitlist read failed:', error);
@@ -49,6 +51,8 @@ export const WaitlistPanel = () => {
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Source</TableHead>
+                <TableHead>Page</TableHead>
+                <TableHead>Locale</TableHead>
                 <TableHead>Joined</TableHead>
               </TableRow>
             </TableHeader>
@@ -57,6 +61,8 @@ export const WaitlistPanel = () => {
                 <TableRow key={r.id}>
                   <TableCell className="font-mono text-xs">{r.email}</TableCell>
                   <TableCell>{r.source || 'not recorded'}</TableCell>
+                  <TableCell>{r.source_path || 'not recorded'}</TableCell>
+                  <TableCell>{r.locale || 'not recorded'}</TableCell>
                   <TableCell>{new Date(r.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}

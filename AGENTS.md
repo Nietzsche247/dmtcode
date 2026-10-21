@@ -8,6 +8,11 @@ Read `docs/agent/README.md`, `docs/agent/OTIS_PROMPT.md`, and `docs/agent/GRAPH_
 
 For product-level audits (content gaps, connectivity, tool QA, member experience), read `docs/agent/ESSENCE_AUDIT.md`. It is seeded with measured findings and must be re-measured, not trusted blindly, on resume.
 
+## Observation resource architecture
+
+- Keep optional digital resource data separate from KITS and gate React and edge output on both publication values, so placeholders never appear publicly.
+- Mount signup chrome once inside the router with route-derived locale context, so all locale mirrors share dismissal and submit behavior.
+
 ## Commerce data boundary
 
 Keep supplier part numbers and self-assembly costs in internal kit data and supplier tooling only; never expose them on customer-facing pages or machine surfaces.

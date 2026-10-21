@@ -80,6 +80,9 @@ function allows(path) {
 
 // [path, shouldBeAllowed, why]
 const CASES = [
+  ["/build-your-own", true, "build your own rig page"],
+  ["/es/build-your-own", true, "es mirror"],
+  ["/de/build-your-own", true, "de mirror"],
   // Events module hunt URLs. These are the reason this patch exists.
   ["/events/boom-festival-2026", true, "hunt URL, human slug"],
   ["/events/ozora-vs-boom-2026", true, "hunt URL, human slug"],

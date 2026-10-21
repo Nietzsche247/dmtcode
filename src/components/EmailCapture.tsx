@@ -4,9 +4,14 @@ import { Mail, ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLocation } from 'react-router-dom';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { useTranslation } from 'react-i18next';
 
 interface EmailCaptureProps {
   source?: string;
+  variant?: 'section' | 'compact' | 'inline';
+  onSuccess?: () => void;
   /**
    * Identifier of the specific product or bundle the visitor asked about,
    * taken from real route context (never invented). When present and it
@@ -16,7 +21,10 @@ interface EmailCaptureProps {
   productSlug?: string | null;
 }
 
-export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailCaptureProps) => {
+export const EmailCapture = ({ source = 'waitlist', productSlug = null, variant = 'section', onSuccess }: EmailCaptureProps) => {
+  const location = useLocation();
+  const locale = useLocale();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const publishedSlugs = useRef<Set<string> | null>(null);
@@ -59,7 +67,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
           .insert({ email: trimmed, bundle_slug: validSlug })
       : await supabase
           .from('waitlist')
-          .insert({ email: trimmed, source });
+          .insert({ email: trimmed, source, source_path: location.pathname.replace(/^\/(es|de)(?=\/|$)/, '') || '/', locale });
 
     setIsSubmitting(false);
 
@@ -68,6 +76,7 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
       if ((error as { code?: string }).code === '23505') {
         toast.success('You are already on the list.');
         setEmail('');
+        onSuccess?.();
         return;
       }
       toast.error('Something went wrong. Please try again.');
@@ -76,7 +85,22 @@ export const EmailCapture = ({ source = 'waitlist', productSlug = null }: EmailC
 
     toast.success('Thanks, you are on the list.');
     setEmail('');
+    onSuccess?.();
   };
+
+  if (variant !== 'section') {
+    return (
+      <form onSubmit={handleSubmit} className="min-w-0 w-full">
+        <div className="flex items-center gap-2 min-w-0">
+          {variant === 'compact' && <label className="text-xs shrink-0">{t('footer.updatesHeading')}</label>}
+          <Input type="email" aria-label={t('emailCapture.emailLabel')} placeholder={t('emailCapture.emailLabel')} value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} className="min-w-0 flex-1 h-11 bg-secondary/30 border-border/50" />
+          <Button type="submit" size="icon" disabled={isSubmitting} aria-label={t('emailCapture.submit')} className="h-11 w-11 shrink-0">
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </form>
+    );
+  }
 
   return (
     <section className="relative py-14 px-4 border-t border-border/30">

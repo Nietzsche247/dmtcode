@@ -91,6 +91,9 @@
     "rights": "Investigación abierta. Cite la fila.",
     "resourcesHeading": "Recursos",
     "projectHeading": "El proyecto",
+    "updatesHeading": "Novedades",
+    "updatesNote": "Nuevos simbolos, resultados nulos y correcciones. Responda a cualquier correo para darse de baja.",
+    "buildYourOwn": "Monte el suyo",
     "articles": "Artículos",
     "guides": "Guías",
     "capture": "Registrar",
@@ -160,6 +163,8 @@
     "terms": "Términos",
     "privacy": "Privacidad"
   },
+  "signupBar": {"text": "Entérese cuando cambie el registro: nuevos símbolos, resultados nulos, correcciones."},
+  "emailCapture": {"emailLabel": "Correo electrónico", "submit": "Suscribirse"},
   "actions": {
     "submit": "Enviar",
     "cancel": "Cancelar",

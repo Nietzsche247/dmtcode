@@ -35,7 +35,7 @@ const LEGAL_COUNTRIES = new Set<string>([
 const VALID_FIRST_SEGMENT = new Set<string>([
   // Prerendered pages
   "registry", "trials", "bibliography", "prepare", "faq", "evidence-map",
-  "about", "critiques", "the-discovery", "null-reports", "glossary", "methods",
+  "about", "critiques", "the-discovery", "build-your-own", "null-reports", "glossary", "methods",
   "open-questions", "object-model", "research", "protocols", "forecasts", "protocol-guide",
   "dataset", "theories", "retreats", "preregister", "documents", "answers",
   // The index of the machine surface. Shipped together with its

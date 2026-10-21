@@ -18,6 +18,7 @@ import EvidenceMap from "./pages/EvidenceMap";
 import Methods from "./pages/Methods";
 import Critiques from "./pages/Critiques";
 import TheDiscovery from "./pages/TheDiscovery";
+import BuildYourOwn from "./pages/BuildYourOwn";
 import People from "./pages/People";
 import PersonDannyGoler from "./pages/PersonDannyGoler";
 import PersonAndrewGallimore from "./pages/PersonAndrewGallimore";
@@ -192,6 +193,7 @@ export const AppRoutes = () => (
     <Route path="Elizabeth_Baker" element={<Navigate to="/about" replace />} />
     <Route path="critiques" element={<Critiques />} />
     <Route path="the-discovery" element={<TheDiscovery />} />
+    <Route path="build-your-own" element={<BuildYourOwn />} />
     <Route path="people" element={<People />} />
     <Route path="people/danny-goler" element={<PersonDannyGoler />} />
     <Route path="people/andrew-gallimore" element={<PersonAndrewGallimore />} />

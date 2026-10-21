@@ -91,6 +91,9 @@
     "rights": "Open research. Cite the row.",
     "resourcesHeading": "Resources",
     "projectHeading": "The project",
+    "updatesHeading": "Updates",
+    "updatesNote": "New symbols, nulls and corrections. Reply to any email to be removed.",
+    "buildYourOwn": "Build your own",
     "articles": "Articles",
     "guides": "Guides",
     "capture": "Capture",
@@ -160,6 +163,8 @@
     "terms": "Terms",
     "privacy": "Privacy"
   },
+  "signupBar": {"text": "Hear when the record changes: new symbols, null results, corrections."},
+  "emailCapture": {"emailLabel": "Email address", "submit": "Subscribe"},
   "actions": {
     "submit": "Submit",
     "cancel": "Cancel",
