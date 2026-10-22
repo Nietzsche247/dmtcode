@@ -260,8 +260,12 @@ const ProductDetail = () => {
         <meta property="og:url" content={canonical} />
         <meta property="og:type" content="product" />
         {kit.photos[0] && <meta property="og:image" content={kit.photos[0].url} />}
-        <script type="application/ld+json">{JSON.stringify(productLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+        {!prerenderedLdPresent && (
+          <>
+            <script type="application/ld+json">{JSON.stringify(productLd)}</script>
+            <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+          </>
+        )}
       </Helmet>
 
       <Navigation />
