@@ -7172,8 +7172,6 @@ ${kit.photos
   <p><a href="${esc(kit.cart)}">Buy now - secure Shopify checkout</a></p>
   <p>Your card statement will read MERIDIAN OPTICS LAB.</p>
   <p><a href="${SITE}/prepare">Back to all five kits</a>, <a href="${SITE}/returns">shipping and returns</a>, machine readable catalogue at <a href="${SITE}/shop.json">/shop.json</a>.</p>
-  <script type="application/ld+json">${jsonLd(productLd)}</script>
-  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({
