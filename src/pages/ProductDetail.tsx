@@ -183,10 +183,28 @@ const ProductDetail = () => {
   const { handle = '' } = useParams();
   const locale = useLocale();
   const kit = KITS.find((k) => k.handle === handle);
+  const path = kit ? `/products/${kit.handle}` : '';
+
+  // The prerendered document already carries this product's Product and
+  // BreadcrumbList JSON-LD in the head, emitted by the edge prerenderer.
+  // Googlebot runs JS on that document, so rendering the same nodes again here
+  // under the same @id merges duplicates and doubles fields like brand. Detect
+  // the prerendered scripts once on mount and skip the Helmet copies in that
+  // case. Plain SPA navigation (no prerendered scripts) keeps them.
+  const [prerenderedLdPresent] = useState(() => {
+    if (typeof document === 'undefined') return false;
+    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+    for (const script of Array.from(scripts)) {
+      if (script.hasAttribute('data-react-helmet')) continue;
+      const text = script.textContent ?? '';
+      if (path && text.includes(`${path}#product"`)) return true;
+      if (text.includes('"Product"') && text.includes('#product"')) return true;
+    }
+    return false;
+  });
 
   if (!kit) return <NotFound />;
 
-  const path = `/products/${kit.handle}`;
   const canonical = `${SITE}${localePath(locale, path)}`;
   const copy = uiCopy(`product-${kit.id}`, locale);
 
