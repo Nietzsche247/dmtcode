@@ -279,10 +279,10 @@ const ProductDetail = () => {
         <meta property="og:type" content="product" />
         {kit.photos[0] && <meta property="og:image" content={kit.photos[0].url} />}
         {!prerenderedLdPresent && (
-          <>
-            <script type="application/ld+json">{JSON.stringify(productLd)}</script>
-            <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
-          </>
+          <script type="application/ld+json">{JSON.stringify(productLd)}</script>
+        )}
+        {!prerenderedLdPresent && (
+          <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         )}
       </Helmet>
 
