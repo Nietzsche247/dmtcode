@@ -12,6 +12,7 @@
 // NULL, so a re-run picks up exactly what the last run did not finish.
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { approvalRelationPatch, RELATION_TO_CORE_QUESTION_DEFINITION } from '../_shared/bibliographyRelation.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -126,7 +127,9 @@ When you are unsure, say on_topic true with low confidence, or on_topic false wi
 You are judging TOPIC FIT ONLY, never truth, rigour or credibility. A speculative first-person trip report is on topic. An ankle-radiograph paper is not.
 
 Return strict JSON only:
-{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>"}]}
+{"results":[{"index":<number>,"on_topic":<boolean>,"confidence":<number 0..1>,"phenomenological_element":"<the specific element found, or empty string if none>","reason":"<one sentence>","relation_to_core_question":"<one vocabulary value>"}]}
+Classify relation_to_core_question separately from topic fit, using these exact definitions:
+${RELATION_TO_CORE_QUESTION_DEFINITION}
 Return exactly one result object per record, using the record's index. When on_topic is true, phenomenological_element MUST name the specific perceptual, experiential or subject-matter element found in that record, and the reason must reference it. When on_topic is false, phenomenological_element must be an empty string. confidence is your certainty in the on_topic call.`;
 
 interface Row {
@@ -134,6 +137,7 @@ interface Row {
   triage_status?: string | null;
   triage_confidence?: number | null;
   triage_reason?: string | null;
+  relation_to_core_question?: string | null;
   title: string | null;
   abstract: string | null;
   journal: string | null;
@@ -146,6 +150,7 @@ interface Verdict {
   confidence: number;
   element: string;
   reason: string;
+  relation: unknown;
 }
 
 class GatewayStop extends Error {
@@ -229,6 +234,7 @@ async function classify(rows: Row[], apiKey: string): Promise<Verdict[]> {
       confidence: Number.isFinite(confidence) ? Math.min(1, Math.max(0, confidence)) : 0,
       element: String(item?.phenomenological_element ?? '').trim().slice(0, 300),
       reason: String(item?.reason ?? '').slice(0, 500) || 'No reason returned by the model.',
+      relation: item?.relation_to_core_question,
     });
   }
   return out;
@@ -292,7 +298,7 @@ Deno.serve(async (req) => {
     for (let pass = 0; pass < 50; pass++) {
       let q = db
         .from('bibliography')
-        .select('id, title, abstract, journal, compounds, triage_status, triage_confidence, triage_reason')
+        .select('id, title, abstract, journal, compounds, triage_status, triage_confidence, triage_reason, relation_to_core_question')
         .order('created_at', { ascending: true })
         .limit(BATCH_SIZE);
 
@@ -365,7 +371,21 @@ Deno.serve(async (req) => {
           }
         }
 
-        const { error: upErr } = await db.from('bibliography').update(patch).eq('id', row.id);
+        if (patch.is_approved === true) {
+          const { relation_note, ...relationPatch } = approvalRelationPatch(triage_status, row.relation_to_core_question, v?.relation);
+          Object.assign(patch, relationPatch);
+          if (relation_note) patch.triage_reason = `${patch.triage_reason} ${relation_note}`;
+          if (relationPatch.triage_status === 'needs_review') triage_status = 'needs_review';
+        }
+
+        // Guard the relation at write time too, so a concurrent human classification survives.
+        let update = db.from('bibliography').update(patch).eq('id', row.id);
+        if ('relation_to_core_question' in patch) update = update.is('relation_to_core_question', null);
+        let { data: updated, error: upErr } = await update.select('id');
+        if (!upErr && updated?.length === 0 && 'relation_to_core_question' in patch) {
+          delete patch.relation_to_core_question;
+          ({ error: upErr } = await db.from('bibliography').update(patch).eq('id', row.id));
+        }
         if (upErr) {
           console.error('triage update failed', row.id, upErr.message);
           continue;
