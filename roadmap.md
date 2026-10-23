@@ -2,11 +2,13 @@
 
 ## Additive observation submission update
 
-- [ ] Extend the single glyph mirror, add observation fields and backfill linked exposure
-- [ ] Shared glyph-only save path, storage uploads and offline replay
-- [ ] Both forms: exposure, sober/null reports, stimulus photos and recording delay
-- [ ] Drawing-before-taxonomy ordering, catalogue flag and EN/ES/DE copy
-- [ ] Rule tests, authenticated route submission checks and deployment handoff
+- [x] Extend the single glyph mirror, add observation fields and backfill linked exposure
+- [x] Shared glyph-only save path, storage uploads and offline replay
+- [x] Both forms: exposure, sober/null reports, stimulus photos and recording delay
+- [x] Drawing-before-taxonomy ordering, catalogue flag and EN/ES/DE copy
+- [x] Rule tests, authenticated route submission checks and deployment handoff
+- [ ] Public stimulus bucket: blocked by workspace public-bucket policy; uploads work privately
+- [ ] Production forms: waits for Netlify deployment from main
 
 - [x] Migration: laser_protocol columns + CHECKs on retreats
 - [x] Insert nine retreat centers (23 rows total, all 'No')
