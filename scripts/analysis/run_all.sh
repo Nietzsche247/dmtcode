@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Rerun DMT Code analysis run 01 end to end from input/ into output/.
 # Usage: scripts/analysis/run_all.sh            (from anywhere)
-#        ROOT=/path/to/analysis-rebuild scripts/analysis/run_all.sh
+#        ROOT=/path/to/folder scripts/analysis/run_all.sh  (folder holds input/ and gets output/)
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="${ROOT:-$(cd "$HERE/../.." && pwd)}"
+ROOT="${ROOT:-$HERE}"
 IN="$ROOT/input"
 OUT="$ROOT/output"
 WORK="$OUT/work"
