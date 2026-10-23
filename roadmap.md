@@ -1,5 +1,13 @@
 # Roadmap
 
+## Additive observation submission update
+
+- [ ] Extend the single glyph mirror, add observation fields and backfill linked exposure
+- [ ] Shared glyph-only save path, storage uploads and offline replay
+- [ ] Both forms: exposure, sober/null reports, stimulus photos and recording delay
+- [ ] Drawing-before-taxonomy ordering, catalogue flag and EN/ES/DE copy
+- [ ] Rule tests, authenticated route submission checks and deployment handoff
+
 - [x] Migration: laser_protocol columns + CHECKs on retreats
 - [x] Insert nine retreat centers (23 rows total, all 'No')
 - [x] /retreats/laser-protocol page, routed before /retreats/:id
