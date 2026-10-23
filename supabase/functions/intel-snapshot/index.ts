@@ -7,7 +7,7 @@
 //
 // Extending: add an entry to METRIC_REGISTRY below. Nothing else needs to change.
 
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 import { parseServiceAccount, getAccessToken, runReport, num } from '../_shared/ga4.ts';
 
 const corsHeaders = {
@@ -41,7 +41,7 @@ interface MetricDef {
 // ---------------------------------------------------------------- context
 
 interface Ctx {
-  db: ReturnType<typeof createClient>;
+  db: SupabaseClient;
   periodDays: number;
   now: Date;
   curStart: Date;

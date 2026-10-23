@@ -10,8 +10,12 @@
 // Writes only to route_health.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { machineAuthError } from "../_shared/cronAuth.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-route-key",
+};
 
 const SITE = "https://dmtcode.com";
 const UA =
