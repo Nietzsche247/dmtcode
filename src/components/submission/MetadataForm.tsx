@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { ContextTermPicker } from '@/components/context/ContextTermPicker';
 import { normalizeTag } from '@/lib/tags';
 import { useTagVocabulary } from '@/hooks/useTagVocabulary';
+import { ObservationExtras } from './ObservationExtras';
 
 const TAG_PRESETS = [
   'geometric', 'alphabetic', 'spiral', 'mandala', 'grid', 'flowing', 
@@ -87,17 +88,21 @@ export interface SymbolMetadata {
   recurrence?: 'once' | 'multiple' | 'persistent';
   emotionalValence?: 'positive' | 'neutral' | 'negative' | 'mixed';
   isSoberBaseline?: boolean;
+  timeSinceObservation?: string;
 }
 
 interface MetadataFormProps {
   onSubmit: (data: SymbolMetadata) => void;
   initialData?: SymbolMetadata | null;
   onBack: () => void;
+  stimulusPhotos: File[];
+  onStimulusPhotosChange: (files: File[]) => void;
 }
 
-export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProps) => {
+export const MetadataForm = ({ onSubmit, initialData, onBack, stimulusPhotos, onStimulusPhotosChange }: MetadataFormProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
   const [isSoberBaseline, setIsSoberBaseline] = useState<boolean>(initialData?.isSoberBaseline || false);
+  const [timeSinceObservation, setTimeSinceObservation] = useState(initialData?.timeSinceObservation || '');
   const [customTagInput, setCustomTagInput] = useState('');
   const { vocabulary } = useTagVocabulary();
 
@@ -169,6 +174,7 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
       recurrence: data.recurrence as 'once' | 'multiple' | 'persistent' | undefined,
       emotionalValence: data.emotionalValence as 'positive' | 'neutral' | 'negative' | 'mixed' | undefined,
       isSoberBaseline,
+      timeSinceObservation,
     });
   };
 
@@ -493,6 +499,9 @@ export const MetadataForm = ({ onSubmit, initialData, onBack }: MetadataFormProp
             />
           </div>
         </div>
+
+        <ObservationExtras photos={stimulusPhotos} onPhotosChange={onStimulusPhotosChange}
+          delay={timeSinceObservation} onDelayChange={setTimeSinceObservation} />
 
         {/* Navigation */}
         <div className="flex justify-between pt-4">

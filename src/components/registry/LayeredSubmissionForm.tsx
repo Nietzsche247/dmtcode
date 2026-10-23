@@ -19,15 +19,23 @@ import { AlertTriangle } from 'lucide-react';
 import { formatSealedAt } from '@/lib/sealFormat';
 import { VisualFieldMap } from './VisualFieldMap';
 import { SignInToContribute } from '@/components/SignInToContribute';
+import { hasSeenCatalogue } from '@/lib/catalogueExposure';
+import { submitObservation, serializeStimulusPhotos } from '@/lib/submitObservation';
+import { wavelengthInteger, exposureFields } from '@/lib/observationRules';
+import { ObservationExtras } from '@/components/submission/ObservationExtras';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { uiCopy } from '@/i18n/ui-strings';
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 interface FormData {
   // Priming control
-  primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | '';
+  primingExposure: 'priming_none' | 'priming_matrix_only' | 'priming_laser_exposed' | 'priming_registry' | '';
   
   // Null report flag
   isNullReport: boolean;
+  substanceTaken: 'yes' | 'no' | '';
+  timeSinceObservation: string;
   
   imageData: string;
   observationMethod: '650nm_laser' | 'closed_eyes' | 'other' | '';
@@ -90,6 +98,12 @@ interface GlyphAnnotation {
 }
 
 export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: LayeredSubmissionFormProps = {}) => {
+  const locale = useLocale();
+  const copy = (key: string) => uiCopy(`observation-${key}`, locale).title;
+  const [stimulusPhotos, setStimulusPhotos] = useState<File[]>([]);
+  const [drawingLocked, setDrawingLocked] = useState(false);
+  const [prefilledFromCatalogue] = useState(() => hasSeenCatalogue());
+  const [observationId, setObservationId] = useState(() => crypto.randomUUID());
   const [step, setStep] = useState<Step>(1);
   const [drawingStartTime, setDrawingStartTime] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,8 +128,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
   const [offlineCapturedAt, setOfflineCapturedAt] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
-    primingExposure: '',
+    primingExposure: hasSeenCatalogue() ? 'priming_registry' : '',
     isNullReport: false,
+    substanceTaken: '',
+    timeSinceObservation: '',
     imageData: '',
     observationMethod: '',
     wavelength: '',
@@ -211,6 +227,11 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       toast.error('Please draw a symbol first');
       return;
     }
+    if (step === 1 && !formData.primingExposure) {
+      toast.error(copy('exposureRequired'));
+      return;
+    }
+    if (step === 1) setDrawingLocked(true);
     if (step === 2 && !formData.observationMethod) {
       toast.error('Please select an observation method');
       return;
@@ -220,6 +241,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       if (formData.observationMethod === '650nm_laser') {
         if (!formData.wavelength) {
           toast.error('Please select a wavelength');
+          return;
+        }
+        if (!formData.substanceTaken) {
+          toast.error(copy('substanceRequired'));
           return;
         }
         if (!formData.surface) {
@@ -291,6 +316,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       ].filter(Boolean);
 
       const submissionData = {
+        id: observationId,
         user_id: userId,
         image_data: formData.imageData,
         source: formData.observationMethod,
@@ -301,8 +327,12 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         drawing_duration_seconds: drawingDuration,
         confidence_rating: formData.confidenceRating,
         orcid: formData.orcid || null,
-        prior_exposure: formData.primingExposure === 'priming_none' ? false : true,
-        catalog_exposure_before_submission: formData.primingExposure || null,
+        ...exposureFields(formData.primingExposure),
+        wavelength_nm: wavelengthInteger(formData.wavelength, formData.wavelengthOther),
+        is_sober_baseline: formData.observationMethod === '650nm_laser' && formData.substanceTaken === 'no',
+        is_null_report: formData.isNullReport,
+        time_since_observation: formData.timeSinceObservation || null,
+        other_method_text: formData.otherMethodText || null,
         capture_route: captureRoute,
         motion: formData.movements.length ? formData.movements.join(', ') : null,
         lighting_conditions: formData.timeOfDay || null,
@@ -322,7 +352,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
       // If offline, save locally and show success
       if (!isOnline) {
         const capturedAt = new Date().toISOString();
-        savePendingSubmission({ ...submissionData, offline_captured_at: capturedAt });
+        savePendingSubmission({ ...submissionData, offline_captured_at: capturedAt }, { stimulusPhotos: await serializeStimulusPhotos(stimulusPhotos) });
         setWasOfflineCapture(true);
         setOfflineCapturedAt(capturedAt);
         setStep(7);
@@ -330,13 +360,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
         return;
       }
 
-      const { data: insertedGlyph, error } = await supabase
-        .from('registry_glyphs')
-        .insert(submissionData)
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { glyph: insertedGlyph } = await submitObservation(submissionData, { stimulusPhotos });
 
       // Store submitted symbol ID
       setSubmittedSymbolId(insertedGlyph.id);
@@ -555,8 +579,10 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
 
   const resetForm = () => {
     setFormData({
-      primingExposure: '',
+      primingExposure: hasSeenCatalogue() ? 'priming_registry' : '',
       isNullReport: false,
+    substanceTaken: '',
+    timeSinceObservation: '',
       imageData: '',
       observationMethod: '',
       wavelength: '',
@@ -593,6 +619,9 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
     pseudonym: ''
   });
     setStep(1);
+    setDrawingLocked(false);
+    setStimulusPhotos([]);
+    setObservationId(crypto.randomUUID());
     setDrawingStartTime(null);
     setSimilarSymbols([]);
     setNewBadges([]);
@@ -690,7 +719,7 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               </p>
             </div>
             
-            {!isNullReport && (
+            {!isNullReport && !drawingLocked && (
               <FabricDrawingCanvas
                 onImageChange={(data) => {
                   setFormData(prev => ({ ...prev, imageData: data }));
@@ -705,6 +734,13 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                 }}
                 onSvgExport={(svg) => setSvgData(svg)}
               />
+            )}
+
+            {!isNullReport && drawingLocked && (
+              <div className="space-y-2">
+                <img src={formData.imageData} alt="" className="w-full max-w-md aspect-square object-contain bg-background" />
+                <p className="text-sm text-muted-foreground">{copy('drawingLocked')}</p>
+              </div>
             )}
 
             {isNullReport && (
@@ -722,11 +758,43 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               </Card>
             )}
             
+            <div className="space-y-3 border-t pt-6">
+              <Label className="text-base font-medium">
+                {copy('exposureQuestion')}
+              </Label>
+              <RadioGroup
+                value={formData.primingExposure}
+                onValueChange={(value) => setFormData({ ...formData, primingExposure: value as typeof formData.primingExposure })}
+                className="grid gap-2 sm:grid-cols-2"
+              >
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_none" id="p-none" />
+                  <Label htmlFor="p-none" className="cursor-pointer font-normal">No, none of it</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_matrix_only" id="p-matrix" />
+                  <Label htmlFor="p-matrix" className="cursor-pointer font-normal">Only Matrix style rain</Label>
+                </div>
+                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
+                  <RadioGroupItem value="priming_laser_exposed" id="p-laser" />
+                  <Label htmlFor="p-laser" className="cursor-pointer font-normal">Yes, Goler or Discovery</Label>
+                </div>
+                <div className="flex items-center space-x-2 border border-border rounded-lg px-3 py-2.5">
+                  <RadioGroupItem value="priming_registry" id="p-registry" />
+                  <Label htmlFor="p-registry" className="cursor-pointer font-normal">{copy('registryExposure')}</Label>
+                </div>
+              </RadioGroup>
+              {prefilledFromCatalogue && <p className="text-sm text-muted-foreground">{copy('exposureNotice')}</p>}
+              {formData.primingExposure === 'priming_none' && (
+                <p className="text-sm text-gold">Unprimed records carry the most weight. Thank you.</p>
+              )}
+            </div>
+
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleBack}>
                 <ChevronLeft className="mr-2 w-4 h-4" /> Back
               </Button>
-              <Button onClick={handleNext} disabled={!isNullReport && !formData.imageData}>
+              <Button onClick={handleNext} disabled={(!isNullReport && !formData.imageData) || !formData.primingExposure}>
                 Next: Observation Method <ChevronRight className="ml-2 w-4 h-4" />
               </Button>
             </div>
@@ -877,6 +945,16 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
                     </Card>
                   )}
                 </div>
+
+                <fieldset className="space-y-3">
+                  <legend className="text-base font-medium">{copy('substanceQuestion')}</legend>
+                  <RadioGroup value={formData.substanceTaken} onValueChange={value => setFormData(prev => ({ ...prev, substanceTaken: value as FormData['substanceTaken'] }))}>
+                    {(['yes', 'no'] as const).map(value => <div key={value} className="flex items-center gap-2">
+                      <RadioGroupItem value={value} id={`substance-${value}`} />
+                      <Label htmlFor={`substance-${value}`}>{copy(value === 'yes' ? 'substanceYes' : 'substanceNo')}</Label>
+                    </div>)}
+                  </RadioGroup>
+                </fieldset>
 
                 <div>
                   <Label className="text-base mb-3 block">Location Type</Label>
@@ -1512,32 +1590,8 @@ export const LayeredSubmissionForm = ({ captureRoute = 'registry_page' }: Layere
               )}
             </div>
 
-            <div className="space-y-3 border-t pt-6">
-              <Label className="text-base font-medium">
-                One last thing, so we can weigh your record properly. Before your experience, had you seen any of this imagery?
-              </Label>
-              <RadioGroup
-                value={formData.primingExposure}
-                onValueChange={(value) => setFormData({ ...formData, primingExposure: value as typeof formData.primingExposure })}
-                className="grid gap-2 sm:grid-cols-3"
-              >
-                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
-                  <RadioGroupItem value="priming_none" id="p-none" />
-                  <Label htmlFor="p-none" className="cursor-pointer font-normal">No, none of it</Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
-                  <RadioGroupItem value="priming_matrix_only" id="p-matrix" />
-                  <Label htmlFor="p-matrix" className="cursor-pointer font-normal">Only Matrix style rain</Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg px-3 py-2.5 cursor-pointer hover:bg-muted/50">
-                  <RadioGroupItem value="priming_laser_exposed" id="p-laser" />
-                  <Label htmlFor="p-laser" className="cursor-pointer font-normal">Yes, Goler or Discovery</Label>
-                </div>
-              </RadioGroup>
-              {formData.primingExposure === 'priming_none' && (
-                <p className="text-sm text-gold">Unprimed records carry the most weight. Thank you.</p>
-              )}
-            </div>
+            <ObservationExtras photos={stimulusPhotos} onPhotosChange={setStimulusPhotos}
+              delay={formData.timeSinceObservation} onDelayChange={value => setFormData(prev => ({ ...prev, timeSinceObservation: value }))} />
 
             {/* Privacy */}
             <div>

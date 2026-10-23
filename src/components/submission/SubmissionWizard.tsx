@@ -14,6 +14,12 @@ import { useUgcTracking } from '@/hooks/useUgcTracking';
 import { CanvasErrorBoundary } from '@/components/registry/CanvasErrorBoundary';
 import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { hasSeenCatalogue, catalogueSeenAt } from '@/lib/catalogueExposure';
+import { submitObservation } from '@/lib/submitObservation';
+import { exposureFields, wavelengthInteger } from '@/lib/observationRules';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { uiCopy } from '@/i18n/ui-strings';
 
 const STEPS = [
   { id: 1, name: 'Draw', description: 'Create your symbol' },
@@ -23,6 +29,11 @@ const STEPS = [
 ];
 
 export const SubmissionWizard = () => {
+  const locale = useLocale();
+  const copy = (key: string) => uiCopy(`observation-${key}`, locale).title;
+  const [isNullReport, setIsNullReport] = useState(false);
+  const [stimulusPhotos, setStimulusPhotos] = useState<File[]>([]);
+  const [observationId] = useState(() => crypto.randomUUID());
   const [currentStep, setCurrentStep] = useState(1);
   const [priorExposure, setPriorExposure] = useState<'naive' | 'exposed' | ''>('');
   // The browser knows something the contributor may not think to mention: it
@@ -64,7 +75,7 @@ export const SubmissionWizard = () => {
       toast.error('Please answer the prior exposure question before continuing');
       return;
     }
-    if (!imageData) {
+    if (!isNullReport && !imageData) {
       toast.error('Please draw something before continuing');
       return;
     }
@@ -81,7 +92,7 @@ export const SubmissionWizard = () => {
   };
 
   const handleFinalSubmit = async () => {
-    if (!imageData || !metadata) {
+    if ((!isNullReport && !imageData) || !metadata) {
       toast.error('Missing required data');
       return;
     }
@@ -99,29 +110,6 @@ export const SubmissionWizard = () => {
         setIsSubmitting(false);
         return;
       }
-
-      // Convert base64 to blob
-      const response = await fetch(imageData);
-      const blob = await response.blob();
-
-      // Generate unique filename
-      const timestamp = Date.now();
-      const filename = `${user.id}/${timestamp}-${Math.random().toString(36).slice(2, 10)}.png`;
-
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('symbol-drawings')
-        .upload(filename, blob, {
-          contentType: 'image/png',
-          upsert: false,
-        });
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('symbol-drawings')
-        .getPublicUrl(filename);
 
       // Capture vector representations from the live Fabric canvas.
       // Additive: only populated for NEW submissions.
@@ -145,33 +133,32 @@ export const SubmissionWizard = () => {
         console.warn('Vector capture failed, continuing with PNG only', e);
       }
 
-      // Create submission record with metadata
-      const { data: submission, error: insertError } = await supabase
-        .from('symbol_submissions')
-        .insert({
-          user_id: user.id,
-          image_url: publicUrl,
-          status: 'approved',
-          description: metadata.description,
-          tags: metadata.tags,
-          source_method: metadata.sourceMethod,
-          surface_type: metadata.surfaceType || null,
-          context_note: metadata.contextNote || null,
-          wavelength: metadata.wavelength || null,
-          dose_level: metadata.doseLevel || null,
-          duration_seconds: metadata.durationSeconds || null,
-          recurrence: metadata.recurrence || null,
-          emotional_valence: metadata.emotionalValence || null,
-          svg_data: svgData,
-          vector_json: vectorJson,
-          is_sober_baseline: metadata.isSoberBaseline ?? false,
-          publication_consent: true,
-          prior_exposure: priorExposure,
-        })
-        .select()
-        .single();
-
-      if (insertError) throw insertError;
+      // Preserve wizard metadata on the glyph; the trigger creates its pair.
+      const { submission } = await submitObservation({
+        id: observationId,
+        user_id: user.id,
+        image_data: isNullReport ? '' : imageData,
+        source: metadata.sourceMethod === 'laser_650nm' ? '650nm_laser'
+          : metadata.sourceMethod === 'closed_eye' ? 'closed_eyes'
+          : metadata.sourceMethod === 'open_eye' ? 'open_eyes' : 'other',
+        free_text_notes: metadata.description,
+        motif_tags: isNullReport ? [...new Set([...metadata.tags, 'null_report'])] : metadata.tags,
+        perceived_surface: metadata.surfaceType || null,
+        context_note: metadata.contextNote || null,
+        wavelength_nm: wavelengthInteger(metadata.wavelength || ''),
+        wavelength_text: metadata.wavelength || null,
+        approximate_dose: metadata.doseLevel || null,
+        observation_duration_seconds: metadata.durationSeconds || null,
+        symbol_recurrence: metadata.recurrence || null,
+        emotional_valence: metadata.emotionalValence || null,
+        svg_data: isNullReport ? null : svgData,
+        vector_json: isNullReport ? null : vectorJson,
+        is_sober_baseline: metadata.isSoberBaseline ?? false,
+        is_null_report: isNullReport,
+        time_since_observation: metadata.timeSinceObservation || null,
+        publication_consent: true,
+        ...exposureFields(priorExposure),
+      }, { stimulusPhotos, uploadDrawing: !isNullReport });
 
       // Trigger admin notification
       await supabase.functions.invoke('notify-admin', {
@@ -275,6 +262,14 @@ export const SubmissionWizard = () => {
               </p>
             </fieldset>
 
+            <div className="flex items-center gap-2">
+              <Checkbox id="wizard-null-report" checked={isNullReport} onCheckedChange={value => setIsNullReport(value === true)} />
+              <Label htmlFor="wizard-null-report">{copy('nullReport')}</Label>
+            </div>
+            {isNullReport ? <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">{copy('nullHelp')}</p>
+              <Button onClick={handleCanvasSave} disabled={!priorExposure}>{copy('continue')}</Button>
+            </div> : (
             <CanvasErrorBoundary fallbackMessage="Canvas loading failed, please retry">
               <SymbolCanvas 
                 onImageChange={setImageData}
@@ -283,6 +278,7 @@ export const SubmissionWizard = () => {
                 onCanvasReady={(c) => { fabricCanvasRef.current = c; }}
               />
             </CanvasErrorBoundary>
+            )}
           </div>
         )}
 
@@ -298,12 +294,14 @@ export const SubmissionWizard = () => {
             <MetadataForm 
               onSubmit={handleMetadataSubmit}
               initialData={metadata}
+              stimulusPhotos={stimulusPhotos}
+              onStimulusPhotosChange={setStimulusPhotos}
               onBack={handleBack}
             />
           </div>
         )}
 
-        {currentStep === 3 && (
+        {currentStep === 3 && metadata && (
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-black tracking-tight">Review & Submit</h2>
@@ -314,7 +312,8 @@ export const SubmissionWizard = () => {
             
             <SubmissionPreview
               imageData={imageData}
-              metadata={metadata!}
+              metadata={metadata}
+              isNullReport={isNullReport}
               onEdit={handleEditFromPreview}
               onSubmit={handleFinalSubmit}
               onBack={handleBack}

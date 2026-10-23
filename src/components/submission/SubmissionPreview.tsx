@@ -3,9 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Edit2, Send, Loader2 } from 'lucide-react';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { uiCopy } from '@/i18n/ui-strings';
 
 interface SubmissionPreviewProps {
   imageData: string;
+  isNullReport?: boolean;
   metadata: SymbolMetadata;
   onEdit: (step: 'draw' | 'metadata') => void;
   onSubmit: () => void;
@@ -43,12 +46,14 @@ const VALENCE_LABELS: Record<string, string> = {
 
 export const SubmissionPreview = ({
   imageData,
+  isNullReport = false,
   metadata,
   onEdit,
   onSubmit,
   onBack,
   isSubmitting,
 }: SubmissionPreviewProps) => {
+  const locale = useLocale();
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -68,11 +73,11 @@ export const SubmissionPreview = ({
               </Button>
             </div>
             <div className="bg-white rounded-lg p-2 flex items-center justify-center">
-              <img
+              {isNullReport ? <p className="text-sm text-muted-foreground">{uiCopy('observation-nullPreview', locale).title}</p> : <img
                 src={imageData}
                 alt="Your symbol drawing"
                 className="max-w-full max-h-[300px] object-contain"
-              />
+              />}
             </div>
           </CardContent>
         </Card>
