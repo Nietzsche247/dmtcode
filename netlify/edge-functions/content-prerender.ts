@@ -4138,10 +4138,12 @@ function renderShell(
 ): string {
   let body = bodyIn;
   const headIds = new Set(
-    Array.from(head.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)).flatMap((match) => {
-      const ld = JSON.parse(match[1]);
-      return (Array.isArray(ld) ? ld : ld["@graph"] ?? [ld])
-        .map((node: Record<string, unknown>) => node["@id"]).filter(Boolean);
+    Array.from(head.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)).flatMap((match) => {
+      try {
+        const ld = JSON.parse(match[1]);
+        return (Array.isArray(ld) ? ld : ld["@graph"] ?? [ld])
+          .map((node: Record<string, unknown>) => node["@id"]).filter(Boolean);
+      } catch { return []; }
     }),
   );
   let out = html
