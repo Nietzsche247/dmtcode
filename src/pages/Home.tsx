@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import type { ReactNode } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { GolerAttribution } from '@/components/GolerAttribution';
@@ -47,6 +48,8 @@ const AnimatedSection = ({ children, className = '' }: { children: ReactNode; cl
 );
 
 const Home = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "Organization" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "WebSite" });
   const navigate = useNavigate();
   const { mode } = useModeStore();
 
@@ -65,7 +68,7 @@ const Home = () => {
         
         <meta name="robots" content="index, follow" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
@@ -91,8 +94,8 @@ const Home = () => {
               "Open data research"
             ]
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
@@ -105,7 +108,7 @@ const Home = () => {
             },
             "license": "https://creativecommons.org/licenses/by/4.0/"
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen">

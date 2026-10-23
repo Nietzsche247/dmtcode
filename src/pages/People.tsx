@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -30,12 +31,13 @@ const ITEM_LIST_LD = {
 };
 
 const People = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'ItemList' });
   return (
     <>
       <SEO uiKey="people" path="/people" />
       <Helmet>
         <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">{JSON.stringify(ITEM_LIST_LD)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(ITEM_LIST_LD)}</script>)}
       </Helmet>
 
       <div className="min-h-screen bg-background">

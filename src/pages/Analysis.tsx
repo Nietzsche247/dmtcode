@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -48,6 +49,7 @@ async function liveCounts() {
 }
 
 const Analysis = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Dataset' });
   const locale = useLocale();
   const { data: live } = useQuery({ queryKey: ['analysis-live-counts'], queryFn: liveCounts, staleTime: 300_000 });
 
@@ -93,7 +95,7 @@ const Analysis = () => {
     <>
       <SEO uiKey="analysis" path="/analysis" canonicalToEnglish />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify(ld)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(ld)}</script>)}
       </Helmet>
       <div className="relative min-h-screen bg-background">
         <Navigation />

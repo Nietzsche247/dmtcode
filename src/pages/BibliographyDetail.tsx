@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -44,6 +45,7 @@ const pubStatusLine = (row: Row): string | null => {
 };
 
 const BibliographyDetail = () => {
+  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/bibliography/' + window.location.pathname.split('/').pop() });
   const { id } = useParams<{ id: string }>();
   const [row, setRow] = useState<Row | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,7 +115,7 @@ const BibliographyDetail = () => {
         <meta property="og:url" content={canonical} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary" />
-        {ld && <script type="application/ld+json">{JSON.stringify(ld)}</script>}
+        {ld && (!(prerenderedLd0) && <script type="application/ld+json">{JSON.stringify(ld)}</script>)}
       </Helmet>
 
       <div className="relative min-h-screen">

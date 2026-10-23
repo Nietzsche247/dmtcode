@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
@@ -13,6 +14,7 @@ const DESC =
   "They are not the same gathering and only one of them happened. Ozora ran 27 July to 4 August 2026 in Hungary. Boom had no 2026 edition; the next is 18 to 25 July 2027 in Portugal.";
 
 const EventOzoraVsBoom2026 = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const locale = useLocale();
   const canonical = `${SITE}${localePath(locale, PATH)}`;
 
@@ -39,7 +41,7 @@ const EventOzoraVsBoom2026 = () => {
         <meta property="og:title" content={TITLE} />
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={canonical} />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(jsonLd)}</script>)}
       </Helmet>
 
       <Navigation />

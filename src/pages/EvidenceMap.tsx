@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
@@ -8,6 +9,8 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { EVIDENCE_LABEL, byDate, loadTimeline, sourceLink } from '@/lib/timeline';
 
 const EvidenceMap = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "ScholarlyArticle" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   const [recordCount, setRecordCount] = useState<number | null>(null);
   const [timelineFailed, setTimelineFailed] = useState(false);
 
@@ -94,7 +97,7 @@ const EvidenceMap = () => {
           name="description" 
           content="Is the DMT code real? A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." 
         />
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ScholarlyArticle",
@@ -147,7 +150,7 @@ const EvidenceMap = () => {
             "datePublished": "2025-11-30",
             "dateModified": "2026-07-29"
           })}
-        </script>
+        </script>)}
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Is the DMT code real? Evidence Timeline & Analysis | DMT Code" />
         <meta property="og:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
@@ -159,7 +162,7 @@ const EvidenceMap = () => {
         <meta name="twitter:description" content="A balanced, both-sides evidence timeline with peer-reviewed citations and resolved DOIs from 1926 to 2025." />
         <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -178,7 +181,7 @@ const EvidenceMap = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -105,6 +106,9 @@ const DrawnGlyphReports = () => {
 };
 
 const Registry = () => {
+  const prerenderedLd0 = usePrerenderedLd({ id: "https://dmtcode.com/registry" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
+  const prerenderedLd2 = usePrerenderedLd({ type: "Report" });
   const navigate = useNavigate();
   return (
 
@@ -121,7 +125,7 @@ const Registry = () => {
         <meta name="twitter:title" content="DMT Code Visual Symbol Registry: Open Catalogue (CC-BY-4.0)" />
         <meta name="twitter:description" content="Browse the open catalogue of visual forms reported during N,N-DMT experiences, with structured metadata and free CC-BY-4.0 data." />
         <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
-        <script type="application/ld+json">
+        {!(prerenderedLd0 && prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@graph": [
@@ -146,10 +150,10 @@ const Registry = () => {
                   { "@type": "ListItem", "position": 2, "name": "Registry", "item": "https://dmtcode.com/registry" }
                 ]
               }
-            ]
+            ].filter((_, i) => ![prerenderedLd0, prerenderedLd1][i])
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd2) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Report",
@@ -172,7 +176,7 @@ const Registry = () => {
             "encodingFormat": "application/pdf",
             "isBasedOn": "https://doi.org/10.5281/zenodo.17816519"
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

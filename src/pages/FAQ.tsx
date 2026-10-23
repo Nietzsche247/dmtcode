@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -147,6 +148,8 @@ const FAQ_GROUPS: Array<{
 const ALL_ITEMS = FAQ_GROUPS.flatMap((g) => g.items);
 
 const FAQ = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'FAQPage' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const faqLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -175,8 +178,8 @@ const FAQ = () => {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Questions about the DMT Code project and preparing to observe | DMT Code" />
         <meta name="twitter:description" content="Answers to common questions about the DMT Code project: what it is, how to prepare safely, why the data is open, and how convergence is measured." />
-        <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(faqLd)}</script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

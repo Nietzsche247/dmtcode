@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -8,6 +9,8 @@ import { Link } from 'react-router-dom';
 import { terms, termSlug } from '@/data/glossaryTerms';
 
 const Glossary = () => {
+  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/glossary#termset' });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   const termSetLd = {
     "@context": "https://schema.org",
     "@type": "DefinedTermSet",
@@ -45,10 +48,10 @@ const Glossary = () => {
         <meta name="twitter:description" content="Scientific glossary of terms used in Code of Reality research and psychedelic phenomenology." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
 
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify(termSetLd)}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -67,7 +70,7 @@ const Glossary = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

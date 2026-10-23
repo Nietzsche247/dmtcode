@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
@@ -52,12 +53,15 @@ const LEVELS: Array<{ n: string; name: string; body: string }> = [
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 } as const;
 const sans = { fontFamily: "'Hanken Grotesk', system-ui, sans-serif" } as const;
 
-const ObjectModel = () => (
+const ObjectModel = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ id: 'https://dmtcode.com/object-model#termset' });
+  return (
   <>
     <SEO uiKey="object-model" path="/object-model" />
     <Helmet>
       <meta name="robots" content="index, follow" />
-      <script type="application/ld+json">
+      {!(prerenderedLd0) && (<script type="application/ld+json">
         {JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
@@ -71,8 +75,8 @@ const ObjectModel = () => (
             },
           ],
         })}
-      </script>
-      <script type="application/ld+json">
+      </script>)}
+      {!(prerenderedLd1) && (<script type="application/ld+json">
         {JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'DefinedTermSet',
@@ -87,7 +91,7 @@ const ObjectModel = () => (
             inDefinedTermSet: 'https://dmtcode.com/object-model#termset',
           })),
         })}
-      </script>
+      </script>)}
     </Helmet>
 
     <div className="relative min-h-screen bg-background">
@@ -232,5 +236,6 @@ const ObjectModel = () => (
     </div>
   </>
 );
+};
 
 export default ObjectModel;

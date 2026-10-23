@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { SEO } from '@/components/SEO';
@@ -33,6 +34,8 @@ const PARA_2 =
   "A listing here is not an endorsement. Psychedelic retreats carry real medical and psychological risk, and the legal position varies by country and changes. Verify current legal status, medical screening practice, staff credentials and emergency procedures directly with the center before you book.";
 
 const Retreats = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'ItemList' });
   const [retreats, setRetreats] = useState<Retreat[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -95,7 +98,7 @@ const Retreats = () => {
         <meta name="twitter:description" content={DESC} />
         <meta name="twitter:image" content={OG_IMAGE} />
         {jsonLd.map((ld, i) => (
-          <script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>
+          {!([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)}
         ))}
       </Helmet>
 

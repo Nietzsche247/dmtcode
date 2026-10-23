@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -27,6 +28,8 @@ const statusConfig = {
 };
 
 const ProtocolDetail = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'MedicalWebPage' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'TechArticle' });
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const locale = useLocale();
@@ -596,7 +599,7 @@ const ProtocolDetail = () => {
         <link rel="canonical" href={canonicalUrl} />
         <meta name="robots" content="index, follow" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0 || prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": isClinicalMode ? "MedicalWebPage" : "TechArticle",
@@ -608,7 +611,7 @@ const ProtocolDetail = () => {
               "cssSelector": "main"
             }
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

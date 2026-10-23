@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
@@ -26,6 +27,7 @@ export const WORKED_EXAMPLES: string[] = [
 ];
 
 const EventHowDatesAreChecked = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const locale = useLocale();
   const canonical = `${SITE}${localePath(locale, PATH)}`;
 
@@ -52,7 +54,7 @@ const EventHowDatesAreChecked = () => {
         <meta property="og:title" content={TITLE} />
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={canonical} />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(jsonLd)}</script>)}
       </Helmet>
 
       <Navigation />

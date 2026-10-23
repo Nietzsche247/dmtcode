@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -30,6 +31,8 @@ const link =
   'text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors';
 
 const PersonAndrewGallimore = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Person' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'BreadcrumbList' });
   return (
     <>
       <Helmet>
@@ -40,8 +43,8 @@ const PersonAndrewGallimore = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/people/andrew-gallimore" />
         <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>
-        <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>)}
       </Helmet>
 
       <div className="min-h-screen bg-background">
