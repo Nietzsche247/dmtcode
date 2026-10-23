@@ -2,9 +2,10 @@
 
 ## Sitewide structured-data deduplication
 
-- [ ] Remove duplicate body scripts while preserving prerender head nodes
-- [ ] Share one-time prerender detection across overlapping React metadata
-- [ ] Verify raw and hydrated node counts, typecheck, build and parity suites
+- [x] Remove duplicate body scripts while preserving prerender head nodes
+- [x] Share one-time prerender detection across overlapping React metadata
+- [x] Verify 36 raw and hydrated routes, three tests, typecheck, build, 593 machine checks and 56 hydration checks
+- [ ] Production deduplication: waits for Netlify deployment from main
 
 ## Machine parity and future bibliography classification
 
