@@ -5196,7 +5196,8 @@ async function renderAnalysis(context: Context, request: Request, locale: Loc = 
       <li>A form counts as replicated when 3 or more clean contributors drew it.</li>
       <li>A junction-cut sensitivity run gave 1,283 fragments and only elementary strokes replicated. It is reported for transparency.</li>
     </ul>
-    <p><a href="${SITE}${lpath(locale, "/documents")}">Full method and code</a></p>
+    <p><a href="https://github.com/Nietzsche247/dmtcode/tree/main/scripts/analysis" target="_blank" rel="noopener">Full method and code</a></p>
+    <p><small>Reproduction: the committed code reproduces every number above and all 79 points of the curve from the 2026-10-23 extraction. The junction-cut sensitivity figures in run01.json were produced by an earlier version of the segmenter whose cut rule was not recorded and do not reproduce; the committed code is the reference from run 02 onward.</small></p>
   </section>
   <section>
     <h2>Open data</h2>
