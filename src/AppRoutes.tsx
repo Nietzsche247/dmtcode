@@ -78,6 +78,7 @@ const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 const TagHub = lazy(() => import("./pages/TagHub"));
 const Guides = lazy(() => import("./pages/Guides"));
 const Capture = lazy(() => import("./pages/Capture"));
+const Record = lazy(() => import("./pages/Record"));
 const GuideDetail = lazy(() => import("./pages/GuideDetail"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const ForAgents = lazy(() => import("./pages/ForAgents"));
@@ -362,6 +363,7 @@ export const AppRoutes = () => (
         </Suspense>
       </ErrorBoundary>
     } />
+    <Route path="record" element={<ErrorBoundary><Suspense fallback={<CalibratingLasersLoader />}><Record /></Suspense></ErrorBoundary>} />
   
   
     <Route path="admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />

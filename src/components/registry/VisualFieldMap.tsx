@@ -11,12 +11,16 @@ interface VisualFieldMapProps {
   onChange?: (pin: FieldPin | null) => void;
   readOnly?: boolean;
   otherPins?: FieldPin[];
+  label?: string;
+  bandLabel?: string;
+  centreLabel?: string;
+  clearLabel?: string;
 }
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 const round4 = (n: number) => Math.round(n * 10000) / 10000;
 
-export const VisualFieldMap = ({ value, onChange, readOnly = false, otherPins = [] }: VisualFieldMapProps) => {
+export const VisualFieldMap = ({ value, onChange, readOnly = false, otherPins = [], label, bandLabel, centreLabel, clearLabel }: VisualFieldMapProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [keyboardPin, setKeyboardPin] = useState<FieldPin>({ x: 0.5, y: 0.5 });
 
@@ -64,11 +68,11 @@ export const VisualFieldMap = ({ value, onChange, readOnly = false, otherPins = 
         className="w-full max-w-[420px] mx-auto aspect-square rounded-lg"
         role={editable ? 'application' : 'img'}
         tabIndex={editable ? 0 : undefined}
-        aria-label={
+        aria-label={label || (
           editable
             ? 'Visual field map. Use arrow keys to move the marker, then press Enter to place it.'
             : 'Visual field map showing placed markers.'
-        }
+        )}
         onKeyDown={handleKeyDown}
         onClick={editable ? (e) => place(e.clientX, e.clientY) : undefined}
         style={{ cursor: editable ? 'crosshair' : 'default' }}
@@ -95,13 +99,13 @@ export const VisualFieldMap = ({ value, onChange, readOnly = false, otherPins = 
           strokeDasharray="2 2"
         />
         <text x="50" y="17" textAnchor="middle" fontSize="3.5" fill="hsl(var(--muted-foreground))">
-          diffraction band
+          {bandLabel || 'diffraction band'}
         </text>
 
         <line x1="47" y1="50" x2="53" y2="50" stroke="hsl(var(--muted-foreground))" strokeWidth="0.4" />
         <line x1="50" y1="47" x2="50" y2="53" stroke="hsl(var(--muted-foreground))" strokeWidth="0.4" />
         <text x="50" y="57" textAnchor="middle" fontSize="3.5" fill="hsl(var(--muted-foreground))">
-          centre
+          {centreLabel || 'centre'}
         </text>
 
         {pins.map((p, i) => (
@@ -147,7 +151,7 @@ export const VisualFieldMap = ({ value, onChange, readOnly = false, otherPins = 
       {editable && value && (
         <div className="flex justify-center">
           <Button type="button" variant="ghost" size="sm" onClick={() => onChange?.(null)}>
-            Clear marker
+            {clearLabel || 'Clear marker'}
           </Button>
         </div>
       )}
