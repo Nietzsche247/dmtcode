@@ -153,7 +153,7 @@ const TrialDetail = () => {
           { '@type': 'ListItem', position: 3, name: trial.title, item: `https://dmtcode.com/trials/${trial.id}` },
         ],
       },
-    ],
+    ].filter((_, i) => ![prerenderedLd0 || prerenderedLd1, prerenderedLd2][i]),
   };
 
   return (

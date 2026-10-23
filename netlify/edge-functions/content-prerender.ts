@@ -4137,7 +4137,20 @@ function renderShell(
   locale: Loc = "en",
 ): string {
   let body = bodyIn;
+  const headIds = new Set(
+    Array.from(head.matchAll(/"@id"\s*:\s*"([^"]+)"/g), (match) => match[1]),
+  );
   let out = html
+    .replace(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi, (script, text) => {
+      try {
+        const ld = JSON.parse(text);
+        const nodes = Array.isArray(ld) ? ld : ld["@graph"] ?? [ld];
+        const retained = nodes.filter((node: Record<string, unknown>) => !headIds.has(String(node["@id"] ?? "")));
+        if (retained.length === nodes.length) return script;
+        if (!retained.length) return "";
+        return `<script type="application/ld+json">${jsonLd(ld["@graph"] ? { ...ld, "@graph": retained } : Array.isArray(ld) ? retained : retained[0])}</script>`;
+      } catch { return script; }
+    })
     .replace(/<title>[\s\S]*?<\/title>/gi, "")
     .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
