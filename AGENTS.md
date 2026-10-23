@@ -32,3 +32,6 @@ Keep supplier part numbers and self-assembly costs in internal kit data and supp
 
 ## Analysis page
 - /analysis renders frozen run figures from public/analysis/<run>.json and only the live counts both React and prerender query with identical predicates, so crawler and hydrated numbers agree.
+
+## Bibliography relation definitions
+- Keep relation vocabulary and exact definitions in the pure shared function module imported by triage and the Netlify data export, so model classification and machine descriptions cannot drift.

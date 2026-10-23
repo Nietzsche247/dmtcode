@@ -1,4 +1,5 @@
 import type { Config } from "@netlify/edge-functions";
+import { RELATION_TO_CORE_QUESTION_DEFINITION } from "../../supabase/functions/_shared/bibliographyRelation.ts";
 
 const SITE = "https://dmtcode.com";
 const LICENSE = "https://creativecommons.org/licenses/by/4.0/";
@@ -719,7 +720,7 @@ export default async (req: Request): Promise<Response> => {
     published_at: "When the row first became publicly visible. Null means it has never been public. Never backfilled with a guess.",
     review_due_at: "published_at plus 72 hours. The deadline by which a moderator was meant to look at it. Null where no review clock applies.",
     review_overdue: "Computed at request time, never stored. True when moderation_status is unreviewed and review_due_at is in the past. A symbol nobody reviewed inside the window is overdue, not approved.",
-    relation_to_core_question: "On a bibliography record: how the source relates to the convergence claim, not how strong the source is. direct_test = it tests or attempts to falsify the claim or the 650 nm protocol itself. mechanistic = it proposes or evidences a mechanism that could produce recurring visual FORM. phenomenological_baseline = it describes what the experience contains as people report it. comparison_condition = a non-DMT state producing comparable visuals, which bears on whether the forms are specific to this protocol. methodological = how to run, blind, score or report such research. historical = the documented record and lineage of this specific claim. adjacent = real psychedelic literature that does not bear on the question. adjacent is the default and is the correct answer for most of this corpus. Read the by_relation_to_core_question tally in corpus_composition before treating the bibliography total as a body of evidence for the claim.",
+    relation_to_core_question: RELATION_TO_CORE_QUESTION_DEFINITION,
     theory_class: "What kind of claim a theory makes, ordered by what it would take to support it. deflationary = the forms come from the observer or the apparatus and nothing external is required. neurocognitive = a brain mechanism produces the recurring structure. psychological = a shared feature of mind, not of the world. phenomenological = a description of the structure of the experience with no cause claimed. ontological = the forms indicate something real outside the observer. metaphysical = a claim about the nature of reality itself. cultural_historical = the forms situated in a human record.",
     framework_originator: "Who built the framework, in its own context and usually for another purpose entirely. The legacy proponent field mixed this person with the next one, which let a borrowed framework read as though its author had endorsed this phenomenon.",
     applied_to_dmtcode_by: "Who pointed the framework at the 650 nm laser phenomenon. DMT Code editors means this site made the connection and the originator did not.",

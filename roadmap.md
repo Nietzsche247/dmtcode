@@ -1,5 +1,11 @@
 # Roadmap
 
+## Machine parity and future bibliography classification
+
+- [x] Accept self-closing canonical links without changing site output
+- [x] Share exact relation definitions and add approval-only, non-overwriting classification with high-risk review
+- [ ] Test classification rules, check function types and build, deploy triage without invoking it, and run production parity
+
 ## Crawlable record links and main deployment
 
 - [x] Make both hero record actions anchors and add the crawler homepage link
