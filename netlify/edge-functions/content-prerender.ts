@@ -590,6 +590,9 @@ export default async (request: Request, context: Context) => {
     if (seg.length === 0) {
       return await renderStatic(context, "home", locale);
     }
+    if (kind === "analysis" && seg.length === 1) {
+      return await renderAnalysis(context, request, locale);
+    }
     if (kind === "for-agents" && seg.length === 1) {
       return await renderForAgents(context, locale);
     }
@@ -3925,6 +3928,7 @@ export const config: Config = {
     "/the-discovery",
     "/build-your-own",
     "/symbols",
+    "/analysis",
     "/null-reports",
     "/glossary",
     "/methods",
@@ -4031,6 +4035,7 @@ const NO_TRANSLATION_UNDER_LOCALE = new Set([
   "/answers",
   "/evidence-map",
   "/articles",
+  "/analysis",
 ]);
 
 function buildHead(o: HeadOpts): string {
@@ -5054,6 +5059,143 @@ const FOR_AGENTS_ENDPOINTS: { path: string; purpose: string }[] = [
   { path: "/llms.txt", purpose: "Prose orientation for language models: what this site claims and what it does not." },
   { path: "/sitemap.xml", purpose: "Every canonical URL, including the /es/ and /de/ mirrors." },
 ];
+
+// ---------- /analysis : aggregate registry analysis ----------
+//
+// Mirrors src/pages/Analysis.tsx by hand (edge code cannot import src/). The
+// run figures come from /analysis/run01.json; the live counts use the same
+// predicates as the React page so prerendered and hydrated numbers agree.
+// PLACEHOLDER: set to the pre-registration DOI URL once it is minted.
+const PREREG_DOI_URL: string | null = null;
+const ANALYSIS_CONCEPT_DOI = "10.5281/zenodo.17816519";
+
+async function renderAnalysis(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
+  const shellRes = await context.next();
+  // deno-lint-ignore no-explicit-any
+  let run: any = null;
+  try {
+    const r = await fetch(new URL("/analysis/run01.json", request.url).toString());
+    if (r.ok) run = await r.json();
+  } catch { /* fall through */ }
+  if (!run) return new Response(await shellRes.text(), { status: 200, headers: PRERENDER_RESP_HEADERS });
+
+  const base = "status=eq.approved&visibility_status=eq.public&is_curated_example=eq.false";
+  const [liveSym, liveSober, liveNull] = await Promise.all([
+    sbCount("symbol_submissions", base),
+    sbCount("symbol_submissions", base + "&is_sober_baseline=eq.true"),
+    sbCount("symbol_submissions", base + "&is_null_report=eq.true"),
+  ]);
+  const symbols = liveSym ?? run.n_submissions;
+  const sober = liveSober ?? run.sober_baseline;
+  const nulls = liveNull ?? run.null_reports;
+  const clean = run.contributors.naive;
+  const replicated = run.tiers.replicated;
+  const prereg = PREREG_DOI_URL ?? `${SITE}${lpath(locale, "/documents")}`;
+  const canonical = `${SITE}/analysis`;
+
+  const tiles: [number, string][] = [
+    [symbols, "public symbols"],
+    [run.contributors.identified, "identified contributors"],
+    [clean, "clean contributors (never saw the registry before drawing)"],
+    [sober, "sober baselines"],
+    [nulls, "null reports"],
+    [run.n_primitives, "separately drawn marks"],
+    [run.n_clusters["0.9"], "distinct forms at 90 percent similarity"],
+    [replicated, "forms drawn by 3 or more clean contributors"],
+  ];
+  const meters: [string, number, number][] = [
+    ["Clean contributors", clean, 30],
+    ["Sober baselines", sober, 30],
+    ["Replicated forms", replicated, 20],
+  ];
+
+  // Simple inline SVG of the curve for non-JS readers.
+  const curve = run.curve as { n: number; observed: number; lo: number; median: number; hi: number }[];
+  const W = 600, H = 260, maxN = curve[curve.length - 1].n, maxY = Math.max(...curve.map((c) => c.hi));
+  const X = (n: number) => ((n - 1) / (maxN - 1)) * W;
+  const Y = (v: number) => H - (v / maxY) * H;
+  const pts = (k: "observed" | "median" | "lo" | "hi") => curve.map((c) => `${X(c.n).toFixed(1)},${Y(c[k]).toFixed(1)}`);
+  const band = [...pts("hi"), ...pts("lo").reverse()].join(" ");
+  const svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Distinct forms against submissions in order of arrival"><polygon points="${band}" fill="currentColor" fill-opacity="0.15"/><polyline points="${pts("median").join(" ")}" fill="none" stroke="currentColor" stroke-dasharray="5 4"/><polyline points="${pts("observed").join(" ")}" fill="none" stroke="currentColor" stroke-width="2"/></svg>`;
+
+  const body = `<article data-prerender="analysis" data-analysis-run="${esc(run.run_id)}" lang="en">
+  <h1>Analysis</h1>
+  <p>This page reports what the registry can and cannot say yet. The tests were fixed in advance in a <a href="${esc(prereg)}">pre-registration v1.0</a>, before the numbers below were computed. A null result is reported with the same weight as a positive one.</p>
+  <section>
+    <h2>Where the registry stands</h2>
+    <ul>${tiles.map(([v, l]) => `<li><strong data-stat="${esc(l)}">${esc(v)}</strong> ${esc(l)}</li>`).join("")}</ul>
+  </section>
+  <section>
+    <h2>How far from an answer</h2>
+    <ul>${meters.map(([l, h, n]) => `<li>${esc(l)}: ${esc(h)} of ${esc(n)} needed</li>`).join("")}</ul>
+    <p>Until these minimums are met the site publishes counts only, no similarity results.</p>
+    <p><a href="${SITE}${lpath(locale, "/record")}">Add a record</a></p>
+  </section>
+  <section>
+    <h2>Is there an alphabet?</h2>
+    <figure>${svg}<figcaption>Each new drawing still adds new forms. If the registry is converging on a finite set of forms, this line will bend toward flat as it grows. At 79 drawings it has not.</figcaption></figure>
+    <p>Solid line: observed distinct forms by submission in order of arrival. Dashed line: median of 1,000 random orderings. Shaded: the 2.5 to 97.5 percent band. Data: <a href="${SITE}/analysis/run01.json">run01.json</a>.</p>
+  </section>
+  <section>
+    <h2>The three registered tests</h2>
+    <table>
+      <thead><tr><th>Test</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>H1 Convergence</td><td>Waiting for 30 clean contributors and 30 sober baselines</td></tr>
+        <tr><td>H2 Known-script null</td><td>Pilot run October 2026: mean best match 84 percent against 93 percent for a real glyph; no script dominates. Method contributed by Jan Grube</td></tr>
+        <tr><td>H3 Protocol variables</td><td>Fields added to the capture form October 2026; waiting for 20 replicated forms</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Method, in brief</h2>
+    <ul>
+      <li>The unit is the separately drawn mark.</li>
+      <li>Each mark is scaled to 32 pixels and compared by overlap (Dice).</li>
+      <li>Forms are grouped at 90 percent similarity.</li>
+      <li>A form counts as replicated when 3 or more clean contributors drew it.</li>
+      <li>A junction-cut sensitivity run gave 1,283 fragments and only elementary strokes replicated. It is reported for transparency.</li>
+    </ul>
+    <p><a href="${SITE}${lpath(locale, "/documents")}">Full method and code</a></p>
+  </section>
+  <p><small>Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI <a href="https://doi.org/${ANALYSIS_CONCEPT_DOI}">${ANALYSIS_CONCEPT_DOI}</a>.</small></p>
+  ${await golerAttribution(locale)}
+</article>`;
+
+  const datasetLd = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: "DMT Code registry analysis, run01",
+    description: "Aggregate counts and a saturation curve computed from the DMT Code registry. Counts only, no similarity results.",
+    url: canonical,
+    identifier: `https://doi.org/${ANALYSIS_CONCEPT_DOI}`,
+    isBasedOn: `https://doi.org/${ANALYSIS_CONCEPT_DOI}`,
+    license: "https://creativecommons.org/licenses/by/4.0/",
+    dateModified: run.extraction_date,
+    distribution: [{ "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE}/analysis/run01.json` }],
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Analysis", item: canonical },
+    ],
+  };
+  const copy = uiCopy("analysis", locale);
+  const head = buildHead({
+    locale,
+    title: copy.title,
+    description: copy.description,
+    canonical,
+    canonicalPath: "/analysis",
+    untranslated: locale !== "en",
+    ogType: "website",
+    jsonLd: [datasetLd, breadcrumbLd],
+  });
+  const html = renderShell(await shellRes.text(), head, body, locale);
+  return new Response(html, { status: 200, headers: PRERENDER_RESP_HEADERS });
+}
 
 async function renderForAgents(context: Context, locale: Loc = "en"): Promise<Response> {
   const shellRes = await context.next();
