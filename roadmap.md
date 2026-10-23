@@ -4,7 +4,7 @@
 
 - [x] Accept self-closing canonical links without changing site output
 - [x] Share exact relation definitions and add approval-only, non-overwriting classification with high-risk review
-- [ ] Test classification rules, check function types and build, deploy triage without invoking it, and run production parity
+- [x] Eight rule tests, Deno typecheck and automatic build passed; triage deployed without invocation; production parity all passed, including 280 of 280 classified and both locale canonicals
 
 ## Crawlable record links and main deployment
 
