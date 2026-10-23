@@ -327,7 +327,7 @@ export default async (req: Request): Promise<Response> => {
     // export are separate grants; the consent filter keeps that claim true.
     fetchAll(
       "symbol_submissions",
-      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent,source_method,prior_exposure,wavelength",
+      "id,description,tags,status,visibility_status,moderation_status,evidence_status,is_curated_example,is_sober_baseline,is_null_report,catalog_exposure_before_submission,time_since_observation,other_method_text,published_at,review_due_at,upvotes,downvotes,image_url,created_at,updated_at,publication_consent,source_method,prior_exposure,wavelength",
       "status=eq.approved&publication_consent=eq.true"
     ),
     fetchAll(
@@ -356,7 +356,7 @@ export default async (req: Request): Promise<Response> => {
     ),
     fetchAll(
       "registry_glyphs",
-      "id,source,created_at,image_data,prior_exposure",
+      "id,source,created_at,image_data,prior_exposure,is_sober_baseline,is_null_report,catalog_exposure_before_submission,time_since_observation,capture_route,publication_consent,other_method_text,stroke_data",
       "order=created_at.desc"
     ),
     fetchAll(
@@ -484,7 +484,7 @@ export default async (req: Request): Promise<Response> => {
   // agents most need without re-querying. "faq" mirrors the live /faq page.
   const symbolsFeed = symbols.map((r) => {
     const sid = String(r.id);
-    return compact({
+    return { ...compact({
       id: sid,
       url: `${SITE}/registry/${sid}`,
       description: (r.description as string) || undefined,
@@ -513,9 +513,14 @@ export default async (req: Request): Promise<Response> => {
       // Emitted as an explicit "not_stated" rather than omitted, because a missing
       // key reads as "no value exists" and the honest reading is "nobody asked".
       source_method: (r.source_method as string) || "not_stated",
-      prior_exposure: (r.prior_exposure as string) || "not_stated",
       wavelength: (r.wavelength as string) || "not_stated",
-    });
+    }),
+      prior_exposure: r.prior_exposure ?? null,
+      is_null_report: r.is_null_report ?? null,
+      catalog_exposure_before_submission: r.catalog_exposure_before_submission ?? null,
+      time_since_observation: r.time_since_observation ?? null,
+      other_method_text: r.other_method_text ?? null,
+    };
   });
 
   const theoriesFeed = theories.map((r) => compact({
@@ -604,11 +609,20 @@ export default async (req: Request): Promise<Response> => {
 
   const registryGlyphsFeed = registryGlyphs
     .filter((r) => typeof r.image_data === "string" && (r.image_data as string).length > 0)
-    .map((r) => compact({
+    .map((r) => ({ ...compact({
       id: String(r.id),
       source: (r.source as string) || undefined,
-      prior_exposure: typeof r.prior_exposure === "boolean" ? (r.prior_exposure ? "exposed" : "naive") : undefined,
       created_at: (r.created_at as string) || undefined,
+    }),
+      prior_exposure: typeof r.prior_exposure === "boolean" ? r.prior_exposure : null,
+      is_sober_baseline: r.is_sober_baseline ?? null,
+      is_null_report: r.is_null_report ?? null,
+      catalog_exposure_before_submission: r.catalog_exposure_before_submission ?? null,
+      time_since_observation: r.time_since_observation ?? null,
+      capture_route: r.capture_route ?? null,
+      publication_consent: r.publication_consent ?? null,
+      other_method_text: r.publication_consent === true ? r.other_method_text ?? null : null,
+      stroke_data: r.publication_consent === true ? r.stroke_data ?? null : null,
     }));
 
   const nonEmptyArray = (v: unknown) =>
@@ -730,6 +744,13 @@ export default async (req: Request): Promise<Response> => {
     primary_source: "A DOI, publisher page or institutional record for the framework, where one has been established. Wikipedia is not a primary source for a framework its author published elsewhere, and several theories still carry a Wikipedia source_url. source_url is left unchanged and may be secondary; primary_source is what a citation should use where it is present. Count how many records actually carry it before relying on it: a defined field is not a populated one.",
     is_curated_example: "True for illustrative examples added by the site operator. These are not observer submissions and are excluded from evidence and convergence totals.",
     is_sober_baseline: "True when the contributor marked the session as a sober baseline run: the full rig, no substance.",
+    is_null_report: "True when the contributor reports running the protocol and seeing no forms. A null report has no drawing. Null reports are evidence and are counted, not discarded.",
+    prior_exposure: "Whether the contributor had already seen this kind of imagery before the observation. On symbols[] it is text: naive, exposed, or null when the record predates the field. On registry_glyphs[] it is a boolean: false = no prior exposure, true = exposed, null = not recorded.",
+    catalog_exposure_before_submission: "The answer to Before your observation, had you seen any of this imagery? priming_none = none of it. priming_matrix_only = only Matrix style rain. priming_laser_exposed = had seen the Goler material or The Discovery. priming_registry = had looked at this registry. Null = not asked, the record predates the question. Records with priming_none are the naive group the pre-registered convergence test uses.",
+    time_since_observation: "How long after the observation the contributor made the record, as the contributor reported it. Null when not given.",
+    other_method_text: "The contributor's own description of the observation method when they chose other. Free text. On registry_glyphs[] it is published only when publication_consent is true.",
+    stroke_data: "The drawing as recorded on the canvas: an array of strokes, each an array of points {x, y, t} with t in milliseconds. Present only on registry_glyphs recorded through the /record tool and only when publication_consent is true. Empty array for a null report.",
+    capture_route: "Where the glyph was recorded. capture_page = the blind capture page, before the catalogue is shown. registry_page = the form on the registry page, where the catalogue is visible. record = the /record tool. Null on records that predate the field.",
     recognized_count: "How many signed in readers pressed the seen it control on this symbol after the symbol was already visible on this site. This is post exposure recognition. It is not an independent match, it is not a replication, and it must never be read as one. The only field that can ever indicate independence is evidence_status.",
     not_a_match_count: "How many signed in readers recorded that this symbol does not resemble what they saw. It is published for completeness. It does not hide the symbol and it does not change where the symbol sits in any default browse order.",
     upvote_count: "How many signed in readers pressed the older generic upvote control. It is a popularity signal only and carries no evidential weight. The key is omitted when the vote table could not be read.",
@@ -740,7 +761,7 @@ export default async (req: Request): Promise<Response> => {
   };
 
   const body = {
-    version: "4.1",
+    version: "4.2",
     dateModified: new Date().toISOString().slice(0, 10),
     license: LICENSE,
     attribution: "DMT Code, https://dmtcode.com",
@@ -765,7 +786,7 @@ export default async (req: Request): Promise<Response> => {
     },
     known_people: KNOWN_PEOPLE,
     field_definitions: FIELD_DEFINITIONS,
-    dataset_version_note: "Version 4.1 adds visibility_status, moderation_status, evidence_status, is_curated_example, published_at, review_due_at and review_overdue to every symbol, and replaces the symbols[].upvotes key with recognized_count, not_a_match_count and upvote_count. The old upvotes key stored the seen it tally rather than the upvote tally, which made it easy to misread. Read field_definitions before treating any count here as evidence.",
+    dataset_version_note: "Version 4.2 adds is_null_report, catalog_exposure_before_submission, time_since_observation and other_method_text to symbols, and is_sober_baseline, is_null_report, catalog_exposure_before_submission, time_since_observation, capture_route, publication_consent, other_method_text and stroke_data to registry_glyphs. A defined field is not a populated one: count the non-null values before relying on a field. Read field_definitions before treating any count here as evidence.",
     counts: {
       total: items.length,
       returned: filtered.length,
