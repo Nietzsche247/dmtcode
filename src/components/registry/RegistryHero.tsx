@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { localePath, useLocale } from '@/i18n/LocaleProvider';
 
 export const RegistryHero = () => {
-  const navigate = useNavigate();
   const locale = useLocale();
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -13,10 +11,6 @@ export const RegistryHero = () => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
-
-  const scrollToSubmit = () => {
-    navigate(localePath(locale, '/record'));
-  };
 
   const scrollToNullReport = () => {
     window.location.href = '/registry?null=true#submit';
@@ -59,13 +53,15 @@ export const RegistryHero = () => {
         style={{ animationFillMode: 'forwards' }}
       >
         <Button 
-          onClick={scrollToSubmit}
+          asChild
           size="lg"
           className="text-base px-8 py-6 h-auto rounded-full btn-lickable border-beam group"
         >
+          <a href={localePath(locale, '/record')}>
           <Plus className="w-5 h-5 mr-2" />
           Submit a Symbol
           <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+          </a>
         </Button>
         <Button 
           onClick={scrollToNullReport}

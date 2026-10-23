@@ -2922,6 +2922,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
       "The registry is public. Every submission shows how many readers said it echoed their own memory after seeing it here, which is recognition after exposure and not an independent match. The bibliography is stance scored. Null results are tracked in the open. The full corpus is downloadable under CC-BY-4.0.",
     ],
     links: [
+      { href: "/record", label: "Record what you saw" },
       { href: "/protocol-guide", label: "The observation protocol" },
       { href: "/prepare", label: `Kits from $${KIT_MIN_PRICE.toLocaleString("en-US")}` },
       { href: "/registry", label: "Visual symbol registry" },

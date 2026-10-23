@@ -21,11 +21,14 @@ const DOIS = {
   '21987511': { kind: 'version', what: 'dataset v4.1' },
   '22101521': { kind: 'concept', what: 'report series concept DOI' },
   '22101522': { kind: 'version', what: 'report Volume 1' },
+  '23601628': { kind: 'version', what: 'pre-registration v1.0' },
 };
 
 // Where a VERSION DOI is legitimately allowed. Everywhere else must use a
 // concept DOI. Add an entry only with a reason.
 const VERSION_ALLOWLIST = [
+  { doi: '23601628', file: 'src/pages/Analysis.tsx', why: 'Cites the fixed pre-registration v1.0 deposit' },
+  { doi: '23601628', file: 'netlify/edge-functions/content-prerender.ts', why: 'Mirrors the Analysis pre-registration v1.0 citation' },
   { doi: '22101522', file: 'src/pages/Registry.tsx', why: 'Report block identifier, names one published deposit' },
   { doi: '22101522', file: 'src/pages/Symbols.tsx', why: 'DigitalDocument and download card cite the fixed Volume 1 PDF, not the living registry' },
   { doi: '22101522', file: 'netlify/edge-functions/content-prerender.ts', why: 'REGISTRY_REPORT_LD identifier, mirrors Registry.tsx' },
