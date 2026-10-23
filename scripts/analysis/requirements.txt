@@ -1,0 +1,7 @@
+# Versions the rebuild was verified with (2026-10-23). Python 3.
+numpy==2.5.3
+scipy==1.18.1
+scikit-image==0.26.0
+Pillow==12.3.0
+CairoSVG==2.9.1
+matplotlib==3.11.2
