@@ -5084,8 +5084,9 @@ const FOR_AGENTS_ENDPOINTS: { path: string; purpose: string }[] = [
 // Mirrors src/pages/Analysis.tsx by hand (edge code cannot import src/). The
 // run figures come from /analysis/run01.json; the live counts use the same
 // predicates as the React page so prerendered and hydrated numbers agree.
-// PLACEHOLDER: set to the pre-registration DOI URL once it is minted.
-const PREREG_DOI_URL: string | null = null;
+// Pre-registration v1.0 DOI. Mirrors src/pages/Analysis.tsx.
+const PREREG_DOI = "10.5281/zenodo.23601628";
+const PREREG_DOI_URL: string | null = `https://doi.org/${PREREG_DOI}`;
 const ANALYSIS_CONCEPT_DOI = "10.5281/zenodo.17816519";
 
 async function renderAnalysis(context: Context, request: Request, locale: Loc = "en"): Promise<Response> {
@@ -5189,7 +5190,7 @@ async function renderAnalysis(context: Context, request: Request, locale: Loc = 
     <h3>License</h3>
     <p>The DMT Code corpus is released under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener noreferrer">Creative Commons Attribution 4.0 International</a>. You may share and adapt the data for any purpose, including commercial use, provided you attribute the source.</p>
   </section>
-  <p><small>Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI <a href="https://doi.org/${ANALYSIS_CONCEPT_DOI}">${ANALYSIS_CONCEPT_DOI}</a>.</small></p>
+  <p><small>Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI <a href="https://doi.org/${ANALYSIS_CONCEPT_DOI}">${ANALYSIS_CONCEPT_DOI}</a>. Pre-registration: DOI <a href="https://doi.org/${PREREG_DOI}">${PREREG_DOI}</a>.</small></p>
   ${await golerAttribution(locale)}
 </article>`;
 
@@ -5200,7 +5201,8 @@ async function renderAnalysis(context: Context, request: Request, locale: Loc = 
     description: "Aggregate counts and a saturation curve computed from the DMT Code registry. Counts only, no similarity results.",
     url: canonical,
     identifier: `https://doi.org/${ANALYSIS_CONCEPT_DOI}`,
-    isBasedOn: `https://doi.org/${ANALYSIS_CONCEPT_DOI}`,
+    isBasedOn: [`https://doi.org/${ANALYSIS_CONCEPT_DOI}`, `https://doi.org/${PREREG_DOI}`],
+    citation: [`https://doi.org/${PREREG_DOI}`],
     license: "https://creativecommons.org/licenses/by/4.0/",
     dateModified: run.extraction_date,
     distribution: [{ "@type": "DataDownload", encodingFormat: "application/json", contentUrl: `${SITE}/analysis/run01.json` }],
