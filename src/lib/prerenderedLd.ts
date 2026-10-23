@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 type LdNode = { '@id'?: string; '@type'?: string | string[]; '@graph'?: LdNode[] };
 export type LdMatcher = { id: string } | { type: string };
+const documentPath = typeof window === 'undefined' ? '' : window.location.pathname;
 
 export function matchesPrerenderedLd(nodes: LdNode[], matcher: LdMatcher): boolean {
   return nodes.some((node) => 'id' in matcher
@@ -22,7 +23,7 @@ export function usePrerenderedLd(matcher: LdMatcher): boolean {
         }
       } catch { /* Malformed metadata cannot suppress a valid client node. */ }
     }
-    return { path: window.location.pathname, nodes };
+    return { path: documentPath, nodes };
   });
   return typeof window !== 'undefined' && snapshot.path === window.location.pathname
     && matchesPrerenderedLd(snapshot.nodes, matcher);
