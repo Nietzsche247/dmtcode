@@ -873,6 +873,20 @@ export const UI_STRINGS: Record<string, Record<Loc, UiCopy>> = {
       "description": "Komponenten, Bezugsquellen und Zweck, um den 650 nm Beobachtungsaufbau selbst zusammenzustellen, als Alternative zu den Kits."
     }
   },
+  "analysis": {
+    "en": {
+      "title": "Analysis: what the registry can and cannot say yet | DMT Code",
+      "description": "The registry so far in aggregate counts: public symbols, contributors, sober baselines, null reports, distinct forms, and a saturation curve. Counts only until the pre-registered minimums are met."
+    },
+    "es": {
+      "title": "Analysis: what the registry can and cannot say yet | DMT Code",
+      "description": "The registry so far in aggregate counts: public symbols, contributors, sober baselines, null reports, distinct forms, and a saturation curve. Counts only until the pre-registered minimums are met."
+    },
+    "de": {
+      "title": "Analysis: what the registry can and cannot say yet | DMT Code",
+      "description": "The registry so far in aggregate counts: public symbols, contributors, sober baselines, null reports, distinct forms, and a saturation curve. Counts only until the pre-registered minimums are met."
+    }
+  },
   "symbols": {
     "en": {
       "title": "DMT laser code symbols: the registry and the free PDF | DMT Code",
