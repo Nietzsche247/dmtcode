@@ -3027,7 +3027,7 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     paragraphs: [
       "The unified corpus is available at /data.json. It merges every bibliography row, every registered clinical trial alongside the separately typed studies, community experiments, reports and platform projects, and every public symbol record with visibility, moderation and evidence status preserved as separate fields, into one document with a shared facet set: content_type, compounds, topic, authority_type, stance_score, people, status, and source_date.",
       "License is CC-BY-4.0. Attribute to DMT Code, https://dmtcode.com. An archived, citable version is available by DOI.",
-      "Current release: DMT Code Open Dataset v4.1, published 17 August 2026. DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) is the concept DOI and always resolves to the latest version.",
+      "Current release: DMT Code Open Dataset v4.2, published 23 October 2026. v4.2 adds the observation fields introduced on 22 October 2026 (sober baseline, null report, exposure at capture, time since observation, stroke data, capture route) and carries run01.json, the first scheduled analysis. DOI 10.5281/zenodo.17816519 (https://doi.org/10.5281/zenodo.17816519) is the concept DOI and always resolves to the latest version.",
       "Live corpus and archived release are not the same artifact. /data.json is continuously updated and carries its own dateModified. The Zenodo release is an immutable dated snapshot. Treat them as byte equivalent only when their checksums match.",
       "Cite as: DMT Code Project (2026). DMT Code Open Dataset [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17816519",
     ],
@@ -3040,7 +3040,8 @@ const STATIC_PAGES: Record<string, StaticPage> = {
     bodyExtraHtml: `<section data-prerender="dataset-versions">
   <h2>Version history</h2>
   <ul>
-    <li>v4.1, 17 August 2026, DOI <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a> (concept DOI, resolves to latest version) (current)</li>
+    <li>v4.2, 23 October 2026, DOI <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a> (concept DOI, resolves to latest version) (current)</li>
+    <li>v4.1, 17 August 2026 (superseded)</li>
     <li>v1.0, DOI <a href="https://doi.org/10.5281/zenodo.17816520">10.5281/zenodo.17816520</a> (superseded)</li>
   </ul>
   <p>Concept DOI: <a href="https://doi.org/10.5281/zenodo.17816519">10.5281/zenodo.17816519</a>. License: CC BY 4.0.</p>
