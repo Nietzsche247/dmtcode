@@ -95,11 +95,11 @@ interface MetadataFormProps {
   onSubmit: (data: SymbolMetadata) => void;
   initialData?: SymbolMetadata | null;
   onBack: () => void;
-  stimulusPhotos: File[];
-  onStimulusPhotosChange: (files: File[]) => void;
+  stimulusPhotos?: File[];
+  onStimulusPhotosChange?: (files: File[]) => void;
 }
 
-export const MetadataForm = ({ onSubmit, initialData, onBack, stimulusPhotos, onStimulusPhotosChange }: MetadataFormProps) => {
+export const MetadataForm = ({ onSubmit, initialData, onBack, stimulusPhotos = [], onStimulusPhotosChange = () => {} }: MetadataFormProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tags || []);
   const [isSoberBaseline, setIsSoberBaseline] = useState<boolean>(initialData?.isSoberBaseline || false);
   const [timeSinceObservation, setTimeSinceObservation] = useState(initialData?.timeSinceObservation || '');
