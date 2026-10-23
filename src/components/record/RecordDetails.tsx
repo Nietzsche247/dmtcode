@@ -24,6 +24,7 @@ export function RecordDetails({ glyphId, userId, copy }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [pin, setPin] = useState<FieldPin | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [savedPhotoPaths, setSavedPhotoPaths] = useState<string[]>([]);
   const [delay, setDelay] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -32,7 +33,7 @@ export function RecordDetails({ glyphId, userId, copy }: Props) {
     const uploaded: string[] = [];
     try {
       const validation = stimulusPhotoError(photos);
-      if (validation) throw new Error(validation);
+      if (validation || savedPhotoPaths.length + photos.length > 3) throw new Error(validation || 'photoCount');
       for (const [n, photo] of photos.entries()) {
         const extension = photo.type === 'image/jpeg' ? 'jpg' : photo.type === 'image/heic' ? 'heic' : 'png';
         const path = `${userId}/${glyphId}-${Date.now()}-${n}.${extension}`;
@@ -42,9 +43,10 @@ export function RecordDetails({ glyphId, userId, copy }: Props) {
       }
       const { error } = await supabase.from('registry_glyphs').update({ post_seal_details: {
         ...answers, field_x: pin?.x ?? null, field_y: pin?.y ?? null,
-        time_since_observation: delay || null, stimulus_photo_paths: uploaded,
+        time_since_observation: delay || null, stimulus_photo_paths: [...savedPhotoPaths, ...uploaded],
       } as Json }).eq('id', glyphId).eq('user_id', userId).select('id').single();
       if (error) throw error;
+      setSavedPhotoPaths(paths => [...paths, ...uploaded]);
       setMessage(copy('detailsSaved')); setPhotos([]);
     } catch {
       if (uploaded.length) await supabase.storage.from('stimulus-photos').remove(uploaded);

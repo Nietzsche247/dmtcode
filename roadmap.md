@@ -2,10 +2,10 @@
 
 ## Quick capture /record
 
-- [ ] Add stroke storage, kit protocols, private voice notes and owner-only post-seal details
-- [ ] Build localized draft, account-return sealing and optional detail/voice blocks
-- [ ] Wire new route and primary entry points without changing existing forms
-- [ ] Verify mobile, authenticated round trip, atomic pairing and remove test records
+- [x] Add stroke storage, kit protocols, private voice notes and owner-only post-seal details
+- [x] Build localized draft, account-return sealing and optional detail/voice blocks
+- [x] Wire new route and primary entry points without changing existing forms
+- [x] Verify mobile, authenticated round trip, atomic pairing and remove test records
 - [ ] Production route: waits for Netlify deployment from main
 
 ## Additive observation submission update

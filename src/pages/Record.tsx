@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ const wavelengths = ['wavelength_650', 'wavelength_red_other', 'wavelength_blue'
 export default function Record() {
   const locale = useLocale();
   const location = useLocation();
-  const copy = (key: string) => uiCopy(`record-${key}`, locale).title;
+  const copy = useCallback((key: string) => uiCopy(`record-${key}`, locale).title, [locale]);
   const [draft, setDraft] = useState(() => readRecordDraft() || freshRecordDraft(location.search, hasSeenCatalogue(location.search)));
   const [userId, setUserId] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -47,7 +47,7 @@ export default function Record() {
     catch { setStorageError(true); }
   }, [draft, sealed]);
 
-  const seal = async () => {
+  const seal = useCallback(async () => {
     if (!userId || sealing.current || !canSealRecord(draft)) return;
     sealing.current = true; setBusy(true); setError('');
     try {
@@ -62,10 +62,10 @@ export default function Record() {
       localStorage.removeItem(RECORD_DRAFT_KEY);
     } catch { setError(copy('sealError')); }
     finally { sealing.current = false; setBusy(false); }
-  };
+  }, [userId, draft, copy]);
   useEffect(() => {
     if (authReady && userId && draft.pendingSeal && !sealed && !attempted.current) { attempted.current = true; void seal(); }
-  }, [authReady, userId, draft.pendingSeal, sealed]);
+  }, [authReady, userId, draft.pendingSeal, sealed, seal]);
 
   const requestSeal = () => {
     if (!canSealRecord(draft)) return;
