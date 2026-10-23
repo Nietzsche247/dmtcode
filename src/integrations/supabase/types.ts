@@ -2073,6 +2073,7 @@ export type Database = {
           original_record_hash: string | null
           other_method_text: string | null
           perceived_surface: string | null
+          post_seal_details: Json | null
           prior_exposure: boolean | null
           privacy_level: string
           protocol_id: string | null
@@ -2082,6 +2083,7 @@ export type Database = {
           sealed_at: string | null
           source: string
           stimulus_photo_paths: string[] | null
+          stroke_data: Json | null
           svg_data: string | null
           symbol_recurrence: string | null
           symmetry: string | null
@@ -2130,6 +2132,7 @@ export type Database = {
           original_record_hash?: string | null
           other_method_text?: string | null
           perceived_surface?: string | null
+          post_seal_details?: Json | null
           prior_exposure?: boolean | null
           privacy_level?: string
           protocol_id?: string | null
@@ -2139,6 +2142,7 @@ export type Database = {
           sealed_at?: string | null
           source: string
           stimulus_photo_paths?: string[] | null
+          stroke_data?: Json | null
           svg_data?: string | null
           symbol_recurrence?: string | null
           symmetry?: string | null
@@ -2187,6 +2191,7 @@ export type Database = {
           original_record_hash?: string | null
           other_method_text?: string | null
           perceived_surface?: string | null
+          post_seal_details?: Json | null
           prior_exposure?: boolean | null
           privacy_level?: string
           protocol_id?: string | null
@@ -2196,6 +2201,7 @@ export type Database = {
           sealed_at?: string | null
           source?: string
           stimulus_photo_paths?: string[] | null
+          stroke_data?: Json | null
           svg_data?: string | null
           symbol_recurrence?: string | null
           symmetry?: string | null
@@ -2638,6 +2644,7 @@ export type Database = {
           moderated_by: string | null
           moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
           other_method_text: string | null
+          post_seal_details: Json | null
           prior_exposure: string | null
           privacy_level: string | null
           publication_consent: boolean
@@ -2681,6 +2688,7 @@ export type Database = {
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
           other_method_text?: string | null
+          post_seal_details?: Json | null
           prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
@@ -2724,6 +2732,7 @@ export type Database = {
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
           other_method_text?: string | null
+          post_seal_details?: Json | null
           prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
@@ -3458,6 +3467,7 @@ export type Database = {
           audio_url: string | null
           created_at: string
           duration_seconds: number | null
+          glyph_id: string | null
           id: string
           integration_prompts: Json | null
           is_analyzed: boolean | null
@@ -3477,6 +3487,7 @@ export type Database = {
           audio_url?: string | null
           created_at?: string
           duration_seconds?: number | null
+          glyph_id?: string | null
           id?: string
           integration_prompts?: Json | null
           is_analyzed?: boolean | null
@@ -3496,6 +3507,7 @@ export type Database = {
           audio_url?: string | null
           created_at?: string
           duration_seconds?: number | null
+          glyph_id?: string | null
           id?: string
           integration_prompts?: Json | null
           is_analyzed?: boolean | null
@@ -3514,6 +3526,13 @@ export type Database = {
             columns: ["assessment_id"]
             isOneToOne: false
             referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_logs_glyph_id_fkey"
+            columns: ["glyph_id"]
+            isOneToOne: false
+            referencedRelation: "registry_glyphs"
             referencedColumns: ["id"]
           },
           {

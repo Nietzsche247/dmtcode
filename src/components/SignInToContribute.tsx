@@ -4,9 +4,12 @@ import { Button } from '@/components/ui/button';
 interface SignInToContributeProps {
   title: string;
   body: string;
+  createLabel?: string;
+  signInLabel?: string;
+  authPath?: string;
 }
 
-export const SignInToContribute = ({ title, body }: SignInToContributeProps) => {
+export const SignInToContribute = ({ title, body, createLabel = 'Create an account', signInLabel = 'I already have one', authPath = '/auth' }: SignInToContributeProps) => {
   const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
 
   return (
@@ -15,10 +18,10 @@ export const SignInToContribute = ({ title, body }: SignInToContributeProps) => 
       <p className="text-muted-foreground">{body}</p>
       <div className="flex flex-wrap gap-3 justify-center pt-2">
         <Button asChild size="lg">
-          <a href={`/auth?mode=signup&returnTo=${returnTo}`}>Create an account</a>
+          <a href={`${authPath}?mode=signup&returnTo=${returnTo}`}>{createLabel}</a>
         </Button>
         <Button asChild variant="outline" size="lg">
-          <a href={`/auth?returnTo=${returnTo}`}>I already have one</a>
+          <a href={`${authPath}?returnTo=${returnTo}`}>{signInLabel}</a>
         </Button>
       </div>
     </Card>

@@ -13,6 +13,8 @@ For product-level audits (content gaps, connectivity, tool QA, member experience
 - Keep optional digital resource data separate from KITS and gate React and edge output on both publication values, so placeholders never appear publicly.
 - Mount signup chrome once inside the router with route-derived locale context, so all locale mirrors share dismissal and submit behavior.
 - Save observations through the shared glyph-only client function; the existing glyph mirror trigger creates the sole atomic linked submission, so form and offline saves cannot create duplicate pairing paths.
+- Quick records retain immutable sealed content; dated post-seal detail JSON on the same glyph is atomically mirrored to its submission and append-only annotations, so later detail never replaces the original drawing or hash.
+- Quick capture owns its device draft and normalized timed stroke arrays; existing canvas and sign-in primitives accept optional presentation props so the full forms keep their behavior.
 
 ## Commerce data boundary
 

@@ -3555,7 +3555,7 @@ ${FIELD_GUIDE_LIVE ? `<section data-prerender="symbols-field-guide"><h2>A printe
   },
   "submit-symbol": {
     title: "Submit a symbol to the registry | DMT Code",
-    description: "The drawing tool for adding a symbol to the DMT Code visual registry with its observation metadata. Open to anyone, with no account required.",
+    description: "The drawing tool for adding a symbol to the DMT Code visual registry with its observation metadata. An account is needed to seal a record.",
     heading: "Submit a symbol to the registry",
     robots: "noindex, follow",
     paragraphs: [

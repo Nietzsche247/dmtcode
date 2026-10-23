@@ -12,6 +12,8 @@ interface SymbolCanvasProps {
   onSave?: () => void;
   disabled?: boolean;
   onCanvasReady?: (canvas: FabricCanvas) => void;
+  quickCapture?: boolean;
+  drawingLabel?: string;
 }
 
 const EXPORT_SIZE = 512;
@@ -32,7 +34,7 @@ const pickCanvasSize = () => {
   return Math.round(Math.max(240, Math.min(400, available)));
 };
 
-export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }: SymbolCanvasProps) => {
+export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady, quickCapture = false, drawingLabel }: SymbolCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
@@ -350,6 +352,12 @@ export const SymbolCanvas = ({ onImageChange, onSave, disabled, onCanvasReady }:
       </div>
     );
   }
+
+  if (quickCapture) return (
+    <div ref={containerRef} className="w-full flex justify-center touch-none">
+      <canvas ref={canvasRef} className="border border-border rounded-md max-w-full touch-none" role="application" tabIndex={0} aria-label={drawingLabel} />
+    </div>
+  );
 
   return (
     <TooltipProvider delayDuration={300}>

@@ -144,7 +144,7 @@ export const ConvergenceHero = () => {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               size="lg"
-              onClick={() => navigate('/capture')}
+              onClick={() => navigate(localePath(locale, '/record'))}
               className="h-14 px-7 rounded-full text-base font-medium flex-1 sm:flex-initial"
             >
               <PencilLine className="w-4 h-4 mr-2" />

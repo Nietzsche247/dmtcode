@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plus, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { localePath, useLocale } from '@/i18n/LocaleProvider';
 
 export const RegistryHero = () => {
+  const navigate = useNavigate();
+  const locale = useLocale();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -11,7 +15,7 @@ export const RegistryHero = () => {
   }, []);
 
   const scrollToSubmit = () => {
-    document.getElementById('submit')?.scrollIntoView({ behavior: 'smooth' });
+    navigate(localePath(locale, '/record'));
   };
 
   const scrollToNullReport = () => {
