@@ -5158,6 +5158,18 @@ async function renderAnalysis(context: Context, request: Request, locale: Loc = 
     </ul>
     <p><a href="${SITE}${lpath(locale, "/documents")}">Full method and code</a></p>
   </section>
+  <section>
+    <h2>Open data</h2>
+    <p>The full DMT Code corpus is published as a machine-readable export under a Creative Commons Attribution 4.0 license. Researchers are welcome to build their own analyses and visualizations on top of it.</p>
+    <ul><li><a href="${SITE}/data.json">/data.json</a>. The complete export in JSON. A single file suitable for scripting, notebooks, and downstream analysis.</li><li><a href="${SITE}/llms.txt">/llms.txt</a>. A machine-readable index of the site aimed at language models and research agents.</li><li><a href="${SITE}/dataset">/dataset</a>. Dataset landing page with citation guidance and licensing details.</li><li><a href="${SITE}/analysis/run01.json">/analysis/run01.json</a>. The frozen figures for analysis run01 shown on this page, in JSON.</li></ul>
+    <h3>What the export contains</h3>
+    <p>The corpus is organized as categories rather than fixed counts, since records are added and revised over time.</p>
+    <ul><li>Clinical trial records tracked from public registries.</li><li>Bibliography sources with DOIs and links to primary literature.</li><li>Symbol submissions contributed by community observers.</li><li>Open theories with attribution and provenance.</li><li>Events and retreats relevant to the research programme.</li></ul>
+    <h3>Roadmap: Clustering and similarity views</h3>
+    <p>Dimensionality reduction and similarity visualizations are not built yet. They are planned as a follow-on once the symbol corpus is large enough to support them. Until then, the export above is the source of truth, and researchers are encouraged to prototype their own views on it.</p>
+    <h3>License</h3>
+    <p>The DMT Code corpus is released under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener noreferrer">Creative Commons Attribution 4.0 International</a>. You may share and adapt the data for any purpose, including commercial use, provided you attribute the source.</p>
+  </section>
   <p><small>Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI <a href="https://doi.org/${ANALYSIS_CONCEPT_DOI}">${ANALYSIS_CONCEPT_DOI}</a>.</small></p>
   ${await golerAttribution(locale)}
 </article>`;

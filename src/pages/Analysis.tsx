@@ -210,6 +210,32 @@ const Analysis = () => {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold mb-4">Open data</h2>
+            <p className="text-sm text-muted-foreground mb-4">The full DMT Code corpus is published as a machine-readable export under a Creative Commons Attribution 4.0 license. Researchers are welcome to build their own analyses and visualizations on top of it.</p>
+            <ul className="space-y-3 text-sm">
+              <li><a href="/data.json" className="text-primary hover:underline font-semibold">/data.json</a><span className="block text-muted-foreground">The complete export in JSON. A single file suitable for scripting, notebooks, and downstream analysis.</span></li>
+              <li><a href="/llms.txt" className="text-primary hover:underline font-semibold">/llms.txt</a><span className="block text-muted-foreground">A machine-readable index of the site aimed at language models and research agents.</span></li>
+              <li><a href="/dataset" className="text-primary hover:underline font-semibold">/dataset</a><span className="block text-muted-foreground">Dataset landing page with citation guidance and licensing details.</span></li>
+              <li><a href="/analysis/run01.json" className="text-primary hover:underline font-semibold">/analysis/run01.json</a><span className="block text-muted-foreground">The frozen figures for analysis run01 shown on this page, in JSON.</span></li>
+            </ul>
+            <h3 className="text-lg font-semibold mt-6 mb-2">What the export contains</h3>
+            <p className="text-sm text-muted-foreground mb-2">The corpus is organized as categories rather than fixed counts, since records are added and revised over time.</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+              <li>Clinical trial records tracked from public registries.</li>
+              <li>Bibliography sources with DOIs and links to primary literature.</li>
+              <li>Symbol submissions contributed by community observers.</li>
+              <li>Open theories with attribution and provenance.</li>
+              <li>Events and retreats relevant to the research programme.</li>
+            </ul>
+            <h3 className="text-lg font-semibold mt-6 mb-2">Roadmap: Clustering and similarity views</h3>
+            <p className="text-sm text-muted-foreground">Dimensionality reduction and similarity visualizations are not built yet. They are planned as a follow-on once the symbol corpus is large enough to support them. Until then, the export above is the source of truth, and researchers are encouraged to prototype their own views on it.</p>
+            <h3 className="text-lg font-semibold mt-6 mb-2">License</h3>
+            <p className="text-sm text-muted-foreground">
+              The DMT Code corpus is released under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Creative Commons Attribution 4.0 International</a>. You may share and adapt the data for any purpose, including commercial use, provided you attribute the source.
+            </p>
+          </section>
+
           <section className="border-t border-border pt-6 space-y-3">
             <p className="text-xs text-muted-foreground">
               Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI{' '}
