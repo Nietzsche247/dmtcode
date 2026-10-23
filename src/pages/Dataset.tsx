@@ -226,7 +226,8 @@ const Dataset = () => {
                 
                 <h4 className="text-foreground font-semibold mt-6 mb-2">Version History</h4>
                 <ul className="text-muted-foreground space-y-1">
-                  <li><strong>v4.1 (17 August 2026):</strong> Latest archived release, an immutable Zenodo snapshot. The live corpus at /data.json is continuously updated and carries its own dateModified; the two are byte-equivalent only when their checksums match. DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> (concept DOI, always resolves to the latest version).</li>
+                  <li><strong>v4.2 (23 October 2026):</strong> Latest archived release, an immutable Zenodo snapshot. The live corpus at /data.json is continuously updated and carries its own dateModified; the two are byte-equivalent only when their checksums match. DOI <a href={zenodoConceptURL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">10.5281/zenodo.17816519</a> (concept DOI, always resolves to the latest version). v4.2 adds the observation fields introduced on 22 October 2026 (sober baseline, null report, exposure at capture, time since observation, stroke data, capture route) and carries run01.json, the first scheduled analysis.</li>
+                  <li><strong>v4.1 (17 August 2026):</strong> Previous archived release.</li>
                   <li><strong>v1.0 (December 2025):</strong> Initial public release</li>
                 </ul>
               </CardContent>

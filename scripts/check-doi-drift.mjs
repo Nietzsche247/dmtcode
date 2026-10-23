@@ -18,7 +18,8 @@ import { join } from 'node:path';
 const DOIS = {
   '17816519': { kind: 'concept', what: 'dataset series concept DOI' },
   '17816520': { kind: 'version', what: 'dataset v1.0, Dec 2025 stub' },
-  '21987511': { kind: 'version', what: 'dataset v4.1' },
+  '21987511': { kind: 'version', what: 'dataset v4.1 (historical)' },
+  '23604050': { kind: 'version', what: 'dataset v4.2' },
   '22101521': { kind: 'concept', what: 'report series concept DOI' },
   '22101522': { kind: 'version', what: 'report Volume 1' },
   '23601628': { kind: 'version', what: 'pre-registration v1.0' },
@@ -36,7 +37,8 @@ const VERSION_ALLOWLIST = [
   { doi: '22101522', file: 'public/llms.txt', why: 'names the Volume 1 PDF at a specific path' },
   { doi: '22101522', file: 'src/data/documents.ts', why: 'document manifest, the entry states Version 1.0 and 51 records, so it cites one deposit' },
   { doi: '22101522', file: 'netlify/lib/documents.ts', why: 'mirror of src/data/documents.ts' },
-  { doi: '21987511', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, explains why the version DOI is not used' },
+  { doi: '21987511', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, names the previous version DOI' },
+  { doi: '23604050', file: 'src/lib/constants.ts', commentOnly: true, why: 'comment only, explains why the version DOI is not used' },
   { doi: '17816520', file: 'netlify/edge-functions/content-prerender.ts', why: 'version history list item, names the superseded v1.0 deposit' },
 ];
 
