@@ -29,3 +29,6 @@ Keep supplier part numbers and self-assembly costs in internal kit data and supp
 - Store historical symbol plates under symbol-plates, not symbols, so the Symbols landing route does not collide with a static directory.
 
 
+
+## Analysis page
+- /analysis renders frozen run figures from public/analysis/<run>.json and only the live counts both React and prerender query with identical predicates, so crawler and hydrated numbers agree.

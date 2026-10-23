@@ -82,6 +82,10 @@
   function = "content-prerender"
 
 [[edge_functions]]
+  path = "/analysis"
+  function = "content-prerender"
+
+[[edge_functions]]
   path = "/null-reports"
   function = "content-prerender"
 

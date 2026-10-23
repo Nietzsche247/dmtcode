@@ -84,6 +84,7 @@
     "nullReportsDesc": "Negative Ergebnisse und Basisdaten"
   },
   "footer": {
+    "analysis": "Analyse",
     "symbols": "Symbole",
     "privacy": "Datenschutz",
     "terms": "Nutzungsbedingungen",

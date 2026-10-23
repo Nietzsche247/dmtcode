@@ -84,6 +84,7 @@
     "nullReportsDesc": "Resultados negativos y datos de referencia"
   },
   "footer": {
+    "analysis": "Análisis",
     "symbols": "Símbolos",
     "privacy": "Privacidad",
     "terms": "Términos",

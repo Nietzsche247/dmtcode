@@ -84,6 +84,7 @@
     "nullReportsDesc": "Negative results and baseline data"
   },
   "footer": {
+    "analysis": "Analysis",
     "symbols": "Symbols",
     "privacy": "Privacy",
     "terms": "Terms",
