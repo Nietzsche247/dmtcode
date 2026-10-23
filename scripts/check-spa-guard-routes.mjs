@@ -81,6 +81,9 @@ function allows(path) {
 
 // [path, shouldBeAllowed, why]
 const CASES = [
+  ["/record", true, "quick capture"],
+  ["/es/record", true, "Spanish quick capture"],
+  ["/de/record", true, "German quick capture"],
   ["/symbols", true, "symbols landing page"],
   ["/es/symbols", true, "es mirror"],
   ["/de/symbols", true, "de mirror"],
