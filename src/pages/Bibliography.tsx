@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -51,6 +52,7 @@ const matchesFilters = (r: BibliographyRow, f: FilterState): boolean => {
 };
 
 const Bibliography = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Dataset' });
   const [rows, setRows] = useState<BibliographyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -130,7 +132,7 @@ const Bibliography = () => {
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        {listJsonLd && <script type="application/ld+json">{JSON.stringify(listJsonLd)}</script>}
+        {listJsonLd && (!(prerenderedLd0) && <script type="application/ld+json">{JSON.stringify(listJsonLd)}</script>)}
       </Helmet>
 
       <div className="relative min-h-screen">

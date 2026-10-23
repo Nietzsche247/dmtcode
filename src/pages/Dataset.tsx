@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Helmet } from "react-helmet";
 import { SEO } from "@/components/SEO";
 import { LocalizedBody } from "@/components/LocalizedBody";
@@ -15,6 +16,7 @@ import { toast } from "sonner";
 import { ZENODO_DOI, ZENODO_URL, ZENODO_CONCEPT_URL, CITATION_APA, CITATION_BIBTEX } from "@/lib/constants";
 
 const Dataset = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "Dataset" });
   const [copied, setCopied] = useState(false);
   
   const zenodoDOI = ZENODO_DOI;
@@ -42,7 +44,7 @@ const Dataset = () => {
         <meta name="twitter:title" content="Dataset | DMT Code open corpus" />
         <meta name="twitter:description" content="Download the full DMT Code open corpus: bibliography, typed trials and studies, public symbol records, theories, events and articles. CC-BY-4.0, DOI-registered on Zenodo." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Dataset",
@@ -65,7 +67,7 @@ const Dataset = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="min-h-screen bg-background transition-theme">

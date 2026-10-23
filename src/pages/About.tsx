@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { GolerAttribution } from '@/components/GolerAttribution';
 import { Footer } from '@/components/Footer';
@@ -7,6 +8,8 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { ZENODO_DOI, ZENODO_URL, CITATION_APA } from '@/lib/constants';
 
 const About = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "AboutPage" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   return (
     <>
       <Helmet>
@@ -29,7 +32,7 @@ const About = () => {
         <meta name="twitter:description" content="Why the DMT Code project exists, how it operates, and how to inspect or critique the record." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AboutPage",
@@ -42,8 +45,8 @@ const About = () => {
             "datePublished": "2025-11-29",
             "dateModified": "2026-07-29"
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -62,7 +65,7 @@ const About = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background transition-theme">

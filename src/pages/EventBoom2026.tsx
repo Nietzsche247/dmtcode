@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
@@ -25,6 +26,8 @@ export const BOOM_FAQ: { q: string; a: string }[] = [
 ];
 
 const EventBoom2026 = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'FAQPage' });
   const locale = useLocale();
   const canonical = `${SITE}${localePath(locale, PATH)}`;
 
@@ -63,7 +66,7 @@ const EventBoom2026 = () => {
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={canonical} />
         {jsonLd.map((ld, i) => (
-          <script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>
+          !([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)
         ))}
       </Helmet>
 

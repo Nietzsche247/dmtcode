@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -27,6 +28,8 @@ interface RetreatRow {
 }
 
 const RetreatDetail = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'LodgingBusiness' });
   const { id } = useParams<{ id: string }>();
   const [retreat, setRetreat] = useState<RetreatRow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -114,8 +117,8 @@ const RetreatDetail = () => {
         <meta property="og:url" content={canonical} />
         <meta property="og:type" content="article" />
         {retreat?.image_url && <meta property="og:image" content={retreat.image_url} />}
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-        {orgJsonLd && <script type="application/ld+json">{JSON.stringify(orgJsonLd)}</script>}
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>)}
+        {orgJsonLd && (!(prerenderedLd1) && <script type="application/ld+json">{JSON.stringify(orgJsonLd)}</script>)}
       </Helmet>
 
       <Navigation />

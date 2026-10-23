@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
@@ -21,12 +22,15 @@ const sans = { fontFamily: "'Hanken Grotesk', system-ui, sans-serif" } as const;
 
 const SITE = 'https://dmtcode.com';
 
-const Downloads = () => (
+const Downloads = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'CollectionPage' });
+  return (
   <>
     <SEO uiKey="documents" path="/documents" />
     <Helmet>
       <meta name="robots" content="index, follow" />
-      <script type="application/ld+json">
+      {!(prerenderedLd0) && (<script type="application/ld+json">
         {JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
@@ -35,8 +39,8 @@ const Downloads = () => (
             { '@type': 'ListItem', position: 2, name: 'Documents', item: `${SITE}/documents` },
           ],
         })}
-      </script>
-      <script type="application/ld+json">
+      </script>)}
+      {!(prerenderedLd1) && (<script type="application/ld+json">
         {JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
@@ -55,7 +59,7 @@ const Downloads = () => (
             inLanguage: d.files.map((f) => f.lang),
           })),
         })}
-      </script>
+      </script>)}
     </Helmet>
 
     <div className="relative min-h-screen bg-background">
@@ -176,5 +180,6 @@ const Downloads = () => (
     </div>
   </>
 );
+};
 
 export default Downloads;

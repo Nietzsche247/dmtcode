@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Navigation } from '@/components/Navigation';
@@ -20,6 +21,8 @@ interface Citation {
 }
 
 const Research = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'ScholarlyArticle' });
   const [citations, setCitations] = useState<Citation[]>([]);
 
   useEffect(() => {
@@ -52,7 +55,7 @@ const Research = () => {
       <SEO uiKey="research" path="/research" />
       <Helmet>
         <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
@@ -61,8 +64,8 @@ const Research = () => {
               { '@type': 'ListItem', position: 2, name: 'Research', item: 'https://dmtcode.com/research' },
             ],
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'ScholarlyArticle',
@@ -75,7 +78,7 @@ const Research = () => {
             license: 'https://creativecommons.org/licenses/by/4.0/',
             citation: citationLd,
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen">

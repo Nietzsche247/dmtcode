@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Navigation } from '@/components/Navigation';
@@ -71,6 +72,7 @@ interface Stats {
 }
 
 const Dashboard = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "BreadcrumbList" });
   const navigate = useNavigate();
   const location = useLocation();
   const { trackDashboardViewed, trackTabSwitched } = useDashboardTracking();
@@ -271,7 +273,7 @@ const Dashboard = () => {
         <meta name="description" content="View your submitted symbols, validations, saved symbols, and assessment history in your personal DMT Code dashboard." />
         <link rel="canonical" href="https://dmtcode.com/dashboard" />
         <meta name="robots" content="noindex, nofollow" />
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -280,7 +282,7 @@ const Dashboard = () => {
               { "@type": "ListItem", "position": 2, "name": "My Dashboard", "item": "https://dmtcode.com/dashboard" }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

@@ -33,5 +33,8 @@ Keep supplier part numbers and self-assembly costs in internal kit data and supp
 ## Analysis page
 - /analysis renders frozen run figures from public/analysis/<run>.json and only the live counts both React and prerender query with identical predicates, so crawler and hydrated numbers agree.
 
+## Structured data ownership
+- Use the shared one-time prerender JSON-LD hook to suppress matching client nodes by exact ID or root type, so crawler scripts remain unique after React runs while SPA navigation retains metadata.
+
 ## Bibliography relation definitions
 - Keep relation vocabulary and exact definitions in the pure shared function module imported by triage and the Netlify data export, so model classification and machine descriptions cannot drift.

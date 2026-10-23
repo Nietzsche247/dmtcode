@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -36,6 +37,8 @@ const FAQ_ENTRIES = [
 ];
 
 const Methods = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "FAQPage" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   return (
     <>
       <SEO uiKey="methods" path="/methods" />
@@ -49,7 +52,7 @@ const Methods = () => {
         <meta name="twitter:description" content="Detailed methodologies for controlled observation and documentation of the 650nm laser DMT phenomenon." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
@@ -59,8 +62,8 @@ const Methods = () => {
               "acceptedAnswer": { "@type": "Answer", "text": f.a }
             }))
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -79,7 +82,7 @@ const Methods = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

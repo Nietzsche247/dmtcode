@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
@@ -35,6 +36,7 @@ interface EventRow {
 const titleCase = (s: string) => s.length ? s[0].toUpperCase() + s.slice(1) : s;
 
 const Events = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'ItemList' });
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [retreatModalOpen, setRetreatModalOpen] = useState(false);
@@ -113,9 +115,9 @@ const Events = () => {
         <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
-          <script type="application/ld+json">
+          !(prerenderedLd0) && (<script type="application/ld+json">
             {JSON.stringify(jsonLd)}
-          </script>
+          </script>)
         )}
       </Helmet>
 

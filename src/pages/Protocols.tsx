@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -18,6 +19,7 @@ const statusConfig = {
 };
 
 const Protocols = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "CollectionPage" });
   const { data: protocols, isLoading } = useQuery({
     queryKey: ['protocols'],
     queryFn: async () => {
@@ -49,7 +51,7 @@ const Protocols = () => {
         <meta name="twitter:description" content="Evidence-based therapeutic protocols for ketamine, psilocybin, MDMA, DMT-laser. Preparation, dosing, integration frameworks with DOI citations." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
@@ -69,7 +71,7 @@ const Protocols = () => {
                 }))
             }
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

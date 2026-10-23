@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -29,6 +30,8 @@ interface EventRow {
 }
 
 const EventDetail = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'Event' });
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<EventRow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,8 +121,8 @@ const EventDetail = () => {
         <meta property="og:description" content={event?.description?.slice(0, 155) || ""} />
         <meta property="og:url" content={canonical} />
         <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-        {eventJsonLd && <script type="application/ld+json">{JSON.stringify(eventJsonLd)}</script>}
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>)}
+        {eventJsonLd && (!(prerenderedLd1) && <script type="application/ld+json">{JSON.stringify(eventJsonLd)}</script>)}
       </Helmet>
 
       <Navigation />

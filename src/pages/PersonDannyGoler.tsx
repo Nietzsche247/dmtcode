@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
@@ -144,6 +145,10 @@ const link =
   'text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors';
 
 const PersonDannyGoler = () => {
+  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/people/danny-goler#person' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd2 = usePrerenderedLd({ type: 'VideoObject' });
+  const prerenderedLd3 = usePrerenderedLd({ type: 'FAQPage' });
   return (
     <>
       <Helmet>
@@ -154,10 +159,10 @@ const PersonDannyGoler = () => {
         />
         <link rel="canonical" href="https://dmtcode.com/people/danny-goler" />
         <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>
-        <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
-        <script type="application/ld+json">{JSON.stringify(VIDEO_LD)}</script>
-        <script type="application/ld+json">{JSON.stringify(FAQ_LD)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(PERSON_LD)}</script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>)}
+        {!(prerenderedLd2) && (<script type="application/ld+json">{JSON.stringify(VIDEO_LD)}</script>)}
+        {!(prerenderedLd3) && (<script type="application/ld+json">{JSON.stringify(FAQ_LD)}</script>)}
       </Helmet>
 
       <div className="min-h-screen bg-background">

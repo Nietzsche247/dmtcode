@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -53,6 +54,8 @@ interface Trial {
 const PAGE_SIZE = 30;
 
 const Trials = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Dataset' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const [trials, setTrials] = useState<Trial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -185,7 +188,7 @@ const Trials = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Trials, Studies and Experiments | DMT Code" />
         <meta name="twitter:description" content={description} />
-        <script type="application/ld+json">
+        {!(prerenderedLd0 && prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@graph': [
@@ -204,9 +207,9 @@ const Trials = () => {
                   { '@type': 'ListItem', position: 2, name: 'Trials', item: 'https://dmtcode.com/trials' },
                 ],
               },
-            ],
+            ].filter((_, i) => ![prerenderedLd0, prerenderedLd1][i]),
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <Navigation />

@@ -4137,7 +4137,24 @@ function renderShell(
   locale: Loc = "en",
 ): string {
   let body = bodyIn;
+  const headIds = new Set(
+    Array.from(head.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)).flatMap((match) => {
+      const ld = JSON.parse(match[1]);
+      return (Array.isArray(ld) ? ld : ld["@graph"] ?? [ld])
+        .map((node: Record<string, unknown>) => node["@id"]).filter(Boolean);
+    }),
+  );
   let out = html
+    .replace(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi, (script, text) => {
+      try {
+        const ld = JSON.parse(text);
+        const nodes = Array.isArray(ld) ? ld : ld["@graph"] ?? [ld];
+        const retained = nodes.filter((node: Record<string, unknown>) => !headIds.has(String(node["@id"] ?? "")));
+        if (retained.length === nodes.length) return script;
+        if (!retained.length) return "";
+        return `<script type="application/ld+json">${jsonLd(ld["@graph"] ? { ...ld, "@graph": retained } : Array.isArray(ld) ? retained : retained[0])}</script>`;
+      } catch { return script; }
+    })
     .replace(/<title>[\s\S]*?<\/title>/gi, "")
     .replace(/<meta[^>]+name=["']description["'][^>]*>\s*/gi, "")
     .replace(/<meta[^>]+property=["']og:[a-z:]+["'][^>]*>\s*/gi, "")
@@ -7000,8 +7017,6 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
 
   const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
   ${await golerAttribution(locale, false)}
-  <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
-  <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
@@ -7068,8 +7083,6 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   </ul>`;
 
   const body = `<article data-prerender="people"><!--tsrc:people:index-->${tr.body_html ?? innerEn}<!--/tsrc-->
-  <script type="application/ld+json">${jsonLd(itemListLd)}</script>
-  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({
@@ -7175,8 +7188,6 @@ async function renderSimplePersonPage(
   const body = `<article data-prerender="person-${slug}">
   <!--tsrc:people:${slug}-->
   <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}<!--/tsrc-->
-  <script type="application/ld+json">${jsonLd(personLd)}</script>
-  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({

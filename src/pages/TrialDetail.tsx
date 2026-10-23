@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -52,6 +53,9 @@ interface Trial {
 
 
 const TrialDetail = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'MedicalStudy' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'CreativeWork' });
+  const prerenderedLd2 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const { id } = useParams<{ id: string }>();
   const [trial, setTrial] = useState<Trial | null>(null);
   const [loading, setLoading] = useState(true);
@@ -149,7 +153,7 @@ const TrialDetail = () => {
           { '@type': 'ListItem', position: 3, name: trial.title, item: `https://dmtcode.com/trials/${trial.id}` },
         ],
       },
-    ],
+    ].filter((_, i) => ![prerenderedLd0 || prerenderedLd1, prerenderedLd2][i]),
   };
 
   return (
@@ -165,7 +169,7 @@ const TrialDetail = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={trial.title} />
         <meta name="twitter:description" content={metaDesc} />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        {!((prerenderedLd0 || prerenderedLd1) && prerenderedLd2) && (<script type="application/ld+json">{JSON.stringify(jsonLd)}</script>)}
       </Helmet>
 
       <Navigation />

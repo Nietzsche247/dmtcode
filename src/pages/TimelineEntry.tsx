@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -21,6 +22,8 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
 );
 
 const TimelineEntry = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Book' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'ScholarlyArticle' });
   const { id } = useParams();
   const [file, setFile] = useState<TimelineFile | null>(null);
   const [failed, setFailed] = useState(false);
@@ -70,7 +73,7 @@ const TimelineEntry = () => {
         {entry && <meta property="og:title" content={entry.headline} />}
         {entry && <meta property="og:description" content={entry.summary.slice(0, 300)} />}
         {entry && <meta property="og:url" content={`https://dmtcode.com/timeline/${entry.id}`} />}
-        {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
+        {jsonLd && (!(prerenderedLd0 || prerenderedLd1) && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

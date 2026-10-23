@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
@@ -42,6 +43,8 @@ interface Row {
 }
 
 const RetreatLaserProtocol = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'FAQPage' });
   const locale = useLocale();
   const [rows, setRows] = useState<Row[] | null>(null);
 
@@ -107,7 +110,7 @@ const RetreatLaserProtocol = () => {
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={`${SITE}${localePath(locale, PATH)}`} />
         {jsonLd.map((ld, i) => (
-          <script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>
+          !([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)
         ))}
       </Helmet>
 

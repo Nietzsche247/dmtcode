@@ -1,8 +1,10 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Card } from "@/components/ui/card";
 import { Check, ExternalLink } from "lucide-react";
 import { Helmet } from "react-helmet";
 
 export const LaserGuide = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'FAQPage' });
   const genericLasers = [
     {
       brand: "HiLetgo",
@@ -65,9 +67,9 @@ export const LaserGuide = () => {
   return (
     <>
       <Helmet>
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify(faqSchema)}
-        </script>
+        </script>)}
       </Helmet>
       
       <section className="w-full py-16 bg-gradient-to-b from-background via-primary/5 to-background">

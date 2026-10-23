@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -9,6 +10,8 @@ import { Network, TrendingUp, GitBranch, Database } from 'lucide-react';
 import { CorrelationsNetwork } from '@/components/registry/CorrelationsNetwork';
 
 const Correlations = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "WebPage" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   return (
     <>
       <Helmet>
@@ -21,7 +24,7 @@ const Correlations = () => {
         <link rel="alternate" hrefLang="en" href="https://dmtcode.com/correlations" />
         <meta name="robots" content="index, follow" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
@@ -34,8 +37,8 @@ const Correlations = () => {
             "datePublished": "2025-11-28",
             "dateModified": "2025-11-28"
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -54,7 +57,7 @@ const Correlations = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

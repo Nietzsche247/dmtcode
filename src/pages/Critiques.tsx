@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -8,6 +9,8 @@ import { ExternalLink } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 
 const Critiques = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "WebPage" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   return (
     <>
       <SEO uiKey="critiques" path="/critiques" />
@@ -24,7 +27,7 @@ const Critiques = () => {
         <meta name="twitter:description" content="Scientific counterarguments and alternative explanations for the Code of Reality phenomenon." />
         <meta name="twitter:image" content="https://dmtcode.com/favicon.png" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
@@ -37,8 +40,8 @@ const Critiques = () => {
             "datePublished": "2025-11-29",
             "dateModified": "2025-11-29"
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -57,7 +60,7 @@ const Critiques = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

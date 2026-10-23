@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Navigation } from '@/components/Navigation';
@@ -185,23 +186,8 @@ const ProductDetail = () => {
   const kit = KITS.find((k) => k.handle === handle);
   const path = kit ? `/products/${kit.handle}` : '';
 
-  // The prerendered document already carries this product's Product and
-  // BreadcrumbList JSON-LD in the head, emitted by the edge prerenderer.
-  // Googlebot runs JS on that document, so rendering the same nodes again here
-  // under the same @id merges duplicates and doubles fields like brand. Detect
-  // the prerendered scripts once on mount and skip the Helmet copies in that
-  // case. Plain SPA navigation (no prerendered scripts) keeps them.
-  const [prerenderedLdPresent] = useState(() => {
-    if (typeof document === 'undefined') return false;
-    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-    for (const script of Array.from(scripts)) {
-      if (script.hasAttribute('data-react-helmet')) continue;
-      const text = script.textContent ?? '';
-      if (path && text.includes(`${path}#product"`)) return true;
-      if (text.includes('"Product"') && text.includes('#product"')) return true;
-    }
-    return false;
-  });
+  const prerenderedProduct = usePrerenderedLd({ id: `${SITE}${path}#product` });
+  const prerenderedBreadcrumb = usePrerenderedLd({ type: 'BreadcrumbList' });
 
   if (!kit) return <NotFound />;
 
@@ -278,10 +264,10 @@ const ProductDetail = () => {
         <meta property="og:url" content={canonical} />
         <meta property="og:type" content="product" />
         {kit.photos[0] && <meta property="og:image" content={kit.photos[0].url} />}
-        {!prerenderedLdPresent && (
+        {!prerenderedProduct && (
           <script type="application/ld+json">{JSON.stringify(productLd)}</script>
         )}
-        {!prerenderedLdPresent && (
+        {!prerenderedBreadcrumb && (
           <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         )}
       </Helmet>

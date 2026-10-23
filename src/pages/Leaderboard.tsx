@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -10,6 +11,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { AvatarGlyph } from '@/components/AvatarGlyph';
 
 const Leaderboard = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: "WebPage" });
+  const prerenderedLd1 = usePrerenderedLd({ type: "BreadcrumbList" });
   // Fetch profiles for reputation and symbol count leaderboard
   const { data: topProfiles, isLoading: profilesLoading } = useQuery({
     queryKey: ['leaderboard-profiles'],
@@ -66,7 +69,7 @@ const Leaderboard = () => {
         <link rel="canonical" href="https://dmtcode.com/leaderboard" />
         <meta name="robots" content="noindex, nofollow" />
         
-        <script type="application/ld+json">
+        {!(prerenderedLd0) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
@@ -79,8 +82,8 @@ const Leaderboard = () => {
             "datePublished": "2025-11-30",
             "dateModified": "2025-11-30"
           })}
-        </script>
-        <script type="application/ld+json">
+        </script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
@@ -99,7 +102,7 @@ const Leaderboard = () => {
               }
             ]
           })}
-        </script>
+        </script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">
