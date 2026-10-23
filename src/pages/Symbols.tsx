@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -35,6 +36,7 @@ const REGISTRY_DOCUMENT = {
 };
 
 export default function Symbols() {
+  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/symbols' });
   const locale = useLocale();
   const html = useLocalizedBody('symbols', { requireHrefs: REQUIRE_HREFS });
   const to = (path: string) => localePath(locale, path);
@@ -63,7 +65,7 @@ export default function Symbols() {
   };
   return <div className="relative min-h-screen bg-background">
     <SEO uiKey="symbols" path="/symbols" canonicalToEnglish={locale !== 'en' && !html} />
-    <Helmet><script type="application/ld+json">{JSON.stringify(collection)}</script></Helmet>
+    <Helmet>{!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(collection)}</script>)}</Helmet>
     <Navigation /><Breadcrumb />
     <main id="main-content" className="relative z-10 pt-4" role="main">
       <div className="container mx-auto px-4 py-12 md:py-16 max-w-6xl space-y-10">

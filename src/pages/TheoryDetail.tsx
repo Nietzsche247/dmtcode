@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
@@ -55,6 +56,8 @@ function paragraphs(text: string) {
 }
 
 export default function TheoryDetail() {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
+  const prerenderedLd1 = usePrerenderedLd({ id: 'https://dmtcode.com/theories/' + (typeof window === 'undefined' ? '' : window.location.pathname.split('/').pop()) });
   const { slug = "" } = useParams<{ slug: string }>();
   const [loading, setLoading] = useState(true);
   const [theory, setTheory] = useState<Theory | null>(null);
@@ -162,8 +165,8 @@ export default function TheoryDetail() {
         <meta property="og:title" content={display.title} />
         {metaDesc && <meta property="og:description" content={metaDesc} />}
         <meta property="og:url" content={canonical} />
-        <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(creativeWorkLd)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">{JSON.stringify(creativeWorkLd)}</script>)}
       </Helmet>
 
       <Navigation />

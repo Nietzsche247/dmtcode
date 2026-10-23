@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Helmet } from 'react-helmet';
@@ -71,6 +72,8 @@ const BREADCRUMB_LD = {
 };
 
 const TheDiscovery = () => {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'Movie' });
+  const prerenderedLd1 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const locale = useLocale();
   const translatedBody = useLocalizedBody('the-discovery');
   const pageCopy = uiCopy('the-discovery', locale);
@@ -83,8 +86,8 @@ const TheDiscovery = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={PAGE_TITLE} />
         <meta name="twitter:description" content={pageCopy.description} />
-        <script type="application/ld+json">{JSON.stringify(MOVIE_LD)}</script>
-        <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(MOVIE_LD)}</script>)}
+        {!(prerenderedLd1) && (<script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>)}
       </Helmet>
 
       <div className="relative min-h-screen bg-background">

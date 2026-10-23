@@ -66,7 +66,7 @@ const EventBoom2026 = () => {
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={canonical} />
         {jsonLd.map((ld, i) => (
-          {!([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)}
+          !([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)
         ))}
       </Helmet>
 

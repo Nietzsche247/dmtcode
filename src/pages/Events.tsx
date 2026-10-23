@@ -115,9 +115,9 @@ const Events = () => {
         <meta name="twitter:image" content="https://dmtcode.com/og-image.png" />
         <meta name="robots" content="index, follow" />
         {jsonLd && (
-          {!(prerenderedLd0) && (<script type="application/ld+json">
+          !(prerenderedLd0) && (<script type="application/ld+json">
             {JSON.stringify(jsonLd)}
-          </script>)}
+          </script>)
         )}
       </Helmet>
 

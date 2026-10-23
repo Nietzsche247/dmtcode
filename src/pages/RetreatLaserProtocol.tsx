@@ -110,7 +110,7 @@ const RetreatLaserProtocol = () => {
         <meta property="og:description" content={DESC} />
         <meta property="og:url" content={`${SITE}${localePath(locale, PATH)}`} />
         {jsonLd.map((ld, i) => (
-          {!([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)}
+          !([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)
         ))}
       </Helmet>
 

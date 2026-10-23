@@ -45,7 +45,7 @@ const pubStatusLine = (row: Row): string | null => {
 };
 
 const BibliographyDetail = () => {
-  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/bibliography/' + window.location.pathname.split('/').pop() });
+  const prerenderedLd0 = usePrerenderedLd({ id: 'https://dmtcode.com/bibliography/' + (typeof window === 'undefined' ? '' : window.location.pathname.split('/').pop()) });
   const { id } = useParams<{ id: string }>();
   const [row, setRow] = useState<Row | null>(null);
   const [loading, setLoading] = useState(true);

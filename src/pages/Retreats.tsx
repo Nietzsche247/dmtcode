@@ -98,7 +98,7 @@ const Retreats = () => {
         <meta name="twitter:description" content={DESC} />
         <meta name="twitter:image" content={OG_IMAGE} />
         {jsonLd.map((ld, i) => (
-          {!([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)}
+          !([prerenderedLd0, prerenderedLd1][i]) && (<script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>)
         ))}
       </Helmet>
 

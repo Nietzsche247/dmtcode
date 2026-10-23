@@ -1,3 +1,4 @@
+import { usePrerenderedLd } from '@/lib/prerenderedLd';
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { SEO } from '@/components/SEO';
@@ -80,6 +81,7 @@ const SOURCE_TYPES = [
 ];
 
 export default function TheoriesPage() {
+  const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const navigate = useNavigate();
   const location = useLocation();
   const [theories, setTheories] = useState<Theory[]>([]);
@@ -256,7 +258,7 @@ export default function TheoriesPage() {
       <SEO uiKey="theories" path="/theories" />
       <Helmet>
         <meta property="og:type" content="website" />
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {!(prerenderedLd0) && (<script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>)}
       </Helmet>
 
       <Navigation />
