@@ -15,6 +15,13 @@
       "when": 1792559035276,
       "tag": "0001_waitlist_source_path_locale",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792730699786,
+      "tag": "0002_observation_pairing_fields",
+      "breakpoints": true
     }
   ]
 }
