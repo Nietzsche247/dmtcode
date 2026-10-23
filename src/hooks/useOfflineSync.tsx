@@ -82,6 +82,10 @@ export const useOfflineSync = () => {
     
     const pending = getPendingSubmissions();
     if (pending.length === 0) return;
+    for (const submission of pending) {
+      if (!submission.data.id) submission.data.id = crypto.randomUUID();
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
     
     syncingRef.current = true;
     setIsSyncing(true);
@@ -92,10 +96,6 @@ export const useOfflineSync = () => {
     
     for (const submission of pending) {
       try {
-        if (!submission.data.id) {
-          submission.data.id = crypto.randomUUID();
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(pending));
-        }
         await submitObservation(submission.data, submission.assets);
         removePendingSubmission(submission.id);
         successCount++;
