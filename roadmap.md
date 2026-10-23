@@ -4,7 +4,9 @@
 
 - [x] Make both hero record actions anchors and add the crawler homepage link
 - [x] Add record to the sitemap with EN, ES and DE mirrors
-- [ ] Verify links, typecheck and Netlify main build status, then deploy main if available
+- [x] Verify desktop/mobile anchors, crawler homepage, sitemap mirrors, route checks and automatic compilation
+- [x] Identify DOI prebuild failure and register the fixed pre-registration DOI
+- [ ] Production: Netlify retry failed because GitHub main still points to b69c36f; waits for repository synchronization before another main build
 
 ## Quick capture /record
 
