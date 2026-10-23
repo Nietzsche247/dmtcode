@@ -1324,6 +1324,11 @@ async function renderPrepare(context: Context, request: Request, locale: Loc = "
             transitTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 0, unitCode: "DAY" },
           },
         },
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "US",
+          returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+        },
       },
     });
   }
@@ -3436,6 +3441,7 @@ ${FIELD_GUIDE_LIVE ? `<section data-prerender="symbols-field-guide"><h2>A printe
 <section><h2>Refunds</h2><p>Once the returned kit is received and inspected, approved refunds are issued to the original payment method within 10 business days. Original shipping charges, where applicable, are not refunded.</p></section>
 <section><h2>Damaged or defective items</h2><p>If your kit arrives damaged or a component is defective, email info@dmtcode.com within 7 days of delivery with photos of the damage and packaging. We will replace the affected component or the full kit at no cost to you. Defective claims do not require returning the original item unless we request it.</p></section>
 <section><h2>Exchanges</h2><p>We do not offer direct exchanges. Return the eligible item for a refund and place a new order.</p></section>
+<section><h2>Digital products</h2><p>The DMT Laser Code Field Guide (PDF) is delivered by email and is non-refundable once delivered. If your download link does not arrive within 24 hours, or the file is damaged or will not open, email info@dmtcode.com with your order number and we will send a working copy or issue a full refund. Duplicate purchases made by mistake are refunded in full.</p></section>
 <section><p>This policy is governed by the laws of the State of Arizona, United States.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/refund-policy">Meridian Optics Lab Refund Policy</a></p></section>`,
   },
   "store-terms": {
@@ -3817,7 +3823,7 @@ async function renderStatic(context: Context, key: string, locale: Loc = "en"): 
     "static",
     key,
     locale,
-    HASH_GATED_STATIC_PAGES.has(key) ? { body_html: md5Hex(enSource) } : undefined,
+    key === "returns" ? { body_extra_html: md5Hex(page.bodyExtraHtml ?? "") } : HASH_GATED_STATIC_PAGES.has(key) ? { body_html: md5Hex(enSource) } : undefined,
     HASH_GATED_STATIC_PAGES.has(key) ? FORBIDDEN_IN_TRANSLATION : undefined,
   );
 

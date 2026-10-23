@@ -40,6 +40,9 @@ const Returns = () => {
               <h2 className="text-2xl font-semibold mt-8">Exchanges</h2>
               <p>We do not offer direct exchanges. Return the eligible item for a refund and place a new order.</p>
 
+              <h2 className="text-2xl font-semibold mt-8">Digital products</h2>
+              <p>The DMT Laser Code Field Guide (PDF) is delivered by email and is non-refundable once delivered. If your download link does not arrive within 24 hours, or the file is damaged or will not open, email info@dmtcode.com with your order number and we will send a working copy or issue a full refund. Duplicate purchases made by mistake are refunded in full.</p>
+
               <p>This policy is governed by the laws of the State of Arizona, United States.</p>
 
               <p className="text-sm text-muted-foreground pt-6">
