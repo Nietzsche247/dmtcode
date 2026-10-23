@@ -207,10 +207,11 @@ const Analysis = () => {
               <li>A junction-cut sensitivity run gave 1,283 fragments and only elementary strokes replicated. It is reported for transparency.</li>
             </ul>
             <p className="text-sm mt-3">
-              <Link to={localePath(locale, '/documents')} className="text-primary hover:underline">Full method and code</Link>
+              <a href="https://github.com/Nietzsche247/dmtcode/tree/main/scripts/analysis" target="_blank" rel="noopener" className="text-primary hover:underline">Full method and code</a>
               {' · '}
               <a href="/analysis/run01.json" className="text-primary hover:underline">run01.json</a>
             </p>
+            <p className="text-xs text-muted-foreground mt-3">Reproduction: the committed code reproduces every number above and all 79 points of the curve from the 2026-10-23 extraction. The junction-cut sensitivity figures in run01.json were produced by an earlier version of the segmenter whose cut rule was not recorded and do not reproduce; the committed code is the reference from run 02 onward.</p>
           </section>
 
           <section>
