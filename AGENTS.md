@@ -12,6 +12,7 @@ For product-level audits (content gaps, connectivity, tool QA, member experience
 
 - Keep optional digital resource data separate from KITS and gate React and edge output on both publication values, so placeholders never appear publicly.
 - Mount signup chrome once inside the router with route-derived locale context, so all locale mirrors share dismissal and submit behavior.
+- Save observations through the shared glyph-only client function; the existing glyph mirror trigger creates the sole atomic linked submission, so form and offline saves cannot create duplicate pairing paths.
 
 ## Commerce data boundary
 

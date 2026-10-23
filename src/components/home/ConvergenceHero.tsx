@@ -7,6 +7,7 @@ import { tagLabel } from '@/lib/tags';
 import { KIT_MIN_PRICE } from '@/data/kits';
 import { useLocale, localePath } from '@/i18n/LocaleProvider';
 import { useTranslation } from 'react-i18next';
+import { markCatalogueSeen } from '@/lib/catalogueExposure';
 
 interface TopSymbol {
   id: string;
@@ -81,6 +82,8 @@ export const ConvergenceHero = () => {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  useEffect(() => { markCatalogueSeen(); }, []);
 
   const specimen = featured ?? {
     id: 'placeholder',

@@ -2046,6 +2046,7 @@ export type Database = {
           communicative_intent: string | null
           confidence_rating: number | null
           confirmation_count: number
+          context_note: string | null
           created_at: string
           depth: string | null
           drawing_duration_seconds: number | null
@@ -2059,14 +2060,18 @@ export type Database = {
           free_text_notes: string | null
           id: string
           image_data: string
+          is_null_report: boolean | null
+          is_sober_baseline: boolean | null
           is_unique: boolean
           lighting_conditions: string | null
           motif_tags: string[] | null
           motion: string | null
+          observation_duration_seconds: number | null
           offline_captured_at: string | null
           orcid: string | null
           orientation: string | null
           original_record_hash: string | null
+          other_method_text: string | null
           perceived_surface: string | null
           prior_exposure: boolean | null
           privacy_level: string
@@ -2076,13 +2081,18 @@ export type Database = {
           route_of_administration: string | null
           sealed_at: string | null
           source: string
+          stimulus_photo_paths: string[] | null
+          svg_data: string | null
           symbol_recurrence: string | null
           symmetry: string | null
           time_since_appearance: string | null
+          time_since_observation: string | null
           updated_at: string
           user_id: string | null
+          vector_json: Json | null
           voice_note_url: string | null
           wavelength_nm: number | null
+          wavelength_text: string | null
         }
         Insert: {
           approximate_dose?: string | null
@@ -2093,6 +2103,7 @@ export type Database = {
           communicative_intent?: string | null
           confidence_rating?: number | null
           confirmation_count?: number
+          context_note?: string | null
           created_at?: string
           depth?: string | null
           drawing_duration_seconds?: number | null
@@ -2106,14 +2117,18 @@ export type Database = {
           free_text_notes?: string | null
           id?: string
           image_data: string
+          is_null_report?: boolean | null
+          is_sober_baseline?: boolean | null
           is_unique?: boolean
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          observation_duration_seconds?: number | null
           offline_captured_at?: string | null
           orcid?: string | null
           orientation?: string | null
           original_record_hash?: string | null
+          other_method_text?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           privacy_level?: string
@@ -2123,13 +2138,18 @@ export type Database = {
           route_of_administration?: string | null
           sealed_at?: string | null
           source: string
+          stimulus_photo_paths?: string[] | null
+          svg_data?: string | null
           symbol_recurrence?: string | null
           symmetry?: string | null
           time_since_appearance?: string | null
+          time_since_observation?: string | null
           updated_at?: string
           user_id?: string | null
+          vector_json?: Json | null
           voice_note_url?: string | null
           wavelength_nm?: number | null
+          wavelength_text?: string | null
         }
         Update: {
           approximate_dose?: string | null
@@ -2140,6 +2160,7 @@ export type Database = {
           communicative_intent?: string | null
           confidence_rating?: number | null
           confirmation_count?: number
+          context_note?: string | null
           created_at?: string
           depth?: string | null
           drawing_duration_seconds?: number | null
@@ -2153,14 +2174,18 @@ export type Database = {
           free_text_notes?: string | null
           id?: string
           image_data?: string
+          is_null_report?: boolean | null
+          is_sober_baseline?: boolean | null
           is_unique?: boolean
           lighting_conditions?: string | null
           motif_tags?: string[] | null
           motion?: string | null
+          observation_duration_seconds?: number | null
           offline_captured_at?: string | null
           orcid?: string | null
           orientation?: string | null
           original_record_hash?: string | null
+          other_method_text?: string | null
           perceived_surface?: string | null
           prior_exposure?: boolean | null
           privacy_level?: string
@@ -2170,13 +2195,18 @@ export type Database = {
           route_of_administration?: string | null
           sealed_at?: string | null
           source?: string
+          stimulus_photo_paths?: string[] | null
+          svg_data?: string | null
           symbol_recurrence?: string | null
           symmetry?: string | null
           time_since_appearance?: string | null
+          time_since_observation?: string | null
           updated_at?: string
           user_id?: string | null
+          vector_json?: Json | null
           voice_note_url?: string | null
           wavelength_nm?: number | null
+          wavelength_text?: string | null
         }
         Relationships: [
           {
@@ -2589,6 +2619,7 @@ export type Database = {
       }
       symbol_submissions: {
         Row: {
+          catalog_exposure_before_submission: string | null
           confidence_rating: number | null
           context_note: string | null
           created_at: string
@@ -2601,10 +2632,12 @@ export type Database = {
           id: string
           image_url: string
           is_curated_example: boolean
+          is_null_report: boolean | null
           is_sober_baseline: boolean
           moderated_at: string | null
           moderated_by: string | null
           moderation_status: Database["public"]["Enums"]["symbol_moderation_status"]
+          other_method_text: string | null
           prior_exposure: string | null
           privacy_level: string | null
           publication_consent: boolean
@@ -2615,10 +2648,12 @@ export type Database = {
           review_due_at: string | null
           source_method: string | null
           status: Database["public"]["Enums"]["submission_status"]
+          stimulus_photo_paths: string[] | null
           surface_type: string | null
           svg_data: string | null
           symmetry: string | null
           tags: string[] | null
+          time_since_observation: string | null
           updated_at: string
           upvotes: number
           user_id: string | null
@@ -2627,6 +2662,7 @@ export type Database = {
           wavelength: string | null
         }
         Insert: {
+          catalog_exposure_before_submission?: string | null
           confidence_rating?: number | null
           context_note?: string | null
           created_at?: string
@@ -2639,10 +2675,12 @@ export type Database = {
           id?: string
           image_url: string
           is_curated_example?: boolean
+          is_null_report?: boolean | null
           is_sober_baseline?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          other_method_text?: string | null
           prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
@@ -2653,10 +2691,12 @@ export type Database = {
           review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
+          stimulus_photo_paths?: string[] | null
           surface_type?: string | null
           svg_data?: string | null
           symmetry?: string | null
           tags?: string[] | null
+          time_since_observation?: string | null
           updated_at?: string
           upvotes?: number
           user_id?: string | null
@@ -2665,6 +2705,7 @@ export type Database = {
           wavelength?: string | null
         }
         Update: {
+          catalog_exposure_before_submission?: string | null
           confidence_rating?: number | null
           context_note?: string | null
           created_at?: string
@@ -2677,10 +2718,12 @@ export type Database = {
           id?: string
           image_url?: string
           is_curated_example?: boolean
+          is_null_report?: boolean | null
           is_sober_baseline?: boolean
           moderated_at?: string | null
           moderated_by?: string | null
           moderation_status?: Database["public"]["Enums"]["symbol_moderation_status"]
+          other_method_text?: string | null
           prior_exposure?: string | null
           privacy_level?: string | null
           publication_consent?: boolean
@@ -2691,10 +2734,12 @@ export type Database = {
           review_due_at?: string | null
           source_method?: string | null
           status?: Database["public"]["Enums"]["submission_status"]
+          stimulus_photo_paths?: string[] | null
           surface_type?: string | null
           svg_data?: string | null
           symmetry?: string | null
           tags?: string[] | null
+          time_since_observation?: string | null
           updated_at?: string
           upvotes?: number
           user_id?: string | null
