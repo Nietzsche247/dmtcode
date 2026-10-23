@@ -1,5 +1,11 @@
 # Roadmap
 
+## Crawlable record links and main deployment
+
+- [x] Make both hero record actions anchors and add the crawler homepage link
+- [x] Add record to the sitemap with EN, ES and DE mirrors
+- [ ] Verify links, typecheck and Netlify main build status, then deploy main if available
+
 ## Quick capture /record
 
 - [x] Add stroke storage, kit protocols, private voice notes and owner-only post-seal details

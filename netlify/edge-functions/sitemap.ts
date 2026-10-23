@@ -14,6 +14,7 @@ const SUPABASE_KEY =
 // /log.
 const STATIC: Array<[string, string, string]> = [
   ["/", "1.0", "daily"],
+  ["/record", "0.9", "weekly"],
   ["/capture", "0.9", "weekly"],
   ["/registry", "0.9", "daily"],
   ["/evidence-map", "0.9", "weekly"],
