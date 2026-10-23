@@ -50,7 +50,7 @@ export async function submitObservation(glyph: TablesInsert<'registry_glyphs'>, 
       if (assets.uploadDrawing && glyph.image_data) {
         const blob = await (await fetch(glyph.image_data)).blob();
         drawingPath = `${user.id}/${id}.png`;
-        const { error } = await supabase.storage.from('symbol-drawings').upload(drawingPath, blob, { contentType: 'image/png', upsert: true });
+        const { error } = await supabase.storage.from('symbol-drawings').upload(drawingPath, blob, { contentType: 'image/png', upsert: false });
         if (error) throw error;
         uploaded.push({ bucket: 'symbol-drawings', path: drawingPath });
       }
