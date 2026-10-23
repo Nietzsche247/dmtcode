@@ -17,9 +17,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { ZENODO_CONCEPT_DOI, ZENODO_CONCEPT_URL } from '@/lib/constants';
 import run from '../../public/analysis/run01.json';
 
-// PLACEHOLDER: set to the pre-registration DOI URL once it is minted. While
-// null the link goes to /documents. Mirrored in content-prerender.ts.
-export const PREREG_DOI_URL: string | null = null;
+// Pre-registration v1.0 DOI. Mirrored in content-prerender.ts.
+export const PREREG_DOI = '10.5281/zenodo.23601628';
+export const PREREG_DOI_URL: string | null = `https://doi.org/${PREREG_DOI}`;
 
 // Pre-registered minimums. Mirrored in content-prerender.ts.
 const NEED_CLEAN = 30;
@@ -82,7 +82,8 @@ const Analysis = () => {
     description: 'Aggregate counts and a saturation curve computed from the DMT Code registry. Counts only, no similarity results.',
     url: 'https://dmtcode.com/analysis',
     identifier: `https://doi.org/${ZENODO_CONCEPT_DOI}`,
-    isBasedOn: ZENODO_CONCEPT_URL,
+    isBasedOn: [ZENODO_CONCEPT_URL, `https://doi.org/${PREREG_DOI}`],
+    citation: [`https://doi.org/${PREREG_DOI}`],
     license: 'https://creativecommons.org/licenses/by/4.0/',
     dateModified: run.extraction_date,
     distribution: [{ '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: 'https://dmtcode.com/analysis/run01.json' }],
@@ -240,6 +241,8 @@ const Analysis = () => {
             <p className="text-xs text-muted-foreground">
               Shape comparison method: Jan Grube, October 2026. Analysis code: DMT Code. Dataset: concept DOI{' '}
               <a href={ZENODO_CONCEPT_URL} className="text-primary hover:underline">{ZENODO_CONCEPT_DOI}</a>.
+              Pre-registration: DOI{' '}
+              <a href={`https://doi.org/${PREREG_DOI}`} className="text-primary hover:underline">{PREREG_DOI}</a>.
             </p>
             <GolerAttribution />
           </section>
