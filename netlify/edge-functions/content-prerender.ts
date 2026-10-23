@@ -7000,8 +7000,6 @@ async function renderPersonPage(context: Context, locale: Loc = "en"): Promise<R
 
   const body = `<article data-prerender="person-danny-goler"><!--tsrc:people:danny-goler-->${tr.body_html ?? innerEn}<!--/tsrc-->
   ${await golerAttribution(locale, false)}
-  <script type="application/ld+json">${jsonLd(PERSON_LD_DANNY_GOLER)}</script>
-  <script type="application/ld+json">${jsonLd(BREADCRUMB_LD_DANNY_GOLER)}</script>
 </article>`;
 
   const head = buildHead({
@@ -7068,8 +7066,6 @@ async function renderPeopleIndex(context: Context, locale: Loc = "en"): Promise<
   </ul>`;
 
   const body = `<article data-prerender="people"><!--tsrc:people:index-->${tr.body_html ?? innerEn}<!--/tsrc-->
-  <script type="application/ld+json">${jsonLd(itemListLd)}</script>
-  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({
@@ -7175,8 +7171,6 @@ async function renderSimplePersonPage(
   const body = `<article data-prerender="person-${slug}">
   <!--tsrc:people:${slug}-->
   <h1>${esc(person.name)}</h1>${tr.body_html ?? person.bodyHtml}<!--/tsrc-->
-  <script type="application/ld+json">${jsonLd(personLd)}</script>
-  <script type="application/ld+json">${jsonLd(breadcrumbLd)}</script>
 </article>`;
 
   const head = buildHead({

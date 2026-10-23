@@ -1,5 +1,11 @@
 # Roadmap
 
+## Sitewide structured-data deduplication
+
+- [ ] Remove duplicate body scripts while preserving prerender head nodes
+- [ ] Share one-time prerender detection across overlapping React metadata
+- [ ] Verify raw and hydrated node counts, typecheck, build and parity suites
+
 ## Machine parity and future bibliography classification
 
 - [x] Accept self-closing canonical links without changing site output
