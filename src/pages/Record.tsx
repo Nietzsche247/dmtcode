@@ -77,7 +77,7 @@ export default function Record() {
     <Helmet>
       <title>{uiCopy('record', locale).title}</title>
       <meta name="description" content={uiCopy('record', locale).description} />
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href={`https://dmtcode.com${localePath(locale, '/record')}`} />
     </Helmet>
     <header className="max-w-xl mx-auto px-6 pt-6 pb-4 border-b border-border"><Link className="text-lg font-semibold" to={localePath(locale, '/')}>DMT Code</Link></header>
