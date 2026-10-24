@@ -4,7 +4,9 @@
 
 - [x] Preserve the six PDFs from commit 8276300 and add localized Record and Documents links
 - [x] Mirror Documents crawler output and list the PDFs in llms.txt and sitemap
-- [ ] Verify tests, typecheck, route drift, rendering and main production deployment
+- [x] Verify 21 tests, route drift, UI/doc mirrors, desktop/mobile links, local EN/ES/DE prerender and automatic build
+- [ ] Separate typecheck not run under the preview build workflow
+- [ ] Deploy new links: main build succeeded on 8276300, but GitHub main still lacks the new link commits; generic PDF returns 200
 
 ## Sitewide structured-data deduplication
 
