@@ -1,5 +1,11 @@
 # Roadmap
 
+## Free Observation Pack PDFs
+
+- [x] Preserve the six PDFs from commit 8276300 and add localized Record and Documents links
+- [x] Mirror Documents crawler output and list the PDFs in llms.txt and sitemap
+- [ ] Verify tests, typecheck, route drift, rendering and main production deployment
+
 ## Sitewide structured-data deduplication
 
 - [x] Remove duplicate body scripts while preserving prerender head nodes
