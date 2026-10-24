@@ -1547,6 +1547,13 @@ ${d.files.map((f) => `      <li><a href="${SITE}/downloads/${f.file}">${esc(d.ti
   <p>${PREPARE_DOC_COUNT} PDF files, ${DOCUMENTS.length} documents, each one in English, Spanish and German where a translation exists. No account, no email, no kit. Licensed CC-BY-4.0, which means you can print them, hand them out, translate them and publish what you find.</p>
   <p>You do not need to buy anything to take part. The <a href="${SITE}/protocol-guide">protocol guide</a> describes how to run the observation, and <a href="${SITE}/prepare">/prepare</a> offers prepared kits.</p>
 ${docSections}
+  <section id="observation-pack">
+    <h2>${esc(uiCopy('observation-pack-entry', locale).title)}</h2>
+    <p>${esc(uiCopy('observation-pack-entry', locale).description)}</p>
+    <p><a href="/downloads/observation-pack/DMT_Code_Observation_Pack_generic.pdf">${esc(uiCopy('observation-pack-download', locale).title)}</a></p>
+    <p>${esc(uiCopy('observation-pack-kits', locale).title)}</p>
+    <ul>${['protocol', 'solo', 'dual', 'triad', 'circle'].map(kit => `<li><a href="/downloads/observation-pack/DMT_Code_Observation_Pack_${kit}.pdf">${kit.charAt(0).toUpperCase() + kit.slice(1)}</a></li>`).join('')}</ul>
+  </section>
   <section>
     <h2>Read the catalogue after you record, not before</h2>
     <p>The symbol set is the one document with an order attached to it. If you have seen something and have not written it down yet, write it down first. A description made before you look at what other people drew is worth more than the same description made after, and the registry keeps the two apart.</p>

@@ -99,6 +99,7 @@ Wavelengths by kit: Protocol at 650 nm; Solo at 650 nm; Dual at 650 and 532 nm; 
 - /downloads/DMTCode_Observation_Field_Sheet_v1_1.pdf (EN), /downloads/DMTCode_Hoja_de_Campo_v1_1_ES.pdf (ES), /downloads/DMTCode_Feldblatt_v1_1_DE.pdf (DE)
 - /downloads/DMTCode_Sober_Baseline_Protocol_v1_1.pdf (EN), /downloads/DMTCode_Protocolo_Base_Sobria_v1_1_ES.pdf (ES), /downloads/DMTCode_Basisprotokoll_Nuechtern_v1_1_DE.pdf (DE)
 - /downloads/DMTCode_AVP_Passthrough_Protocol_v1.pdf (EN), /downloads/DMTCode_Protocolo_AVP_Passthrough_v1_ES.pdf (ES), /downloads/DMTCode_AVP_Passthrough_Protokoll_v1_DE.pdf (DE)
+- https://dmtcode.com/downloads/observation-pack/DMT_Code_Observation_Pack_generic.pdf: Six printable pages: setup, during, right after, details, sitter card, morning sheet. Free, CC BY 4.0.
 
 ## Citable registry PDF
 

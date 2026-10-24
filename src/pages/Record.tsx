@@ -15,6 +15,7 @@ import { canSealRecord, freshRecordDraft, readRecordDraft, RECORD_DRAFT_KEY, rec
 import { formatSealedAt } from '@/lib/sealFormat';
 import { localePath, useLocale } from '@/i18n/LocaleProvider';
 import { uiCopy } from '@/i18n/ui-strings';
+import { observationPackPath } from '@/lib/observationPack';
 
 type SealedRecord = Awaited<ReturnType<typeof submitObservation>>;
 const methods = ['650nm_laser', 'closed_eyes', 'other'];
@@ -23,6 +24,7 @@ const wavelengths = ['wavelength_650', 'wavelength_red_other', 'wavelength_blue'
 export default function Record() {
   const locale = useLocale();
   const location = useLocation();
+  const packPath = observationPackPath(new URLSearchParams(location.search).get('kit'));
   const copy = useCallback((key: string) => uiCopy(`record-${key}`, locale).title, [locale]);
   const [draft, setDraft] = useState(() => readRecordDraft() || freshRecordDraft(location.search, hasSeenCatalogue(location.search)));
   const [userId, setUserId] = useState<string | null>(null);
@@ -89,6 +91,7 @@ export default function Record() {
         <Button className="w-full h-14 text-base" disabled={!draft.nullReport && draft.strokes.length === 0} onClick={() => update({ step: 2 })}>{copy('next')}</Button>
         <Button variant="link" className="min-h-12 px-0" onClick={() => update({ nullReport: !draft.nullReport })}>{copy(draft.nullReport ? 'drawInstead' : 'nothing')}</Button>
         <div><Link className="text-sm text-muted-foreground underline py-3 inline-block" to={localePath(locale, '/capture')}>{copy('fullForm')}</Link></div>
+        <a className="text-xs text-muted-foreground underline py-3 inline-block" href={packPath} download>{uiCopy('observation-pack-download', locale).title}</a>
       </>}
       {!sealed && draft.step === 2 && <>
         <fieldset className="space-y-3"><legend className="text-lg font-medium mb-3">{copy('substance')}</legend>
@@ -120,6 +123,11 @@ export default function Record() {
           <RecordDetails glyphId={sealed.glyph.id} userId={userId} copy={copy} />
           <RecordVoiceNote glyphId={sealed.glyph.id} submissionId={sealed.submission.id} userId={userId} copy={copy} />
         </>}
+        <section className="space-y-3 border-t border-border pt-5">
+          <h2 className="text-lg">{uiCopy('observation-pack-paper', locale).title}</h2>
+          <p className="text-sm text-muted-foreground">{uiCopy('observation-pack-paper', locale).description}</p>
+          <a className="text-sm text-primary underline py-3 inline-block" href={packPath} download>{uiCopy('observation-pack-download', locale).title}</a>
+        </section>
       </>}
     </main>
   </div>;

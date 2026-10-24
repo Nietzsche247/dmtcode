@@ -7,6 +7,9 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { SEO } from '@/components/SEO';
 import { DOCUMENTS, docCountWord, DOC_PATH } from '@/data/documents';
 import { markCatalogueSeen, RECORD_AFTER_CATALOGUE_PATH } from '@/lib/catalogueExposure';
+import { useLocale } from '@/i18n/LocaleProvider';
+import { uiCopy } from '@/i18n/ui-strings';
+import { OBSERVATION_PACK_KITS, observationPackPath } from '@/lib/observationPack';
 
 // The document index. Before this page existed, /downloads was a 404 while
 // /llms.txt told machines that the documents lived "under /downloads/", and the
@@ -23,6 +26,8 @@ const sans = { fontFamily: "'Hanken Grotesk', system-ui, sans-serif" } as const;
 const SITE = 'https://dmtcode.com';
 
 const Downloads = () => {
+  const locale = useLocale();
+  const pack = uiCopy('observation-pack-entry', locale);
   const prerenderedLd0 = usePrerenderedLd({ type: 'BreadcrumbList' });
   const prerenderedLd1 = usePrerenderedLd({ type: 'CollectionPage' });
   return (
@@ -92,6 +97,15 @@ const Downloads = () => {
         </section>
 
         <section className="container mx-auto px-4 max-w-3xl py-10 space-y-8">
+          <article id="observation-pack" className="rounded-lg border border-border bg-card/40 p-5 space-y-3">
+            <h2 className="text-2xl text-foreground" style={serif}>{pack.title}</h2>
+            <p className="text-base text-muted-foreground leading-relaxed" style={sans}>{pack.description}</p>
+            <a href={observationPackPath(null)} download className="text-sm text-primary underline py-3 inline-block">{uiCopy('observation-pack-download', locale).title}</a>
+            <p className="text-sm text-muted-foreground">{uiCopy('observation-pack-kits', locale).title}</p>
+            <ul className="flex flex-wrap gap-3">
+              {OBSERVATION_PACK_KITS.map(kit => <li key={kit}><a href={observationPackPath(kit)} download className="text-sm text-primary underline py-3 inline-block">{kit.charAt(0).toUpperCase() + kit.slice(1)}</a></li>)}
+            </ul>
+          </article>
           {DOCUMENTS.map((d) => (
             <article
               key={d.id}

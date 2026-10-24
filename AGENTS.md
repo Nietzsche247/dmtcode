@@ -15,6 +15,7 @@ For product-level audits (content gaps, connectivity, tool QA, member experience
 - Save observations through the shared glyph-only client function; the existing glyph mirror trigger creates the sole atomic linked submission, so form and offline saves cannot create duplicate pairing paths.
 - Quick records retain immutable sealed content; dated post-seal detail JSON on the same glyph is atomically mirrored to its submission and append-only annotations, so later detail never replaces the original drawing or hash.
 - Quick capture owns its device draft and normalized timed stroke arrays; existing canvas and sign-in primitives accept optional presentation props so the full forms keep their behavior.
+- Observation Pack links use a separate download-only kit selector, so adding paper variants does not change capture protocol validation.
 
 ## Commerce data boundary
 

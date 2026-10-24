@@ -435,6 +435,11 @@ export default async (request: Request) => {
   });
 
   // Every /downloads/*.pdf is a live, linked asset (including the DOI-bearing
+  for (const variant of ['generic', 'protocol', 'solo', 'dual', 'triad', 'circle']) {
+    entries.push({ path: `/downloads/observation-pack/DMT_Code_Observation_Pack_${variant}.pdf`, changefreq: 'yearly', priority: '0.5', localized: false });
+  }
+
+  // Other document URLs are collected from the existing Downloads listing.
   // registry PDF) but a static file, so the list is read from llms.txt, which
   // already enumerates them and is regenerated on each build. PDFs are
   // English-only routes: no /es or /de mirrors and no hreflang alternates.
