@@ -1,5 +1,11 @@
 # Roadmap
 
+## Duties-paid shipping copy
+
+- [x] Update Prepare EN/ES/DE, Shipping and FAQ packaging copies with matching prerender text
+- [ ] Verify local crawler output, automatic build, legal drift and machine parity
+- [ ] Production copy requires Netlify deployment from main
+
 ## Free Observation Pack PDFs
 
 - [x] Preserve the six PDFs from commit 8276300 and add localized Record and Documents links
