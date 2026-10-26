@@ -24,9 +24,9 @@ const Shipping = () => {
 
             <div className="space-y-6 text-base leading-relaxed">
               <p>All kits ship free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days of ordering.</p>
-              <p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship in plain packaging.</p>
+              <p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship from our fulfillment partner Arbor Scientific in Arbor packaging. No prices appear on the packing slip.</p>
               <p>If your order has not arrived within 10 business days, email info@dmtcode.com with your order number and we will investigate with the carrier.</p>
-              <p>We also ship internationally to Canada, the United Kingdom, Ireland, most of the European Union, Norway, Switzerland, Israel, the United Arab Emirates, Japan, South Korea, Hong Kong, Singapore, Malaysia, Australia and New Zealand. International rates are carrier calculated (USPS or DHL Express) and shown at checkout before you pay. Delivery timelines vary by destination, and any customs duties or import taxes are the responsibility of the buyer. If your country is not offered at checkout, email info@dmtcode.com before ordering.</p>
+              <p>We also ship internationally to Canada, the United Kingdom, Ireland, most of the European Union, Norway, Switzerland, Israel, the United Arab Emirates, Japan, South Korea, Hong Kong, Singapore, Malaysia, Australia and New Zealand. International orders ship by UPS. The shipping price shown at checkout already includes customs duties, import taxes and the carrier's brokerage fees. We pay those, so there is nothing to pay on delivery. If a carrier ever asks you for import charges, email info@dmtcode.com and we will pay them or refund you in full. Delivery usually takes 5 to 10 business days after the order ships. If your country is not offered at checkout, email info@dmtcode.com before ordering.</p>
 
               <p className="text-sm text-muted-foreground pt-6">
                 Authoritative copy:{' '}

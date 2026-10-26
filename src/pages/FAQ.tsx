@@ -139,7 +139,7 @@ const FAQ_GROUPS: Array<{
       },
       {
         q: 'What are your shipping and refund terms?',
-        a: 'Kits are sold and shipped by Meridian Optics Lab, our store of record. That is the name on your card statement and on the parcel, and kits ship in plain packaging. US shipping is free and orders arrive in 7 to 10 business days. Unopened kits can be returned within 30 days; the full refund and shipping policies are linked on the Prepare page and at checkout. If anything arrives damaged or not as described, email info@dmtcode.com with your order number and photos and we will sort it out.',
+        a: 'Kits are sold and shipped by Meridian Optics Lab, our store of record. That is the name on your card statement. Kits ship from our fulfillment partner Arbor Scientific in Arbor packaging. No prices appear on the packing slip. US shipping is free and orders arrive in 7 to 10 business days. Unopened kits can be returned within 30 days; the full refund and shipping policies are linked on the Prepare page and at checkout. If anything arrives damaged or not as described, email info@dmtcode.com with your order number and photos and we will sort it out.',
       },
     ],
   },

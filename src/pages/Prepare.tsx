@@ -26,7 +26,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Outside the US",
-      body: "Checkout offers shipping to Canada, the UK, most EU countries, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.",
+      body: "Checkout offers shipping to Canada, the UK, most EU countries, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. Kits ship by UPS, and the shipping price at checkout already includes customs duties, import taxes and brokerage fees. We pay those, so there is nothing to pay on delivery.",
     },
     returns: {
       title: "Returns",
@@ -40,7 +40,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Questions: info@dmtcode.com, answered within 2 business days.",
     sellerPolicies: "Full policies",
     cardLine: "30-day returns on unopened kits. Free US shipping.",
-    geoShips: "You appear to be in {country}. Shipping there is calculated at checkout (USPS or DHL Express) and shown before you pay.",
+    geoShips: "You appear to be in {country}. Shipping there goes by UPS, and the price at checkout already includes duties and import taxes, so there is nothing to pay on delivery.",
     geoNoShip: "You appear to be in {country}. We do not ship there yet. Email info@dmtcode.com and we will tell you when that changes.",
   },
   es: {
@@ -51,7 +51,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Fuera de Estados Unidos",
-      body: "El pago ofrece envío a Canadá, Reino Unido, la mayoría de los países de la UE, Suiza, Noruega, Australia, Nueva Zelanda, Japón, Singapur, Hong Kong, Corea del Sur, Malasia, Israel y Emiratos Árabes Unidos. La tarifa del transportista (USPS o DHL Express) se muestra antes de pagar. Los aranceles y los impuestos de importación corren a cargo del comprador.",
+      body: "El pago ofrece envío a Canadá, Reino Unido, la mayoría de los países de la UE, Suiza, Noruega, Australia, Nueva Zelanda, Japón, Singapur, Hong Kong, Corea del Sur, Malasia, Israel y Emiratos Árabes Unidos. Los kits se envían por UPS y el precio del envío al pagar ya incluye aranceles, impuestos de importación y gastos de gestión aduanera. Nosotros los pagamos, por lo que no hay nada que pagar a la entrega.",
     },
     returns: {
       title: "Devoluciones",
@@ -65,7 +65,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Consultas: info@dmtcode.com, respuesta en 2 días hábiles.",
     sellerPolicies: "Políticas completas",
     cardLine: "Devoluciones en 30 días para kits sin abrir. Envío gratuito en EE. UU.",
-    geoShips: "Parece que está en {country}. El envío hasta allí se calcula al pagar (USPS o DHL Express) y se muestra antes del pago.",
+    geoShips: "Parece que está en {country}. El envío hasta allí se realiza por UPS y el precio al pagar ya incluye aranceles e impuestos de importación, por lo que no hay nada que pagar a la entrega.",
     geoNoShip: "Parece que está en {country}. Todavía no enviamos allí. Escriba a info@dmtcode.com y le avisaremos cuando cambie.",
   },
   de: {
@@ -76,7 +76,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Außerhalb der USA",
-      body: "Beim Bezahlen wird Versand nach Kanada, Großbritannien, in die meisten EU-Länder, in die Schweiz, nach Norwegen, Australien, Neuseeland, Japan, Singapur, Hongkong, Südkorea, Malaysia, Israel und in die Vereinigten Arabischen Emirate angeboten. Der Tarif des Versanddienstleisters (USPS oder DHL Express) wird vor der Zahlung angezeigt. Zölle und Einfuhrsteuern trägt der Käufer.",
+      body: "Beim Bezahlen wird Versand nach Kanada, Großbritannien, in die meisten EU-Länder, in die Schweiz, nach Norwegen, Australien, Neuseeland, Japan, Singapur, Hongkong, Südkorea, Malaysia, Israel und in die Vereinigten Arabischen Emirate angeboten. Die Kits werden mit UPS verschickt. Der beim Bezahlen angezeigte Versandpreis enthält bereits Zölle, Einfuhrsteuern und Gebühren für die Zollabfertigung. Wir übernehmen diese Kosten, sodass bei der Lieferung nichts zu zahlen ist.",
     },
     returns: {
       title: "Rückgabe",
@@ -90,7 +90,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Fragen: info@dmtcode.com, Antwort innerhalb von 2 Werktagen.",
     sellerPolicies: "Alle Richtlinien",
     cardLine: "30 Tage Rückgaberecht für ungeöffnete Kits. Kostenloser Versand in den USA.",
-    geoShips: "Sie scheinen sich in {country} zu befinden. Der Versand dorthin wird beim Bezahlen berechnet (USPS oder DHL Express) und vor der Zahlung angezeigt.",
+    geoShips: "Sie scheinen sich in {country} zu befinden. Der Versand dorthin erfolgt mit UPS. Der Preis beim Bezahlen enthält bereits Zölle und Einfuhrsteuern, sodass bei der Lieferung nichts zu zahlen ist.",
     geoNoShip: "Sie scheinen sich in {country} zu befinden. Dorthin versenden wir noch nicht. Schreiben Sie an info@dmtcode.com, wir melden uns, sobald sich das ändert.",
   },
 } as const;
