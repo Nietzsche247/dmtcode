@@ -3,7 +3,7 @@
 ## Duties-paid shipping copy
 
 - [x] Update Prepare EN/ES/DE, Shipping and FAQ packaging copies with matching prerender text
-- [ ] Verify local crawler output, automatic build, legal drift and machine parity
+- [x] Verify six local crawler pages, four visible pages, automatic build, legal/kit/route drift and all 593 live machine parity checks
 - [ ] Production copy requires Netlify deployment from main
 
 ## Free Observation Pack PDFs
