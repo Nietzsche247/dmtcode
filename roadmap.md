@@ -5,6 +5,7 @@
 - [x] Update Prepare EN/ES/DE, Shipping and FAQ packaging copies with matching prerender text
 - [x] Verify six local crawler pages, four visible pages, automatic build, legal/kit/route drift and all 593 live machine parity checks
 - [ ] Production copy requires Netlify deployment from main
+- [ ] FAQ Spanish/German packaging translations require a pipeline refresh after deployment; existing source-hash checks provide English fallback
 
 ## Free Observation Pack PDFs
 
