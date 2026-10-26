@@ -1113,7 +1113,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Outside the US",
-      body: "Checkout offers shipping to Canada, the UK, most EU countries, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. The carrier rate (USPS or DHL Express) is shown at checkout before you pay. Customs duties and import taxes are the buyer's responsibility.",
+      body: "Checkout offers shipping to Canada, the UK, most EU countries, Switzerland, Norway, Australia, New Zealand, Japan, Singapore, Hong Kong, South Korea, Malaysia, Israel and the UAE. Kits ship by UPS, and the shipping price at checkout already includes customs duties, import taxes and brokerage fees. We pay those, so there is nothing to pay on delivery.",
     },
     returns: {
       title: "Returns",
@@ -1127,7 +1127,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Questions: info@dmtcode.com, answered within 2 business days.",
     sellerPolicies: "Full policies",
     cardLine: "30-day returns on unopened kits. Free US shipping.",
-    geoShips: "You appear to be in {country}. Shipping there is calculated at checkout (USPS or DHL Express) and shown before you pay.",
+    geoShips: "You appear to be in {country}. Shipping there goes by UPS, and the price at checkout already includes duties and import taxes, so there is nothing to pay on delivery.",
     geoNoShip: "You appear to be in {country}. We do not ship there yet. Email info@dmtcode.com and we will tell you when that changes.",
   },
   es: {
@@ -1138,7 +1138,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Fuera de Estados Unidos",
-      body: "El pago ofrece envío a Canadá, Reino Unido, la mayoría de los países de la UE, Suiza, Noruega, Australia, Nueva Zelanda, Japón, Singapur, Hong Kong, Corea del Sur, Malasia, Israel y Emiratos Árabes Unidos. La tarifa del transportista (USPS o DHL Express) se muestra antes de pagar. Los aranceles y los impuestos de importación corren a cargo del comprador.",
+      body: "El pago ofrece envío a Canadá, Reino Unido, la mayoría de los países de la UE, Suiza, Noruega, Australia, Nueva Zelanda, Japón, Singapur, Hong Kong, Corea del Sur, Malasia, Israel y Emiratos Árabes Unidos. Los kits se envían por UPS y el precio del envío al pagar ya incluye aranceles, impuestos de importación y gastos de gestión aduanera. Nosotros los pagamos, por lo que no hay nada que pagar a la entrega.",
     },
     returns: {
       title: "Devoluciones",
@@ -1152,7 +1152,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Consultas: info@dmtcode.com, respuesta en 2 días hábiles.",
     sellerPolicies: "Políticas completas",
     cardLine: "Devoluciones en 30 días para kits sin abrir. Envío gratuito en EE. UU.",
-    geoShips: "Parece que está en {country}. El envío hasta allí se calcula al pagar (USPS o DHL Express) y se muestra antes del pago.",
+    geoShips: "Parece que está en {country}. El envío hasta allí se realiza por UPS y el precio al pagar ya incluye aranceles e impuestos de importación, por lo que no hay nada que pagar a la entrega.",
     geoNoShip: "Parece que está en {country}. Todavía no enviamos allí. Escriba a info@dmtcode.com y le avisaremos cuando cambie.",
   },
   de: {
@@ -1163,7 +1163,7 @@ const PREPARE_BUY_COPY = {
     },
     outside: {
       title: "Außerhalb der USA",
-      body: "Beim Bezahlen wird Versand nach Kanada, Großbritannien, in die meisten EU-Länder, in die Schweiz, nach Norwegen, Australien, Neuseeland, Japan, Singapur, Hongkong, Südkorea, Malaysia, Israel und in die Vereinigten Arabischen Emirate angeboten. Der Tarif des Versanddienstleisters (USPS oder DHL Express) wird vor der Zahlung angezeigt. Zölle und Einfuhrsteuern trägt der Käufer.",
+      body: "Beim Bezahlen wird Versand nach Kanada, Großbritannien, in die meisten EU-Länder, in die Schweiz, nach Norwegen, Australien, Neuseeland, Japan, Singapur, Hongkong, Südkorea, Malaysia, Israel und in die Vereinigten Arabischen Emirate angeboten. Die Kits werden mit UPS verschickt. Der beim Bezahlen angezeigte Versandpreis enthält bereits Zölle, Einfuhrsteuern und Gebühren für die Zollabfertigung. Wir übernehmen diese Kosten, sodass bei der Lieferung nichts zu zahlen ist.",
     },
     returns: {
       title: "Rückgabe",
@@ -1177,7 +1177,7 @@ const PREPARE_BUY_COPY = {
     sellerQuestions: "Fragen: info@dmtcode.com, Antwort innerhalb von 2 Werktagen.",
     sellerPolicies: "Alle Richtlinien",
     cardLine: "30 Tage Rückgaberecht für ungeöffnete Kits. Kostenloser Versand in den USA.",
-    geoShips: "Sie scheinen sich in {country} zu befinden. Der Versand dorthin wird beim Bezahlen berechnet (USPS oder DHL Express) und vor der Zahlung angezeigt.",
+    geoShips: "Sie scheinen sich in {country} zu befinden. Der Versand dorthin erfolgt mit UPS. Der Preis beim Bezahlen enthält bereits Zölle und Einfuhrsteuern, sodass bei der Lieferung nichts zu zahlen ist.",
     geoNoShip: "Sie scheinen sich in {country} zu befinden. Dorthin versenden wir noch nicht. Schreiben Sie an info@dmtcode.com, wir melden uns, sobald sich das ändert.",
   },
 } as const;
@@ -2413,7 +2413,7 @@ const FAQ_GROUPS: Array<{ heading: string; items: Array<{ q: string; a: string }
       },
       {
         q: "What are your shipping and refund terms?",
-        a: "Kits are sold and shipped by Meridian Optics Lab, our store of record. That is the name on your card statement and on the parcel, and kits ship in plain packaging. US shipping is free and orders arrive in 7 to 10 business days. Unopened kits can be returned within 30 days; the full refund and shipping policies are linked on the Prepare page and at checkout. If anything arrives damaged or not as described, email info@dmtcode.com with your order number and photos and we will sort it out.",
+        a: "Kits are sold and shipped by Meridian Optics Lab, our store of record. That is the name on your card statement. Kits ship from our fulfillment partner Arbor Scientific in Arbor packaging. No prices appear on the packing slip. US shipping is free and orders arrive in 7 to 10 business days. Unopened kits can be returned within 30 days; the full refund and shipping policies are linked on the Prepare page and at checkout. If anything arrives damaged or not as described, email info@dmtcode.com with your order number and photos and we will sort it out.",
       },
     ],
   },
@@ -3434,7 +3434,7 @@ ${FIELD_GUIDE_LIVE ? `<section data-prerender="symbols-field-guide"><h2>A printe
       "These policies belong to Meridian Optics Lab, the store of record for DMT Code kits.",
     ],
     breadcrumbName: "Shipping",
-    bodyExtraHtml: `<section><p>All kits ship free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days of ordering.</p><p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship in plain packaging.</p><p>If your order has not arrived within 10 business days, email info@dmtcode.com with your order number and we will investigate with the carrier.</p><p>We also ship internationally to Canada, the United Kingdom, Ireland, most of the European Union, Norway, Switzerland, Israel, the United Arab Emirates, Japan, South Korea, Hong Kong, Singapore, Malaysia, Australia and New Zealand. International rates are carrier calculated (USPS or DHL Express) and shown at checkout before you pay. Delivery timelines vary by destination, and any customs duties or import taxes are the responsibility of the buyer. If your country is not offered at checkout, email info@dmtcode.com before ordering.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy">Meridian Optics Lab Shipping Policy</a></p></section>`,
+    bodyExtraHtml: `<section><p>All kits ship free within the United States. Orders are processed within 2 business days and arrive within 7 to 10 business days of ordering.</p><p>You will receive a shipping confirmation email with tracking when your order is on its way. Kits ship from our fulfillment partner Arbor Scientific in Arbor packaging. No prices appear on the packing slip.</p><p>If your order has not arrived within 10 business days, email info@dmtcode.com with your order number and we will investigate with the carrier.</p><p>We also ship internationally to Canada, the United Kingdom, Ireland, most of the European Union, Norway, Switzerland, Israel, the United Arab Emirates, Japan, South Korea, Hong Kong, Singapore, Malaysia, Australia and New Zealand. International orders ship by UPS. The shipping price shown at checkout already includes customs duties, import taxes and the carrier's brokerage fees. We pay those, so there is nothing to pay on delivery. If a carrier ever asks you for import charges, email info@dmtcode.com and we will pay them or refund you in full. Delivery usually takes 5 to 10 business days after the order ships. If your country is not offered at checkout, email info@dmtcode.com before ordering.</p><p>Authoritative copy: <a href="https://dmtcode-p4szt.myshopify.com/policies/shipping-policy">Meridian Optics Lab Shipping Policy</a></p></section>`,
   },
   returns: {
     title: "Returns and Refunds | Meridian Optics Lab via DMT Code",
