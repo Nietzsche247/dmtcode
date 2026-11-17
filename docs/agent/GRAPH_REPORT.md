@@ -1,7 +1,7 @@
-# Graph Report - dmtcode  (2026-11-16)
+# Graph Report - dmtcode  (2026-11-17)
 
 ## Corpus Check
-- 677 files · ~971,231 words
+- 677 files · ~972,008 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4b3872ff`
+- Built from commit: `3396f782`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -131,7 +131,7 @@
 - Articles.tsx
 - calculate-cascade/index.ts
 - trends-ingest/index.ts
-- Graph Report - dmtcode  (2026-11-15)
+- Graph Report - dmtcode  (2026-11-16)
 - renderStatic
 - entries
 - Roadmap
@@ -220,13 +220,12 @@
 - admin-member-emails/index.ts
 - admin-translate-submission/index.ts
 - canvas-confetti
-- class-variance-authority
 - clsx
 - cmdk
+- d3
 - date-fns
 - agent/README.md
 - drizzle-kit
-- drizzle-orm
 - eslint
 - eslint-plugin-react-hooks
 - fabric
@@ -283,6 +282,7 @@
 - zustand
 - playwright-core
 - postcss
+- tailwindcss
 - @tailwindcss/typography
 - @types/node
 - @types/react
@@ -334,7 +334,7 @@ Nodes (143): AdminNotifications(), Notification, ApiAccessLog(), ApiLog, Article
 
 ### Community 1 - "Communities (298 total, 97 thin omitted)"
 Cohesion: 0.01
-Nodes (187): Communities (298 total, 97 thin omitted), Community 0 - "Communities (290 total, 99 thin omitted)", Community 100 - "lib/legal.ts", Community 101 - "tags", Community 102 - "WhatIfTimeline.tsx", Community 103 - "ScienceRoom.tsx", Community 104 - "GuideDetail.tsx", Community 105 - "Accessibility Audit Completed" (+179 more)
+Nodes (187): Communities (298 total, 97 thin omitted), Community 0 - "client.ts", Community 100 - "devDependencies", Community 101 - "timeline.schema.json", Community 102 - "enum", Community 103 - "properties", Community 104 - "CartDrawer.tsx", Community 105 - "ArticleDetail.tsx" (+179 more)
 
 ### Community 2 - "AppRoutes.tsx"
 Cohesion: 0.03
@@ -470,7 +470,7 @@ Nodes (24): 1. ✅ Red Color Contrast (WCAG AA 4.5:1), 2. ✅ Canvas Keyboard Ac
 
 ### Community 35 - "dependencies"
 Cohesion: 0.08
-Nodes (25): d3, embla-carousel-react, dependencies, d3, embla-carousel-react, @radix-ui/react-collapsible, @radix-ui/react-select, @radix-ui/react-switch (+17 more)
+Nodes (25): class-variance-authority, embla-carousel-react, dependencies, class-variance-authority, embla-carousel-react, @radix-ui/react-collapsible, @radix-ui/react-select, @radix-ui/react-switch (+17 more)
 
 ### Community 36 - "TrialDetail.tsx"
 Cohesion: 0.14
@@ -730,7 +730,7 @@ Nodes (13): 1. WCAG AA Contrast Compliance (4.5:1 minimum), 2. Canvas Keyboard A
 
 ### Community 100 - "devDependencies"
 Cohesion: 0.15
-Nodes (13): autoprefixer, @eslint/js, eslint-plugin-react-refresh, devDependencies, autoprefixer, @eslint/js, eslint-plugin-react-refresh, postgres (+5 more)
+Nodes (13): autoprefixer, drizzle-orm, @eslint/js, eslint-plugin-react-refresh, devDependencies, autoprefixer, drizzle-orm, @eslint/js (+5 more)
 
 ### Community 101 - "timeline.schema.json"
 Cohesion: 0.15
@@ -792,9 +792,9 @@ Nodes (10): corsHeaders, DependencyRule, Forecast, fromNumeric(), numberToQuarte
 Cohesion: 0.26
 Nodes (9): corsHeaders, isoDate(), MediaRow, MetricRow, nn(), numOrNull(), parseCsv(), parseMedia() (+1 more)
 
-### Community 116 - "Graph Report - dmtcode  (2026-11-15)"
+### Community 116 - "Graph Report - dmtcode  (2026-11-16)"
 Cohesion: 0.18
-Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - dmtcode  (2026-11-15), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
+Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - dmtcode  (2026-11-16), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
 
 ### Community 117 - "renderStatic"
 Cohesion: 0.25
@@ -1080,7 +1080,7 @@ Nodes (3): dompurify, dompurify, LocalizedMarkup()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `dependencies` connect `dependencies` to `swr`, `tailwind-merge`, `@tanstack/react-query`, `@types/d3`, `@types/dompurify`, `vaul`, `vis-timeline`, `vite-plugin-pwa`, `zod`, `zustand`, `package.json`, `carousel.tsx`, `dompurify`, `canvas-confetti`, `class-variance-authority`, `clsx`, `cmdk`, `date-fns`, `fabric`, `@hookform/resolvers`, `i18next`, `i18next-browser-languagedetector`, `input-otp`, `@lovable.dev/cloud-auth-js`, `lucide-react`, `next-themes`, `@radix-ui/react-accordion`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-aspect-ratio`, `@radix-ui/react-avatar`, `@radix-ui/react-checkbox`, `@radix-ui/react-context-menu`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-hover-card`, `@radix-ui/react-label`, `@radix-ui/react-menubar`, `@radix-ui/react-navigation-menu`, `@radix-ui/react-popover`, `@radix-ui/react-progress`, `@radix-ui/react-radio-group`, `@radix-ui/react-scroll-area`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-tabs`, `@radix-ui/react-toast`, `@radix-ui/react-toggle`, `@radix-ui/react-tooltip`, `react-day-picker`, `react-dom`, `react-helmet`, `react-hook-form`, `react-markdown`, `react-resizable-panels`, `recharts`, `rehype-raw`, `@supabase/supabase-js`?**
+- **Why does `dependencies` connect `dependencies` to `tailwind-merge`, `@tanstack/react-query`, `@types/d3`, `@types/dompurify`, `vaul`, `vis-timeline`, `vite-plugin-pwa`, `zod`, `zustand`, `package.json`, `carousel.tsx`, `dompurify`, `canvas-confetti`, `clsx`, `cmdk`, `d3`, `date-fns`, `fabric`, `@hookform/resolvers`, `i18next`, `i18next-browser-languagedetector`, `input-otp`, `@lovable.dev/cloud-auth-js`, `lucide-react`, `next-themes`, `@radix-ui/react-accordion`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-aspect-ratio`, `@radix-ui/react-avatar`, `@radix-ui/react-checkbox`, `@radix-ui/react-context-menu`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-hover-card`, `@radix-ui/react-label`, `@radix-ui/react-menubar`, `@radix-ui/react-navigation-menu`, `@radix-ui/react-popover`, `@radix-ui/react-progress`, `@radix-ui/react-radio-group`, `@radix-ui/react-scroll-area`, `@radix-ui/react-separator`, `@radix-ui/react-slider`, `@radix-ui/react-slot`, `@radix-ui/react-tabs`, `@radix-ui/react-toast`, `@radix-ui/react-toggle`, `@radix-ui/react-tooltip`, `react-day-picker`, `react-dom`, `react-helmet`, `react-hook-form`, `react-markdown`, `react-resizable-panels`, `recharts`, `rehype-raw`, `@supabase/supabase-js`, `swr`?**
   _High betweenness centrality (0.083) - this node is a cross-community bridge._
 - **Why does `react` connect `carousel.tsx` to `TrialDetailModal.tsx`, `useIsMobile`, `dependencies`?**
   _High betweenness centrality (0.076) - this node is a cross-community bridge._
