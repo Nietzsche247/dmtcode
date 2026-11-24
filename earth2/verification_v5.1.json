@@ -1,0 +1,1565 @@
+{
+ "title": "Earth2 graph v5 verification",
+ "built": "2026-11-23",
+ "graph_file": "EARTH2_GENERATED_v5.1_2026-11-23_Graph.json",
+ "totals": {
+  "nodes": 713,
+  "event_nodes": 698,
+  "drivers": 15,
+  "links": 1305,
+  "companies": 165,
+  "chains": 11
+ },
+ "nodes_by_type": {
+  "LIKELY PRECURSOR": 181,
+  "TRIGGER": 111,
+  "SPARK": 340,
+  "END EVENT": 55,
+  "DRIVER": 15,
+  "NECESSARY CONDITION": 11
+ },
+ "nodes_by_arm": {
+  "AI FINANCING AND BANKS": 69,
+  "FED RATES AND JAPAN": 32,
+  "RARE EARTHS CHINA AND TAIWAN": 82,
+  "OIL AND GULF": 15,
+  "CYBER": 139,
+  "BIO": 75,
+  "AI CAPABILITY": 49,
+  "HUMANOID ROBOTS": 8,
+  "WHITE-COLLAR WORK": 109,
+  "SHIPPING AND CANALS": 6,
+  "DISCOVERIES": 21,
+  "POWER AND THE GRID": 46,
+  "JOBS AND THE BACKLASH": 43,
+  "WEATHER AND FOOD": 8,
+  "RUSSIA AND EUROPE": 11
+ },
+ "nodes_by_arm_and_type": {
+  "AI FINANCING AND BANKS": {
+   "LIKELY PRECURSOR": 25,
+   "TRIGGER": 8,
+   "END EVENT": 5,
+   "SPARK": 29,
+   "DRIVER": 2
+  },
+  "FED RATES AND JAPAN": {
+   "TRIGGER": 7,
+   "LIKELY PRECURSOR": 12,
+   "END EVENT": 4,
+   "SPARK": 8,
+   "DRIVER": 1
+  },
+  "RARE EARTHS CHINA AND TAIWAN": {
+   "LIKELY PRECURSOR": 29,
+   "TRIGGER": 12,
+   "END EVENT": 4,
+   "SPARK": 33,
+   "DRIVER": 1,
+   "NECESSARY CONDITION": 3
+  },
+  "OIL AND GULF": {
+   "LIKELY PRECURSOR": 8,
+   "END EVENT": 1,
+   "TRIGGER": 1,
+   "SPARK": 4,
+   "DRIVER": 1
+  },
+  "CYBER": {
+   "LIKELY PRECURSOR": 22,
+   "TRIGGER": 22,
+   "END EVENT": 8,
+   "SPARK": 83,
+   "DRIVER": 3,
+   "NECESSARY CONDITION": 1
+  },
+  "BIO": {
+   "LIKELY PRECURSOR": 18,
+   "SPARK": 40,
+   "END EVENT": 7,
+   "TRIGGER": 9,
+   "DRIVER": 1
+  },
+  "AI CAPABILITY": {
+   "LIKELY PRECURSOR": 18,
+   "END EVENT": 6,
+   "TRIGGER": 4,
+   "SPARK": 18,
+   "DRIVER": 2,
+   "NECESSARY CONDITION": 1
+  },
+  "HUMANOID ROBOTS": {
+   "LIKELY PRECURSOR": 5,
+   "DRIVER": 1,
+   "SPARK": 1,
+   "END EVENT": 1
+  },
+  "WHITE-COLLAR WORK": {
+   "LIKELY PRECURSOR": 13,
+   "END EVENT": 7,
+   "TRIGGER": 17,
+   "SPARK": 70,
+   "DRIVER": 2
+  },
+  "SHIPPING AND CANALS": {
+   "LIKELY PRECURSOR": 2,
+   "TRIGGER": 3,
+   "END EVENT": 1
+  },
+  "DISCOVERIES": {
+   "END EVENT": 2,
+   "LIKELY PRECURSOR": 19
+  },
+  "POWER AND THE GRID": {
+   "TRIGGER": 11,
+   "SPARK": 29,
+   "DRIVER": 1,
+   "END EVENT": 1,
+   "LIKELY PRECURSOR": 1,
+   "NECESSARY CONDITION": 3
+  },
+  "JOBS AND THE BACKLASH": {
+   "TRIGGER": 10,
+   "SPARK": 24,
+   "LIKELY PRECURSOR": 5,
+   "END EVENT": 4
+  },
+  "WEATHER AND FOOD": {
+   "NECESSARY CONDITION": 2,
+   "LIKELY PRECURSOR": 2,
+   "TRIGGER": 3,
+   "END EVENT": 1
+  },
+  "RUSSIA AND EUROPE": {
+   "END EVENT": 3,
+   "TRIGGER": 4,
+   "NECESSARY CONDITION": 1,
+   "LIKELY PRECURSOR": 2,
+   "SPARK": 1
+  }
+ },
+ "nodes_by_model_layer": {
+  "board": 82,
+  "majors": 18,
+  "tree": 393,
+  "driver": 69,
+  "62": 62,
+  "discoveries": 18,
+  "new arm": 39,
+  "deep dive": 31,
+  "v5.1": 1
+ },
+ "arms_with_no_end_event": [],
+ "links": {
+  "total": 1305,
+  "cascade_links_with_strength": 1110,
+  "display_only_by_design": 195,
+  "display_only_note": "Driver links (drivers are measured curves with no odds), driver effects to their major (the challenger model, kept out of the cascade so the two models are not double counted), same-curve pairs and the tree's guessed board mappings.",
+  "missing_strength": 0,
+  "missing_delay": 0,
+  "strength_from_board_A_to_about_B": 77,
+  "strength_from_trigger_tree_lift_points": 220,
+  "strength_from_new_arm_agent_A_to_B": 129,
+  "strength_estimated": 684,
+  "delay_estimated": 1110,
+  "by_kind": {
+   "LIKELY": 1068,
+   "MAGNIFIES": 117,
+   "OPPOSES": 90,
+   "NECESSARY": 30
+  },
+  "lowering_links": 101
+ },
+ "node_schema_gaps": {
+  "fields_missing": {
+   "odds_now": 20,
+   "odds_history": 20,
+   "least_capability": 20
+  },
+  "by_type": {
+   "odds_now": {
+    "SPARK (number call)": 20
+   },
+   "odds_history": {
+    "SPARK (number call)": 20
+   },
+   "least_capability": {
+    "SPARK (number call)": 20
+   }
+  },
+  "event_nodes_with_no_layer_tagged": 30,
+  "note": "Number calls N01 to N20 are point forecasts on a driver reading, so they carry no odds and no least capability."
+ },
+ "companies": {
+  "total": 165,
+  "unverified": 158,
+  "verified": 7,
+  "verified_list": [
+   {
+    "ticker": "LLY",
+    "source": "Definitional: the event's own test names the company (BB2), board read 2"
+   },
+   {
+    "ticker": "ORCL",
+    "source": "Definitional: the event's own test names the company (F4), board read 2"
+   },
+   {
+    "ticker": "NVDA",
+    "source": "Definitional: the event's own test names the company (F5, F10, F11), board read 2"
+   },
+   {
+    "ticker": "ANT",
+    "source": "Definitional: the event's own test names the company (F6), board read 2"
+   },
+   {
+    "ticker": "SFTBY",
+    "source": "Definitional: the event's own test names the company (J4), board read 2"
+   },
+   {
+    "ticker": "TSLA",
+    "source": "Definitional: the event's own test names the company (X2), board read 2"
+   },
+   {
+    "ticker": "MRNA",
+    "source": "Definitional: the event's own test names the company (BB1), board read 2"
+   }
+  ],
+  "listed_options_yes": 130,
+  "listed_options_no": 34,
+  "listed_options_note": "yes means a US listing, where listed options are the norm; not checked name by name.",
+  "collision_candidates": [
+   {
+    "ticker": "MSFT",
+    "name": "Microsoft",
+    "event_nodes": 16,
+    "arms": [
+     "AI CAPABILITY",
+     "BIO",
+     "CYBER",
+     "JOBS AND THE BACKLASH",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "GOOGL",
+    "name": "Alphabet",
+    "event_nodes": 12,
+    "arms": [
+     "AI CAPABILITY",
+     "BIO",
+     "CYBER",
+     "JOBS AND THE BACKLASH"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "AMZN",
+    "name": "Amazon.com",
+    "event_nodes": 8,
+    "arms": [
+     "AI CAPABILITY",
+     "BIO",
+     "CYBER",
+     "JOBS AND THE BACKLASH"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "META",
+    "name": "Meta Platforms, Inc.",
+    "event_nodes": 11,
+    "arms": [
+     "AI CAPABILITY",
+     "CYBER",
+     "JOBS AND THE BACKLASH"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "CRWV",
+    "name": "CoreWeave, Inc.",
+    "event_nodes": 6,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "JOBS AND THE BACKLASH",
+     "POWER AND THE GRID"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "NVDA",
+    "name": "NVIDIA",
+    "event_nodes": 6,
+    "arms": [
+     "AI CAPABILITY",
+     "AI FINANCING AND BANKS",
+     "CYBER"
+    ],
+    "listed_options": "yes",
+    "verified": true
+   },
+   {
+    "ticker": "ORCL",
+    "name": "Oracle Corporation",
+    "event_nodes": 4,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "JOBS AND THE BACKLASH",
+     "POWER AND THE GRID"
+    ],
+    "listed_options": "yes",
+    "verified": true
+   },
+   {
+    "ticker": "IREN",
+    "name": "IREN Limited",
+    "event_nodes": 4,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "JOBS AND THE BACKLASH",
+     "POWER AND THE GRID"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "RELX",
+    "name": "RELX PLC ADR",
+    "event_nodes": 7,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "PANW",
+    "name": "Palo Alto Networks, Inc.",
+    "event_nodes": 7,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "CRWD",
+    "name": "CrowdStrike Holdings, Inc.",
+    "event_nodes": 5,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "WDAY",
+    "name": "Workday, Inc.",
+    "event_nodes": 4,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "TRU",
+    "name": "TransUnion",
+    "event_nodes": 4,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "ADBE",
+    "name": "Adobe Inc.",
+    "event_nodes": 3,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "FA",
+    "name": "First Advantage Corporation",
+    "event_nodes": 3,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "EFX",
+    "name": "Equifax Inc.",
+    "event_nodes": 3,
+    "arms": [
+     "CYBER",
+     "WHITE-COLLAR WORK"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "NBIS",
+    "name": "Nebius Group N.V.",
+    "event_nodes": 3,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "POWER AND THE GRID"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "COIN",
+    "name": "Coinbase Global, Inc.",
+    "event_nodes": 3,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "CYBER"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "JPM",
+    "name": "JPMorgan Chase & Co.",
+    "event_nodes": 3,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "CYBER"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "AMD",
+    "name": "Advanced Micro Devices",
+    "event_nodes": 3,
+    "arms": [
+     "AI CAPABILITY",
+     "CYBER"
+    ],
+    "listed_options": "yes",
+    "verified": false
+   },
+   {
+    "ticker": "TSLA",
+    "name": "Tesla",
+    "event_nodes": 3,
+    "arms": [
+     "HUMANOID ROBOTS",
+     "RARE EARTHS CHINA AND TAIWAN"
+    ],
+    "listed_options": "yes",
+    "verified": true
+   },
+   {
+    "ticker": "NEO",
+    "name": "Neo Performance Materials",
+    "event_nodes": 3,
+    "arms": [
+     "RARE EARTHS CHINA AND TAIWAN",
+     "RUSSIA AND EUROPE"
+    ],
+    "listed_options": "no",
+    "verified": false
+   },
+   {
+    "ticker": "6762",
+    "name": "TDK",
+    "event_nodes": 3,
+    "arms": [
+     "AI FINANCING AND BANKS",
+     "RARE EARTHS CHINA AND TAIWAN"
+    ],
+    "listed_options": "no",
+    "verified": false
+   }
+  ]
+ },
+ "sample_run": {
+  "update": [
+   {
+    "id": "F2",
+    "before": 39.0,
+    "after": 42.0,
+    "date": "2026-11-22",
+    "reason": "CoreWeave 5-year default insurance at 1,232.6 bp on Nov 20; its $4B loan still not launched; shares down 12% Friday to $39.51; debt $46.9B with $10.97B due in 2027",
+    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, row F2 (sources S1, S7, S10)"
+   }
+  ],
+  "nodes_moved": 13,
+  "moved": [
+   {
+    "id": "F2",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 39.0,
+    "after": 42.0,
+    "delta": 3.0,
+    "role": "set by hand"
+   },
+   {
+    "id": "27-4",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 55.0,
+    "after": 57.3,
+    "delta": 2.3,
+    "role": "cascade",
+    "path": "F2 > 27-4"
+   },
+   {
+    "id": "B2",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 60.0,
+    "after": 60.8,
+    "delta": 0.8,
+    "role": "cascade",
+    "path": "F2 > B2"
+   },
+   {
+    "id": "B1",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 33.0,
+    "after": 33.6,
+    "delta": 0.6,
+    "role": "cascade",
+    "path": "F2 > B1"
+   },
+   {
+    "id": "28-2",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 58.0,
+    "after": 58.5,
+    "delta": 0.5,
+    "role": "cascade",
+    "path": "F2 > 27-4 > 28-2"
+   },
+   {
+    "id": "F9",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 33.0,
+    "after": 33.5,
+    "delta": 0.5,
+    "role": "cascade",
+    "path": "F2 > F9"
+   },
+   {
+    "id": "29-6",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 45.0,
+    "after": 45.3,
+    "delta": 0.3,
+    "role": "cascade",
+    "path": "F2 > 27-4 > 29-6"
+   },
+   {
+    "id": "27-1",
+    "arm": "AI CAPABILITY",
+    "before": 65.0,
+    "after": 64.9,
+    "delta": -0.1,
+    "role": "cascade",
+    "path": "F2 > 27-4 > 27-1"
+   },
+   {
+    "id": "F7",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 55.0,
+    "after": 55.1,
+    "delta": 0.1,
+    "role": "cascade",
+    "path": "F2 > 27-4 > F7"
+   },
+   {
+    "id": "28-1",
+    "arm": "AI CAPABILITY",
+    "before": 55.0,
+    "after": 54.9,
+    "delta": -0.1,
+    "role": "cascade",
+    "path": "F2 > 27-4 > 28-1"
+   },
+   {
+    "id": "F1",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 85.0,
+    "after": 85.1,
+    "delta": 0.1,
+    "role": "cascade",
+    "path": "F2 > B2 > F1"
+   },
+   {
+    "id": "J3",
+    "arm": "FED RATES AND JAPAN",
+    "before": 15.0,
+    "after": 15.1,
+    "delta": 0.1,
+    "role": "cascade",
+    "path": "F2 > F9 > J3"
+   },
+   {
+    "id": "F11",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 20.0,
+    "after": 20.1,
+    "delta": 0.1,
+    "role": "cascade",
+    "path": "F2 > 27-4 > F11"
+   }
+  ],
+  "skipped": [
+   {
+    "id": "D6",
+    "reason": "effect would land 2027-06-05 after its window closes 2027-05-31"
+   }
+  ],
+  "stats": {
+   "links_used": 23,
+   "blocked_fired_or_hand_set": 5,
+   "dropped_window_closed": 1,
+   "dropped_tiny": 28,
+   "cut_at_hop_limit": 0
+  }
+ },
+ "top_5_collisions_after_sample_run": [
+  {
+   "kind": "c",
+   "what": "OWL sits on 2 risen nodes: B2, F1",
+   "nodes": [
+    "B2",
+    "F1"
+   ],
+   "company": "OWL",
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "joint_odds": 51.7,
+   "score": 0.517,
+   "window_end": "2027-05-31",
+   "listed_options": "yes",
+   "verified": false
+  },
+  {
+   "kind": "c",
+   "what": "CRWV sits on 2 risen nodes: F1, F2",
+   "nodes": [
+    "F1",
+    "F2"
+   ],
+   "company": "CRWV",
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "joint_odds": 35.7,
+   "score": 0.357,
+   "window_end": "2027-05-31",
+   "listed_options": "yes",
+   "verified": false
+  },
+  {
+   "kind": "b",
+   "what": "F1 (+0.1) x J3 (+0.1), same layer: CREDIT",
+   "nodes": [
+    "F1",
+    "J3"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "FED RATES AND JAPAN"
+   ],
+   "gap_days": 0,
+   "shared_layers": [
+    "CREDIT"
+   ],
+   "joint_odds": 12.9,
+   "score": 0.257,
+   "window_end": "2027-03-31"
+  },
+  {
+   "kind": "b",
+   "what": "B2 (+0.8) x J3 (+0.1), same layer: CREDIT",
+   "nodes": [
+    "B2",
+    "J3"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "FED RATES AND JAPAN"
+   ],
+   "gap_days": 0,
+   "shared_layers": [
+    "CREDIT"
+   ],
+   "joint_odds": 9.2,
+   "score": 0.184,
+   "window_end": "2027-03-31"
+  },
+  {
+   "kind": "b",
+   "what": "28-2 (+0.5) x J3 (+0.1), same layer: CREDIT",
+   "nodes": [
+    "28-2",
+    "J3"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "FED RATES AND JAPAN"
+   ],
+   "gap_days": 62,
+   "shared_layers": [
+    "CREDIT"
+   ],
+   "joint_odds": 8.8,
+   "score": 0.177,
+   "window_end": "2027-03-31"
+  }
+ ],
+ "read3_run": {
+  "updates": 15,
+  "nodes_moved": 53,
+  "cascade_moves": [
+   {
+    "id": "27-1",
+    "arm": "AI CAPABILITY",
+    "before": 64.9,
+    "after": 60.4,
+    "delta": -4.5
+   },
+   {
+    "id": "J1",
+    "arm": "FED RATES AND JAPAN",
+    "before": 35.0,
+    "after": 33.0,
+    "delta": -2.0
+   },
+   {
+    "id": "B3",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 30.0,
+    "after": 28.1,
+    "delta": -1.9
+   },
+   {
+    "id": "R5",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 45.0,
+    "after": 46.5,
+    "delta": 1.5
+   },
+   {
+    "id": "R6",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 70.0,
+    "after": 71.5,
+    "delta": 1.5
+   },
+   {
+    "id": "F1",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 85.1,
+    "after": 84.0,
+    "delta": -1.1
+   },
+   {
+    "id": "F7",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 55.1,
+    "after": 56.1,
+    "delta": 1.0
+   },
+   {
+    "id": "27-5",
+    "arm": "FED RATES AND JAPAN",
+    "before": 45.0,
+    "after": 44.0,
+    "delta": -1.0
+   },
+   {
+    "id": "29-6",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 45.3,
+    "after": 46.3,
+    "delta": 1.0
+   },
+   {
+    "id": "27-6",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 70.0,
+    "after": 70.7,
+    "delta": 0.7
+   },
+   {
+    "id": "28-1",
+    "arm": "AI CAPABILITY",
+    "before": 54.9,
+    "after": 54.2,
+    "delta": -0.7
+   },
+   {
+    "id": "O1",
+    "arm": "OIL AND GULF",
+    "before": 60.0,
+    "after": 59.4,
+    "delta": -0.6
+   },
+   {
+    "id": "C5",
+    "arm": "CYBER",
+    "before": 25.0,
+    "after": 24.4,
+    "delta": -0.6
+   },
+   {
+    "id": "R2",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 45.0,
+    "after": 45.5,
+    "delta": 0.5
+   },
+   {
+    "id": "29-3",
+    "arm": "AI CAPABILITY",
+    "before": 55.0,
+    "after": 54.6,
+    "delta": -0.4
+   },
+   {
+    "id": "C2",
+    "arm": "CYBER",
+    "before": 60.0,
+    "after": 59.6,
+    "delta": -0.4
+   },
+   {
+    "id": "F5",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 60.0,
+    "after": 60.4,
+    "delta": 0.4
+   },
+   {
+    "id": "J2",
+    "arm": "FED RATES AND JAPAN",
+    "before": 20.0,
+    "after": 19.6,
+    "delta": -0.4
+   },
+   {
+    "id": "M21",
+    "arm": "AI CAPABILITY",
+    "before": 50.0,
+    "after": 49.7,
+    "delta": -0.3
+   },
+   {
+    "id": "M22",
+    "arm": "AI CAPABILITY",
+    "before": 38.0,
+    "after": 37.7,
+    "delta": -0.3
+   },
+   {
+    "id": "W2",
+    "arm": "WHITE-COLLAR WORK",
+    "before": 28.0,
+    "after": 27.7,
+    "delta": -0.3
+   },
+   {
+    "id": "B1",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 33.6,
+    "after": 33.3,
+    "delta": -0.3
+   },
+   {
+    "id": "T1",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 40.0,
+    "after": 40.2,
+    "delta": 0.2
+   },
+   {
+    "id": "M26",
+    "arm": "AI CAPABILITY",
+    "before": 48.0,
+    "after": 48.2,
+    "delta": 0.2
+   },
+   {
+    "id": "F9",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 33.5,
+    "after": 33.7,
+    "delta": 0.2
+   },
+   {
+    "id": "27-3",
+    "arm": "CYBER",
+    "before": 55.0,
+    "after": 54.8,
+    "delta": -0.2
+   },
+   {
+    "id": "M40",
+    "arm": "AI CAPABILITY",
+    "before": 35.0,
+    "after": 34.8,
+    "delta": -0.2
+   },
+   {
+    "id": "M12",
+    "arm": "AI CAPABILITY",
+    "before": 55.0,
+    "after": 54.8,
+    "delta": -0.2
+   },
+   {
+    "id": "M15",
+    "arm": "CYBER",
+    "before": 55.0,
+    "after": 54.8,
+    "delta": -0.2
+   },
+   {
+    "id": "M25",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 42.0,
+    "after": 41.8,
+    "delta": -0.2
+   },
+   {
+    "id": "F2",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 42.0,
+    "after": 41.8,
+    "delta": -0.2
+   },
+   {
+    "id": "28-6",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 55.0,
+    "after": 55.1,
+    "delta": 0.1
+   },
+   {
+    "id": "RD05",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 35.0,
+    "after": 35.1,
+    "delta": 0.1
+   },
+   {
+    "id": "27-4",
+    "arm": "AI FINANCING AND BANKS",
+    "before": 57.3,
+    "after": 57.4,
+    "delta": 0.1
+   },
+   {
+    "id": "RD14",
+    "arm": "RARE EARTHS CHINA AND TAIWAN",
+    "before": 50.0,
+    "after": 50.1,
+    "delta": 0.1
+   },
+   {
+    "id": "M19",
+    "arm": "AI CAPABILITY",
+    "before": 55.0,
+    "after": 54.9,
+    "delta": -0.1
+   },
+   {
+    "id": "M13",
+    "arm": "DISCOVERIES",
+    "before": 30.0,
+    "after": 29.9,
+    "delta": -0.1
+   },
+   {
+    "id": "M32",
+    "arm": "AI CAPABILITY",
+    "before": 48.0,
+    "after": 47.9,
+    "delta": -0.1
+   }
+  ],
+  "stats": {
+   "links_used": 78,
+   "blocked_fired_or_hand_set": 28,
+   "dropped_window_closed": 5,
+   "dropped_tiny": 39,
+   "cut_at_hop_limit": 0
+  }
+ },
+ "top_5_collisions_after_read3": [
+  {
+   "kind": "a",
+   "what": "27-4 rose +0.1, pushed by 3 arms",
+   "nodes": [
+    "27-4"
+   ],
+   "arms": [
+    "AI CAPABILITY",
+    "AI FINANCING AND BANKS",
+    "FED RATES AND JAPAN"
+   ],
+   "joint_odds": 57.4,
+   "score": 1.722,
+   "window_end": "2027-11-30"
+  },
+  {
+   "kind": "a",
+   "what": "F7 rose +1.0, pushed by 2 arms",
+   "nodes": [
+    "F7"
+   ],
+   "arms": [
+    "AI CAPABILITY",
+    "AI FINANCING AND BANKS"
+   ],
+   "joint_odds": 56.1,
+   "score": 1.122,
+   "window_end": "2027-05-31"
+  },
+  {
+   "kind": "b",
+   "what": "F6 (+5.0) x R4 (+10.0)",
+   "nodes": [
+    "F6",
+    "R4"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "RARE EARTHS CHINA AND TAIWAN"
+   ],
+   "gap_days": 0,
+   "shared_layers": [],
+   "joint_odds": 56.0,
+   "score": 1.12,
+   "window_end": "2027-03-31"
+  },
+  {
+   "kind": "b",
+   "what": "F6 (+5.0) x R6 (+1.5)",
+   "nodes": [
+    "F6",
+    "R6"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "RARE EARTHS CHINA AND TAIWAN"
+   ],
+   "gap_days": 0,
+   "shared_layers": [],
+   "joint_odds": 50.0,
+   "score": 1.001,
+   "window_end": "2027-03-31"
+  },
+  {
+   "kind": "b",
+   "what": "27-6 (+0.7) x F6 (+5.0)",
+   "nodes": [
+    "27-6",
+    "F6"
+   ],
+   "arms": [
+    "AI FINANCING AND BANKS",
+    "RARE EARTHS CHINA AND TAIWAN"
+   ],
+   "gap_days": 0,
+   "shared_layers": [],
+   "joint_odds": 49.5,
+   "score": 0.99,
+   "window_end": "2027-03-31"
+  }
+ ],
+ "date_fix_check": {
+  "rows_closing_2026_11_20": [
+   "F8"
+  ],
+  "R6": {
+   "window_start": "2026-11-22",
+   "window_peak": "2027-02-03",
+   "window_end": "2027-11-30",
+   "odds_by": {
+    "2027-01-19": 15.0,
+    "2027-02-19": 25.0,
+    "2027-05-19": 45.0,
+    "2027-11-19": 70.0,
+    "2028-11-19": 85.0,
+    "2029-11-19": 90.0
+   }
+  },
+  "deep_dive_links_into_R6_that_carry_a_move": 26
+ },
+ "layer_collisions_standing": {
+  "POWER": {
+   "pairs": 1253,
+   "arms_involved": [
+    "AI CAPABILITY",
+    "AI FINANCING AND BANKS",
+    "CYBER",
+    "DISCOVERIES",
+    "FED RATES AND JAPAN",
+    "JOBS AND THE BACKLASH",
+    "OIL AND GULF",
+    "POWER AND THE GRID",
+    "SHIPPING AND CANALS"
+   ],
+   "top": [
+    {
+     "a": "PG9",
+     "a_arm": "POWER AND THE GRID",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 71.4,
+     "window_ends": "2027-08-31"
+    },
+    {
+     "a": "PG4",
+     "a_arm": "POWER AND THE GRID",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 71.4,
+     "window_ends": "2027-11-19"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "PG9",
+     "b_arm": "POWER AND THE GRID",
+     "joint_odds": 71.4,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "PG4",
+     "b_arm": "POWER AND THE GRID",
+     "joint_odds": 71.4,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 70.6,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "PG9",
+     "a_arm": "POWER AND THE GRID",
+     "b": "RD19",
+     "b_arm": "AI FINANCING AND BANKS",
+     "joint_odds": 68.0,
+     "window_ends": "2027-08-31"
+    }
+   ]
+  },
+  "CREDIT": {
+   "pairs": 3485,
+   "arms_involved": [
+    "AI FINANCING AND BANKS",
+    "BIO",
+    "CYBER",
+    "DISCOVERIES",
+    "FED RATES AND JAPAN",
+    "JOBS AND THE BACKLASH",
+    "OIL AND GULF",
+    "POWER AND THE GRID",
+    "RARE EARTHS CHINA AND TAIWAN",
+    "RUSSIA AND EUROPE",
+    "WHITE-COLLAR WORK"
+   ],
+   "top": [
+    {
+     "a": "J5",
+     "a_arm": "FED RATES AND JAPAN",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 74.8,
+     "window_ends": "2026-12-18"
+    },
+    {
+     "a": "JB1",
+     "a_arm": "JOBS AND THE BACKLASH",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 73.9,
+     "window_ends": "2027-11-30"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 73.9,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "J5",
+     "a_arm": "FED RATES AND JAPAN",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 71.4,
+     "window_ends": "2026-12-18"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "J5",
+     "b_arm": "FED RATES AND JAPAN",
+     "joint_odds": 71.4,
+     "window_ends": "2026-12-18"
+    },
+    {
+     "a": "F1",
+     "a_arm": "AI FINANCING AND BANKS",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 70.6,
+     "window_ends": "2027-05-31"
+    }
+   ]
+  },
+  "SHIPPING": {
+   "pairs": 596,
+   "arms_involved": [
+    "CYBER",
+    "DISCOVERIES",
+    "OIL AND GULF",
+    "RARE EARTHS CHINA AND TAIWAN",
+    "RUSSIA AND EUROPE",
+    "SHIPPING AND CANALS",
+    "WEATHER AND FOOD"
+   ],
+   "top": [
+    {
+     "a": "R4",
+     "a_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "b": "WF4",
+     "b_arm": "WEATHER AND FOOD",
+     "joint_odds": 60.0,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "R4",
+     "a_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "b": "DS4",
+     "b_arm": "DISCOVERIES",
+     "joint_odds": 60.0,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "WF4",
+     "a_arm": "WEATHER AND FOOD",
+     "b": "RD18",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 56.2,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "DS4",
+     "a_arm": "DISCOVERIES",
+     "b": "WF4",
+     "b_arm": "WEATHER AND FOOD",
+     "joint_odds": 56.2,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "DS4",
+     "a_arm": "DISCOVERIES",
+     "b": "RD18",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 56.2,
+     "window_ends": "2027-12-31"
+    },
+    {
+     "a": "R4",
+     "a_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "b": "DS7",
+     "b_arm": "DISCOVERIES",
+     "joint_odds": 56.0,
+     "window_ends": "2027-05-31"
+    }
+   ]
+  },
+  "FOOD": {
+   "pairs": 63,
+   "arms_involved": [
+    "DISCOVERIES",
+    "OIL AND GULF",
+    "RUSSIA AND EUROPE",
+    "SHIPPING AND CANALS",
+    "WEATHER AND FOOD"
+   ],
+   "top": [
+    {
+     "a": "DS7",
+     "a_arm": "DISCOVERIES",
+     "b": "WF4",
+     "b_arm": "WEATHER AND FOOD",
+     "joint_odds": 52.5,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "WF4",
+     "a_arm": "WEATHER AND FOOD",
+     "b": "RU9",
+     "b_arm": "RUSSIA AND EUROPE",
+     "joint_odds": 46.5,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "O1",
+     "a_arm": "OIL AND GULF",
+     "b": "WF4",
+     "b_arm": "WEATHER AND FOOD",
+     "joint_odds": 44.5,
+     "window_ends": "2027-03-31"
+    },
+    {
+     "a": "DS7",
+     "a_arm": "DISCOVERIES",
+     "b": "RU9",
+     "b_arm": "RUSSIA AND EUROPE",
+     "joint_odds": 43.4,
+     "window_ends": "2027-07-15"
+    },
+    {
+     "a": "O1",
+     "a_arm": "OIL AND GULF",
+     "b": "DS7",
+     "b_arm": "DISCOVERIES",
+     "joint_odds": 41.6,
+     "window_ends": "2027-05-31"
+    },
+    {
+     "a": "DS7",
+     "a_arm": "DISCOVERIES",
+     "b": "WF2",
+     "b_arm": "WEATHER AND FOOD",
+     "joint_odds": 38.5,
+     "window_ends": "2027-11-19"
+    }
+   ]
+  },
+  "JOBS": {
+   "pairs": 3925,
+   "arms_involved": [
+    "AI CAPABILITY",
+    "AI FINANCING AND BANKS",
+    "BIO",
+    "CYBER",
+    "DISCOVERIES",
+    "HUMANOID ROBOTS",
+    "JOBS AND THE BACKLASH",
+    "RARE EARTHS CHINA AND TAIWAN",
+    "RUSSIA AND EUROPE",
+    "WHITE-COLLAR WORK"
+   ],
+   "top": [
+    {
+     "a": "DS1",
+     "a_arm": "DISCOVERIES",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 74.8,
+     "window_ends": "2027-06-30"
+    },
+    {
+     "a": "JB1",
+     "a_arm": "JOBS AND THE BACKLASH",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 73.9,
+     "window_ends": "2027-11-30"
+    },
+    {
+     "a": "DS1",
+     "a_arm": "DISCOVERIES",
+     "b": "JB1",
+     "b_arm": "JOBS AND THE BACKLASH",
+     "joint_odds": 71.4,
+     "window_ends": "2027-06-30"
+    },
+    {
+     "a": "DS6",
+     "a_arm": "DISCOVERIES",
+     "b": "RD02",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 70.4,
+     "window_ends": "2027-11-30"
+    },
+    {
+     "a": "DS1",
+     "a_arm": "DISCOVERIES",
+     "b": "RD08",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 68.0,
+     "window_ends": "2027-04-16"
+    },
+    {
+     "a": "JB1",
+     "a_arm": "JOBS AND THE BACKLASH",
+     "b": "RD08",
+     "b_arm": "RARE EARTHS CHINA AND TAIWAN",
+     "joint_odds": 67.2,
+     "window_ends": "2027-04-16"
+    }
+   ]
+  }
+ },
+ "food_layer_arms": [
+  "BIO",
+  "DISCOVERIES",
+  "OIL AND GULF",
+  "POWER AND THE GRID",
+  "RUSSIA AND EUROPE",
+  "SHIPPING AND CANALS",
+  "WEATHER AND FOOD"
+ ],
+ "food_collision_check": "Rule 6 example: El Nino crops (WF1, WF2, WF3, WF5), Gulf fertilizer cut off (WF4, behind Hormuz staying shut) and Russian grain (RU9) all land on FOOD in the first half of 2027. Cross-arm FOOD pairs are in layer_collisions_standing.FOOD; within the weather arm they converge on WF8 (world food shock).",
+ "layer_collisions_rule": "Standing list: two different arms, same layer, windows within 120 days, both nodes between 25% and 90% (near-certain and priced events left out). Sparks, drivers and challenger effects left out.",
+ "read2_carry_in_checks": {
+  "F8 FIRED Nov 20 at 6,910.39": "FIRED 2026-11-20",
+  "F5 Nvidia under $120, 60% by Mar 31": 60.4,
+  "F10 SEC or DOJ action (read 2 40%, read 3 44%)": 44.0,
+  "F2 neocloud default, 42% by May 31 (applied by the sample run)": 41.8,
+  "F6 Anthropic under $83 (read 2 65%, read 3 70%)": 70.0,
+  "F9 S&P 20% below record, 33% by May 31": 33.7,
+  "O2 Brent above $110, Earth2 33%, market above Earth2": [
+   33.0,
+   "Market above Earth2: options imply about 49% against Earth2 33%"
+  ],
+  "MR1 fired Oct 28, 2026": "FIRED 2026-10-28",
+  "GR1 fired Jul 14, 2026": "FIRED 2026-07-14",
+  "chain Hormuz x canal (about 27%)": true,
+  "chain Nvidia accounting x capex x writedown (about 7%)": true,
+  "P1 Panama canal node": [
+   33.0,
+   "2027-01-01",
+   "2027-05-01",
+   "2027-05-31"
+  ]
+ },
+ "read3_checks": {
+  "D1": {
+   "expected": 94,
+   "in_graph": 94.0
+  },
+  "D2": {
+   "expected": 54,
+   "in_graph": 54.0
+  },
+  "D3": {
+   "expected": 25,
+   "in_graph": 25.0
+  },
+  "D4": {
+   "expected": 37,
+   "in_graph": 37.0
+  },
+  "R1": {
+   "expected": 40,
+   "in_graph": 40.0
+  },
+  "R4": {
+   "expected": 80,
+   "in_graph": 80.0
+  },
+  "R7": {
+   "expected": 25,
+   "in_graph": 25.0
+  },
+  "F10": {
+   "expected": 44,
+   "in_graph": 44.0
+  },
+  "F11": {
+   "expected": 25,
+   "in_graph": 25.0
+  },
+  "BB2": {
+   "expected": 45,
+   "in_graph": 45.0
+  },
+  "X1": {
+   "expected": 38,
+   "in_graph": 38.0
+  },
+  "F6": {
+   "expected": 70,
+   "in_graph": 70.0
+  },
+  "O4": {
+   "expected": 50.5,
+   "in_graph": 50.5
+  },
+  "D5": {
+   "expected": 21,
+   "in_graph": 21.0
+  },
+  "J5": {
+   "expected": 85,
+   "in_graph": 85.0
+  }
+ },
+ "atlas_ids_missing_from_graph": [],
+ "atlas_note": "Every major, driver, trigger, spark, effect and number-call ID in EARTH2_ATLAS_IDS.csv is kept. The 134 instrument rows and 3 synthetic research rows are not graph events; companies come from the exposure layer instead.",
+ "discoveries_pace": {
+  "current_rate": {
+   "verified_ai_new_proofs_per_quarter": 44,
+   "verified_ai_new_proofs_period": "2026Q2, last quarter logged",
+   "verified_ai_new_proofs_per_week": 3.4,
+   "all_cause_status_changes_per_quarter_2026H1": 43,
+   "all_cause_vs_pre_ai_baseline": "about 2.6x",
+   "all_cause_status_changes_2026Q3": 31,
+   "all_cause_status_changes_2026Q4_to_date": 11,
+   "claimed_not_yet_digested": "OpenAI repo released 2026-10-06 includes proofs for 23 Erdos problems (19 with Lean files), not yet checked by the site owner. The database lists 7 problems as 'open (Lean)': a formal proof exists but no human has digested it.",
+   "sources": [
+    "https://github.com/teorth/erdosproblems/wiki/AI-contributions-to-Erd%C5%91s-problems",
+    "https://github.com/teorth/erdosproblems/blob/main/data/problems.yaml",
+    "https://www.quantamagazine.org/how-ai-tore-through-a-mathematical-community-20260803/",
+    "https://officechai.com/ai/openai-has-also-included-proofs-for-23-erdos-problems-in-its-latest-math-proof-drop/"
+   ]
+  },
+  "growth_multiple": {
+   "half_over_half": "8x (9 verified AI new proofs in 2025H2, 72 in 2026H1)",
+   "quarter_over_quarter": "4.0x (2025Q4 to 2026Q1), 1.6x (2026Q1 to 2026Q2)",
+   "year_over_year_estimate": "about 6x (latest quarterly growth of 1.57x compounded over four quarters). A measured year-over-year figure is not possible: AI logging starts in 2025Q4 and stops 2026-06-30.",
+   "working_assumption_for_ladder": "Machine maths capability is moving up about one difficulty tier every 6 to 9 months: modest Erdos problems in late 2025, dozens per quarter by mid 2026, a claimed Millennium Prize problem (Navier-Stokes) in September 2026. Volume on the Erdos list is now limited by human checking and by the shrinking pool of easier problems, not by machine output."
+  },
+  "method": "1) Rebuilt every problem's status at each of 1,699 commits of problems.yaml; counted the last move from an open-type status into proved, disproved or solved for problems still solved on 2026-11-22. 2) Parsed all 538 rows of the AI contributions wiki; 'new proof' = sections 1a to 1d with a full-solution (green) outcome, 'found existing literature' = section 2a with a full-solution outcome; counted unique problems by date of first such entry. 3) Joined the two to label status changes. 4) Rate = last full logged quarter; growth = half over half and latest quarter over quarter compounded. Scripts: /home/claude/e2v5/scripts/parse_wiki.py, transitions.py, trans_count2.py, pace_counts.py.",
+  "caveats": [
+   "The wiki stopped on 2026-06-30, so AI attribution for 2026Q3 and 2026Q4 cannot be verified from the logged list.",
+   "On 2026-10-06 erdosproblems.com stopped showing statuses and solved counts; status updates now lag behind claims, so the 2026Q3 and 2026Q4 all-cause counts understate machine output.",
+   "The wiki says it is not a benchmark and has selection bias: easy or obscure problems fall first; absence of past progress can reflect obscurity rather than difficulty.",
+   "Status history contains same-day flip-flops (a status set then reverted); the count uses the last entry into a solved state, which removes those.",
+   "The April 2026 spike (30) reflects a batch of results from new OpenAI models, so quarterly numbers are lumpy.",
+   "Several big claims (OpenAI 100+ problems, Tier 4 97.6%) are company reports not independently checked."
+  ]
+ },
+ "build_notes": []
+}

@@ -167,6 +167,13 @@ export default async (request: Request, context: Context) => {
     return Response.redirect(`${url.origin}${locale ? "/" + locale : ""}/documents`, 301);
   }
 
+  // Earth2 graph: a standalone static page at public/future/earth2/index.html
+  // that reads graph.json beside it. Its files take the asset branch below;
+  // only the bare path needs sending to the page. 302 so the page can move.
+  if (/^\/future\/earth2\/?$/i.test(path)) {
+    return Response.redirect(`${url.origin}/future/earth2/index.html`, 302);
+  }
+
   // Referral redirect prefix: proxied to the Supabase go function by a
   // redirect rule, which runs after edge functions. Pass through untouched.
   if (/^\/go(\/|$)/i.test(path)) {

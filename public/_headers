@@ -9,3 +9,8 @@
 # graph-handoff-headers:start
 # /agent/* is intentionally indexable: no X-Robots-Tag noindex here.
 # graph-handoff-headers:end
+
+# Earth2 graph: a separate forecasting page, kept out of search indexes.
+/future/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Earth2 graph</title>
+<style>
+:root{--bg:#0e1116;--panel:#161b22;--line:#2a313c;--text:#e6edf3;--dim:#8b949e;--accent:#58a6ff;--up:#ff6b6b;--down:#4dabf7}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.4 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+body{display:flex;flex-direction:column}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:16px;margin:0 8px 0 0;font-weight:600}
+header .grow{flex:1}
+button,select,input{background:#0d1117;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit}
+button{cursor:pointer}button:hover{border-color:var(--accent)}
+button.on{background:#1f6feb;border-color:#1f6feb}
+#status{color:var(--dim);font-size:12px}
+main{position:relative;flex:1;display:flex;min-height:0}
+#left,#right{background:var(--panel);overflow:auto;border-color:var(--line);border-style:solid;border-width:0}
+#left{width:250px;border-right-width:1px;padding:10px}
+#right{width:400px;border-left-width:1px;padding:0}
+#stage{flex:1;position:relative;min-width:0}
+#graph{position:absolute;inset:0}
+#list{position:absolute;inset:0;overflow:auto;display:none;padding:8px}
+h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:14px 0 6px}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;margin:2px 0;cursor:pointer}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
+.tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
+.tabs button{flex:1;border:0;border-radius:0;background:none;padding:9px 4px;border-bottom:2px solid transparent}
+.tabs button.on{border-bottom-color:var(--accent);background:none}
+.tab{display:none;padding:12px}.tab.on{display:block}
+.big{font-size:28px;font-weight:600}
+.muted{color:var(--dim)}.small{font-size:12px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:10px;padding:1px 7px;font-size:11px;margin:1px 2px 1px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{border-bottom:1px solid var(--line);padding:4px 3px;text-align:left;vertical-align:top}
+th{color:var(--dim);font-weight:500}
+tr.click{cursor:pointer}tr.click:hover{background:#1c2330}
+.up{color:var(--up)}.down{color:var(--down)}
+.q{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:#0d1117}
+.q b{color:#ffd166}
+.form{display:grid;grid-template-columns:90px 1fr;gap:6px;align-items:center;margin:8px 0}
+.form input{width:100%}
+#drop{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:rgba(14,17,22,.92);z-index:5;text-align:center;padding:20px}
+#tl{width:100%}
+.legend{font-size:11px;color:var(--dim)}
+#hover{position:absolute;pointer-events:none;background:#000c;border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;max-width:320px;display:none;z-index:4}
+.mobtog{display:none}
+@media (max-width:900px){
+  #left,#right{position:absolute;top:0;bottom:0;z-index:6;display:none;width:min(92vw,420px)}
+  #left{left:0}#right{right:0}
+  #left.show,#right.show{display:block}
+  .mobtog{display:inline-block}
+  header h1{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Earth2 graph v5.1</h1>
+  <button class="mobtog" onclick="tog('left')">Filters</button>
+  <button id="b2d" class="on" onclick="setView('2d')">2D</button>
+  <button id="b3d" onclick="setView('3d')">3D</button>
+  <button id="blist" onclick="setView('list')">List</button>
+  <select id="layout" onchange="applyLayout()" title="2D layout">
+    <option value="force">Free layout</option>
+    <option value="lanes">Timeline lanes</option>
+  </select>
+  <select id="colorby" onchange="refresh()" title="Color">
+    <option value="arm">Color by arm</option>
+    <option value="heat">Heat: last move</option>
+  </select>
+  <input id="search" placeholder="Find a node or ticker" oninput="doSearch(this.value)" style="width:170px">
+  <span class="grow"></span>
+  <span id="status">Loading data...</span>
+  <button onclick="document.getElementById('file').click()">Load data file</button>
+  <button onclick="downloadData()">Save data</button>
+  <button class="mobtog" onclick="tog('right')">Panel</button>
+  <input type="file" id="file" accept=".json,application/json" style="display:none" onchange="loadFile(this.files[0])">
+</header>
+<main>
+  <aside id="left">
+    <h3>Timeline</h3>
+    <input type="range" id="tl" min="0" max="1500" value="0" oninput="onTimeline()">
+    <div class="small"><span id="tldate"></span> <label class="chk" style="display:inline-flex"><input type="checkbox" id="tlonly" onchange="refresh()"> show only open windows</label></div>
+    <div class="legend">Nodes whose window is open on this date are bright. The rest fade.</div>
+    <h3>Show</h3>
+    <label class="chk"><input type="checkbox" id="showSpark" onchange="rebuild()"> sparks and number calls</label>
+    <label class="chk"><input type="checkbox" id="showCo" onchange="rebuild()"> companies</label>
+    <label class="chk"><input type="checkbox" id="showDisp" onchange="rebuild()"> display-only links</label>
+    <label class="chk"><input type="checkbox" id="showDrv" onchange="rebuild()" checked> drivers and driver effects</label>
+    <h3>Arms <button class="small" onclick="allChk('arm',true)">all</button> <button class="small" onclick="allChk('arm',false)">none</button></h3>
+    <div id="arms"></div>
+    <h3>Layers</h3>
+    <div id="layers"></div>
+    <h3>Types</h3>
+    <div id="types"></div>
+    <h3>Legend</h3>
+    <div class="legend">Size: end events largest, then conditions and precursors, triggers, sparks. Arrows run from cause to effect. Red links lower the target. Heat view: red rose, blue fell in the last run.</div>
+  </aside>
+  <section id="stage">
+    <div id="graph"></div>
+    <div id="list"></div>
+    <div id="hover"></div>
+    <div id="drop">
+      <div style="font-size:16px">Choose the graph data file to open</div>
+      <div class="muted small">The page reads EARTH2_GENERATED_v5.1_2026-11-23_Graph.json from the same folder. Browsers block that when the page is opened straight from disk, so pick the file here (or drag it onto the page).</div>
+      <button onclick="document.getElementById('file').click()">Choose data file</button>
+    </div>
+  </section>
+  <aside id="right">
+    <div class="tabs">
+      <button id="tNode" class="on" onclick="tab('Node')">Node</button>
+      <button id="tColl" onclick="tab('Coll')">Collisions</button>
+      <button id="tLog" onclick="tab('Log')">Log</button>
+      <button id="tAbout" onclick="tab('About')">About</button>
+    </div>
+    <div id="pNode" class="tab on"><div class="muted">Click a node to see its odds, window, links and companies. You can set new odds there and watch the chain move.</div></div>
+    <div id="pColl" class="tab"></div>
+    <div id="pLog" class="tab"></div>
+    <div id="pAbout" class="tab"></div>
+  </aside>
+</main>
+<script src="vendor/force-graph.min.js"></script>
+<script src="vendor/3d-force-graph.min.js"></script>
+<script>
+"use strict";
+const DEFAULT_DATA = "graph.json";
+const ARM_COLOR = {"AI FINANCING AND BANKS":"#e45756","FED RATES AND JAPAN":"#f58518","RARE EARTHS CHINA AND TAIWAN":"#b279a2",
+ "OIL AND GULF":"#9d755d","CYBER":"#4c78a8","BIO":"#54a24b","AI CAPABILITY":"#eeca3b","HUMANOID ROBOTS":"#f7b6d2",
+ "WHITE-COLLAR WORK":"#72b7b2","SHIPPING AND CANALS":"#17becf","DISCOVERIES":"#bcbd22","POWER AND THE GRID":"#e377c2",
+ "JOBS AND THE BACKLASH":"#aec7e8","WEATHER AND FOOD":"#98df8a","RUSSIA AND EUROPE":"#ffbb78"};
+const TYPE_SIZE = {"END EVENT":9,"NECESSARY CONDITION":6,"LIKELY PRECURSOR":5,"TRIGGER":3.5,"SPARK":1.6,"DRIVER":4,"COMPANY":2};
+const T0 = new Date("2026-11-22"), T1 = new Date("2030-12-31");
+let G=null, byId={}, coById={}, outL={}, inL={}, view="2d", fg2=null, fg3=null, sel=null, heat={}, lastEntry=null, timeline=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=x=>x==null?"none":(Math.round(x*10)/10)+"%";
+function tog(id){$(id).classList.toggle("show")}
+function tab(t){for(const k of ["Node","Coll","Log","About"]){$("t"+k).classList.toggle("on",k===t);$("p"+k).classList.toggle("on",k===t)}}
+
+// ---------- loading ----------
+async function boot(){
+  const p=new URLSearchParams(location.search); const url=p.get("data")||DEFAULT_DATA;
+  try{ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error(r.status); init(await r.json(), url); }
+  catch(e){ $("status").textContent="Data file not loaded yet"; $("drop").style.display="flex"; }
+}
+function loadFile(f){ if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ init(JSON.parse(rd.result), f.name);}catch(e){alert("Not a valid graph file: "+e.message)} }; rd.readAsText(f); }
+document.addEventListener("dragover",e=>e.preventDefault());
+document.addEventListener("drop",e=>{e.preventDefault(); if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);});
+function downloadData(){
+  if(!G) return; const b=new Blob([JSON.stringify(G,null,1)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="EARTH2_graph_"+new Date().toISOString().slice(0,10)+".json"; a.click();
+}
+
+function init(data, name){
+  G=data; G.links=G.links||G.edges||[]; G.companies=G.companies||[]; G.cascade_log=G.cascade_log||[];
+  byId={}; coById={}; outL={}; inL={};
+  for(const n of G.nodes){ byId[n.id]=n; }
+  for(const c of G.companies){ coById[c.id]=c; }
+  for(const l of G.links){ (outL[l.source]=outL[l.source]||[]).push(l); (inL[l.target]=inL[l.target]||[]).push(l); }
+  $("drop").style.display="none";
+  $("status").textContent=`${G.nodes.length} nodes, ${G.links.length} links, ${G.companies.length} companies. Data: ${name}`;
+  lastEntry=G.cascade_log.length?G.cascade_log[G.cascade_log.length-1]:null; setHeat(lastEntry);
+  buildFilters(); setTimelineFromToday(); rebuild(); renderColl(); renderLog(); renderAbout();
+}
+
+// ---------- filters ----------
+function buildFilters(){
+  const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR);
+  $("arms").innerHTML=arms.map(a=>`<label class="chk"><input type="checkbox" data-k="arm" value="${esc(a)}" checked onchange="rebuild()"><span class="sw" style="background:${ARM_COLOR[a]||'#888'}"></span>${esc(a)} <span class="muted">${G.nodes.filter(n=>n.arm===a).length}</span></label>`).join("");
+  const layers=(G.meta&&G.meta.layers)||["JOBS","FOOD","SHIPPING","POWER","CREDIT"];
+  $("layers").innerHTML=layers.map(a=>`<label class="chk"><input type="checkbox" data-k="layer" value="${a}" checked onchange="rebuild()">${a}</label>`).join("")+
+    `<label class="chk"><input type="checkbox" data-k="layer" value="(none)" checked onchange="rebuild()">no layer tagged</label>`;
+  const types=["END EVENT","NECESSARY CONDITION","LIKELY PRECURSOR","TRIGGER","SPARK","DRIVER"];
+  $("types").innerHTML=types.map(a=>`<label class="chk"><input type="checkbox" data-k="type" value="${a}" checked onchange="rebuild()">${a.toLowerCase()} <span class="muted">${G.nodes.filter(n=>n.type===a).length}</span></label>`).join("");
+}
+function allChk(k,v){document.querySelectorAll(`input[data-k=${k}]`).forEach(x=>x.checked=v); rebuild();}
+function checked(k){return new Set([...document.querySelectorAll(`input[data-k=${k}]`)].filter(x=>x.checked).map(x=>x.value));}
+function visibleNodes(){
+  const arms=checked("arm"), layers=checked("layer"), types=checked("type");
+  const sp=$("showSpark").checked, drv=$("showDrv").checked;
+  return G.nodes.filter(n=>{
+    if(!arms.has(n.arm)) return false;
+    if(!types.has(n.type)) return false;
+    if(n.type==="SPARK" && !sp) return false;
+    if((n.type==="DRIVER"||n.challenger) && !drv) return false;
+    const ly=n.layers_hit&&n.layers_hit.length?n.layers_hit:["(none)"];
+    if(!ly.some(x=>layers.has(x))) return false;
+    if($("tlonly").checked && !isOpen(n)) return false;
+    return true;
+  });
+}
+
+// ---------- timeline ----------
+function setTimelineFromToday(){ timeline=new Date(); if(timeline<T0) timeline=T0; $("tl").value=Math.round((timeline-T0)/864e5); onTimeline(true); }
+function onTimeline(quiet){ timeline=new Date(T0.getTime()+(+$("tl").value)*864e5); $("tldate").textContent=timeline.toISOString().slice(0,10); if(!quiet) refresh(); }
+function isOpen(n){ if(!n.window_start||!n.window_end) return n.type==="DRIVER"; const s=new Date(n.window_start), e=new Date(n.window_end); return timeline>=s && timeline<=e; }
+
+// ---------- drawing ----------
+function nodeColor(n){
+  if(n.type==="COMPANY") return n.collision_candidate?"#ffd166":"#6e7681";
+  if($("colorby").value==="heat"){ const d=heat[n.id]; if(d==null) return "#3a4250"; return d>0?"#ff6b6b":"#4dabf7"; }
+  return ARM_COLOR[n.arm]||"#888";
+}
+function alphaOf(n){ if(n.type==="COMPANY") return 0.9; return isOpen(n)?1:0.18; }
+function hexA(hex,a){ const v=parseInt(hex.slice(1),16); return `rgba(${v>>16&255},${v>>8&255},${v&255},${a})`; }
+function nodeSize(n){ let s=TYPE_SIZE[n.type]||3; if($("colorby").value==="heat" && heat[n.id]!=null) s+=Math.min(8,Math.abs(heat[n.id])*1.5); return s; }
+function graphData(){
+  const vis=visibleNodes(); const ids=new Set(vis.map(n=>n.id)); const disp=$("showDisp").checked;
+  const links=G.links.filter(l=>ids.has(l.source.id||l.source)&&ids.has(l.target.id||l.target)&&(disp||!l.display_only));
+  const nodes=vis.slice();
+  if($("showCo").checked){
+    for(const c of G.companies){ const on=(c.event_nodes||[]).filter(x=>ids.has(x)); if(!on.length) continue;
+      c.type="COMPANY"; nodes.push(c); for(const x of on) links.push({source:c.id,target:x,company:true}); }
+  }
+  return {nodes, links};
+}
+function label(n){
+  if(n.type==="COMPANY") return `<b>${esc(n.ticker)}</b> ${esc(n.name)}<br>options: ${esc(n.listed_options)}, verified: ${n.verified?"yes":"no"}<br>sits on ${n.event_nodes.length} nodes in ${n.arms.length} arms`;
+  return `<b>${esc(n.id)}</b> ${esc(n.label)}<br>${esc(n.arm)} . ${esc(n.type.toLowerCase())}<br>odds ${fmt(n.odds_now)} by ${esc(n.window_end||"")}${heat[n.id]!=null?`<br>last move ${heat[n.id]>0?"+":""}${heat[n.id]}`:""}`;
+}
+function linkColor(l){ if(l.company) return "rgba(255,209,102,.25)"; if(l.display_only) return "rgba(139,148,158,.18)"; return l.sign<0?"rgba(255,107,107,.55)":"rgba(160,170,185,.35)"; }
+function rebuild(){
+  if(!G) return;
+  if(view==="list"){ renderList(); return; }
+  const el=$("graph"); const data=graphData();
+  if(view==="2d"){
+    if(fg3){ fg3._destructor&&fg3._destructor(); fg3=null; el.innerHTML=""; }
+    if(typeof ForceGraph!=="function"){ el.innerHTML='<div style="padding:20px" class="muted">The 2D drawing library did not load (no internet?). Use the List view.</div>'; return; }
+    if(!fg2){
+      fg2=ForceGraph()(el).backgroundColor("#0e1116").nodeId("id").nodeLabel(label)
+        .nodeCanvasObject((n,ctx,sc)=>{ const r=nodeSize(n); ctx.beginPath();
+          if(n.type==="DRIVER"){ ctx.rect(n.x-r,n.y-r,2*r,2*r);} else ctx.arc(n.x,n.y,r,0,2*Math.PI);
+          ctx.fillStyle=hexA(nodeColor(n),alphaOf(n)); ctx.fill();
+          if(sel&&(n.id===sel)){ctx.lineWidth=2/sc;ctx.strokeStyle="#fff";ctx.stroke();}
+          if(n.type==="END EVENT"&&sc>0.6){ctx.font=`${11/sc}px sans-serif`;ctx.fillStyle=hexA("#e6edf3",alphaOf(n));ctx.fillText(n.id,n.x+r+2,n.y+3);} })
+        .nodePointerAreaPaint((n,c,ctx)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(n.x,n.y,nodeSize(n)+2,0,2*Math.PI);ctx.fill();})
+        .linkColor(linkColor).linkWidth(l=>l.strength?0.4+2.5*l.strength:0.3)
+        .linkDirectionalArrowLength(l=>l.company?0:3).linkDirectionalArrowRelPos(1)
+        .onNodeClick(n=>selectNode(n.id)).cooldownTicks(200).onRenderFramePre(drawLanes);
+      fg2.d3Force("charge").strength(-28);
+    }
+    fg2.width(el.clientWidth).height(el.clientHeight).graphData(data); applyLayout(true);
+  } else {
+    if(fg2){ fg2._destructor&&fg2._destructor(); fg2=null; el.innerHTML=""; }
+    for(const n of data.nodes){ delete n.fx; delete n.fy; delete n.fz; }
+    if(typeof ForceGraph3D!=="function"){ el.innerHTML='<div style="padding:20px" class="muted">The 3D drawing library did not load (no internet?). Use 2D or List.</div>'; return; }
+    if(!fg3){
+      fg3=ForceGraph3D()(el).backgroundColor("#0e1116").nodeId("id").nodeLabel(label)
+        .nodeColor(n=>hexA(nodeColor(n),alphaOf(n))).nodeVal(n=>Math.pow(nodeSize(n),1.6)).nodeOpacity(0.95)
+        .linkColor(linkColor).linkWidth(l=>l.strength?0.3+1.5*l.strength:0).linkDirectionalArrowLength(l=>l.company?0:2.5).linkDirectionalArrowRelPos(1)
+        .onNodeClick(n=>selectNode(n.id));
+    }
+    fg3.width(el.clientWidth).height(el.clientHeight).graphData(data);
+  }
+}
+function refresh(){ if(view==="list"){renderList();return;} if(fg2){ fg2.nodeColor(fg2.nodeColor()); fg2.linkColor(linkColor); } if(fg3){ fg3.nodeColor(n=>hexA(nodeColor(n),alphaOf(n))).nodeVal(n=>Math.pow(nodeSize(n),1.6)); } if($("tlonly").checked) rebuild(); }
+function setView(v){ view=v; for(const k of ["2d","3d","list"]) $("b"+k).classList.toggle("on",k===v); $("graph").style.display=v==="list"?"none":"block"; $("list").style.display=v==="list"?"block":"none"; rebuild(); }
+window.addEventListener("resize",()=>{ const el=$("graph"); if(fg2) fg2.width(el.clientWidth).height(el.clientHeight); if(fg3) fg3.width(el.clientWidth).height(el.clientHeight); });
+
+const LW=2400, LH=70;
+function drawLanes(ctx,sc){
+  if(!G||$("layout").value!=="lanes"||view!=="2d") return; const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR); const H=arms.length*LH;
+  ctx.save(); ctx.font=`${12/sc}px sans-serif`;
+  for(let y=2027;y<=2030;y++){ const t=(new Date(y+"-01-01")-T0)/(T1-T0); const x=-LW/2+t*LW; ctx.strokeStyle="rgba(139,148,158,.25)"; ctx.lineWidth=1/sc; ctx.beginPath(); ctx.moveTo(x,-H/2-40); ctx.lineTo(x,H/2); ctx.stroke(); ctx.fillStyle="#8b949e"; ctx.fillText(String(y),x+4/sc,-H/2-28); }
+  if(timeline){ const t=(timeline-T0)/(T1-T0); const x=-LW/2+t*LW; ctx.strokeStyle="rgba(88,166,255,.7)"; ctx.lineWidth=2/sc; ctx.beginPath(); ctx.moveTo(x,-H/2-40); ctx.lineTo(x,H/2); ctx.stroke(); }
+  arms.forEach((a,i)=>{ const y=-H/2+i*LH; ctx.fillStyle=hexA(ARM_COLOR[a]||"#888888",.9); ctx.textAlign="right"; ctx.fillText(a,-LW/2-24,y+4); ctx.textAlign="left"; ctx.strokeStyle="rgba(139,148,158,.08)"; ctx.beginPath(); ctx.moveTo(-LW/2,y+LH/2); ctx.lineTo(LW/2,y+LH/2); ctx.stroke(); });
+  ctx.restore();
+}
+function applyLayout(silent){
+  if(!fg2||!G) return;
+  const lanes=$("layout").value==="lanes"; const data=fg2.graphData(); const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR);
+  const W=LW, H=arms.length*LH, typeOff={"END EVENT":0,"NECESSARY CONDITION":-14,"LIKELY PRECURSOR":-8,"TRIGGER":10,"SPARK":20,"DRIVER":-22};
+  for(const n of data.nodes){
+    if(!lanes){ delete n.fx; delete n.fy; continue; }
+    if(n.type==="COMPANY"){ const on=(n.event_nodes||[]).map(x=>byId[x]).filter(Boolean); n.fx=W/2+60; n.fy=on.length? on.reduce((s,x)=>s+(x.fy||0),0)/on.length:0; continue; }
+    const d=n.window_peak?new Date(n.window_peak):T0; const t=Math.max(0,Math.min(1,(d-T0)/(T1-T0)));
+    const lane=arms.indexOf(n.arm); let h=0; for(const ch of n.id) h=(h*31+ch.charCodeAt(0))%997;
+    n.fx=-W/2+t*W; n.fy=-H/2+lane*LH+(typeOff[n.type]||0)+(h%13)-6;
+  }
+  fg2.d3ReheatSimulation(); if(lanes&&!silent) setTimeout(()=>fg2.zoomToFit(400,30),300);
+}
+
+// ---------- list view ----------
+let listSort={k:"odds_now",d:-1};
+function renderList(){
+  const vis=visibleNodes().filter(n=>n.type!=="DRIVER");
+  vis.sort((a,b)=>{const k=listSort.k; const x=a[k]==null?-1:a[k], y=b[k]==null?-1:b[k]; return (x>y?1:x<y?-1:0)*listSort.d;});
+  const th=(k,t)=>`<th style="cursor:pointer" onclick="listSort={k:'${k}',d:listSort.k==='${k}'?-listSort.d:-1};renderList()">${t}</th>`;
+  $("list").innerHTML=`<table><tr>${th("id","ID")}${th("label","Event")}${th("arm","Arm")}${th("type","Type")}${th("odds_now","Odds")}${th("window_end","Window ends")}${th("status","Status")}<th>Last move</th></tr>`+
+    vis.slice(0,800).map(n=>`<tr class="click" onclick="selectNode('${n.id}')"><td>${esc(n.id)}</td><td>${esc(n.label)}</td><td><span class="sw" style="background:${ARM_COLOR[n.arm]}"></span> ${esc(n.arm)}</td><td>${esc(n.type.toLowerCase())}</td><td>${fmt(n.odds_now)}</td><td>${esc(n.window_end||"")}</td><td>${esc(n.status)}</td><td class="${heat[n.id]>0?"up":heat[n.id]<0?"down":""}">${heat[n.id]!=null?(heat[n.id]>0?"+":"")+heat[n.id]:""}</td></tr>`).join("")+`</table>`+(vis.length>800?`<div class="muted">Showing 800 of ${vis.length}. Use filters.</div>`:"");
+}
+
+// ---------- search ----------
+function doSearch(q){
+  q=q.trim().toLowerCase(); if(!q||!G) return;
+  let hit=G.nodes.find(n=>n.id.toLowerCase()===q)||G.companies.find(c=>c.ticker.toLowerCase()===q)||G.nodes.find(n=>(n.label||"").toLowerCase().includes(q));
+  if(!hit) return; if(hit.ticker){ showCompany(hit.id); return; } selectNode(hit.id,true);
+}
+
+// ---------- node panel ----------
+function spark(hist){
+  const h=(hist||[]).filter(x=>x.odds!=null); if(h.length<1) return "";
+  const W=360,H=70,ts=h.map(x=>new Date(x.date).getTime()); const t0=Math.min(...ts), t1=Math.max(...ts)||t0+1;
+  const X=t=>t1===t0?W/2:8+(t-t0)/(t1-t0)*(W-16), Y=o=>H-8-(o/100)*(H-16);
+  const pts=h.map((x,i)=>`${X(ts[i]).toFixed(1)},${Y(x.odds).toFixed(1)}`).join(" ");
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" style="background:#0d1117;border-radius:6px"><line x1="0" x2="${W}" y1="${Y(50)}" y2="${Y(50)}" stroke="#2a313c" stroke-dasharray="3 3"/><polyline fill="none" stroke="#58a6ff" stroke-width="2" points="${pts}"/>${h.map((x,i)=>`<circle cx="${X(ts[i])}" cy="${Y(x.odds)}" r="3" fill="#58a6ff"><title>${esc(x.date)}: ${x.odds}% ${esc(x.note||"")}</title></circle>`).join("")}</svg>`;
+}
+function linkRow(l,dir){
+  const o=dir==="out"?l.target:l.source; const oid=o.id||o; const on=byId[oid]||{};
+  return `<tr class="click" onclick="selectNode('${oid}',true)"><td>${esc(oid)}<div class="muted">${esc((on.label||"").slice(0,60))}</div></td><td>${l.strength==null?"<span class=muted>display</span>":(l.sign<0?"<span class=up>-</span>":"+")+l.strength}</td><td>${l.delay_days==null?"":l.delay_days+" d"}</td><td>${esc((l.kind||"").toLowerCase())}${l.estimated?"<div class=muted>estimate</div>":""}</td></tr><tr><td colspan="4" class="muted small" style="border-bottom:1px solid #2a313c">${esc(l.reason||"")}</td></tr>`;
+}
+function selectNode(id,focus){
+  if(coById[id]){ showCompany(id); return; }
+  const n=byId[id]; if(!n) return; sel=id; tab("Node"); if(window.innerWidth<=900) $("right").classList.add("show");
+  const outs=(outL[id]||[]), ins=(inL[id]||[]);
+  const cos=G.companies.filter(c=>(c.sits_on||[]).some(s=>s.node===id));
+  const fired=String(n.status||"").toUpperCase().startsWith("FIRED");
+  $("pNode").innerHTML=`
+   <div class="muted small">${esc(n.id)} . ${esc(n.type.toLowerCase())}${n.side?" . "+esc(n.side)+" side":""}</div>
+   <div style="font-size:16px;font-weight:600;margin:2px 0 6px">${esc(n.label)}</div>
+   <div><span class="sw" style="background:${ARM_COLOR[n.arm]}"></span> ${esc(n.arm)}</div>
+   <div style="display:flex;gap:16px;align-items:baseline;margin:8px 0"><div class="big">${n.odds_now==null?"no odds":fmt(n.odds_now)}</div><div class="muted small">${esc(n.odds_text||"")}</div></div>
+   <div class="small">Status: <b>${esc(n.status)}</b>${heat[id]!=null?` . last move <span class="${heat[id]>0?"up":"down"}">${heat[id]>0?"+":""}${heat[id]}</span>`:""}</div>
+   <div class="small">Window: ${esc(n.window_start||"?")} to ${esc(n.window_end||"?")}, peak ${esc(n.window_peak||"?")}</div>
+   <div class="small">Layers: ${(n.layers_hit||[]).map(x=>`<span class="pill">${x}</span>`).join("")||"<span class=muted>none tagged</span>"}</div>
+   ${n.least_capability?`<div class="small" style="margin-top:6px"><span class="muted">Least capability that makes it easy:</span> ${esc(n.least_capability)}</div>`:""}
+   ${n.priced?`<div class="small" style="margin-top:4px;color:#ffd166">${esc(n.priced)}</div>`:""}
+   ${n.one_number_rule?`<div class="small muted">${esc(n.one_number_rule)}</div>`:""}
+   ${n.next_watch?`<div class="small" style="margin-top:4px"><span class="muted">Next thing to watch:</span> ${esc(n.next_watch)}</div>`:""}
+   ${n.unlocks?`<div class="small"><span class="muted">Unlocks:</span> ${esc(n.unlocks)}</div>`:""}
+   ${n.belief_line?`<div class="small"><span class="muted">If solved, people will believe:</span> ${esc(n.belief_line)}</div>`:""}
+   <h3>Odds history</h3>${spark(n.odds_history)}
+   ${n.odds_now!=null?`<h3>Set new odds (a real, dated event)</h3>
+   <div class="form"><label>New odds %</label><input id="fOdds" type="number" min="0" max="100" step="0.5" value="${n.odds_now}">
+   <label>Date</label><input id="fDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+   <label>What happened</label><input id="fWhy" placeholder="the event, in one line">
+   <label>Source</label><input id="fSrc" placeholder="where it was reported"></div>
+   <button onclick="runFromForm('${id}')">Move it and run the chain</button> ${fired?'<span class="muted small">This node fired and is pinned at 100.</span>':""}
+   <div id="runOut"></div>`:""}
+   <h3>Pushes (${outs.length})</h3><table><tr><th>Target</th><th>Strength</th><th>Delay</th><th>Kind</th></tr>${outs.map(l=>linkRow(l,"out")).join("")}</table>
+   <h3>Pushed by (${ins.length})</h3><table><tr><th>Source</th><th>Strength</th><th>Delay</th><th>Kind</th></tr>${ins.map(l=>linkRow(l,"in")).join("")}</table>
+   <h3>Companies on this node (${cos.length})</h3>
+   ${cos.length?`<table><tr><th>Ticker</th><th>Name</th><th>Options</th><th>Verified</th><th>Nodes</th></tr>${cos.map(c=>`<tr class="click" onclick="showCompany('${c.id}')"><td>${esc(c.ticker)}</td><td>${esc(c.name)}</td><td>${esc(c.listed_options)}</td><td>${c.verified?"yes":"no"}</td><td>${(c.event_nodes||[]).length}${c.collision_candidate?' <span title="collision candidate" style="color:#ffd166">*</span>':""}</td></tr>`).join("")}</table>`:'<div class="muted small">None attached.</div>'}
+   <h3>Source</h3><div class="small muted">${esc(n.source||"")}</div>`;
+  if(focus){ const f=fg2||fg3; if(f){ const nn=f.graphData().nodes.find(x=>x.id===id); if(nn&&fg2) {fg2.centerAt(nn.x,nn.y,600); fg2.zoom(3,600);} if(nn&&fg3) fg3.cameraPosition({x:nn.x*1.6,y:nn.y*1.6,z:(nn.z||0)*1.6+120},nn,800);} }
+  refresh();
+}
+function showCompany(cid){
+  const c=coById[cid]; if(!c) return; tab("Node"); if(window.innerWidth<=900) $("right").classList.add("show");
+  $("pNode").innerHTML=`<div class="muted small">company</div><div style="font-size:16px;font-weight:600">${esc(c.ticker)} . ${esc(c.name)}</div>
+   <div class="small">Exchange: ${esc(c.exchange||"?")}</div>
+   <div class="small">Listed options: <b>${esc(c.listed_options)}</b> <span class="muted">(${esc(c.listed_options_basis||"")})</span></div>
+   <div class="small">Verified: <b>${c.verified?"yes":"no"}</b> ${c.verified_source?`<span class="muted">${esc(c.verified_source)}</span>`:""}</div>
+   ${c.collision_candidate?'<div class="small" style="color:#ffd166">Collision candidate: sits on 3 or more event nodes from 2 or more arms.</div>':""}
+   <div class="small muted" style="margin-top:6px">No direction is stored. Which way it moves depends on which events fire together.</div>
+   <h3>Sits on</h3><table><tr><th>Node</th><th>Arm</th><th>Odds</th><th>Materiality</th></tr>${(c.sits_on||[]).map(s=>{const n=byId[s.node]||{};return `<tr class="click" onclick="selectNode('${s.node}',true)"><td>${esc(s.node)}${s.context_only?' <span class="muted">(context)</span>':""}<div class="muted">${esc((n.label||"").slice(0,60))}</div></td><td>${esc(n.arm||"")}</td><td>${fmt(n.odds_now)}</td><td>${esc(s.materiality||"")}</td></tr>`}).join("")}</table>`;
+}
+
+// ---------- the cascade (same rule as the script) ----------
+const ODDS_MIN=1, ODDS_MAX=99;
+const isFired=n=>String(n.status||"").toUpperCase().startsWith("FIRED")||n.odds_now===100;
+function cascade(deltas, runDate, maxHops=4, fade=0.5){
+  const out={}; for(const l of G.links){ if(l.strength==null||l.display_only) continue; const s=l.source.id||l.source; (out[s]=out[s]||[]).push(l); }
+  const reached=new Set(Object.keys(deltas)); let frontier={}; for(const k in deltas) if(deltas[k]!==0) frontier[k]=deltas[k];
+  const delayAt={}, pathAt={}; for(const k in frontier){delayAt[k]=0; pathAt[k]=[k];}
+  const totals={}, routes={}, pushers={}, skipped={};
+  for(let hop=1; hop<=maxHops; hop++){
+    const inc={};
+    for(const u in frontier){ const du=frontier[u];
+      for(const l of (out[u]||[])){ const v=l.target.id||l.target; const tn=byId[v];
+        if(reached.has(v)||!tn||isFired(tn)||tn.odds_now==null) continue;
+        const step=du*l.strength*(l.sign||1)*(hop>1?fade:1);
+        if(Math.abs(step)<0.01) continue;
+        const ad=delayAt[u]+(l.delay_days||0); const arr=new Date(runDate.getTime()+ad*864e5);
+        if(tn.window_end && arr>new Date(tn.window_end+"T23:59:59")){ skipped[v]=`effect would land ${arr.toISOString().slice(0,10)} after its window closes ${tn.window_end}`; continue; }
+        inc[v]=(inc[v]||0)+step; (routes[v]=routes[v]||[]).push([step,pathAt[u].concat([v])]);
+        (pushers[v]=pushers[v]||new Set()).add(byId[u].arm);
+        if(delayAt[v]==null||ad<delayAt[v]) delayAt[v]=ad;
+        pathAt[v]=routes[v].reduce((a,b)=>Math.abs(b[0])>Math.abs(a[0])?b:a)[1];
+      }
+    }
+    for(const v in inc){ reached.add(v); totals[v]=inc[v]; }
+    frontier=inc; if(!Object.keys(inc).length) break;
+  }
+  return {totals,routes,pushers,skipped};
+}
+function gapDays(a,b){ if(!a.window_start||!a.window_end||!b.window_start||!b.window_end) return null;
+  const a0=new Date(a.window_start),a1=new Date(a.window_end),b0=new Date(b.window_start),b1=new Date(b.window_end);
+  return Math.max(0,Math.round((Math.max(a0,b0)-Math.min(a1,b1))/864e5)); }
+function collisions(rose, after, pushers, limit=120){
+  const items=[]; const endOf=id=>byId[id].window_end||"2100-01-01";
+  for(const id in pushers){ const arms=[...pushers[id]].filter(Boolean); if(rose[id]&&new Set(arms).size>=2){ const A=[...new Set(arms)];
+    items.push({kind:"a",what:`${id} rose ${rose[id]>0?"+":""}${rose[id].toFixed(1)}, pushed by ${A.length} arms`,nodes:[id],arms:A,joint_odds:+after[id].toFixed(1),score:after[id]/100*A.length,window_end:endOf(id)}); } }
+  const ids=Object.keys(rose).sort();
+  for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++){ const a=byId[ids[i]], b=byId[ids[j]];
+    if(a.arm===b.arm) continue; const g=gapDays(a,b); if(g==null||g>limit) continue;
+    const joint=after[a.id]/100*after[b.id]/100; const shared=(a.layers_hit||[]).filter(x=>(b.layers_hit||[]).includes(x));
+    items.push({kind:"b",what:`${a.id} (+${rose[a.id].toFixed(1)}) x ${b.id} (+${rose[b.id].toFixed(1)})${shared.length?", same layer: "+shared.join(", "):""}`,nodes:[a.id,b.id],arms:[a.arm,b.arm],gap_days:g,joint_odds:+(joint*100).toFixed(1),score:joint*2,window_end:endOf(a.id)<endOf(b.id)?endOf(a.id):endOf(b.id)}); }
+  for(const c of G.companies){ const on=(c.event_nodes||[]).filter(x=>rose[x]); if(on.length<2) continue;
+    const top=on.slice().sort((x,y)=>after[y]-after[x]).slice(0,2); const joint=after[top[0]]/100*after[top[1]]/100; const arms=[...new Set(on.map(x=>byId[x].arm))];
+    items.push({kind:"c",what:`${c.ticker} sits on ${on.length} risen nodes: ${on.join(", ")}`,nodes:on,company:c.ticker,arms,joint_odds:+(joint*100).toFixed(1),score:joint*arms.length,window_end:on.map(endOf).sort()[0]}); }
+  items.sort((x,y)=>(y.score-x.score)||(x.window_end<y.window_end?-1:1));
+  return items;
+}
+function runFromForm(id){
+  const v=parseFloat($("fOdds").value), d=$("fDate").value, why=$("fWhy").value.trim(), src=$("fSrc").value.trim();
+  if(isNaN(v)||v<0||v>100){ alert("Odds must be 0 to 100."); return; }
+  if(!d||!why){ alert("Odds move on real, dated events only. Give the date and what happened."); return; }
+  runUpdates([{id,new_odds:v,date:d,reason:why,source:src}]);
+}
+function runUpdates(ups){
+  const runDate=new Date(ups.map(u=>u.date).sort().slice(-1)[0]); const deltas={};
+  for(const u of ups) deltas[u.id]=u.new_odds-byId[u.id].odds_now;
+  const r=cascade(deltas,runDate);
+  const moved=[], rose={}, after={};
+  for(const u of ups){ const n=byId[u.id]; const b=n.odds_now; const a=u.new_odds===100?100:Math.min(ODDS_MAX,Math.max(ODDS_MIN,u.new_odds));
+    moved.push({id:u.id,label:n.label,arm:n.arm,before:b,after:a,delta:+(a-b).toFixed(1),role:"set by hand",reason:u.reason,source:u.source,date:u.date});
+    after[u.id]=a; if(a>b){ rose[u.id]=a-b; (r.pushers[u.id]=r.pushers[u.id]||new Set()).add(n.arm);} }
+  for(const v of Object.keys(r.totals).sort((x,y)=>Math.abs(r.totals[y])-Math.abs(r.totals[x]))){
+    const n=byId[v]; const b=n.odds_now; const a=Math.round(Math.min(ODDS_MAX,Math.max(ODDS_MIN,b+r.totals[v]))*10)/10; if(Math.abs(a-b)<0.05) continue;
+    const top=r.routes[v].slice().sort((x,y)=>Math.abs(y[0])-Math.abs(x[0])).slice(0,3);
+    moved.push({id:v,label:n.label,arm:n.arm,before:b,after:a,delta:+(a-b).toFixed(1),role:"cascade",paths:top.map(t=>({path:t[1].join(" > "),points:+t[0].toFixed(2)}))});
+    after[v]=a; if(a>b) rose[v]=a-b; }
+  const coll=collisions(rose,after,r.pushers);
+  const entry={date:runDate.toISOString().slice(0,10),run_at:new Date().toISOString(),run_by:"page (live)",trigger:ups.map(u=>({id:u.id,before:byId[u.id].odds_now,after:u.new_odds,date:u.date,reason:u.reason,source:u.source})),
+    moved,skipped:Object.entries(r.skipped).filter(([k])=>!(k in r.totals)).map(([id,reason])=>({id,reason})),
+    collisions:{a_multi_arm_nodes:coll.filter(c=>c.kind==="a"),b_cross_arm_pairs:coll.filter(c=>c.kind==="b").slice(0,40),c_companies:coll.filter(c=>c.kind==="c")},queue:coll.slice(0,5)};
+  for(const m of moved){ const n=byId[m.id]; n.odds_now=m.after; n.odds_as_of=entry.date; (n.odds_history=n.odds_history||[]).push({date:entry.date,odds:m.after,note:m.role==="set by hand"?m.reason:"cascade from "+ups.map(u=>u.id).join(", ")});
+    if(m.role==="set by hand"){ if(m.after===100) n.status="FIRED "+m.date; else if(m.delta>0) n.status="AHEAD"; else if(m.delta<0) n.status="BEHIND"; } n.last_move={date:entry.date,delta:m.delta}; }
+  G.cascade_log.push(entry); lastEntry=entry; setHeat(entry); $("colorby").value="heat";
+  const ro=$("runOut"); if(ro) ro.innerHTML=movedTable(entry,12)+`<div class="small muted">Saved in this page only. Use Save data to keep it.</div>`;
+  refresh(); renderColl(); renderLog(); if(sel) setTimeout(()=>{},0);
+}
+function setHeat(e){ heat={}; if(!e) return; for(const m of e.moved) heat[m.id]=m.delta; }
+function movedTable(e,limit){
+  const ms=e.moved.slice(0,limit||999);
+  return `<table><tr><th>ID</th><th>Before</th><th>After</th><th>Move</th><th>How</th></tr>${ms.map(m=>`<tr class="click" onclick="selectNode('${m.id}',true)"><td>${esc(m.id)}<div class="muted">${esc((m.label||"").slice(0,50))}</div></td><td>${m.before}</td><td>${m.after}</td><td class="${m.delta>0?"up":"down"}">${m.delta>0?"+":""}${m.delta}</td><td class="small">${m.role==="cascade"?esc(m.paths[0].path):"set by hand"}</td></tr>`).join("")}</table>${e.moved.length>ms.length?`<div class="muted small">${e.moved.length-ms.length} more in the Log tab.</div>`:""}`;
+}
+
+// ---------- collisions panel ----------
+function layerCollisions(){
+  const ev=G.nodes.filter(n=>n.type!=="SPARK"&&n.type!=="DRIVER"&&!n.challenger&&n.odds_now!=null&&n.odds_now>=25&&n.odds_now<90&&n.window_end&&new Date(n.window_end)>=new Date("2026-11-22"));
+  const by={};
+  for(let i=0;i<ev.length;i++) for(let j=i+1;j<ev.length;j++){ const a=ev[i],b=ev[j]; if(a.arm===b.arm) continue; const g=gapDays(a,b); if(g==null||g>120) continue;
+    for(const L of (a.layers_hit||[])) if((b.layers_hit||[]).includes(L)) (by[L]=by[L]||[]).push({a,b,joint:a.odds_now*b.odds_now/100,end:a.window_end<b.window_end?a.window_end:b.window_end}); }
+  return by;
+}
+function renderColl(){
+  if(!G) return; let h="";
+  h+=`<h3>The next collisions queue</h3>`;
+  if(lastEntry&&lastEntry.queue&&lastEntry.queue.length){
+    h+=`<div class="small muted">After the run on ${esc(lastEntry.date)}: ${lastEntry.trigger.map(t=>esc(t.id)+" "+t.before+" to "+t.after).join(", ")}</div>`;
+    h+=lastEntry.queue.map((c,i)=>`<div class="q"><b>${i+1}.</b> ${esc(c.what)}<div class="small muted">${c.kind==="a"?"one node, several arms":c.kind==="b"?"two arms, windows within 120 days":"company on several risen nodes"} . arms: ${esc(c.arms.join(", "))} . joint odds ${c.joint_odds}% . window ends ${esc(c.window_end)}</div></div>`).join("");
+  } else h+=`<div class="muted small">No cascade run yet. Set new odds on a node to fill the queue.</div>`;
+  if(lastEntry&&lastEntry.collisions){ const C=lastEntry.collisions;
+    h+=`<h3>All collisions from the last run</h3><div class="small">Several arms on one node: ${C.a_multi_arm_nodes.length} . cross-arm pairs: ${C.b_cross_arm_pairs.length} . companies: ${C.c_companies.length}</div>`;
+    h+=[...C.a_multi_arm_nodes,...C.c_companies,...C.b_cross_arm_pairs.slice(0,15)].map(c=>`<div class="small" style="margin:3px 0">[${c.kind}] ${esc(c.what)} <span class="muted">joint ${c.joint_odds}%</span></div>`).join(""); }
+  const lc=layerCollisions();
+  h+=`<h3>Standing layer collisions (two arms, same layer, windows within 120 days, both between 25% and 90%)</h3>`;
+  for(const L of ["FOOD","SHIPPING","POWER","CREDIT","JOBS"]){ const xs=(lc[L]||[]).sort((x,y)=>y.joint-x.joint).slice(0,6);
+    h+=`<div class="small" style="margin-top:6px"><b>${L}</b> <span class="muted">${(lc[L]||[]).length} pairs</span></div>`+xs.map(x=>`<div class="small" style="margin-left:8px">${esc(x.a.id)} (${esc(x.a.arm)}) x ${esc(x.b.id)} (${esc(x.b.arm)}) <span class="muted">joint ${x.joint.toFixed(1)}%, ends ${esc(x.end)}</span></div>`).join(""); }
+  if(G.chains&&G.chains.length){ h+=`<h3>Compound chains</h3>`+G.chains.map(c=>`<div class="q"><b>${esc(c.name)}</b> <span class="muted">joint ${c.joint}% . hit ${c.hit}</span><div class="small">${c.legs.map(x=>`<a href="#" onclick="selectNode('${x}',true);return false" style="color:#58a6ff">${x}</a>`).join(" then ")}</div><div class="small muted">${esc(c.note||"")}</div></div>`).join(""); }
+  const cc=G.companies.filter(c=>c.collision_candidate).sort((a,b)=>b.event_nodes.length-a.event_nodes.length);
+  h+=`<h3>Collision candidate companies (${cc.length})</h3><div class="small muted">3 or more event nodes from 2 or more arms. No direction stored.</div><table><tr><th>Ticker</th><th>Nodes</th><th>Arms</th><th>Options</th><th>Verified</th></tr>${cc.map(c=>`<tr class="click" onclick="showCompany('${c.id}')"><td>${esc(c.ticker)}</td><td>${c.event_nodes.length}</td><td>${c.arms.length}</td><td>${esc(c.listed_options)}</td><td>${c.verified?"yes":"no"}</td></tr>`).join("")}</table>`;
+  $("pColl").innerHTML=h;
+}
+function renderLog(){
+  if(!G) return; const L=G.cascade_log;
+  $("pLog").innerHTML=`<h3>Cascade log (${L.length})</h3>`+(L.length?L.slice().reverse().map((e,i)=>`<div class="q"><b>${esc(e.date)}</b> ${e.trigger.map(t=>`${esc(t.id)} ${t.before} to ${t.after}`).join(", ")}<div class="small">${e.trigger.map(t=>esc(t.reason)).join("; ")}</div><div class="small muted">${e.moved.length} nodes moved${e.run_by?" . "+esc(e.run_by):""}</div><details><summary class="small">What moved</summary>${movedTable(e)}</details></div>`).join(""):'<div class="muted small">Empty.</div>');
+}
+function renderAbout(){
+  const m=G.meta||{};
+  $("pAbout").innerHTML=`<div class="small">${esc(m.what_it_is||"")}</div>
+   <h3>How odds move</h3><div class="small">${esc((m.cascade_rule&&m.cascade_rule.move)||"")}. Hop 1 full, each further hop half. At most 4 hops, each node once per run, odds held between 1% and 99%. Fired nodes are pinned at 100. An effect that would land after a node's window closes is dropped.</div>
+   <h3>Link strength</h3><div class="small">${esc(m.strength_rule||"")}</div>
+   <h3>Data</h3><div class="small">Built ${esc(m.built||"")}, as of ${esc(m.as_of||"")}. ${esc(m.base_note||"")}</div>
+   <h3>Arms</h3><div class="small">${(m.arms||[]).map(a=>`<span class="pill"><span class="sw" style="background:${ARM_COLOR[a]}"></span> ${esc(a)}</span>`).join("")}</div>`;
+}
+boot();
+</script>
+</body>
+</html>
