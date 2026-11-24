@@ -32,7 +32,9 @@ export default defineConfig(({ mode }) => ({
         // request time by the data-json edge function, and a precache route would
         // be matched ahead of the network, serving every returning visitor a stale
         // build-time copy of the corpus instead of the live one.
-        globIgnores: ['**/data.json'],
+        globIgnores: ['**/data.json', 'future/**'],
+        // future/ holds standalone static pages (the Earth2 graph). Kept out of the
+        // precache so a daily graph.json update is never shadowed by a build copy.
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -114,7 +116,9 @@ export default defineConfig(({ mode }) => ({
           }
         ],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//, /^\/data\.json$/]
+        // /future/ is excluded so Netlify serves the standalone static pages there;
+        // the app shell fallback would answer with the app's 404 instead.
+        navigateFallbackDenylist: [/^\/api\//, /^\/data\.json$/, /^\/future\//]
       },
       devOptions: {
         enabled: false,

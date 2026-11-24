@@ -49,6 +49,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 import Leaderboard from "./pages/Leaderboard";
 import NullReports from "./pages/NullReports";
 import NotFound from "./pages/NotFound";
+import Earth2Redirect from "./pages/Earth2Redirect";
 import SubmitSymbol from "./pages/SubmitSymbol";
 import Dataset from "./pages/Dataset";
 import Trials from "./pages/Trials";
@@ -410,6 +411,7 @@ export const AppRoutes = () => (
         </Suspense>
       </ErrorBoundary>
     } />
+    <Route path="future/earth2/*" element={<Earth2Redirect />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
