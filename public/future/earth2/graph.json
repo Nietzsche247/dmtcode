@@ -1961,7 +1961,7 @@
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
    "odds_now": 46.5,
-   "odds_text": "45% by May 31",
+   "odds_text": "45% by May 31, 60% by Nov 2027 (call confirmed Nov 23: counts only a new US floor, tariff or stockpile purchase after Nov 19)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -2644,7 +2644,7 @@
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
    "odds_now": 25.0,
-   "odds_text": "20% by Nov 2027",
+   "odds_text": "25% by Nov 2027, 40% by Nov 2028 (call confirmed Nov 23: not fired; the Japan halt is de facto)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -2666,8 +2666,8 @@
     "2027-01-19": 2.0,
     "2027-02-19": 4.0,
     "2027-05-19": 9.0,
-    "2027-11-19": 20.0,
-    "2028-11-19": 35.0,
+    "2027-11-19": 25.0,
+    "2028-11-19": 40.0,
     "2029-11-19": 45.0
    },
    "window_start": "2026-11-22",
