@@ -24545,6 +24545,695 @@
    "estimated": true,
    "source": "Earth2 v5.1 build estimate; record level per Drewry WCI history (Sept 2021). Freight node P4 ($5,500) is the nearer tell.",
    "model_layer": "v5.1"
+  },
+  {
+   "id": "FD01",
+   "label": "El Nino crop losses locked in for H1 2027: the Jan 12, 2027 WASDE still puts India's 2026-27 rice crop below 2025-26 (Nov: 147.0 vs 154.0 Mt) and GAPKI still sees lower Indonesian palm oil output in 2027 than 2026 (59.87 vs about 61.8 Mt).",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "NECESSARY CONDITION",
+   "odds_now": 90.0,
+   "odds_text": "90% by 2027-01-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 90.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-01-12",
+   "window_end": "2027-01-31",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "None. Already in the forecasts, and the El Nino is in the ocean (CPC Nov 12: Nino-3.4 at +2.5C).",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt ; https://indonesiabusinesspost.com/7851/energy-and-resources/indonesia-s-palm-oil-exports-forecast-to-fall-12-in-2027-as-el-nino-and-biodiesel-demand-tighten-supply ; https://cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.pdf",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "El Nino crop losses locked in for H1 2027: the Jan 12, 2027 WASDE still puts India's 2026-27 rice crop below 2025-26 (Nov: 147.0 vs 154.0 Mt) and GAPKI still sees lower Indonesian palm oil output in 2027 than 2026 (59.87 vs about 61.8 Mt).",
+   "current_fact": "USDA WASDE Nov 2026: India rice 147.0 Mt in 2026-27 vs 154.0 Mt in 2025-26. GAPKI Nov 16, 2026: Indonesia CPO plus PKO 59.87 Mt in 2027, down 3.1%; El Nino costs about 3.08 Mt."
+  },
+  {
+   "id": "FD02",
+   "label": "Indonesia tightens palm oil exports by Jun 30, 2027: raises the export levy above 12.5% of the reference price, raises the domestic market obligation, or caps export permits.",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 35.0,
+   "odds_text": "35% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 35.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-04-30",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "A trade or finance ministry regulation. B50 pulls about 17.4 Mt of CPO into biodiesel in 2027 (GAPKI) while El Nino cuts output.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://ukragroconsult.com/en/news/indonesia-cuts-crude-palm-oil-export-duty-for-november/ ; https://indonesiabusinesspost.com/7851/energy-and-resources/indonesia-s-palm-oil-exports-forecast-to-fall-12-in-2027-as-el-nino-and-biodiesel-demand-tighten-supply",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Indonesia tightens palm oil exports by Jun 30, 2027: raises the export levy above 12.5% of the reference price, raises the domestic market obligation, or caps export permits.",
+   "current_fact": "Nov 2026: CPO reference price $978.90/t; export duty $124/t; levy 12.5% ($122.36/t); combined $246.36/t, down from $308.27/t in October. GAPKI sees 2027 exports at 29.73 Mt, down 12.3%."
+  },
+  {
+   "id": "FD03",
+   "label": "India bans exports of non-basmati white rice outright (as on Jul 20, 2023) by Jun 30, 2027. This alone settles WF8 (a top-3 exporter bans a staple's main grade).",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "TRIGGER",
+   "odds_now": 12.0,
+   "odds_text": "12% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 12.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-02-28",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "One DGFT notification. The Feb to Mar 2027 state elections (Uttar Pradesh, Punjab and three more) give the motive; record state stocks are the brake.",
+   "status": "ON TRACK",
+   "status_deepdive": "WATCH",
+   "source": "https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/110626-indian-rice-exporters-brace-for-possible-curbs-on-100-broken-wr-exports ; https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt ; https://www.oneindia.com/india/eci-likely-to-announce-election-dates-for-up-punjab-goa-manipur-and-uttarakhand-in-january-2027-8255079.html",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "India bans exports of non-basmati white rice outright (as on Jul 20, 2023) by Jun 30, 2027. This alone settles WF8 (a top-3 exporter bans a staple's main grade).",
+   "current_fact": "Nov 5, 2026 (Platts): no new curbs; the government is weighing a curb on 100% broken rice; broken rice $336/t FOB, up 5% in a month. USDA Nov: India ships 23.0 Mt of 60.2 Mt world rice trade in 2026-27 (38%) and ends the year with 58.0 Mt of stocks."
+  },
+  {
+   "id": "FD04",
+   "label": "Indonesia bans palm oil exports outright (as on Apr 28, 2022) by Jun 30, 2027. This alone settles WF8.",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "TRIGGER",
+   "odds_now": 6.0,
+   "odds_text": "6% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 6.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-05-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "A presidential announcement after a domestic cooking oil price spike, as in April 2022.",
+   "status": "ON TRACK",
+   "status_deepdive": "WATCH",
+   "source": "https://tradingeconomics.com/commodity/palm-oil ; https://indonesiabusinesspost.com/7851/energy-and-resources/indonesia-s-palm-oil-exports-forecast-to-fall-12-in-2027-as-el-nino-and-biodiesel-demand-tighten-supply",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Indonesia bans palm oil exports outright (as on Apr 28, 2022) by Jun 30, 2027. This alone settles WF8.",
+   "current_fact": "Nov 23, 2026: Malaysian palm oil futures RM4,157/t, an eight-month low, down 13% in a month; Malaysian stocks a record 3.62 Mt in October. GAPKI: Indonesian 2027 exports down 12%."
+  },
+  {
+   "id": "FD05",
+   "label": "India's Feb to Mar 2027 state elections go ahead: Uttar Pradesh, Punjab, Uttarakhand, Goa and Manipur (Election Commission dates expected in January 2027).",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 95.0,
+   "odds_text": "95% by 2027-03-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 95.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-03-01",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "FOOD",
+    "JOBS"
+   ],
+   "least_capability": "Calendar. The assemblies' terms run out in spring 2027 [exact dates unverified].",
+   "status": "ON TRACK",
+   "status_deepdive": "SCHEDULED",
+   "source": "https://www.oneindia.com/india/eci-likely-to-announce-election-dates-for-up-punjab-goa-manipur-and-uttarakhand-in-january-2027-8255079.html",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "India's Feb to Mar 2027 state elections go ahead: Uttar Pradesh, Punjab, Uttarakhand, Goa and Manipur (Election Commission dates expected in January 2027).",
+   "current_fact": "Nov 2026 press: the Election Commission is expected to announce dates for the five states in January 2027; polls likely in February and March."
+  },
+  {
+   "id": "FD06",
+   "label": "No bypass at scale for Gulf fertilizer: overland trucking to Saudi Red Sea ports and other workarounds carry less than a quarter of the Gulf's pre-war fertilizer exports in every month through Mar 2027.",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "NECESSARY CONDITION",
+   "odds_now": 90.0,
+   "odds_text": "90% by 2027-03-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 90.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-02-28",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "FOOD",
+    "SHIPPING"
+   ],
+   "least_capability": "None. True today: Saudi trucking volumes are too small to replace the strait (The National, Oct 31).",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://www.thenationalnews.com/business/energy/2026/10/31/middle-east-fertiliser-exports-decline-by-70-as-iran-war-disrupts-supplies/ ; https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901994-opportunistic-saudi-ammonia-exports-to-continue-maaden",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "No bypass at scale for Gulf fertilizer: overland trucking to Saudi Red Sea ports and other workarounds carry less than a quarter of the Gulf's pre-war fertilizer exports in every month through Mar 2027.",
+   "current_fact": "Sep 2026 Middle East fertilizer exports 994,000 t vs 3.41 Mt a year earlier (Kpler via The National). All Saudi ammonia exits through Hormuz; Ma'aden idled two of its three 1.1 Mt a year ammonia units in March (Argus, Nov 9)."
+  },
+  {
+   "id": "FD07",
+   "label": "Sulfur stays short and phosphate output stays cut: Mosaic's Q4 2026 report (due late Feb 2027) still lists its Louisiana phosphate plants (Uncle Sam, Faustina) idled or curtailed.",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 70.0,
+   "odds_text": "70% by 2027-03-15 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 70.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-02-25",
+   "window_end": "2027-03-15",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Sulfur stays near or above $1,000/t; about half of traded sulfur comes from Hormuz-exposed countries (TFI).",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://www.fertilizerdaily.com/20261029-sulfur-above-1000t-keeps-mosaic-phosphate-plants-curtailed-ahead-of-q3-results/ ; https://www.agnavigator.com/Article/2026/11/04/mosaic-posts/",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Sulfur stays short and phosphate output stays cut: Mosaic's Q4 2026 report (due late Feb 2027) still lists its Louisiana phosphate plants (Uncle Sam, Faustina) idled or curtailed.",
+   "current_fact": "Oct 29, 2026: Uncle Sam and Faustina idled or curtailed; Bartow, New Wales and South Pierce at reduced rates; Brazil sites idled. Spot sulfur topped $1,000/t this year with peaks near $1,300 (vs about $500 in January). Mosaic Q3 phosphate operating loss $194M (Nov 3)."
+  },
+  {
+   "id": "FD08",
+   "label": "China opens a 2027 urea export quota of 3 Mt or more, announced by Apr 30, 2027 (2026: 3.3 Mt, opened in late May with FOB floors of $430 to $500/t).",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "CHINA FERTILIZER POLICY (brake)",
+   "type": "TRIGGER",
+   "odds_now": 30.0,
+   "odds_text": "30% by 2027-04-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 30.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-04-15",
+   "window_end": "2027-04-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "A customs and NDRC quota notice.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.fertilizerdaily.com/20260918-china-urea-export-quota-2026-nitrogen-price-floor/ ; https://www.timeslive.co.za/news/world/2026-05-27-china-allows-fresh-urea-exports-amid-iran-war-fuelled-fertiliser-crisis-sources-say/ ; https://www.agnavigator.com/Article/2026/11/05/nitrogen-market-update-cf-industries-reports-q3-2026-results/ ; https://www.fertilizerdaily.com/20261029-sulfur-above-1000t-keeps-mosaic-phosphate-plants-curtailed-ahead-of-q3-results/",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "China opens a 2027 urea export quota of 3 Mt or more, announced by Apr 30, 2027 (2026: 3.3 Mt, opened in late May with FOB floors of $430 to $500/t).",
+   "current_fact": "CF (Nov 4, 2026): China is expected to export 2 to 4 Mt more urea than last year but to keep control of nitrogen exports for food security. China's MAP and DAP exports remain tightly controlled (Oct 29)."
+  },
+  {
+   "id": "FD09",
+   "label": "US spring nitrogen squeeze: DTN's weekly US retail urea average tops $750 per ton in any week from Jan 1 to May 31, 2027 (Nov 9 to 13, 2026: $657).",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 38.0,
+   "odds_text": "38% by 2027-05-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 38.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-05-31",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Hormuz stays shut into Northern Hemisphere spring buying while Europe stays gas-short.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.dtnpf.com/agriculture/web/ag/crops/article/2026/11/18/5-8-major-fertilizer-prices-edge",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "US spring nitrogen squeeze: DTN's weekly US retail urea average tops $750 per ton in any week from Jan 1 to May 31, 2027 (Nov 9 to 13, 2026: $657).",
+   "current_fact": "DTN Nov 9 to 13, 2026: urea $657/t (up 10% on the year), anhydrous $997 (up 16%), DAP $947, MAP $995, potash $504."
+  },
+  {
+   "id": "FD10",
+   "label": "Tampa ammonia monthly contract settles at $750/t or higher for any month from January to May 2027 (November 2026 about $640, derived).",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 40.0,
+   "odds_text": "40% by 2027-05-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 40.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-05-31",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Europe keeps curtailing on gas while Gulf ammonia stays stuck behind Hormuz.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.fertilizerdaily.com/20261102-tampa-ammonia-november-2026/ ; https://www.qcintel.com/ammonia/article/tampa-ammonia-falls-10-mt-for-october-74032.html",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Tampa ammonia monthly contract settles at $750/t or higher for any month from January to May 2027 (November 2026 about $640, derived).",
+   "current_fact": "November 2026 settled up $95/t from October (Yara and Mosaic, Oct 28). September was $555 and October fell $10, so November is about $640 (derived). Q3 2026 average $622, up 27% on the year (LSB)."
+  },
+  {
+   "id": "FD11",
+   "label": "Europe stays gas-short for ammonia: the TTF front month settles above EUR 80/MWh on 20 or more trading days from Jan 1 to Mar 31, 2027.",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 50.0,
+   "odds_text": "50% by 2027-03-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 50.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-02-15",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "FOOD",
+    "POWER"
+   ],
+   "least_capability": "QatarEnergy's force majeure stays in place through a normal winter (EU storage just under 75% full on Oct 28).",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.fertilizerdaily.com/20261102-ttf-gas-price-100-europe-ammonia/ ; https://www.agnavigator.com/Article/2026/11/05/nitrogen-market-update-cf-industries-reports-q3-2026-results/",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Europe stays gas-short for ammonia: the TTF front month settles above EUR 80/MWh on 20 or more trading days from Jan 1 to Mar 31, 2027.",
+   "current_fact": "TTF settled above EUR 100/MWh on Oct 28, 2026, the first time since Dec 2022 and about 3x pre-war. CF: 37% of Europe's ammonia capacity was offline or cut in October. Yara cut 150,000 t of ammonia in Q3."
+  },
+  {
+   "id": "FD12",
+   "label": "Egypt keeps rationing gas to fertilizer plants: cuts of 20% or more are still in force on Feb 28, 2027 (33% since Nov 8, 2026).",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 65.0,
+   "odds_text": "65% by 2027-02-28 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 65.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-01-31",
+   "window_end": "2027-02-28",
+   "layers_hit": [
+    "FOOD",
+    "POWER"
+   ],
+   "least_capability": "Costly spot LNG (JKM above $34/MMBtu at end October; close to $120M a cargo).",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://enterpriseam.com/egypt/2026/11/09/govt-deepens-industrial-gas-rationing-raising-curtailments-on-fertilizer-and-methanol-plants-to-33-and-notifying-ezz-steel-of-a-30-cut/",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Egypt keeps rationing gas to fertilizer plants: cuts of 20% or more are still in force on Feb 28, 2027 (33% since Nov 8, 2026).",
+   "current_fact": "Nov 8, 2026: cuts raised to 33% (MOPCO filing); Abu Qir and Kima confirmed the 20% cut of Nov 1; no end date. Egypt makes about 6.5 Mt of urea a year and exports about 3.6 Mt; granular about $535/t FOB, up 17% since September."
+  },
+  {
+   "id": "FD13",
+   "label": "US farmers cut corn for 2027: USDA Prospective Plantings (Mar 31, 2027) puts corn below 93.0 million acres (2026: 96.8 million).",
+   "arm": "OIL AND GULF",
+   "deepdive_arm": "GULF FERTILIZER (second order)",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 40.0,
+   "odds_text": "40% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 40.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-03-31",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "High nitrogen prices against corn prices tilt acres to soybeans; no new event needed.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt ; https://www.kpler.com/blog/ureas-gulf-squeeze-has-eased-but-the-acreage-hit-is-locked-in",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "US farmers cut corn for 2027: USDA Prospective Plantings (Mar 31, 2027) puts corn below 93.0 million acres (2026: 96.8 million).",
+   "current_fact": "USDA Nov 2026: US corn planted 96.8 M acres in 2026 vs 98.7 M in 2025. Kpler: the US would have planted more corn in 2026 had urea been cheaper."
+  },
+  {
+   "id": "FD14",
+   "label": "A Ukrainian strike halts a major Russian nitrogen plant (Nevinnomyssk Azot, Novomoskovsk Azot, Acron Novgorod, Dorogobuzh, KuibyshevAzot or Togliattiazot) for 2 weeks or more between Dec 1, 2026 and Jun 30, 2027.",
+   "arm": "RUSSIA AND EUROPE",
+   "deepdive_arm": "RUSSIAN GRAIN AND FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 55.0,
+   "odds_text": "55% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 55.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Long-range drones already used on these plants (Acron Jan 2026, Dorogobuzh Feb 2026, Nevinnomyssk Azot).",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.bcinsight.crugroup.com/2026/01/27/drone-attack-on-acron/ ; https://www.pravda.com.ua/eng/news/2026/02/27/8022981/ ; https://militarnyi.com/en/news/drones-chemical-plant-nevinnomyssk-azot/ ; https://www.agnavigator.com/Article/2026/11/05/nitrogen-market-update-cf-industries-reports-q3-2026-results/ ; https://www.themoscowtimes.com/2026/08/03/russia-eyes-new-windfall-as-iran-war-blocks-global-fertilizer-supply",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "A Ukrainian strike halts a major Russian nitrogen plant (Nevinnomyssk Azot, Novomoskovsk Azot, Acron Novgorod, Dorogobuzh, KuibyshevAzot or Togliattiazot) for 2 weeks or more between Dec 1, 2026 and Jun 30, 2027.",
+   "current_fact": "Jan 2026 drone attack on Acron; Feb 2026 FP-1 strike on the Dorogobuzh plant (Smolensk) with deaths; strikes on Nevinnomyssk Azot. CF (Nov 4): the war is a risk to Russian nitrogen sites. Russia exported about 43 Mt of fertilizer in 2025. Outage lengths [unverified]."
+  },
+  {
+   "id": "FD15",
+   "label": "Russia tightens fertilizer exports beyond its Dec 2026 to May 2027 quota (18.8 Mt): cuts the quota, or suspends ammonium nitrate or urea exports, by May 31, 2027.",
+   "arm": "RUSSIA AND EUROPE",
+   "deepdive_arm": "RUSSIAN GRAIN AND FERTILIZER",
+   "type": "TRIGGER",
+   "odds_now": 25.0,
+   "odds_text": "25% by 2027-05-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 25.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-03-15",
+   "window_end": "2027-05-31",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "A government decree. Russia suspended ammonium nitrate exports for a month in spring 2026 and moved to quotas on Apr 22.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://ru.themoscowtimes.com/2026/11/06/rf-ustanovila-kvotu-na-eksport-minudobreniy-na-dekabr-may-v-razmere-188-mln-t-a210616 ; https://www.kpler.com/blog/ureas-gulf-squeeze-has-eased-but-the-acreage-hit-is-locked-in ; https://www.themoscowtimes.com/2026/08/03/russia-eyes-new-windfall-as-iran-war-blocks-global-fertilizer-supply",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Russia tightens fertilizer exports beyond its Dec 2026 to May 2027 quota (18.8 Mt): cuts the quota, or suspends ammonium nitrate or urea exports, by May 31, 2027.",
+   "current_fact": "Nov 6, 2026: quota for Dec 1, 2026 to May 31, 2027 over 18.8 Mt (nitrogen over 11.3 Mt including 2.3 Mt ammonium nitrate; complex over 7.5 Mt). Domestic prices up more than 30% in 2026 (Aug 3)."
+  },
+  {
+   "id": "FD16",
+   "label": "Russia sets its Feb 15 to Jun 30, 2027 grain export quota at 12 Mt or less (2026: 20 Mt for wheat, meslin, barley and corn combined).",
+   "arm": "RUSSIA AND EUROPE",
+   "deepdive_arm": "RUSSIAN GRAIN AND FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 30.0,
+   "odds_text": "30% by 2027-02-15 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 30.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2026-12-26",
+   "window_end": "2027-02-15",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "A government resolution, usually issued in late December.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.fertilizerdaily.com/20251226-russia-sets-20-million-tons-grain-export-quota-for-first-half-of-2026/md/ ; https://ukragroconsult.com/en/news/russia-may-restrict-corn-exports-with-quotas-in-2027/ ; https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Russia sets its Feb 15 to Jun 30, 2027 grain export quota at 12 Mt or less (2026: 20 Mt for wheat, meslin, barley and corn combined).",
+   "current_fact": "Aug 2026: Russia weighing 2027 quotas on corn and barley of 3 to 5 Mt; corn stocks about 0.2 Mt. USDA Nov: Russian 2026-27 wheat crop 88.0 Mt, exports 39.0 Mt (cut from 40.0)."
+  },
+  {
+   "id": "FD17",
+   "label": "Novorossiysk is hit again: a strike halts two or more Novorossiysk grain terminals for 7 days or more between Dec 1, 2026 and Jun 30, 2027.",
+   "arm": "RUSSIA AND EUROPE",
+   "deepdive_arm": "RUSSIAN GRAIN AND FERTILIZER",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 50.0,
+   "odds_text": "50% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 50.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD",
+    "SHIPPING"
+   ],
+   "least_capability": "Sea and air drones already in use (Aug 2026: three terminals shut; five grain ships hit Aug 17 to 18).",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/082026-escalating-ship-attacks-at-russian-black-sea-ports-stall-wheat-trade ; https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/081226-russian-grain-exports-disrupted-after-novorossiysk-terminals-attack",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Novorossiysk is hit again: a strike halts two or more Novorossiysk grain terminals for 7 days or more between Dec 1, 2026 and Jun 30, 2027.",
+   "current_fact": "Aug 2026: three Novorossiysk deep-sea terminals shut after attacks; five grain ships hit near Novorossiysk and Tuapse on Aug 17 to 18; shipowners avoiding Russian ports; August wheat exports 1.8 Mt vs 4.5 Mt a year earlier."
+  },
+  {
+   "id": "FD18",
+   "label": "Russia's southern grain route stays impaired: Azov Sea and Black Sea grain loadings stay well below normal through Mar 31, 2027 (Azov halted since July 2026; Azov ports carry about a quarter of Russian grain exports).",
+   "arm": "RUSSIA AND EUROPE",
+   "deepdive_arm": "RUSSIAN GRAIN AND FERTILIZER",
+   "type": "NECESSARY CONDITION",
+   "odds_now": 72.0,
+   "odds_text": "72% by 2027-03-31 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 72.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-02-28",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "FOOD",
+    "SHIPPING"
+   ],
+   "least_capability": "None new. Drone risk and insurance already keep ships away.",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/082026-escalating-ship-attacks-at-russian-black-sea-ports-stall-wheat-trade ; https://ukragroconsult.com/en/news/russian-exporters-no-longer-expect-normalization-as-wheat-export-forecast-falls-to-a-multi-year-low/",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Russia's southern grain route stays impaired: Azov Sea and Black Sea grain loadings stay well below normal through Mar 31, 2027 (Azov halted since July 2026; Azov ports carry about a quarter of Russian grain exports).",
+   "current_fact": "Aug 20, 2026: Azov ports halted since July. Oct 1: SovEcon cut its season forecast to 36.7 Mt; Azov and Black Sea shipments well below normal; Novorossiysk and Tuapse at reduced capacity; no normalization expected before 2027. Status since October [unverified]."
+  },
+  {
+   "id": "FD19",
+   "label": "Food prices turn up: the FAO Food Price Index prints above 133.9 (its October 2026 level) in at least one month from November 2026 to June 2027.",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "FOOD LAYER",
+   "type": "NECESSARY CONDITION",
+   "odds_now": 85.0,
+   "odds_text": "85% by 2027-07-03 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 85.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-12-04",
+   "window_peak": "2027-03-05",
+   "window_end": "2027-07-03",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Any one arm biting; sugar has already risen four months running.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://www.bizcommunity.com/article/global-food-prices-fall-in-october-as-sugar-rises-for-fourth-month-639621a",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Food prices turn up: the FAO Food Price Index prints above 133.9 (its October 2026 level) in at least one month from November 2026 to June 2027.",
+   "current_fact": "Oct 2026 index 133.9, down 1.6 points; cereals down 4.5%, vegetable oils up 0.3%, sugar up 6.6% (FAO, Nov 6). Next release about Dec 4."
+  },
+  {
+   "id": "FD20",
+   "label": "Vegetable oils lead the turn: the FAO Vegetable Oil Price Index rises 15% or more above its October 2026 level in any month by June 2027.",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "EL NINO",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 28.0,
+   "odds_text": "28% by 2027-07-03 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 28.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-08",
+   "window_peak": "2027-05-07",
+   "window_end": "2027-07-03",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "El Nino yield losses reach Indonesia from Q1 2027 while B50 absorbs supply.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "https://tradingeconomics.com/commodity/palm-oil ; https://indonesiabusinesspost.com/7851/energy-and-resources/indonesia-s-palm-oil-exports-forecast-to-fall-12-in-2027-as-el-nino-and-biodiesel-demand-tighten-supply ; https://www.bizcommunity.com/article/global-food-prices-fall-in-october-as-sugar-rises-for-fourth-month-639621a",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "Vegetable oils lead the turn: the FAO Vegetable Oil Price Index rises 15% or more above its October 2026 level in any month by June 2027.",
+   "current_fact": "Palm oil RM4,157/t on Nov 23, 2026, down 13% in a month; Malaysian stocks a record 3.62 Mt in October. FAO vegetable oils up 0.3% in October."
+  },
+  {
+   "id": "FD21",
+   "label": "The grain cushion holds: USDA's Feb 10, 2027 WASDE keeps 2026-27 world wheat ending stocks at 275 Mt or more (Nov 2026: 280.8 Mt).",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "FOOD LAYER (brake)",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 72.0,
+   "odds_text": "72% by 2027-02-28 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 72.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2026-11-23",
+   "window_peak": "2027-02-10",
+   "window_end": "2027-02-28",
+   "layers_hit": [
+    "FOOD"
+   ],
+   "least_capability": "Nothing has to happen; stocks are already high.",
+   "status": "ON TRACK",
+   "status_deepdive": "RUNNING",
+   "source": "https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt ; https://www.fastmarkets.com/insights/amis-revises-global-wheat-and-corn-forecast-warns-on-black-sea-bottleneck/ ; https://www.bizcommunity.com/article/global-food-prices-fall-in-october-as-sugar-rises-for-fourth-month-639621a",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "The grain cushion holds: USDA's Feb 10, 2027 WASDE keeps 2026-27 world wheat ending stocks at 275 Mt or more (Nov 2026: 280.8 Mt).",
+   "current_fact": "USDA Nov 2026: world wheat ending stocks 280.8 Mt (Oct 276.0). AMIS Nov 10: 360.6 Mt, up from 346 Mt. FAO: cereal stocks-to-use 32.4% (Nov 6)."
+  },
+  {
+   "id": "FD22",
+   "label": "THE FOOD COLLISION LANDS IN H1 2027: by Jun 30, 2027 all three hold: (1) WF4 settles true (Gulf fertilizer exports under half of 2025 in every month through March); (2) Russian wheat exports for Jul 2026 to May 2027 total under 34 Mt (on pace for RU9); (3) India restricts a non-basmati rice export (WF3) or Indonesia tightens palm oil exports (FD02).",
+   "arm": "WEATHER AND FOOD",
+   "deepdive_arm": "COLLISION",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 28.0,
+   "odds_text": "28% by 2027-06-30 (food deep dive, Nov 23)",
+   "odds_history": [
+    {
+     "date": "2026-11-23",
+     "odds": 28.0,
+     "note": "food deep dive, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-23",
+   "window_start": "2027-01-01",
+   "window_peak": "2027-03-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "FOOD",
+    "SHIPPING"
+   ],
+   "least_capability": "No new event: today's Gulf and Russian conditions persist while one government notice lands.",
+   "status": "ON TRACK",
+   "status_deepdive": "OPEN",
+   "source": "graph.json odds_now (WF4, RU9, WF3) ; this file (FD02)",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "settlement_test": "THE FOOD COLLISION LANDS IN H1 2027: by Jun 30, 2027 all three hold: (1) WF4 settles true (Gulf fertilizer exports under half of 2025 in every month through March); (2) Russian wheat exports for Jul 2026 to May 2027 total under 34 Mt (on pace for RU9); (3) India restricts a non-basmati rice export (WF3) or Indonesia tightens palm oil exports (FD02).",
+   "current_fact": "Graph odds Nov 23: WF4 75, RU9 62, WF3 50; this deep dive: FD02 35. Joint, treating the arms as independent: 0.75 x 0.62 x 0.58 = about 27%."
   }
  ],
  "links": [
@@ -40754,6 +41443,825 @@
    "estimated": true,
    "delay_estimated": true,
    "origin": "v5.1 live patch Nov 23 (orphan wiring)"
+  },
+  {
+   "source": "WF1",
+   "target": "FD01",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A very strong El Nino peak firms up the crop losses (A now 90, B now 90, B if A fires 92)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD01",
+   "target": "FD03",
+   "sign": 1,
+   "strength": 0.133,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "No crop shortfall, no reason for an outright ban (A now 90, B now 12, B if A fires 13.3)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD01",
+   "target": "FD04",
+   "sign": 1,
+   "strength": 0.067,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "Indonesia banned in 2022 only after a domestic shortage (A now 90, B now 6, B if A fires 6.7)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD01",
+   "target": "WF3",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A smaller rice crop raises the odds of any rice curb (A now 90, B now 50, B if A fires 53)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF3",
+   "target": "FD03",
+   "sign": 1,
+   "strength": 0.16,
+   "delay_days": 120,
+   "kind": "LIKELY",
+   "reason": "The Sep 2022 broken-rice ban came ten months before the Jul 2023 white-rice ban (A now 50, B now 12, B if A fires 20)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD05",
+   "target": "FD03",
+   "sign": 1,
+   "strength": 0.05,
+   "delay_days": 0,
+   "kind": "MAGNIFIES",
+   "reason": "Elections make food prices a ruling-party problem (A now 95, B now 12, B if A fires 12.2)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD05",
+   "target": "WF3",
+   "sign": 1,
+   "strength": 0.1,
+   "delay_days": 0,
+   "kind": "MAGNIFIES",
+   "reason": "Elections raise the bar for letting rice prices run (A now 95, B now 50, B if A fires 50.5)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD03",
+   "target": "WF8",
+   "sign": 1,
+   "strength": 0.591,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "An outright white-rice ban settles WF8 (A now 12, B now 48, B if A fires 100)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF2",
+   "target": "FD02",
+   "sign": 1,
+   "strength": 0.333,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "High palm prices push Jakarta to protect cooking oil and B50 (A now 55, B now 35, B if A fires 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF2",
+   "target": "FD04",
+   "sign": 1,
+   "strength": 0.089,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "The 2022 ban followed a price spike (A now 55, B now 6, B if A fires 10)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF2",
+   "target": "FD20",
+   "sign": 1,
+   "strength": 0.489,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Palm is the biggest swing in the vegetable oil index (A now 55, B now 28, B if A fires 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD02",
+   "target": "FD04",
+   "sign": 1,
+   "strength": 0.092,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "In 2022 levy and DMO steps came before the ban (A now 35, B now 6, B if A fires 12)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD02",
+   "target": "FD20",
+   "sign": 1,
+   "strength": 0.154,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Less Indonesian oil on the world market (A now 35, B now 28, B if A fires 38)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD04",
+   "target": "WF8",
+   "sign": 1,
+   "strength": 0.553,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "An outright palm oil ban settles WF8 (A now 6, B now 48, B if A fires 100)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD20",
+   "target": "WF7",
+   "sign": 1,
+   "strength": 0.167,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Vegetable oils carry the index when they jump (A now 28, B now 48, B if A fires 60)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD20",
+   "target": "FD04",
+   "sign": 1,
+   "strength": 0.056,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "World prices feed the domestic cooking oil price (A now 28, B now 6, B if A fires 10)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD20",
+   "target": "FD19",
+   "sign": 1,
+   "strength": 0.194,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A 15% oil jump lifts the whole index (A now 28, B now 85, B if A fires 99)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD06",
+   "target": "WF4",
+   "sign": 1,
+   "strength": 0.833,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "WF4 holds only while no bypass replaces the strait (A now 90, B now 75, B if A fires 83.3)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD06",
+   "target": "FD07",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "Gulf sulfur has no bypass either (A now 90, B now 70, B if A fires 72)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "P5",
+   "target": "FD06",
+   "sign": 1,
+   "strength": 0.1,
+   "delay_days": 14,
+   "kind": "MAGNIFIES",
+   "reason": "Houthi attacks would also close the Red Sea ports used for the Saudi trucking bypass (A now 50, B now 90, B if A fires 95)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF4",
+   "target": "FD07",
+   "sign": 1,
+   "strength": 0.32,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Sulfur rides the same blocked strait (A now 75, B now 70, B if A fires 78)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF4",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.24,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "About 40% of seaborne urea stays stuck into spring (A now 75, B now 38, B if A fires 44)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF4",
+   "target": "FD10",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Gulf ammonia stays off the market (A now 75, B now 40, B if A fires 45)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD07",
+   "sign": -1,
+   "strength": 0.305,
+   "delay_days": 60,
+   "kind": "OPPOSES",
+   "reason": "Hormuz reopening frees Gulf sulfur (A now 18, B now 70, B if A fires 45)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD09",
+   "sign": -1,
+   "strength": 0.22,
+   "delay_days": 45,
+   "kind": "OPPOSES",
+   "reason": "Hormuz reopening frees about 40% of seaborne urea (A now 18, B now 38, B if A fires 20)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD10",
+   "sign": -1,
+   "strength": 0.22,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Hormuz reopening frees Gulf ammonia (A now 18, B now 40, B if A fires 22)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD11",
+   "sign": -1,
+   "strength": 0.244,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Qatar LNG returns and TTF falls (A now 18, B now 50, B if A fires 30)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD12",
+   "sign": -1,
+   "strength": 0.183,
+   "delay_days": 45,
+   "kind": "OPPOSES",
+   "reason": "Cheaper LNG lets Egypt restore gas to fertilizer plants (A now 18, B now 65, B if A fires 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "O3",
+   "target": "FD22",
+   "sign": -1,
+   "strength": 0.244,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Removes the Gulf leg of the collision (A now 18, B now 28, B if A fires 8)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD08",
+   "target": "FD09",
+   "sign": -1,
+   "strength": 0.143,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Chinese urea fills part of the Gulf gap (A now 30, B now 38, B if A fires 28)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD08",
+   "target": "FD10",
+   "sign": -1,
+   "strength": 0.071,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Less urea demand for imported ammonia (A now 30, B now 40, B if A fires 35)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD11",
+   "target": "FD10",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "European curtailment pulls ammonia from Tampa's market (A now 50, B now 40, B if A fires 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD11",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.16,
+   "delay_days": 45,
+   "kind": "LIKELY",
+   "reason": "Less European urea and nitrates (A now 50, B now 38, B if A fires 46)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD11",
+   "target": "FD12",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "The same LNG squeeze sets Egypt's import bill (A now 50, B now 65, B if A fires 75)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD12",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.143,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Egypt is a top urea exporter; less Egyptian urea for Europe and the US (A now 65, B now 38, B if A fires 43)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD10",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.233,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Ammonia is the feedstock for urea (A now 40, B now 38, B if A fires 52)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD09",
+   "target": "FD13",
+   "sign": 1,
+   "strength": 0.242,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "Costly nitrogen tilts acres from corn to soybeans (A now 38, B now 40, B if A fires 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD09",
+   "target": "WF7",
+   "sign": 1,
+   "strength": 0.065,
+   "delay_days": 120,
+   "kind": "LIKELY",
+   "reason": "Input costs pass into grain prices (A now 38, B now 48, B if A fires 52)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD09",
+   "target": "FD19",
+   "sign": 1,
+   "strength": 0.065,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "Fertilizer costs feed cereal prices (A now 38, B now 85, B if A fires 89)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD07",
+   "target": "WF7",
+   "sign": 1,
+   "strength": 0.067,
+   "delay_days": 180,
+   "kind": "LIKELY",
+   "reason": "Less phosphate applied trims 2027 yields (A now 70, B now 48, B if A fires 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD13",
+   "target": "WF7",
+   "sign": 1,
+   "strength": 0.033,
+   "delay_days": 180,
+   "kind": "LIKELY",
+   "reason": "Fewer corn acres tighten the 2027-28 balance (A now 40, B now 48, B if A fires 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD14",
+   "target": "FD10",
+   "sign": 1,
+   "strength": 0.133,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "Russia is a large ammonia and nitrogen exporter (A now 55, B now 40, B if A fires 46)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD14",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.089,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Less Russian urea at the margin (A now 55, B now 38, B if A fires 42)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD14",
+   "target": "FD15",
+   "sign": 1,
+   "strength": 0.156,
+   "delay_days": 14,
+   "kind": "MAGNIFIES",
+   "reason": "Outages push Moscow to protect home supply (A now 55, B now 25, B if A fires 32)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD15",
+   "target": "FD09",
+   "sign": 1,
+   "strength": 0.133,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Russia shipped about 870 kt of urea to India in H1 2026 alone (A now 25, B now 38, B if A fires 48)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD15",
+   "target": "FD10",
+   "sign": 1,
+   "strength": 0.08,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Less Russian nitrogen on the water (A now 25, B now 40, B if A fires 46)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "RU4",
+   "target": "FD14",
+   "sign": -1,
+   "strength": 0.727,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "A ceasefire ends the strikes on plants (A now 45, B now 55, B if A fires 15)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "RU4",
+   "target": "FD17",
+   "sign": -1,
+   "strength": 0.636,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "A ceasefire ends the strikes on ports (A now 45, B now 50, B if A fires 15)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "RU4",
+   "target": "FD18",
+   "sign": -1,
+   "strength": 0.764,
+   "delay_days": 60,
+   "kind": "OPPOSES",
+   "reason": "Azov and Black Sea routes reopen (A now 45, B now 72, B if A fires 30)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD16",
+   "target": "RU9",
+   "sign": 1,
+   "strength": 0.114,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "A tight quota caps second-half shipments (A now 30, B now 62, B if A fires 70)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD17",
+   "target": "RU9",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Novorossiysk is the main wheat outlet (A now 50, B now 62, B if A fires 72)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD17",
+   "target": "FD19",
+   "sign": 1,
+   "strength": 0.04,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Black Sea disruption lifts wheat prices (A now 50, B now 85, B if A fires 87)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD18",
+   "target": "RU9",
+   "sign": 1,
+   "strength": 0.861,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "Exports under 38 Mt need the southern route to stay impaired (A now 72, B now 62, B if A fires 86.1)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF4",
+   "target": "FD22",
+   "sign": 1,
+   "strength": 0.373,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "Leg 1 of the collision (A now 75, B now 28, B if A fires 37.3)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "RU9",
+   "target": "FD22",
+   "sign": 1,
+   "strength": 0.452,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "Leg 2 of the collision (A now 62, B now 28, B if A fires 45.2)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "WF3",
+   "target": "FD22",
+   "sign": 1,
+   "strength": 0.37,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "Leg 3 (rice option); then the joint is WF4 x RU9 (A now 50, B now 28, B if A fires 46.5)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD02",
+   "target": "FD22",
+   "sign": 1,
+   "strength": 0.285,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "Leg 3 (palm option); then the joint is WF4 x RU9 (A now 35, B now 28, B if A fires 46.5)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD22",
+   "target": "WF8",
+   "sign": 1,
+   "strength": 0.194,
+   "delay_days": 90,
+   "kind": "LIKELY",
+   "reason": "Three arms on the food layer at once raise both WF8 legs (A now 28, B now 48, B if A fires 62)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD19",
+   "target": "WF7",
+   "sign": 1,
+   "strength": 0.565,
+   "delay_days": 0,
+   "kind": "NECESSARY",
+   "reason": "The index cannot reach 140 without first rising above 133.9 (A now 85, B now 48, B if A fires 56.5)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD19",
+   "target": "WF8",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "Bans and records follow rising prices (A now 85, B now 48, B if A fires 51)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD19",
+   "target": "FD03",
+   "sign": 1,
+   "strength": 0.1,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Rising world prices make export curbs more tempting (A now 85, B now 12, B if A fires 13.5)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD21",
+   "target": "WF7",
+   "sign": -1,
+   "strength": 0.214,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "Big stocks cap cereal prices (A now 72, B now 48, B if A fires 42)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
+  },
+  {
+   "source": "FD21",
+   "target": "WF8",
+   "sign": -1,
+   "strength": 0.107,
+   "delay_days": 60,
+   "kind": "OPPOSES",
+   "reason": "Big stocks make a record harder (A now 72, B now 48, B if A fires 45)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
+   "display_only": false
   }
  ],
  "companies": [
@@ -48436,9 +49944,35 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: US LNG exporter, O6 row"
+    },
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:LNG",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: TTF spread on US cargoes.",
+     "estimated": true
+    },
+    {
+     "node": "FD12",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD12 > CO:LNG",
+     "exposure_weight": 0.2,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Egypt spot LNG buying.",
+     "estimated": true
     }
    ],
    "event_nodes": [
+    "FD11",
+    "FD12",
     "O6",
     "P1"
    ],
@@ -48447,7 +49981,7 @@
     "OIL AND GULF",
     "SHIPPING AND CANALS"
    ],
-   "collision_candidate": false,
+   "collision_candidate": true,
    "options_check": {
     "date": "2026-11-23",
     "source": "marketdata.theocc.com series search",
@@ -48458,6 +49992,24 @@
     "last_expiry": "2029-01-19",
     "call_oi": 49134,
     "put_oi": 27435
+   },
+   "deepdive_profile": {
+    "deepdive_id": "CO:LNG",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "LNG (NYSE American)",
+    "listed_options": "yes, light, 76,569 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "US LNG exporter; with Qatari LNG under force majeure, the Europe and Egypt gas squeeze runs through US cargoes.",
+    "source": "https://www.fertilizerdaily.com/20261102-ttf-gas-price-100-europe-ammonia/ ; https://enterpriseam.com/egypt/2026/11/09/govt-deepens-industrial-gas-rationing-raising-curtailments-on-fertilizer-and-methanol-plants-to-33-and-notifying-ezz-steel-of-a-30-cut/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD11",
+     "FD12"
+    ]
    }
   },
   {
@@ -49950,6 +51502,1685 @@
     "nodes_on": [
      "RD02"
     ]
+   }
+  },
+  {
+   "id": "CO:CF",
+   "ticker": "CF",
+   "name": "CF Industries Holdings",
+   "exchange": "NYSE",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CF, 15 expirations to 2029-01-19, open interest 37,494 calls / 30,263 puts (light)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:CF",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf urea stuck while North American plants run full.",
+     "estimated": true
+    },
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:CF",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: US urea price.",
+     "estimated": true
+    },
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:CF",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: ammonia price.",
+     "estimated": true
+    },
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:CF",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: European gas against cheap US gas.",
+     "estimated": true
+    },
+    {
+     "node": "FD08",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD08 > CO:CF",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: China export quota.",
+     "estimated": true
+    },
+    {
+     "node": "FD14",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD14 > CO:CF",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian plant outages.",
+     "estimated": true
+    },
+    {
+     "node": "FD15",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD15 > CO:CF",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian export curbs.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD08",
+    "FD09",
+    "FD10",
+    "FD11",
+    "FD14",
+    "FD15",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:CF",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "CF (NYSE)",
+    "listed_options": "yes, light, 67,757 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": true,
+    "note": "Largest North American nitrogen maker; about 9.5 Mt ammonia in 2026 at about 97% utilization; says Middle East urea exports were cut about in half and 37% of Europe's ammonia capacity was offline in October.",
+    "source": "https://www.agnavigator.com/Article/2026/11/05/nitrogen-market-update-cf-industries-reports-q3-2026-results/ ; https://www.sec.gov/Archives/edgar/data/0001324404/000132440426000025/cf-20260930.htm",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF4",
+     "FD09",
+     "FD10",
+     "FD11",
+     "FD08",
+     "FD14",
+     "FD15"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CF",
+    "liquidity": "light",
+    "series": 615,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 37494,
+    "put_oi": 30263
+   }
+  },
+  {
+   "id": "CO:LXU",
+   "ticker": "LXU",
+   "name": "LSB Industries",
+   "exchange": "NYSE",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: LXU, 5 expirations to 2028-01-21, open interest 15,318 calls / 4,813 puts (light)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:LXU",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Tampa-linked ammonia sales.",
+     "estimated": true
+    },
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:LXU",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: US gas cost against TTF.",
+     "estimated": true
+    },
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:LXU",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: US nitrogen prices.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD09",
+    "FD10",
+    "FD11"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:LXU",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "LXU (NYSE)",
+    "listed_options": "yes, light, 20,131 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "US ammonia, nitrates and UAN; sells ammonia off the Tampa benchmark (Q3 2026 Tampa average $622); Q3 gas cost $2.93/MMBtu against TTF near $32.5.",
+    "source": "https://www.fertilizerdaily.com/20261102-tampa-ammonia-november-2026/ ; https://www.fertilizerdaily.com/20261102-ttf-gas-price-100-europe-ammonia/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD10",
+     "FD11",
+     "FD09"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "LXU",
+    "liquidity": "light",
+    "series": 49,
+    "expirations": 5,
+    "last_expiry": "2028-01-21",
+    "call_oi": 15318,
+    "put_oi": 4813
+   }
+  },
+  {
+   "id": "CO:UAN",
+   "ticker": "UAN",
+   "name": "CVR Partners",
+   "exchange": "NYSE",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: UAN, 4 expirations to 2027-05-21, open interest 2,843 calls / 2,004 puts (very light)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:UAN",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: US nitrogen prices.",
+     "estimated": true
+    },
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:UAN",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: ammonia price.",
+     "estimated": true
+    },
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:UAN",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf supply gap.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD09",
+    "FD10",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:UAN",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "UAN (NYSE)",
+    "listed_options": "yes, very light, 4,847 contracts open interest",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "US nitrogen maker (UAN and ammonia). Exposure from the company profile, not checked this run.",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD09",
+     "FD10",
+     "WF4"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "UAN",
+    "liquidity": "very light",
+    "series": 89,
+    "expirations": 4,
+    "last_expiry": "2027-05-21",
+    "call_oi": 2843,
+    "put_oi": 2004
+   }
+  },
+  {
+   "id": "CO:NTR",
+   "ticker": "NTR",
+   "name": "Nutrien",
+   "exchange": "NYSE",
+   "other_listings": [
+    {
+     "ticker": "NTR",
+     "exchange": "TSX"
+    }
+   ],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NTR, 13 expirations to 2029-01-19, open interest 49,359 calls / 43,473 puts (light)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:NTR",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: US nitrogen prices.",
+     "estimated": true
+    },
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:NTR",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: ammonia price.",
+     "estimated": true
+    },
+    {
+     "node": "FD15",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD15 > CO:NTR",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian export curbs.",
+     "estimated": true
+    },
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:NTR",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf supply gap.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD09",
+    "FD10",
+    "FD15",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:NTR",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "NTR (NYSE); NTR (TSX)",
+    "listed_options": "yes, light, 92,832 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": true,
+    "note": "Potash and nitrogen; Trinidad nitrogen (about 85,000 t a month of ammonia) shut indefinitely Oct 5, 2026; sold its 50% of Profertil to Adecoagro.",
+    "source": "https://www.bnnbloomberg.ca/business/company-news/2026/10/05/nutrien-to-indefinitely-shut-trinidad-nitrogen-operations-amid-gas-supply-constraints ; https://ir.adecoagro.com/adecoagro-to-acquire-best-in-class-urea-producer-2/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD09",
+     "FD10",
+     "FD15",
+     "WF4"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NTR",
+    "liquidity": "light",
+    "series": 419,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 49359,
+    "put_oi": 43473
+   }
+  },
+  {
+   "id": "CO:MOS",
+   "ticker": "MOS",
+   "name": "Mosaic",
+   "exchange": "NYSE",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MOS, 13 expirations to 2029-01-19, open interest 236,836 calls / 157,427 puts (moderate)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD07",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD07 > CO:MOS",
+     "exposure_weight": 0.7,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: sulfur cost and phosphate curtailments.",
+     "estimated": true
+    },
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:MOS",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf sulfur and phosphate behind Hormuz.",
+     "estimated": true
+    },
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:MOS",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: ammonia buyer.",
+     "estimated": true
+    },
+    {
+     "node": "FD15",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD15 > CO:MOS",
+     "exposure_weight": 0.2,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian phosphate and potash competition.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD07",
+    "FD10",
+    "FD15",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:MOS",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "MOS (NYSE)",
+    "listed_options": "yes, moderate, 394,263 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": true,
+    "note": "Phosphate and potash; Louisiana phosphate idled or curtailed on sulfur above $1,000/t; buyer in the Tampa ammonia contract; Q3 2026 phosphate operating loss $194M.",
+    "source": "https://www.fertilizerdaily.com/20261029-sulfur-above-1000t-keeps-mosaic-phosphate-plants-curtailed-ahead-of-q3-results/ ; https://www.agnavigator.com/Article/2026/11/04/mosaic-posts/ ; https://www.fertilizerdaily.com/20261102-tampa-ammonia-november-2026/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD07",
+     "WF4",
+     "FD10",
+     "FD15"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MOS",
+    "liquidity": "moderate",
+    "series": 327,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 236836,
+    "put_oi": 157427
+   }
+  },
+  {
+   "id": "CO:YAR",
+   "ticker": "YAR",
+   "name": "Yara International",
+   "exchange": "Oslo Bors",
+   "other_listings": [
+    {
+     "ticker": "YARIY",
+     "exchange": "OTC"
+    }
+   ],
+   "listed_options": "no",
+   "listed_options_basis": "OCC series search Nov 23, 2026: no series listed for YARIY",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:YAR",
+     "exposure_weight": 0.7,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: TTF gas cost and curtailments.",
+     "estimated": true
+    },
+    {
+     "node": "FD10",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD10 > CO:YAR",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Tampa supplier.",
+     "estimated": true
+    },
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:YAR",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: nitrogen prices.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD09",
+    "FD10",
+    "FD11"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:YAR",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "YAR (Oslo Bors); YARIY (OTC)",
+    "listed_options": "no US-listed options",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Europe's largest ammonia maker on TTF gas; cut 150,000 t of ammonia in Q3 2026 (mainly Ferrara); supplier in the Tampa ammonia contract.",
+    "source": "https://www.fertilizerdaily.com/20261102-ttf-gas-price-100-europe-ammonia/ ; https://www.fertilizerdaily.com/20261102-tampa-ammonia-november-2026/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD11",
+     "FD10",
+     "FD09"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "YARIY",
+    "liquidity": "none",
+    "series": 0,
+    "expirations": 0,
+    "last_expiry": null,
+    "call_oi": 0,
+    "put_oi": 0
+   }
+  },
+  {
+   "id": "CO:2020",
+   "ticker": "2020",
+   "name": "SABIC Agri-Nutrients",
+   "exchange": "Tadawul",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:2020",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: exports stuck behind Hormuz.",
+     "estimated": true
+    },
+    {
+     "node": "FD06",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD06 > CO:2020",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Red Sea trucking bypass.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD06",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:2020",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "2020 (Tadawul)",
+    "listed_options": "no US-listed options",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Saudi urea and ammonia at Jubail, inside the Gulf. Plant location from the company profile, not checked this run.",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF4",
+     "FD06"
+    ]
+   }
+  },
+  {
+   "id": "CO:1211",
+   "ticker": "1211",
+   "name": "Saudi Arabian Mining Co (Ma'aden)",
+   "exchange": "Tadawul",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:1211",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: exports stuck behind Hormuz.",
+     "estimated": true
+    },
+    {
+     "node": "FD06",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD06 > CO:1211",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: bypass.",
+     "estimated": true
+    },
+    {
+     "node": "FD07",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD07 > CO:1211",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: phosphate supply.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD06",
+    "FD07",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:1211",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "1211 (Tadawul)",
+    "listed_options": "no US-listed options",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Phosphate and ammonia at Ras al-Khair on the Gulf coast; idled two of three 1.1 Mt a year ammonia units in March 2026; ships small lots to India. Also gold and aluminium, so not a pure fertilizer name.",
+    "source": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901994-opportunistic-saudi-ammonia-exports-to-continue-maaden",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF4",
+     "FD06",
+     "FD07"
+    ]
+   }
+  },
+  {
+   "id": "CO:IQCD",
+   "ticker": "IQCD",
+   "name": "Industries Qatar",
+   "exchange": "Qatar Stock Exchange",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:IQCD",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: QAFCO exports.",
+     "estimated": true
+    },
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:IQCD",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Qatar gas and LNG force majeure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD11",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:IQCD",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "IQCD (Qatar Stock Exchange)",
+    "listed_options": "no US-listed options",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Owner of QAFCO, the world's largest single-site urea exporter (about 14% of global urea), offline since Mar 4, 2026 after QatarEnergy shut gas output. Ownership link [unverified this run].",
+    "source": "https://www.gulf-times.com/article/723114/business/iran-war-threatens-global-food-security-as-qatars-fertiliser-plant-goes-offline",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF4",
+     "FD11"
+    ]
+   }
+  },
+  {
+   "id": "CO:FERTIGLB",
+   "ticker": "FERTIGLB",
+   "name": "Fertiglobe",
+   "exchange": "ADX",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:FERTIGLB",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Ruwais exports behind Hormuz.",
+     "estimated": true
+    },
+    {
+     "node": "FD12",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD12 > CO:FERTIGLB",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Egypt plants on rationed gas.",
+     "estimated": true
+    },
+    {
+     "node": "FD06",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD06 > CO:FERTIGLB",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: bypass.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD06",
+    "FD12",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:FERTIGLB",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "FERTIGLB (ADX)",
+    "listed_options": "no US-listed options",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "ADNOC-controlled nitrogen exporter: Ruwais (UAE, inside the Gulf) plus Egypt (EFC, EBIC) and Algeria. Plant footprint from the company profile, not checked this run.",
+    "source": "https://www.semafor.com/article/05/14/2026/fertiglobe-warns-of-wars-long-term-impact-on-food-prices",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF4",
+     "FD12",
+     "FD06"
+    ]
+   }
+  },
+  {
+   "id": "CO:ABUK",
+   "ticker": "ABUK",
+   "name": "Abu Qir Fertilizers and Chemical Industries",
+   "exchange": "EGX",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD12",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD12 > CO:ABUK",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: gas rationing.",
+     "estimated": true
+    },
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:ABUK",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: urea price.",
+     "estimated": true
+    },
+    {
+     "node": "FD11",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD11 > CO:ABUK",
+     "exposure_weight": 0.2,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: LNG price.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD09",
+    "FD11",
+    "FD12"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:ABUK",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "ABUK (EGX)",
+    "listed_options": "no US-listed options",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Egypt's largest urea maker; confirmed the Nov 1, 2026 20% gas cut (government raised cuts to 33% on Nov 8).",
+    "source": "https://enterpriseam.com/egypt/2026/11/09/govt-deepens-industrial-gas-rationing-raising-curtailments-on-fertilizer-and-methanol-plants-to-33-and-notifying-ezz-steel-of-a-30-cut/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD12",
+     "FD09",
+     "FD11"
+    ]
+   }
+  },
+  {
+   "id": "CO:AKRN",
+   "ticker": "AKRN",
+   "name": "Acron",
+   "exchange": "Moscow Exchange",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "FD14",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD14 > CO:AKRN",
+     "exposure_weight": 0.7,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: drone strikes on plants.",
+     "estimated": true
+    },
+    {
+     "node": "FD15",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD15 > CO:AKRN",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian export quota.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD14",
+    "FD15"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "RUSSIA AND EUROPE"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:AKRN",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "AKRN (Moscow Exchange)",
+    "listed_options": "no US-listed options",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Russian nitrogen and phosphate maker (Novgorod, Dorogobuzh); hit by Ukrainian drones in Jan and Feb 2026 per headlines (article bodies not read). Not reachable for US accounts [unverified on current access rules].",
+    "source": "https://www.bcinsight.crugroup.com/2026/01/27/drone-attack-on-acron/ ; https://www.pravda.com.ua/eng/news/2026/02/27/8022981/",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD14",
+     "FD15"
+    ]
+   }
+  },
+  {
+   "id": "CO:WEAT",
+   "ticker": "WEAT",
+   "name": "Teucrium Wheat Fund",
+   "exchange": "NYSE Arca",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: WEAT, 8 expirations to 2029-01-19, open interest 160,907 calls / 9,103 puts (moderate)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "RU9",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link RU9 > CO:WEAT",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian export shortfall.",
+     "estimated": true
+    },
+    {
+     "node": "FD16",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD16 > CO:WEAT",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Russian quota.",
+     "estimated": true
+    },
+    {
+     "node": "FD17",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD17 > CO:WEAT",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Novorossiysk outage.",
+     "estimated": true
+    },
+    {
+     "node": "FD18",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD18 > CO:WEAT",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: southern route.",
+     "estimated": true
+    },
+    {
+     "node": "FD21",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD21 > CO:WEAT",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: world wheat stocks.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD16",
+    "FD17",
+    "FD18",
+    "FD21",
+    "RU9"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:WEAT",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "WEAT (NYSE Arca)",
+    "listed_options": "yes, moderate, 170,010 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Fund that holds CBOT wheat futures; the listed price pure-play for the Russian grain arm (no investable Russian exporter).",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "RU9",
+     "FD16",
+     "FD17",
+     "FD18",
+     "FD21"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "WEAT",
+    "liquidity": "moderate",
+    "series": 182,
+    "expirations": 8,
+    "last_expiry": "2029-01-19",
+    "call_oi": 160907,
+    "put_oi": 9103
+   }
+  },
+  {
+   "id": "CO:DBA",
+   "ticker": "DBA",
+   "name": "Invesco DB Agriculture Fund",
+   "exchange": "NYSE Arca",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DBA, 6 expirations to 2029-01-19, open interest 107,733 calls / 3,511 puts (moderate)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "WF7",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF7 > CO:DBA",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: FAO index at 140.",
+     "estimated": true
+    },
+    {
+     "node": "FD19",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD19 > CO:DBA",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: food prices turn up.",
+     "estimated": true
+    },
+    {
+     "node": "RU9",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link RU9 > CO:DBA",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: wheat.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD19",
+    "RU9",
+    "WF7"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:DBA",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "DBA (NYSE Arca)",
+    "listed_options": "yes, moderate, 111,244 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Fund of agricultural futures (grains, softs, livestock); a basket proxy for the FAO index path. Holdings mix [unverified this run].",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "WF7",
+     "FD19",
+     "RU9"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DBA",
+    "liquidity": "moderate",
+    "series": 130,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 107733,
+    "put_oi": 3511
+   }
+  },
+  {
+   "id": "CO:AGRO",
+   "ticker": "AGRO",
+   "name": "Adecoagro",
+   "exchange": "NYSE",
+   "other_listings": [],
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AGRO, 4 expirations to 2027-06-17, open interest 17,117 calls / 4,796 puts (light)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD09 > CO:AGRO",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: urea price via Profertil.",
+     "estimated": true
+    },
+    {
+     "node": "WF4",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF4 > CO:AGRO",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf supply gap.",
+     "estimated": true
+    },
+    {
+     "node": "FD03",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD03 > CO:AGRO",
+     "exposure_weight": 0.2,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: rice prices if India bans.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD03",
+    "FD09",
+    "WF4"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:AGRO",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "AGRO (NYSE)",
+    "listed_options": "yes, light, 21,913 contracts open interest",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": true,
+    "note": "Bought Nutrien's 50% of Profertil (about 1.3 Mt urea and 790 kt ammonia a year; about 60% of Argentina's urea) for about $600M with ACA (80/20), announced Sep 15, 2025; completion reported later; also grows rice in Argentina and Uruguay.",
+    "source": "https://ir.adecoagro.com/adecoagro-to-acquire-best-in-class-urea-producer-2/ ; https://www.barchart.com/story/news/36620209/adecoagro-completes-the-acquisition-of-profertil",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD09",
+     "WF4",
+     "FD03"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AGRO",
+    "liquidity": "light",
+    "series": 33,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 17117,
+    "put_oi": 4796
+   }
+  },
+  {
+   "id": "CO:KRBL",
+   "ticker": "KRBL",
+   "name": "KRBL Ltd",
+   "exchange": "NSE",
+   "other_listings": [
+    {
+     "ticker": "530813",
+     "exchange": "BSE"
+    }
+   ],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": true,
+   "sits_on": [
+    {
+     "node": "FD03",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD03 > CO:KRBL",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Indian rice export policy.",
+     "estimated": true
+    },
+    {
+     "node": "WF3",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF3 > CO:KRBL",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Indian rice export policy.",
+     "estimated": true
+    },
+    {
+     "node": "O3",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link O3 > CO:KRBL",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: Gulf basmati trade through Hormuz.",
+     "estimated": true
+    },
+    {
+     "node": "FD05",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD05 > CO:KRBL",
+     "exposure_weight": 0.2,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: election-year food policy.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD03",
+    "FD05",
+    "O3",
+    "WF3"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "OIL AND GULF",
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": true,
+   "deepdive_profile": {
+    "deepdive_id": "CO:KRBL",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "KRBL (NSE); 530813 (BSE)",
+    "listed_options": "no US-listed options",
+    "verified": true,
+    "flag_3plus_nodes_2plus_arms": true,
+    "note": "India's largest basmati exporter; H1 FY27 export revenue down 41% on Gulf transit and payment problems (Hormuz); Saudi Arabia its largest export market.",
+    "source": "https://www.multibagg.ai/market-pulse/articles/krbl-gulf-export-revenue-fall-concall-cmwbol7ew000w2dny61sapndi ; https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/110626-indian-rice-exporters-brace-for-possible-curbs-on-100-broken-wr-exports",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD03",
+     "WF3",
+     "O3",
+     "FD05"
+    ]
+   }
+  },
+  {
+   "id": "CO:AALI",
+   "ticker": "AALI",
+   "name": "Astra Agro Lestari",
+   "exchange": "IDX",
+   "other_listings": [],
+   "listed_options": "no",
+   "listed_options_basis": "listing outside the US; no US ADR with listed options found (food deep dive Nov 23)",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "FD04",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD04 > CO:AALI",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: export ban.",
+     "estimated": true
+    },
+    {
+     "node": "WF2",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF2 > CO:AALI",
+     "exposure_weight": 0.6,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: palm price.",
+     "estimated": true
+    },
+    {
+     "node": "FD02",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD02 > CO:AALI",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: export levy or DMO.",
+     "estimated": true
+    },
+    {
+     "node": "FD20",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD20 > CO:AALI",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: vegetable oil prices.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD02",
+    "FD04",
+    "FD20",
+    "WF2"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:AALI",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "AALI (IDX)",
+    "listed_options": "no US-listed options",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Indonesian palm oil planter. Exposure from the company profile, not checked this run.",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD04",
+     "WF2",
+     "FD02",
+     "FD20"
+    ]
+   }
+  },
+  {
+   "id": "CO:F34",
+   "ticker": "F34",
+   "name": "Wilmar International",
+   "exchange": "SGX",
+   "other_listings": [
+    {
+     "ticker": "WLMIY",
+     "exchange": "OTC"
+    }
+   ],
+   "listed_options": "no",
+   "listed_options_basis": "OCC series search Nov 23, 2026: no series listed for WLMIY",
+   "verified": false,
+   "verified_source": null,
+   "deepdive_verified": false,
+   "sits_on": [
+    {
+     "node": "FD02",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD02 > CO:F34",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: export levy or DMO.",
+     "estimated": true
+    },
+    {
+     "node": "FD04",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD04 > CO:F34",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: export ban.",
+     "estimated": true
+    },
+    {
+     "node": "WF2",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link WF2 > CO:F34",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: palm price.",
+     "estimated": true
+    },
+    {
+     "node": "FD20",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json: link FD20 > CO:F34",
+     "exposure_weight": 0.4,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure: vegetable oil prices.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "FD02",
+    "FD04",
+    "FD20",
+    "WF2"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "WEATHER AND FOOD"
+   ],
+   "collision_candidate": false,
+   "deepdive_profile": {
+    "deepdive_id": "CO:F34",
+    "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+    "ticker_text": "F34 (SGX); WLMIY (OTC)",
+    "listed_options": "no US-listed options",
+    "verified": false,
+    "flag_3plus_nodes_2plus_arms": false,
+    "note": "Largest palm oil refiner and trader, with big Indonesian operations. Exposure from the company profile, not checked this run.",
+    "source": "company profile (not checked this run)",
+    "status": "ACTIVE",
+    "window_start": "2026-11-23",
+    "window_peak": "2027-03-31",
+    "window_end": "2027-06-30",
+    "nodes_on": [
+     "FD02",
+     "FD04",
+     "WF2",
+     "FD20"
+    ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "WLMIY",
+    "liquidity": "none",
+    "series": 0,
+    "expirations": 0,
+    "last_expiry": null,
+    "call_oi": 0,
+    "put_oi": 0
    }
   }
  ],
@@ -54404,6 +57635,131 @@
      }
     ]
    }
+  },
+  {
+   "date": "2026-11-23",
+   "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
+   "source_drive_id": null,
+   "deepdive_graph_block": {
+    "name": "EARTH2 deep dive 2: the food collision",
+    "created": "2026-11-23",
+    "schema": "Graphify v5 (NetworkX node-link: nodes and links)",
+    "end_event": "WF8",
+    "collision_window": {
+     "start": "2027-01-01",
+     "end": "2027-06-30"
+    },
+    "board_refs_used": {
+     "O3": 18.0,
+     "P5": 50.0,
+     "RU4": 45.0,
+     "RU9": 62.0,
+     "WF1": 90.0,
+     "WF2": 55.0,
+     "WF3": 50.0,
+     "WF4": 75.0,
+     "WF7": 48.0,
+     "WF8": 48.0
+    },
+    "board_refs_note": "Taken from graph.json odds_now on Nov 23, 2026 (not older board snapshots).",
+    "strength_rule": "strength = (odds of B if A fires - odds of B now) / (100 - odds of A now), absolute value, capped at 1. NECESSARY links use B now / A now (deep dive 1 rule: if A fails, B falls to about zero).",
+    "company_link_rule": "Company links use kind MAGNIFIES and sign +1 to mean the node moves the stock. Direction is not labeled. Strength is an estimated exposure weight.",
+    "options_rule": "US-listed options from the OCC series search (standard product symbol only). Liquidity by total open interest, same bands as graph.json options_check: heavy 1,000,000+, moderate 100,000+, light 10,000+, very light under 10,000.",
+    "arm_note": "Three arms: EL NINO (graph arm WEATHER AND FOOD), GULF FERTILIZER (graph arm OIL AND GULF) and RUSSIAN GRAIN AND FERTILIZER (graph arm RUSSIA AND EUROPE). Graph node WF4 (Gulf fertilizer) sits in WEATHER AND FOOD on the graph; this file reads it as the Gulf arm for the 3-node, 2-arm company flag.",
+    "collision_verdict": {
+     "nodes_where_arms_land": {
+      "WF7 and WF8 (food price layer)": [
+       "EL NINO via WF2, FD20, WF3",
+       "GULF via WF4, FD07, FD09",
+       "RUSSIA via RU9, FD17, FD16"
+      ],
+      "FD09 and FD10 (nitrogen price layer)": [
+       "GULF via WF4, FD11, FD12",
+       "RUSSIA via FD14, FD15"
+      ],
+      "FD22 (the collision node)": [
+       "all three, by construction"
+      ]
+     },
+     "joint_all_three_by_2027-06-30": 28,
+     "at_least_two_of_three_by_2027-06-30": 72,
+     "wf8_inside_window": 17,
+     "tightest_overlap": "2027-02-01 to 2027-03-31 (Gulf peak, Russian quota and port season, India rice decision ahead of state elections); the vegetable oil leg peaks later, Apr to May 2027."
+    },
+    "not_advice": "Not financial advice. No tickets, no orders."
+   },
+   "board_refs_used_note": "board_refs_used are graph.json odds_now values on the merge date; no existing node odds were changed by this merge.",
+   "nodes_added": [
+    "FD01",
+    "FD02",
+    "FD03",
+    "FD04",
+    "FD05",
+    "FD06",
+    "FD07",
+    "FD08",
+    "FD09",
+    "FD10",
+    "FD11",
+    "FD12",
+    "FD13",
+    "FD14",
+    "FD15",
+    "FD16",
+    "FD17",
+    "FD18",
+    "FD19",
+    "FD20",
+    "FD21",
+    "FD22"
+   ],
+   "nodes_mapped_to_v5": [],
+   "links_added": 63,
+   "links_skipped": [],
+   "companies_added": [
+    "CO:CF",
+    "CO:LXU",
+    "CO:UAN",
+    "CO:NTR",
+    "CO:MOS",
+    "CO:YAR",
+    "CO:2020",
+    "CO:1211",
+    "CO:IQCD",
+    "CO:FERTIGLB",
+    "CO:ABUK",
+    "CO:AKRN",
+    "CO:WEAT",
+    "CO:DBA",
+    "CO:AGRO",
+    "CO:KRBL",
+    "CO:AALI",
+    "CO:F34"
+   ],
+   "companies_extended": [
+    "CO:LNG"
+   ],
+   "companies_updated": [
+    "CO:LNG"
+   ],
+   "arm_map": {
+    "EL NINO": "WEATHER AND FOOD",
+    "FOOD LAYER": "WEATHER AND FOOD",
+    "COLLISION": "WEATHER AND FOOD",
+    "GULF FERTILIZER": "OIL AND GULF",
+    "CHINA FERTILIZER POLICY": "OIL AND GULF",
+    "RUSSIAN GRAIN AND FERTILIZER": "RUSSIA AND EUROPE",
+    "WEATHER AND FOOD": "WEATHER AND FOOD",
+    "OIL AND GULF": "OIL AND GULF",
+    "RUSSIA AND EUROPE": "RUSSIA AND EUROPE"
+   },
+   "status_map": "deep-dive RUNNING, OPEN, WATCH and SCHEDULED load as ON TRACK (original kept in status_deepdive); FIRED loads as FIRED with the date",
+   "strength_note": "Link strengths are the deep dive's own, computed on graph odds_now of the merge date (NECESSARY links use B now / A now as in deep dive 1).",
+   "notes": [
+    "Deep dive 2: the food collision (El Nino, Gulf fertilizer behind Hormuz, Russian grain) on WF8, Jan to Jun 2027.",
+    "Company links became sits_on entries; existing companies were extended, not duplicated.",
+    "Odds clamped to 1..99 on load; no FIRED nodes in this file."
+   ]
   }
  ]
 }
