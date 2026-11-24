@@ -1,9 +1,9 @@
 {
  "meta": {
-  "title": "Earth2 graph v5.1",
-  "version": "v5.1",
+  "title": "Earth2 graph v5.2",
+  "version": "v5.2",
   "built": "2026-11-23",
-  "as_of": "2026-11-22",
+  "as_of": "2026-11-23",
   "what_it_is": "A fixed reference world: big end events out to 2030 traced backwards through necessary conditions and likely precursors. Each day asks where the real world is tracking it. Neutral: no helped or hurt labels on companies.",
   "odds_unit": "percent (0 to 100). odds_now is the chance the event happens by window_end.",
   "lens": "Nov 22, 2026 to Dec 31, 2030",
@@ -77,6 +77,9 @@
    "Merged the rare-earth deep dive as merged on Nov 23 (31 nodes RD01 to RD35, 56 links, 21 new companies, 5 extended; RD27 runs from DA7).",
    "Added P6, the shipping and canals end event.",
    "Applied the Nov 23 read 3 board moves through the engine (second cascade_log entry)."
+  ],
+  "v5_2_changes": [
+   "Majors settled Nov 23: one number per major (27-1 50, 27-3 50, 27-5 43, 28-1 55, 28-3 55, 28-5 40, 28-6 55, 29-1 50, 29-2 65, 29-4 60), applied through the engine with all ten pinned (third cascade_log entry). Biggest knock-ons: 29-3 down 1.5, 27-4 up 0.9."
   ]
  },
  "nodes": [
@@ -654,7 +657,7 @@
    "arm": "CYBER",
    "board_arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 40.0,
+   "odds_now": 39.4,
    "odds_text": "40% by Mar 31",
    "odds_history": [
     {
@@ -666,6 +669,11 @@
      "date": "2026-11-22",
      "odds": 40.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 39.4,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -689,7 +697,12 @@
    "what_changed": "No confirmed halt. JPMorgan's Nov 16 disruption ran about 8.6 hours by one tally and the bank called it a bug: a scoring call. Binance: $6.34B taken, $2.85B frozen. Coinbase is at a 52-week low (S4, S6)",
    "if_it_fires": "Regional banks break 30 to about 40. Miner-host distress 45 to about 55 through bitcoin. Fed: emergency liquidity",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 11",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.6
+   }
   },
   {
    "id": "R6",
@@ -955,7 +968,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 60.8,
+   "odds_now": 60.9,
    "odds_text": "60% by May 31",
    "odds_history": [
     {
@@ -972,6 +985,11 @@
      "date": "2026-11-22",
      "odds": 60.8,
      "note": "cascade from F2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 60.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -996,10 +1014,10 @@
    "if_it_fires": "AI financing ++ (these funds are the marginal lender). Banks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 17",
    "model_layer": "board",
-   "odds_as_of": "2026-11-22",
+   "odds_as_of": "2026-11-23",
    "last_move": {
-    "date": "2026-11-22",
-    "delta": 0.8
+    "date": "2026-11-23",
+    "delta": 0.1
    }
   },
   {
@@ -1370,7 +1388,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 70.0,
+   "odds_now": 69.5,
    "odds_text": "65% by Mar 31",
    "odds_history": [
     {
@@ -1387,6 +1405,11 @@
      "date": "2026-11-23",
      "odds": 70.0,
      "note": "Market calibration ahead of the Dec 15 unlock"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 69.5,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -1414,7 +1437,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": 5.0
+    "delta": -0.5
    }
   },
   {
@@ -1423,7 +1446,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 25.0,
+   "odds_now": 24.9,
    "odds_text": "35% by Mar 17 (market 34)",
    "odds_history": [
     {
@@ -1440,6 +1463,11 @@
      "date": "2026-11-23",
      "odds": 25.0,
      "note": "Fed path eased after the Nov 20 rout (markets, Nov 23 premarket)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 24.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -1467,7 +1495,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -10.0
+    "delta": -0.1
    }
   },
   {
@@ -1635,7 +1663,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 55.0,
+   "odds_now": 54.9,
    "odds_text": "55% by Nov 2027",
    "odds_history": [
     {
@@ -1647,6 +1675,11 @@
      "date": "2026-11-22",
      "odds": 55.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 54.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -1670,7 +1703,12 @@
    "what_changed": "LONG LENS. $1,239B (Feb) to $1,063B (Sep): down $176B in seven months; China cut $135B in 12 months. Total foreign holdings stayed flat at $9.24T, so others have filled the gap so far (S3, S7)",
    "if_it_fires": "US long rates; Fed bond buying 25 to about 35 by Nov 2027",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 30",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "C5",
@@ -2017,7 +2055,7 @@
    "arm": "CYBER",
    "board_arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35.0,
+   "odds_now": 34.7,
    "odds_text": "35% by Nov 2027",
    "odds_history": [
     {
@@ -2029,6 +2067,11 @@
      "date": "2026-11-22",
      "odds": 35.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 34.7,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -2053,7 +2096,12 @@
    "what_changed": "LONG LENS. Four step-ups in autonomy in six months (May 11, Oct 19, Oct 21, Nov 16). Google expects hands-off low-skill attacks within 3 months and sophisticated fully autonomous ones within 6 (S6)",
    "if_it_fires": "Gulf energy; hospitals and labs (bio); the Fed if payments. Model limits 25 to about 60",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 38",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.3
+   }
   },
   {
    "id": "BT2",
@@ -2398,7 +2446,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 22.0,
+   "odds_now": 21.9,
    "odds_text": "22% by May 31",
    "odds_history": [
     {
@@ -2415,6 +2463,11 @@
      "date": "2026-11-22",
      "odds": 22.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 21.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -2439,7 +2492,12 @@
    "what_changed": "Market: recession by end of 2027 30 to 31%. The S&P is on its longest losing run since April 2024 (S3)",
    "if_it_fires": "Flips the Fed (cuts) and oil (down). Helps every put; ends the hike and oil-up logic",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 46",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "C8",
@@ -2447,7 +2505,7 @@
    "arm": "CYBER",
    "board_arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 55.0,
+   "odds_now": 54.4,
    "odds_text": "55% by Nov 2027",
    "odds_history": [
     {
@@ -2459,6 +2517,11 @@
      "date": "2026-11-22",
      "odds": 55.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 54.4,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -2482,7 +2545,12 @@
    "what_changed": "LONG LENS. Premium grows about 5% a year ($16.4B in 2026) while exploited flaws grow 38% to 67% a year; rates have fallen 13 quarters running. An insurer failure is 10 / 25 / 40 by Nov 2027 / 28 / 29 (S6)",
    "if_it_fires": "Banks (loans that require cover); AI labs (liability pushed back to them)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 47",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.6
+   }
   },
   {
    "id": "C7",
@@ -2837,7 +2905,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 25.0,
+   "odds_now": 24.9,
    "odds_text": "25% by Nov 2027",
    "odds_history": [
     {
@@ -2849,6 +2917,11 @@
      "date": "2026-11-22",
      "odds": 25.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 24.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -2872,7 +2945,12 @@
    "what_changed": "LONG LENS. Interest cost $970B (FY25), $1.05T (FY26), heading to $1.32T by FY29; each extra point of rates adds about $310B; the average rate on the debt is 3.52% against a market near 5% (S7)",
    "if_it_fires": "The dollar and savers lose; Japan; reverses the rate pressure on AI debt",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 55",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "O6",
@@ -3353,7 +3431,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.0,
+   "odds_now": 29.9,
    "odds_text": "30% by Nov 2027",
    "odds_history": [
     {
@@ -3365,6 +3443,11 @@
      "date": "2026-11-22",
      "odds": 30.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 29.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "odds_by": {
@@ -3388,7 +3471,12 @@
    "what_changed": "LONG LENS. The limit ($41.1T) is reached in Feb 2027; cash runs out Nov to Dec 2027 and gets tight from August (S7)",
    "if_it_fires": "Treasuries; the dollar; banks",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 67",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "BB2",
@@ -3972,8 +4060,8 @@
    "label": "Agi is declared",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 60.4,
-   "odds_text": "65% by Nov 2027 (board 55%",
+   "odds_now": 50.0,
+   "odds_text": "50% by Nov 2027 (majors settled Nov 23; legs were 65 and 50)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -3989,6 +4077,11 @@
      "date": "2026-11-23",
      "odds": 60.4,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 50.0,
+     "note": "Majors settled: one number per major (legs were 65 and 50)"
     }
    ],
    "window_start": "2026-11-22",
@@ -3999,7 +4092,7 @@
     "POWER"
    ],
    "least_capability": "A model that clears the one-work-month task horizon and a lab willing to say so",
-   "status": "AHEAD",
+   "status": "BEHIND",
    "year": 2027,
    "description": "5 triggers at lift 3 or more, 5 of them new.\nFC3 AGI gets declared with no referee left to check (M, 40%, +35): A formal lab statement is the major itself.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 60%, +6): Long autonomous work is the usual public AGI yardstick.\nFC2 AI writes the labs' own code and starts steering research (M, 40%, +6): A lab run mostly by its model can call it AGI.\nFC9 Superintelligence claims start at small labs and pull big labs in (M, 30%, +4): Big labs answer an ASI claim by declaring AGI.\nFC4 Washington holds frontier releases and eyes equity in labs (M, 35%, +3): A federal review can become the body that certifies AGI. BRAKES: GR3 Chips and announced capacity sit idle waiting for power (-2): Same delay, smaller effect by 2027. WEAK LINKS (under 3 points): PF3, GB3, RM5, RM6, GR1.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-1",
@@ -4007,7 +4100,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -4.5
+    "delta": -10.4
    }
   },
   {
@@ -4043,8 +4136,8 @@
    "label": "Washington binds ai",
    "arm": "CYBER",
    "type": "END EVENT",
-   "odds_now": 54.8,
-   "odds_text": "55% by Nov 2027",
+   "odds_now": 50.0,
+   "odds_text": "50% by Nov 2027 (majors settled Nov 23; legs were 55 and 50)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -4055,6 +4148,11 @@
      "date": "2026-11-23",
      "odds": 54.8,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 50.0,
+     "note": "Majors settled: one number per major (legs were 55 and 50)"
     }
    ],
    "window_start": "2026-11-22",
@@ -4064,7 +4162,7 @@
     "JOBS"
    ],
    "least_capability": "One AI-run attack with a public victim and a bill ready to move",
-   "status": "AHEAD",
+   "status": "BEHIND",
    "year": 2027,
    "description": "30 triggers at lift 3 or more, 23 of them new.\nFC4 Washington holds frontier releases and eyes equity in labs (M, 35%, +35): A pre-release law is the standing rule.\nRM1 AI agents run intrusions with little human direction (M, 70%, +12): A named AI-run breach at home forces a binding rule.\nGB1 AI labs say they can no longer rule out bio help (M, 45%, +8): Adds a biology case to the hacking case for a rule.\nFC6 New Democratic statehouses pass AI laws faster than Washington can preempt (U, 50%, +7): A patchwork makes industry ask Congress for one rule.\nFC8 Chatbot harm suits shift from families to state attorneys general (M, 40%, +8): Child safety is the bipartisan road to a federal rule.\nRM2 Flaws are attacked before defenders can patch (M, 70%, +4): Feeds the hacking wave that drives the rule.\nRM6 Rival labs copy frontier models at industrial scale (M, 45%, +6): Identity rules for model access become law. ALSO: FC7 (+4), PF2 (+3), RM5 (+5), GB6 (+10), FC3 (+5), GR1 (+3), ID2 (+5), RM3 (+5), FC1 (+3), FC5 (+3), FC2 (+4), WK6 (+3), FC9 (+5), RM9 (+4), ID3 (+3), GB5 (+3), RM4 (+3), ID4 (+4), ID6 (+3), MR8 (+3), MR9 (+3), ID7 (+3), ID9 (+3). WEAK LINKS (under 3 points): ID1, ID8, WK5, PF1, PF4, PF5, PF6, PF7, RM7, DA8, DA9, GR2, GR5, GR6, GR8.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-3",
@@ -4072,7 +4170,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.2
+    "delta": -4.8
    }
   },
   {
@@ -4080,7 +4178,7 @@
    "label": "The ai debt break",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 57.4,
+   "odds_now": 58.3,
    "odds_text": "about 55% by Nov 2027",
    "odds_history": [
     {
@@ -4097,6 +4195,11 @@
      "date": "2026-11-23",
      "odds": 57.4,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 58.3,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -4115,7 +4218,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": 0.1
+    "delta": 0.9
    }
   },
   {
@@ -4123,8 +4226,8 @@
    "label": "Money gets dearer",
    "arm": "FED RATES AND JAPAN",
    "type": "END EVENT",
-   "odds_now": 44.0,
-   "odds_text": "65% and 45% by Nov 2027",
+   "odds_now": 43.0,
+   "odds_text": "43% by Nov 2027 (majors settled Nov 23; both legs needed: yen 65, 10-year 43)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -4135,6 +4238,11 @@
      "date": "2026-11-23",
      "odds": 44.0,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 43.0,
+     "note": "Majors settled: both legs needed, so the lower leg binds (yen 65, 10-year 43)"
     }
    ],
    "window_start": "2026-11-22",
@@ -4144,7 +4252,7 @@
     "CREDIT"
    ],
    "least_capability": "Oil above $100 plus a Fed still hiking",
-   "status": "ON TRACK",
+   "status": "BEHIND",
    "year": 2027,
    "description": "4 triggers at lift 3 or more, 4 of them new.\nMR2 Tokyo sells Treasuries again to defend the yen (M, 55%, +12): It is the major's Tokyo leg, repeated.\nMR3 Treasury auctions clear badly as the 10-year nears 5.50% (M, 45%, +12): A failed sale can push the 10-year past 5.50%.\nMR7 Gulf oil moves on dark tankers; one loss shuts the route (U, 30%, +10): Oil spike feeds inflation and long yields.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +4): Record supply competes with Treasuries for buyers. WEAK LINKS (under 3 points): MR6, GR2, GR4, GR6, GR7, GR9.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-5",
@@ -4199,8 +4307,8 @@
    "label": "The self-improvement year",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 54.2,
-   "odds_text": "55% and 60% by Nov 2028",
+   "odds_now": 55.0,
+   "odds_text": "55% by Nov 2028 (majors settled Nov 23; legs were 55 and 60)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -4216,6 +4324,11 @@
      "date": "2026-11-23",
      "odds": 54.2,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 55.0,
+     "note": "Majors settled: one number per major (legs were 55 and 60)"
     }
    ],
    "window_start": "2027-06-01",
@@ -4226,7 +4339,7 @@
     "POWER"
    ],
    "least_capability": "A lab whose models write most of the next model's code and research",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "year": 2028,
    "description": "7 triggers at lift 3 or more, 5 of them new.\nFC2 AI writes the labs' own code and starts steering research (M, 68%, +25): This is the recursive learning signal itself.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 85%, +6): Agents that run for weeks can do AI research.\nFC9 Superintelligence claims start at small labs and pull big labs in (M, 52%, +8): Makes the intelligence explosion a public story.\nGB1 AI labs say they can no longer rule out bio help (M, 65%, +3): A public admission of fast capability gain.\nRM5 Open-weight models trail the frontier by about four months (M, 65%, +3): Self-improvement gains spread to open models within months.\nRM6 Rival labs copy frontier models at industrial scale (M, 60%, +3): Self-improvement gains leak to rivals within months.\nFC3 AGI gets declared with no referee left to check (M, 60%, +3): Declaration draws public eyes to self-improvement. BRAKES: GR1 Statewide data center pauses spread from Texas to more states (-3): Less new compute in the top US build state; GR3 Chips and announced capacity sit idle waiting for power (-3): Training compute arrives later than chip sales imply; GR4 Gas turbine order book sells out years ahead (-2): On-site power route is capped by factory slots; GR5 Local opposition blocks or delays projects, counted in dollars (-2): Fewer sites clear in time for 2028 compute; GR7 Texas large-load requests dwarf the grid they want to join (-2): Texas compute arrives later. WEAK LINKS (under 3 points): PF3, GB3, RM7, GR2, GR8, GR9.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-1",
@@ -4235,7 +4348,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.7
+    "delta": 0.8
    }
   },
   {
@@ -4243,7 +4356,7 @@
    "label": "The bill reaches the lenders",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 58.5,
+   "odds_now": 58.4,
    "odds_text": "58% by Nov 2028",
    "odds_history": [
     {
@@ -4255,6 +4368,11 @@
      "date": "2026-11-22",
      "odds": 58.5,
      "note": "cascade from F2"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 58.4,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2027-06-01",
@@ -4269,10 +4387,10 @@
    "description": "11 triggers at lift 3 or more, 9 of them new.\nWK2 Software loans go bad as lenders price AI disruption (M, 62%, +12): Software losses alone can pass $500M at one fund.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +8): Marked-down AI bonds force lender loss disclosures.\nMR5 Retail private credit funds ration withdrawals each quarter (M, 50%, +12): A gated fund must mark loans and admit losses.\nMR4 Neocloud chip-backed debt hits its refinancing wall (M, 55%, +10): Lenders must disclose chip-loan losses.\nWK8 Paid seats fall at per-seat software vendors (U, 45%, +10): Falling seats turn loan marks into real defaults.\nFC5 Local boards and voters block data centers faster than builders adapt (M, 72%, +4): Lenders hold loans on projects that cannot open.\nGR1 Statewide data center pauses spread from Texas to more states (M, FIRED, +3): Construction loans on paused sites go bad. ALSO: GR3 (+4), MR3 (+3), MR8 (+5), WK7 (+3). WEAK LINKS (under 3 points): PF4, PF8, GR5.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-2",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-22",
+   "odds_as_of": "2026-11-23",
    "last_move": {
-    "date": "2026-11-22",
-    "delta": 0.5
+    "date": "2026-11-23",
+    "delta": -0.1
    }
   },
   {
@@ -4281,12 +4399,17 @@
    "arm": "CYBER",
    "type": "END EVENT",
    "odds_now": 55.0,
-   "odds_text": "78% and 60% by Nov 2028",
+   "odds_text": "55% by Nov 2028 (majors settled Nov 23; legs were 55, 78 and 60)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 55.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 55.0,
+     "note": "Majors settled: one number per major (legs were 55, 78 and 60)"
     }
    ],
    "window_start": "2027-06-01",
@@ -4301,7 +4424,12 @@
    "description": "16 triggers at lift 3 or more, 11 of them new.\nRM3 Cyber incidents halt exchanges and payment processors (M, 60%, +19): This test is the major's own halt leg.\nRM1 AI agents run intrusions with little human direction (M, 85%, +6): Same agents can reach brokers, processors and physical plant.\nRM2 Flaws are attacked before defenders can patch (M, 88%, +5): Brokers and processors cannot patch inside two days.\nID1 State-run fake IT workers hired into Western firms (M, 60%, +5): DPRK crews targeted 21 crypto and fintech firms in late 2025.\nDA8 Cheap drones in small-group hands near airports, borders and prisons (M, 48%, +6): An autonomous drone strike would be first physical damage.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 85%, +3): Long unattended runs also serve attackers, per public warnings.\nID4 Voice and video cloning fraud losses keep climbing (M, 60%, +4): Cloned approvals and biometric bypass reach payment rails. ALSO: WK5 (+3), MR6 (+4), ID3 (+3), ID7 (+3), RM9 (+3), MR9 (+4), MR8 (+3), DA9 (+3), ID8 (+3). WEAK LINKS (under 3 points): ID9, PF7, RM8, DA5.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-3",
    "model_layer": "majors",
-   "one_number_rule": "Model 35 is the major (55%); C4 78% and C9 60% are legs under it."
+   "one_number_rule": "Model 35 is the major (55%); C4 78% and C9 60% are legs under it.",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": 0.0
+   }
   },
   {
    "id": "28-4",
@@ -4337,12 +4465,17 @@
    "arm": "BIO",
    "type": "END EVENT",
    "odds_now": 40.0,
-   "odds_text": "40% by Nov 2028",
+   "odds_text": "40% by Nov 2028 (majors settled Nov 23; legs were 40, 18 and 4)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 40.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 40.0,
+     "note": "Majors settled: one number per major (legs were 40, 18 and 4)"
     }
    ],
    "window_start": "2027-06-01",
@@ -4356,15 +4489,20 @@
    "year": 2028,
    "description": "5 triggers at lift 3 or more, 3 of them new.\nGB6 A toxin case where charging papers cite a chatbot (M, 37%, +15): Would be reported as the first AI-assisted bioweapon case.\nGB1 AI labs say they can no longer rule out bio help (M, 65%, +4): Raises the odds that a case shows confirmed AI use.\nGB5 DNA-order screening covers only federally funded buyers (U, 50%, +4): Exposes the uncovered channel and drives the rules leg.\nRM5 Open-weight models trail the frontier by about four months (M, 65%, +3): Open weights carry no enforceable use limits.\nGB8 Unlicensed private biolabs found by accident, not by oversight (U, 50%, +3): Shows material can sit unseen; feeds the rules leg. WEAK LINKS (under 3 points): GB4, RM9.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-5",
-   "model_layer": "majors"
+   "model_layer": "majors",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": 0.0
+   }
   },
   {
    "id": "28-6",
    "label": "Taiwan votes under pressure",
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "type": "END EVENT",
-   "odds_now": 55.1,
-   "odds_text": "55% and 14% by Nov 2028",
+   "odds_now": 55.0,
+   "odds_text": "55% by Nov 2028 (majors settled Nov 23; T1 55, T2 14)",
    "odds_history": [
     {
      "date": "2026-11-19",
@@ -4375,6 +4513,11 @@
      "date": "2026-11-23",
      "odds": 55.1,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 55.0,
+     "note": "Majors settled: one number per major (T1 55, T2 14)"
     }
    ],
    "window_start": "2027-06-01",
@@ -4394,7 +4537,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": 0.1
+    "delta": -0.1
    }
   },
   {
@@ -4403,12 +4546,17 @@
    "arm": "CYBER",
    "type": "END EVENT",
    "odds_now": 50.0,
-   "odds_text": "50%, 47% and 60% by Nov 2029",
+   "odds_text": "50% by Nov 2029 (majors settled Nov 23; legs were 50, 47 and 60)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 50.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 50.0,
+     "note": "Majors settled: one number per major (legs were 50, 47 and 60)"
     }
    ],
    "window_start": "2028-06-01",
@@ -4424,7 +4572,12 @@
    "description": "7 triggers at lift 3 or more, 7 of them new.\nRM4 Defense networks breached for months before anyone notices (M, 50%, +35): This test is the major's first leg.\nRM8 Quantum deadline pulled in faster than agencies can migrate (M, 50%, +15): Feeds the post-quantum emergency leg directly.\nRM1 AI agents run intrusions with little human direction (M, 92%, +6): Government networks were the first reported target.\nRM2 Flaws are attacked before defenders can patch (M, 95%, +5): Defense suppliers patch slower than attackers move.\nDA5 Undersea cable breaks around Taiwan's islands, cause hard to prove (U, 75%, +5): Shows military and civil links share weak cables.\nID1 State-run fake IT workers hired into Western firms (M, 72%, +3): Insider access at contractors and suppliers exposes networks.\nID7 Impersonation of officials, agencies and executives (M, 70%, +3): Fake senior-official messages test government and military contacts. WEAK LINKS (under 3 points): ID4, WK5, DA8, DA9.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 29-1",
    "model_layer": "majors",
-   "one_number_rule": "Legs 50%, 47%, 60%: the primary leg (model 49, 50%) is used."
+   "one_number_rule": "Legs 50%, 47%, 60%: the primary leg (model 49, 50%) is used.",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": 0.0
+   }
   },
   {
    "id": "29-2",
@@ -4432,12 +4585,17 @@
    "arm": "FED RATES AND JAPAN",
    "type": "END EVENT",
    "odds_now": 65.0,
-   "odds_text": "65% and 50% by Nov 2029",
+   "odds_text": "65% by Nov 2029 (majors settled Nov 23; legs were 65, 50 and 47)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 65.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 65.0,
+     "note": "Majors settled: one number per major (legs were 65, 50 and 47)"
     }
    ],
    "window_start": "2028-06-01",
@@ -4452,14 +4610,19 @@
    "description": "10 triggers at lift 3 or more, 8 of them new.\nMR3 Treasury auctions clear badly as the 10-year nears 5.50% (M, 70%, +10): Auction stress is the path to Fed bond buying.\nMR8 Deposits can leave at any hour; agents may move them (M, 48%, +12): A fast run is a financial system emergency.\nMR2 Tokyo sells Treasuries again to defend the yen (M, 80%, +6): Forced official selling strains Treasury market function.\nMR5 Retail private credit funds ration withdrawals each quarter (M, 60%, +5): Retail losses and bank links raise emergency odds.\nRM3 Cyber incidents halt exchanges and payment processors (M, 72%, +4): A halt can force emergency central bank liquidity.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +3): Disorderly credit raises pressure for a backstop.\nMR6 Stablecoin redemptions turn issuers into Treasury bill sellers (M, 62%, +4): A forced bill seller adds to funding stress. ALSO: WK2 (+3), MR7 (+4), MR9 (+3). WEAK LINKS (under 3 points): WK3, MR4, GR2, GR6.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 29-2",
    "model_layer": "majors",
-   "one_number_rule": "The Fed buys bonds (D9, 65%) is the major; model 51 (50%) is a second primary."
+   "one_number_rule": "The Fed buys bonds (D9, 65%) is the major; model 51 (50%) is a second primary.",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": 0.0
+   }
   },
   {
    "id": "29-3",
    "label": "An asi claim",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 54.6,
+   "odds_now": 53.1,
    "odds_text": "55% by Nov 2029",
    "odds_history": [
     {
@@ -4471,6 +4634,11 @@
      "date": "2026-11-23",
      "odds": 54.6,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 53.1,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2028-06-01",
@@ -4489,7 +4657,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.4
+    "delta": -1.5
    }
   },
   {
@@ -4498,12 +4666,17 @@
    "arm": "BIO",
    "type": "END EVENT",
    "odds_now": 60.0,
-   "odds_text": "75% and 60% by Nov 2029",
+   "odds_text": "60% by Nov 2029 (majors settled Nov 23; both legs needed: 75 and 60)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 60.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 60.0,
+     "note": "Majors settled: both legs needed, so the lower leg binds (75 and 60)"
     }
    ],
    "window_start": "2028-06-01",
@@ -4518,7 +4691,12 @@
    "description": "4 triggers at lift 3 or more, 4 of them new.\nGB9 Keytruda copies queue up while the Medicare price cut slips (U, 70%, +25): This is the copies leg of the major itself.\nGB7 New drugs beat standard care on survival in big tumors (M, 70%, +10): Class-defining survival win in the largest cancer market.\nGB2 China becomes big pharma's main source of new drugs (M, 88%, +4): Keytruda's challengers and successors increasingly come from China.\nGB3 AI-designed drugs fill the trial queue and near approval (M, 88%, +3): More shots at a cure-class result, sooner. WEAK LINKS (under 3 points): GB4.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 29-4",
    "model_layer": "majors",
-   "one_number_rule": "Copies launch 75% and a cure-class result 60%: the lower leg is used."
+   "one_number_rule": "Copies launch 75% and a cure-class result 60%: the lower leg is used.",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": 0.0
+   }
   },
   {
    "id": "29-5",
@@ -4553,7 +4731,7 @@
    "label": "The ai shakeout",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 46.3,
+   "odds_now": 46.4,
    "odds_text": "45% by Nov 2029",
    "odds_history": [
     {
@@ -4570,6 +4748,11 @@
      "date": "2026-11-23",
      "odds": 46.3,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 46.4,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2028-06-01",
@@ -4588,7 +4771,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": 1.0
+    "delta": 0.1
    }
   },
   {
@@ -19113,7 +19296,7 @@
    "label": "Recursive Learning Algorithms Discovered",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 54.8,
+   "odds_now": 54.0,
    "odds_text": "25 / 55 / 72 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 25.0,
@@ -19130,6 +19313,11 @@
      "date": "2026-11-23",
      "odds": 54.8,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 54.0,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2027-06-01",
@@ -19152,7 +19340,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.2
+    "delta": -0.8
    }
   },
   {
@@ -19160,7 +19348,7 @@
    "label": "Scientific Discovery Rate 10x",
    "arm": "DISCOVERIES",
    "type": "END EVENT",
-   "odds_now": 29.9,
+   "odds_now": 30.0,
    "odds_text": "8 / 30 / 52 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 8.0,
@@ -19177,6 +19365,11 @@
      "date": "2026-11-23",
      "odds": 29.9,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 30.0,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2027-06-01",
@@ -19198,7 +19391,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.1
+    "delta": 0.1
    }
   },
   {
@@ -19206,7 +19399,7 @@
    "label": "Laboratory Access Restrictions",
    "arm": "BIO",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35.0,
+   "odds_now": 34.4,
    "odds_text": "35 / 55 / 68 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 35.0,
@@ -19218,6 +19411,11 @@
      "date": "2026-11-19",
      "odds": 35.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 34.4,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19235,7 +19433,12 @@
    "shift": "1Q earlier",
    "model_group": "E",
    "source": "EARTH2 9 THE 62 SCORECARD, row 14; model file forecasts_dmtcodecom.md",
-   "model_layer": "62"
+   "model_layer": "62",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.6
+   }
   },
   {
    "id": "M15",
@@ -19288,7 +19491,7 @@
    "label": "DNA Synthesis Restrictions (Global)",
    "arm": "BIO",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 45.0,
+   "odds_now": 44.7,
    "odds_text": "20 / 45 / 60 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 20.0,
@@ -19300,6 +19503,11 @@
      "date": "2026-11-19",
      "odds": 45.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 44.7,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2027-06-01",
@@ -19317,7 +19525,12 @@
    "shift": "2Q later",
    "model_group": "E",
    "source": "EARTH2 9 THE 62 SCORECARD, row 16; model file forecasts_dmtcodecom.md",
-   "model_layer": "62"
+   "model_layer": "62",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.3
+   }
   },
   {
    "id": "M17",
@@ -19397,7 +19610,7 @@
    "label": "Artificial Superintelligence (ASI)",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 54.9,
+   "odds_now": 55.0,
    "odds_text": "8 / 30 / 55 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 8.0,
@@ -19414,6 +19627,11 @@
      "date": "2026-11-23",
      "odds": 54.9,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 55.0,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2028-06-01",
@@ -19436,7 +19654,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.1
+    "delta": 0.1
    }
   },
   {
@@ -19480,7 +19698,7 @@
    "label": "AI Capability Doubling Time Collapses",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 49.7,
+   "odds_now": 48.3,
    "odds_text": "50 / 70 / 80 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 50.0,
@@ -19497,6 +19715,11 @@
      "date": "2026-11-23",
      "odds": 49.7,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 48.3,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19519,7 +19742,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.3
+    "delta": -1.4
    }
   },
   {
@@ -19527,7 +19750,7 @@
    "label": "Intelligence Explosion Publicly Recognized",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 37.7,
+   "odds_now": 36.1,
    "odds_text": "38 / 60 / 73 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 38.0,
@@ -19544,6 +19767,11 @@
      "date": "2026-11-23",
      "odds": 37.7,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 36.1,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19566,7 +19794,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.3
+    "delta": -1.6
    }
   },
   {
@@ -19610,7 +19838,7 @@
    "label": "AI Consciousness Debate Reaches UN",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.0,
+   "odds_now": 29.9,
    "odds_text": "12 / 30 / 48 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 12.0,
@@ -19622,6 +19850,11 @@
      "date": "2026-11-19",
      "odds": 30.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 29.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2027-06-01",
@@ -19639,14 +19872,19 @@
    "shift": "3Q later",
    "model_group": "D",
    "source": "EARTH2 9 THE 62 SCORECARD, row 24; model file forecasts_dmtcodecom.md",
-   "model_layer": "62"
+   "model_layer": "62",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "M25",
    "label": "Stock Market Restructuring Event",
    "arm": "AI FINANCING AND BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 41.8,
+   "odds_now": 41.0,
    "odds_text": "42 / 58 / 68 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 42.0,
@@ -19663,6 +19901,11 @@
      "date": "2026-11-23",
      "odds": 41.8,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 41.0,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19684,7 +19927,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.2
+    "delta": -0.8
    }
   },
   {
@@ -19692,7 +19935,7 @@
    "label": "Nation-State Hardware Hoarding",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 48.2,
+   "odds_now": 46.7,
    "odds_text": "48 / 65 / 77 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 48.0,
@@ -19709,6 +19952,11 @@
      "date": "2026-11-23",
      "odds": 48.2,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 46.7,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19730,7 +19978,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": 0.2
+    "delta": -1.5
    }
   },
   {
@@ -19965,7 +20213,7 @@
    "label": "Stock Market Circuit Breakers Triggered",
    "arm": "AI FINANCING AND BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 25.0,
+   "odds_now": 24.9,
    "odds_text": "25 / 37 / 47 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 25.0,
@@ -19977,6 +20225,11 @@
      "date": "2026-11-19",
      "odds": 25.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 24.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -19994,7 +20247,12 @@
    "shift": "2Q later",
    "model_group": "H",
    "source": "EARTH2 9 THE 62 SCORECARD, row 33; model file forecasts_dmtcodecom.md",
-   "model_layer": "62"
+   "model_layer": "62",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "M34",
@@ -20037,7 +20295,7 @@
    "label": "Global Financial Systems Vulnerable",
    "arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35.0,
+   "odds_now": 34.9,
    "odds_text": "35 / 55 / 70 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 35.0,
@@ -20049,6 +20307,11 @@
      "date": "2026-11-19",
      "odds": 35.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 34.9,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -20066,7 +20329,12 @@
    "shift": "3Q earlier",
    "model_group": "G",
    "source": "EARTH2 9 THE 62 SCORECARD, row 35; model file forecasts_dmtcodecom.md",
-   "model_layer": "62"
+   "model_layer": "62",
+   "odds_as_of": "2026-11-23",
+   "last_move": {
+    "date": "2026-11-23",
+    "delta": -0.1
+   }
   },
   {
    "id": "M36",
@@ -20217,7 +20485,7 @@
    "label": "Government ASI Nationalization Attempts",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 34.8,
+   "odds_now": 34.0,
    "odds_text": "35 / 52 / 65 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 35.0,
@@ -20234,6 +20502,11 @@
      "date": "2026-11-23",
      "odds": 34.8,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-23",
+     "odds": 34.0,
+     "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
     }
    ],
    "window_start": "2026-11-22",
@@ -20255,7 +20528,7 @@
    "odds_as_of": "2026-11-23",
    "last_move": {
     "date": "2026-11-23",
-    "delta": -0.2
+    "delta": -0.8
    }
   },
   {
@@ -51084,6 +51357,1008 @@
      "joint_odds": 49.5,
      "score": 0.99,
      "window_end": "2027-03-31"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-23",
+   "run_at": "2026-11-24T02:54:57+00:00",
+   "trigger": [
+    {
+     "id": "27-1",
+     "before": 60.4,
+     "after": 50.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 65 and 50)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "27-3",
+     "before": 54.8,
+     "after": 50.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 55 and 50)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "27-5",
+     "before": 44.0,
+     "after": 43.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: both legs needed, so the lower leg binds (yen 65, 10-year 43)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "28-1",
+     "before": 54.2,
+     "after": 55.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 55 and 60)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "28-3",
+     "before": 55.0,
+     "after": 55.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 55, 78 and 60)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "28-5",
+     "before": 40.0,
+     "after": 40.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 40, 18 and 4)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "28-6",
+     "before": 55.1,
+     "after": 55.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (T1 55, T2 14)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "29-1",
+     "before": 50.0,
+     "after": 50.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 50, 47 and 60)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "29-2",
+     "before": 65.0,
+     "after": 65.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: one number per major (legs were 65, 50 and 47)",
+     "source": "majors decision, Nov 23"
+    },
+    {
+     "id": "29-4",
+     "before": 60.0,
+     "after": 60.0,
+     "date": "2026-11-23",
+     "reason": "Majors settled: both legs needed, so the lower leg binds (75 and 60)",
+     "source": "majors decision, Nov 23"
+    }
+   ],
+   "rule": {
+    "move": "d x strength x sign",
+    "fade": 0.5,
+    "max_hops": 4,
+    "visit": "once per run",
+    "clamp": [
+     1.0,
+     99.0
+    ],
+    "fired_pinned": true,
+    "collision_days": 120
+   },
+   "moved": [
+    {
+     "id": "27-1",
+     "label": "Agi is declared",
+     "arm": "AI CAPABILITY",
+     "before": 60.4,
+     "after": 50.0,
+     "delta": -10.4,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 65 and 50)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "27-3",
+     "label": "Washington binds ai",
+     "arm": "CYBER",
+     "before": 54.8,
+     "after": 50.0,
+     "delta": -4.8,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 55 and 50)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "27-5",
+     "label": "Money gets dearer",
+     "arm": "FED RATES AND JAPAN",
+     "before": 44.0,
+     "after": 43.0,
+     "delta": -1.0,
+     "role": "set by hand",
+     "reason": "Majors settled: both legs needed, so the lower leg binds (yen 65, 10-year 43)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "28-1",
+     "label": "The self-improvement year",
+     "arm": "AI CAPABILITY",
+     "before": 54.2,
+     "after": 55.0,
+     "delta": 0.8,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 55 and 60)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "28-3",
+     "label": "The financial plumbing is breached",
+     "arm": "CYBER",
+     "before": 55.0,
+     "after": 55.0,
+     "delta": 0.0,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 55, 78 and 60)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "28-5",
+     "label": "A bio case with intent, and the rules that follow",
+     "arm": "BIO",
+     "before": 40.0,
+     "after": 40.0,
+     "delta": 0.0,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 40, 18 and 4)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "28-6",
+     "label": "Taiwan votes under pressure",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 55.1,
+     "after": 55.0,
+     "delta": -0.1,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (T1 55, T2 14)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "29-1",
+     "label": "The networks are not safe",
+     "arm": "CYBER",
+     "before": 50.0,
+     "after": 50.0,
+     "delta": 0.0,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 50, 47 and 60)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "29-2",
+     "label": "The backstop",
+     "arm": "FED RATES AND JAPAN",
+     "before": 65.0,
+     "after": 65.0,
+     "delta": 0.0,
+     "role": "set by hand",
+     "reason": "Majors settled: one number per major (legs were 65, 50 and 47)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "29-4",
+     "label": "The keytruda cliff and cure-class results",
+     "arm": "BIO",
+     "before": 60.0,
+     "after": 60.0,
+     "delta": 0.0,
+     "role": "set by hand",
+     "reason": "Majors settled: both legs needed, so the lower leg binds (75 and 60)",
+     "source": "majors decision, Nov 23",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "M22",
+     "label": "Intelligence Explosion Publicly Recognized",
+     "arm": "AI CAPABILITY",
+     "before": 37.7,
+     "after": 36.1,
+     "delta": -1.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-1 > M22",
+       "points": -1.56
+      }
+     ]
+    },
+    {
+     "id": "29-3",
+     "label": "An asi claim",
+     "arm": "AI CAPABILITY",
+     "before": 54.6,
+     "after": 53.1,
+     "delta": -1.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-23",
+     "paths": [
+      {
+       "path": "27-1 > 29-3",
+       "points": -2.08
+      },
+      {
+       "path": "28-1 > 29-3",
+       "points": 0.32
+      },
+      {
+       "path": "27-3 > 29-3",
+       "points": 0.24
+      }
+     ]
+    },
+    {
+     "id": "M26",
+     "label": "Nation-State Hardware Hoarding",
+     "arm": "AI CAPABILITY",
+     "before": 48.2,
+     "after": 46.7,
+     "delta": -1.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-1 > M26",
+       "points": -1.56
+      },
+      {
+       "path": "28-1 > M26",
+       "points": 0.08
+      }
+     ]
+    },
+    {
+     "id": "M21",
+     "label": "AI Capability Doubling Time Collapses",
+     "arm": "AI CAPABILITY",
+     "before": 49.7,
+     "after": 48.3,
+     "delta": -1.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-1 > M21",
+       "points": -1.56
+      },
+      {
+       "path": "28-1 > M21",
+       "points": 0.12
+      }
+     ]
+    },
+    {
+     "id": "27-4",
+     "label": "The ai debt break",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 57.4,
+     "after": 58.3,
+     "delta": 0.9,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-22",
+     "paths": [
+      {
+       "path": "27-1 > 27-4",
+       "points": 1.04
+      },
+      {
+       "path": "27-5 > 27-4",
+       "points": -0.15
+      }
+     ]
+    },
+    {
+     "id": "M25",
+     "label": "Stock Market Restructuring Event",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 41.8,
+     "after": 41.0,
+     "delta": -0.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-1 > M25",
+       "points": -0.83
+      }
+     ]
+    },
+    {
+     "id": "M12",
+     "label": "Recursive Learning Algorithms Discovered",
+     "arm": "AI CAPABILITY",
+     "before": 54.8,
+     "after": 54.0,
+     "delta": -0.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-1 > M12",
+       "points": -0.83
+      }
+     ]
+    },
+    {
+     "id": "M40",
+     "label": "Government ASI Nationalization Attempts",
+     "arm": "AI CAPABILITY",
+     "before": 34.8,
+     "after": 34.0,
+     "delta": -0.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-22",
+     "paths": [
+      {
+       "path": "27-1 > M40",
+       "points": -0.83
+      },
+      {
+       "path": "28-1 > M40",
+       "points": 0.08
+      }
+     ]
+    },
+    {
+     "id": "C4",
+     "label": "Payments or trading halt 4+ hours at a top institution, network or exchange, or $1B+ is stolen",
+     "arm": "CYBER",
+     "before": 40.0,
+     "after": 39.4,
+     "delta": -0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-3 > C4",
+       "points": -0.58
+      }
+     ]
+    },
+    {
+     "id": "C8",
+     "label": "The insurance turn: cyber rates rise for the first time since 2023 and insurers add widespread-event or AI limits",
+     "arm": "CYBER",
+     "before": 55.0,
+     "after": 54.4,
+     "delta": -0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-3 > C8",
+       "points": -0.58
+      }
+     ]
+    },
+    {
+     "id": "M14",
+     "label": "Laboratory Access Restrictions",
+     "arm": "BIO",
+     "before": 35.0,
+     "after": 34.4,
+     "delta": -0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-22",
+     "paths": [
+      {
+       "path": "27-3 > M14",
+       "points": -0.58
+      }
+     ]
+    },
+    {
+     "id": "F6",
+     "label": "Anthropic (ANT) closes under its $83 IPO price",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 70.0,
+     "after": 69.5,
+     "delta": -0.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-23",
+     "paths": [
+      {
+       "path": "27-3 > F6",
+       "points": -0.48
+      }
+     ]
+    },
+    {
+     "id": "C9",
+     "label": "The first physical or nationwide effect officially attributed to an AI-run attack (utility, hospital network, transport, pipeline)",
+     "arm": "CYBER",
+     "before": 35.0,
+     "after": 34.7,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-3 > C9",
+       "points": -0.29
+      }
+     ]
+    },
+    {
+     "id": "M16",
+     "label": "DNA Synthesis Restrictions (Global)",
+     "arm": "BIO",
+     "before": 45.0,
+     "after": 44.7,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-3 > M16",
+       "points": -0.29
+      }
+     ]
+    },
+    {
+     "id": "29-6",
+     "label": "The ai shakeout",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 46.3,
+     "after": 46.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-07-15",
+     "paths": [
+      {
+       "path": "27-1 > 27-4 > 29-6",
+       "points": 0.13
+      },
+      {
+       "path": "27-5 > 28-2 > 29-6",
+       "points": -0.01
+      }
+     ]
+    },
+    {
+     "id": "D3",
+     "label": "Three straight hikes (upper bound 4.75% by Mar 17)",
+     "arm": "FED RATES AND JAPAN",
+     "before": 25.0,
+     "after": 24.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-22",
+     "paths": [
+      {
+       "path": "27-5 > D3",
+       "points": -0.1
+      }
+     ]
+    },
+    {
+     "id": "J6",
+     "label": "Japan's Treasury holdings fall under $1,000B",
+     "arm": "FED RATES AND JAPAN",
+     "before": 55.0,
+     "after": 54.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-5 > J6",
+       "points": -0.1
+      }
+     ]
+    },
+    {
+     "id": "28-2",
+     "label": "The bill reaches the lenders",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 58.5,
+     "after": 58.4,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-23",
+     "paths": [
+      {
+       "path": "27-5 > 28-2",
+       "points": -0.1
+      }
+     ]
+    },
+    {
+     "id": "M35",
+     "label": "Global Financial Systems Vulnerable",
+     "arm": "CYBER",
+     "before": 35.0,
+     "after": 34.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-22",
+     "paths": [
+      {
+       "path": "27-3 > C4 > M35",
+       "points": -0.09
+      }
+     ]
+    },
+    {
+     "id": "M19",
+     "label": "Artificial Superintelligence (ASI)",
+     "arm": "AI CAPABILITY",
+     "before": 54.9,
+     "after": 55.0,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-23",
+     "paths": [
+      {
+       "path": "28-1 > M19",
+       "points": 0.08
+      }
+     ]
+    },
+    {
+     "id": "M24",
+     "label": "AI Consciousness Debate Reaches UN",
+     "arm": "AI CAPABILITY",
+     "before": 30.0,
+     "after": 29.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-21",
+     "paths": [
+      {
+       "path": "27-1 > 29-3 > M24",
+       "points": -0.08
+      }
+     ]
+    },
+    {
+     "id": "B2",
+     "label": "Private-credit funds mark down and face redemption queues (Blue Owl under $7 by May 21 is 40%)",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 60.8,
+     "after": 60.9,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-23",
+     "paths": [
+      {
+       "path": "27-1 > 27-4 > B2",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "M13",
+     "label": "Scientific Discovery Rate 10x",
+     "arm": "DISCOVERIES",
+     "before": 29.9,
+     "after": 30.0,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "28-1 > M13",
+       "points": 0.06
+      }
+     ]
+    },
+    {
+     "id": "D8",
+     "label": "A debt-limit scare: bill yields spike or a rating agency acts",
+     "arm": "FED RATES AND JAPAN",
+     "before": 30.0,
+     "after": 29.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-22",
+     "paths": [
+      {
+       "path": "27-5 > D8",
+       "points": -0.05
+      }
+     ]
+    },
+    {
+     "id": "D6",
+     "label": "A US recession call",
+     "arm": "FED RATES AND JAPAN",
+     "before": 22.0,
+     "after": 21.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-22",
+     "paths": [
+      {
+       "path": "27-5 > D6",
+       "points": -0.05
+      }
+     ]
+    },
+    {
+     "id": "M33",
+     "label": "Stock Market Circuit Breakers Triggered",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 25.0,
+     "after": 24.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-5 > M33",
+       "points": -0.05
+      }
+     ]
+    },
+    {
+     "id": "D9",
+     "label": "The Fed buys bonds, or Treasury caps long-bond sales, while inflation is above target",
+     "arm": "FED RATES AND JAPAN",
+     "before": 25.0,
+     "after": 24.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-21",
+     "paths": [
+      {
+       "path": "27-5 > D9",
+       "points": -0.05
+      }
+     ]
+    }
+   ],
+   "skipped": [
+    {
+     "id": "B3",
+     "reason": "effect would land 2027-04-06 after its window closes 2027-03-31"
+    },
+    {
+     "id": "C5",
+     "reason": "effect would land 2027-09-19 after its window closes 2027-03-31"
+    },
+    {
+     "id": "F3",
+     "reason": "effect would land 2027-04-22 after its window closes 2027-03-31"
+    }
+   ],
+   "stats": {
+    "links_used": 47,
+    "blocked_fired_or_hand_set": 14,
+    "dropped_window_closed": 3,
+    "dropped_tiny": 44,
+    "cut_at_hop_limit": 0
+   },
+   "collisions": {
+    "a_multi_arm_nodes": [
+     {
+      "kind": "a",
+      "what": "27-4 rose +0.9, pushed by 2 arms",
+      "nodes": [
+       "27-4"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "FED RATES AND JAPAN"
+      ],
+      "joint_odds": 58.3,
+      "score": 1.166,
+      "window_end": "2027-11-30"
+     }
+    ],
+    "b_cross_arm_pairs": [
+     {
+      "kind": "b",
+      "what": "28-1 (+0.8) x B2 (+0.1)",
+      "nodes": [
+       "28-1",
+       "B2"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "AI FINANCING AND BANKS"
+      ],
+      "gap_days": 1,
+      "shared_layers": [],
+      "joint_odds": 33.5,
+      "score": 0.67,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.9) x 28-1 (+0.8), same layer: POWER",
+      "nodes": [
+       "27-4",
+       "28-1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "AI FINANCING AND BANKS"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 32.1,
+      "score": 0.641,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "28-1 (+0.8) x 29-6 (+0.1), same layer: POWER",
+      "nodes": [
+       "28-1",
+       "29-6"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "AI FINANCING AND BANKS"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 25.5,
+      "score": 0.51,
+      "window_end": "2028-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "29-6 (+0.1) x M19 (+0.1), same layer: POWER",
+      "nodes": [
+       "29-6",
+       "M19"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "AI FINANCING AND BANKS"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 25.5,
+      "score": 0.51,
+      "window_end": "2029-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "B2 (+0.1) x M13 (+0.1)",
+      "nodes": [
+       "B2",
+       "M13"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "DISCOVERIES"
+      ],
+      "gap_days": 1,
+      "shared_layers": [],
+      "joint_odds": 18.3,
+      "score": 0.365,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.9) x M13 (+0.1)",
+      "nodes": [
+       "27-4",
+       "M13"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 17.5,
+      "score": 0.35,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "28-1 (+0.8) x M13 (+0.1), same layer: JOBS",
+      "nodes": [
+       "28-1",
+       "M13"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 16.5,
+      "score": 0.33,
+      "window_end": "2028-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "M13 (+0.1) x M19 (+0.1), same layer: JOBS",
+      "nodes": [
+       "M13",
+       "M19"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 16.5,
+      "score": 0.33,
+      "window_end": "2028-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "29-6 (+0.1) x M13 (+0.1)",
+      "nodes": [
+       "29-6",
+       "M13"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 13.9,
+      "score": 0.278,
+      "window_end": "2028-11-30"
+     }
+    ],
+    "c_companies": []
+   },
+   "queue": [
+    {
+     "kind": "a",
+     "what": "27-4 rose +0.9, pushed by 2 arms",
+     "nodes": [
+      "27-4"
+     ],
+     "arms": [
+      "AI CAPABILITY",
+      "FED RATES AND JAPAN"
+     ],
+     "joint_odds": 58.3,
+     "score": 1.166,
+     "window_end": "2027-11-30"
+    },
+    {
+     "kind": "b",
+     "what": "28-1 (+0.8) x B2 (+0.1)",
+     "nodes": [
+      "28-1",
+      "B2"
+     ],
+     "arms": [
+      "AI CAPABILITY",
+      "AI FINANCING AND BANKS"
+     ],
+     "gap_days": 1,
+     "shared_layers": [],
+     "joint_odds": 33.5,
+     "score": 0.67,
+     "window_end": "2027-05-31"
+    },
+    {
+     "kind": "b",
+     "what": "27-4 (+0.9) x 28-1 (+0.8), same layer: POWER",
+     "nodes": [
+      "27-4",
+      "28-1"
+     ],
+     "arms": [
+      "AI CAPABILITY",
+      "AI FINANCING AND BANKS"
+     ],
+     "gap_days": 0,
+     "shared_layers": [
+      "POWER"
+     ],
+     "joint_odds": 32.1,
+     "score": 0.641,
+     "window_end": "2027-11-30"
+    },
+    {
+     "kind": "b",
+     "what": "28-1 (+0.8) x 29-6 (+0.1), same layer: POWER",
+     "nodes": [
+      "28-1",
+      "29-6"
+     ],
+     "arms": [
+      "AI CAPABILITY",
+      "AI FINANCING AND BANKS"
+     ],
+     "gap_days": 0,
+     "shared_layers": [
+      "POWER"
+     ],
+     "joint_odds": 25.5,
+     "score": 0.51,
+     "window_end": "2028-11-30"
+    },
+    {
+     "kind": "b",
+     "what": "29-6 (+0.1) x M19 (+0.1), same layer: POWER",
+     "nodes": [
+      "29-6",
+      "M19"
+     ],
+     "arms": [
+      "AI CAPABILITY",
+      "AI FINANCING AND BANKS"
+     ],
+     "gap_days": 0,
+     "shared_layers": [
+      "POWER"
+     ],
+     "joint_odds": 25.5,
+     "score": 0.51,
+     "window_end": "2029-11-30"
     }
    ]
   }
