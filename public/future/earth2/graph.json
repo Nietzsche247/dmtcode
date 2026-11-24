@@ -80,7 +80,8 @@
   ],
   "v5_2_changes": [
    "Majors settled Nov 23: one number per major (27-1 50, 27-3 50, 27-5 43, 28-1 55, 28-3 55, 28-5 40, 28-6 55, 29-1 50, 29-2 65, 29-4 60), applied through the engine with all ten pinned (third cascade_log entry). Biggest knock-ons: 29-3 down 1.5, 27-4 up 0.9."
-  ]
+  ],
+  "options_checked": "Nov 23, 2026: every US-listed company checked against the OCC series search; listed_options, listed_options_basis and options_check (expirations, last expiry, open interest, liquidity) now measured, not assumed."
  },
  "nodes": [
   {
@@ -40762,7 +40763,7 @@
    "name": "Pfizer",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: PFE, 14 expirations to 2029-01-19, open interest 1,184,760 calls / 938,682 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -40781,7 +40782,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "PFE",
+    "liquidity": "heavy",
+    "series": 327,
+    "expirations": 14,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1184760,
+    "put_oi": 938682
+   }
   },
   {
    "id": "CO:01530",
@@ -40816,7 +40828,7 @@
    "name": "AstraZeneca",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AZN, 13 expirations to 2029-01-19, open interest 70,754 calls / 30,282 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -40835,7 +40847,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AZN",
+    "liquidity": "moderate",
+    "series": 406,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 70754,
+    "put_oi": 30282
+   }
   },
   {
    "id": "CO:01093",
@@ -40870,7 +40893,7 @@
    "name": "Summit Therapeutics",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: SMMT, 12 expirations to 2029-01-19, open interest 186,537 calls / 97,736 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -40906,7 +40929,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "SMMT",
+    "liquidity": "moderate",
+    "series": 427,
+    "expirations": 12,
+    "last_expiry": "2029-01-19",
+    "call_oi": 186537,
+    "put_oi": 97736
+   }
   },
   {
    "id": "CO:09926",
@@ -40958,7 +40992,7 @@
    "name": "Recursion Pharmaceuticals",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: RXRX, 11 expirations to 2029-01-19, open interest 237,441 calls / 45,508 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -40977,7 +41011,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "RXRX",
+    "liquidity": "moderate",
+    "series": 159,
+    "expirations": 11,
+    "last_expiry": "2029-01-19",
+    "call_oi": 237441,
+    "put_oi": 45508
+   }
   },
   {
    "id": "CO:SDGR",
@@ -40985,7 +41030,7 @@
    "name": "Schrodinger",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: SDGR, 7 expirations to 2027-11-19, open interest 19,930 calls / 8,104 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41004,7 +41049,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "SDGR",
+    "liquidity": "light",
+    "series": 113,
+    "expirations": 7,
+    "last_expiry": "2027-11-19",
+    "call_oi": 19930,
+    "put_oi": 8104
+   }
   },
   {
    "id": "CO:ABSI",
@@ -41012,7 +41068,7 @@
    "name": "Absci",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ABSI, 6 expirations to 2029-01-19, open interest 56,173 calls / 22,804 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41031,7 +41087,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ABSI",
+    "liquidity": "light",
+    "series": 111,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 56173,
+    "put_oi": 22804
+   }
   },
   {
    "id": "CO:03696",
@@ -41066,7 +41133,7 @@
    "name": "Eli Lilly and Company",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: LLY, 18 expirations to 2029-01-19, open interest 136,322 calls / 183,952 puts (moderate)",
    "verified": true,
    "verified_source": "Definitional: the event's own test names the company (BB2), board read 2",
    "sits_on": [
@@ -41093,7 +41160,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "LLY",
+    "liquidity": "moderate",
+    "series": 2299,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 136322,
+    "put_oi": 183952
+   }
   },
   {
    "id": "CO:NVO",
@@ -41101,7 +41179,7 @@
    "name": "Novo Nordisk",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NVO, 15 expirations to 2029-01-19, open interest 833,077 calls / 494,823 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41120,7 +41198,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NVO",
+    "liquidity": "heavy",
+    "series": 414,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 833077,
+    "put_oi": 494823
+   }
   },
   {
    "id": "CO:HIMS",
@@ -41128,7 +41217,7 @@
    "name": "Hims & Hers Health",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: HIMS, 13 expirations to 2029-01-19, open interest 484,312 calls / 292,161 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41147,7 +41236,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "HIMS",
+    "liquidity": "moderate",
+    "series": 525,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 484312,
+    "put_oi": 292161
+   }
   },
   {
    "id": "CO:RVMD",
@@ -41155,7 +41255,7 @@
    "name": "Revolution Medicines",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: RVMD, 10 expirations to 2029-01-19, open interest 27,939 calls / 22,585 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41183,7 +41283,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "RVMD",
+    "liquidity": "light",
+    "series": 403,
+    "expirations": 10,
+    "last_expiry": "2029-01-19",
+    "call_oi": 27939,
+    "put_oi": 22585
+   }
   },
   {
    "id": "CO:MRK",
@@ -41191,7 +41302,7 @@
    "name": "Merck & Co.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MRK, 16 expirations to 2029-01-19, open interest 264,848 calls / 205,846 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41243,7 +41354,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MRK",
+    "liquidity": "moderate",
+    "series": 645,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 264848,
+    "put_oi": 205846
+   }
   },
   {
    "id": "CO:068270",
@@ -41359,7 +41481,7 @@
    "name": "Alphabet",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: GOOGL, 24 expirations to 2029-01-19, open interest 2,261,547 calls / 1,637,926 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41510,7 +41632,18 @@
     "CYBER",
     "JOBS AND THE BACKLASH"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "GOOGL",
+    "liquidity": "heavy",
+    "series": 2312,
+    "expirations": 24,
+    "last_expiry": "2029-01-19",
+    "call_oi": 2261547,
+    "put_oi": 1637926
+   }
   },
   {
    "id": "CO:MSFT",
@@ -41518,7 +41651,7 @@
    "name": "Microsoft",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MSFT, 26 expirations to 2029-01-19, open interest 2,167,758 calls / 1,277,039 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41734,7 +41867,18 @@
     "JOBS AND THE BACKLASH",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MSFT",
+    "liquidity": "heavy",
+    "series": 2233,
+    "expirations": 26,
+    "last_expiry": "2029-01-19",
+    "call_oi": 2167758,
+    "put_oi": 1277039
+   }
   },
   {
    "id": "CO:AMZN",
@@ -41742,7 +41886,7 @@
    "name": "Amazon.com",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AMZN, 24 expirations to 2029-01-19, open interest 2,550,206 calls / 1,938,922 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41861,7 +42005,18 @@
     "CYBER",
     "JOBS AND THE BACKLASH"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AMZN",
+    "liquidity": "heavy",
+    "series": 1221,
+    "expirations": 24,
+    "last_expiry": "2029-01-19",
+    "call_oi": 2550206,
+    "put_oi": 1938922
+   }
   },
   {
    "id": "CO:TWST",
@@ -41869,7 +42024,7 @@
    "name": "Twist Bioscience",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TWST, 6 expirations to 2027-12-17, open interest 14,003 calls / 8,583 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41897,7 +42052,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TWST",
+    "liquidity": "light",
+    "series": 255,
+    "expirations": 6,
+    "last_expiry": "2027-12-17",
+    "call_oi": 14003,
+    "put_oi": 8583
+   }
   },
   {
    "id": "CO:DHR",
@@ -41905,7 +42071,7 @@
    "name": "Danaher",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DHR, 14 expirations to 2029-01-19, open interest 52,772 calls / 30,204 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41933,7 +42099,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DHR",
+    "liquidity": "light",
+    "series": 572,
+    "expirations": 14,
+    "last_expiry": "2029-01-19",
+    "call_oi": 52772,
+    "put_oi": 30204
+   }
   },
   {
    "id": "CO:TMO",
@@ -41941,7 +42118,7 @@
    "name": "Thermo Fisher Scientific",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TMO, 15 expirations to 2029-01-19, open interest 27,754 calls / 30,044 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -41969,7 +42146,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TMO",
+    "liquidity": "light",
+    "series": 1057,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 27754,
+    "put_oi": 30044
+   }
   },
   {
    "id": "CO:01548",
@@ -42276,7 +42464,7 @@
    "name": "MP Materials",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MP, 15 expirations to 2029-01-19, open interest 316,429 calls / 234,930 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42432,6 +42620,17 @@
      "R2",
      "R5"
     ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MP",
+    "liquidity": "moderate",
+    "series": 443,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 316429,
+    "put_oi": 234930
    }
   },
   {
@@ -42440,7 +42639,7 @@
    "name": "Energy Fuels",
    "exchange": "NYSE AMERICAN",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: UUUU, 11 expirations to 2029-01-19, open interest 384,726 calls / 129,980 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42563,6 +42762,17 @@
      "RD16",
      "R4"
     ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "UUUU",
+    "liquidity": "moderate",
+    "series": 262,
+    "expirations": 11,
+    "last_expiry": "2029-01-19",
+    "call_oi": 384726,
+    "put_oi": 129980
    }
   },
   {
@@ -42738,7 +42948,7 @@
    "name": "Viasat",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: VSAT, 9 expirations to 2029-01-19, open interest 212,093 calls / 56,517 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42766,7 +42976,18 @@
    "arms": [
     "RARE EARTHS CHINA AND TAIWAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "VSAT",
+    "liquidity": "moderate",
+    "series": 215,
+    "expirations": 9,
+    "last_expiry": "2029-01-19",
+    "call_oi": 212093,
+    "put_oi": 56517
+   }
   },
   {
    "id": "CO:FRA",
@@ -42836,7 +43057,7 @@
    "name": "Axon Enterprise",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AXON, 13 expirations to 2029-01-19, open interest 45,531 calls / 31,357 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42863,7 +43084,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AXON",
+    "liquidity": "light",
+    "series": 1050,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 45531,
+    "put_oi": 31357
+   }
   },
   {
    "id": "CO:ONDS",
@@ -42871,7 +43103,7 @@
    "name": "Ondas Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ONDS, 13 expirations to 2029-01-19, open interest 1,153,456 calls / 454,990 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42898,7 +43130,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ONDS",
+    "liquidity": "heavy",
+    "series": 265,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1153456,
+    "put_oi": 454990
+   }
   },
   {
    "id": "CO:CRM",
@@ -42906,7 +43149,7 @@
    "name": "Salesforce, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CRM, 16 expirations to 2029-01-19, open interest 312,621 calls / 312,558 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -42966,7 +43209,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CRM",
+    "liquidity": "moderate",
+    "series": 806,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 312621,
+    "put_oi": 312558
+   }
   },
   {
    "id": "CO:NOW",
@@ -42974,7 +43228,7 @@
    "name": "ServiceNow, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NOW, 16 expirations to 2029-01-19, open interest 718,439 calls / 575,152 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43018,7 +43272,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NOW",
+    "liquidity": "heavy",
+    "series": 1046,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 718439,
+    "put_oi": 575152
+   }
   },
   {
    "id": "CO:PATH",
@@ -43026,7 +43291,7 @@
    "name": "UiPath, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: PATH, 15 expirations to 2029-01-19, open interest 331,107 calls / 185,697 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43062,7 +43327,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "PATH",
+    "liquidity": "moderate",
+    "series": 347,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 331107,
+    "put_oi": 185697
+   }
   },
   {
    "id": "CO:ACN",
@@ -43070,7 +43346,7 @@
    "name": "Accenture plc",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ACN, 16 expirations to 2029-01-19, open interest 124,557 calls / 115,869 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43114,7 +43390,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ACN",
+    "liquidity": "moderate",
+    "series": 850,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 124557,
+    "put_oi": 115869
+   }
   },
   {
    "id": "CO:OBDC",
@@ -43122,7 +43409,7 @@
    "name": "Blue Owl Capital Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: OBDC, 9 expirations to 2028-03-17, open interest 6,570 calls / 13,456 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43166,7 +43453,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "OBDC",
+    "liquidity": "light",
+    "series": 74,
+    "expirations": 9,
+    "last_expiry": "2028-03-17",
+    "call_oi": 6570,
+    "put_oi": 13456
+   }
   },
   {
    "id": "CO:BXSL",
@@ -43174,7 +43472,7 @@
    "name": "Blackstone Secured Lending Fund",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: BXSL, 6 expirations to 2029-01-19, open interest 10,249 calls / 15,702 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43218,15 +43516,26 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "BXSL",
+    "liquidity": "light",
+    "series": 95,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 10249,
+    "put_oi": 15702
+   }
   },
   {
    "id": "CO:OTF",
    "ticker": "OTF",
    "name": "Blue Owl Technology Finance Corp.",
    "exchange": "NYSE",
-   "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options": "no",
+   "listed_options_basis": "OCC series search Nov 23, 2026: no listed series under OTF (yet)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43270,7 +43579,16 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": null,
+    "checked": [
+     "OTF"
+    ],
+    "liquidity": "none"
+   }
   },
   {
    "id": "CO:RHI",
@@ -43278,7 +43596,7 @@
    "name": "Robert Half Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: RHI, 4 expirations to 2027-06-17, open interest 6,552 calls / 5,295 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43330,7 +43648,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "RHI",
+    "liquidity": "light",
+    "series": 47,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 6552,
+    "put_oi": 5295
+   }
   },
   {
    "id": "CO:MAN",
@@ -43338,7 +43667,7 @@
    "name": "ManpowerGroup Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MAN, 5 expirations to 2027-12-17, open interest 2,030 calls / 1,045 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43390,7 +43719,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MAN",
+    "liquidity": "very light",
+    "series": 73,
+    "expirations": 5,
+    "last_expiry": "2027-12-17",
+    "call_oi": 2030,
+    "put_oi": 1045
+   }
   },
   {
    "id": "CO:ZIP",
@@ -43398,7 +43738,7 @@
    "name": "ZipRecruiter, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ZIP, 4 expirations to 2027-06-17, open interest 1,390 calls / 170 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43450,7 +43790,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ZIP",
+    "liquidity": "very light",
+    "series": 17,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 1390,
+    "put_oi": 170
+   }
   },
   {
    "id": "CO:TRI",
@@ -43458,7 +43809,7 @@
    "name": "Thomson Reuters Corporation",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TRI, 6 expirations to 2027-09-17, open interest 3,682 calls / 4,375 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43485,7 +43836,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TRI",
+    "liquidity": "very light",
+    "series": 150,
+    "expirations": 6,
+    "last_expiry": "2027-09-17",
+    "call_oi": 3682,
+    "put_oi": 4375
+   }
   },
   {
    "id": "CO:RELX",
@@ -43493,7 +43855,7 @@
    "name": "RELX PLC ADR",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: RELX, 4 expirations to 2027-07-16, open interest 2,386 calls / 372 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43561,7 +43923,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "RELX",
+    "liquidity": "very light",
+    "series": 37,
+    "expirations": 4,
+    "last_expiry": "2027-07-16",
+    "call_oi": 2386,
+    "put_oi": 372
+   }
   },
   {
    "id": "CO:DOCS",
@@ -43569,7 +43942,7 @@
    "name": "Doximity, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DOCS, 7 expirations to 2029-01-19, open interest 22,631 calls / 12,690 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43588,7 +43961,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DOCS",
+    "liquidity": "light",
+    "series": 167,
+    "expirations": 7,
+    "last_expiry": "2029-01-19",
+    "call_oi": 22631,
+    "put_oi": 12690
+   }
   },
   {
    "id": "CO:PANW",
@@ -43596,7 +43980,7 @@
    "name": "Palo Alto Networks, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: PANW, 18 expirations to 2029-01-19, open interest 320,930 calls / 329,816 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43681,7 +44065,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "PANW",
+    "liquidity": "moderate",
+    "series": 1742,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 320930,
+    "put_oi": 329816
+   }
   },
   {
    "id": "CO:ZS",
@@ -43689,7 +44084,7 @@
    "name": "Zscaler, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ZS, 16 expirations to 2029-01-19, open interest 100,310 calls / 89,212 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43708,7 +44103,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ZS",
+    "liquidity": "moderate",
+    "series": 819,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 100310,
+    "put_oi": 89212
+   }
   },
   {
    "id": "CO:CRWD",
@@ -43716,7 +44122,7 @@
    "name": "CrowdStrike Holdings, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CRWD, 19 expirations to 2029-01-19, open interest 621,049 calls / 612,182 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43785,7 +44191,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CRWD",
+    "liquidity": "heavy",
+    "series": 1457,
+    "expirations": 19,
+    "last_expiry": "2029-01-19",
+    "call_oi": 621049,
+    "put_oi": 612182
+   }
   },
   {
    "id": "CO:CTSH",
@@ -43793,7 +44210,7 @@
    "name": "Cognizant Technology Solutions Corporation",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CTSH, 10 expirations to 2029-01-19, open interest 41,163 calls / 30,399 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43829,7 +44246,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CTSH",
+    "liquidity": "light",
+    "series": 285,
+    "expirations": 10,
+    "last_expiry": "2029-01-19",
+    "call_oi": 41163,
+    "put_oi": 30399
+   }
   },
   {
    "id": "CO:ADBE",
@@ -43837,7 +44265,7 @@
    "name": "Adobe Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ADBE, 17 expirations to 2029-01-19, open interest 374,525 calls / 206,049 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43898,7 +44326,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ADBE",
+    "liquidity": "moderate",
+    "series": 949,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 374525,
+    "put_oi": 206049
+   }
   },
   {
    "id": "CO:UPWK",
@@ -43906,7 +44345,7 @@
    "name": "Upwork Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: UPWK, 6 expirations to 2029-01-19, open interest 32,152 calls / 26,122 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43925,7 +44364,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "UPWK",
+    "liquidity": "light",
+    "series": 76,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 32152,
+    "put_oi": 26122
+   }
   },
   {
    "id": "CO:FVRR",
@@ -43933,7 +44383,7 @@
    "name": "Fiverr International Ltd.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: FVRR, 7 expirations to 2029-01-19, open interest 60,364 calls / 25,470 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -43952,7 +44402,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "FVRR",
+    "liquidity": "light",
+    "series": 112,
+    "expirations": 7,
+    "last_expiry": "2029-01-19",
+    "call_oi": 60364,
+    "put_oi": 25470
+   }
   },
   {
    "id": "CO:TEAM",
@@ -43960,7 +44421,7 @@
    "name": "Atlassian Corporation",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TEAM, 14 expirations to 2029-01-19, open interest 74,703 calls / 57,297 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44012,7 +44473,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TEAM",
+    "liquidity": "moderate",
+    "series": 736,
+    "expirations": 14,
+    "last_expiry": "2029-01-19",
+    "call_oi": 74703,
+    "put_oi": 57297
+   }
   },
   {
    "id": "CO:TCS",
@@ -44064,7 +44536,7 @@
    "name": "Infosys Limited",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: INFY, 6 expirations to 2029-01-19, open interest 45,789 calls / 110,643 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44108,7 +44580,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "INFY",
+    "liquidity": "moderate",
+    "series": 107,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 45789,
+    "put_oi": 110643
+   }
   },
   {
    "id": "CO:HCLTECH",
@@ -44160,7 +44643,7 @@
    "name": "Wipro Limited",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: WIT, 4 expirations to 2027-06-17, open interest 3,425 calls / 4,003 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44204,7 +44687,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "WIT",
+    "liquidity": "very light",
+    "series": 28,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 3425,
+    "put_oi": 4003
+   }
   },
   {
    "id": "CO:TECHM",
@@ -44256,7 +44750,7 @@
    "name": "First Advantage Corporation",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: FA, 4 expirations to 2027-07-16, open interest 394 calls / 29 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44292,7 +44786,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "FA",
+    "liquidity": "very light",
+    "series": 40,
+    "expirations": 4,
+    "last_expiry": "2027-07-16",
+    "call_oi": 394,
+    "put_oi": 29
+   }
   },
   {
    "id": "CO:OKTA",
@@ -44300,7 +44805,7 @@
    "name": "Okta, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: OKTA, 15 expirations to 2029-01-19, open interest 80,009 calls / 93,418 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44319,7 +44824,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "OKTA",
+    "liquidity": "moderate",
+    "series": 805,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 80009,
+    "put_oi": 93418
+   }
   },
   {
    "id": "CO:WDAY",
@@ -44327,7 +44843,7 @@
    "name": "Workday, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: WDAY, 14 expirations to 2029-01-19, open interest 101,714 calls / 62,397 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44371,7 +44887,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "WDAY",
+    "liquidity": "moderate",
+    "series": 630,
+    "expirations": 14,
+    "last_expiry": "2029-01-19",
+    "call_oi": 101714,
+    "put_oi": 62397
+   }
   },
   {
    "id": "CO:META",
@@ -44379,7 +44906,7 @@
    "name": "Meta Platforms, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: META, 23 expirations to 2029-01-19, open interest 1,740,251 calls / 950,032 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44513,7 +45040,18 @@
     "CYBER",
     "JOBS AND THE BACKLASH"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "META",
+    "liquidity": "heavy",
+    "series": 3433,
+    "expirations": 23,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1740251,
+    "put_oi": 950032
+   }
   },
   {
    "id": "CO:SNAP",
@@ -44521,7 +45059,7 @@
    "name": "Snap Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: SNAP, 12 expirations to 2029-01-19, open interest 1,000,886 calls / 280,784 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44540,7 +45078,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "SNAP",
+    "liquidity": "heavy",
+    "series": 183,
+    "expirations": 12,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1000886,
+    "put_oi": 280784
+   }
   },
   {
    "id": "CO:V",
@@ -44548,7 +45097,7 @@
    "name": "Visa Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: V, 18 expirations to 2029-01-19, open interest 217,545 calls / 206,348 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44567,7 +45116,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "V",
+    "liquidity": "moderate",
+    "series": 1158,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 217545,
+    "put_oi": 206348
+   }
   },
   {
    "id": "CO:MA",
@@ -44575,7 +45135,7 @@
    "name": "Mastercard Incorporated",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MA, 17 expirations to 2029-01-19, open interest 68,035 calls / 70,736 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44594,7 +45154,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MA",
+    "liquidity": "moderate",
+    "series": 1268,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 68035,
+    "put_oi": 70736
+   }
   },
   {
    "id": "CO:PYPL",
@@ -44602,7 +45173,7 @@
    "name": "PayPal Holdings, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: PYPL, 16 expirations to 2029-01-19, open interest 1,085,281 calls / 385,253 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44621,7 +45192,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "PYPL",
+    "liquidity": "heavy",
+    "series": 494,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1085281,
+    "put_oi": 385253
+   }
   },
   {
    "id": "CO:NICE",
@@ -44629,7 +45211,7 @@
    "name": "NICE Ltd. ADS",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NICE, 7 expirations to 2029-01-19, open interest 5,937 calls / 9,018 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44656,7 +45238,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NICE",
+    "liquidity": "light",
+    "series": 204,
+    "expirations": 7,
+    "last_expiry": "2029-01-19",
+    "call_oi": 5937,
+    "put_oi": 9018
+   }
   },
   {
    "id": "CO:TRU",
@@ -44664,7 +45257,7 @@
    "name": "TransUnion",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TRU, 5 expirations to 2028-01-21, open interest 3,459 calls / 2,252 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44708,7 +45301,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TRU",
+    "liquidity": "very light",
+    "series": 161,
+    "expirations": 5,
+    "last_expiry": "2028-01-21",
+    "call_oi": 3459,
+    "put_oi": 2252
+   }
   },
   {
    "id": "CO:EFX",
@@ -44716,7 +45320,7 @@
    "name": "Equifax Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: EFX, 5 expirations to 2027-07-16, open interest 2,905 calls / 3,186 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44752,7 +45356,18 @@
     "CYBER",
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "EFX",
+    "liquidity": "very light",
+    "series": 162,
+    "expirations": 5,
+    "last_expiry": "2027-07-16",
+    "call_oi": 2905,
+    "put_oi": 3186
+   }
   },
   {
    "id": "CO:EXPN",
@@ -44796,7 +45411,7 @@
    "name": "Apple Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AAPL, 24 expirations to 2029-01-19, open interest 2,774,327 calls / 2,563,637 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44815,7 +45430,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AAPL",
+    "liquidity": "heavy",
+    "series": 1727,
+    "expirations": 24,
+    "last_expiry": "2029-01-19",
+    "call_oi": 2774327,
+    "put_oi": 2563637
+   }
   },
   {
    "id": "CO:HO",
@@ -44850,7 +45476,7 @@
    "name": "Tyler Technologies, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TYL, 5 expirations to 2027-12-17, open interest 5,623 calls / 2,608 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44869,7 +45495,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TYL",
+    "liquidity": "very light",
+    "series": 221,
+    "expirations": 5,
+    "last_expiry": "2027-12-17",
+    "call_oi": 5623,
+    "put_oi": 2608
+   }
   },
   {
    "id": "CO:WLY",
@@ -44877,7 +45514,7 @@
    "name": "John Wiley & Sons, Inc. Class A",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: WLY, 4 expirations to 2027-06-17, open interest 665 calls / 586 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44896,7 +45533,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "WLY",
+    "liquidity": "very light",
+    "series": 47,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 665,
+    "put_oi": 586
+   }
   },
   {
    "id": "CO:CLVT",
@@ -44904,7 +45552,7 @@
    "name": "Clarivate Plc",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CLVT, 4 expirations to 2027-07-16, open interest 7,537 calls / 536 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44931,7 +45579,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CLVT",
+    "liquidity": "very light",
+    "series": 28,
+    "expirations": 4,
+    "last_expiry": "2027-07-16",
+    "call_oi": 7537,
+    "put_oi": 536
+   }
   },
   {
    "id": "CO:ICFI",
@@ -44939,7 +45598,7 @@
    "name": "ICF International, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ICFI, 4 expirations to 2027-06-17, open interest 14 calls / 4 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44958,7 +45617,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ICFI",
+    "liquidity": "very light",
+    "series": 76,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 14,
+    "put_oi": 4
+   }
   },
   {
    "id": "CO:UNH",
@@ -44966,7 +45636,7 @@
    "name": "UnitedHealth Group Incorporated",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: UNH, 16 expirations to 2029-01-19, open interest 489,813 calls / 398,990 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -44985,7 +45655,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "UNH",
+    "liquidity": "moderate",
+    "series": 1009,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 489813,
+    "put_oi": 398990
+   }
   },
   {
    "id": "CO:CI",
@@ -44993,7 +45674,7 @@
    "name": "The Cigna Group",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CI, 16 expirations to 2029-01-19, open interest 53,766 calls / 28,205 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45012,7 +45693,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CI",
+    "liquidity": "light",
+    "series": 706,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 53766,
+    "put_oi": 28205
+   }
   },
   {
    "id": "CO:ELV",
@@ -45020,7 +45712,7 @@
    "name": "Elevance Health, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ELV, 9 expirations to 2029-01-19, open interest 14,150 calls / 13,093 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45039,7 +45731,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ELV",
+    "liquidity": "light",
+    "series": 435,
+    "expirations": 9,
+    "last_expiry": "2029-01-19",
+    "call_oi": 14150,
+    "put_oi": 13093
+   }
   },
   {
    "id": "CO:INTU",
@@ -45047,7 +45750,7 @@
    "name": "Intuit Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: INTU, 15 expirations to 2029-01-19, open interest 87,003 calls / 72,821 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45066,7 +45769,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "INTU",
+    "liquidity": "moderate",
+    "series": 995,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 87003,
+    "put_oi": 72821
+   }
   },
   {
    "id": "CO:HRB",
@@ -45074,7 +45788,7 @@
    "name": "H&R Block, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: HRB, 5 expirations to 2027-07-16, open interest 4,262 calls / 16,280 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45093,7 +45807,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "HRB",
+    "liquidity": "light",
+    "series": 59,
+    "expirations": 5,
+    "last_expiry": "2027-07-16",
+    "call_oi": 4262,
+    "put_oi": 16280
+   }
   },
   {
    "id": "CO:UBER",
@@ -45101,7 +45826,7 @@
    "name": "Uber Technologies, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: UBER, 16 expirations to 2029-01-19, open interest 792,943 calls / 693,651 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45120,7 +45845,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "UBER",
+    "liquidity": "heavy",
+    "series": 521,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 792943,
+    "put_oi": 693651
+   }
   },
   {
    "id": "CO:DASH",
@@ -45128,7 +45864,7 @@
    "name": "DoorDash, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DASH, 15 expirations to 2029-01-19, open interest 98,071 calls / 56,822 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45147,7 +45883,18 @@
    "arms": [
     "WHITE-COLLAR WORK"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DASH",
+    "liquidity": "moderate",
+    "series": 666,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 98071,
+    "put_oi": 56822
+   }
   },
   {
    "id": "CO:ORCL",
@@ -45155,7 +45902,7 @@
    "name": "Oracle Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ORCL, 18 expirations to 2029-01-19, open interest 1,876,494 calls / 1,692,744 puts (heavy)",
    "verified": true,
    "verified_source": "Definitional: the event's own test names the company (F4), board read 2",
    "sits_on": [
@@ -45217,7 +45964,18 @@
     "JOBS AND THE BACKLASH",
     "POWER AND THE GRID"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ORCL",
+    "liquidity": "heavy",
+    "series": 1043,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1876494,
+    "put_oi": 1692744
+   }
   },
   {
    "id": "CO:CRWV",
@@ -45225,7 +45983,7 @@
    "name": "CoreWeave, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CRWV, 19 expirations to 2029-01-19, open interest 1,870,680 calls / 1,990,658 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45311,7 +46069,18 @@
     "JOBS AND THE BACKLASH",
     "POWER AND THE GRID"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CRWV",
+    "liquidity": "heavy",
+    "series": 1063,
+    "expirations": 19,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1870680,
+    "put_oi": 1990658
+   }
   },
   {
    "id": "CO:NBIS",
@@ -45319,7 +46088,7 @@
    "name": "Nebius Group N.V.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NBIS, 22 expirations to 2029-01-19, open interest 953,324 calls / 876,899 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45380,7 +46149,18 @@
     "AI FINANCING AND BANKS",
     "POWER AND THE GRID"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NBIS",
+    "liquidity": "heavy",
+    "series": 1329,
+    "expirations": 22,
+    "last_expiry": "2029-01-19",
+    "call_oi": 953324,
+    "put_oi": 876899
+   }
   },
   {
    "id": "CO:FXY",
@@ -45388,7 +46168,7 @@
    "name": "Invesco CurrencyShares Japanese Yen Trust",
    "exchange": "NYSE ARCA",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: FXY, 6 expirations to 2029-01-19, open interest 75,188 calls / 22,884 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45407,7 +46187,18 @@
    "arms": [
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "FXY",
+    "liquidity": "light",
+    "series": 180,
+    "expirations": 6,
+    "last_expiry": "2029-01-19",
+    "call_oi": 75188,
+    "put_oi": 22884
+   }
   },
   {
    "id": "CO:TLT",
@@ -45415,7 +46206,7 @@
    "name": "iShares 20+ Year Treasury Bond ETF",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TLT, 29 expirations to 2029-01-19, open interest 9,047,052 calls / 4,452,063 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45442,7 +46233,18 @@
    "arms": [
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TLT",
+    "liquidity": "heavy",
+    "series": 1352,
+    "expirations": 29,
+    "last_expiry": "2029-01-19",
+    "call_oi": 9047052,
+    "put_oi": 4452063
+   }
   },
   {
    "id": "CO:IEF",
@@ -45450,7 +46252,7 @@
    "name": "iShares 7-10 Year Treasury Bond ETF",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: IEF, 21 expirations to 2029-01-19, open interest 1,027,962 calls / 486,982 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45477,7 +46279,18 @@
    "arms": [
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "IEF",
+    "liquidity": "heavy",
+    "series": 833,
+    "expirations": 21,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1027962,
+    "put_oi": 486982
+   }
   },
   {
    "id": "CO:CME",
@@ -45485,7 +46298,7 @@
    "name": "CME Group Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CME, 14 expirations to 2029-01-19, open interest 26,759 calls / 29,122 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45522,7 +46335,18 @@
     "AI FINANCING AND BANKS",
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CME",
+    "liquidity": "light",
+    "series": 663,
+    "expirations": 14,
+    "last_expiry": "2029-01-19",
+    "call_oi": 26759,
+    "put_oi": 29122
+   }
   },
   {
    "id": "CO:IREN",
@@ -45530,7 +46354,7 @@
    "name": "IREN Limited",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: IREN, 21 expirations to 2029-01-19, open interest 2,407,693 calls / 1,633,606 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45600,7 +46424,18 @@
     "JOBS AND THE BACKLASH",
     "POWER AND THE GRID"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "IREN",
+    "liquidity": "heavy",
+    "series": 899,
+    "expirations": 21,
+    "last_expiry": "2029-01-19",
+    "call_oi": 2407693,
+    "put_oi": 1633606
+   }
   },
   {
    "id": "CO:BX",
@@ -45608,7 +46443,7 @@
    "name": "Blackstone Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: BX, 15 expirations to 2029-01-19, open interest 170,636 calls / 291,464 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45636,7 +46471,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "BX",
+    "liquidity": "moderate",
+    "series": 631,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 170636,
+    "put_oi": 291464
+   }
   },
   {
    "id": "CO:APO",
@@ -45644,7 +46490,7 @@
    "name": "Apollo Global Management, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: APO, 15 expirations to 2029-01-19, open interest 171,380 calls / 159,626 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45672,7 +46518,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "APO",
+    "liquidity": "moderate",
+    "series": 579,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 171380,
+    "put_oi": 159626
+   }
   },
   {
    "id": "CO:OWL",
@@ -45680,7 +46537,7 @@
    "name": "Blue Owl Capital Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: OWL, 13 expirations to 2029-01-19, open interest 267,909 calls / 473,346 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45724,7 +46581,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "OWL",
+    "liquidity": "moderate",
+    "series": 254,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 267909,
+    "put_oi": 473346
+   }
   },
   {
    "id": "CO:CRCL",
@@ -45732,7 +46600,7 @@
    "name": "Circle Internet Group, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CRCL, 17 expirations to 2029-01-19, open interest 442,193 calls / 263,428 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45751,7 +46619,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CRCL",
+    "liquidity": "moderate",
+    "series": 839,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 442193,
+    "put_oi": 263428
+   }
   },
   {
    "id": "CO:COIN",
@@ -45759,7 +46638,7 @@
    "name": "Coinbase Global, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: COIN, 18 expirations to 2029-01-19, open interest 588,252 calls / 418,698 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45795,7 +46674,18 @@
     "AI FINANCING AND BANKS",
     "CYBER"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "COIN",
+    "liquidity": "heavy",
+    "series": 1339,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 588252,
+    "put_oi": 418698
+   }
   },
   {
    "id": "CO:XOM",
@@ -45803,7 +46693,7 @@
    "name": "ExxonMobil Holdings Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: XOM, 17 expirations to 2029-01-19, open interest 623,973 calls / 410,234 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45822,7 +46712,18 @@
    "arms": [
     "OIL AND GULF"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "XOM",
+    "liquidity": "heavy",
+    "series": 608,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 623973,
+    "put_oi": 410234
+   }
   },
   {
    "id": "CO:CVX",
@@ -45830,7 +46731,7 @@
    "name": "Chevron Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CVX, 15 expirations to 2029-01-19, open interest 273,934 calls / 212,405 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45849,7 +46750,18 @@
    "arms": [
     "OIL AND GULF"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CVX",
+    "liquidity": "moderate",
+    "series": 595,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 273934,
+    "put_oi": 212405
+   }
   },
   {
    "id": "CO:DAL",
@@ -45857,7 +46769,7 @@
    "name": "Delta Air Lines, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DAL, 13 expirations to 2029-01-19, open interest 460,261 calls / 199,069 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45876,7 +46788,18 @@
    "arms": [
     "OIL AND GULF"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DAL",
+    "liquidity": "moderate",
+    "series": 491,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 460261,
+    "put_oi": 199069
+   }
   },
   {
    "id": "CO:JPM",
@@ -45884,7 +46807,7 @@
    "name": "JPMorgan Chase & Co.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: JPM, 15 expirations to 2029-01-19, open interest 286,404 calls / 350,919 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45929,7 +46852,18 @@
     "AI FINANCING AND BANKS",
     "CYBER"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "JPM",
+    "liquidity": "moderate",
+    "series": 882,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 286404,
+    "put_oi": 350919
+   }
   },
   {
    "id": "CO:BAC",
@@ -45937,7 +46871,7 @@
    "name": "Bank of America Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: BAC, 18 expirations to 2029-01-19, open interest 1,116,930 calls / 1,372,349 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -45965,7 +46899,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "BAC",
+    "liquidity": "heavy",
+    "series": 516,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1116930,
+    "put_oi": 1372349
+   }
   },
   {
    "id": "CO:SCHW",
@@ -45973,7 +46918,7 @@
    "name": "The Charles Schwab Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: SCHW, 16 expirations to 2029-01-19, open interest 236,816 calls / 219,411 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46001,7 +46946,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "SCHW",
+    "liquidity": "moderate",
+    "series": 548,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 236816,
+    "put_oi": 219411
+   }
   },
   {
    "id": "CO:HOOD",
@@ -46009,7 +46965,7 @@
    "name": "Robinhood Markets, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: HOOD, 18 expirations to 2029-01-19, open interest 1,059,422 calls / 699,775 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46028,7 +46984,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "HOOD",
+    "liquidity": "heavy",
+    "series": 950,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1059422,
+    "put_oi": 699775
+   }
   },
   {
    "id": "CO:IBKR",
@@ -46036,7 +47003,7 @@
    "name": "Interactive Brokers Group, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: IBKR, 16 expirations to 2029-01-19, open interest 71,323 calls / 63,173 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46055,7 +47022,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "IBKR",
+    "liquidity": "moderate",
+    "series": 491,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 71323,
+    "put_oi": 63173
+   }
   },
   {
    "id": "CO:CBOE",
@@ -46063,7 +47041,7 @@
    "name": "Cboe Global Markets, Inc.",
    "exchange": "CBOE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CBOE, 13 expirations to 2029-01-19, open interest 30,712 calls / 20,753 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46082,7 +47060,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CBOE",
+    "liquidity": "light",
+    "series": 704,
+    "expirations": 13,
+    "last_expiry": "2029-01-19",
+    "call_oi": 30712,
+    "put_oi": 20753
+   }
   },
   {
    "id": "CO:EQIX",
@@ -46090,7 +47079,7 @@
    "name": "Equinix, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: EQIX, 7 expirations to 2027-12-17, open interest 8,722 calls / 14,297 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46117,7 +47106,18 @@
    "arms": [
     "JOBS AND THE BACKLASH"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "EQIX",
+    "liquidity": "light",
+    "series": 605,
+    "expirations": 7,
+    "last_expiry": "2027-12-17",
+    "call_oi": 8722,
+    "put_oi": 14297
+   }
   },
   {
    "id": "CO:CEG",
@@ -46125,7 +47125,7 @@
    "name": "Constellation Energy Corporation",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CEG, 18 expirations to 2029-01-19, open interest 77,071 calls / 121,750 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46144,7 +47144,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CEG",
+    "liquidity": "moderate",
+    "series": 921,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 77071,
+    "put_oi": 121750
+   }
   },
   {
    "id": "CO:VST",
@@ -46152,7 +47163,7 @@
    "name": "Vistra Corp.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: VST, 18 expirations to 2029-01-19, open interest 224,668 calls / 266,172 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46187,7 +47198,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "VST",
+    "liquidity": "moderate",
+    "series": 845,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 224668,
+    "put_oi": 266172
+   }
   },
   {
    "id": "CO:AEP",
@@ -46195,7 +47217,7 @@
    "name": "American Electric Power Company, Inc.",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AEP, 10 expirations to 2029-01-19, open interest 31,367 calls / 19,182 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46230,7 +47252,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AEP",
+    "liquidity": "light",
+    "series": 266,
+    "expirations": 10,
+    "last_expiry": "2029-01-19",
+    "call_oi": 31367,
+    "put_oi": 19182
+   }
   },
   {
    "id": "CO:BE",
@@ -46238,7 +47271,7 @@
    "name": "Bloom Energy Corporation",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: BE, 19 expirations to 2029-01-19, open interest 492,224 calls / 531,945 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46282,7 +47315,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "BE",
+    "liquidity": "heavy",
+    "series": 1211,
+    "expirations": 19,
+    "last_expiry": "2029-01-19",
+    "call_oi": 492224,
+    "put_oi": 531945
+   }
   },
   {
    "id": "CO:GEV",
@@ -46290,7 +47334,7 @@
    "name": "GE Vernova Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: GEV, 17 expirations to 2029-01-19, open interest 107,539 calls / 137,492 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46325,7 +47369,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "GEV",
+    "liquidity": "moderate",
+    "series": 1924,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 107539,
+    "put_oi": 137492
+   }
   },
   {
    "id": "CO:CAT",
@@ -46333,7 +47388,7 @@
    "name": "Caterpillar Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CAT, 16 expirations to 2029-01-19, open interest 141,515 calls / 134,537 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46360,7 +47415,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CAT",
+    "liquidity": "moderate",
+    "series": 1662,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 141515,
+    "put_oi": 134537
+   }
   },
   {
    "id": "CO:DLR",
@@ -46368,7 +47434,7 @@
    "name": "Digital Realty Trust, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: DLR, 15 expirations to 2029-01-19, open interest 17,857 calls / 40,262 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46396,7 +47462,18 @@
     "JOBS AND THE BACKLASH",
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "DLR",
+    "liquidity": "light",
+    "series": 546,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 17857,
+    "put_oi": 40262
+   }
   },
   {
    "id": "CO:PWR",
@@ -46404,7 +47481,7 @@
    "name": "Quanta Services, Inc.",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: PWR, 10 expirations to 2029-01-19, open interest 19,603 calls / 31,587 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46431,7 +47508,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "PWR",
+    "liquidity": "light",
+    "series": 706,
+    "expirations": 10,
+    "last_expiry": "2029-01-19",
+    "call_oi": 19603,
+    "put_oi": 31587
+   }
   },
   {
    "id": "CO:ETN",
@@ -46439,7 +47527,7 @@
    "name": "Eaton Corporation plc",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: ETN, 15 expirations to 2029-01-19, open interest 40,854 calls / 55,484 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46458,7 +47546,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "ETN",
+    "liquidity": "light",
+    "series": 888,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 40854,
+    "put_oi": 55484
+   }
   },
   {
    "id": "CO:HUBB",
@@ -46466,7 +47565,7 @@
    "name": "Hubbell Incorporated",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: HUBB, 6 expirations to 2027-12-17, open interest 2,679 calls / 8,414 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46485,7 +47584,18 @@
    "arms": [
     "POWER AND THE GRID"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "HUBB",
+    "liquidity": "light",
+    "series": 271,
+    "expirations": 6,
+    "last_expiry": "2027-12-17",
+    "call_oi": 2679,
+    "put_oi": 8414
+   }
   },
   {
    "id": "CO:NVDA",
@@ -46493,7 +47603,7 @@
    "name": "NVIDIA",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NVDA, 25 expirations to 2029-01-19, open interest 10,611,720 calls / 9,255,577 puts (heavy)",
    "verified": true,
    "verified_source": "Definitional: the event's own test names the company (F5, F10, F11), board read 2",
    "sits_on": [
@@ -46563,7 +47673,18 @@
     "AI FINANCING AND BANKS",
     "CYBER"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NVDA",
+    "liquidity": "heavy",
+    "series": 2267,
+    "expirations": 25,
+    "last_expiry": "2029-01-19",
+    "call_oi": 10611720,
+    "put_oi": 9255577
+   }
   },
   {
    "id": "CO:AMD",
@@ -46571,7 +47692,7 @@
    "name": "Advanced Micro Devices",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: AMD, 23 expirations to 2029-01-19, open interest 1,705,374 calls / 1,815,785 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46616,7 +47737,18 @@
     "AI CAPABILITY",
     "CYBER"
    ],
-   "collision_candidate": true
+   "collision_candidate": true,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "AMD",
+    "liquidity": "heavy",
+    "series": 3268,
+    "expirations": 23,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1705374,
+    "put_oi": 1815785
+   }
   },
   {
    "id": "CO:LDOS",
@@ -46624,7 +47756,7 @@
    "name": "Leidos",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: LDOS, 4 expirations to 2027-05-21, open interest 7,824 calls / 4,768 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46643,15 +47775,26 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "LDOS",
+    "liquidity": "light",
+    "series": 130,
+    "expirations": 4,
+    "last_expiry": "2027-05-21",
+    "call_oi": 7824,
+    "put_oi": 4768
+   }
   },
   {
    "id": "CO:SOX",
    "ticker": "SOX",
    "name": "PHLX Semiconductor Sector Index",
    "exchange": "NASDAQ INDEXES",
-   "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options": "unknown",
+   "listed_options_basis": "Index, not a stock. OCC equity series search Nov 23, 2026 returns no data for SOX; index option status not confirmed. Trade through SOXX or SMH if needed.",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46670,7 +47813,16 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": null,
+    "checked": [
+     "SOX"
+    ],
+    "liquidity": "unconfirmed"
+   }
   },
   {
    "id": "CO:IBM",
@@ -46678,7 +47830,7 @@
    "name": "International Business Machines",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: IBM, 19 expirations to 2029-01-19, open interest 266,776 calls / 221,378 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46706,7 +47858,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "IBM",
+    "liquidity": "moderate",
+    "series": 1045,
+    "expirations": 19,
+    "last_expiry": "2029-01-19",
+    "call_oi": 266776,
+    "put_oi": 221378
+   }
   },
   {
    "id": "CO:CSCO",
@@ -46714,7 +47877,7 @@
    "name": "Cisco Systems",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CSCO, 18 expirations to 2029-01-19, open interest 471,042 calls / 416,258 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46742,7 +47905,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CSCO",
+    "liquidity": "moderate",
+    "series": 717,
+    "expirations": 18,
+    "last_expiry": "2029-01-19",
+    "call_oi": 471042,
+    "put_oi": 416258
+   }
   },
   {
    "id": "CO:NET",
@@ -46750,7 +47924,7 @@
    "name": "Cloudflare",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: NET, 17 expirations to 2029-01-19, open interest 119,153 calls / 101,129 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46778,7 +47952,18 @@
    "arms": [
     "CYBER"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "NET",
+    "liquidity": "moderate",
+    "series": 1032,
+    "expirations": 17,
+    "last_expiry": "2029-01-19",
+    "call_oi": 119153,
+    "put_oi": 101129
+   }
   },
   {
    "id": "CO:ANT",
@@ -46840,7 +48025,7 @@
    "name": "Tesla",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: TSLA, 23 expirations to 2029-01-19, open interest 3,056,113 calls / 2,407,147 puts (heavy)",
    "verified": true,
    "verified_source": "Definitional: the event's own test names the company (X2), board read 2",
    "sits_on": [
@@ -46916,6 +48101,17 @@
      "R6",
      "RD24"
     ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "TSLA",
+    "liquidity": "heavy",
+    "series": 2494,
+    "expirations": 23,
+    "last_expiry": "2029-01-19",
+    "call_oi": 3056113,
+    "put_oi": 2407147
    }
   },
   {
@@ -46924,7 +48120,7 @@
    "name": "Moderna",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MRNA, 16 expirations to 2029-01-19, open interest 310,197 calls / 453,655 puts (moderate)",
    "verified": true,
    "verified_source": "Definitional: the event's own test names the company (BB1), board read 2",
    "sits_on": [
@@ -46943,7 +48139,18 @@
    "arms": [
     "BIO"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MRNA",
+    "liquidity": "moderate",
+    "series": 949,
+    "expirations": 16,
+    "last_expiry": "2029-01-19",
+    "call_oi": 310197,
+    "put_oi": 453655
+   }
   },
   {
    "id": "CO:LYSCF",
@@ -46978,7 +48185,7 @@
    "name": "Core Scientific",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: CORZ, 15 expirations to 2029-01-19, open interest 1,128,350 calls / 480,024 puts (heavy)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -46997,7 +48204,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "CORZ",
+    "liquidity": "heavy",
+    "series": 472,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 1128350,
+    "put_oi": 480024
+   }
   },
   {
    "id": "CO:APLD",
@@ -47005,7 +48223,7 @@
    "name": "Applied Digital",
    "exchange": "NASDAQ",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: APLD, 12 expirations to 2029-01-19, open interest 657,934 calls / 298,561 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47032,7 +48250,18 @@
    "arms": [
     "AI FINANCING AND BANKS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "APLD",
+    "liquidity": "moderate",
+    "series": 477,
+    "expirations": 12,
+    "last_expiry": "2029-01-19",
+    "call_oi": 657934,
+    "put_oi": 298561
+   }
   },
   {
    "id": "CO:MUFG",
@@ -47040,7 +48269,7 @@
    "name": "Mitsubishi UFJ Financial",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MUFG, 4 expirations to 2027-05-21, open interest 3,326 calls / 1,685 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47068,7 +48297,18 @@
     "AI FINANCING AND BANKS",
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MUFG",
+    "liquidity": "very light",
+    "series": 29,
+    "expirations": 4,
+    "last_expiry": "2027-05-21",
+    "call_oi": 3326,
+    "put_oi": 1685
+   }
   },
   {
    "id": "CO:SMFG",
@@ -47076,7 +48316,7 @@
    "name": "Sumitomo Mitsui Financial",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: SMFG, 4 expirations to 2027-07-16, open interest 405 calls / 2,085 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47095,7 +48335,18 @@
    "arms": [
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "SMFG",
+    "liquidity": "very light",
+    "series": 29,
+    "expirations": 4,
+    "last_expiry": "2027-07-16",
+    "call_oi": 405,
+    "put_oi": 2085
+   }
   },
   {
    "id": "CO:MFG",
@@ -47103,7 +48354,7 @@
    "name": "Mizuho Financial",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: MFG, 4 expirations to 2027-07-16, open interest 360 calls / 295 puts (very light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47122,7 +48373,18 @@
    "arms": [
     "FED RATES AND JAPAN"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "MFG",
+    "liquidity": "very light",
+    "series": 31,
+    "expirations": 4,
+    "last_expiry": "2027-07-16",
+    "call_oi": 360,
+    "put_oi": 295
+   }
   },
   {
    "id": "CO:TCS.NS",
@@ -47157,7 +48419,7 @@
    "name": "Cheniere Energy",
    "exchange": "NYSE American",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: LNG, 11 expirations to 2029-01-19, open interest 49,134 calls / 27,435 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47185,7 +48447,18 @@
     "OIL AND GULF",
     "SHIPPING AND CANALS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "LNG",
+    "liquidity": "light",
+    "series": 552,
+    "expirations": 11,
+    "last_expiry": "2029-01-19",
+    "call_oi": 49134,
+    "put_oi": 27435
+   }
   },
   {
    "id": "CO:VG",
@@ -47193,7 +48466,7 @@
    "name": "Venture Global",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: VG, 15 expirations to 2029-01-19, open interest 407,555 calls / 297,656 puts (moderate)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47221,7 +48494,18 @@
     "OIL AND GULF",
     "SHIPPING AND CANALS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "VG",
+    "liquidity": "moderate",
+    "series": 291,
+    "expirations": 15,
+    "last_expiry": "2029-01-19",
+    "call_oi": 407555,
+    "put_oi": 297656
+   }
   },
   {
    "id": "CO:LPG",
@@ -47229,7 +48513,7 @@
    "name": "Dorian LPG",
    "exchange": "NYSE",
    "listed_options": "yes",
-   "listed_options_basis": "US listing; listed options assumed, not checked",
+   "listed_options_basis": "OCC series search Nov 23, 2026: LPG, 4 expirations to 2027-06-17, open interest 7,586 calls / 3,176 puts (light)",
    "verified": false,
    "verified_source": null,
    "sits_on": [
@@ -47248,7 +48532,18 @@
    "arms": [
     "SHIPPING AND CANALS"
    ],
-   "collision_candidate": false
+   "collision_candidate": false,
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": "LPG",
+    "liquidity": "light",
+    "series": 133,
+    "expirations": 4,
+    "last_expiry": "2027-06-17",
+    "call_oi": 7586,
+    "put_oi": 3176
+   }
   },
   {
    "id": "CO:USAR",
@@ -47363,7 +48658,7 @@
    "exchange": "TSX",
    "other_listings": [],
    "listed_options": "no",
-   "listed_options_basis": "rare-earth deep dive Nov 23: no US-listed options",
+   "listed_options_basis": "OCC series search Nov 23, 2026: no listed series under any US symbol (OCC 'NEO' is NeoGenomics, a different company)",
    "verified": false,
    "verified_source": null,
    "deepdive_verified": true,
@@ -47433,6 +48728,13 @@
      "RD33",
      "RD02"
     ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": null,
+    "checked": [],
+    "liquidity": "none"
    }
   },
   {
@@ -47530,7 +48832,7 @@
     }
    ],
    "listed_options": "no",
-   "listed_options_basis": "rare-earth deep dive Nov 23: no US-listed options",
+   "listed_options_basis": "OCC series search Nov 23, 2026: no listed series under TTDKY (OTC ADR); none in the US",
    "verified": false,
    "verified_source": null,
    "deepdive_verified": true,
@@ -47600,6 +48902,15 @@
      "RD18",
      "RD19"
     ]
+   },
+   "options_check": {
+    "date": "2026-11-23",
+    "source": "marketdata.theocc.com series search",
+    "symbol": null,
+    "checked": [
+     "TTDKY"
+    ],
+    "liquidity": "none"
    }
   },
   {
