@@ -25234,6 +25234,492 @@
    "origin_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
    "settlement_test": "THE FOOD COLLISION LANDS IN H1 2027: by Jun 30, 2027 all three hold: (1) WF4 settles true (Gulf fertilizer exports under half of 2025 in every month through March); (2) Russian wheat exports for Jul 2026 to May 2027 total under 34 Mt (on pace for RU9); (3) India restricts a non-basmati rice export (WF3) or Indonesia tightens palm oil exports (FD02).",
    "current_fact": "Graph odds Nov 23: WF4 75, RU9 62, WF3 50; this deep dive: FD02 35. Joint, treating the arms as independent: 0.75 x 0.62 x 0.58 = about 27%."
+  },
+  {
+   "id": "HP01",
+   "label": "IPO share supply wave: SpaceX releases 797.6M locked shares on Dec 8, 2026 (its IPO float was 555.6M); Anthropic releases 303M on Dec 15, 303M on Jan 5, 353M on Jan 19 and 353M on Feb 2. True if the releases happen on schedule.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "TRIGGER",
+   "odds_now": 97.0,
+   "odds_text": "97% by 2027-02-02 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 97.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-08",
+   "window_peak": "2026-12-08",
+   "window_end": "2027-02-02",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Nothing. The dates are in the IPO terms.",
+   "status": "SCHEDULED",
+   "source": "StockCar Nov 21, 2026; FinanceFeeds Nov 25, 2026 (secondary; verify in the filings)",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 8; Dec 15; Jan 5; Jan 19; Feb 2"
+  },
+  {
+   "id": "HP02",
+   "label": "Year-end funding squeeze: on any day from Dec 15, 2026 to Jan 5, 2027 the overnight secured rate (SOFR) prints 25 bp or more above the Fed's interest on reserves, or Standing Repo Facility use tops $75B.",
+   "arm": "FED RATES AND JAPAN",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 45.0,
+   "odds_text": "45% by 2027-01-05 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 45.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-15",
+   "window_peak": "2026-12-31",
+   "window_end": "2027-01-05",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Year-end balance-sheet dates with reserves near scarce and the Fed not buying bills.",
+   "status": "RUNNING",
+   "source": "NY Fed Nov 24, 2026 (SOFR 3.94% vs 3.90%); Goldman Nov 10, 2026 (reserves near scarcity)",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 15 tax date; Dec 31"
+  },
+  {
+   "id": "HP03",
+   "label": "Survival financing: a neocloud or miner-host under stress closes a lifeline of $1B or more from a customer or supplier (backed loan, prepayment, equity or takeover). First test: CoreWeave's $4B Meta-backed loan, marketed since Nov 16, and about $9B of expected customer prepayments.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 70.0,
+   "odds_text": "70% by 2027-03-31 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 70.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2026-12-15",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "A customer that needs the capacity more than it fears the credit.",
+   "status": "RUNNING",
+   "source": "TheStreet Nov 13, 2026; Motley Fool Nov 24, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "CoreWeave loan pricing, early December"
+  },
+  {
+   "id": "HP04",
+   "label": "OpenAI cuts, defers or renegotiates a compute commitment of $10B or more, or a supplier (Oracle, CoreWeave, Microsoft, AMD, Broadcom) discloses it. A fall in Oracle's contracted backlog from one quarter to the next counts.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 55.0,
+   "odds_text": "55% by 2027-11-30 (hard pass Nov 25, estimate)",
+   "odds_by": {
+    "2027-02-19": 15,
+    "2027-05-19": 35,
+    "2027-11-19": 55
+   },
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 55.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2027-05-15",
+   "window_end": "2027-11-30",
+   "layers_hit": [
+    "CREDIT",
+    "POWER"
+   ],
+   "least_capability": "A closed IPO window. No failure is needed, only a slower raise.",
+   "status": "RUNNING",
+   "source": "Hard pass Nov 25, 2026 (estimate)",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Oracle results about Dec 14 (backlog)"
+  },
+  {
+   "id": "HP05",
+   "label": "Oracle defends its rating: it sells $10B or more of new stock or equity-linked paper, or cuts its fiscal 2027 capex guide. It has already sold out a $20B at-the-market program and raised $10B of stock plus $10B of notes in early November.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 70.0,
+   "odds_text": "70% by 2027-03-31 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 70.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2026-12-14",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "A rating one notch above junk at S&P (trigger: debt at 4.5 times earnings).",
+   "status": "RUNNING",
+   "source": "Oracle 10-Q for Aug 31, 2026; DCD early Nov 2026; S&P Jul 9, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Oracle results about Dec 14"
+  },
+  {
+   "id": "HP06",
+   "label": "Flight to quality: the 10-year Treasury closes below 4.50% (4.83% on Nov 25, down from 5.05% on Nov 19).",
+   "arm": "FED RATES AND JAPAN",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 40.0,
+   "odds_text": "40% by 2027-03-31 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 40.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2027-01-15",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Stocks and credit doing the Fed's tightening for it; gasoline down 56 cents in November.",
+   "status": "RUNNING",
+   "source": "Yahoo Nov 25, 2026; AAA Nov 25, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 9 Fed; Dec 10 CPI"
+  },
+  {
+   "id": "HP07",
+   "label": "The credit index catches down: the US high-yield bond spread (ICE BofA) closes at 500 bp or more (364 bp on Nov 24, while CoreWeave's default insurance is 1,314 bp and a $500M data-center loan auction failed).",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 42.0,
+   "odds_text": "42% by 2027-03-31 (hard pass Nov 25, estimate)",
+   "odds_by": {
+    "2027-01-19": 20,
+    "2027-02-19": 32,
+    "2027-05-19": 50
+   },
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 42.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2027-01-15",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "One large default or one failed financing. The index is priced for neither.",
+   "status": "RUNNING",
+   "source": "Saxo Nov 24, 2026; ICE via Korea Invest Insights Nov 20, 2026; Roic Nov 25, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 1 BCRED window; CoreWeave loan; Jan 14 bank results"
+  },
+  {
+   "id": "HP08",
+   "label": "The lenders who felt safe: a US life insurer or annuity writer discloses $1B or more of private-credit or AI data-center losses, is downgraded for them, or a private-equity-owned insurer is seized or halts withdrawals.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 30.0,
+   "odds_text": "30% by 2027-11-30 (hard pass Nov 25, estimate)",
+   "odds_by": {
+    "2027-02-19": 5,
+    "2027-05-19": 14,
+    "2027-11-19": 30
+   },
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 30.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2027-02-01",
+   "window_peak": "2027-08-15",
+   "window_end": "2027-11-30",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Year-end audited marks on private assets.",
+   "status": "RUNNING",
+   "source": "Royal Gazette Nov 11, 2026 (Bermuda life sector $435.7B); NAIC Nov 17, 2026; hard pass estimate",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Q4 results, February"
+  },
+  {
+   "id": "HP09",
+   "label": "Europe's gas wall: by Mar 31, 2027 EU storage falls below 15% full, or Dutch TTF gas settles above EUR 150/MWh, or a large member state declares a gas emergency, or the EU suspends its Jan 1 ban on long-term Russian LNG. Storage was 68.9% on Nov 23 against an 89% five-year average; TTF about EUR 90; Qatar loading about half its pre-war volume.",
+   "arm": "RUSSIA AND EUROPE",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 60.0,
+   "odds_text": "60% by 2027-03-31 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 60.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-15",
+   "window_peak": "2027-02-28",
+   "window_end": "2027-03-31",
+   "layers_hit": [
+    "POWER",
+    "FOOD"
+   ],
+   "least_capability": "A normal winter. The storage arithmetic does the rest.",
+   "status": "RUNNING",
+   "source": "GIE via PiQ Markets Nov 23 to 24, 2026; IEA via S&P Global Nov 3, 2026; Bloomberg Nov 10, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Jan 1 Russian LNG ban; weekly storage"
+  },
+  {
+   "id": "HP10",
+   "label": "Democrats take both chambers of Congress on Jan 3, 2027 (Senate 56 to 44; House at least 231, final count unverified).",
+   "arm": "FED RATES AND JAPAN",
+   "type": "TRIGGER",
+   "odds_now": 99.0,
+   "odds_text": "99% by 2027-01-03 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 99.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2027-01-03",
+   "window_peak": "2027-01-03",
+   "window_end": "2027-01-03",
+   "layers_hit": [
+    "JOBS"
+   ],
+   "least_capability": "Nothing. The election is over.",
+   "status": "SCHEDULED",
+   "source": "Latin Times Nov 19, 2026; IBTimes",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Jan 3"
+  },
+  {
+   "id": "HP11",
+   "label": "Divided government bites: a federal shutdown of 5 days or more begins between Dec 12, 2026 and Jun 30, 2027 (funding expires Dec 11; the Iran campaign is funded through January).",
+   "arm": "FED RATES AND JAPAN",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 50.0,
+   "odds_text": "50% by 2027-06-30 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 50.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-12",
+   "window_peak": "2027-02-15",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "JOBS",
+    "CREDIT"
+   ],
+   "least_capability": "A stopgap that expires under the new Congress.",
+   "status": "RUNNING",
+   "source": "Kalshi about Nov 25, 2026 (27% for Dec 11); The National Nov 25, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 11; the stopgap's end date"
+  },
+  {
+   "id": "HP12",
+   "label": "The Fed stops: no hike at two straight meetings after Dec 9, or the statement drops its lean toward tightening. First chance Jan 27, then Mar 17.",
+   "arm": "FED RATES AND JAPAN",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 60.0,
+   "odds_text": "60% by 2027-06-30 (hard pass Nov 25, estimate)",
+   "odds_by": {
+    "2027-02-19": 8,
+    "2027-05-19": 45
+   },
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 60.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2027-01-27",
+   "window_peak": "2027-03-17",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "A credit market that tightens on its own, or a shutdown that blanks the data.",
+   "status": "RUNNING",
+   "source": "Hard pass Nov 25, 2026 (estimate); CME Nov 25, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 9 projections; Jan 27"
+  },
+  {
+   "id": "HP13",
+   "label": "Layoffs find their reason: a Fortune 100 company announces 5,000 or more job cuts and names AI as a cause while the S&P 500 sits 8% or more below its record.",
+   "arm": "WHITE-COLLAR WORK",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 65.0,
+   "odds_text": "65% by 2027-06-30 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 65.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-01",
+   "window_peak": "2027-01-31",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "JOBS"
+   ],
+   "least_capability": "A falling share price. AI is the reason investors reward.",
+   "status": "RUNNING",
+   "source": "Hard pass Nov 25, 2026 (estimate); routine job losses cluster in downturns",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "January announcements; Challenger report early February"
+  },
+  {
+   "id": "HP14",
+   "label": "The Ellison complex cracks: Skydance (SKYD; about $86.8B of debt, rated BB) announces a distressed exchange or a forced asset sale of $5B or more, or Larry Ellison sells, or adds to, the 413M Oracle shares he has pledged for personal loans.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 35.0,
+   "odds_text": "35% by 2027-11-30 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 35.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-25",
+   "window_peak": "2027-06-15",
+   "window_end": "2027-11-30",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Oracle's share price. It backs all three: the pledge, the guarantee and the company.",
+   "status": "RUNNING",
+   "source": "Oracle proxy Sep 21, 2026; Skydance 10-Q; The DESK Nov 10, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Oracle results about Dec 14"
+  },
+  {
+   "id": "HP15",
+   "label": "Nvidia's quarterly report, due Dec 4, is filed late or discloses a formal SEC investigation, a subpoena or a material weakness.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "TRIGGER",
+   "odds_now": 35.0,
+   "odds_text": "35% by 2026-12-11 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 35.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-12-01",
+   "window_peak": "2026-12-04",
+   "window_end": "2026-12-11",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "A lawyer's caution after the chief executive resigned (Nov 11) and returned (Nov 23).",
+   "status": "RUNNING",
+   "source": "Nvidia 8-K; Reuters Nov 21, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Dec 1 House interview; Dec 4 filing"
+  },
+  {
+   "id": "HP16",
+   "label": "Bitcoin's forced seller: Strategy (851,305 BTC bought at $75,446 on average; its stock is worth about 63% of its bitcoin) sells 10,000 or more BTC in a month or suspends a preferred dividend. MSCI drops the stock on Nov 30.",
+   "arm": "AI FINANCING AND BANKS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": 45.0,
+   "odds_text": "45% by 2027-06-30 (hard pass Nov 25, estimate)",
+   "odds_history": [
+    {
+     "date": "2026-11-25",
+     "odds": 45.0,
+     "note": "hard pass Nov 25, first load"
+    }
+   ],
+   "odds_as_of": "2026-11-25",
+   "window_start": "2026-11-30",
+   "window_peak": "2027-03-15",
+   "window_end": "2027-06-30",
+   "layers_hit": [
+    "CREDIT"
+   ],
+   "least_capability": "Bitcoin staying under its cost while the stock trades below the coins.",
+   "status": "RUNNING",
+   "source": "Strategy 8-K Nov 23, 2026; Nasdaq Nov 25, 2026",
+   "model_layer": "deep dive",
+   "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "estimated": true,
+   "next_watch": "Nov 30 index removal; bitcoin $55,106 low"
   }
  ],
  "links": [
@@ -42262,6 +42748,486 @@
    "delay_estimated": true,
    "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
    "display_only": false
+  },
+  {
+   "source": "HP01",
+   "target": "F6",
+   "sign": 1,
+   "strength": 0.1,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "Anthropic's releases land on a stock near its IPO price",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP02",
+   "target": "D9",
+   "sign": 1,
+   "strength": 0.13,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "A funding squeeze pushes the Fed back to buying bills (24.9 to about 32)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP02",
+   "target": "HP07",
+   "sign": 1,
+   "strength": 0.24,
+   "delay_days": 7,
+   "kind": "LIKELY",
+   "reason": "Dealers with no balance sheet stop making markets in credit (42 to about 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP03",
+   "target": "F2",
+   "sign": -1,
+   "strength": 0.39,
+   "delay_days": 0,
+   "kind": "OPPOSES",
+   "reason": "A lifeline postpones the default (41.8 to about 30)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP03",
+   "target": "HP07",
+   "sign": -1,
+   "strength": 0.23,
+   "delay_days": 0,
+   "kind": "OPPOSES",
+   "reason": "A funded CoreWeave calms the index (42 to about 35)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP04",
+   "target": "F4",
+   "sign": 1,
+   "strength": 0.44,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Oracle's backlog is mostly OpenAI (30 to about 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP04",
+   "target": "F2",
+   "sign": 1,
+   "strength": 0.29,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Neocloud contracts lean on OpenAI (41.8 to about 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP04",
+   "target": "J4",
+   "sign": 1,
+   "strength": 0.33,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "SoftBank is OpenAI's largest outside backer (35 to about 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP04",
+   "target": "27-4",
+   "sign": 1,
+   "strength": 0.37,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "The keystone customer steps back (58.3 to about 75)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "F9",
+   "target": "HP04",
+   "sign": 1,
+   "strength": 0.15,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "A bear market shuts the IPO window OpenAI needs (55 to about 65)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP05",
+   "target": "F4",
+   "sign": -1,
+   "strength": 0.27,
+   "delay_days": 0,
+   "kind": "OPPOSES",
+   "reason": "New equity buys rating room (30 to about 22)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP06",
+   "target": "D4",
+   "sign": -1,
+   "strength": 0.2,
+   "delay_days": 0,
+   "kind": "OPPOSES",
+   "reason": "Yields falling make a 5.50% close less likely (37 to about 25)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "F9",
+   "target": "HP06",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A bear market sends money to Treasuries (40 to about 60)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP12",
+   "target": "HP06",
+   "sign": 1,
+   "strength": 0.375,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A Fed that stops pulls long yields down (40 to about 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "F2",
+   "target": "HP07",
+   "sign": 1,
+   "strength": 0.48,
+   "delay_days": 7,
+   "kind": "LIKELY",
+   "reason": "A neocloud default reprices the whole index (42 to about 70)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "B2",
+   "target": "HP07",
+   "sign": 1,
+   "strength": 0.33,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Funds meeting redemptions sell what they can (42 to about 55)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP07",
+   "target": "F9",
+   "sign": 1,
+   "strength": 0.28,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "Wider credit spreads drag stocks (33.7 to about 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP07",
+   "target": "28-2",
+   "sign": 1,
+   "strength": 0.17,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "Index losses are the lenders' first marks (58.4 to about 68)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP07",
+   "target": "HP12",
+   "sign": 1,
+   "strength": 0.26,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A credit market doing the tightening lets the Fed stop (60 to about 75)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "B2",
+   "target": "HP08",
+   "sign": 1,
+   "strength": 0.31,
+   "delay_days": 90,
+   "kind": "LIKELY",
+   "reason": "Insurers own the private credit the funds are gating (30 to about 42)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP07",
+   "target": "HP08",
+   "sign": 1,
+   "strength": 0.26,
+   "delay_days": 90,
+   "kind": "LIKELY",
+   "reason": "Downgrades raise insurers' capital charges (30 to about 45)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP08",
+   "target": "28-2",
+   "sign": 1,
+   "strength": 0.31,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "An insurer loss is the bill reaching the lenders (58.4 to about 80)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "O4",
+   "target": "HP09",
+   "sign": -1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "OPPOSES",
+   "reason": "An open Hormuz lets Qatar's gas move again (60 to about 45)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP09",
+   "target": "O4",
+   "sign": 1,
+   "strength": 0.19,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A cold, short Europe presses Washington to end the blockade (50.5 to about 58)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP09",
+   "target": "FD11",
+   "sign": 1,
+   "strength": 0.75,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "Storage near empty keeps TTF above EUR 80 (50 to about 80)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP09",
+   "target": "FD10",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "European ammonia plants shut first (40 to about 52)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP09",
+   "target": "RU7",
+   "sign": 1,
+   "strength": 0.25,
+   "delay_days": 60,
+   "kind": "LIKELY",
+   "reason": "Energy subsidies widen deficits (40 to about 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP10",
+   "target": "O4",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "The Iran campaign is funded through January and the new Congress holds the purse",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP10",
+   "target": "HP11",
+   "sign": 1,
+   "strength": 0.3,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Wave elections are followed by funding fights (1995, 2011, 2018)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP11",
+   "target": "HP12",
+   "sign": 1,
+   "strength": 0.1,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A shutdown blanks the data the Fed needs to justify a hike (60 to about 65)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "D2",
+   "target": "HP12",
+   "sign": -1,
+   "strength": 0.54,
+   "delay_days": 0,
+   "kind": "OPPOSES",
+   "reason": "A January hike resets the count (60 to about 35)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP13",
+   "target": "W1",
+   "sign": 1,
+   "strength": 0.43,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "One big named cut makes AI the standard reason (50 to about 65)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "F9",
+   "target": "HP13",
+   "sign": 1,
+   "strength": 0.2,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A falling market is the cover (65 to about 78)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP13",
+   "target": "27-3",
+   "sign": 1,
+   "strength": 0.17,
+   "delay_days": 90,
+   "kind": "LIKELY",
+   "reason": "Named AI layoffs give the new Congress its hearings (50 to about 56)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "F4",
+   "target": "HP14",
+   "sign": 1,
+   "strength": 0.5,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "Oracle at junk guts the pledge and the guarantee (35 to about 70)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP07",
+   "target": "HP14",
+   "sign": 1,
+   "strength": 0.26,
+   "delay_days": 30,
+   "kind": "LIKELY",
+   "reason": "A shut junk market strands $86.8B of Skydance debt (35 to about 50)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP14",
+   "target": "HP07",
+   "sign": 1,
+   "strength": 0.15,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "A Skydance exchange is index-sized supply (42 to about 52)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP15",
+   "target": "F10",
+   "sign": 1,
+   "strength": 0.4,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A disclosed investigation is one step from formal action (44 to about 70)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP15",
+   "target": "F5",
+   "sign": 1,
+   "strength": 0.18,
+   "delay_days": 0,
+   "kind": "LIKELY",
+   "reason": "A late or qualified filing hits the stock (60.4 to about 72)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
+  },
+  {
+   "source": "HP16",
+   "target": "F3",
+   "sign": 1,
+   "strength": 0.24,
+   "delay_days": 14,
+   "kind": "LIKELY",
+   "reason": "Forced bitcoin selling starves the miner-hosts (45 to about 58)",
+   "estimated": true,
+   "delay_estimated": true,
+   "origin": "hard pass Nov 25 (A to about B, estimate)"
   }
  ],
  "companies": [
@@ -47455,12 +48421,51 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: named in the event definition F4"
+    },
+    {
+     "node": "HP14",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP14 > CO:ORCL",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    },
+    {
+     "node": "HP04",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP04 > CO:ORCL",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    },
+    {
+     "node": "HP05",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP05 > CO:ORCL",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
     "F4",
     "GR5",
     "GR8",
+    "HP04",
+    "HP05",
+    "HP14",
     "MR1"
    ],
    "context_nodes": [
@@ -47557,6 +48562,18 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: named in F1 and F2 rows (loan, default insurance)"
+    },
+    {
+     "node": "HP03",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP03 > CO:CRWV",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
@@ -47564,6 +48581,7 @@
     "F2",
     "GR1",
     "GR3",
+    "HP03",
     "MR1",
     "MR4"
    ],
@@ -48076,11 +49094,24 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: named in B2 (Blue Owl under $7) and F1 (Blue Owl bond)"
+    },
+    {
+     "node": "HP07",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP07 > CO:OWL",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
     "B2",
     "F1",
+    "HP07",
     "MR5"
    ],
    "context_nodes": [
@@ -49163,6 +50194,18 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: named in the event definitions F5, F10, F11"
+    },
+    {
+     "node": "HP15",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP15 > CO:NVDA",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
@@ -49171,6 +50214,7 @@
     "F5",
     "FC1",
     "FC2",
+    "HP15",
     "RM7"
    ],
    "context_nodes": [
@@ -49968,17 +51012,31 @@
      "delay_days": 0,
      "reason": "Exposure: Egypt spot LNG buying.",
      "estimated": true
+    },
+    {
+     "node": "HP09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP09 > CO:LNG",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
     "FD11",
     "FD12",
+    "HP09",
     "O6",
     "P1"
    ],
    "context_nodes": [],
    "arms": [
     "OIL AND GULF",
+    "RUSSIA AND EUROPE",
     "SHIPPING AND CANALS"
    ],
    "collision_candidate": true,
@@ -50035,18 +51093,32 @@
      "horizon": null,
      "context_only": false,
      "source": "EARTH2_EVENT_BOARD_read2: US LNG exporter, O6 row"
+    },
+    {
+     "node": "HP09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP09 > CO:VG",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
+    "HP09",
     "O6",
     "P1"
    ],
    "context_nodes": [],
    "arms": [
     "OIL AND GULF",
+    "RUSSIA AND EUROPE",
     "SHIPPING AND CANALS"
    ],
-   "collision_candidate": false,
+   "collision_candidate": true,
    "options_check": {
     "date": "2026-11-23",
     "source": "marketdata.theocc.com series search",
@@ -51599,6 +52671,18 @@
      "delay_days": 0,
      "reason": "Exposure: Russian export curbs.",
      "estimated": true
+    },
+    {
+     "node": "HP09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP09 > CO:CF",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
@@ -51608,6 +52692,7 @@
     "FD11",
     "FD14",
     "FD15",
+    "HP09",
     "WF4"
    ],
    "context_nodes": [],
@@ -51699,18 +52784,32 @@
      "delay_days": 0,
      "reason": "Exposure: US nitrogen prices.",
      "estimated": true
+    },
+    {
+     "node": "HP09",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP09 > CO:LXU",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
     }
    ],
    "event_nodes": [
     "FD09",
     "FD10",
-    "FD11"
+    "FD11",
+    "HP09"
    ],
    "context_nodes": [],
    "arms": [
-    "OIL AND GULF"
+    "OIL AND GULF",
+    "RUSSIA AND EUROPE"
    ],
-   "collision_candidate": false,
+   "collision_candidate": true,
    "deepdive_profile": {
     "deepdive_id": "CO:LXU",
     "source_file": "EARTH2_DEEPDIVE_FOOD_2026-11-23_nodes_links.json",
@@ -53182,6 +54281,270 @@
     "call_oi": 0,
     "put_oi": 0
    }
+  },
+  {
+   "id": "CO:SPCX",
+   "ticker": "SPCX",
+   "name": "SpaceX",
+   "exchange": "NASDAQ",
+   "listed_options": "yes",
+   "listed_options_basis": "Nasdaq option chain Nov 25, 2026: Dec 18 $110 put open interest 35,305 (heavy)",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP01",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP01 > CO:SPCX",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP01"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:HYG",
+   "ticker": "HYG",
+   "name": "iShares iBoxx High Yield Corporate Bond ETF",
+   "exchange": "NYSE ARCA",
+   "listed_options": "yes",
+   "listed_options_basis": "Nasdaq option chain Nov 25, 2026: Mar 19 $73 put open interest 58,970 (heavy)",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP07",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP07 > CO:HYG",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP07"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:SKYD",
+   "ticker": "SKYD",
+   "name": "Skydance (formerly Paramount Skydance and Warner Bros. Discovery)",
+   "exchange": "NASDAQ",
+   "listed_options": "yes",
+   "listed_options_basis": "OCC series search Nov 25, 2026: open interest 777,016 calls / 724,526 puts (heavy); two series sets, use the standard one",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP14",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP14 > CO:SKYD",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP14"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:MSTR",
+   "ticker": "MSTR",
+   "name": "Strategy",
+   "exchange": "NASDAQ",
+   "listed_options": "yes",
+   "listed_options_basis": "US listing; not checked Nov 25",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP16",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP16 > CO:MSTR",
+     "exposure_weight": 0.8,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP16"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:MET",
+   "ticker": "MET",
+   "name": "MetLife",
+   "exchange": "NYSE",
+   "listed_options": "yes",
+   "listed_options_basis": "Nasdaq option chain Nov 25, 2026: Jun 17 $80 put open interest 363 (light)",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP08",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP08 > CO:MET",
+     "exposure_weight": 0.3,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP08"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:LNC",
+   "ticker": "LNC",
+   "name": "Lincoln National",
+   "exchange": "NYSE",
+   "listed_options": "yes",
+   "listed_options_basis": "Nasdaq option chain Nov 25, 2026: Mar 19 $30 put open interest 1,136 (light, wide spreads)",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP08",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP08 > CO:LNC",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP08"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:EQH",
+   "ticker": "EQH",
+   "name": "Equitable Holdings",
+   "exchange": "NYSE",
+   "listed_options": "yes",
+   "listed_options_basis": "Nasdaq option chain Nov 25, 2026: almost no open interest (very light)",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP08",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP08 > CO:EQH",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP08"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
+  },
+  {
+   "id": "CO:CRBG",
+   "ticker": "CRBG",
+   "name": "Corebridge Financial",
+   "exchange": "NYSE",
+   "listed_options": "unknown",
+   "listed_options_basis": "Nasdaq chain returned no rows Nov 25, 2026",
+   "verified": false,
+   "verified_source": null,
+   "sits_on": [
+    {
+     "node": "HP08",
+     "materiality": null,
+     "horizon": null,
+     "context_only": false,
+     "source": "EARTH2_HARDPASS_2026-11-25_nodes_links.json: link HP08 > CO:CRBG",
+     "exposure_weight": 0.5,
+     "kind": "MAGNIFIES",
+     "delay_days": 0,
+     "reason": "Exposure.",
+     "estimated": true
+    }
+   ],
+   "event_nodes": [
+    "HP08"
+   ],
+   "context_nodes": [],
+   "arms": [
+    "AI FINANCING AND BANKS"
+   ],
+   "collision_candidate": false,
+   "other_listings": []
   }
  ],
  "chains": [
@@ -57759,6 +59122,57 @@
     "Deep dive 2: the food collision (El Nino, Gulf fertilizer behind Hormuz, Russian grain) on WF8, Jan to Jun 2027.",
     "Company links became sits_on entries; existing companies were extended, not duplicated.",
     "Odds clamped to 1..99 on load; no FIRED nodes in this file."
+   ]
+  },
+  {
+   "date": "2026-11-25",
+   "source_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
+   "short_name": "hard pass Nov 25",
+   "nodes_added": [
+    "HP01",
+    "HP02",
+    "HP03",
+    "HP04",
+    "HP05",
+    "HP06",
+    "HP07",
+    "HP08",
+    "HP09",
+    "HP10",
+    "HP11",
+    "HP12",
+    "HP13",
+    "HP14",
+    "HP15",
+    "HP16"
+   ],
+   "links_added": 40,
+   "links_skipped": [],
+   "companies_added": [
+    "CO:SPCX",
+    "CO:HYG",
+    "CO:SKYD",
+    "CO:MSTR",
+    "CO:MET",
+    "CO:LNC",
+    "CO:EQH",
+    "CO:CRBG"
+   ],
+   "companies_extended": [
+    "CO:ORCL",
+    "CO:CF",
+    "CO:LXU",
+    "CO:VG",
+    "CO:LNG",
+    "CO:CRWV",
+    "CO:NVDA",
+    "CO:OWL"
+   ],
+   "notes": [
+    "EARTH2 hard pass: responses, supply and late dominoes",
+    "All odds are first estimates from the Nov 25 hard pass and are flagged estimated. No existing node's odds were changed.",
+    "Company exposure links became sits_on entries; existing companies were extended, not duplicated.",
+    "Odds clamped to 1..99 on load; none needed it."
    ]
   }
  ]
