@@ -218,7 +218,7 @@
    "arm": "OIL AND GULF",
    "board_arm": "OIL AND GULF",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 59.4,
+   "odds_now": 59.8,
    "odds_text": "60% by May 31",
    "odds_history": [
     {
@@ -235,6 +235,11 @@
      "date": "2026-11-23",
      "odds": 59.4,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 59.8,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -262,10 +267,10 @@
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 3",
    "model_layer": "board",
    "priced": "Market already prices it (board priced check, Nov 22)",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.6
+    "date": "2026-11-25",
+    "delta": 0.4
    }
   },
   {
@@ -433,7 +438,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 41.8,
+   "odds_now": 41.9,
    "odds_text": "42% by May 31",
    "odds_history": [
     {
@@ -455,6 +460,11 @@
      "date": "2026-11-23",
      "odds": 41.8,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 41.9,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -480,10 +490,10 @@
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 7",
    "model_layer": "board",
    "base_note": "Loaded at the Nov 19 value (39%). The sample cascade run applies the Nov 22 update (42%).",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.2
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -605,7 +615,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 37.0,
+   "odds_now": 37.1,
    "odds_text": "40% by May 31, leaning down",
    "odds_history": [
     {
@@ -622,6 +632,11 @@
      "date": "2026-11-23",
      "odds": 37.0,
      "note": "Fed path eased after the Nov 20 rout (markets, Nov 23 premarket)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 37.1,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -646,10 +661,10 @@
    "if_it_fires": "Credit freeze 85 to about 90; neocloud default 42 to about 50; banks ++; Japan ++",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 10",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -3.0
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -765,7 +780,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.0,
+   "odds_now": 33.1,
    "odds_text": "35% by Mar 31",
    "odds_history": [
     {
@@ -782,6 +797,11 @@
      "date": "2026-11-23",
      "odds": 33.0,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 33.1,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -807,10 +827,10 @@
    "if_it_fires": "US long rates: 10-year above 5.50% 40 to about 50. AI financing ++",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 13",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -2.0
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -916,7 +936,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 54.0,
+   "odds_now": 54.6,
    "odds_text": "60% on Jan 27 (market 62)",
    "odds_history": [
     {
@@ -933,6 +953,11 @@
      "date": "2026-11-23",
      "odds": 54.0,
      "note": "Fed path eased after the Nov 20 rout (markets, Nov 23 premarket)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 54.6,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -957,10 +982,10 @@
    "if_it_fires": "Japan ++: yen through 160 35 to about 42. AI financing and banks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 16",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -6.0
+    "date": "2026-11-25",
+    "delta": 0.6
    }
   },
   {
@@ -1272,7 +1297,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.3,
+   "odds_now": 33.4,
    "odds_text": "33% by May 31",
    "odds_history": [
     {
@@ -1299,6 +1324,11 @@
      "date": "2026-11-23",
      "odds": 33.3,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 33.4,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -1323,10 +1353,10 @@
    "if_it_fires": "AI financing ++: credit freeze 85 to about 92; neocloud default 42 to about 52. Third hike 35 to about 28",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 23",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.3
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -1447,7 +1477,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 24.9,
+   "odds_now": 25.1,
    "odds_text": "35% by Mar 17 (market 34)",
    "odds_history": [
     {
@@ -1469,6 +1499,11 @@
      "date": "2026-11-23",
      "odds": 24.9,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 25.1,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -1493,10 +1528,10 @@
    "if_it_fires": "AI financing ++, banks ++, Japan ++: credit freeze 85 to about 90; regional banks break 30 to about 40",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 26",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.1
+    "date": "2026-11-25",
+    "delta": 0.2
    }
   },
   {
@@ -1823,7 +1858,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 19.6,
+   "odds_now": 21.0,
    "odds_text": "20% by May 31, leaning up",
    "odds_history": [
     {
@@ -1840,6 +1875,11 @@
      "date": "2026-11-23",
      "odds": 19.6,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 21.0,
+     "note": "Japan 40-year JGB auction (JPY 300bn) drew bid-to-cover 2.63x vs 3.10x prior and a 12-month average near 2.75; highest accepted yield 4.090% vs 4.125%; called underwhelming. Third straight long auction with thinner demand. The 40-year at about 4.145% is still below the May record 4.355%, so no record yet"
     }
    ],
    "odds_by": {
@@ -1857,17 +1897,17 @@
     "CREDIT"
    ],
    "least_capability": "A weak long-bond auction in Tokyo",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "hit": 5,
    "next_watch": "40-year auction Nov 25; 30-year Dec 8; 20-year Dec 17 (all verified)",
    "what_changed": "Demand thinned at the last two long auctions (20-year cover 3.64 vs 5.84; 30-year 3.36 vs 3.88). SMFG now lends for data centers only to top-grade hyperscalers: a standard, not a numeric cap. The record itself is in dispute (4.168% logged; 4.235% to 4.25% in two sources) (S3, S7)",
    "if_it_fires": "The megabank hinge: neocloud default 42 to about 50; lender loss 33 to about 38. US long rates ++",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 33",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.4
+    "date": "2026-11-25",
+    "delta": 1.4
    }
   },
   {
@@ -2447,7 +2487,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 21.9,
+   "odds_now": 20.0,
    "odds_text": "22% by May 31",
    "odds_history": [
     {
@@ -2469,6 +2509,11 @@
      "date": "2026-11-23",
      "odds": 21.9,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 20.0,
+     "note": "Q3 GDP second estimate revised up to 4.3% annualized from 3.4% (largest second-estimate revision since 2021); real GDI 4.4%; final sales to private domestic purchasers 5.8%. Offset: October real spending slipped (down $5.8B) while income rose 0.7%. A recession call by May 31 needs a sharper turn than the data show"
     }
    ],
    "odds_by": {
@@ -2487,17 +2532,17 @@
     "CREDIT"
    ],
    "least_capability": "Two weak jobs reports with rising jobless claims",
-   "status": "ON TRACK",
+   "status": "BEHIND",
    "hit": 4,
    "next_watch": "Q3 GDP second estimate Nov 25; jobs Dec 4",
    "what_changed": "Market: recession by end of 2027 30 to 31%. The S&P is on its longest losing run since April 2024 (S3)",
    "if_it_fires": "Flips the Fed (cuts) and oil (down). Helps every put; ends the hike and oil-up logic",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 46",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.1
+    "date": "2026-11-25",
+    "delta": -1.9
    }
   },
   {
@@ -2959,7 +3004,7 @@
    "arm": "OIL AND GULF",
    "board_arm": "OIL AND GULF",
    "type": "END EVENT",
-   "odds_now": 40.0,
+   "odds_now": 65.0,
    "odds_text": "40% by Nov 2027",
    "odds_history": [
     {
@@ -2971,6 +3016,11 @@
      "date": "2026-11-22",
      "odds": 40.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 65.0,
+     "note": "US LNG feedgas averaged a record 20.4 Bcf/d for November to date (19.3 in October); single-day nominations 21.5 Bcf/d on Nov 25 (record 21.2 on Nov 15; BNEF 21.8 on Nov 14); Golden Pass at its highest monthly draw (about 0.81 Bcf/d). Feedgas runs a few percent above exports, so exports near 19 Bcf/d now and need about 21.5 feedgas in one month by Nov 2027 to top 20"
     }
    ],
    "odds_by": {
@@ -2989,14 +3039,19 @@
     "SHIPPING"
    ],
    "least_capability": "Golden Pass, Port Arthur and Rio Grande starting on schedule",
-   "status": "QUIET",
+   "status": "AHEAD",
    "hit": 3,
    "next_watch": "EIA Nov 25; Golden Pass, Port Arthur and Rio Grande start-ups in 2027",
    "what_changed": "REFRAMED on the three-year lens: the 2028 story is gas and tankers, not crude volume. A court voided the licence for the offshore crude port (Texas GulfLink) on Aug 12, so its Q4 2028 date is no longer safe. The crude swing-exporter test is 3% by May 31. A canal squeeze (P1) lengthens Asia voyages but leaves volume mostly intact (S2, S8, S9)",
    "if_it_fires": "US gas and power costs for data centers: AI financing +. Japan as the buyer. Fed + (home prices follow world prices)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 56",
    "model_layer": "board",
-   "end_event_note": "The structural Gulf export story: the US as a standing energy exporter because of Middle East disruption"
+   "end_event_note": "The structural Gulf export story: the US as a standing energy exporter because of Middle East disruption",
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 25.0
+   }
   },
   {
    "id": "O7",
@@ -3004,7 +3059,7 @@
    "arm": "OIL AND GULF",
    "board_arm": "OIL AND GULF",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.0,
+   "odds_now": 29.7,
    "odds_text": "30% by Nov 2027",
    "odds_history": [
     {
@@ -3016,6 +3071,11 @@
      "date": "2026-11-22",
      "odds": 30.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 29.7,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_by": {
@@ -3040,7 +3100,12 @@
    "what_changed": "LONG LENS, the other side: EIA sees Brent at $86 in 2027 and $77 by Q4 2027 as Gulf output returns; record tanker deliveries arrive in 2028 (S8)",
    "if_it_fires": "Shale and Gulf budgets; Gulf sovereign cash for AI deals; the Fed cuts sooner; ship lenders",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 57",
-   "model_layer": "board"
+   "model_layer": "board",
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.3
+   }
   },
   {
    "id": "BB1",
@@ -4179,7 +4244,7 @@
    "label": "The ai debt break",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 58.3,
+   "odds_now": 58.4,
    "odds_text": "about 55% by Nov 2027",
    "odds_history": [
     {
@@ -4201,6 +4266,11 @@
      "date": "2026-11-23",
      "odds": 58.3,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 58.4,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "window_start": "2026-11-22",
@@ -4216,10 +4286,10 @@
    "description": "10 triggers at lift 3 or more, 8 of them new.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +15): Oracle moves closer to junk; refinancing gets harder.\nMR4 Neocloud chip-backed debt hits its refinancing wall (M, 35%, +12): A big AI borrower defaults.\nGR1 Statewide data center pauses spread from Texas to more states (M, FIRED, +6): Paused sites earn nothing against debt already drawn.\nGR3 Chips and announced capacity sit idle waiting for power (U, 40%, +6): Idle chips lose value while the debt on them accrues.\nMR3 Treasury auctions clear badly as the 10-year nears 5.50% (M, 45%, +4): Higher base rates lift AI refinancing costs.\nWK2 Software loans go bad as lenders price AI disruption (M, 35%, +5): The same funds are the marginal lender to AI borrowers.\nGR5 Local opposition blocks or delays projects, counted in dollars (M, 55%, +3): Cancelled sites strand land deposits and bridge loans. ALSO: MR5 (+4), RM5 (+3), WK8 (+3). WEAK LINKS (under 3 points): RM6, MR2, GR2, GR4, GR6, GR7, GR8, GR9, FC4.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-4",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.9
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -4227,7 +4297,7 @@
    "label": "Money gets dearer",
    "arm": "FED RATES AND JAPAN",
    "type": "END EVENT",
-   "odds_now": 43.0,
+   "odds_now": 43.1,
    "odds_text": "43% by Nov 2027 (majors settled Nov 23; both legs needed: yen 65, 10-year 43)",
    "odds_history": [
     {
@@ -4244,6 +4314,11 @@
      "date": "2026-11-23",
      "odds": 43.0,
      "note": "Majors settled: both legs needed, so the lower leg binds (yen 65, 10-year 43)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 43.1,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "window_start": "2026-11-22",
@@ -4259,10 +4334,10 @@
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-5",
    "model_layer": "majors",
    "one_number_rule": "Two legs joined by AND: the lower leg (45%) is used. J1 65%, D4 45% by Nov 2027.",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.0
+    "date": "2026-11-25",
+    "delta": 0.1
    }
   },
   {
@@ -4437,13 +4512,18 @@
    "label": "The hiring freeze goes broad",
    "arm": "WHITE-COLLAR WORK",
    "type": "END EVENT",
-   "odds_now": 50.0,
+   "odds_now": 49.7,
    "odds_text": "50% by Nov 2028",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 50.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 49.7,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "window_start": "2027-06-01",
@@ -4458,7 +4538,12 @@
    "year": 2028,
    "description": "9 triggers at lift 3 or more, 8 of them new.\nWK3 Young workers in AI-exposed jobs are hired less (M, 70%, +10): The junior rung is where a broad freeze starts.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 85%, +5): Firms wait for agents instead of hiring.\nPF1 AI auto-apply floods employers and breaks open hiring (U, 72%, +5): Open hiring gets costly; firms pause postings and hire by referral.\nFC7 Job fear turns partisan and gets written into labor law (M, 78%, +4): Notice rules push firms to freeze hiring instead.\nWK6 Layoffs blamed on AI return in waves (M, 72%, +4): Firms that cut also stop backfilling.\nWK7 Tiny AI-run firms undercut large incumbents (M, 52%, +4): Incumbents under price pressure stop hiring first.\nFC2 AI writes the labs' own code and starts steering research (M, 68%, +3): Labs show other employers the engineering headcount math. ALSO: WK8 (+3), ID5 (+3). WEAK LINKS (under 3 points): ID1, ID3, WK9, PF2, PF6, MR3, FC6.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-4",
-   "model_layer": "majors"
+   "model_layer": "majors",
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.3
+   }
   },
   {
    "id": "28-5",
@@ -22469,7 +22554,7 @@
    "label": "Gas to power gets tight: NYMEX Henry Hub front-month natural gas settles above $5.00/MMBtu.",
    "arm": "POWER AND THE GRID",
    "type": "TRIGGER",
-   "odds_now": 18.0,
+   "odds_now": 20.1,
    "odds_text": "18% by 2027-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 8,
@@ -22482,6 +22567,11 @@
      "date": "2026-11-22",
      "odds": 18.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 20.1,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "window_start": "2026-11-22",
@@ -22495,7 +22585,12 @@
    "status": "QUIET",
    "current_fact": "Nov 11, 2026: December Henry Hub settled $3.22. LNG feedgas set a daily record of 20.3 Bcf/d on Nov 7. Storage was 1.4% above the five-year average (Oct 30). EIA's November outlook sees a $2.87 winter average. A strong El Nino usually brings a milder northern US winter.",
    "source": "https://www.aga.org/research-policy/resource-library/natural-gas-market-indicators-november-12-2026/; https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml",
-   "model_layer": "new arm"
+   "model_layer": "new arm",
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 2.1
+   }
   },
   {
    "id": "PG7",
@@ -25577,7 +25672,7 @@
    "label": "The Fed stops: no hike at two straight meetings after Dec 9, or the statement drops its lean toward tightening. First chance Jan 27, then Mar 17.",
    "arm": "FED RATES AND JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 60.0,
+   "odds_now": 59.8,
    "odds_text": "60% by 2027-06-30 (hard pass Nov 25, estimate)",
    "odds_by": {
     "2027-02-19": 8,
@@ -25588,6 +25683,11 @@
      "date": "2026-11-25",
      "odds": 60.0,
      "note": "hard pass Nov 25, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 59.8,
+     "note": "cascade from D6, J2, O6"
     }
    ],
    "odds_as_of": "2026-11-25",
@@ -25603,7 +25703,11 @@
    "model_layer": "deep dive",
    "origin_file": "EARTH2_HARDPASS_2026-11-25_nodes_links.json",
    "estimated": true,
-   "next_watch": "Dec 9 projections; Jan 27"
+   "next_watch": "Dec 9 projections; Jan 27",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.2
+   }
   },
   {
    "id": "HP13",
@@ -58264,6 +58368,1177 @@
      "joint_odds": 25.5,
      "score": 0.51,
      "window_end": "2029-11-30"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-25",
+   "run_at": "2026-11-25T21:22:45+00:00",
+   "trigger": [
+    {
+     "id": "D6",
+     "before": 21.9,
+     "after": 20.0,
+     "date": "2026-11-25",
+     "reason": "Q3 GDP second estimate revised up to 4.3% annualized from 3.4% (largest second-estimate revision since 2021); real GDI 4.4%; final sales to private domestic purchasers 5.8%. Offset: October real spending slipped (down $5.8B) while income rose 0.7%. A recession call by May 31 needs a sharper turn than the data show",
+     "source": "BEA GDP second estimate Q3 2026 and Personal Income and Outlays October 2026, Nov 25, via StockTitan (stocktitan.net/articles/q3-2026-gdp-second-estimate; stocktitan.net/articles/october-2026-pce-inflation-report)"
+    },
+    {
+     "id": "J2",
+     "before": 19.6,
+     "after": 21.0,
+     "date": "2026-11-25",
+     "reason": "Japan 40-year JGB auction (JPY 300bn) drew bid-to-cover 2.63x vs 3.10x prior and a 12-month average near 2.75; highest accepted yield 4.090% vs 4.125%; called underwhelming. Third straight long auction with thinner demand. The 40-year at about 4.145% is still below the May record 4.355%, so no record yet",
+     "source": "Japan MOF auction via Newsquawk (Nov 25, 03:57 UTC) and Briefs Finance (Nov 25)"
+    },
+    {
+     "id": "O6",
+     "before": 40.0,
+     "after": 65.0,
+     "date": "2026-11-25",
+     "reason": "US LNG feedgas averaged a record 20.4 Bcf/d for November to date (19.3 in October); single-day nominations 21.5 Bcf/d on Nov 25 (record 21.2 on Nov 15; BNEF 21.8 on Nov 14); Golden Pass at its highest monthly draw (about 0.81 Bcf/d). Feedgas runs a few percent above exports, so exports near 19 Bcf/d now and need about 21.5 feedgas in one month by Nov 2027 to top 20",
+     "source": "NGI, Nov 25 and Nov 13, 2026 (naturalgasintel.com); Reuters/LSEG via BOE Report, Nov 9; Bloomberg via Energy Connects, Nov 16"
+    }
+   ],
+   "rule": {
+    "move": "d x strength x sign",
+    "fade": 0.5,
+    "max_hops": 4,
+    "visit": "once per run",
+    "clamp": [
+     1.0,
+     99.0
+    ],
+    "fired_pinned": true,
+    "collision_days": 120
+   },
+   "moved": [
+    {
+     "id": "D6",
+     "label": "A US recession call",
+     "arm": "FED RATES AND JAPAN",
+     "before": 21.9,
+     "after": 20.0,
+     "delta": -1.9,
+     "role": "set by hand",
+     "reason": "Q3 GDP second estimate revised up to 4.3% annualized from 3.4% (largest second-estimate revision since 2021); real GDI 4.4%; final sales to private domestic purchasers 5.8%. Offset: October real spending slipped (down $5.8B) while income rose 0.7%. A recession call by May 31 needs a sharper turn than the data show",
+     "source": "BEA GDP second estimate Q3 2026 and Personal Income and Outlays October 2026, Nov 25, via StockTitan (stocktitan.net/articles/q3-2026-gdp-second-estimate; stocktitan.net/articles/october-2026-pce-inflation-report)",
+     "date": "2026-11-25"
+    },
+    {
+     "id": "J2",
+     "label": "Japan's 30-year yield breaks its record on a weak auction, or a megabank caps data-center lending",
+     "arm": "FED RATES AND JAPAN",
+     "before": 19.6,
+     "after": 21.0,
+     "delta": 1.4,
+     "role": "set by hand",
+     "reason": "Japan 40-year JGB auction (JPY 300bn) drew bid-to-cover 2.63x vs 3.10x prior and a 12-month average near 2.75; highest accepted yield 4.090% vs 4.125%; called underwhelming. Third straight long auction with thinner demand. The 40-year at about 4.145% is still below the May record 4.355%, so no record yet",
+     "source": "Japan MOF auction via Newsquawk (Nov 25, 03:57 UTC) and Briefs Finance (Nov 25)",
+     "date": "2026-11-25"
+    },
+    {
+     "id": "O6",
+     "label": "The Gulf export story, structural version: US LNG exports top 20 Bcf a day in a month",
+     "arm": "OIL AND GULF",
+     "before": 40.0,
+     "after": 65.0,
+     "delta": 25.0,
+     "role": "set by hand",
+     "reason": "US LNG feedgas averaged a record 20.4 Bcf/d for November to date (19.3 in October); single-day nominations 21.5 Bcf/d on Nov 25 (record 21.2 on Nov 15; BNEF 21.8 on Nov 14); Golden Pass at its highest monthly draw (about 0.81 Bcf/d). Feedgas runs a few percent above exports, so exports near 19 Bcf/d now and need about 21.5 feedgas in one month by Nov 2027 to top 20",
+     "source": "NGI, Nov 25 and Nov 13, 2026 (naturalgasintel.com); Reuters/LSEG via BOE Report, Nov 9; Bloomberg via Energy Connects, Nov 16",
+     "date": "2026-11-25"
+    },
+    {
+     "id": "PG6",
+     "label": "Gas to power gets tight: NYMEX Henry Hub front-month natural gas settles above $5.00/MMBtu.",
+     "arm": "POWER AND THE GRID",
+     "before": 18.0,
+     "after": 20.1,
+     "delta": 2.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-24",
+     "paths": [
+      {
+       "path": "O6 > PG6",
+       "points": 2.08
+      }
+     ]
+    },
+    {
+     "id": "D2",
+     "label": "A second straight hike on Jan 27",
+     "arm": "FED RATES AND JAPAN",
+     "before": 54.0,
+     "after": 54.6,
+     "delta": 0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-09",
+     "paths": [
+      {
+       "path": "D6 > D2",
+       "points": 0.57
+      }
+     ]
+    },
+    {
+     "id": "O1",
+     "label": "Brent closes above $100",
+     "arm": "OIL AND GULF",
+     "before": 59.4,
+     "after": 59.8,
+     "delta": 0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "D6 > O1",
+       "points": 0.38
+      }
+     ]
+    },
+    {
+     "id": "O7",
+     "label": "Brent averages under $75 for a month",
+     "arm": "OIL AND GULF",
+     "before": 30.0,
+     "after": 29.7,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "D6 > O7",
+       "points": -0.28
+      }
+     ]
+    },
+    {
+     "id": "28-4",
+     "label": "The hiring freeze goes broad",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 50.0,
+     "after": 49.7,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "D6 > 28-4",
+       "points": -0.28
+      }
+     ]
+    },
+    {
+     "id": "D3",
+     "label": "Three straight hikes (upper bound 4.75% by Mar 17)",
+     "arm": "FED RATES AND JAPAN",
+     "before": 24.9,
+     "after": 25.1,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-28",
+     "paths": [
+      {
+       "path": "D6 > D2 > D3",
+       "points": 0.17
+      }
+     ]
+    },
+    {
+     "id": "HP12",
+     "label": "The Fed stops: no hike at two straight meetings after Dec 9, or the statement drops its lean toward tightening. First chance Jan 27, then Mar 17.",
+     "arm": "FED RATES AND JAPAN",
+     "before": 60.0,
+     "after": 59.8,
+     "delta": -0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-09",
+     "paths": [
+      {
+       "path": "D6 > D2 > HP12",
+       "points": -0.15
+      }
+     ]
+    },
+    {
+     "id": "F2",
+     "label": "A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 41.8,
+     "after": 41.9,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "J2 > F2",
+       "points": 0.14
+      }
+     ]
+    },
+    {
+     "id": "D4",
+     "label": "The 10-year Treasury closes above 5.50%",
+     "arm": "FED RATES AND JAPAN",
+     "before": 37.0,
+     "after": 37.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-09",
+     "paths": [
+      {
+       "path": "J2 > D4",
+       "points": 0.14
+      }
+     ]
+    },
+    {
+     "id": "J1",
+     "label": "The yen closes weaker than 160 and Tokyo confirms 5 trillion yen or more of buying",
+     "arm": "FED RATES AND JAPAN",
+     "before": 33.0,
+     "after": 33.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-23",
+     "paths": [
+      {
+       "path": "D6 > D2 > J1",
+       "points": 0.05
+      },
+      {
+       "path": "D6 > O1 > J1",
+       "points": 0.05
+      }
+     ]
+    },
+    {
+     "id": "B1",
+     "label": "A bank or credit fund discloses $500M+ of AI or data-center losses, or gates withdrawals because of them",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 33.3,
+     "after": 33.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-09",
+     "paths": [
+      {
+       "path": "J2 > B1",
+       "points": 0.09
+      }
+     ]
+    },
+    {
+     "id": "27-5",
+     "label": "Money gets dearer",
+     "arm": "FED RATES AND JAPAN",
+     "before": 43.0,
+     "after": 43.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-08",
+     "paths": [
+      {
+       "path": "J2 > D4 > 27-5",
+       "points": 0.02
+      },
+      {
+       "path": "D6 > O7 > 27-5",
+       "points": 0.02
+      },
+      {
+       "path": "D6 > O1 > 27-5",
+       "points": 0.02
+      }
+     ]
+    },
+    {
+     "id": "27-4",
+     "label": "The ai debt break",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 58.3,
+     "after": 58.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "J2 > F2 > 27-4",
+       "points": 0.05
+      }
+     ]
+    }
+   ],
+   "skipped": [],
+   "stats": {
+    "links_used": 31,
+    "blocked_fired_or_hand_set": 5,
+    "dropped_window_closed": 1,
+    "dropped_tiny": 48,
+    "cut_at_hop_limit": 0
+   },
+   "collisions": {
+    "a_multi_arm_nodes": [
+     {
+      "kind": "a",
+      "what": "27-5 rose +0.1, pushed by 2 arms",
+      "nodes": [
+       "27-5"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "joint_odds": 43.1,
+      "score": 0.862,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "a",
+      "what": "J1 rose +0.1, pushed by 2 arms",
+      "nodes": [
+       "J1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "joint_odds": 33.1,
+      "score": 0.662,
+      "window_end": "2027-03-31"
+     }
+    ],
+    "b_cross_arm_pairs": [
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x O6 (+25.0), same layer: POWER",
+      "nodes": [
+       "27-4",
+       "O6"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 38.0,
+      "score": 0.759,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "D2 (+0.6) x O6 (+25.0)",
+      "nodes": [
+       "D2",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 35.5,
+      "score": 0.71,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x O1 (+0.4), same layer: POWER",
+      "nodes": [
+       "27-4",
+       "O1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 34.9,
+      "score": 0.698,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "D2 (+0.6) x O1 (+0.4)",
+      "nodes": [
+       "D2",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 32.7,
+      "score": 0.653,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x D2 (+0.6), same layer: CREDIT",
+      "nodes": [
+       "27-4",
+       "D2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 31.9,
+      "score": 0.638,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "27-5 (+0.1) x O6 (+25.0)",
+      "nodes": [
+       "27-5",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 28.0,
+      "score": 0.56,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "F2 (+0.1) x O6 (+25.0)",
+      "nodes": [
+       "F2",
+       "O6"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 27.2,
+      "score": 0.545,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-5 (+0.1) x O1 (+0.4)",
+      "nodes": [
+       "27-5",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 25.8,
+      "score": 0.515,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x 27-5 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "27-4",
+       "27-5"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 25.2,
+      "score": 0.503,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "F2 (+0.1) x O1 (+0.4)",
+      "nodes": [
+       "F2",
+       "O1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 25.1,
+      "score": 0.501,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "D4 (+0.1) x O6 (+25.0)",
+      "nodes": [
+       "D4",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 24.1,
+      "score": 0.482,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "D2 (+0.6) x F2 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "D2",
+       "F2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 22.9,
+      "score": 0.458,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "D4 (+0.1) x O1 (+0.4)",
+      "nodes": [
+       "D4",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 22.2,
+      "score": 0.444,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x O6 (+25.0)",
+      "nodes": [
+       "B1",
+       "O6"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 21.7,
+      "score": 0.434,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x D4 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "27-4",
+       "D4"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 21.7,
+      "score": 0.433,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "J1 (+0.1) x O6 (+25.0), same layer: POWER",
+      "nodes": [
+       "J1",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 21.5,
+      "score": 0.43,
+      "window_end": "2027-03-31"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x O1 (+0.4)",
+      "nodes": [
+       "B1",
+       "O1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 20.0,
+      "score": 0.399,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "J1 (+0.1) x O1 (+0.4), same layer: POWER",
+      "nodes": [
+       "J1",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 19.8,
+      "score": 0.396,
+      "window_end": "2027-03-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x J1 (+0.1), same layer: CREDIT, POWER",
+      "nodes": [
+       "27-4",
+       "J1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT",
+       "POWER"
+      ],
+      "joint_odds": 19.3,
+      "score": 0.387,
+      "window_end": "2027-03-31"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x D2 (+0.6), same layer: CREDIT",
+      "nodes": [
+       "B1",
+       "D2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 18.2,
+      "score": 0.365,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "27-5 (+0.1) x F2 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "27-5",
+       "F2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 18.1,
+      "score": 0.361,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "D3 (+0.2) x O6 (+25.0)",
+      "nodes": [
+       "D3",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 16.3,
+      "score": 0.326,
+      "window_end": "2027-03-17"
+     },
+     {
+      "kind": "b",
+      "what": "D4 (+0.1) x F2 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "D4",
+       "F2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 15.5,
+      "score": 0.311,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "D3 (+0.2) x O1 (+0.4)",
+      "nodes": [
+       "D3",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 15.0,
+      "score": 0.3,
+      "window_end": "2027-03-17"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x D3 (+0.2), same layer: CREDIT",
+      "nodes": [
+       "27-4",
+       "D3"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 14.7,
+      "score": 0.293,
+      "window_end": "2027-03-17"
+     },
+     {
+      "kind": "b",
+      "what": "27-5 (+0.1) x B1 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "27-5",
+       "B1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 14.4,
+      "score": 0.288,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "F2 (+0.1) x J1 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "F2",
+       "J1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 13.9,
+      "score": 0.277,
+      "window_end": "2027-03-31"
+     },
+     {
+      "kind": "b",
+      "what": "J2 (+1.4) x O6 (+25.0)",
+      "nodes": [
+       "J2",
+       "O6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 13.7,
+      "score": 0.273,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "O6 (+25.0) x PG6 (+2.1), same layer: POWER",
+      "nodes": [
+       "O6",
+       "PG6"
+      ],
+      "arms": [
+       "OIL AND GULF",
+       "POWER AND THE GRID"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 13.1,
+      "score": 0.261,
+      "window_end": "2027-11-19"
+     },
+     {
+      "kind": "b",
+      "what": "J2 (+1.4) x O1 (+0.4)",
+      "nodes": [
+       "J2",
+       "O1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "OIL AND GULF"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 12.6,
+      "score": 0.251,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x D4 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "B1",
+       "D4"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 12.4,
+      "score": 0.248,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x J2 (+1.4), same layer: CREDIT",
+      "nodes": [
+       "27-4",
+       "J2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 12.3,
+      "score": 0.245,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "O1 (+0.4) x PG6 (+2.1), same layer: FOOD, POWER",
+      "nodes": [
+       "O1",
+       "PG6"
+      ],
+      "arms": [
+       "OIL AND GULF",
+       "POWER AND THE GRID"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "FOOD",
+       "POWER"
+      ],
+      "joint_odds": 12.0,
+      "score": 0.24,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-4 (+0.1) x PG6 (+2.1), same layer: POWER",
+      "nodes": [
+       "27-4",
+       "PG6"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "POWER AND THE GRID"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "POWER"
+      ],
+      "joint_odds": 11.7,
+      "score": 0.235,
+      "window_end": "2027-11-19"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x J1 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "B1",
+       "J1"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 11.1,
+      "score": 0.221,
+      "window_end": "2027-03-31"
+     },
+     {
+      "kind": "b",
+      "what": "D2 (+0.6) x PG6 (+2.1)",
+      "nodes": [
+       "D2",
+       "PG6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "POWER AND THE GRID"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 11.0,
+      "score": 0.219,
+      "window_end": "2027-01-27"
+     },
+     {
+      "kind": "b",
+      "what": "D3 (+0.2) x F2 (+0.1), same layer: CREDIT",
+      "nodes": [
+       "D3",
+       "F2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 10.5,
+      "score": 0.21,
+      "window_end": "2027-03-17"
+     },
+     {
+      "kind": "b",
+      "what": "F2 (+0.1) x J2 (+1.4), same layer: CREDIT",
+      "nodes": [
+       "F2",
+       "J2"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 8.8,
+      "score": 0.176,
+      "window_end": "2027-05-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-5 (+0.1) x PG6 (+2.1)",
+      "nodes": [
+       "27-5",
+       "PG6"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "POWER AND THE GRID"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 8.7,
+      "score": 0.173,
+      "window_end": "2027-11-19"
+     },
+     {
+      "kind": "b",
+      "what": "B1 (+0.1) x D3 (+0.2), same layer: CREDIT",
+      "nodes": [
+       "B1",
+       "D3"
+      ],
+      "arms": [
+       "AI FINANCING AND BANKS",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 8.4,
+      "score": 0.168,
+      "window_end": "2027-03-17"
+     }
+    ],
+    "c_companies": []
+   },
+   "queue": [
+    {
+     "kind": "a",
+     "what": "27-5 rose +0.1, pushed by 2 arms",
+     "nodes": [
+      "27-5"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "OIL AND GULF"
+     ],
+     "joint_odds": 43.1,
+     "score": 0.862,
+     "window_end": "2027-11-30"
+    },
+    {
+     "kind": "b",
+     "what": "27-4 (+0.1) x O6 (+25.0), same layer: POWER",
+     "nodes": [
+      "27-4",
+      "O6"
+     ],
+     "arms": [
+      "AI FINANCING AND BANKS",
+      "OIL AND GULF"
+     ],
+     "gap_days": 0,
+     "shared_layers": [
+      "POWER"
+     ],
+     "joint_odds": 38.0,
+     "score": 0.759,
+     "window_end": "2027-11-30"
+    },
+    {
+     "kind": "b",
+     "what": "D2 (+0.6) x O6 (+25.0)",
+     "nodes": [
+      "D2",
+      "O6"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "OIL AND GULF"
+     ],
+     "gap_days": 0,
+     "shared_layers": [],
+     "joint_odds": 35.5,
+     "score": 0.71,
+     "window_end": "2027-01-27"
+    },
+    {
+     "kind": "b",
+     "what": "27-4 (+0.1) x O1 (+0.4), same layer: POWER",
+     "nodes": [
+      "27-4",
+      "O1"
+     ],
+     "arms": [
+      "AI FINANCING AND BANKS",
+      "OIL AND GULF"
+     ],
+     "gap_days": 0,
+     "shared_layers": [
+      "POWER"
+     ],
+     "joint_odds": 34.9,
+     "score": 0.698,
+     "window_end": "2027-05-31"
+    },
+    {
+     "kind": "a",
+     "what": "J1 rose +0.1, pushed by 2 arms",
+     "nodes": [
+      "J1"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "OIL AND GULF"
+     ],
+     "joint_odds": 33.1,
+     "score": 0.662,
+     "window_end": "2027-03-31"
     }
    ]
   }
