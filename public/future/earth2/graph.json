@@ -30086,8 +30086,8 @@
    "sign": 1,
    "strength": 0.3,
    "delay_days": 365,
-   "kind": "NECESSARY",
-   "reason": "The self-improvement year follows a declaration",
+   "kind": "LIKELY",
+   "reason": "The self-improvement year follows a declaration. A self-improvement year does not need a formal AGI declaration first (least-capability rule); reclassified from NECESSARY 2026-11-25.",
    "estimated": true,
    "delay_estimated": true,
    "origin": "estimate from majors page"
@@ -30698,8 +30698,8 @@
    "sign": 1,
    "strength": 0.2,
    "delay_days": 540,
-   "kind": "NECESSARY",
-   "reason": "ASI needs AGI first",
+   "kind": "LIKELY",
+   "reason": "ASI needs AGI first. An ASI claim does not need an AGI declaration inside the 2027 window first (least-capability rule); reclassified from NECESSARY 2026-11-25.",
    "estimated": true,
    "delay_estimated": true,
    "origin": "estimate from majors page"
@@ -41262,8 +41262,8 @@
    "sign": 1,
    "strength": 0.2083,
    "delay_days": 90,
-   "kind": "NECESSARY",
-   "reason": "Ukraine's backers treat written guarantees as the price of a deal. (agent: 45 to about 60)",
+   "kind": "LIKELY",
+   "reason": "Ukraine's backers treat written guarantees as the price of a deal. (agent: 45 to about 60). A ceasefire can take effect and hold without written guarantees (the 1953 Korean armistice did); reclassified from NECESSARY 2026-11-25.",
    "estimated": false,
    "delay_estimated": true,
    "origin": "new arm research agent, A to about B"
