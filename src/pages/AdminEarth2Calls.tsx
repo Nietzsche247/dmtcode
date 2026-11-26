@@ -9,11 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 type YesNo = "yes" | "no";
-interface Call { id: string; num: number; name: string; question: string; pick: YesNo }
+interface Call { id: string; num: number; name: string; question: string; pick: YesNo; note?: string }
 interface Ruling { call_id: string; answer: string; answered_at: string }
 
 const CALLS: Call[] = [
   { id: "call-1", num: 1, name: "Nepal halt", question: "Should a small market's trading halt, like Nepal's, count toward the 2028 exchange halt leg?", pick: "no" },
+  { id: "call-3", num: 3, name: "R5 price floors", question: "Should R5 count only a new US price floor or stockpile buy?", pick: "yes", note: "The graph already reads it this way. Yes confirms it." },
+  { id: "call-4", num: 4, name: "R7 Japan halt", question: "Should R7 leave out China's informal halt to Japan, so it counts only a formal named cutoff?", pick: "yes", note: "The graph already reads it this way. Yes confirms it." },
   { id: "call-5", num: 5, name: "JPMorgan, Nov 16", question: "Should JPMorgan's 8.6 hour outage on Nov 16, which the bank called a bug, count as a payments halt?", pick: "no" },
   { id: "call-6", num: 6, name: "SMFG lending rule", question: "Should SMFG's rule to lend for data centers only to the largest cloud companies count as a megabank cap?", pick: "no" },
   { id: "call-7", num: 7, name: "OpenAI, Sep 3", question: "Should OpenAI calling Sep 3 the start of the AGI era count as AGI declared?", pick: "no" },
@@ -22,8 +24,6 @@ const CALLS: Call[] = [
 
 const SETTLED = [
   "Call 2, AGI wording: 2027 major 1 already counts only OpenAI, Google DeepMind, Anthropic, Meta or xAI saying so in an official release.",
-  "Call 3, R5: already counts only a new US price floor, tariff or stockpile purchase after Nov 19 (board read 3, Nov 23).",
-  "Call 4, R7: already ruled not fired; the Japan halt is de facto (board read 3, Nov 23).",
 ];
 
 const AdminEarth2Calls = () => {
@@ -69,7 +69,7 @@ const AdminEarth2Calls = () => {
     <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:py-12">
       {head}
       <h1 className="text-2xl font-semibold sm:text-3xl">Earth 2 scoring calls</h1>
-      <p className="mt-2 text-muted-foreground">Five open calls. Tap Yes or No. Each answer saves right away and goes into the next read.</p>
+      <p className="mt-2 text-muted-foreground">Seven open calls. Tap Yes or No. Each answer saves right away and goes into the next read.</p>
       <Button className="mt-6 w-full sm:w-auto" disabled={busy !== null} onClick={() => save(CALLS, (c) => c.pick, "all")}>
         {busy === "all" && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Take all suggestions
       </Button>
@@ -84,6 +84,7 @@ const AdminEarth2Calls = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>{c.question}</p>
+                {c.note && <p className="text-sm text-muted-foreground">{c.note}</p>}
                 <p className="text-sm text-muted-foreground">Suggested: {c.pick === "yes" ? "Yes" : "No"}</p>
                 <div className="grid grid-cols-2 gap-3">
                   {(["yes", "no"] as YesNo[]).map((v) => {
