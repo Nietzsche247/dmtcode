@@ -96,7 +96,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 84.0,
+   "odds_now": 83.5,
    "odds_text": "85% by May 31",
    "odds_history": [
     {
@@ -128,6 +128,11 @@
      "date": "2026-11-23",
      "odds": 84.0,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 83.5,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -153,10 +158,10 @@
    "if_it_fires": "Banks: loss disclosure 33 to about 40. Neocloud default 42 to about 50. Japan megabanks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 1",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.1
+    "date": "2026-11-25",
+    "delta": -0.5
    },
    "kill_condition": "Every AI data-center financing of $1B or more launched from Dec 1, 2026 to Apr 30, 2027 prices at or inside its talk, none is pulled, cut or sold at a discount, and CoreWeave's $4B loan funds.",
    "kill_check": "Bloomberg and Reuters deal coverage; LSEG LPC loan data; CoreWeave and Blue Owl 8-K filings",
@@ -437,7 +442,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 80.0,
+   "odds_now": 77.2,
    "odds_text": "70% through May 31",
    "odds_history": [
     {
@@ -454,6 +459,11 @@
      "date": "2026-11-23",
      "odds": 80.0,
      "note": "Heavy rare-earth premium widened (dysprosium series relabelled Platts, delivered North America)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 77.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -478,10 +488,10 @@
    "if_it_fires": "Carmakers, defense, robots; Fed + (goods prices)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 5",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 10.0
+    "date": "2026-11-25",
+    "delta": -2.8
    },
    "kill_condition": "The Europe (Rotterdam) to China price ratio for dysprosium or terbium oxide falls under 3 times in any assessment before May 31, 2027.",
    "kill_check": "Fastmarkets or Argus Dy and Tb oxide assessments, Rotterdam versus China; Platts North America",
@@ -561,7 +571,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 41.9,
+   "odds_now": 41.7,
    "odds_text": "42% by May 31",
    "odds_history": [
     {
@@ -588,6 +598,11 @@
      "date": "2026-11-25",
      "odds": 41.9,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 41.7,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -616,7 +631,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": 0.1
+    "delta": -0.2
    },
    "kill_condition": "CoreWeave's $4B loan prices and funds by Jan 31, 2027, and no neocloud or data-center vehicle with $1B+ of debt misses a payment or launches a distressed exchange through Apr 30, 2027.",
    "kill_check": "CoreWeave 8-K filings; Moody's, S&P and Fitch actions; bankruptcy court dockets",
@@ -687,7 +702,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 94.0,
+   "odds_now": 95.0,
    "odds_text": "97% on Dec 9 (market)",
    "odds_history": [
     {
@@ -709,6 +724,11 @@
      "date": "2026-11-23",
      "odds": 94.0,
      "note": "Fed path eased after the Nov 20 rout (markets, Nov 23 premarket)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 95.0,
+     "note": "October PCE inflation 3.8% year on year and Q3 GDP revised up to 4.3% annualized keep a Dec 9 hike near certain"
     }
    ],
    "odds_by": {
@@ -726,7 +746,7 @@
     "CREDIT"
    ],
    "least_capability": "Inflation prints that stay above target into the December meeting",
-   "status": "BEHIND",
+   "status": "AHEAD",
    "hit": 2,
    "next_watch": "Oct PCE Nov 25; jobs Dec 4; decision Dec 9. Nov CPI is Dec 10, the day after",
    "what_changed": "Kalshi: 25 bp 91 to 92, larger 5 to 6, hold 3 to 4. Minutes: nearly all officials expect more hikes; one floated 50 bp (S3)",
@@ -734,10 +754,10 @@
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 9",
    "model_layer": "board",
    "priced": "Market already prices it (board priced check, Nov 22)",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -3.0
+    "date": "2026-11-25",
+    "delta": 1.0
    },
    "kill_condition": "The FOMC statement on Dec 9, 2026 leaves the target range unchanged or cuts it.",
    "kill_check": "Federal Reserve FOMC statement, Dec 9, 2026",
@@ -932,7 +952,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 71.5,
+   "odds_now": 69.9,
    "odds_text": "70% by Nov 2027",
    "odds_history": [
     {
@@ -949,6 +969,11 @@
      "date": "2026-11-23",
      "odds": 71.5,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 69.9,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -974,10 +999,10 @@
    "if_it_fires": "Fed + (goods prices); Japan first in line; AI and robot hardware",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 12",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 1.5
+    "date": "2026-11-25",
+    "delta": -1.6
    },
    "folded_from": [
     {
@@ -1021,7 +1046,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.1,
+   "odds_now": 33.4,
    "odds_text": "35% by Mar 31",
    "odds_history": [
     {
@@ -1043,6 +1068,11 @@
      "date": "2026-11-25",
      "odds": 33.1,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 33.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -1071,7 +1101,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": 0.1
+    "delta": 0.3
    },
    "kill_condition": "The yen strengthens past 145 per dollar on a weekly close before Mar 1, 2027.",
    "kill_check": "USD/JPY weekly close (Fed H.10); Japan Ministry of Finance monthly intervention data",
@@ -1084,7 +1114,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "TRIGGER",
-   "odds_now": 45.5,
+   "odds_now": 35.0,
    "odds_text": "45% on Jan 10",
    "odds_history": [
     {
@@ -1106,6 +1136,11 @@
      "date": "2026-11-23",
      "odds": 45.5,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 35.0,
+     "note": "MOFCOM Announcement No. 59 extended the gallium, germanium and antimony suspension with no gap to Jan 27, 2027, its second two-month roll in two weeks; Beijing is staggering deadlines past Jan 10 and has let none of four truce deadlines lapse"
     }
    ],
    "odds_by": {
@@ -1124,17 +1159,17 @@
     "JOBS"
    ],
    "least_capability": "Beijing choosing not to roll the Jan 10 pause",
-   "status": "ON TRACK",
+   "status": "BEHIND",
    "hit": 4,
    "next_watch": "Nov 27 lapse test; G20 Dec 14 to 15; Jan 1 Pentagon magnet ban; Jan 10",
    "what_changed": "Shenzhen ended with no extension and no rare-earth pledge, only a plan to draft a stability plan. CAUTION: a thin Kalshi market prices an extension before Jan 11 at 75 to 85; Earth2's 45% includes a partial snap-back (S2)",
    "if_it_fires": "AI financing + (chips, magnets); Fed + (goods prices); cyber + (tit for tat); Japan +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 14",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.5
+    "date": "2026-11-25",
+    "delta": -10.5
    },
    "kill_condition": "Before Jan 10, 2027 MOFCOM extends the rare-earth pause in full past Jan 10 with no new licence limits.",
    "kill_check": "MOFCOM announcements; G20 Miami leaders' readouts",
@@ -1190,7 +1225,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 54.6,
+   "odds_now": 54.4,
    "odds_text": "60% on Jan 27 (market 62)",
    "odds_history": [
     {
@@ -1212,6 +1247,11 @@
      "date": "2026-11-25",
      "odds": 54.6,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 54.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -1239,7 +1279,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": 0.6
+    "delta": -0.2
    },
    "kill_condition": "The Fed does not hike on Dec 9, 2026 (so Jan 27 cannot be the second straight hike), or it holds on Jan 27, 2027.",
    "kill_check": "FOMC statements, Dec 9, 2026 and Jan 27, 2027",
@@ -1253,7 +1293,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 60.9,
+   "odds_now": 60.6,
    "odds_text": "60% by May 31",
    "odds_history": [
     {
@@ -1275,6 +1315,11 @@
      "date": "2026-11-23",
      "odds": 60.9,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 60.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -1299,10 +1344,10 @@
    "if_it_fires": "AI financing ++ (these funds are the marginal lender). Banks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 17",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.1
+    "date": "2026-11-25",
+    "delta": -0.3
    },
    "kill_condition": "BCRED and Blue Owl's non-traded credit funds meet every redemption request in full at the Dec 2026 and Mar 2027 windows with no NAV markdown of 2% or more.",
    "kill_check": "Fund tender offer results (SEC EDGAR, SC TO-I/A); monthly NAV releases",
@@ -1375,7 +1420,7 @@
    "arm": "CYBER",
    "board_arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.0,
+   "odds_now": 29.5,
    "odds_text": "30% by Mar 31 (the three-year run reads nearer 20%)",
    "odds_history": [
     {
@@ -1387,6 +1432,11 @@
      "date": "2026-11-22",
      "odds": 30.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 29.5,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -1414,7 +1464,12 @@
    "kill_condition": "No joint FBI, CISA or NSA advisory attributes a destructive (not espionage) attack on a US company, utility, water or health system to Iran or China through Feb 28, 2027.",
    "kill_check": "CISA and FBI joint advisories; DOJ indictments; Treasury OFAC cyber sanctions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.5
+   }
   },
   {
    "id": "O4",
@@ -1582,7 +1637,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.4,
+   "odds_now": 33.3,
    "odds_text": "33% by May 31",
    "odds_history": [
     {
@@ -1614,6 +1669,11 @@
      "date": "2026-11-25",
      "odds": 33.4,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 33.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -1641,7 +1701,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": 0.1
+    "delta": -0.1
    },
    "folded_from": [
     {
@@ -1838,7 +1898,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 25.1,
+   "odds_now": 25.3,
    "odds_text": "35% by Mar 17 (market 34)",
    "odds_history": [
     {
@@ -1865,6 +1925,11 @@
      "date": "2026-11-25",
      "odds": 25.1,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 25.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -2484,7 +2549,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 46.5,
+   "odds_now": 46.2,
    "odds_text": "45% by May 31, 60% by Nov 2027 (call confirmed Nov 23: counts only a new US floor, tariff or stockpile purchase after Nov 19)",
    "odds_history": [
     {
@@ -2501,6 +2566,11 @@
      "date": "2026-11-23",
      "odds": 46.5,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 46.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -2525,10 +2595,10 @@
    "if_it_fires": "Banks + (state-backed project loans)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 36",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 1.5
+    "date": "2026-11-25",
+    "delta": -0.3
    },
    "kill_condition": "The FY2027 defense bill is signed without a heavy rare-earth, antimony, gallium or germanium price floor or stockpile purchase, and no DLA, DOE or Commerce award or tariff is announced by Apr 30, 2027.",
    "kill_check": "NDAA text (Congress.gov); Defense Logistics Agency and DOE award notices; Commerce Section 232 actions",
@@ -3000,13 +3070,18 @@
    "arm": "SHIPPING AND CANALS",
    "board_arm": "SHIPPING AND CANALS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.0,
+   "odds_now": 45.0,
    "odds_text": "33% by May 31, 2027",
    "odds_history": [
     {
      "date": "2026-11-22",
      "odds": 33.0,
      "note": "board read 2"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 45.0,
+     "note": "Canal authority projects Gatun Lake falling from 86.5 ft to 84.0 ft by Jan 25, about 2.5 ft under the January average; in September it cut max draft to 48 ft at about 84.5 ft. Held below the helper's 48 because a projection is not a cut"
     }
    ],
    "odds_by": {
@@ -3024,7 +3099,7 @@
     "POWER"
    ],
    "least_capability": "A dry season with lake levels below the canal's operating line",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "hit": 2,
    "next_watch": "Canal dry-season slot bids Nov 24; CPC update Dec 10; dry-season slot window Jan 3 to Apr 3; Gatun low point late Apr to May. Early warning: Gatun more than 1 ft under its 5-yr average in January",
    "what_changed": "LONG LENS. Not in a squeeze now: 34 slots and a 50 ft draft restored Nov 9 after 2026 trims to 32 slots and 48 ft (never across this line; 2023-24 crossed it at 22 slots and 44 ft). Gatun Lake 86.6 ft Nov 22 vs a 5-yr November average of 86.5 ft, about 2 ft below a year ago; the 2026 wet season ran 34% short on rain. Nino-3.4 +2.5C: strong to very strong El Nino likely through Jan to Mar 2027; the canal authority says strong El Nino impacts show the following year and warned of strain in the Jan to Apr 2027 dry season. The $4.6M and record $5.3M slot prices of Aug 2026 came from the war, not drought (S9)",
@@ -3036,7 +3111,12 @@
    "kill_check": "Panama Canal Authority Gatun Lake levels and advisories to shipping",
    "date_state": "ESTIMATED",
    "date_catalyst": "Gatun Lake seasonal low, late April to May (dry season)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 12.0
+   }
   },
   {
    "id": "D6",
@@ -3603,7 +3683,7 @@
    "arm": "OIL AND GULF",
    "board_arm": "OIL AND GULF",
    "type": "END EVENT",
-   "odds_now": 65.0,
+   "odds_now": 64.6,
    "odds_text": "40% by Nov 2027",
    "odds_history": [
     {
@@ -3620,6 +3700,11 @@
      "date": "2026-11-25",
      "odds": 65.0,
      "note": "US LNG feedgas averaged a record 20.4 Bcf/d for November to date (19.3 in October); single-day nominations 21.5 Bcf/d on Nov 25 (record 21.2 on Nov 15; BNEF 21.8 on Nov 14); Golden Pass at its highest monthly draw (about 0.81 Bcf/d). Feedgas runs a few percent above exports, so exports near 19 Bcf/d now and need about 21.5 feedgas in one month by Nov 2027 to top 20"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 64.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -3649,7 +3734,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": 25.0
+    "delta": -0.4
    },
    "kill_condition": "Golden Pass and Port Arthur both slip their first LNG cargo past Jun 30, 2027.",
    "kill_check": "EIA monthly LNG exports; ExxonMobil, QatarEnergy and Sempra start-up announcements; FERC filings",
@@ -4455,13 +4540,18 @@
    "label": "AI-attributed layoffs come back: Challenger counts 25,000+ job cuts blamed on AI in a single month",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 50,
+   "odds_now": 50.2,
    "odds_text": "50% by Nov 2027 (EST)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 50,
      "note": "additions file, not yet merged into the board"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 50.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -4488,14 +4578,19 @@
    "kill_check": "Challenger, Gray and Christmas monthly job cuts report",
    "date_state": "ESTIMATED",
    "date_catalyst": "Challenger January report, early Feb 2027, which the row calls the real test (date not confirmed)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "W2",
    "label": "The junior squeeze reaches official data: NY Fed recent-graduate unemployment prints 6.0% or higher",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 27.7,
+   "odds_now": 27.8,
    "odds_text": "28% by Nov 2027 (EST)",
    "odds_history": [
     {
@@ -4507,6 +4602,11 @@
      "date": "2026-11-23",
      "odds": 27.7,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 27.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -4530,10 +4630,10 @@
    "next_watch": "NY Fed quarterly update Feb 2027; jobs report Dec 4",
    "source": "claude/EARTH2_BOARD_ADDITIONS_20_11_2026.md, section 2",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.3
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "kill_condition": "The NY Fed recent-graduate unemployment rate prints 5.0% or lower in its Feb or May 2027 update.",
    "kill_check": "New York Fed, The Labor Market for Recent College Graduates (quarterly)",
@@ -4624,13 +4724,18 @@
    "label": "Seats start to fall: a top-ten application software vendor reports paid seats or subscription revenue down and names AI agents",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 22,
+   "odds_now": 20.0,
    "odds_text": "22% by Nov 2027 (EST)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 22,
      "note": "additions file, not yet merged into the board"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 20.0,
+     "note": "Workday Q3 FY27: subscription revenue up 12.8% year on year, FY27 subscription guide raised to 13%; no seat decline"
     }
    ],
    "odds_by": {
@@ -4649,7 +4754,7 @@
     "CREDIT"
    ],
    "least_capability": "Customers hiring fewer people and buying fewer software seats",
-   "status": "ON TRACK",
+   "status": "BEHIND",
    "hit": 4,
    "next_watch": "Workday and Salesforce results late Nov to early Dec; full-year guides late Feb 2027",
    "source": "claude/EARTH2_BOARD_ADDITIONS_20_11_2026.md, section 2",
@@ -4657,20 +4762,30 @@
    "kill_condition": "Every top-ten application software vendor reports subscription revenue up year on year in each quarter reported through Aug 2027.",
    "kill_check": "Quarterly results of Salesforce, Workday, Adobe, ServiceNow and the other top-ten vendors",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -2.0
+   }
   },
   {
    "id": "W6",
    "label": "The credit link fires: software default rate in private credit reaches 3%, or two more $1B+ software firms are handed to lenders",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35,
+   "odds_now": 34.4,
    "odds_text": "35% by Nov 2027 (EST)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 35,
      "note": "additions file, not yet merged into the board"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 34.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -4728,20 +4843,30 @@
    "kill_condition": "Fitch's private-credit software default rate stays at or under 1.5% through its Q2 2027 reading and no $1B+ sponsor-owned software firm is handed to lenders through Jun 30, 2027.",
    "kill_check": "Fitch U.S. Private Credit Default Rate reports; LCD and PitchBook restructuring news",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.6
+   }
   },
   {
    "id": "W7",
    "label": "Policy catches up: a second large state, or Congress, enacts an AI layoff notice or reporting law",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 45,
+   "odds_now": 45.2,
    "odds_text": "45% by Nov 2027 (EST)",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 45,
      "note": "additions file, not yet merged into the board"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 45.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_by": {
@@ -4767,7 +4892,12 @@
    "kill_condition": "The 2027 sessions of New York, Texas, Florida, Illinois and Pennsylvania adjourn without passing an AI layoff notice or reporting bill, and no federal bill passes either chamber, by Jul 31, 2027.",
    "kill_check": "State legislature bill trackers (New York A9533A and peers); Congress.gov",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "W8",
@@ -4924,7 +5054,7 @@
    "label": "Agi is declared",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 50.0,
+   "odds_now": 51.8,
    "odds_text": "50% by Nov 2027 (majors settled Nov 23; legs were 65 and 50)",
    "odds_history": [
     {
@@ -4946,6 +5076,11 @@
      "date": "2026-11-23",
      "odds": 50.0,
      "note": "Majors settled: one number per major (legs were 65 and 50)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 51.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -4961,10 +5096,10 @@
    "description": "5 triggers at lift 3 or more, 5 of them new.\nFC3 AGI gets declared with no referee left to check (M, 40%, +35): A formal lab statement is the major itself.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 60%, +6): Long autonomous work is the usual public AGI yardstick.\nFC2 AI writes the labs' own code and starts steering research (M, 40%, +6): A lab run mostly by its model can call it AGI.\nFC9 Superintelligence claims start at small labs and pull big labs in (M, 30%, +4): Big labs answer an ASI claim by declaring AGI.\nFC4 Washington holds frontier releases and eyes equity in labs (M, 35%, +3): A federal review can become the body that certifies AGI. BRAKES: GR3 Chips and announced capacity sit idle waiting for power (-2): Same delay, smaller effect by 2027. WEAK LINKS (under 3 points): PF3, GB3, RM5, RM6, GR1.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-1",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -10.4
+    "date": "2026-11-25",
+    "delta": 1.8
    },
    "kill_condition": "By Aug 31, 2027 no frontier lab or G7 government has made a written AGI claim and METR's best published task horizon is still under 40 hours.",
    "kill_check": "Lab releases and model cards; METR task-horizon updates; G7 government releases",
@@ -4976,13 +5111,18 @@
    "label": "Ai agents reach white-collar work",
    "arm": "WHITE-COLLAR WORK",
    "type": "END EVENT",
-   "odds_now": 55.0,
+   "odds_now": 57.2,
    "odds_text": "55% by Nov 2027",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 55.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 57.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -5001,14 +5141,19 @@
    "kill_condition": "McKinsey's 2027 State of AI survey reports under 45% of respondents at $1B+ organizations scaling agents in at least one function.",
    "kill_check": "McKinsey State of AI survey; Census Business Trends and Outlook Survey",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 2.2
+   }
   },
   {
    "id": "27-3",
    "label": "Washington binds ai",
    "arm": "CYBER",
    "type": "END EVENT",
-   "odds_now": 50.0,
+   "odds_now": 50.7,
    "odds_text": "50% by Nov 2027 (majors settled Nov 23; legs were 55 and 50)",
    "odds_history": [
     {
@@ -5025,6 +5170,11 @@
      "date": "2026-11-23",
      "odds": 50.0,
      "note": "Majors settled: one number per major (legs were 55 and 50)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 50.7,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -5039,10 +5189,10 @@
    "description": "30 triggers at lift 3 or more, 23 of them new.\nFC4 Washington holds frontier releases and eyes equity in labs (M, 35%, +35): A pre-release law is the standing rule.\nRM1 AI agents run intrusions with little human direction (M, 70%, +12): A named AI-run breach at home forces a binding rule.\nGB1 AI labs say they can no longer rule out bio help (M, 45%, +8): Adds a biology case to the hacking case for a rule.\nFC6 New Democratic statehouses pass AI laws faster than Washington can preempt (U, 50%, +7): A patchwork makes industry ask Congress for one rule.\nFC8 Chatbot harm suits shift from families to state attorneys general (M, 40%, +8): Child safety is the bipartisan road to a federal rule.\nRM2 Flaws are attacked before defenders can patch (M, 70%, +4): Feeds the hacking wave that drives the rule.\nRM6 Rival labs copy frontier models at industrial scale (M, 45%, +6): Identity rules for model access become law. ALSO: FC7 (+4), PF2 (+3), RM5 (+5), GB6 (+10), FC3 (+5), GR1 (+3), ID2 (+5), RM3 (+5), FC1 (+3), FC5 (+3), FC2 (+4), WK6 (+3), FC9 (+5), RM9 (+4), ID3 (+3), GB5 (+3), RM4 (+3), ID4 (+4), ID6 (+3), MR8 (+3), MR9 (+3), ID7 (+3), ID9 (+3). WEAK LINKS (under 3 points): ID1, ID8, WK5, PF1, PF4, PF5, PF6, PF7, RM7, DA8, DA9, GR2, GR5, GR6, GR8.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-3",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -4.8
+    "date": "2026-11-25",
+    "delta": 0.7
    },
    "kill_condition": "By Aug 31, 2027 no federal statute or binding rule limiting frontier model release or training has passed either chamber or appeared as a proposed rule.",
    "kill_check": "Congress.gov; Federal Register; Commerce BIS rules",
@@ -5163,7 +5313,7 @@
    "label": "The rare-earth squeeze stops a factory",
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "type": "END EVENT",
-   "odds_now": 70.7,
+   "odds_now": 70.0,
    "odds_text": "70% by Nov 2027",
    "odds_history": [
     {
@@ -5175,6 +5325,11 @@
      "date": "2026-11-23",
      "odds": 70.7,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 70.0,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -5190,10 +5345,10 @@
    "description": "6 triggers at lift 3 or more, 6 of them new.\nDA3 Rare-earth pause ends Jan 10, 2027; magnets flow on short-leash licences (M, 40%, +14): A lapse is the direct path to a line stop.\nDA2 Heavy rare-earth price outside China hits 16 times the China price (M, 55%, +8): Price rationing comes before a physical line stop.\nDA6 Western rare-earth output grows 41% a year, still far under need (M, 45%, +8): No Western buffer if licences tighten.\nDA7 Rare earths and magnets rerouted through third countries (U, 45%, +6): Closing the leak removes the last buffer.\nDA1 China Coast Guard incursions spread to Pratas, Penghu and Taiwan's east (M, 45%, +3): A squeeze and response invite tighter Chinese export curbs.\nRM7 Smuggled AI chips outrun export-control enforcement (M, 40%, +3): Tighter chip enforcement invites rare-earth retaliation. WEAK LINKS (under 3 points): RM6, DA4.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-6",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.7
+    "date": "2026-11-25",
+    "delta": -0.7
    },
    "kill_condition": "China grants Western and Japanese magnet makers general Dy/Tb licences covering 2027 and the ex-China to China price ratio falls under 3 times, both before May 31, 2027.",
    "kill_check": "MOFCOM licence notices; Fastmarkets or Argus Dy/Tb price ratio; automaker production notices",
@@ -5205,7 +5360,7 @@
    "label": "The self-improvement year",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 55.0,
+   "odds_now": 61.0,
    "odds_text": "55% by Nov 2028 (majors settled Nov 23; legs were 55 and 60)",
    "odds_history": [
     {
@@ -5227,6 +5382,11 @@
      "date": "2026-11-23",
      "odds": 55.0,
      "note": "Majors settled: one number per major (legs were 55 and 60)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 61.0,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -5243,10 +5403,10 @@
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-1",
    "model_layer": "majors",
    "one_number_rule": "Recursive learning 55% and the recognized explosion 60%: the lower leg is used.",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.8
+    "date": "2026-11-25",
+    "delta": 6.0
    },
    "kill_condition": "By May 31, 2028 no top-five lab has stated in writing that AI does most of its AI research and METR's measured capability doubling time is still above four months.",
    "kill_check": "Lab official documents and system cards; METR reports; UN scientific panel on AI",
@@ -5258,7 +5418,7 @@
    "label": "The bill reaches the lenders",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 58.4,
+   "odds_now": 58.3,
    "odds_text": "58% by Nov 2028",
    "odds_history": [
     {
@@ -5275,6 +5435,11 @@
      "date": "2026-11-23",
      "odds": 58.4,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 58.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -5289,9 +5454,9 @@
    "description": "11 triggers at lift 3 or more, 9 of them new.\nWK2 Software loans go bad as lenders price AI disruption (M, 62%, +12): Software losses alone can pass $500M at one fund.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +8): Marked-down AI bonds force lender loss disclosures.\nMR5 Retail private credit funds ration withdrawals each quarter (M, 50%, +12): A gated fund must mark loans and admit losses.\nMR4 Neocloud chip-backed debt hits its refinancing wall (M, 55%, +10): Lenders must disclose chip-loan losses.\nWK8 Paid seats fall at per-seat software vendors (U, 45%, +10): Falling seats turn loan marks into real defaults.\nFC5 Local boards and voters block data centers faster than builders adapt (M, 72%, +4): Lenders hold loans on projects that cannot open.\nGR1 Statewide data center pauses spread from Texas to more states (M, FIRED, +3): Construction loans on paused sites go bad. ALSO: GR3 (+4), MR3 (+3), MR8 (+5), WK7 (+3). WEAK LINKS (under 3 points): PF4, PF8, GR5.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-2",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
+    "date": "2026-11-25",
     "delta": -0.1
    },
    "kill_condition": "Bank and BDC filings through the Q4 2027 results (early 2028) show AI and data-center loan losses under $500M in total and no private-credit fund gates withdrawals.",
@@ -5304,7 +5469,7 @@
    "label": "The financial plumbing is breached",
    "arm": "CYBER",
    "type": "END EVENT",
-   "odds_now": 55.0,
+   "odds_now": 57.0,
    "odds_text": "55% by Nov 2028 (majors settled Nov 23; legs were 55, 78 and 60)",
    "odds_history": [
     {
@@ -5316,6 +5481,11 @@
      "date": "2026-11-23",
      "odds": 55.0,
      "note": "Majors settled: one number per major (legs were 55, 78 and 60)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 57.0,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -5331,10 +5501,10 @@
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-3",
    "model_layer": "majors",
    "one_number_rule": "Model 35 is the major (55%); C4 78% and C9 60% are legs under it.",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.0
+    "date": "2026-11-25",
+    "delta": 2.0
    },
    "kill_condition": "No 4+ hour halt at a top exchange, bank or payment network and no $1B+ single theft from Jun 1, 2027 through May 31, 2028.",
    "kill_check": "Exchange and payment network notices; SEC Regulation SCI notices; Chainalysis and Elliptic theft data",
@@ -5346,7 +5516,7 @@
    "label": "The hiring freeze goes broad",
    "arm": "WHITE-COLLAR WORK",
    "type": "END EVENT",
-   "odds_now": 49.7,
+   "odds_now": 52.7,
    "odds_text": "50% by Nov 2028",
    "odds_history": [
     {
@@ -5358,6 +5528,11 @@
      "date": "2026-11-25",
      "odds": 49.7,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 52.7,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -5376,7 +5551,7 @@
    "odds_as_of": "2026-11-25",
    "last_move": {
     "date": "2026-11-25",
-    "delta": -0.3
+    "delta": 3.0
    },
    "kill_condition": "NACE's fall 2027 and spring 2028 outlooks both show planned graduate hiring up on the year and the NY Fed recent-graduate unemployment rate is under 5% in its mid-2028 update.",
    "kill_check": "NACE Job Outlook; New York Fed recent graduates data; BLS Employment Situation",
@@ -5562,7 +5737,7 @@
    "label": "An asi claim",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 53.1,
+   "odds_now": 61.1,
    "odds_text": "55% by Nov 2029",
    "odds_history": [
     {
@@ -5579,6 +5754,11 @@
      "date": "2026-11-23",
      "odds": 53.1,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 61.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -5594,10 +5774,10 @@
    "description": "5 triggers at lift 3 or more, 5 of them new.\nFC9 Superintelligence claims start at small labs and pull big labs in (M, 70%, +25): A funded lab's claim is the major or forces it.\nFC2 AI writes the labs' own code and starts steering research (M, 82%, +10): AI-led research is the claimed road to ASI.\nFC3 AGI gets declared with no referee left to check (M, 72%, +8): Once AGI is spent, ASI is the next claim.\nWK1 Agents finish multi-day tasks alone; the yardstick has run out (M, 92%, +3): Keeps capability claims escalating.\nFC4 Washington holds frontier releases and eyes equity in labs (M, 68%, +4): A state-backed lab has reason to claim ASI first. WEAK LINKS (under 3 points): PF3, RM6.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 29-3",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.5
+    "date": "2026-11-25",
+    "delta": 8.0
    },
    "kill_condition": "By May 31, 2029 no frontier lab or G7 government has claimed in writing that a system beats the best humans across essentially all cognitive work.",
    "kill_check": "Lab releases and model cards; G7 government releases",
@@ -5651,13 +5831,18 @@
    "label": "Mass cognitive displacement begins",
    "arm": "WHITE-COLLAR WORK",
    "type": "END EVENT",
-   "odds_now": 56.0,
+   "odds_now": 62.0,
    "odds_text": "56% by Nov 2029",
    "odds_history": [
     {
      "date": "2026-11-19",
      "odds": 56.0,
      "note": "majors page, read 2 (Nov 19)"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 62.0,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -5676,7 +5861,12 @@
    "kill_condition": "Office payrolls (information, financial activities, professional and business services) are higher than a year earlier in every BLS jobs report from Jun 2028 to Mar 2029.",
    "kill_check": "BLS Employment Situation, table B-1",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 6.0
+   }
   },
   {
    "id": "29-6",
@@ -5850,7 +6040,7 @@
    "arm": "AI CAPABILITY",
    "type": "TRIGGER",
    "family": "Frontier race, culture and politics",
-   "odds_now": 55,
+   "odds_now": 65.0,
    "odds_text": "55 / 80 / 90 by Nov 2027 / 2028 / 2029",
    "odds_by": {
     "2027-11-30": 55,
@@ -5862,6 +6052,11 @@
      "date": "2026-11-19",
      "odds": 55.0,
      "note": "trigger tree v2, sealed Nov 19"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 65.0,
+     "note": "METR Q4 update: pooled 50% time horizon about 40 hours, doubling every 3.61 months; 167 hours is about 2.1 doublings away (about 7.5 months); METR's own extrapolation reaches 200 hours around July 2027. Held under 75 because one suite is saturated"
     }
    ],
    "window_start": "2026-11-22",
@@ -5873,7 +6068,7 @@
    ],
    "least_capability": "A frontier lab or government moving faster than any referee",
    "least_capability_basis": "family line (trigger family FC)",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "hit": 4,
    "settlement_test": "METR or a government AI institute publishes a measured 50% horizon of 167 hours or more for any model.",
    "board_reference": null,
@@ -5881,7 +6076,12 @@
    "source": "EARTH2 5 TRIGGER TREE (version 2) via EARTH2_GENERATED_v1 graph",
    "model_layer": "tree",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 10.0
+   }
   },
   {
    "id": "MR2",
@@ -18799,7 +18999,7 @@
    "label": "The self-improvement loop closes",
    "arm": "AI CAPABILITY",
    "type": "END EVENT",
-   "odds_now": 37,
+   "odds_now": 40.0,
    "odds_text": "37 / 63 / 82 / 89 by May 2027 / Nov 2027 / Nov 2028 / Nov 2029",
    "odds_by": {
     "2027-05-19": 37,
@@ -18812,6 +19012,11 @@
      "date": "2026-11-19",
      "odds": 37,
      "note": "driver model, sealed Nov 19"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 40.0,
+     "note": "METR reports the newer TH2 suite doubling every 1.65 months, under the test's 2-month line, while the headline rate is 3.61 months; small bump until the test wording says which counts"
     }
    ],
    "window_start": "2026-11-22",
@@ -18823,7 +19028,7 @@
    ],
    "least_capability": "Driver D01, D05 crossing its test line: ROUTES (judgment hung on drivers)",
    "least_capability_basis": "driver dating line",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "settlement_test": "Any one of: a frontier lab states in writing that AI systems do most of its AI research; METR or a government AI institute reports a frontier capability doubling time under two months; a G7 government or the UN AI science panel states in an official document that self-accelerating AI progress is under way.",
    "who_it_hits_text": null,
    "links_text": "62: 12, 21, 22, 32, 13, 17, 57",
@@ -18833,7 +19038,12 @@
    "kill_condition": "By Apr 15, 2027 no lab states in writing that AI does most of its AI research, METR's measured doubling time is still above four months, and no G7 or UN panel statement says self-accelerating progress is under way.",
    "kill_check": "Lab documents; METR reports; UN scientific panel on AI",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 3.0
+   }
   },
   {
    "id": "E03",
@@ -20524,7 +20734,7 @@
    "label": "Recursive Learning Algorithms Discovered",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 54.0,
+   "odds_now": 54.1,
    "odds_text": "25 / 55 / 72 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 25.0,
@@ -20546,6 +20756,11 @@
      "date": "2026-11-23",
      "odds": 54.0,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 54.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -20565,10 +20780,10 @@
    "model_group": "C",
    "source": "EARTH2 9 THE 62 SCORECARD, row 12; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.8
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -20578,7 +20793,7 @@
    "label": "Scientific Discovery Rate 10x",
    "arm": "DISCOVERIES",
    "type": "END EVENT",
-   "odds_now": 30.0,
+   "odds_now": 30.8,
    "odds_text": "8 / 30 / 52 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 8.0,
@@ -20600,6 +20815,11 @@
      "date": "2026-11-23",
      "odds": 30.0,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 30.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -20618,10 +20838,10 @@
    "model_group": "DS",
    "source": "EARTH2 9 THE 62 SCORECARD, row 13; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.1
+    "date": "2026-11-25",
+    "delta": 0.8
    },
    "kill_condition": "Verified AI-contributed new proofs on the Erdos problems database fall below 44 a quarter (the Q2 2026 pace) in two quarters before Jun 30, 2028.",
    "kill_check": "Erdos problems database (erdosproblems.com); Terence Tao's AI contributions log",
@@ -20852,7 +21072,7 @@
    "label": "Artificial Superintelligence (ASI)",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 55.0,
+   "odds_now": 55.3,
    "odds_text": "8 / 30 / 55 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 8.0,
@@ -20874,6 +21094,11 @@
      "date": "2026-11-23",
      "odds": 55.0,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 55.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -20893,10 +21118,10 @@
    "model_group": "C",
    "source": "EARTH2 9 THE 62 SCORECARD, row 19; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.1
+    "date": "2026-11-25",
+    "delta": 0.3
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -20942,7 +21167,7 @@
    "label": "AI Capability Doubling Time Collapses",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 48.3,
+   "odds_now": 48.4,
    "odds_text": "50 / 70 / 80 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 50.0,
@@ -20964,6 +21189,11 @@
      "date": "2026-11-23",
      "odds": 48.3,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 48.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -20983,10 +21213,10 @@
    "model_group": "C",
    "source": "EARTH2 9 THE 62 SCORECARD, row 21; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.4
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -20996,7 +21226,7 @@
    "label": "Intelligence Explosion Publicly Recognized",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 36.1,
+   "odds_now": 36.2,
    "odds_text": "38 / 60 / 73 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 38.0,
@@ -21018,6 +21248,11 @@
      "date": "2026-11-23",
      "odds": 36.1,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 36.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -21037,10 +21272,10 @@
    "model_group": "C",
    "source": "EARTH2 9 THE 62 SCORECARD, row 22; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.6
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21088,7 +21323,7 @@
    "label": "AI Consciousness Debate Reaches UN",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 29.9,
+   "odds_now": 30.3,
    "odds_text": "12 / 30 / 48 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 12.0,
@@ -21105,6 +21340,11 @@
      "date": "2026-11-23",
      "odds": 29.9,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 30.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-06-01",
@@ -21123,10 +21363,10 @@
    "model_group": "D",
    "source": "EARTH2 9 THE 62 SCORECARD, row 24; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.1
+    "date": "2026-11-25",
+    "delta": 0.4
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21136,7 +21376,7 @@
    "label": "Stock Market Restructuring Event",
    "arm": "AI FINANCING AND BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 41.0,
+   "odds_now": 41.1,
    "odds_text": "42 / 58 / 68 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 42.0,
@@ -21158,6 +21398,11 @@
      "date": "2026-11-23",
      "odds": 41.0,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 41.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -21176,10 +21421,10 @@
    "model_group": "H",
    "source": "EARTH2 9 THE 62 SCORECARD, row 25; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.8
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21189,7 +21434,7 @@
    "label": "Nation-State Hardware Hoarding",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 46.7,
+   "odds_now": 46.8,
    "odds_text": "48 / 65 / 77 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 48.0,
@@ -21211,6 +21456,11 @@
      "date": "2026-11-23",
      "odds": 46.7,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 46.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -21229,10 +21479,10 @@
    "model_group": "D",
    "source": "EARTH2 9 THE 62 SCORECARD, row 26; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -1.5
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21432,7 +21682,7 @@
    "label": "Human R&D Obsolescence",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 47.9,
+   "odds_now": 48.6,
    "odds_text": "6 / 24 / 48 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 6.0,
@@ -21449,6 +21699,11 @@
      "date": "2026-11-23",
      "odds": 47.9,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 48.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -21468,10 +21723,10 @@
    "model_group": "C",
    "source": "EARTH2 9 THE 62 SCORECARD, row 32; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.1
+    "date": "2026-11-25",
+    "delta": 0.7
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21769,7 +22024,7 @@
    "label": "Government ASI Nationalization Attempts",
    "arm": "AI CAPABILITY",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 34.0,
+   "odds_now": 34.1,
    "odds_text": "35 / 52 / 65 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 35.0,
@@ -21791,6 +22046,11 @@
      "date": "2026-11-23",
      "odds": 34.0,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 34.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -21809,10 +22069,10 @@
    "model_group": "D",
    "source": "EARTH2 9 THE 62 SCORECARD, row 40; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.8
+    "date": "2026-11-25",
+    "delta": 0.1
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -21860,7 +22120,7 @@
    "label": "Global Unemployment Crisis",
    "arm": "WHITE-COLLAR WORK",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 7.0,
+   "odds_now": 7.2,
    "odds_text": "1 / 3 / 7 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 1.0,
@@ -21872,6 +22132,11 @@
      "date": "2026-11-19",
      "odds": 7.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 7.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -21891,7 +22156,12 @@
    "source": "EARTH2 9 THE 62 SCORECARD, row 42; model file forecasts_dmtcodecom.md",
    "model_layer": "62",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "M43",
@@ -22280,7 +22550,7 @@
    "label": "UBI Legislation Fast-Tracked",
    "arm": "WHITE-COLLAR WORK",
    "type": "END EVENT",
-   "odds_now": 18.0,
+   "odds_now": 18.3,
    "odds_text": "3 / 8 / 18 by Nov 2027 / 2028 / 2029 (EST)",
    "odds_by": {
     "2027-11-30": 3.0,
@@ -22292,6 +22562,11 @@
      "date": "2026-11-19",
      "odds": 18.0,
      "note": "62 scorecard, scoring pass Nov 19"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 18.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-06-01",
@@ -22313,7 +22588,12 @@
    "kill_condition": "No guaranteed income bill passes either chamber of Congress or any state legislature by May 31, 2029.",
    "kill_check": "Congress.gov; state legislature trackers",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.3
+   }
   },
   {
    "id": "M54",
@@ -22852,13 +23132,18 @@
    "label": "AI-evolved solvers for SAT and hard optimization (scheduling, routing, chip verification) that beat the best human-built solvers on real industrial work. P vs NP itself is not expected to be settled.",
    "arm": "DISCOVERIES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 75.0,
+   "odds_now": 75.2,
    "odds_text": "75.0% by Dec 2030 (expected solve window 2026-12 to 2028-06, difficulty tier 2)",
    "odds_history": [
     {
      "date": "2026-11-22",
      "odds": 75.0,
      "note": "discoveries ladder, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 75.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-12-01",
@@ -22903,7 +23188,12 @@
    "source": "https://arxiv.org/abs/2509.07367; https://www.ijcai.org/proceedings/2026/257; https://deepmind.google/blog/alphaevolve-impact/",
    "model_layer": "discoveries",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "DS5",
@@ -22961,13 +23251,18 @@
    "label": "An AI agent takes a written spec to a fabricated, working chip with little human help.",
    "arm": "DISCOVERIES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 80.0,
+   "odds_now": 80.2,
    "odds_text": "80.0% by Dec 2030 (expected solve window 2027-01 to 2028-12, difficulty tier 3)",
    "odds_history": [
     {
      "date": "2026-11-22",
      "odds": 80.0,
      "note": "discoveries ladder, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 80.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-01-01",
@@ -23010,7 +23305,12 @@
    "source": "https://arxiv.org/html/2603.08716; https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/; https://deepmind.google/blog/alphaevolve-impact/",
    "model_layer": "discoveries",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "DS7",
@@ -23129,13 +23429,18 @@
    "label": "Faster matrix multiplication that speeds real GPU and TPU workloads, not only the theoretical exponent.",
    "arm": "DISCOVERIES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 50.0,
+   "odds_now": 50.1,
    "odds_text": "50.0% by Dec 2030 (expected solve window 2027-01 to 2029-06, difficulty tier 3)",
    "odds_history": [
     {
      "date": "2026-11-22",
      "odds": 50.0,
      "note": "discoveries ladder, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 50.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-01-01",
@@ -23176,7 +23481,12 @@
    "source": "https://arxiv.org/abs/2608.16884; https://arxiv.org/abs/2610.10593; https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/",
    "model_layer": "discoveries",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.1
+   }
   },
   {
    "id": "DS10",
@@ -23456,13 +23766,18 @@
    "label": "A classical or quantum attack that cuts the security of lattice-based post-quantum encryption (ML-KEM, the new standard) below its claimed level.",
    "arm": "DISCOVERIES",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 12.0,
+   "odds_now": 12.2,
    "odds_text": "12.0% by Dec 2030 (expected solve window 2028-01 to 2035-12, difficulty tier 5)",
    "odds_history": [
     {
      "date": "2026-11-22",
      "odds": 12.0,
      "note": "discoveries ladder, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 12.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2028-01-01",
@@ -23513,7 +23828,12 @@
    "source": "https://blog.cr.yp.to/20260630-risk.html",
    "model_layer": "discoveries",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "DS16",
@@ -24336,7 +24656,7 @@
    "label": "El Nino peaks very strong: NOAA CPC's 3-month index for Oct to Dec 2026 (RONI, or ONI if RONI is not published) is +2.0C or higher.",
    "arm": "WEATHER AND FOOD",
    "type": "NECESSARY CONDITION",
-   "odds_now": 90.0,
+   "odds_now": 97.0,
    "odds_text": "90% by 2027-01-15 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 90,
@@ -24349,6 +24669,11 @@
      "date": "2026-11-22",
      "odds": 90.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 97.0,
+     "note": "Weekly Nino-3.4 anomaly +3.3C; relative Nino-3.4 +2.5C in October; RONI for Aug to Oct already 1.97"
     }
    ],
    "window_start": "2026-11-22",
@@ -24359,19 +24684,24 @@
     "SHIPPING"
    ],
    "least_capability": "Already in the ocean; only the index print is pending (early January).",
-   "status": "ON TRACK",
+   "status": "AHEAD",
    "current_fact": "Nov 12, 2026 (CPC): El Nino Advisory; Nino-3.4 at +2.5C; strong to very strong El Nino likely through Jan to Mar 2027 (over 79%); about 60% chance the 3-month RONI tops +2.5C, a historic event, for Oct to Dec and Nov to Jan; expected to weaken in early 2027. Next update about Dec 10.",
    "source": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.shtml",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 7.0
+   }
   },
   {
    "id": "WF2",
    "label": "Palm oil squeeze: the Malaysian benchmark palm oil futures contract closes above RM5,000 per tonne.",
    "arm": "WEATHER AND FOOD",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 55.0,
+   "odds_now": 59.9,
    "odds_text": "55% by 2027-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 42,
@@ -24384,6 +24714,11 @@
      "date": "2026-11-22",
      "odds": 55.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 59.9,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -24398,14 +24733,19 @@
    "source": "https://theedgemalaysia.com/node/825655",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 4.9
+   }
   },
   {
    "id": "WF3",
    "label": "India restricts rice exports again: a ban, duty or minimum price on any non-basmati grade, including 100% broken.",
    "arm": "WEATHER AND FOOD",
    "type": "TRIGGER",
-   "odds_now": 50.0,
+   "odds_now": 53.5,
    "odds_text": "50% by 2027-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 38,
@@ -24418,6 +24758,11 @@
      "date": "2026-11-22",
      "odds": 50.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 53.5,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -24432,7 +24777,12 @@
    "source": "https://www.spglobal.com/energy/en/news-research/latest-news/agriculture/110626-indian-rice-exporters-brace-for-possible-curbs-on-100-broken-wr-exports; https://www.businesstoday.in/india/story/biggest-drop-since-2009-rice-output-faces-10-mn-tonne-slump-amid-rainfall-deficit-el-nino-risk-556455-2026-09-18",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 3.5
+   }
   },
   {
    "id": "WF4",
@@ -24474,7 +24824,7 @@
    "label": "Southern crop hit: Australia's 2026-27 wheat harvest comes in below 28 Mt (ABARES December 2026 crop report).",
    "arm": "WEATHER AND FOOD",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 22.0,
+   "odds_now": 24.8,
    "odds_text": "22% by 2027-03-31 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 22,
@@ -24487,6 +24837,11 @@
      "date": "2026-11-22",
      "odds": 22.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 24.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-12-01",
@@ -24502,7 +24857,12 @@
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
    "date_catalyst": "ABARES December 2026 crop report, early December (date not confirmed)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 2.8
+   }
   },
   {
    "id": "WF6",
@@ -24543,7 +24903,7 @@
    "label": "FAO Food Price Index prints 140 or higher in any month.",
    "arm": "WEATHER AND FOOD",
    "type": "TRIGGER",
-   "odds_now": 48.0,
+   "odds_now": 50.8,
    "odds_text": "48% by 2027-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 32,
@@ -24556,6 +24916,11 @@
      "date": "2026-11-22",
      "odds": 48.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 50.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-12-04",
@@ -24570,14 +24935,19 @@
    "source": "https://www.bizcommunity.com/article/global-food-prices-fall-in-october-as-sugar-rises-for-fourth-month-639621a",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 2.8
+   }
   },
   {
    "id": "WF8",
    "label": "World food shock: the FAO Food Price Index sets a new monthly record above 160.2 (March 2022), or a top-3 exporter bans exports of a staple outright (rice, wheat, corn, soybeans or palm oil; a whole crop or its main grade, not just a duty or a broken-rice curb).",
    "arm": "WEATHER AND FOOD",
    "type": "END EVENT",
-   "odds_now": 48.0,
+   "odds_now": 48.6,
    "odds_text": "48% by 2029-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 14,
@@ -24590,6 +24960,11 @@
      "date": "2026-11-22",
      "odds": 48.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 48.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -24606,7 +24981,12 @@
    "kill_condition": "The FAO Food Price Index stays under 130 in every month from Jan to Dec 2027 with no top-3 exporter staple ban.",
    "kill_check": "FAO Food Price Index (monthly); USDA FAS export policy reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.6
+   }
   },
   {
    "id": "RU1",
@@ -24938,7 +25318,7 @@
    "label": "Longer voyages for US gas and propane to Asia: the Cape of Good Hope share of US Gulf-to-Asia LPG voyages tops 50% in a month (record 48% in Oct 2016; 43% in Apr 2026).",
    "arm": "SHIPPING AND CANALS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.0,
+   "odds_now": 36.3,
    "odds_text": "30% by 2027-05-31 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 28,
@@ -24951,6 +25331,11 @@
      "date": "2026-11-22",
      "odds": 30.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 36.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -24966,7 +25351,12 @@
    "source": "https://www.hellenicshippingnews.com/cape-of-good-hope-captures-43-share-of-us-asia-lpg-voyages/; https://mykn.kuehne-nagel.com/news/article/panama-canal-transit-auction-reaches-record; https://www.marineinsight.com/panama-canal-raises-daily-transits-to-34-and-restores-50-foot-neopanamax-draft-as-water-levels-recover/; https://gcaptain.com/gulf-oil-exports-recover-as-hormuz-shipping-struggles/",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 6.3
+   }
   },
   {
    "id": "P3",
@@ -25007,7 +25397,7 @@
    "label": "Freight spike: Drewry's World Container Index composite tops $5,500 per 40 ft, or VLCC Middle East Gulf to China rates top WS 600 again.",
    "arm": "SHIPPING AND CANALS",
    "type": "TRIGGER",
-   "odds_now": 38.0,
+   "odds_now": 38.2,
    "odds_text": "38% by 2027-11-19 (EST, research agent Nov 22)",
    "odds_by": {
     "2027-05-19": 25,
@@ -25020,6 +25410,11 @@
      "date": "2026-11-22",
      "odds": 38.0,
      "note": "new arm, first build"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 38.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2026-11-22",
@@ -25035,7 +25430,12 @@
    "source": "https://gcaptain.com/supertanker-rates-plunge-more-than-60-from-record-highs/; https://www.hellenicshippingnews.com/?p=1149579; https://www.greenworldwide.com/freight-market-update-week-47-2026/",
    "model_layer": "new arm",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.2
+   }
   },
   {
    "id": "P5",
@@ -25140,16 +25540,21 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "NECESSARY CONDITION",
-   "odds_now": 93.0,
+   "odds_now": 92.3,
    "odds_text": "93% by 2027-11-30 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 93.0,
      "note": "rare-earth deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 92.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-11-23",
    "window_peak": "2027-03-31",
    "window_end": "2027-11-30",
@@ -25164,7 +25569,11 @@
    "model_layer": "deep dive",
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.7
+   }
   },
   {
    "id": "RD05",
@@ -25172,7 +25581,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35.1,
+   "odds_now": 30.4,
    "odds_text": "35% by 2027-03-31 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -25184,9 +25593,14 @@
      "date": "2026-11-23",
      "odds": 35.1,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 30.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-12-01",
    "window_peak": "2027-01-10",
    "window_end": "2027-03-31",
@@ -25202,8 +25616,8 @@
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "note": "Renewal timing around Dec 2026 is an inference from one-year validity [unverified].",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.1
+    "date": "2026-11-25",
+    "delta": -4.7
    },
    "date_state": "ESTIMATED",
    "date_catalyst": "Deep dive tied the peak to the Jan 10, 2027 pause expiry; the licences' own expiry dates are not confirmed",
@@ -25340,16 +25754,21 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 55.0,
+   "odds_now": 54.6,
    "odds_text": "55% by 2027-11-30 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 55.0,
      "note": "rare-earth deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 54.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-12-01",
    "window_peak": "2027-04-30",
    "window_end": "2027-11-30",
@@ -25363,7 +25782,11 @@
    "model_layer": "deep dive",
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": -0.4
+   }
   },
   {
    "id": "RD11",
@@ -25465,7 +25888,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 50.1,
+   "odds_now": 47.3,
    "odds_text": "50% by 2027-12-31 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -25477,9 +25900,14 @@
      "date": "2026-11-23",
      "odds": 50.1,
      "note": "cascade from D1, D2, D3, D4, R1, R4, R7, F10, F11, BB2, X1, F6, O4, D5, J5"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 47.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2027-01-10",
    "window_peak": "2027-06-30",
    "window_end": "2027-12-31",
@@ -25494,8 +25922,8 @@
    "model_layer": "deep dive",
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 0.1
+    "date": "2026-11-25",
+    "delta": -2.8
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -26061,7 +26489,7 @@
    "label": "Sea freight shock: Drewry's World Container Index tops its Sept 2021 record ($10,377 per 40 ft container) in any week",
    "arm": "SHIPPING AND CANALS",
    "type": "END EVENT",
-   "odds_now": 15.0,
+   "odds_now": 15.6,
    "odds_text": "15% by Nov 2029 (EST). Needs a second chokepoint shock on top of Hormuz: a Taiwan quarantine, renewed Red Sea attacks with Suez still down, or a canal drought year.",
    "odds_by": {
     "2027-11-30": 6,
@@ -26073,6 +26501,11 @@
      "date": "2026-11-23",
      "odds": 15.0,
      "note": "v5.1, first estimate"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 15.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "window_start": "2027-01-01",
@@ -26091,7 +26524,12 @@
    "kill_condition": "Both the Red Sea and Hormuz routes run at near-normal traffic through all of 2028 (Suez transits within 15% of pre-crisis, Hormuz above 69 ships a day).",
    "kill_check": "Drewry World Container Index (weekly); Suez Canal Authority transits; IMF PortWatch",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "odds_as_of": "2026-11-25",
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.6
+   }
   },
   {
    "id": "FD01",
@@ -26099,16 +26537,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "EL NINO",
    "type": "NECESSARY CONDITION",
-   "odds_now": 90.0,
+   "odds_now": 91.4,
    "odds_text": "90% by 2027-01-31 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 90.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 91.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-11-23",
    "window_peak": "2027-01-12",
    "window_end": "2027-01-31",
@@ -26125,7 +26568,11 @@
    "current_fact": "USDA WASDE Nov 2026: India rice 147.0 Mt in 2026-27 vs 154.0 Mt in 2025-26. GAPKI Nov 16, 2026: Indonesia CPO plus PKO 59.87 Mt in 2027, down 3.1%; El Nino costs about 3.08 Mt.",
    "date_state": "SCHEDULED",
    "date_catalyst": "USDA WASDE Jan 12, 2027",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 1.4
+   }
   },
   {
    "id": "FD02",
@@ -26133,16 +26580,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "EL NINO",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 35.0,
+   "odds_now": 35.8,
    "odds_text": "35% by 2027-06-30 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 35.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 35.8,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-12-01",
    "window_peak": "2027-04-30",
    "window_end": "2027-06-30",
@@ -26158,7 +26610,11 @@
    "settlement_test": "Indonesia tightens palm oil exports by Jun 30, 2027: raises the export levy above 12.5% of the reference price, raises the domestic market obligation, or caps export permits.",
    "current_fact": "Nov 2026: CPO reference price $978.90/t; export duty $124/t; levy 12.5% ($122.36/t); combined $246.36/t, down from $308.27/t in October. GAPKI sees 2027 exports at 29.73 Mt, down 12.3%.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.8
+   }
   },
   {
    "id": "FD03",
@@ -26166,16 +26622,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "EL NINO",
    "type": "TRIGGER",
-   "odds_now": 12.0,
+   "odds_now": 12.4,
    "odds_text": "12% by 2027-06-30 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 12.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 12.4,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-12-01",
    "window_peak": "2027-02-28",
    "window_end": "2027-06-30",
@@ -26191,7 +26652,11 @@
    "settlement_test": "India bans exports of non-basmati white rice outright (as on Jul 20, 2023) by Jun 30, 2027. This alone settles WF8 (a top-3 exporter bans a staple's main grade).",
    "current_fact": "Nov 5, 2026 (Platts): no new curbs; the government is weighing a curb on 100% broken rice; broken rice $336/t FOB, up 5% in a month. USDA Nov: India ships 23.0 Mt of 60.2 Mt world rice trade in 2026-27 (38%) and ends the year with 58.0 Mt of stocks.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.4
+   }
   },
   {
    "id": "FD04",
@@ -26199,16 +26664,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "EL NINO",
    "type": "TRIGGER",
-   "odds_now": 6.0,
+   "odds_now": 6.3,
    "odds_text": "6% by 2027-06-30 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 6.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 6.3,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2027-01-01",
    "window_peak": "2027-05-31",
    "window_end": "2027-06-30",
@@ -26224,7 +26694,11 @@
    "settlement_test": "Indonesia bans palm oil exports outright (as on Apr 28, 2022) by Jun 30, 2027. This alone settles WF8.",
    "current_fact": "Nov 23, 2026: Malaysian palm oil futures RM4,157/t, an eight-month low, down 13% in a month; Malaysian stocks a record 3.62 Mt in October. GAPKI: Indonesian 2027 exports down 12%.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.3
+   }
   },
   {
    "id": "FD05",
@@ -26704,16 +27178,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "FOOD LAYER",
    "type": "NECESSARY CONDITION",
-   "odds_now": 85.0,
+   "odds_now": 85.1,
    "odds_text": "85% by 2027-07-03 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 85.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 85.1,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2026-12-04",
    "window_peak": "2027-03-05",
    "window_end": "2027-07-03",
@@ -26729,7 +27208,11 @@
    "settlement_test": "Food prices turn up: the FAO Food Price Index prints above 133.9 (its October 2026 level) in at least one month from November 2026 to June 2027.",
    "current_fact": "Oct 2026 index 133.9, down 1.6 points; cereals down 4.5%, vegetable oils up 0.3%, sugar up 6.6% (FAO, Nov 6). Next release about Dec 4.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.1
+   }
   },
   {
    "id": "FD20",
@@ -26737,16 +27220,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "EL NINO",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 28.0,
+   "odds_now": 29.2,
    "odds_text": "28% by 2027-07-03 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 28.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 29.2,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2027-01-08",
    "window_peak": "2027-05-07",
    "window_end": "2027-07-03",
@@ -26762,7 +27250,11 @@
    "settlement_test": "Vegetable oils lead the turn: the FAO Vegetable Oil Price Index rises 15% or more above its October 2026 level in any month by June 2027.",
    "current_fact": "Palm oil RM4,157/t on Nov 23, 2026, down 13% in a month; Malaysian stocks a record 3.62 Mt in October. FAO vegetable oils up 0.3% in October.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 1.2
+   }
   },
   {
    "id": "FD21",
@@ -26804,16 +27296,21 @@
    "arm": "WEATHER AND FOOD",
    "deepdive_arm": "COLLISION",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 28.0,
+   "odds_now": 28.6,
    "odds_text": "28% by 2027-06-30 (food deep dive, Nov 23)",
    "odds_history": [
     {
      "date": "2026-11-23",
      "odds": 28.0,
      "note": "food deep dive, first load"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 28.6,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-25",
    "window_start": "2027-01-01",
    "window_peak": "2027-03-31",
    "window_end": "2027-06-30",
@@ -26830,7 +27327,11 @@
    "settlement_test": "THE FOOD COLLISION LANDS IN H1 2027: by Jun 30, 2027 all three hold: (1) WF4 settles true (Gulf fertilizer exports under half of 2025 in every month through March); (2) Russian wheat exports for Jul 2026 to May 2027 total under 34 Mt (on pace for RU9); (3) India restricts a non-basmati rice export (WF3) or Indonesia tightens palm oil exports (FD02).",
    "current_fact": "Graph odds Nov 23: WF4 75, RU9 62, WF3 50; this deep dive: FD02 35. Joint, treating the arms as independent: 0.75 x 0.62 x 0.58 = about 27%.",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-25",
+    "delta": 0.6
+   }
   },
   {
    "id": "HP01",
@@ -27201,7 +27702,7 @@
    "label": "The Fed stops: no hike at two straight meetings after Dec 9, or the statement drops its lean toward tightening. First chance Jan 27, then Mar 17.",
    "arm": "FED RATES AND JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 59.8,
+   "odds_now": 59.9,
    "odds_text": "60% by 2027-06-30 (hard pass Nov 25, estimate)",
    "odds_by": {
     "2027-02-19": 8,
@@ -27217,6 +27718,11 @@
      "date": "2026-11-25",
      "odds": 59.8,
      "note": "cascade from D6, J2, O6"
+    },
+    {
+     "date": "2026-11-25",
+     "odds": 59.9,
+     "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
     }
    ],
    "odds_as_of": "2026-11-25",
@@ -27235,7 +27741,7 @@
    "next_watch": "Dec 9 projections; Jan 27",
    "last_move": {
     "date": "2026-11-25",
-    "delta": -0.2
+    "delta": 0.1
    },
    "date_state": "SCHEDULED",
    "date_catalyst": "FOMC Mar 17, 2027, the second meeting after Jan 27 (first chance Jan 27)",
@@ -60193,6 +60699,2205 @@
      "joint_odds": 33.1,
      "score": 0.662,
      "window_end": "2027-03-31"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-25",
+   "run_at": "2026-11-26T02:28:29+00:00",
+   "trigger": [
+    {
+     "id": "D1",
+     "before": 94.0,
+     "after": 95.0,
+     "date": "2026-11-25",
+     "reason": "October PCE inflation 3.8% year on year and Q3 GDP revised up to 4.3% annualized keep a Dec 9 hike near certain",
+     "source": "BEA, PCE price index and GDP second estimate, Nov 25, 2026 (bea.gov)"
+    },
+    {
+     "id": "R2",
+     "before": 45.5,
+     "after": 35.0,
+     "date": "2026-11-24",
+     "reason": "MOFCOM Announcement No. 59 extended the gallium, germanium and antimony suspension with no gap to Jan 27, 2027, its second two-month roll in two weeks; Beijing is staggering deadlines past Jan 10 and has let none of four truce deadlines lapse",
+     "source": "MOFCOM, aqygzj.mofcom.gov.cn/qdml/art/2026/art_98ae61c2a60f43638304f2e6a43f952f.html"
+    },
+    {
+     "id": "WF1",
+     "before": 90.0,
+     "after": 97.0,
+     "date": "2026-11-23",
+     "reason": "Weekly Nino-3.4 anomaly +3.3C; relative Nino-3.4 +2.5C in October; RONI for Aug to Oct already 1.97",
+     "source": "NOAA CPC weekly SST indices, cpc.ncep.noaa.gov/data/indices/wksst9120.for"
+    },
+    {
+     "id": "P1",
+     "before": 33.0,
+     "after": 45.0,
+     "date": "2026-11-24",
+     "reason": "Canal authority projects Gatun Lake falling from 86.5 ft to 84.0 ft by Jan 25, about 2.5 ft under the January average; in September it cut max draft to 48 ft at about 84.5 ft. Held below the helper's 48 because a projection is not a cut",
+     "source": "Panama Canal Authority, Gatun water indicators, evtms-rpts.pancanal.com/eng/h2o/GatunWaterIndicators.pdf"
+    },
+    {
+     "id": "FC1",
+     "before": 55.0,
+     "after": 65.0,
+     "date": "2026-11-20",
+     "reason": "METR Q4 update: pooled 50% time horizon about 40 hours, doubling every 3.61 months; 167 hours is about 2.1 doublings away (about 7.5 months); METR's own extrapolation reaches 200 hours around July 2027. Held under 75 because one suite is saturated",
+     "source": "METR, metr.org/blog/2026-11-20-q4-2026-capability-update/"
+    },
+    {
+     "id": "E02",
+     "before": 37.0,
+     "after": 40.0,
+     "date": "2026-11-20",
+     "reason": "METR reports the newer TH2 suite doubling every 1.65 months, under the test's 2-month line, while the headline rate is 3.61 months; small bump until the test wording says which counts",
+     "source": "METR, metr.org/blog/2026-11-20-q4-2026-capability-update/"
+    },
+    {
+     "id": "W5",
+     "before": 22.0,
+     "after": 20.0,
+     "date": "2026-11-24",
+     "reason": "Workday Q3 FY27: subscription revenue up 12.8% year on year, FY27 subscription guide raised to 13%; no seat decline",
+     "source": "Workday 8-K exhibit 99.1, sec.gov/Archives/edgar/data/0001327811/000132781126000057/wday-10312026x991.htm"
+    }
+   ],
+   "rule": {
+    "move": "d x strength x sign",
+    "fade": 0.5,
+    "max_hops": 4,
+    "visit": "once per run",
+    "clamp": [
+     1.0,
+     99.0
+    ],
+    "fired_pinned": true,
+    "collision_days": 120
+   },
+   "moved": [
+    {
+     "id": "D1",
+     "label": "The Fed hikes on Dec 9",
+     "arm": "FED RATES AND JAPAN",
+     "before": 94.0,
+     "after": 95.0,
+     "delta": 1.0,
+     "role": "set by hand",
+     "reason": "October PCE inflation 3.8% year on year and Q3 GDP revised up to 4.3% annualized keep a Dec 9 hike near certain",
+     "source": "BEA, PCE price index and GDP second estimate, Nov 25, 2026 (bea.gov)",
+     "date": "2026-11-25"
+    },
+    {
+     "id": "R2",
+     "label": "China's rare-earth pause lapses or partly snaps back on Jan 10",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 45.5,
+     "after": 35.0,
+     "delta": -10.5,
+     "role": "set by hand",
+     "reason": "MOFCOM Announcement No. 59 extended the gallium, germanium and antimony suspension with no gap to Jan 27, 2027, its second two-month roll in two weeks; Beijing is staggering deadlines past Jan 10 and has let none of four truce deadlines lapse",
+     "source": "MOFCOM, aqygzj.mofcom.gov.cn/qdml/art/2026/art_98ae61c2a60f43638304f2e6a43f952f.html",
+     "date": "2026-11-24"
+    },
+    {
+     "id": "WF1",
+     "label": "El Nino peaks very strong: NOAA CPC's 3-month index for Oct to Dec 2026 (RONI, or ONI if RONI is not published) is +2.0C or higher.",
+     "arm": "WEATHER AND FOOD",
+     "before": 90.0,
+     "after": 97.0,
+     "delta": 7.0,
+     "role": "set by hand",
+     "reason": "Weekly Nino-3.4 anomaly +3.3C; relative Nino-3.4 +2.5C in October; RONI for Aug to Oct already 1.97",
+     "source": "NOAA CPC weekly SST indices, cpc.ncep.noaa.gov/data/indices/wksst9120.for",
+     "date": "2026-11-23"
+    },
+    {
+     "id": "P1",
+     "label": "The Panama Canal cuts daily slots below 30 or the Neopanamax max draft below 47 feet for drought",
+     "arm": "SHIPPING AND CANALS",
+     "before": 33.0,
+     "after": 45.0,
+     "delta": 12.0,
+     "role": "set by hand",
+     "reason": "Canal authority projects Gatun Lake falling from 86.5 ft to 84.0 ft by Jan 25, about 2.5 ft under the January average; in September it cut max draft to 48 ft at about 84.5 ft. Held below the helper's 48 because a projection is not a cut",
+     "source": "Panama Canal Authority, Gatun water indicators, evtms-rpts.pancanal.com/eng/h2o/GatunWaterIndicators.pdf",
+     "date": "2026-11-24"
+    },
+    {
+     "id": "FC1",
+     "label": "AI agent task length outruns the test built to measure it (same curve as WK1)",
+     "arm": "AI CAPABILITY",
+     "before": 55.0,
+     "after": 65.0,
+     "delta": 10.0,
+     "role": "set by hand",
+     "reason": "METR Q4 update: pooled 50% time horizon about 40 hours, doubling every 3.61 months; 167 hours is about 2.1 doublings away (about 7.5 months); METR's own extrapolation reaches 200 hours around July 2027. Held under 75 because one suite is saturated",
+     "source": "METR, metr.org/blog/2026-11-20-q4-2026-capability-update/",
+     "date": "2026-11-20"
+    },
+    {
+     "id": "E02",
+     "label": "The self-improvement loop closes",
+     "arm": "AI CAPABILITY",
+     "before": 37.0,
+     "after": 40.0,
+     "delta": 3.0,
+     "role": "set by hand",
+     "reason": "METR reports the newer TH2 suite doubling every 1.65 months, under the test's 2-month line, while the headline rate is 3.61 months; small bump until the test wording says which counts",
+     "source": "METR, metr.org/blog/2026-11-20-q4-2026-capability-update/",
+     "date": "2026-11-20"
+    },
+    {
+     "id": "W5",
+     "label": "Seats start to fall: a top-ten application software vendor reports paid seats or subscription revenue down and names AI agents",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 22.0,
+     "after": 20.0,
+     "delta": -2.0,
+     "role": "set by hand",
+     "reason": "Workday Q3 FY27: subscription revenue up 12.8% year on year, FY27 subscription guide raised to 13%; no seat decline",
+     "source": "Workday 8-K exhibit 99.1, sec.gov/Archives/edgar/data/0001327811/000132781126000057/wday-10312026x991.htm",
+     "date": "2026-11-24"
+    },
+    {
+     "id": "29-3",
+     "label": "An asi claim",
+     "arm": "AI CAPABILITY",
+     "before": 53.1,
+     "after": 61.1,
+     "delta": 8.0,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 29-3",
+       "points": 8.0
+      }
+     ]
+    },
+    {
+     "id": "P2",
+     "label": "Longer voyages for US gas and propane to Asia: the Cape of Good Hope share of US Gulf-to-Asia LPG voyages tops 50% in a month (record 48% in Oct 2016; 43% in Apr 2026).",
+     "arm": "SHIPPING AND CANALS",
+     "before": 30.0,
+     "after": 36.3,
+     "delta": 6.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "P1 > P2",
+       "points": 6.27
+      }
+     ]
+    },
+    {
+     "id": "28-1",
+     "label": "The self-improvement year",
+     "arm": "AI CAPABILITY",
+     "before": 55.0,
+     "after": 61.0,
+     "delta": 6.0,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 28-1",
+       "points": 6.0
+      }
+     ]
+    },
+    {
+     "id": "29-5",
+     "label": "Mass cognitive displacement begins",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 56.0,
+     "after": 62.0,
+     "delta": 6.0,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 29-5",
+       "points": 6.0
+      }
+     ]
+    },
+    {
+     "id": "WF2",
+     "label": "Palm oil squeeze: the Malaysian benchmark palm oil futures contract closes above RM5,000 per tonne.",
+     "arm": "WEATHER AND FOOD",
+     "before": 55.0,
+     "after": 59.9,
+     "delta": 4.9,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "WF1 > WF2",
+       "points": 4.9
+      }
+     ]
+    },
+    {
+     "id": "RD05",
+     "label": "China does not renew, or narrows, the one-year general licences held by 3 Chinese magnet makers",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 35.1,
+     "after": 30.4,
+     "delta": -4.7,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-25",
+     "paths": [
+      {
+       "path": "R2 > RD05",
+       "points": -4.73
+      }
+     ]
+    },
+    {
+     "id": "WF3",
+     "label": "India restricts rice exports again: a ban, duty or minimum price on any non-basmati grade, including 100% broken.",
+     "arm": "WEATHER AND FOOD",
+     "before": 50.0,
+     "after": 53.5,
+     "delta": 3.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-23",
+     "paths": [
+      {
+       "path": "WF1 > WF3",
+       "points": 3.5
+      }
+     ]
+    },
+    {
+     "id": "28-4",
+     "label": "The hiring freeze goes broad",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 49.7,
+     "after": 52.7,
+     "delta": 3.0,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 28-4",
+       "points": 3.0
+      }
+     ]
+    },
+    {
+     "id": "RD14",
+     "label": "Western magnet plants slip 6+ months on furnace and diffusion equipment (one GBD vendor outside China; ULVAC over 70% of furnaces)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 50.1,
+     "after": 47.3,
+     "delta": -2.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "R2 > RD14",
+       "points": -2.83
+      }
+     ]
+    },
+    {
+     "id": "R4",
+     "label": "Dysprosium and terbium outside China stay above 3 times the China price",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 80.0,
+     "after": 77.2,
+     "delta": -2.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-09",
+     "paths": [
+      {
+       "path": "R2 > R4",
+       "points": -2.83
+      }
+     ]
+    },
+    {
+     "id": "WF5",
+     "label": "Southern crop hit: Australia's 2026-27 wheat harvest comes in below 28 Mt (ABARES December 2026 crop report).",
+     "arm": "WEATHER AND FOOD",
+     "before": 22.0,
+     "after": 24.8,
+     "delta": 2.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "WF1 > WF5",
+       "points": 2.8
+      }
+     ]
+    },
+    {
+     "id": "WF7",
+     "label": "FAO Food Price Index prints 140 or higher in any month.",
+     "arm": "WEATHER AND FOOD",
+     "before": 48.0,
+     "after": 50.8,
+     "delta": 2.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-24",
+     "paths": [
+      {
+       "path": "WF1 > WF7",
+       "points": 2.8
+      }
+     ]
+    },
+    {
+     "id": "27-2",
+     "label": "Ai agents reach white-collar work",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 55.0,
+     "after": 57.2,
+     "delta": 2.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-13",
+     "paths": [
+      {
+       "path": "FC1 > 27-2",
+       "points": 2.22
+      }
+     ]
+    },
+    {
+     "id": "28-3",
+     "label": "The financial plumbing is breached",
+     "arm": "CYBER",
+     "before": 55.0,
+     "after": 57.0,
+     "delta": 2.0,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 28-3",
+       "points": 2.0
+      }
+     ]
+    },
+    {
+     "id": "27-1",
+     "label": "Agi is declared",
+     "arm": "AI CAPABILITY",
+     "before": 50.0,
+     "after": 51.8,
+     "delta": 1.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-25",
+     "paths": [
+      {
+       "path": "FC1 > 27-1",
+       "points": 1.78
+      }
+     ]
+    },
+    {
+     "id": "R6",
+     "label": "A Western car, aircraft or robot production line stops for lack of heavy rare earths",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 71.5,
+     "after": 69.9,
+     "delta": -1.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "R2 > R6",
+       "points": -1.57
+      }
+     ]
+    },
+    {
+     "id": "FD01",
+     "label": "El Nino crop losses locked in for H1 2027: the Jan 12, 2027 WASDE still puts India's 2026-27 rice crop below 2025-26 (Nov: 147.0 vs 154.0 Mt) and GAPKI still sees lower Indonesian palm oil output in 2027 than 2026 (59.87 vs about 61.8 Mt).",
+     "arm": "WEATHER AND FOOD",
+     "before": 90.0,
+     "after": 91.4,
+     "delta": 1.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-25",
+     "paths": [
+      {
+       "path": "WF1 > FD01",
+       "points": 1.4
+      }
+     ]
+    },
+    {
+     "id": "FD20",
+     "label": "Vegetable oils lead the turn: the FAO Vegetable Oil Price Index rises 15% or more above its October 2026 level in any month by June 2027.",
+     "arm": "WEATHER AND FOOD",
+     "before": 28.0,
+     "after": 29.2,
+     "delta": 1.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-04-24",
+     "paths": [
+      {
+       "path": "WF1 > WF2 > FD20",
+       "points": 1.2
+      }
+     ]
+    },
+    {
+     "id": "M13",
+     "label": "Scientific Discovery Rate 10x",
+     "arm": "DISCOVERIES",
+     "before": 30.0,
+     "after": 30.8,
+     "delta": 0.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-03-24",
+     "paths": [
+      {
+       "path": "FC1 > 29-3 > M13",
+       "points": 0.6
+      },
+      {
+       "path": "FC1 > 28-1 > M13",
+       "points": 0.24
+      }
+     ]
+    },
+    {
+     "id": "FD02",
+     "label": "Indonesia tightens palm oil exports by Jun 30, 2027: raises the export levy above 12.5% of the reference price, raises the domestic market obligation, or caps export permits.",
+     "arm": "WEATHER AND FOOD",
+     "before": 35.0,
+     "after": 35.8,
+     "delta": 0.8,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-05-24",
+     "paths": [
+      {
+       "path": "WF1 > WF2 > FD02",
+       "points": 0.82
+      }
+     ]
+    },
+    {
+     "id": "M32",
+     "label": "Human R&D Obsolescence",
+     "arm": "AI CAPABILITY",
+     "before": 47.9,
+     "after": 48.6,
+     "delta": 0.7,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-03-24",
+     "paths": [
+      {
+       "path": "FC1 > 29-3 > M32",
+       "points": 0.6
+      },
+      {
+       "path": "FC1 > 28-1 > M32",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "27-6",
+     "label": "The rare-earth squeeze stops a factory",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 70.7,
+     "after": 70.0,
+     "delta": -0.7,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "R2 > R6 > 27-6",
+       "points": -0.75
+      }
+     ]
+    },
+    {
+     "id": "RD03",
+     "label": "Chinese Dy/Tb or Dy/Tb magnets to the affected buyer are slowed, denied or legally barred (China licence or US DFARS)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 93.0,
+     "after": 92.3,
+     "delta": -0.7,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-05",
+     "paths": [
+      {
+       "path": "R2 > RD03",
+       "points": -0.74
+      }
+     ]
+    },
+    {
+     "id": "27-3",
+     "label": "Washington binds ai",
+     "arm": "CYBER",
+     "before": 50.0,
+     "after": 50.7,
+     "delta": 0.7,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-13",
+     "paths": [
+      {
+       "path": "FC1 > 27-3",
+       "points": 0.67
+      }
+     ]
+    },
+    {
+     "id": "FD22",
+     "label": "THE FOOD COLLISION LANDS IN H1 2027: by Jun 30, 2027 all three hold: (1) WF4 settles true (Gulf fertilizer exports under half of 2025 in every month through March); (2) Russian wheat exports for Jul 2026 to May 2027 total under 34 Mt (on pace for RU9); (3) India restricts a non-basmati rice export (WF3) or Indonesia tightens palm oil exports (FD02).",
+     "arm": "WEATHER AND FOOD",
+     "before": 28.0,
+     "after": 28.6,
+     "delta": 0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-23",
+     "paths": [
+      {
+       "path": "WF1 > WF3 > FD22",
+       "points": 0.65
+      }
+     ]
+    },
+    {
+     "id": "WF8",
+     "label": "World food shock: the FAO Food Price Index sets a new monthly record above 160.2 (March 2022), or a top-3 exporter bans exports of a staple outright (rice, wheat, corn, soybeans or palm oil; a whole crop or its main grade, not just a duty or a broken-rice curb).",
+     "arm": "WEATHER AND FOOD",
+     "before": 48.0,
+     "after": 48.6,
+     "delta": 0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-06-23",
+     "paths": [
+      {
+       "path": "WF1 > WF3 > WF8",
+       "points": 0.28
+      },
+      {
+       "path": "WF1 > WF7 > WF8",
+       "points": 0.19
+      },
+      {
+       "path": "WF1 > WF2 > WF8",
+       "points": 0.16
+      }
+     ]
+    },
+    {
+     "id": "P6",
+     "label": "Sea freight shock: Drewry's World Container Index tops its Sept 2021 record ($10,377 per 40 ft container) in any week",
+     "arm": "SHIPPING AND CANALS",
+     "before": 15.0,
+     "after": 15.6,
+     "delta": 0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "P1 > P6",
+       "points": 0.6
+      }
+     ]
+    },
+    {
+     "id": "W6",
+     "label": "The credit link fires: software default rate in private credit reaches 3%, or two more $1B+ software firms are handed to lenders",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 35.0,
+     "after": 34.4,
+     "delta": -0.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "W5 > W6",
+       "points": -0.56
+      }
+     ]
+    },
+    {
+     "id": "F1",
+     "label": "Another $1B+ AI data-center financing is pulled, cut or sold at a discount",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 84.0,
+     "after": 83.5,
+     "delta": -0.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "R2 > F1",
+       "points": -0.53
+      }
+     ]
+    },
+    {
+     "id": "C6",
+     "label": "The US formally attributes a destructive attack by Iran or China on a listed company, utility, water or health system",
+     "arm": "CYBER",
+     "before": 30.0,
+     "after": 29.5,
+     "delta": -0.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "R2 > C6",
+       "points": -0.53
+      }
+     ]
+    },
+    {
+     "id": "M24",
+     "label": "AI Consciousness Debate Reaches UN",
+     "arm": "AI CAPABILITY",
+     "before": 29.9,
+     "after": 30.3,
+     "delta": 0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-23",
+     "paths": [
+      {
+       "path": "FC1 > 29-3 > M24",
+       "points": 0.4
+      }
+     ]
+    },
+    {
+     "id": "FD03",
+     "label": "India bans exports of non-basmati white rice outright (as on Jul 20, 2023) by Jun 30, 2027. This alone settles WF8 (a top-3 exporter bans a staple's main grade).",
+     "arm": "WEATHER AND FOOD",
+     "before": 12.0,
+     "after": 12.4,
+     "delta": 0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-25",
+     "paths": [
+      {
+       "path": "WF1 > WF3 > FD03",
+       "points": 0.28
+      },
+      {
+       "path": "WF1 > FD01 > FD03",
+       "points": 0.09
+      }
+     ]
+    },
+    {
+     "id": "O6",
+     "label": "The Gulf export story, structural version: US LNG exports top 20 Bcf a day in a month",
+     "arm": "OIL AND GULF",
+     "before": 65.0,
+     "after": 64.6,
+     "delta": -0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-23",
+     "paths": [
+      {
+       "path": "P1 > O6",
+       "points": -0.36
+      }
+     ]
+    },
+    {
+     "id": "RD10",
+     "label": "Japanese magnet makers run out of Dy stock and ration (Shin-Etsu, Proterial, TDK)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 55.0,
+     "after": 54.6,
+     "delta": -0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "R2 > RD05 > RD10",
+       "points": -0.35
+      }
+     ]
+    },
+    {
+     "id": "M53",
+     "label": "UBI Legislation Fast-Tracked",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 18.0,
+     "after": 18.3,
+     "delta": 0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-07-22",
+     "paths": [
+      {
+       "path": "FC1 > 29-5 > M53",
+       "points": 0.3
+      },
+      {
+       "path": "FC1 > 28-4 > M53",
+       "points": 0.04
+      }
+     ]
+    },
+    {
+     "id": "M19",
+     "label": "Artificial Superintelligence (ASI)",
+     "arm": "AI CAPABILITY",
+     "before": 55.0,
+     "after": 55.3,
+     "delta": 0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-11-24",
+     "paths": [
+      {
+       "path": "FC1 > 28-1 > M19",
+       "points": 0.3
+      }
+     ]
+    },
+    {
+     "id": "J1",
+     "label": "The yen closes weaker than 160 and Tokyo confirms 5 trillion yen or more of buying",
+     "arm": "FED RATES AND JAPAN",
+     "before": 33.1,
+     "after": 33.4,
+     "delta": 0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-09",
+     "paths": [
+      {
+       "path": "P1 > J1",
+       "points": 0.24
+      },
+      {
+       "path": "D1 > J1",
+       "points": 0.05
+      }
+     ]
+    },
+    {
+     "id": "FD04",
+     "label": "Indonesia bans palm oil exports outright (as on Apr 28, 2022) by Jun 30, 2027. This alone settles WF8.",
+     "arm": "WEATHER AND FOOD",
+     "before": 6.0,
+     "after": 6.3,
+     "delta": 0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-25",
+     "paths": [
+      {
+       "path": "WF1 > WF2 > FD04",
+       "points": 0.22
+      },
+      {
+       "path": "WF1 > FD01 > FD04",
+       "points": 0.05
+      }
+     ]
+    },
+    {
+     "id": "R5",
+     "label": "Washington sets a price floor, tariff or stockpile purchase for heavy rare earths, antimony, gallium or germanium",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 46.5,
+     "after": 46.2,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-23",
+     "paths": [
+      {
+       "path": "R2 > R6 > R5",
+       "points": -0.26
+      }
+     ]
+    },
+    {
+     "id": "B2",
+     "label": "Private-credit funds mark down and face redemption queues (Blue Owl under $7 by May 21 is 40%)",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 60.9,
+     "after": 60.6,
+     "delta": -0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "W5 > B2",
+       "points": -0.26
+      }
+     ]
+    },
+    {
+     "id": "D2",
+     "label": "A second straight hike on Jan 27",
+     "arm": "FED RATES AND JAPAN",
+     "before": 54.6,
+     "after": 54.4,
+     "delta": -0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "R2 > D2",
+       "points": -0.53
+      },
+      {
+       "path": "P1 > D2",
+       "points": 0.18
+      },
+      {
+       "path": "D1 > D2",
+       "points": 0.1
+      }
+     ]
+    },
+    {
+     "id": "D3",
+     "label": "Three straight hikes (upper bound 4.75% by Mar 17)",
+     "arm": "FED RATES AND JAPAN",
+     "before": 25.1,
+     "after": 25.3,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "P1 > D3",
+       "points": 0.18
+      }
+     ]
+    },
+    {
+     "id": "P4",
+     "label": "Freight spike: Drewry's World Container Index composite tops $5,500 per 40 ft, or VLCC Middle East Gulf to China rates top WS 600 again.",
+     "arm": "SHIPPING AND CANALS",
+     "before": 38.0,
+     "after": 38.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-24",
+     "paths": [
+      {
+       "path": "P1 > P2 > P4",
+       "points": 0.18
+      }
+     ]
+    },
+    {
+     "id": "F2",
+     "label": "A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 41.9,
+     "after": 41.7,
+     "delta": -0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-10",
+     "paths": [
+      {
+       "path": "R2 > F1 > F2",
+       "points": -0.14
+      },
+      {
+       "path": "W5 > W6 > F2",
+       "points": -0.03
+      }
+     ]
+    },
+    {
+     "id": "W1",
+     "label": "AI-attributed layoffs come back: Challenger counts 25,000+ job cuts blamed on AI in a single month",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 50.0,
+     "after": 50.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-06-13",
+     "paths": [
+      {
+       "path": "FC1 > 27-2 > W1",
+       "points": 0.17
+      }
+     ]
+    },
+    {
+     "id": "W7",
+     "label": "Policy catches up: a second large state, or Congress, enacts an AI layoff notice or reporting law",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 45.0,
+     "after": 45.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-08-12",
+     "paths": [
+      {
+       "path": "FC1 > 27-2 > W7",
+       "points": 0.17
+      }
+     ]
+    },
+    {
+     "id": "DS4",
+     "label": "AI-evolved solvers for SAT and hard optimization (scheduling, routing, chip verification) that beat the best human-built solvers on real industrial work. P vs NP itself is not expected to be settled.",
+     "arm": "DISCOVERIES",
+     "before": 75.0,
+     "after": 75.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-23",
+     "paths": [
+      {
+       "path": "FC1 > 28-1 > DS4",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "DS6",
+     "label": "An AI agent takes a written spec to a fabricated, working chip with little human help.",
+     "arm": "DISCOVERIES",
+     "before": 80.0,
+     "after": 80.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-23",
+     "paths": [
+      {
+       "path": "FC1 > 28-1 > DS6",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "DS9",
+     "label": "Faster matrix multiplication that speeds real GPU and TPU workloads, not only the theoretical exponent.",
+     "arm": "DISCOVERIES",
+     "before": 50.0,
+     "after": 50.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-23",
+     "paths": [
+      {
+       "path": "FC1 > 28-1 > DS9",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "DS15",
+     "label": "A classical or quantum attack that cuts the security of lattice-based post-quantum encryption (ML-KEM, the new standard) below its claimed level.",
+     "arm": "DISCOVERIES",
+     "before": 12.0,
+     "after": 12.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-05-23",
+     "paths": [
+      {
+       "path": "FC1 > 28-1 > DS15",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "M42",
+     "label": "Global Unemployment Crisis",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 7.0,
+     "after": 7.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2028-07-22",
+     "paths": [
+      {
+       "path": "FC1 > 29-5 > M42",
+       "points": 0.15
+      }
+     ]
+    },
+    {
+     "id": "M21",
+     "label": "AI Capability Doubling Time Collapses",
+     "arm": "AI CAPABILITY",
+     "before": 48.3,
+     "after": 48.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M21",
+       "points": 0.13
+      }
+     ]
+    },
+    {
+     "id": "M26",
+     "label": "Nation-State Hardware Hoarding",
+     "arm": "AI CAPABILITY",
+     "before": 46.7,
+     "after": 46.8,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M26",
+       "points": 0.13
+      }
+     ]
+    },
+    {
+     "id": "M22",
+     "label": "Intelligence Explosion Publicly Recognized",
+     "arm": "AI CAPABILITY",
+     "before": 36.1,
+     "after": 36.2,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M22",
+       "points": 0.13
+      }
+     ]
+    },
+    {
+     "id": "B1",
+     "label": "A bank or credit fund discloses $500M+ of AI or data-center losses, or gates withdrawals because of them",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 33.4,
+     "after": 33.3,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-23",
+     "paths": [
+      {
+       "path": "W5 > B1",
+       "points": -0.13
+      }
+     ]
+    },
+    {
+     "id": "FD19",
+     "label": "Food prices turn up: the FAO Food Price Index prints above 133.9 (its October 2026 level) in at least one month from November 2026 to June 2027.",
+     "arm": "WEATHER AND FOOD",
+     "before": 85.0,
+     "after": 85.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-04-24",
+     "paths": [
+      {
+       "path": "WF1 > WF2 > FD20 > FD19",
+       "points": 0.12
+      }
+     ]
+    },
+    {
+     "id": "W2",
+     "label": "The junior squeeze reaches official data: NY Fed recent-graduate unemployment prints 6.0% or higher",
+     "arm": "WHITE-COLLAR WORK",
+     "before": 27.7,
+     "after": 27.8,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-10-11",
+     "paths": [
+      {
+       "path": "FC1 > 27-2 > W2",
+       "points": 0.09
+      }
+     ]
+    },
+    {
+     "id": "28-2",
+     "label": "The bill reaches the lenders",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 58.4,
+     "after": 58.3,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-25",
+     "paths": [
+      {
+       "path": "W5 > W6 > 28-2",
+       "points": -0.04
+      },
+      {
+       "path": "W5 > B1 > 28-2",
+       "points": -0.04
+      }
+     ]
+    },
+    {
+     "id": "M40",
+     "label": "Government ASI Nationalization Attempts",
+     "arm": "AI CAPABILITY",
+     "before": 34.0,
+     "after": 34.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-23",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M40",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "M25",
+     "label": "Stock Market Restructuring Event",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 41.0,
+     "after": 41.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-23",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M25",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "M12",
+     "label": "Recursive Learning Algorithms Discovered",
+     "arm": "AI CAPABILITY",
+     "before": 54.0,
+     "after": 54.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-07-23",
+     "paths": [
+      {
+       "path": "FC1 > 27-1 > M12",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "HP12",
+     "label": "The Fed stops: no hike at two straight meetings after Dec 9, or the statement drops its lean toward tightening. First chance Jan 27, then Mar 17.",
+     "arm": "FED RATES AND JAPAN",
+     "before": 59.8,
+     "after": 59.9,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-25",
+     "paths": [
+      {
+       "path": "R2 > D2 > HP12",
+       "points": 0.07
+      }
+     ]
+    }
+   ],
+   "skipped": [
+    {
+     "id": "C4",
+     "reason": "effect would land 2027-06-13 after its window closes 2027-03-31"
+    },
+    {
+     "id": "DS1",
+     "reason": "effect would land 2028-05-23 after its window closes 2027-06-30"
+    },
+    {
+     "id": "M15",
+     "reason": "effect would land 2028-03-24 after its window closes 2027-11-30"
+    },
+    {
+     "id": "M50",
+     "reason": "effect would land 2028-05-23 after its window closes 2027-11-30"
+    },
+    {
+     "id": "M55",
+     "reason": "effect would land 2028-03-24 after its window closes 2027-11-30"
+    },
+    {
+     "id": "M61",
+     "reason": "effect would land 2028-07-22 after its window closes 2027-11-30"
+    },
+    {
+     "id": "M62",
+     "reason": "effect would land 2028-11-24 after its window closes 2027-11-30"
+    },
+    {
+     "id": "O5",
+     "reason": "effect would land 2027-02-23 after its window closes 2027-01-31"
+    },
+    {
+     "id": "X2",
+     "reason": "effect would land 2027-04-24 after its window closes 2026-12-31"
+    }
+   ],
+   "stats": {
+    "links_used": 100,
+    "blocked_fired_or_hand_set": 5,
+    "dropped_window_closed": 18,
+    "dropped_tiny": 51,
+    "cut_at_hop_limit": 0
+   },
+   "collisions": {
+    "a_multi_arm_nodes": [
+     {
+      "kind": "a",
+      "what": "J1 rose +0.3, pushed by 2 arms",
+      "nodes": [
+       "J1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "SHIPPING AND CANALS"
+      ],
+      "joint_odds": 33.4,
+      "score": 0.668,
+      "window_end": "2027-03-31"
+     }
+    ],
+    "b_cross_arm_pairs": [
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x WF1 (+7.0)",
+      "nodes": [
+       "D1",
+       "WF1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 92.1,
+      "score": 1.843,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x FD01 (+1.4)",
+      "nodes": [
+       "D1",
+       "FD01"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 86.8,
+      "score": 1.737,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x FD19 (+0.1)",
+      "nodes": [
+       "D1",
+       "FD19"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 80.8,
+      "score": 1.617,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x WF1 (+7.0)",
+      "nodes": [
+       "DS6",
+       "WF1"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 77.8,
+      "score": 1.556,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x DS6 (+0.2)",
+      "nodes": [
+       "D1",
+       "DS6"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 23,
+      "shared_layers": [],
+      "joint_odds": 76.2,
+      "score": 1.524,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x FD01 (+1.4)",
+      "nodes": [
+       "DS6",
+       "FD01"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 73.3,
+      "score": 1.466,
+      "window_end": "2027-01-31"
+     },
+     {
+      "kind": "b",
+      "what": "DS4 (+0.2) x WF1 (+7.0), same layer: SHIPPING",
+      "nodes": [
+       "DS4",
+       "WF1"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "SHIPPING"
+      ],
+      "joint_odds": 72.9,
+      "score": 1.459,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x DS4 (+0.2)",
+      "nodes": [
+       "D1",
+       "DS4"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 71.4,
+      "score": 1.429,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "DS4 (+0.2) x FD01 (+1.4)",
+      "nodes": [
+       "DS4",
+       "FD01"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 68.7,
+      "score": 1.375,
+      "window_end": "2027-01-31"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x FD19 (+0.1)",
+      "nodes": [
+       "DS6",
+       "FD19"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 68.3,
+      "score": 1.365,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "DS4 (+0.2) x FD19 (+0.1)",
+      "nodes": [
+       "DS4",
+       "FD19"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 64.0,
+      "score": 1.28,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "FC1 (+10.0) x WF1 (+7.0)",
+      "nodes": [
+       "FC1",
+       "WF1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 63.1,
+      "score": 1.261,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x FC1 (+10.0)",
+      "nodes": [
+       "D1",
+       "FC1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 61.8,
+      "score": 1.235,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "FC1 (+10.0) x FD01 (+1.4)",
+      "nodes": [
+       "FC1",
+       "FD01"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 59.4,
+      "score": 1.188,
+      "window_end": "2027-01-31"
+     },
+     {
+      "kind": "b",
+      "what": "HP12 (+0.1) x WF1 (+7.0)",
+      "nodes": [
+       "HP12",
+       "WF1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 12,
+      "shared_layers": [],
+      "joint_odds": 58.1,
+      "score": 1.162,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x WF2 (+4.9)",
+      "nodes": [
+       "D1",
+       "WF2"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 56.9,
+      "score": 1.138,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "27-2 (+2.2) x WF1 (+7.0)",
+      "nodes": [
+       "27-2",
+       "WF1"
+      ],
+      "arms": [
+       "WEATHER AND FOOD",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 55.5,
+      "score": 1.11,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "FC1 (+10.0) x FD19 (+0.1)",
+      "nodes": [
+       "FC1",
+       "FD19"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 55.3,
+      "score": 1.106,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "FD01 (+1.4) x HP12 (+0.1)",
+      "nodes": [
+       "FD01",
+       "HP12"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 54.7,
+      "score": 1.095,
+      "window_end": "2027-01-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-2 (+2.2) x D1 (+1.0), same layer: CREDIT",
+      "nodes": [
+       "27-2",
+       "D1"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "CREDIT"
+      ],
+      "joint_odds": 54.3,
+      "score": 1.087,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "27-2 (+2.2) x FD01 (+1.4)",
+      "nodes": [
+       "27-2",
+       "FD01"
+      ],
+      "arms": [
+       "WEATHER AND FOOD",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 52.3,
+      "score": 1.046,
+      "window_end": "2027-01-31"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x FC1 (+10.0), same layer: JOBS",
+      "nodes": [
+       "DS6",
+       "FC1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 52.1,
+      "score": 1.043,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "28-1 (+6.0) x FD19 (+0.1)",
+      "nodes": [
+       "28-1",
+       "FD19"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 51.9,
+      "score": 1.038,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "FD19 (+0.1) x HP12 (+0.1)",
+      "nodes": [
+       "FD19",
+       "HP12"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 51.0,
+      "score": 1.019,
+      "window_end": "2027-06-30"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x WF3 (+3.5)",
+      "nodes": [
+       "D1",
+       "WF3"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 50.8,
+      "score": 1.016,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "27-1 (+1.8) x WF1 (+7.0)",
+      "nodes": [
+       "27-1",
+       "WF1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 50.2,
+      "score": 1.005,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "29-5 (+6.0) x DS6 (+0.2), same layer: JOBS",
+      "nodes": [
+       "29-5",
+       "DS6"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 49.7,
+      "score": 0.994,
+      "window_end": "2028-12-31"
+     },
+     {
+      "kind": "b",
+      "what": "27-1 (+1.8) x D1 (+1.0)",
+      "nodes": [
+       "27-1",
+       "D1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 49.2,
+      "score": 0.984,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "27-3 (+0.7) x WF1 (+7.0)",
+      "nodes": [
+       "27-3",
+       "WF1"
+      ],
+      "arms": [
+       "CYBER",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 49.2,
+      "score": 0.984,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "29-3 (+8.0) x DS6 (+0.2), same layer: JOBS",
+      "nodes": [
+       "29-3",
+       "DS6"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 49.0,
+      "score": 0.98,
+      "window_end": "2028-12-31"
+     },
+     {
+      "kind": "b",
+      "what": "DS4 (+0.2) x FC1 (+10.0), same layer: JOBS",
+      "nodes": [
+       "DS4",
+       "FC1"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 48.9,
+      "score": 0.978,
+      "window_end": "2027-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "28-1 (+6.0) x DS6 (+0.2), same layer: JOBS",
+      "nodes": [
+       "28-1",
+       "DS6"
+      ],
+      "arms": [
+       "AI CAPABILITY",
+       "DISCOVERIES"
+      ],
+      "gap_days": 0,
+      "shared_layers": [
+       "JOBS"
+      ],
+      "joint_odds": 48.9,
+      "score": 0.978,
+      "window_end": "2028-11-30"
+     },
+     {
+      "kind": "b",
+      "what": "W1 (+0.2) x WF1 (+7.0)",
+      "nodes": [
+       "W1",
+       "WF1"
+      ],
+      "arms": [
+       "WEATHER AND FOOD",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.7,
+      "score": 0.974,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "27-2 (+2.2) x FD19 (+0.1)",
+      "nodes": [
+       "27-2",
+       "FD19"
+      ],
+      "arms": [
+       "WEATHER AND FOOD",
+       "WHITE-COLLAR WORK"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.7,
+      "score": 0.974,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "DS9 (+0.1) x WF1 (+7.0)",
+      "nodes": [
+       "DS9",
+       "WF1"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.6,
+      "score": 0.972,
+      "window_end": "2027-01-15"
+     },
+     {
+      "kind": "b",
+      "what": "28-3 (+2.0) x FD19 (+0.1)",
+      "nodes": [
+       "28-3",
+       "FD19"
+      ],
+      "arms": [
+       "CYBER",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.5,
+      "score": 0.97,
+      "window_end": "2027-07-03"
+     },
+     {
+      "kind": "b",
+      "what": "D1 (+1.0) x WF7 (+2.8)",
+      "nodes": [
+       "D1",
+       "WF7"
+      ],
+      "arms": [
+       "FED RATES AND JAPAN",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.3,
+      "score": 0.965,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "27-3 (+0.7) x D1 (+1.0)",
+      "nodes": [
+       "27-3",
+       "D1"
+      ],
+      "arms": [
+       "CYBER",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.2,
+      "score": 0.963,
+      "window_end": "2026-12-09"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x HP12 (+0.1)",
+      "nodes": [
+       "DS6",
+       "HP12"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "FED RATES AND JAPAN"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.0,
+      "score": 0.961,
+      "window_end": "2027-06-30"
+     },
+     {
+      "kind": "b",
+      "what": "DS6 (+0.2) x WF2 (+4.9)",
+      "nodes": [
+       "DS6",
+       "WF2"
+      ],
+      "arms": [
+       "DISCOVERIES",
+       "WEATHER AND FOOD"
+      ],
+      "gap_days": 0,
+      "shared_layers": [],
+      "joint_odds": 48.0,
+      "score": 0.961,
+      "window_end": "2027-11-19"
+     }
+    ],
+    "c_companies": [
+     {
+      "kind": "c",
+      "what": "DBA sits on 2 risen nodes: FD19, WF7",
+      "nodes": [
+       "FD19",
+       "WF7"
+      ],
+      "company": "DBA",
+      "arms": [
+       "WEATHER AND FOOD"
+      ],
+      "joint_odds": 43.2,
+      "score": 0.432,
+      "window_end": "2027-07-03",
+      "listed_options": "yes",
+      "verified": false
+     },
+     {
+      "kind": "c",
+      "what": "AALI sits on 4 risen nodes: FD02, FD04, FD20, WF2",
+      "nodes": [
+       "FD02",
+       "FD04",
+       "FD20",
+       "WF2"
+      ],
+      "company": "AALI",
+      "arms": [
+       "WEATHER AND FOOD"
+      ],
+      "joint_odds": 21.4,
+      "score": 0.214,
+      "window_end": "2027-06-30",
+      "listed_options": "no",
+      "verified": false
+     },
+     {
+      "kind": "c",
+      "what": "F34 sits on 4 risen nodes: FD02, FD04, FD20, WF2",
+      "nodes": [
+       "FD02",
+       "FD04",
+       "FD20",
+       "WF2"
+      ],
+      "company": "F34",
+      "arms": [
+       "WEATHER AND FOOD"
+      ],
+      "joint_odds": 21.4,
+      "score": 0.214,
+      "window_end": "2027-06-30",
+      "listed_options": "no",
+      "verified": false
+     },
+     {
+      "kind": "c",
+      "what": "KRBL sits on 2 risen nodes: FD03, WF3",
+      "nodes": [
+       "FD03",
+       "WF3"
+      ],
+      "company": "KRBL",
+      "arms": [
+       "WEATHER AND FOOD"
+      ],
+      "joint_odds": 6.6,
+      "score": 0.066,
+      "window_end": "2027-06-30",
+      "listed_options": "no",
+      "verified": false
+     }
+    ],
+    "per_arm": {
+     "AI FINANCING AND BANKS": 43,
+     "FED RATES AND JAPAN": 151,
+     "RARE EARTHS CHINA AND TAIWAN": 0,
+     "OIL AND GULF": 0,
+     "CYBER": 87,
+     "BIO": 0,
+     "AI CAPABILITY": 375,
+     "HUMANOID ROBOTS": 0,
+     "WHITE-COLLAR WORK": 237,
+     "SHIPPING AND CANALS": 165,
+     "DISCOVERIES": 206,
+     "POWER AND THE GRID": 0,
+     "JOBS AND THE BACKLASH": 0,
+     "WEATHER AND FOOD": 392,
+     "RUSSIA AND EUROPE": 0
+    }
+   },
+   "queue": [
+    {
+     "kind": "b",
+     "what": "D1 (+1.0) x WF1 (+7.0)",
+     "nodes": [
+      "D1",
+      "WF1"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "WEATHER AND FOOD"
+     ],
+     "gap_days": 0,
+     "shared_layers": [],
+     "joint_odds": 92.1,
+     "score": 1.843,
+     "window_end": "2026-12-09"
+    },
+    {
+     "kind": "b",
+     "what": "D1 (+1.0) x FD01 (+1.4)",
+     "nodes": [
+      "D1",
+      "FD01"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "WEATHER AND FOOD"
+     ],
+     "gap_days": 0,
+     "shared_layers": [],
+     "joint_odds": 86.8,
+     "score": 1.737,
+     "window_end": "2026-12-09"
+    },
+    {
+     "kind": "b",
+     "what": "D1 (+1.0) x FD19 (+0.1)",
+     "nodes": [
+      "D1",
+      "FD19"
+     ],
+     "arms": [
+      "FED RATES AND JAPAN",
+      "WEATHER AND FOOD"
+     ],
+     "gap_days": 0,
+     "shared_layers": [],
+     "joint_odds": 80.8,
+     "score": 1.617,
+     "window_end": "2026-12-09"
+    },
+    {
+     "kind": "b",
+     "what": "DS6 (+0.2) x WF1 (+7.0)",
+     "nodes": [
+      "DS6",
+      "WF1"
+     ],
+     "arms": [
+      "DISCOVERIES",
+      "WEATHER AND FOOD"
+     ],
+     "gap_days": 0,
+     "shared_layers": [],
+     "joint_odds": 77.8,
+     "score": 1.556,
+     "window_end": "2027-01-15"
+    },
+    {
+     "kind": "b",
+     "what": "D1 (+1.0) x DS6 (+0.2)",
+     "nodes": [
+      "D1",
+      "DS6"
+     ],
+     "arms": [
+      "DISCOVERIES",
+      "FED RATES AND JAPAN"
+     ],
+     "gap_days": 23,
+     "shared_layers": [],
+     "joint_odds": 76.2,
+     "score": 1.524,
+     "window_end": "2026-12-09"
     }
    ]
   }
