@@ -899,6 +899,33 @@ export type Database = {
         }
         Relationships: []
       }
+      earth2_scoring_rulings: {
+        Row: {
+          answer: string
+          answered_at: string
+          answered_by: string
+          call_id: string
+          pick: string
+          question: string
+        }
+        Insert: {
+          answer: string
+          answered_at?: string
+          answered_by?: string
+          call_id: string
+          pick: string
+          question: string
+        }
+        Update: {
+          answer?: string
+          answered_at?: string
+          answered_by?: string
+          call_id?: string
+          pick?: string
+          question?: string
+        }
+        Relationships: []
+      }
       event_leads: {
         Row: {
           created_at: string

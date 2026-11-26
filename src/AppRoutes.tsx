@@ -8,6 +8,7 @@ import Correlations from "./pages/Correlations";
 import Waitlist from "./pages/Waitlist";
 import Events from "./pages/Events";
 import Admin from "./pages/Admin";
+import AdminEarth2Calls from "./pages/AdminEarth2Calls";
 import Auth from "./pages/Auth";
 import FAQ from "./pages/FAQ";
 import Bibliography from "./pages/Bibliography";
@@ -368,6 +369,7 @@ export const AppRoutes = () => (
   
   
     <Route path="admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+    <Route path="admin/earth2-calls" element={<ProtectedRoute><AdminEarth2Calls /></ProtectedRoute>} />
     <Route path="volunteer" element={<VolunteerDashboard />} />
 
     <Route path="auth" element={<Auth />} />

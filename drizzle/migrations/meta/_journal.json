@@ -29,6 +29,13 @@
       "when": 1792734947028,
       "tag": "0003_quick_record_capture",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795658816632,
+      "tag": "0004_create_earth2_scoring_rulings",
+      "breakpoints": true
     }
   ]
 }
