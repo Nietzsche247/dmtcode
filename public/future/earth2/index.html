@@ -150,7 +150,7 @@ const ARM_COLOR = {"AI FINANCING AND BANKS":"#e45756","FED RATES AND JAPAN":"#f5
  "JOBS AND THE BACKLASH":"#aec7e8","WEATHER AND FOOD":"#98df8a","RUSSIA AND EUROPE":"#ffbb78"};
 const TYPE_SIZE = {"END EVENT":9,"NECESSARY CONDITION":6,"LIKELY PRECURSOR":5,"TRIGGER":3.5,"SPARK":1.6,"DRIVER":4,"COMPANY":2};
 const T0 = new Date("2026-11-22"), T1 = new Date("2030-12-31");
-let G=null, byId={}, coById={}, outL={}, inL={}, view="2d", fg2=null, fg3=null, sel=null, heat={}, lastEntry=null, timeline=null;
+let G=null, byId={}, coById={}, outL={}, inL={}, aliasOf={}, view="2d", fg2=null, fg3=null, sel=null, heat={}, lastEntry=null, timeline=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=x=>x==null?"none":(Math.round(x*10)/10)+"%";
@@ -177,6 +177,7 @@ function init(data, name){
   for(const n of G.nodes){ byId[n.id]=n; }
   for(const c of G.companies){ coById[c.id]=c; }
   for(const l of G.links){ (outL[l.source]=outL[l.source]||[]).push(l); (inL[l.target]=inL[l.target]||[]).push(l); }
+  aliasOf={}; for(const m of (G.merges||[])){ for(const [o,v] of Object.entries(m.alias_map||{})) aliasOf[o]=(v&&v.survivor)||v; for(const x of (m.nodes_mapped_to_v5||[])) if(x.deepdive_id&&x.v5_id&&!aliasOf[x.deepdive_id]) aliasOf[x.deepdive_id]=x.v5_id; }
   $("drop").style.display="none";
   $("status").textContent=`${G.nodes.length} nodes, ${G.links.length} links, ${G.companies.length} companies. Data: ${name}`;
   lastEntry=G.cascade_log.length?G.cascade_log[G.cascade_log.length-1]:null; setHeat(lastEntry);
@@ -184,10 +185,12 @@ function init(data, name){
 }
 
 // ---------- filters ----------
+function allArms(){ const a=[...((G.meta&&G.meta.arms)||[])]; for(const n of G.nodes) if(n.arm&&!a.includes(n.arm)) a.push(n.arm); return a.length?a:Object.keys(ARM_COLOR); }
+function allLayers(){ const a=[...((G.meta&&G.meta.layers)||[])]; for(const n of G.nodes) for(const L of (n.layers_hit||[])) if(!a.includes(L)) a.push(L); return a; }
 function buildFilters(){
-  const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR);
+  const arms=allArms();
   $("arms").innerHTML=arms.map(a=>`<label class="chk"><input type="checkbox" data-k="arm" value="${esc(a)}" checked onchange="rebuild()"><span class="sw" style="background:${ARM_COLOR[a]||'#888'}"></span>${esc(a)} <span class="muted">${G.nodes.filter(n=>n.arm===a).length}</span></label>`).join("");
-  const layers=(G.meta&&G.meta.layers)||["JOBS","FOOD","SHIPPING","POWER","CREDIT"];
+  const layers=allLayers();
   $("layers").innerHTML=layers.map(a=>`<label class="chk"><input type="checkbox" data-k="layer" value="${a}" checked onchange="rebuild()">${a}</label>`).join("")+
     `<label class="chk"><input type="checkbox" data-k="layer" value="(none)" checked onchange="rebuild()">no layer tagged</label>`;
   const types=["END EVENT","NECESSARY CONDITION","LIKELY PRECURSOR","TRIGGER","SPARK","DRIVER"];
@@ -279,7 +282,7 @@ window.addEventListener("resize",()=>{ const el=$("graph"); if(fg2) fg2.width(el
 
 const LW=2400, LH=70;
 function drawLanes(ctx,sc){
-  if(!G||$("layout").value!=="lanes"||view!=="2d") return; const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR); const H=arms.length*LH;
+  if(!G||$("layout").value!=="lanes"||view!=="2d") return; const arms=allArms(); const H=arms.length*LH;
   ctx.save(); ctx.font=`${12/sc}px sans-serif`;
   for(let y=2027;y<=2030;y++){ const t=(new Date(y+"-01-01")-T0)/(T1-T0); const x=-LW/2+t*LW; ctx.strokeStyle="rgba(139,148,158,.25)"; ctx.lineWidth=1/sc; ctx.beginPath(); ctx.moveTo(x,-H/2-40); ctx.lineTo(x,H/2); ctx.stroke(); ctx.fillStyle="#8b949e"; ctx.fillText(String(y),x+4/sc,-H/2-28); }
   if(timeline){ const t=(timeline-T0)/(T1-T0); const x=-LW/2+t*LW; ctx.strokeStyle="rgba(88,166,255,.7)"; ctx.lineWidth=2/sc; ctx.beginPath(); ctx.moveTo(x,-H/2-40); ctx.lineTo(x,H/2); ctx.stroke(); }
@@ -288,7 +291,7 @@ function drawLanes(ctx,sc){
 }
 function applyLayout(silent){
   if(!fg2||!G) return;
-  const lanes=$("layout").value==="lanes"; const data=fg2.graphData(); const arms=(G.meta&&G.meta.arms)||Object.keys(ARM_COLOR);
+  const lanes=$("layout").value==="lanes"; const data=fg2.graphData(); const arms=allArms();
   const W=LW, H=arms.length*LH, typeOff={"END EVENT":0,"NECESSARY CONDITION":-14,"LIKELY PRECURSOR":-8,"TRIGGER":10,"SPARK":20,"DRIVER":-22};
   for(const n of data.nodes){
     if(!lanes){ delete n.fx; delete n.fy; continue; }
@@ -313,6 +316,7 @@ function renderList(){
 // ---------- search ----------
 function doSearch(q){
   q=q.trim().toLowerCase(); if(!q||!G) return;
+  const al=Object.keys(aliasOf).find(k=>k.toLowerCase()===q); if(al&&!byId[al]){ selectNode(al,true); return; }
   let hit=G.nodes.find(n=>n.id.toLowerCase()===q)||G.companies.find(c=>c.ticker.toLowerCase()===q)||G.nodes.find(n=>(n.label||"").toLowerCase().includes(q));
   if(!hit) return; if(hit.ticker){ showCompany(hit.id); return; } selectNode(hit.id,true);
 }
@@ -327,26 +331,31 @@ function spark(hist){
 }
 function linkRow(l,dir){
   const o=dir==="out"?l.target:l.source; const oid=o.id||o; const on=byId[oid]||{};
-  return `<tr class="click" onclick="selectNode('${oid}',true)"><td>${esc(oid)}<div class="muted">${esc((on.label||"").slice(0,60))}</div></td><td>${l.strength==null?"<span class=muted>display</span>":(l.sign<0?"<span class=up>-</span>":"+")+l.strength}</td><td>${l.delay_days==null?"":l.delay_days+" d"}</td><td>${esc((l.kind||"").toLowerCase())}${l.estimated?"<div class=muted>estimate</div>":""}</td></tr><tr><td colspan="4" class="muted small" style="border-bottom:1px solid #2a313c">${esc(l.reason||"")}</td></tr>`;
+  return `<tr class="click" onclick="selectNode('${oid}',true)"><td>${esc(oid)}<div class="muted">${esc((on.label||"").slice(0,60))}</div></td><td>${(l.strength==null||l.display_only)?`<span class=muted title="${esc(l.display_only_reason||"")}">display</span>`:(l.sign<0?"<span class=up>-</span>":"+")+l.strength}</td><td>${l.delay_days==null?"":l.delay_days+" d"}</td><td>${esc((l.kind||"").toLowerCase())}${l.estimated?"<div class=muted>estimate</div>":""}</td></tr><tr><td colspan="4" class="muted small" style="border-bottom:1px solid #2a313c">${esc(l.reason||"")}</td></tr>`;
 }
 function selectNode(id,focus){
   if(coById[id]){ showCompany(id); return; }
+  let foldedFrom=null; for(let i=0;i<6&&!byId[id]&&aliasOf[id];i++){ foldedFrom=foldedFrom||id; id=aliasOf[id]; }
   const n=byId[id]; if(!n) return; sel=id; tab("Node"); if(window.innerWidth<=900) $("right").classList.add("show");
   const outs=(outL[id]||[]), ins=(inL[id]||[]);
   const cos=G.companies.filter(c=>(c.sits_on||[]).some(s=>s.node===id));
   const fired=String(n.status||"").toUpperCase().startsWith("FIRED");
   $("pNode").innerHTML=`
+   ${foldedFrom?`<div class="small" style="color:#ffd166">${esc(foldedFrom)} was folded into ${esc(n.id)} (same event).</div>`:""}
    <div class="muted small">${esc(n.id)} . ${esc(n.type.toLowerCase())}${n.side?" . "+esc(n.side)+" side":""}</div>
    <div style="font-size:16px;font-weight:600;margin:2px 0 6px">${esc(n.label)}</div>
    <div><span class="sw" style="background:${ARM_COLOR[n.arm]}"></span> ${esc(n.arm)}</div>
    <div style="display:flex;gap:16px;align-items:baseline;margin:8px 0"><div class="big">${n.odds_now==null?"no odds":fmt(n.odds_now)}</div><div class="muted small">${esc(n.odds_text||"")}</div></div>
    <div class="small">Status: <b>${esc(n.status)}</b>${heat[id]!=null?` . last move <span class="${heat[id]>0?"up":"down"}">${heat[id]>0?"+":""}${heat[id]}</span>`:""}</div>
-   <div class="small">Window: ${esc(n.window_start||"?")} to ${esc(n.window_end||"?")}, peak ${esc(n.window_peak||"?")}</div>
+   <div class="small">Window: ${esc(n.window_start||"?")} to ${esc(n.window_end||"?")}, peak ${esc(n.window_peak||"?")}${n.date_state?` <span class="pill">${esc(n.date_state.toLowerCase())}${n.peak_placeholder?", peak is a placeholder":""}</span>`:""}</div>
+   ${n.date_catalyst?`<div class="small muted">Date: ${esc(n.date_catalyst)}</div>`:""}
    <div class="small">Layers: ${(n.layers_hit||[]).map(x=>`<span class="pill">${x}</span>`).join("")||"<span class=muted>none tagged</span>"}</div>
    ${n.least_capability?`<div class="small" style="margin-top:6px"><span class="muted">Least capability that makes it easy:</span> ${esc(n.least_capability)}</div>`:""}
    ${n.priced?`<div class="small" style="margin-top:4px;color:#ffd166">${esc(n.priced)}</div>`:""}
    ${n.one_number_rule?`<div class="small muted">${esc(n.one_number_rule)}</div>`:""}
    ${n.next_watch?`<div class="small" style="margin-top:4px"><span class="muted">Next thing to watch:</span> ${esc(n.next_watch)}</div>`:""}
+   ${n.kill_condition?`<div class="small" style="margin-top:4px"><span class="muted">Kill condition:</span> ${esc(n.kill_condition)}${n.kill_check?`<div class="muted">Check: ${esc(n.kill_check)}</div>`:""}</div>`:""}
+   ${(n.folded_from||[]).length?`<div class="small muted" style="margin-top:4px">Also known as: ${n.folded_from.map(f=>esc(f.id)+(f.odds_now!=null?" ("+f.odds_now+"% by "+esc(f.window_end||"")+")":"")).join(", ")}</div>`:""}
    ${n.unlocks?`<div class="small"><span class="muted">Unlocks:</span> ${esc(n.unlocks)}</div>`:""}
    ${n.belief_line?`<div class="small"><span class="muted">If solved, people will believe:</span> ${esc(n.belief_line)}</div>`:""}
    <h3>Odds history</h3>${spark(n.odds_history)}
@@ -465,6 +474,18 @@ function layerCollisions(){
     for(const L of (a.layers_hit||[])) if((b.layers_hit||[]).includes(L)) (by[L]=by[L]||[]).push({a,b,joint:a.odds_now*b.odds_now/100,end:a.window_end<b.window_end?a.window_end:b.window_end}); }
   return by;
 }
+function standingCollisions(limit=120){
+  const today=new Date(new Date().toISOString().slice(0,10)); const live=n=>n&&n.odds_now!=null&&!isFired(n);
+  const push={};
+  for(const l of G.links){ if(l.display_only||l.strength==null) continue; const u=byId[l.source.id||l.source], v=byId[l.target.id||l.target];
+    if(!live(u)||!live(v)||(v.window_end&&new Date(v.window_end)<today)) continue; const g=gapDays(u,v); if(g==null||g>limit) continue;
+    ((push[v.id]=push[v.id]||{})[u.arm]=push[v.id][u.arm]||[]).push(u.id); }
+  const items=[]; for(const id in push){ const arms=Object.keys(push[id]).filter(Boolean).sort(); if(arms.length<2) continue; const n=byId[id];
+    items.push({id,n,arms,pushers:push[id],score:n.odds_now/100*arms.length,end:n.window_end||"2100-01-01"}); }
+  items.sort((a,b)=>(b.score-a.score)||(a.end<b.end?-1:1));
+  const perArm={}; for(const a of allArms()) perArm[a]=0; for(const it of items) for(const a of new Set([...it.arms,it.n.arm])) if(a) perArm[a]=(perArm[a]||0)+1;
+  return {items,perArm};
+}
 function renderColl(){
   if(!G) return; let h="";
   h+=`<h3>The next collisions queue</h3>`;
@@ -475,9 +496,13 @@ function renderColl(){
   if(lastEntry&&lastEntry.collisions){ const C=lastEntry.collisions;
     h+=`<h3>All collisions from the last run</h3><div class="small">Several arms on one node: ${C.a_multi_arm_nodes.length} . cross-arm pairs: ${C.b_cross_arm_pairs.length} . companies: ${C.c_companies.length}</div>`;
     h+=[...C.a_multi_arm_nodes,...C.c_companies,...C.b_cross_arm_pairs.slice(0,15)].map(c=>`<div class="small" style="margin:3px 0">[${c.kind}] ${esc(c.what)} <span class="muted">joint ${c.joint_odds}%</span></div>`).join(""); }
+  const sc=standingCollisions();
+  h+=`<h3>Standing collisions: nodes pushed by two or more arms (${sc.items.length})</h3><div class="small muted">Links that carry a move, from live nodes whose windows overlap the target's or sit within 120 days. Every arm in the data is counted.</div>`;
+  h+=`<div class="small" style="margin:4px 0">${Object.entries(sc.perArm).map(([a,k])=>`<span class="pill"><span class="sw" style="background:${ARM_COLOR[a]||"#888"}"></span> ${esc(a)} ${k}</span>`).join(" ")}</div>`;
+  h+=sc.items.slice(0,12).map(it=>`<div class="small" style="margin:3px 0"><a href="#" onclick="selectNode('${it.id}',true);return false" style="color:#58a6ff">${esc(it.id)}</a> ${esc((it.n.label||"").slice(0,70))} <span class="muted">${fmt(it.n.odds_now)}, ${it.arms.length} arms: ${it.arms.map(a=>esc(a)+" ("+it.pushers[a].map(esc).join(", ")+")").join("; ")}</span></div>`).join("");
   const lc=layerCollisions();
   h+=`<h3>Standing layer collisions (two arms, same layer, windows within 120 days, both between 25% and 90%)</h3>`;
-  for(const L of ["FOOD","SHIPPING","POWER","CREDIT","JOBS"]){ const xs=(lc[L]||[]).sort((x,y)=>y.joint-x.joint).slice(0,6);
+  for(const L of allLayers()){ const xs=(lc[L]||[]).sort((x,y)=>y.joint-x.joint).slice(0,6);
     h+=`<div class="small" style="margin-top:6px"><b>${L}</b> <span class="muted">${(lc[L]||[]).length} pairs</span></div>`+xs.map(x=>`<div class="small" style="margin-left:8px">${esc(x.a.id)} (${esc(x.a.arm)}) x ${esc(x.b.id)} (${esc(x.b.arm)}) <span class="muted">joint ${x.joint.toFixed(1)}%, ends ${esc(x.end)}</span></div>`).join(""); }
   if(G.chains&&G.chains.length){ h+=`<h3>Compound chains</h3>`+G.chains.map(c=>`<div class="q"><b>${esc(c.name)}</b> <span class="muted">joint ${c.joint}% . hit ${c.hit}</span><div class="small">${c.legs.map(x=>`<a href="#" onclick="selectNode('${x}',true);return false" style="color:#58a6ff">${x}</a>`).join(" then ")}</div><div class="small muted">${esc(c.note||"")}</div></div>`).join(""); }
   const cc=G.companies.filter(c=>c.collision_candidate).sort((a,b)=>b.event_nodes.length-a.event_nodes.length);

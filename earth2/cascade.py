@@ -22,6 +22,12 @@ OPTIONS
   --fade 0.5          multiplier per hop after the first
   --collision-days 120  how close two windows must be to count as a collision
   --report PATH       also write this run's log entry to its own JSON file
+  --collisions        list the standing collisions (every arm counted) and stop if no update is given
+
+OLD IDS (folded duplicates)
+  When two ids were the same real event, the copy was folded into the survivor and recorded in
+  graph["merges"] as an alias_map (old id -> survivor). An update that names an old id is applied to
+  its survivor, with a one-line NOTICE, so saved prompts keep working. Example: E16 -> D4.
 
 THE RULE (same rule the page runs live)
   A node set by hand moves by d = new - old (percentage points).
@@ -42,6 +48,11 @@ COLLISIONS (rule 8), listed after every run
   (c) a company that sits on two or more risen nodes
   Each is scored: joint odds x number of arms pushing. Ties go to the shortest window.
   The top 5 is THE NEXT COLLISIONS QUEUE.
+
+STANDING COLLISIONS (every arm counted; no arm list is written into this file)
+  A live node pushed by links that carry a move from two or more different arms, where each pushing
+  node's window overlaps the target's window or sits within --collision-days (120) of it. The arms are
+  read from meta.arms plus every arm found on a node, so a new arm is counted the day it is added.
 """
 
 import argparse
@@ -90,7 +101,38 @@ def load(path):
     return g, nodes, links
 
 
-def read_updates(args, nodes):
+def alias_map(g):
+    """old id -> (survivor id, reason, date), from every merges entry that carries an alias_map, plus the
+    deep-dive ids mapped onto existing nodes (nodes_mapped_to_v5)."""
+    out = {}
+    for m in g.get("merges", []) or []:
+        for old, v in (m.get("alias_map") or {}).items():
+            if isinstance(v, dict):
+                out[old] = (v.get("survivor"), v.get("reason", ""), v.get("date", m.get("date", "")))
+            else:
+                out[old] = (v, "", m.get("date", ""))
+        for x in m.get("nodes_mapped_to_v5", []) or []:
+            if x.get("deepdive_id") and x.get("v5_id"):
+                out.setdefault(x["deepdive_id"], (x["v5_id"], x.get("reason", ""), m.get("date", "")))
+    return out
+
+
+def resolve_id(nid, nodes, aliases):
+    """Follow the alias chain from an old id to a node that exists. Returns (id, notice or None)."""
+    seen, cur = [], nid
+    while cur not in nodes and cur in aliases and cur not in seen:
+        seen.append(cur)
+        cur = aliases[cur][0]
+    if cur == nid:
+        return nid, None
+    if cur not in nodes:
+        return nid, None
+    first = aliases[nid]
+    why = (first[1] or "").split(":")[0]
+    return cur, f"NOTICE: '{nid}' was folded into '{cur}' on {first[2] or 'an earlier merge'} ({why}); applying the update to {cur}."
+
+
+def read_updates(args, nodes, aliases=None):
     raw = []
     for item in args.set or []:
         nid, val = item.split("=", 1)
@@ -102,8 +144,14 @@ def read_updates(args, nodes):
     if not raw:
         raise SystemExit("Nothing to do. Give --set ID=ODDS (with --date and --reason) or --updates FILE.")
     out = {}
+    aliases = aliases or {}
     for u in raw:
         nid = str(u.get("id", "")).strip()
+        if nid not in nodes:
+            nid2, notice = resolve_id(nid, nodes, aliases)
+            if notice:
+                print(notice)
+                nid = nid2
         if nid not in nodes:
             near = [k for k in nodes if k.lower().startswith(nid.lower()[:2])][:8]
             raise SystemExit(f"Unknown id '{nid}'. Close: {near}")
@@ -114,6 +162,8 @@ def read_updates(args, nodes):
         v = float(u["new_odds"])
         if not 0 <= v <= 100:
             raise SystemExit(f"'{nid}': odds must be 0..100")
+        if nid in out and out[nid]["new"] != v:
+            raise SystemExit(f"'{nid}' is set twice with different odds ({out[nid]['new']} and {v}); an old id may resolve to it.")
         out[nid] = {"new": v, "date": str(u["date"]), "reason": u["reason"], "source": u.get("source") or ""}
     return out
 
@@ -220,6 +270,63 @@ def collisions(nodes, companies, rose, after, pushers, limit_days):
     return items
 
 
+def all_arms(g):
+    """Every arm in the data: meta.arms first, then any arm found on a node. Nothing hardcoded."""
+    arms = list((g.get("meta") or {}).get("arms") or [])
+    for n in g["nodes"]:
+        a = n.get("arm")
+        if a and a not in arms:
+            arms.append(a)
+    return arms
+
+
+def standing_collisions(g, nodes, links, limit_days, today):
+    """Live nodes pushed by two or more arms whose windows overlap or sit within limit_days."""
+    pushers = {}
+    for e in links:
+        if e.get("display_only") or e.get("strength") is None:
+            continue
+        u, v = nodes[e["source"]], nodes[e["target"]]
+        if u.get("odds_now") is None or v.get("odds_now") is None or is_fired(v) or is_fired(u):
+            continue
+        end_v = parse_date(v.get("window_end"), end=True)
+        if end_v is not None and end_v < today:
+            continue
+        gap = window_gap(u, v)
+        if gap is None or gap > limit_days:
+            continue
+        pushers.setdefault(v["id"], {}).setdefault(u.get("arm"), []).append(u["id"])
+    items = []
+    far = dt.date(2100, 1, 1)
+    for nid, by_arm in pushers.items():
+        arms = sorted(a for a in by_arm if a)
+        if len(arms) < 2:
+            continue
+        n = nodes[nid]
+        items.append({"node": nid, "label": n.get("label"), "arm": n.get("arm"), "odds": n.get("odds_now"),
+                      "arms": arms, "n_arms": len(arms), "pushers": {a: sorted(by_arm[a]) for a in arms},
+                      "window_end": (parse_date(n.get("window_end"), end=True) or far).isoformat(),
+                      "score": round((n.get("odds_now") or 0) / 100 * len(arms), 3)})
+    items.sort(key=lambda h: (-h["score"], h["window_end"]))
+    per_arm = {a: 0 for a in all_arms(g)}
+    for it in items:
+        for a in set(it["arms"]) | {it["arm"]}:
+            if a:
+                per_arm[a] = per_arm.get(a, 0) + 1
+    return items, per_arm
+
+
+def print_standing(g, nodes, links, limit_days, today, top=15):
+    items, per_arm = standing_collisions(g, nodes, links, limit_days, today)
+    print(f"STANDING COLLISIONS {today}: {len(items)} nodes pushed by 2+ arms (windows within {limit_days} days)")
+    for i, c in enumerate(items[:top], 1):
+        print(f"  {i}. {c['node']} ({c['arm']}, {c['odds']}%) pushed by {c['n_arms']} arms: "
+              + "; ".join(f"{a}: {', '.join(p)}" for a, p in c["pushers"].items()))
+    print("  ARMS IN STANDING COLLISIONS (every arm in the data): "
+          + ", ".join(f"{a} {k}" for a, k in per_arm.items()))
+    return items, per_arm
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Cascade a real, dated event through the Earth2 graph.")
     p.add_argument("graph")
@@ -234,10 +341,15 @@ def main(argv=None):
     p.add_argument("--fade", type=float, default=0.5)
     p.add_argument("--collision-days", type=int, default=120)
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--collisions", action="store_true")
     a = p.parse_args(argv)
 
     g, nodes, links = load(a.graph)
-    ups = read_updates(a, nodes)
+    if a.collisions and not (a.set or a.updates):
+        today = parse_date(a.date) if a.date else dt.date.today()
+        print_standing(g, nodes, links, a.collision_days, today)
+        return 0
+    ups = read_updates(a, nodes, alias_map(g))
     run_date = max(parse_date(u["date"]) for u in ups.values())
     deltas = {k: u["new"] - float(nodes[k]["odds_now"]) for k, u in ups.items()}
     totals, routes, pushers, skipped, stats = cascade(nodes, links, deltas, run_date, a.max_hops, a.fade)
@@ -296,6 +408,16 @@ def main(argv=None):
     print("\nTHE NEXT COLLISIONS QUEUE")
     for i, c in enumerate(queue, 1):
         print(f"  {i}. [{c['kind']}] {c['what']}  arms: {', '.join(c['arms'])}  joint {c['joint_odds']}%  score {c['score']}  window ends {c['window_end']}")
+    run_arms = {x: 0 for x in all_arms(g)}
+    for c in coll:
+        for x in c["arms"]:
+            if x:
+                run_arms[x] = run_arms.get(x, 0) + 1
+    entry["collisions"]["per_arm"] = run_arms
+    print("ARMS IN THIS RUN'S COLLISIONS (every arm in the data): " + ", ".join(f"{x} {k}" for x, k in run_arms.items()))
+    if a.collisions:
+        print()
+        print_standing(g, nodes, links, a.collision_days, run_date)
     if a.report:
         with open(a.report, "w", encoding="utf-8") as f:
             json.dump(entry, f, indent=1, ensure_ascii=False)
