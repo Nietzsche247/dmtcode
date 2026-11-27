@@ -26,3 +26,7 @@ dev-dist
 
 .env
 parity_report.json 
+
+# Earth2: real tickets are private and never committed (this repo is public)
+earth2/tickets.json
+earth2/tickets*.local.json

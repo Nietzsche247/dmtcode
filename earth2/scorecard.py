@@ -303,6 +303,47 @@ def base_rate_missing(v):
     return out
 
 
+MARKET_FIELDS = ["odds", "venue", "contract", "url", "as_of", "match_note"]
+MARKET_NEEDED = ["odds", "venue", "contract", "as_of", "match_note"]
+PLAY_MONEY = ("manifold", "metaculus", "good judgment", "gjopen")
+LENS_CLASSES = {"commanding_heights": ("holds a chokepoint", "sells intelligence by the unit")}
+
+
+def market_problem(m):
+    """None when m is a like-for-like market record for a main event, else a short reason.
+    A market is real money or a traded instrument; forecast sites are not markets."""
+    if not isinstance(m, dict):
+        return "must be an object with " + ", ".join(MARKET_NEEDED)
+    miss = [k for k in MARKET_NEEDED if not filled(m.get(k))]
+    if miss:
+        return "missing " + ", ".join(miss) + " (match_note says why it is like for like)"
+    if not (is_num(m["odds"]) and 1 <= m["odds"] <= 99):
+        return "odds must be a percent from 1 to 99"
+    if any(p in str(m["venue"]).lower() for p in PLAY_MONEY):
+        return f"{m['venue']} is a forecast site, not a market; keep it out of the market column"
+    if iso(m["as_of"]) is None:
+        return "as_of must be a date, YYYY-MM-DD"
+    return None
+
+
+def lens_problem(row):
+    """None when row is a structure-only lens mark on a company, else a short reason. No direction is stored."""
+    if not isinstance(row, dict):
+        return "must be an object with lens, class, basis, source"
+    for k in ("lens", "class", "basis", "source"):
+        if not (isinstance(row.get(k), str) and filled(row.get(k))):
+            return f"missing {k}"
+    allowed = LENS_CLASSES.get(row["lens"].strip())
+    if allowed is None:
+        return f"unknown lens {row['lens']!r}; known: {', '.join(LENS_CLASSES)}"
+    if row["class"].strip() not in allowed:
+        return f"class must be one of: {', '.join(allowed)}"
+    low = (row["basis"] + " " + row["class"]).lower()
+    if any(w in low for w in (" helped", " hurt", "bullish", "bearish", " long ", " short ")):
+        return "a lens mark is structure only; no helped, hurt, long or short wording"
+    return None
+
+
 def tags_problem(v):
     """None when v is a clean list of judgment tags, else a short reason."""
     if not isinstance(v, list) or not v or not all(isinstance(t, str) for t in v):
@@ -865,6 +906,21 @@ def validator_checks(g, graph_rel=GRAPH_REL):
     f2, n2 = gate_report(g, doc["questions"])
     fails.extend(f2)
     notes.extend(n2)
+    n_mkt = 0
+    for n in g.get("nodes", []):
+        if n.get("market") is not None:
+            p = market_problem(n["market"]) if is_main_event(n) else "market odds belong on main events only"
+            if p:
+                fails.append(f"{n['id']}: market: {p}")
+            n_mkt += 1
+    n_lens = 0
+    for c_ in g.get("companies", []):
+        for lens, row in (c_.get("lenses") or {}).items():
+            p = lens_problem(row) or (None if row.get("lens") == lens else "lens key and lens field differ")
+            if p:
+                fails.append(f"{c_['id']}: lenses.{lens}: {p}")
+            n_lens += 1
+    notes.append(f"NOTE: market odds on {n_mkt} main events; company lens marks {n_lens}.")
     c = compute_score(doc["questions"])["counts"]
     notes.append(f"NOTE: scorecard has {c['total']} questions: {c['open']} open, {c['settled']} settled "
                  f"({c['backfilled']} backfilled), {c['void']} void.")
@@ -1120,7 +1176,8 @@ def cmd_import_seed(a):
         raise SystemExit(f"{a.file} does not load as JSON: {e}")
     if not isinstance(seed, dict):
         raise SystemExit(f"Seed file not found or not an object: {a.file}")
-    known = ("questions", "backfilled", "event_tags", "legacy_base_rates")
+    known = ("questions", "backfilled", "event_tags", "legacy_base_rates", "legacy_settlement_tests",
+             "event_markets", "company_lenses")
     skipped = [k for k in seed if k not in known and not k.startswith("_")]
     nodes = {n["id"]: n for n in g["nodes"]}
     aliases = alias_map(g)
@@ -1130,7 +1187,7 @@ def cmd_import_seed(a):
     for k in ("questions", "backfilled"):
         if not isinstance(seed.get(k, []), list):
             errs.append(f"{k} must be a list")
-    for k in ("event_tags", "legacy_base_rates"):
+    for k in ("event_tags", "legacy_base_rates", "legacy_settlement_tests", "event_markets", "company_lenses"):
         if not isinstance(seed.get(k, {}), dict):
             errs.append(f"{k} must be an object")
     if errs:
@@ -1172,13 +1229,64 @@ def cmd_import_seed(a):
         if nodes[nid].get("base_rate") not in (None, clean):
             notes.append(f"NOTE legacy_base_rates {nid}: base_rate changes from {nodes[nid].get('base_rate')} to {clean}.")
         rate_writes.append((nid, clean))
+    test_writes, market_writes, lens_writes = [], [], []
+    for raw_id, row in (seed.get("legacy_settlement_tests") or {}).items():
+        nid = resolve(raw_id, nodes, aliases)
+        if nid is None:
+            errs.append(f"legacy_settlement_tests: {raw_id!r} is not a node in the graph")
+            continue
+        if nid != raw_id:
+            notes.append(f"NOTICE legacy_settlement_tests: '{raw_id}' was folded into '{nid}'; using {nid}.")
+        if not is_main_event(nodes[nid]):
+            errs.append(f"legacy_settlement_tests: {nid!r} is not a main event ({MAIN_EVENT_RULE})")
+            continue
+        text, why = (row, None) if isinstance(row, str) else ((row or {}).get("text"), (row or {}).get("replace_reason"))
+        if not filled(text) or len(str(text).strip()) < 25:
+            errs.append(f"legacy_settlement_tests {raw_id}: the test is missing or too short to settle anything")
+            continue
+        text = str(text).strip()
+        old = nodes[nid].get("settlement_test")
+        if filled(old) and old != text and not filled(why):
+            errs.append(f"legacy_settlement_tests {nid}: already has a test; replacing it needs "
+                        f'{{"text": "...", "replace_reason": "..."}}')
+            continue
+        if filled(old) and old != text:
+            notes.append(f"NOTE legacy_settlement_tests {nid}: test replaced ({why}).")
+        test_writes.append((nid, text, why if filled(old) and old != text else None))
+    for raw_id, m in (seed.get("event_markets") or {}).items():
+        nid = resolve(raw_id, nodes, aliases)
+        if nid is None:
+            errs.append(f"event_markets: {raw_id!r} is not a node in the graph")
+            continue
+        if nid != raw_id:
+            notes.append(f"NOTICE event_markets: '{raw_id}' was folded into '{nid}'; using {nid}.")
+        if not is_main_event(nodes[nid]):
+            errs.append(f"event_markets: {nid!r} is not a main event ({MAIN_EVENT_RULE})")
+            continue
+        p = market_problem(m)
+        if p:
+            errs.append(f"event_markets {raw_id}: {p}")
+            continue
+        market_writes.append((nid, {k: (m[k].strip() if isinstance(m[k], str) else m[k])
+                                    for k in MARKET_FIELDS if k in m}))
+    cos = {c["id"]: c for c in g.get("companies", [])}
+    for cid, row in (seed.get("company_lenses") or {}).items():
+        if cid not in cos:
+            errs.append(f"company_lenses: {cid!r} is not a company on the graph")
+            continue
+        p = lens_problem(row)
+        if p:
+            errs.append(f"company_lenses {cid}: {p}")
+            continue
+        lens_writes.append((cid, {k: row[k].strip() for k in ("lens", "class", "basis", "source")}))
     for n in notes:
         print(n)
     if errs:
         refuse(errs, f"{len(errs)} problem{'s' if len(errs) != 1 else ''} in {a.file}")
     live = sum(1 for q in new if q["kind"] == "live")
     print(f"SEED OK: live questions {live}, backfilled answers {len(new) - live}, events given judgment tags "
-          f"{len(tag_writes)}, events given a base rate {len(rate_writes)}.")
+          f"{len(tag_writes)}, events given a base rate {len(rate_writes)}, settlement tests {len(test_writes)}, "
+          f"market odds {len(market_writes)}, company lens marks {len(lens_writes)}.")
     if a.dry_run:
         print("DRY RUN: nothing written.")
         return 0
@@ -1193,11 +1301,29 @@ def cmd_import_seed(a):
         if nodes[nid].get("base_rate") != br:
             nodes[nid]["base_rate"] = br
             changed += 1
+    stamp_day = today().isoformat()
+    for nid, text, why in test_writes:
+        if nodes[nid].get("settlement_test") != text:
+            if why:
+                nodes[nid].setdefault("settlement_test_history", []).append(
+                    {"date": stamp_day, "old": nodes[nid]["settlement_test"], "reason": why})
+            nodes[nid]["settlement_test"] = text
+            changed += 1
+    for nid, m in market_writes:
+        if nodes[nid].get("market") != m:
+            nodes[nid]["market"] = m
+            changed += 1
+    for cid, row in lens_writes:
+        lenses = cos[cid].setdefault("lenses", {})
+        if lenses.get(row["lens"]) != row:
+            lenses[row["lens"]] = row
+            changed += 1
     if {n["id"]: n.get("odds_now") for n in g["nodes"]} != odds_before or odds_stamp(g["nodes"]) != stamp_before:
         raise SystemExit("Refusing to write: an odds value would change. This command writes structure only.")
     if changed:
         write_json(PATHS["graph"], g)
-        print(f"Graph: judgment_tags and base_rate written ({changed} node fields; structure only, no odds moved).")
+        print(f"Graph: structure written ({changed} fields: tags, base rates, tests, market odds, company lenses; "
+              f"no odds moved).")
     if new:
         print("ADDED")
         _apply_new(doc, new)

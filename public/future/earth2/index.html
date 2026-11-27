@@ -291,12 +291,15 @@ function nodeScore(n){
   const t=phxToday(), mine=scQ().filter(q=>q.event_id===n.id||q.path_node===n.id), open=mine.filter(q=>q.status==="OPEN"), done=mine.filter(q=>q.status==="SETTLED").length;
   const qList=`<div class="small" style="margin-top:4px"><span class="muted">Open questions:</span> ${open.length||"none"}${done?` <span class="muted">. answered: ${done}</span>`:""}</div>`+open.map(q=>qCard(q,t,false)).join("");
   if(!isMain(n)) return mine.length?qList:"";
-  const cor=correctedOdds(n), br=n.base_rate, jt=n.judgment_tags||[];
+  const cor=correctedOdds(n), br=n.base_rate, jt=n.judgment_tags||[], mk=n.market;
   return `<div class="small" style="margin-top:6px"><span class="muted">Scorecard:</span> ${cor?`raw odds <b>${fmt(n.odds_now)}</b>, corrected <b style="color:#ffd166">${cor.value}%</b> <span class="muted">(${cor.used.map(x=>esc(x[0])+" "+offBy(x[1])).join(", ")} points off; the raw number is what stays stored and scored)</span>`:`raw odds only. <span class="muted">No correction is active${jt.length?"; its tags need 10 answers each":""}.</span>`}</div>
    <div class="small"><span class="muted">Judgment tags:</span> ${jt.length?jt.map(x=>`<span class="pill">${esc(x)}</span>`).join(""):'<span class="muted">none yet</span>'}</div>
-   <div class="small"><span class="muted">Base rate:</span> ${br&&br.value!=null?`<b>${esc(br.value)}%</b> <span class="muted">${esc(br.reference_class||"")} . ${esc(br.source||"")}</span>`:'<span class="muted">none yet</span>'}</div>${SC?qList:""}`;
+   <div class="small"><span class="muted">Base rate:</span> ${br&&br.value!=null?`<b>${esc(br.value)}%</b> <span class="muted">${esc(br.reference_class||"")} . ${esc(br.source||"")}</span>`:'<span class="muted">none yet</span>'}</div>
+   <div class="small"><span class="muted">Settlement test:</span> ${n.settlement_test?esc(n.settlement_test):'<span class="muted">none yet</span>'}</div>
+   <div class="small"><span class="muted">Market:</span> ${mk&&mk.odds!=null?`<b>${esc(mk.odds)}%</b> vs ours <b>${fmt(n.odds_now)}</b> <span style="color:#ffd166">(gap ${gapTxt(n)})</span> <span class="muted">${esc(mk.venue)} . ${esc(mk.contract)} . as of ${esc(mk.as_of)} . ${esc(mk.match_note||"")}</span>`:'<span class="muted">no like-for-like market</span>'}</div>${SC?qList:""}`;
 }
 
+function gapTxt(n){const m=n.market;if(!m||m.odds==null||n.odds_now==null)return "";const d=Math.round((n.odds_now-m.odds)*10)/10;return (d>0?"+":"")+d+" points, ours "+(d>0?"higher":"lower");}
 // ---------- filters ----------
 function allArms(){ const a=[...((G.meta&&G.meta.arms)||[])]; for(const n of G.nodes) if(n.arm&&!a.includes(n.arm)) a.push(n.arm); return a.length?a:Object.keys(ARM_COLOR); }
 function allLayers(){ const a=[...((G.meta&&G.meta.layers)||[])]; for(const n of G.nodes) for(const L of (n.layers_hit||[])) if(!a.includes(L)) a.push(L); return a; }
@@ -494,6 +497,7 @@ function showCompany(cid){
    <div class="small">Exchange: ${esc(c.exchange||"?")}</div>
    <div class="small">Listed options: <b>${esc(c.listed_options)}</b> <span class="muted">(${esc(c.listed_options_basis||"")})</span></div>
    <div class="small">Verified: <b>${c.verified?"yes":"no"}</b> ${c.verified_source?`<span class="muted">${esc(c.verified_source)}</span>`:""}</div>
+   ${Object.values(c.lenses||{}).map(L=>`<div class="small"><span class="muted">Lens (${esc(L.lens==="commanding_heights"?"Commanding Heights":L.lens)}):</span> <b>${esc(L["class"])}</b> <span class="muted">${esc(L.basis)} . ${esc(L.source)}</span></div>`).join("")}
    ${c.collision_candidate?'<div class="small" style="color:#ffd166">Collision candidate: sits on 3 or more event nodes from 2 or more arms.</div>':""}
    <div class="small muted" style="margin-top:6px">No direction is stored. Which way it moves depends on which events fire together.</div>
    <h3>Sits on</h3><table><tr><th>Node</th><th>Arm</th><th>Odds</th><th>Materiality</th></tr>${(c.sits_on||[]).map(s=>{const n=byId[s.node]||{};return `<tr class="click" onclick="selectNode('${s.node}',true)"><td>${esc(s.node)}${s.context_only?' <span class="muted">(context)</span>':""}<div class="muted">${esc((n.label||"").slice(0,60))}</div></td><td>${esc(n.arm||"")}</td><td>${fmt(n.odds_now)}</td><td>${esc(s.materiality||"")}</td></tr>`}).join("")}</table>`;
@@ -621,6 +625,11 @@ function renderColl(){
   if(G.chains&&G.chains.length){ h+=`<h3>Compound chains</h3>`+G.chains.map(c=>`<div class="q"><b>${esc(c.name)}</b> <span class="muted">joint ${c.joint}% . hit ${c.hit}</span><div class="small">${c.legs.map(x=>`<a href="#" onclick="selectNode('${x}',true);return false" style="color:#58a6ff">${x}</a>`).join(" then ")}</div><div class="small muted">${esc(c.note||"")}</div></div>`).join(""); }
   const cc=G.companies.filter(c=>c.collision_candidate).sort((a,b)=>b.event_nodes.length-a.event_nodes.length);
   h+=`<h3>Collision candidate companies (${cc.length})</h3><div class="small muted">3 or more event nodes from 2 or more arms. No direction stored.</div><table><tr><th>Ticker</th><th>Nodes</th><th>Arms</th><th>Options</th><th>Verified</th></tr>${cc.map(c=>`<tr class="click" onclick="showCompany('${c.id}')"><td>${esc(c.ticker)}</td><td>${c.event_nodes.length}</td><td>${c.arms.length}</td><td>${esc(c.listed_options)}</td><td>${c.verified?"yes":"no"}</td></tr>`).join("")}</table>`;
+  const mg=G.nodes.filter(n=>isMain(n)&&n.market&&n.market.odds!=null&&n.odds_now!=null).sort((a,b)=>Math.abs(b.odds_now-b.market.odds)-Math.abs(a.odds_now-a.market.odds));
+  h+=`<h3>Market gaps (${mg.length} main events with a like-for-like market)</h3><div class="small muted">Ours against the market on the same event, threshold and deadline. Biggest gap first. A gap is where one side is wrong; it is not a trade by itself.</div>`+(mg.length?`<table><tr><th>Event</th><th>Ours</th><th>Market</th><th>Gap</th><th>Venue</th></tr>${mg.map(n=>`<tr class="click" onclick="selectNode('${n.id}',true)"><td>${esc(n.id)} ${esc((n.label||"").slice(0,60))}</td><td>${fmt(n.odds_now)}</td><td>${esc(n.market.odds)}%</td><td>${esc(gapTxt(n))}</td><td>${esc(n.market.venue)}</td></tr>`).join("")}</table>`:'<div class="small muted">None recorded yet.</div>');
+  const lens=G.companies.filter(c=>c.lenses&&c.lenses.commanding_heights);
+  if(lens.length){ const by=k=>lens.filter(c=>c.lenses.commanding_heights["class"]===k);
+    h+=`<h3>Commanding Heights lens (${lens.length} companies)</h3><div class="small muted">Manidis and Roberts, Oct 29, 2026. Structure only: who holds a scarce position and who sells intelligence by the unit. No direction stored, no odds changed.</div>`+["holds a chokepoint","sells intelligence by the unit"].map(k=>`<div class="small" style="margin-top:4px"><b>${k}</b> (${by(k).length}): ${by(k).map(c=>`<a href="#" onclick="showCompany('${c.id}');return false" style="color:#58a6ff">${esc(c.ticker||c.name)}</a>`).join(", ")||"none"}</div>`).join(""); }
   $("pColl").innerHTML=h;
 }
 function renderLog(){

@@ -1,0 +1,8 @@
+{
+ "_note": "Example only. Real tickets stay outside this public repo (the Project), and earth2/tickets.json is gitignored. Run: python3 earth2/ticket_guard.py PATH/TO/REGISTER.json",
+ "tickets": [
+  {"id": "T-EXAMPLE-1", "node": "J5", "ticker": "XYZ", "contract": "XYZ Jan 15 2027 50 call", "expiry": "2027-01-15", "odds_at_entry": 85, "entry_date": "2026-11-25", "status": "OPEN"},
+  {"id": "T-EXAMPLE-2", "node": "E16", "ticker": "ABC", "contract": "ABC Mar 19 2027 40 put", "expiry": "2027-03-19", "odds_at_entry": 40, "entry_date": "2026-11-25", "status": "PLANNED"},
+  {"id": "T-EXAMPLE-3", "node": "D6", "ticker": "DEF", "contract": "DEF shares", "expiry": null, "odds_at_entry": 20, "entry_date": "2026-11-25", "status": "OPEN"}
+ ]
+}

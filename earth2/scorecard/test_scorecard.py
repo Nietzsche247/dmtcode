@@ -808,6 +808,88 @@ if (!pw) { console.log(JSON.stringify({skip: 'playwright is not installed'})); p
 """
 
 
+class Test7bStructureImports(unittest.TestCase):
+    """Settlement tests, market odds and company lens marks enter through import-seed: structure only, never odds."""
+
+    def test_tests_markets_and_lenses_import_and_bad_rows_are_refused(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        stamp = g["meta"]["odds_stamp"]
+        sc = module(root)
+        main = [n for n in g["nodes"] if sc.is_main_event(n)]
+        bare = next(n for n in main if not n.get("settlement_test"))
+        tested = next(n for n in main if n.get("settlement_test"))
+        co = g["companies"][0]["id"]
+        good_mkt = {"odds": 30, "venue": "Kalshi", "contract": "KXTEST-27", "url": "https://kalshi.com/x",
+                    "as_of": day(0), "match_note": "same threshold, same deadline"}
+        lens = {"lens": "commanding_heights", "class": "holds a chokepoint", "basis": "controls a scarce position",
+                "source": "Manidis and Roberts, The Commanding Heights, Oct 29, 2026"}
+        # refused: play money as a market, a lens with direction words, replacing a test without a reason
+        out = import_seed(self, root, expect=2, event_markets={bare["id"]: dict(good_mkt, venue="Manifold")})
+        self.assertIn("forecast site, not a market", out)
+        out = import_seed(self, root, expect=2, company_lenses={co: dict(lens, basis="this name gets helped")})
+        self.assertIn("structure only", out)
+        out = import_seed(self, root, expect=2, legacy_settlement_tests={tested["id"]: "YES if a brand new rule is met by the date."})
+        self.assertIn("replace_reason", out)
+        # accepted: all three, and no odds move
+        import_seed(self, root, legacy_settlement_tests={
+            bare["id"]: "YES if the named agency reports the threshold met by the deadline. NO otherwise.",
+            tested["id"]: {"text": "YES if the reworded rule is met by the deadline. NO otherwise.", "replace_reason": "test wording fix"}},
+            event_markets={bare["id"]: good_mkt}, company_lenses={co: lens})
+        g2 = load(root, GRAPH)
+        nodes = {n["id"]: n for n in g2["nodes"]}
+        self.assertEqual(g2["meta"]["odds_stamp"], stamp)
+        self.assertEqual(nodes[bare["id"]]["market"]["odds"], 30)
+        self.assertTrue(nodes[bare["id"]]["settlement_test"].startswith("YES if the named agency"))
+        self.assertEqual(nodes[tested["id"]]["settlement_test_history"][0]["old"], tested["settlement_test"])
+        self.assertEqual(next(c for c in g2["companies"] if c["id"] == co)["lenses"]["commanding_heights"]["class"],
+                         "holds a chokepoint")
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        # a hand edit that puts play money in the market column fails the validator
+        nodes[bare["id"]]["market"]["venue"] = "Metaculus"
+        save(root, GRAPH, g2)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertNotEqual(code, 0, out)
+        self.assertIn("forecast site", out)
+
+
+class Test7cTicketGuard(unittest.TestCase):
+    """The ticket guard reads the graph and a private register, warns, and writes nothing."""
+
+    def test_guard_rules(self):
+        tmp = tempfile.mkdtemp()
+        g = load(REPO, GRAPH)
+        nodes = {n["id"]: n for n in g["nodes"]}
+        sched = next(n for n in g["nodes"] if n.get("date_state") == "SCHEDULED" and n.get("window_peak")
+                     and n.get("odds_now") is not None and 5 < n["odds_now"] < 95)
+        peak = dt.date.fromisoformat(sched["window_peak"])
+        reg = {"tickets": [
+            {"id": "A", "node": sched["id"], "expiry": (peak + dt.timedelta(days=30)).isoformat(),
+             "odds_at_entry": sched["odds_now"], "status": "OPEN"},
+            {"id": "B", "node": sched["id"], "expiry": (peak + dt.timedelta(days=5)).isoformat(),
+             "odds_at_entry": sched["odds_now"] + 12, "status": "OPEN"},
+            {"id": "C", "node": "E16", "expiry": None, "odds_at_entry": nodes["D4"]["odds_now"], "status": "OPEN"},
+            {"id": "D", "node": "NOT-A-NODE", "expiry": None, "status": "OPEN"},
+            {"id": "E", "node": sched["id"], "expiry": "2000-01-01", "status": "CLOSED"}]}
+        path = os.path.join(tmp, "reg.json")
+        with open(path, "w") as f:
+            json.dump(reg, f)
+        before = sha(REPO, GRAPH)
+        r = subprocess.run([sys.executable, os.path.join(REPO, "earth2", "ticket_guard.py"), path, "--json"],
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+        self.assertEqual(r.returncode, 1, r.stdout)
+        rows = {x["id"]: x for x in json.loads(r.stdout)["rows"]}
+        self.assertNotIn("E", rows)  # closed tickets are skipped
+        self.assertEqual(rows["A"]["level"], "OK", rows["A"])  # fixed date plus three weeks is enough
+        self.assertTrue(any("three weeks" in w for w in rows["B"]["warns"]), rows["B"])
+        self.assertTrue(any("odds fell" in w for w in rows["B"]["warns"]), rows["B"])
+        self.assertEqual((rows["C"]["node"], rows["C"]["level"]), ("D4", "OK"))
+        self.assertIn("E16 was folded into D4", rows["C"]["notes"])
+        self.assertEqual(rows["D"]["level"], "WARN")
+        self.assertEqual(sha(REPO, GRAPH), before)
+
+
 class Test8Page(unittest.TestCase):
     def script(self):
         with open(os.path.join(REPO, "public/future/earth2/index.html"), encoding="utf-8") as f:
