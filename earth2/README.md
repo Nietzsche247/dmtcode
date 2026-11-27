@@ -56,7 +56,7 @@ The tags say which kind of judgment a question tests:
 - `brakes` . did someone step in to stop or soften it (rescue, extension, waiver, backstop).
 - `actor` . did a government or company do the dramatic thing or the routine thing.
 - `market` . Earth2's odds differ from a recorded market number; who was right. Needs `market`.
-- `pace` . did it arrive sooner or larger than the recorded consensus (analyst estimates, an agency forecast, a market-implied date). Needs `consensus`. Write it so YES means sooner or larger.
+- `pace` . did it arrive sooner or larger than the recorded consensus (analyst estimates, an agency forecast, a market-implied date). Needs `consensus`. Write it so the script side (`script_side`) is the answer that means sooner or larger than the consensus.
 
 `lock` is a sha256 over id, event_id, text, test, source, tags, script_side, written, due, odds_locked, market.odds and consensus.value. Change any of them by hand and the validator and the engine refuse to run.
 
@@ -98,7 +98,7 @@ A seed file for `import-seed` is `{"questions": [...], "backfilled": [...], "eve
 - p = odds_locked / 100, o = 1 for YES. Brier = mean((p - o)^2). It is shown beside the coin flip, 0.25, and, on the questions that carry market odds, beside the market's Brier. Lower is better.
 - Script side: p_s = p when `script_side` is YES, else 1 - p; o_s the same way.
 - Per tag and per arm: n, mean signed error in points = mean(p_s - o_s) x 100, Brier, and active = n >= 10. A plus error means Earth2 rates its own script too high.
-- For `pace`: the share that arrived sooner or larger than consensus (answered YES), overall and per arm.
+- For `pace`: the share that arrived sooner or larger than consensus, overall and per arm. A pace answer counts as sooner when the outcome equals the question's `script_side`, so a NO-side question that comes in NO counts and one that comes in YES does not.
 - Corrected odds for a main event = raw `odds_now` minus the mean signed error of its active `judgment_tags`, held between 1 and 99. The page and the `cascade.py` output work it out on the fly. `odds_now` is never overwritten with a corrected number; the raw number is what keeps getting scored.
 
 ## The lock

@@ -9,6 +9,10 @@ they are installed, and is skipped with a plain message when they are not.
 
 Every test works on a temporary copy of the repo's Earth2 files. The repo files are never written;
 the last test proves it by comparing every file with its hash from the start of the run.
+
+The tests do not depend on what the live scorecard holds. Each temp copy is reset to a blank state first:
+no questions, no misses, no judgment_tags or base_rate on any node, a fresh odds stamp, and a legacy list
+rebuilt from the copied graph. Only the "real files" tests (Test9) read the live, populated files as they are.
 """
 import datetime as dt
 import functools
@@ -36,9 +40,11 @@ CASCADE = "earth2/cascade.py"
 VALIDATE = "earth2/validate_graph.py"
 MERGE = "earth2/deepdives/merge_nodes.py"
 TEMPLATE = "earth2/templates/arm_template.json"
-COPY = [SC, CASCADE, VALIDATE, MERGE, QUESTIONS, "earth2/scorecard/misses.json", "earth2/scorecard/corrections.json",
-        "earth2/scorecard/legacy_main_events.json", TEMPLATE, "earth2/templates/README.md", GRAPH, PUBLIC,
-        "public/future/earth2/index.html"]
+MISSES = "earth2/scorecard/misses.json"
+CORRECTIONS = "earth2/scorecard/corrections.json"
+LEGACY = "earth2/scorecard/legacy_main_events.json"
+COPY = [SC, CASCADE, VALIDATE, MERGE, QUESTIONS, MISSES, CORRECTIONS, LEGACY, TEMPLATE, "earth2/templates/README.md",
+        GRAPH, PUBLIC, "public/future/earth2/index.html"]
 TODAY = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=7)).date()  # America/Phoenix
 _n = itertools.count(1)
 
@@ -61,7 +67,8 @@ def tree_hashes():
 START = tree_hashes()
 
 
-def fresh(case, vendor=False):
+def fresh(case, vendor=False, live=False):
+    """A temp copy of the Earth2 files. Reset to a blank state unless live is true (the real-files tests)."""
     root = tempfile.mkdtemp(prefix="earth2_test_")
     case.addCleanup(shutil.rmtree, root, True)
     for rel in COPY:
@@ -69,7 +76,26 @@ def fresh(case, vendor=False):
         shutil.copy2(os.path.join(REPO, rel), os.path.join(root, rel))
     if vendor:
         shutil.copytree(os.path.join(REPO, "public/future/earth2/vendor"), os.path.join(root, "public/future/earth2/vendor"))
+    if not live:
+        blank(root)
     return root
+
+
+def blank(root):
+    """The same starting point whatever the repo holds: an empty scorecard on an untagged, freshly stamped graph."""
+    mod = module(root)
+    g = load(root, GRAPH)
+    for n in g["nodes"]:
+        n.pop("judgment_tags", None)
+        n.pop("base_rate", None)
+    g["meta"]["odds_stamp"] = mod.odds_stamp(g["nodes"])
+    save(root, GRAPH, g)
+    save(root, QUESTIONS, {"version": 1, "questions": []})
+    save(root, MISSES, {"version": 1, "misses": []})
+    events = {n["id"]: mod.node_gaps(n) for n in sorted(g["nodes"], key=lambda n: n["id"]) if mod.is_main_event(n)}
+    save(root, LEGACY, {"version": 1, "as_of": day(0), "what": "test copy: every main event in the copied graph",
+                        "gap_fields": mod.GAP_FIELDS, "events": events})
+    mod.write_score([], quiet=True)
 
 
 def run(root, script, *args, env=None):
@@ -102,7 +128,20 @@ def module(root):
     return mod
 
 
-def question(event="27-5", due=None, written=None, odds=40, tags=("timing",), side="YES", **kw):
+def live_mid(n, low=10, high=80):
+    """A node that is live with odds in the middle, so a test can move it either way."""
+    o = n.get("odds_now")
+    return o is not None and low <= o <= high and not str(n.get("status", "")).upper().startswith("FIRED")
+
+
+with open(os.path.join(REPO, GRAPH), encoding="utf-8") as _f:
+    _REAL = json.load(_f)
+_ENDS = [n["id"] for n in _REAL["nodes"] if n.get("type") == "END EVENT" and live_mid(n, 20, 90)]
+EVENT = "27-5" if "27-5" in _ENDS else _ENDS[0]  # a live end event; the tests hang their questions on it
+del _REAL, _f
+
+
+def question(event=EVENT, due=None, written=None, odds=40, tags=("timing",), side="YES", **kw):
     q = {"event_id": event, "path_node": None, "text": f"Test question {next(_n)}: did the dated step arrive?",
          "test": "YES when the named source shows it on or before the due date.", "source": "Test source",
          "tags": list(tags), "script_side": side, "due": due or day(10), "odds_locked": odds,
@@ -113,7 +152,7 @@ def question(event="27-5", due=None, written=None, odds=40, tags=("timing",), si
     return q
 
 
-def backfilled(outcome, odds, side="YES", tags=("timing",), event="27-5", **kw):
+def backfilled(outcome, odds, side="YES", tags=("timing",), event=EVENT, **kw):
     q = question(event=event, due=day(-20), odds=odds, tags=tags, side=side, kind="backfilled")
     q.update({"outcome": outcome, "settled_as_of": day(-21), "evidence": "The source showed it.",
               "evidence_source": "Test source", "odds_date": day(-30)})
@@ -203,7 +242,7 @@ class Test1Lock(unittest.TestCase):
 class Test2LockedFields(unittest.TestCase):
     def test_hand_edits_to_a_question_fail_the_validator(self):
         root = fresh(self)
-        base = ["add", "--event", "27-5", "--text", "Will the market number hold?", "--test", "YES when it holds.",
+        base = ["add", "--event", EVENT, "--text", "Will the market number hold?", "--test", "YES when it holds.",
                 "--source", "Test source", "--script-side", "YES", "--due", day(10), "--odds", "40", "--odds-basis", "fixture"]
         code, out = run(root, SC, *base, "--tags", "market")
         self.assertEqual(code, 2, out)
@@ -219,7 +258,7 @@ class Test2LockedFields(unittest.TestCase):
         self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)
         good = load(root, QUESTIONS)
         self.assertEqual(good["questions"][0]["tags"], ["timing", "market"])
-        self.assertEqual(good["questions"][0]["arm"], next(n["arm"] for n in load(root, GRAPH)["nodes"] if n["id"] == "27-5"))
+        self.assertEqual(good["questions"][0]["arm"], next(n["arm"] for n in load(root, GRAPH)["nodes"] if n["id"] == EVENT))
 
         def edited(change):
             doc = json.loads(json.dumps(good))
@@ -268,15 +307,16 @@ class Test3OddsStamp(unittest.TestCase):
         root = fresh(self)
         g = load(root, GRAPH)
         stamp0 = g["meta"]["odds_stamp"]
-        node = next(n for n in g["nodes"] if n["id"] == "D4")
+        node, other = [n for n in g["nodes"] if n.get("model_layer") == "board" and live_mid(n)][:2]
+        edited, move = node["id"], "%s=%s" % (other["id"], other["odds_now"] + 7)
         node["odds_now"] = node["odds_now"] + 5
         save(root, GRAPH, g)
         code, out = run(root, VALIDATE, GRAPH)
         self.assertEqual(code, 1, out)
         self.assertIn("Odds were edited outside the engine", out)
-        self.assertIn("D4", out)
+        self.assertIn(edited, out)
         self.assertIn("--restamp --reason", out)
-        code, out = run(root, CASCADE, GRAPH, "--set", "F2=50", "--date", day(0), "--reason", "test", "--dry-run")
+        code, out = run(root, CASCADE, GRAPH, "--set", move, "--date", day(0), "--reason", "test", "--dry-run")
         self.assertEqual(code, 4, out)
         self.assertIn("CASCADE REFUSED", out)
         code, out = run(root, MERGE, GRAPH, TEMPLATE, "--dry-run")
@@ -286,21 +326,21 @@ class Test3OddsStamp(unittest.TestCase):
         self.assertNotEqual(code, 0, out)
         self.assertIn("--reason", out)
         log_before = len(g["cascade_log"])
-        code, out = run(root, CASCADE, GRAPH, "--restamp", "--reason", "test repair of D4")
+        code, out = run(root, CASCADE, GRAPH, "--restamp", "--reason", "test repair of one node")
         self.assertEqual(code, 0, out)
         g2 = load(root, GRAPH)
         entry = g2["cascade_log"][-1]
         self.assertEqual(len(g2["cascade_log"]), log_before + 1)
-        self.assertEqual((entry["kind"], entry["reason"], entry["stamp_before"]), ("restamp", "test repair of D4", stamp0))
+        self.assertEqual((entry["kind"], entry["reason"], entry["stamp_before"]), ("restamp", "test repair of one node", stamp0))
         self.assertEqual(entry["stamp_after"], g2["meta"]["odds_stamp"])
-        self.assertIn("D4", entry["odds_not_matching_history"])
+        self.assertIn(edited, entry["odds_not_matching_history"])
         self.assertNotEqual(g2["meta"]["odds_stamp"], stamp0)
         self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)
         code, out = run(root, CASCADE, GRAPH, "--restamp", "--reason", "again")
         self.assertIn("already matches", out)
         self.assertEqual(len(load(root, GRAPH)["cascade_log"]), log_before + 1)
         # a real run stamps the graph itself
-        code, out = run(root, CASCADE, GRAPH, "--set", "F2=50", "--date", day(0), "--reason", "test event", "--source", "test")
+        code, out = run(root, CASCADE, GRAPH, "--set", move, "--date", day(0), "--reason", "test event", "--source", "test")
         self.assertEqual(code, 0, out)
         g3 = load(root, GRAPH)
         self.assertNotEqual(g3["meta"]["odds_stamp"], g2["meta"]["odds_stamp"])
@@ -427,10 +467,26 @@ class Test5Scoring(unittest.TestCase):
         self.assertIsNone(self.sc.corrected_odds(dict(node, type="LIKELY PRECURSOR"), s["tags"]))
         self.assertIsNone(self.sc.corrected_odds(dict(node, judgment_tags=["brakes"]), s["tags"]))
 
+    def test_pace_share_follows_the_script_side(self):
+        r, score = self.row, self.sc.compute_score
+        # script side NO: a NO answer is the script's way, so it counts as sooner; a YES answer does not
+        self.assertEqual(score([r(30, "NO", side="NO", tags=("pace",))])["pace"]["share_sooner"], 100.0)
+        self.assertEqual(score([r(30, "YES", side="NO", tags=("pace",))])["pace"]["share_sooner"], 0.0)
+        # script side YES: the other way round
+        self.assertEqual(score([r(30, "YES", side="YES", tags=("pace",))])["pace"]["share_sooner"], 100.0)
+        self.assertEqual(score([r(30, "NO", side="YES", tags=("pace",))])["pace"]["share_sooner"], 0.0)
+        mixed = score([r(30, "NO", side="NO", tags=("pace",), arm="ARM A"), r(30, "YES", side="NO", tags=("pace",), arm="ARM A"),
+                       r(60, "YES", side="YES", tags=("pace",), arm="ARM B"), r(60, "YES", tags=("timing",), arm="ARM B")])["pace"]
+        self.assertEqual((mixed["n"], mixed["share_sooner"]), (3, 66.7))
+        self.assertEqual(mixed["by_arm"], {"ARM A": {"n": 2, "share_sooner": 50.0}, "ARM B": {"n": 1, "share_sooner": 100.0}})
+        self.assertIn("script side", mixed["rule"])
+
     def test_cli_score_and_cascade_show_corrected_odds(self):
         root = self.root
-        import_seed(self, root, backfilled=timing_ten(), event_tags={"27-5": ["timing", "brakes"]},
-                    legacy_base_rates={"27-5": {"value": 15, "reference_class": "test class", "source": "test count"}})
+        stamp_before = load(root, GRAPH)["meta"]["odds_stamp"]
+        legacy_before = load(root, LEGACY)["events"]
+        import_seed(self, root, backfilled=timing_ten(), event_tags={EVENT: ["timing", "brakes"]},
+                    legacy_base_rates={EVENT: {"value": 15, "reference_class": "test class", "source": "test count"}})
         code, out = run(root, SC, "score")
         self.assertEqual(code, 0, out)
         self.assertIn("timing    10    +12.0   0.2600  active", out)
@@ -440,25 +496,34 @@ class Test5Scoring(unittest.TestCase):
         self.assertTrue(all(r["kind"] == "backfilled" and r["status"] == "SETTLED" for r in pub["questions"]))
         self.assertEqual(load(root, QUESTIONS)["questions"][0]["odds_date"], day(-30))
         g = load(root, GRAPH)
-        node = next(n for n in g["nodes"] if n["id"] == "27-5")
+        node = next(n for n in g["nodes"] if n["id"] == EVENT)
         self.assertEqual(node["judgment_tags"], ["timing", "brakes"])
         self.assertEqual(node["base_rate"], {"value": 15, "reference_class": "test class", "source": "test count"})
-        self.assertEqual(g["meta"]["odds_stamp"], START_STAMP)  # structure only: no odds moved
+        self.assertEqual(g["meta"]["odds_stamp"], stamp_before)  # structure only: no odds moved
         old = {n["id"]: n.get("odds_now") for n in load(REPO, GRAPH)["nodes"]}
         self.assertEqual({n["id"]: n.get("odds_now") for n in g["nodes"]}, old)
-        legacy = load(root, "earth2/scorecard/legacy_main_events.json")
-        self.assertEqual(len(legacy["events"]), 130)
-        self.assertEqual(legacy["events"]["27-5"], [g for g in START_LEGACY["events"]["27-5"] if g == "settlement_test"])
+        legacy = load(root, LEGACY)
+        self.assertEqual(sorted(legacy["events"]), sorted(legacy_before))
+        self.assertEqual(legacy_before[EVENT][-2:], ["base_rate", "judgment_tags"])
+        self.assertEqual(legacy["events"][EVENT], [x for x in legacy_before[EVENT] if x == "settlement_test"])
         self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)
-        d4 = next(n for n in g["nodes"] if n["id"] == "D4")
-        code, out = run(root, CASCADE, GRAPH, "--set", "D4=%s" % (d4["odds_now"] + 10), "--date", day(0), "--reason", "test", "--dry-run")
-        self.assertEqual(code, 0, out)
-        self.assertIn("CORRECTED ODDS", out)
-        m = re.search(r"^\s+27-5\s+raw\s+([\d.]+)\s+corrected\s+([\d.]+)\s+\(timing \+12\.0 points off\)", out, re.M)
+        # push the event up through any live node that carries a move into it, and read its corrected line
+        by = {n["id"]: n for n in g["nodes"]}
+        pushers = sorted(((l["strength"], l["source"]) for l in g["links"] if l["target"] == EVENT and not l.get("display_only")
+                          and l.get("strength") and l.get("sign", 1) > 0 and live_mid(by[l["source"]], 5, 85)), reverse=True)
+        self.assertTrue(pushers, "no live node pushes " + EVENT)
+        m = None
+        for _, src in pushers:
+            code, out = run(root, CASCADE, GRAPH, "--set", "%s=%s" % (src, by[src]["odds_now"] + 10), "--date", day(0), "--reason", "test", "--dry-run")
+            self.assertEqual(code, 0, out)
+            self.assertIn("CORRECTED ODDS", out)
+            m = re.search(r"^\s+" + re.escape(EVENT) + r"\s+raw\s+([\d.]+)\s+corrected\s+([\d.]+)\s+\(timing \+12\.0 points off\)", out, re.M)
+            if m:
+                break
         self.assertTrue(m, out)
         raw, cor = float(m.group(1)), float(m.group(2))
         self.assertGreater(raw, node["odds_now"])
-        self.assertEqual(cor, self.sc.half_up(max(1.0, raw - 12.0), 1))
+        self.assertEqual(cor, self.sc.half_up(min(99.0, max(1.0, raw - 12.0)), 1))
         self.assertEqual(load(root, GRAPH)["nodes"], g["nodes"])  # the dry run and the corrected number wrote nothing
 
 
@@ -604,9 +669,9 @@ class Test6Gate(unittest.TestCase):
 
     def test_legacy_list_only_shrinks_and_a_lost_field_fails(self):
         root = fresh(self)
-        legacy = load(root, "earth2/scorecard/legacy_main_events.json")
+        legacy = load(root, LEGACY)
         count = len(legacy["events"])
-        self.assertEqual(count, 130)
+        self.assertEqual(count, sum(1 for n in load(root, GRAPH)["nodes"] if module(root).is_main_event(n)))
         has_test = next(k for k, v in legacy["events"].items() if "settlement_test" not in v)
         g = load(root, GRAPH)
         good = json.loads(json.dumps(g))
@@ -649,7 +714,7 @@ class Test7FoldedIds(unittest.TestCase):
         sc = module(root)
         self.assertNotIn("E16", nodes)
         self.assertTrue(sc.is_main_event(nodes["D4"]))  # a board row
-        self.assertTrue(sc.is_main_event(nodes["27-5"]))  # an end event
+        self.assertTrue(sc.is_main_event(nodes[EVENT]))  # an end event
         self.assertTrue(nodes["DA1"].get("board_reference"))
         self.assertFalse(sc.is_main_event(nodes["DA1"]))  # a tree trigger that points at a board row
         base = ["--text", "Did the 10-year close above 5.50% by the due date?", "--test", "YES when DGS10 closes above 5.50.",
@@ -663,11 +728,11 @@ class Test7FoldedIds(unittest.TestCase):
         self.assertEqual((q["event_id"], q["path_node"], q["arm"]), ("D4", None, nodes["D4"]["arm"]))
         # and as path_node
         base[1] = "Did the 10-year close above 5.50% on the way to the major?"
-        code, out = run(root, SC, "add", "--event", "27-5", "--path-node", "E16", *base)
+        code, out = run(root, SC, "add", "--event", EVENT, "--path-node", "E16", *base)
         self.assertEqual(code, 0, out)
         self.assertIn("path_node 'E16' was folded into 'D4'", out)
         q = by_id(root, "Q-0002")
-        self.assertEqual((q["event_id"], q["path_node"]), ("27-5", "D4"))
+        self.assertEqual((q["event_id"], q["path_node"]), (EVENT, "D4"))
         # a tree trigger with a board_reference is not a main event: refused as event_id, with what to do instead
         base[1] = "Did the first export step arrive by the due date?"
         code, out = run(root, SC, "add", "--event", "DA1", *base)
@@ -682,13 +747,13 @@ class Test7FoldedIds(unittest.TestCase):
         q = by_id(root, "Q-0003")
         self.assertEqual((q["event_id"], q["path_node"]), ("T1", "DA1"))
         # an old id folded into an end event is accepted and stored under the survivor
-        g["merges"][-1]["alias_map"]["OLD-275"] = {"survivor": "27-5", "reason": "test fold", "date": day(0)}
+        g["merges"][-1]["alias_map"]["OLD-275"] = {"survivor": EVENT, "reason": "test fold", "date": day(0)}
         save(root, GRAPH, g)
         base[1] = "Did the second dated step arrive by the due date?"
         code, out = run(root, SC, "add", "--event", "OLD-275", *base)
         self.assertEqual(code, 0, out)
-        self.assertIn("'OLD-275' was folded into '27-5'", out)
-        self.assertEqual(by_id(root, "Q-0004")["event_id"], "27-5")
+        self.assertIn("'OLD-275' was folded into '%s'" % EVENT, out)
+        self.assertEqual(by_id(root, "Q-0004")["event_id"], EVENT)
         self.assertEqual(run(root, SC, "add", "--event", "NOPE-1", *base)[0], 2)
         out = import_seed(self, root, expect=2, questions=[question(event="DA1")], event_tags={"DA1": ["timing"]})
         self.assertIn("questions[1]: event_id 'DA1' is not a main event", out)
@@ -783,16 +848,15 @@ class Test8Page(unittest.TestCase):
             f.write(copy.group(0) + "\nconst g=JSON.parse(require('fs').readFileSync(process.argv[2],'utf8'));"
                     "const by={};for(const n of g.nodes)by[n.id]=n;"
                     "console.log(JSON.stringify({count:g.nodes.filter(isMain).length,ids:g.nodes.filter(isMain).map(n=>n.id).sort(),"
-                    "d4:isMain(by['D4']),major:isMain(by['27-5']),trigger:isMain(by['DA1'])}));")
-        r = subprocess.run([NODE, os.path.join(root, "main.js"), os.path.join(root, GRAPH)], stdout=subprocess.PIPE,
+                    "d4:isMain(by['D4']),major:isMain(by[process.argv[3]]),trigger:isMain(by['DA1'])}));")
+        r = subprocess.run([NODE, os.path.join(root, "main.js"), os.path.join(root, GRAPH), EVENT], stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT, universal_newlines=True)
         self.assertEqual(r.returncode, 0, r.stdout)
         page = json.loads(r.stdout)
         py_ids = sorted(n["id"] for n in load(root, GRAPH)["nodes"] if sc.is_main_event(n))
         self.assertEqual(page["count"], len(py_ids))
         self.assertEqual(page["ids"], py_ids)
-        self.assertEqual(len(START_LEGACY["events"]), 130)  # the legacy list is fixed; the graph may grow past it
-        self.assertGreaterEqual(len(py_ids), 1)
+        self.assertEqual(py_ids, sorted(load(root, LEGACY)["events"]))  # the blank copy lists every main event
         self.assertEqual((page["d4"], page["major"], page["trigger"]), (True, True, False))
         self.assertEqual([sc.stamp_token(x) for x in (None, 0, 37, 37.1, 37.14, 37.16, 64.6, 100)], ["x", "0", "370", "371", "371", "372", "646", "1000"])
 
@@ -803,8 +867,8 @@ class Test8Page(unittest.TestCase):
                 question(due=day(2), tags=("actor",)), question(written=day(-10), due=day(-2), tags=("brakes",)),
                 question(due=day(7), tags=("actor",)),
                 question(due=day(12), tags=("pace",), path_node="D4", consensus={"value": "2027-06-30", "source": "Test survey", "as_of": day(0)})]
-        import_seed(self, root, questions=live, backfilled=timing_ten(), event_tags={"27-5": ["timing", "brakes"]},
-                    legacy_base_rates={"27-5": {"value": 15, "reference_class": "test class", "source": "test count"}})
+        import_seed(self, root, questions=live, backfilled=timing_ten(), event_tags={EVENT: ["timing", "brakes"]},
+                    legacy_base_rates={EVENT: {"value": 15, "reference_class": "test class", "source": "test count"}})
         steps = [("settle", "Q-0004", "--outcome", "YES", "--as-of", day(0), "--source", "Test source", "--evidence", "It arrived."),
                  ("settle", "Q-0005", "--outcome", "NO", "--as-of", day(-2), "--source", "Test source", "--evidence", "It did not."),
                  ("void", "Q-0006", "--reason", "The series was discontinued."),
@@ -819,6 +883,9 @@ class Test8Page(unittest.TestCase):
     def test_page_loads_with_no_scorecard_an_empty_one_and_a_full_one(self):
         chrome = next((p for p in (shutil.which(x) for x in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser")) if p), "")
         root = fresh(self, vendor=True)
+        blank_graph = load(root, GRAPH)
+        n_nodes = len(blank_graph["nodes"])
+        n_main = sum(1 for n in blank_graph["nodes"] if module(root).is_main_event(n))
         site = os.path.join(root, "site")
         src = os.path.join(root, "public/future/earth2")
 
@@ -843,7 +910,7 @@ class Test8Page(unittest.TestCase):
         self.addCleanup(server.server_close)
         self.addCleanup(server.shutdown)
         shot = os.environ.get("EARTH2_TEST_SHOTS", "")
-        cases = [{"name": "a_none"}, {"name": "b_empty"}, {"name": "c_full", "node": "27-5"}, {"name": "d_edited", "node": "D4"}]
+        cases = [{"name": "a_none"}, {"name": "b_empty"}, {"name": "c_full", "node": EVENT}, {"name": "d_edited", "node": "D4"}]
         if shot:
             for c in cases:
                 c["shot"] = os.path.join(shot, c["name"] + ".png")
@@ -861,7 +928,7 @@ class Test8Page(unittest.TestCase):
         for name, c in res.items():
             self.assertEqual(c["errors"], [], name)
             self.assertEqual(c["consoleErrors"], [], name)
-            self.assertIn("656 nodes", c["status"], name)
+            self.assertIn("%d nodes" % n_nodes, c["status"], name)
             self.assertEqual(c["viewWidth"], 380)
             self.assertLessEqual(c["docWidth"], 380, name)
             self.assertLessEqual(c["bodyOverflow"], 1, name)
@@ -872,24 +939,24 @@ class Test8Page(unittest.TestCase):
         self.assertIn("no questions yet", b["summary"])
         self.assertIn("No answers yet", b["body"])
         self.assertIn("needs 10 more", b["body"])
-        self.assertIn("130 main events are from before the gate", b["body"])
-        self.assertEqual(b["mainCount"], sum(1 for n in load(REPO, GRAPH)["nodes"] if module(root).is_main_event(n)))
+        self.assertIn("%d main events are from before the gate" % n_main, b["body"])
+        self.assertEqual(b["mainCount"], n_main)
         self.assertFalse(b["openByDefault"])
-        self.assertEqual(b["stamp"], START_STAMP)
+        self.assertEqual(b["stamp"], blank_graph["meta"]["odds_stamp"])
         # the full fixture: overdue in red and open by default, counts, tag table, settle command, misses
         self.assertIn("1 overdue", c["summary"])
         self.assertTrue(c["openByDefault"])
         self.assertEqual(c["badTiles"], ["1\nOVERDUE"])
         for text in ("OVERDUE", "OPEN", "ANSWERED ON TIME", "ANSWERED LATE", "DEFERRED", "VOID", "BACKFILLED", "Coin flip 0.25",
                      "Q-0001", "3 days late", "active", "needs 9 more", "A big event with no node", "CYBER 1",
-                     "Still missing: settlement test", "base rate 129", "judgment tags 129"):
+                     "Still missing: settlement test", "base rate %d" % (n_main - 1), "judgment tags %d" % (n_main - 1)):
             self.assertIn(text, c["body"], text)
         self.assertTrue(any(x.startswith("python3 earth2/scorecard.py settle Q-0001 --outcome YES_OR_NO --as-of " + day(-3)) for x in c["cmds"]), c["cmds"])
         self.assertEqual(c["warnClass"], "")
         self.assertEqual(pub["tags"]["timing"]["mean_signed_error"], 12.0)
-        raw = next(n for n in load(REPO, GRAPH)["nodes"] if n["id"] == "27-5")["odds_now"]
+        raw = next(n for n in blank_graph["nodes"] if n["id"] == EVENT)["odds_now"]
         self.assertIn("corrected", c["node"])
-        self.assertIn("corrected %g%%" % module(root).half_up(max(1.0, raw - 12.0), 1), c["node"])
+        self.assertIn("corrected %g%%" % module(root).half_up(min(99.0, max(1.0, raw - 12.0)), 1), c["node"])
         for text in ("timing +12.0", "Judgment tags:", "Base rate:", "15%", "test class", "Open questions: 4", "answered: 12", "Q-0001"):
             self.assertIn(text, c["node"], text)
         self.assertEqual(c["nodeTooWide"], 0)
@@ -899,22 +966,54 @@ class Test8Page(unittest.TestCase):
         self.assertIn("Q-0007", d["node"])
 
 
-class Test9RepoUntouched(unittest.TestCase):
-    def test_zz_the_repo_files_were_not_written(self):
-        self.assertEqual(tree_hashes(), START)
+class Test9RealFiles(unittest.TestCase):
+    """The only tests that read the live, populated files as they are (through an untouched copy)."""
 
-    def test_real_graph_passes_with_the_real_files(self):
-        root = fresh(self)
+    def test_real_files_pass_the_validator_and_hold_their_locks(self):
+        root = fresh(self, live=True)
+        for rel in COPY:
+            self.assertEqual(sha(root, rel), sha(REPO, rel), rel)
+        sc = module(root)
+        g = load(root, GRAPH)
+        doc, problem = sc.load_questions()
+        self.assertIsNone(problem)
+        late = sc.overdue(doc["questions"])
+        self.assertEqual([q["id"] for q in late], [],
+                         "The repo has overdue questions. Run python3 earth2/scorecard.py due and settle them.")
+        for q in doc["questions"]:
+            self.assertEqual(q["lock"], sc.lock_hash(q), "%s: a locked field was changed by hand" % q.get("id"))
+        self.assertEqual(sc.check_questions(doc, g), [])
+        self.assertEqual(sc.sync_problems(doc["questions"]), [])
+        self.assertEqual(g["meta"].get("odds_stamp"), sc.odds_stamp(g["nodes"]))
         code, out = run(root, VALIDATE, GRAPH)
         self.assertEqual(code, 0, out)
         self.assertIn("ALL CHECKS PASS", out)
-        self.assertEqual(load(root, GRAPH)["meta"]["odds_stamp"], module(root).odds_stamp(load(root, GRAPH)["nodes"]))
+        self.assertEqual(run(root, CASCADE, GRAPH, "--collisions")[0], 0)  # the lock is not tripped today
+        code, out = run(root, SC, "due")
+        self.assertEqual(code, 0, out)
+        self.assertIn("Nothing is overdue.", out)
+        for rel in COPY:
+            self.assertEqual(sha(root, rel), sha(REPO, rel), rel + " was written by a read-only command")
 
+    @unittest.skipUnless(NODE, "node is not installed, so the page's count of main events was not checked")
+    def test_real_graph_main_events_python_and_page_agree(self):
+        root = fresh(self, live=True)
+        with open(os.path.join(REPO, "public/future/earth2/index.html"), encoding="utf-8") as f:
+            copy = re.search(r"const isMain=[^;]*;", f.read())
+        self.assertTrue(copy, "isMain not found in the page")
+        with open(os.path.join(root, "main.js"), "w", encoding="utf-8") as f:
+            f.write(copy.group(0) + "\nconst g=JSON.parse(require('fs').readFileSync(process.argv[2],'utf8'));"
+                    "console.log(JSON.stringify(g.nodes.filter(isMain).map(n=>n.id).sort()));")
+        r = subprocess.run([NODE, os.path.join(root, "main.js"), os.path.join(REPO, GRAPH)], stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT, universal_newlines=True)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        sc = module(root)
+        py_ids = sorted(n["id"] for n in load(REPO, GRAPH)["nodes"] if sc.is_main_event(n))
+        self.assertEqual(json.loads(r.stdout), py_ids)
+        self.assertGreaterEqual(len(py_ids), 130)
 
-with open(os.path.join(REPO, GRAPH), encoding="utf-8") as _f:
-    START_STAMP = json.load(_f)["meta"]["odds_stamp"]
-with open(os.path.join(REPO, "earth2/scorecard/legacy_main_events.json"), encoding="utf-8") as _f:
-    START_LEGACY = json.load(_f)
+    def test_zz_the_repo_files_were_not_written(self):
+        self.assertEqual(tree_hashes(), START)
 
 
 def tearDownModule():

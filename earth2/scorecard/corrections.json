@@ -4,10 +4,10 @@
  "rule": "corrected odds = raw odds_now minus the mean signed error of the event's active judgment tags, held between 1 and 99. odds_now is never overwritten; the raw number keeps getting scored.",
  "min_n": 10,
  "overall": {
-  "n": 0,
-  "mean_signed_error": null,
-  "brier": null,
-  "backfilled": 0,
+  "n": 2,
+  "mean_signed_error": 40.0,
+  "brier": 0.16,
+  "backfilled": 2,
   "coin_flip": 0.25
  },
  "market": {
@@ -20,20 +20,20 @@
  },
  "tags": {
   "timing": {
-   "n": 0,
-   "mean_signed_error": null,
-   "brier": null,
+   "n": 1,
+   "mean_signed_error": 40.0,
+   "brier": 0.16,
    "active": false,
-   "needs": 10,
-   "backfilled": 0
+   "needs": 9,
+   "backfilled": 1
   },
   "brakes": {
-   "n": 0,
-   "mean_signed_error": null,
-   "brier": null,
+   "n": 1,
+   "mean_signed_error": 40.0,
+   "brier": 0.16,
    "active": false,
-   "needs": 10,
-   "backfilled": 0
+   "needs": 9,
+   "backfilled": 1
   },
   "actor": {
    "n": 0,
@@ -60,11 +60,124 @@
    "backfilled": 0
   }
  },
- "arms": {},
+ "arms": {
+  "AI CAPABILITY": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "AI FINANCING AND BANKS": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "BIO": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "CYBER": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "FED RATES AND JAPAN": {
+   "n": 1,
+   "mean_signed_error": 40.0,
+   "brier": 0.16,
+   "active": false,
+   "needs": 9,
+   "backfilled": 1
+  },
+  "HUMANOID ROBOTS": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "JOBS AND THE BACKLASH": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "OIL AND GULF": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "POWER AND THE GRID": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "RARE EARTHS CHINA AND TAIWAN": {
+   "n": 1,
+   "mean_signed_error": 40.0,
+   "brier": 0.16,
+   "active": false,
+   "needs": 9,
+   "backfilled": 1
+  },
+  "RUSSIA AND EUROPE": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "SHIPPING AND CANALS": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "WEATHER AND FOOD": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "WHITE-COLLAR WORK": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  }
+ },
  "pace": {
   "n": 0,
   "share_sooner": null,
   "by_arm": {},
-  "rule": "share of settled pace questions answered YES; write a pace question so YES means sooner or larger than the consensus"
+  "rule": "share of settled pace questions answered on the script side; write a pace question so the script side means sooner or larger than the recorded consensus"
  }
 }

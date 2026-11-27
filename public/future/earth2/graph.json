@@ -168,7 +168,11 @@
    "kill_condition": "Every AI data-center financing of $1B or more launched from Dec 1, 2026 to Apr 30, 2027 prices at or inside its talk, none is pulled, cut or sold at a discount, and CoreWeave's $4B loan funds.",
    "kill_check": "Bloomberg and Reuters deal coverage; LSEG LPC loan data; CoreWeave and Blue Owl 8-K filings",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "F7",
@@ -262,7 +266,10 @@
    "kill_condition": "All four (Microsoft, Alphabet, Amazon, Meta) hold or raise their capex guides at the late Jan to early Feb 2027 results and each guides 2027 above 2026.",
    "kill_check": "Q4 2026 earnings releases and calls; 10-K filings",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "O1",
@@ -358,7 +365,11 @@
    "kill_condition": "Hormuz transits average 69 ships a day or more for a full month and front-month Brent settles under $80, both before Apr 1, 2027.",
    "kill_check": "ICE Brent front-month settlements; IMF PortWatch daily Hormuz transits",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market",
+    "pace"
+   ]
   },
   {
    "id": "C1",
@@ -436,7 +447,11 @@
    "kill_condition": "By Feb 28, 2027 no government agency or listed company has attributed any intrusion as AI-run in an advisory or SEC 8-K, and Google's mid-February threat report finds no AI-run campaign against a listed company.",
    "kill_check": "SEC 8-K Item 1.05 filings (EDGAR); CISA and FBI advisories; Google Threat Intelligence reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "R4",
@@ -498,7 +513,10 @@
    "kill_condition": "The Europe (Rotterdam) to China price ratio for dysprosium or terbium oxide falls under 3 times in any assessment before May 31, 2027.",
    "kill_check": "Fastmarkets or Argus Dy and Tb oxide assessments, Rotterdam versus China; Platts North America",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "F5",
@@ -565,7 +583,10 @@
    "kill_condition": "Nvidia files its 10-Q on time by Dec 4, 2026 with no regulator letter on its accounting, then beats and raises at its Feb 24, 2027 results, and the stock closes the following week above its Nov 20, 2026 close.",
    "kill_check": "Nvidia 10-Q and earnings release (SEC EDGAR); Nasdaq daily close",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "F2",
@@ -638,7 +659,11 @@
    "kill_condition": "CoreWeave's $4B loan prices and funds by Jan 31, 2027, and no neocloud or data-center vehicle with $1B+ of debt misses a payment or launches a distressed exchange through Apr 30, 2027.",
    "kill_check": "CoreWeave 8-K filings; Moody's, S&P and Fitch actions; bankruptcy court dockets",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "C2",
@@ -696,7 +721,10 @@
    "kill_condition": "No single attack or patch takes three or more listed companies, or one industry nationwide, offline for a day from Dec 1, 2026 to Feb 28, 2027.",
    "kill_check": "CISA alerts; company 8-K filings; FAA ground stop records; outage trackers (Downdetector, ThousandEyes)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "D1",
@@ -765,7 +793,11 @@
    "kill_check": "Federal Reserve FOMC statement, Dec 9, 2026",
    "date_state": "SCHEDULED",
    "date_catalyst": "FOMC decision Dec 9 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "actor",
+    "market"
+   ]
   },
   {
    "id": "D4",
@@ -858,7 +890,11 @@
    "kill_condition": "The 10-year Treasury yield closes below 4.25% on any day from Dec 1, 2026 to Mar 31, 2027 (a 125 bp climb in the last two months would then be needed).",
    "kill_check": "US Treasury daily par yield curve; FRED DGS10",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "market"
+   ]
   },
   {
    "id": "C4",
@@ -946,7 +982,10 @@
    "kill_condition": "No exchange, top bank or card network halts 4+ hours and no single theft tops $1B from Dec 1, 2026 to Feb 28, 2027.",
    "kill_check": "Exchange status pages and SEC Regulation SCI notices; card network and Fed service notices; Chainalysis and Elliptic theft tallies",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "R6",
@@ -1040,7 +1079,11 @@
    "kill_condition": "China grants Western and Japanese magnet makers general licences for dysprosium and terbium covering 2027 and the ex-China to China price ratio falls under 3 times, both before May 31, 2027.",
    "kill_check": "MOFCOM licence notices; Fastmarkets or Argus Dy/Tb price ratio; automaker production notices",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "J1",
@@ -1108,7 +1151,11 @@
    "kill_condition": "The yen strengthens past 145 per dollar on a weekly close before Mar 1, 2027.",
    "kill_check": "USD/JPY weekly close (Fed H.10); Japan Ministry of Finance monthly intervention data",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "market"
+   ]
   },
   {
    "id": "R2",
@@ -1177,7 +1224,16 @@
    "kill_check": "MOFCOM announcements; G20 Miami leaders' readouts",
    "date_state": "LOCKED",
    "date_catalyst": "China's rare-earth export-control pause expires Jan 10, 2027 (MOFCOM No. 58) (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ],
+   "base_rate": {
+    "value": 17,
+    "reference_class": "Share of deadlines in this US and China truce that were allowed to lapse: 0 of 4 (the Aug 2025 tariff truce, the Nov 2025 twelve-month suspension, the Nov 9, 2026 rare-earth extension and the Nov 24, 2026 gallium and germanium extension). Shown as 17, not 0, by the rule of succession (one lapse and one extension added), so a sample of four cannot read as zero.",
+    "source": "G2_report.md section 1A, Behaviour and table row R2 (BASE RATE)"
+   }
   },
   {
    "id": "J4",
@@ -1219,7 +1275,11 @@
    "kill_condition": "SoftBank's 5-year default insurance stays under 400 bp and no agency puts it on review for downgrade through Jan 15, 2027.",
    "kill_check": "SoftBank Group CDS (Bloomberg or S&P Global Market Intelligence); Moody's, S&P and JCR actions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "market"
+   ]
   },
   {
    "id": "D2",
@@ -1287,7 +1347,11 @@
    "kill_check": "FOMC statements, Dec 9, 2026 and Jan 27, 2027",
    "date_state": "SCHEDULED",
    "date_catalyst": "FOMC decision Jan 27, 2027 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "B2",
@@ -1355,7 +1419,11 @@
    "kill_check": "Fund tender offer results (SEC EDGAR, SC TO-I/A); monthly NAV releases",
    "date_state": "LOCKED",
    "date_catalyst": "BCRED Q4 redemption window closes Dec 1 (fund terms); the first dated read on private-credit redemption queues (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "pace"
+   ]
   },
   {
    "id": "J5",
@@ -1414,7 +1482,11 @@
    "kill_check": "Bank of Japan monetary policy statement, Dec 18, 2026",
    "date_state": "SCHEDULED",
    "date_catalyst": "Bank of Japan decision Dec 18 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "actor",
+    "market"
+   ]
   },
   {
    "id": "C6",
@@ -1471,7 +1543,10 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": -0.5
-   }
+   },
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "O4",
@@ -1528,7 +1603,11 @@
    "kill_condition": "The G20 ends Dec 15, 2026 without a US and Iran understanding and no US and Iran talks are held before Feb 28, 2027.",
    "kill_check": "White House, Pentagon and State Department statements; G20 readouts",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "F3",
@@ -1576,7 +1655,11 @@
    "kill_condition": "Bitcoin closes above $57,700 every day through Feb 28, 2027 and no listed miner-host announces a lost or cancelled AI anchor tenant.",
    "kill_check": "Bitcoin daily close (CME CF reference rate); miner-host 8-K filings and releases (IREN, Core Scientific, Cipher, TeraWulf, Hut 8)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "O2",
@@ -1631,7 +1714,11 @@
    "kill_condition": "Front-month Brent settles under $85 for 20 straight trading days before Apr 1, 2027.",
    "kill_check": "ICE Brent front-month settlements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "market"
+   ]
   },
   {
    "id": "B1",
@@ -1740,7 +1827,11 @@
    "kill_check": "Bank Q4 earnings releases and 10-K filings; BDC and interval fund 10-K and tender filings (SEC EDGAR)",
    "date_state": "SCHEDULED",
    "date_catalyst": "JPMorgan Q4 results Jan 14, 2027 open the bank reporting season (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "X1",
@@ -1829,7 +1920,10 @@
    "kill_condition": "By May 31, 2027 no frontier lab or G7 government has made a written AGI or expert-level general intelligence statement about a deployed model.",
    "kill_check": "Lab blogs, model cards and system cards (OpenAI, Anthropic, Google DeepMind, xAI, Meta); G7 government releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "F6",
@@ -1892,7 +1986,11 @@
    "kill_check": "ANT daily close (exchange data); lock-up schedule in the IPO prospectus",
    "date_state": "LOCKED",
    "date_catalyst": "Anthropic first lock-up release Dec 15 (IPO lock-up terms; schedule in HP01)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "timing",
+    "market"
+   ]
   },
   {
    "id": "D3",
@@ -1965,7 +2063,11 @@
    "kill_check": "FOMC statements",
    "date_state": "SCHEDULED",
    "date_catalyst": "FOMC decision Mar 17, 2027, the third straight meeting the row needs",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "R1",
@@ -2069,7 +2171,11 @@
    "kill_check": "MOFCOM announcements (mofcom.gov.cn); Reuters",
    "date_state": "LOCKED",
    "date_catalyst": "Suspension expiry Nov 27, 2026 as the row is written. The seed list says Nov 24 reports put the expiry at Jan 27, 2027; not verified here and not applied (see plumbing note)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "F4",
@@ -2117,7 +2223,11 @@
    "kill_check": "Oracle earnings release and 8-K; Moody's, S&P and Fitch actions",
    "date_state": "ESTIMATED",
    "date_catalyst": "Oracle quarterly results about Dec 14 (date an estimate) (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "F9",
@@ -2184,7 +2294,10 @@
    "kill_condition": "The S&P 500 sets a new record close above 7,818.93 before Apr 1, 2027.",
    "kill_check": "S&P 500 daily close (S&P Dow Jones Indices)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "J6",
@@ -2241,7 +2354,11 @@
    "kill_condition": "Japan's Treasury holdings rise in six straight monthly TIC releases from Dec 2026 to May 2027.",
    "kill_check": "US Treasury TIC Major Foreign Holders table (monthly)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "C5",
@@ -2298,7 +2415,10 @@
    "kill_condition": "By Feb 28, 2027 no bill binding cyber-capable AI models has been reported out of committee in the new Congress and no executive order or rule binding model releases is in the Federal Register.",
    "kill_check": "Congress.gov committee actions; Federal Register; Commerce BIS rules",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "B3",
@@ -2355,7 +2475,10 @@
    "kill_condition": "No US bank fails from Dec 2026 to Feb 2027, no regional bank reports a quarterly loss in January 2027 results, and KRE closes above its Nov 20, 2026 close on Feb 26, 2027.",
    "kill_check": "KRE daily close (NYSE Arca); FDIC failed bank list; regional bank Q4 results",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "J2",
@@ -2417,7 +2540,11 @@
    "kill_condition": "Every Japanese 30-year auction from Dec 2026 to Apr 2027 clears with bid-to-cover above 3 and no megabank announces a cap on data-center lending.",
    "kill_check": "Japan Ministry of Finance auction results; megabank releases (MUFG, SMFG, Mizuho)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "market"
+   ]
   },
   {
    "id": "BB3",
@@ -2496,7 +2623,11 @@
    "kill_condition": "The lead AI-designed candidate due for an FDA decision in Q1 2027 gets a complete response letter, or its decision date moves past Nov 2027, with no other AI-designed drug under FDA review.",
    "kill_check": "FDA novel drug approvals and complete response letters; sponsor press releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "C3",
@@ -2543,7 +2674,10 @@
    "kill_condition": "No government toolset leak and no zero-click phone exploit chain hitting 100,000+ devices is reported through Feb 28, 2027.",
    "kill_check": "Apple and Google security bulletins; Citizen Lab and Amnesty Tech reports; CISA Known Exploited Vulnerabilities catalogue",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "R5",
@@ -2605,7 +2739,11 @@
    "kill_condition": "The FY2027 defense bill is signed without a heavy rare-earth, antimony, gallium or germanium price floor or stockpile purchase, and no DLA, DOE or Commerce award or tariff is announced by Apr 30, 2027.",
    "kill_check": "NDAA text (Congress.gov); Defense Logistics Agency and DOE award notices; Commerce Section 232 actions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "BT1",
@@ -2651,7 +2789,11 @@
    "kill_condition": "No new outbreak headline in the US or Europe, and the ECDC weekly reports rate the Ebola risk to Europe as very low, through Feb 28, 2027.",
    "kill_check": "ECDC weekly communicable disease threats report; daily moves in preparedness stocks (Emergent BioSolutions, SIGA)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "market"
+   ]
   },
   {
    "id": "C9",
@@ -2709,7 +2851,11 @@
    "kill_condition": "By Aug 31, 2027 no government has attributed a physical or nationwide outage to an AI-run attack and CISA's industrial control advisories report no AI-run intrusion into control systems.",
    "kill_check": "CISA ICS advisories; government incident attributions (CISA, NCSC, ENISA)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "BT2",
@@ -2758,7 +2904,10 @@
    "kill_condition": "WHO declares the current Ebola outbreak over (42 days with no new case) before Mar 1, 2027, with no other promotion trigger.",
    "kill_check": "WHO Disease Outbreak News; CDC Ebola updates",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "O3",
@@ -2843,7 +2992,11 @@
    "kill_condition": "No US and Iran deal or ceasefire text is signed by Mar 31, 2027, leaving under two months for a full month of 69+ ships a day.",
    "kill_check": "IMF PortWatch daily Hormuz transits; State Department and Iranian foreign ministry statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "T1",
@@ -2900,7 +3053,10 @@
    "kill_condition": "Taiwan's Coast Guard Administration reports no China coast guard boarding attempt and no 24-hour presence around an outlying island in any month from Dec 2026 to Aug 2027.",
    "kill_check": "Taiwan Coast Guard Administration and Ministry of National Defense reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "J3",
@@ -2958,7 +3114,10 @@
    "kill_check": "USD/JPY weekly closes (Fed H.10)",
    "date_state": "SCHEDULED",
    "date_catalyst": "Bank of Japan decision Dec 18; the Aug 2024 unwind the row cites followed a BOJ hike (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "X2",
@@ -3005,7 +3164,11 @@
    "kill_condition": "Tesla says at any event, post or filing before Dec 31, 2026 that Optimus is still in pilot output under 1,000 units, and no humanoid maker reports 10,000+ deployed.",
    "kill_check": "Tesla investor relations releases and posts; humanoid maker releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "D5",
@@ -3064,7 +3227,11 @@
    "kill_check": "Congress.gov bill status; White House signed legislation",
    "date_state": "LOCKED",
    "date_catalyst": "Federal funding expires Dec 11 (law); a lapse would start Dec 12 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "P1",
@@ -3118,7 +3285,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 12.0
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "D6",
@@ -3186,7 +3357,11 @@
    "kill_condition": "The advance Q4 2026 GDP estimate (late January 2027) shows growth above 2% annualized and no monthly payroll print is negative through the early April 2027 jobs report.",
    "kill_check": "BEA GDP releases; BLS Employment Situation; NBER announcements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "C8",
@@ -3244,7 +3419,11 @@
    "kill_check": "Marsh Global Insurance Market Index (quarterly); Jan 1 renewal reports (Howden, Gallagher Re, Guy Carpenter)",
    "date_state": "LOCKED",
    "date_catalyst": "Jan 1, 2027 insurance and reinsurance renewals (contract date)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "C7",
@@ -3289,7 +3468,11 @@
    "kill_condition": "No DOJ indictment, OFAC sanction or formal US statement names China for an AI-run hacking campaign by Jan 9, 2027.",
    "kill_check": "DOJ press releases; Treasury OFAC actions; State Department statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "BT3",
@@ -3337,7 +3520,16 @@
    "kill_condition": "No WHO emergency committee is convened for any new event through Aug 31, 2027.",
    "kill_check": "WHO IHR emergency committee statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ],
+   "base_rate": {
+    "value": 40,
+    "reference_class": "A new WHO public health emergency of international concern within 12 months: declarations in 2009, 2014 (polio and Ebola), 2016, 2019, 2020, 2022, 2024 and 2026, about 0.5 a year.",
+    "source": "G4_report.md section 3b, table row BT3 (BASE RATE)"
+   }
   },
   {
    "id": "R7",
@@ -3395,7 +3587,10 @@
    "kill_condition": "China and Japan sign a written trade truce that lifts the Jan 6, 2026 dual-use ban on Japan before Jun 30, 2027.",
    "kill_check": "MOFCOM announcements; Japan METI statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "O5",
@@ -3443,7 +3638,10 @@
    "kill_condition": "Front-month Brent settles under $90 every day from Dec 15, 2026 to Jan 15, 2027, with no export-curb bill introduced.",
    "kill_check": "ICE Brent settlements; EIA weekly retail gasoline prices; Congress.gov",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "F10",
@@ -3511,7 +3709,10 @@
    "kill_check": "Nvidia 10-Q and 10-K (SEC EDGAR); SEC and DOJ press releases; House committee statements",
    "date_state": "LOCKED",
    "date_catalyst": "Nvidia 10-Q due Dec 4 (SEC filing deadline), the first filing that would disclose a formal SEC or DOJ step; House interview Dec 1 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "F11",
@@ -3573,7 +3774,11 @@
    "kill_condition": "Nvidia raises guidance at each of its Feb, May and Aug 2027 results with no increase in its allowance for doubtful receivables.",
    "kill_check": "Nvidia earnings releases, 10-Q and 10-K (receivables and allowance notes)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "R8",
@@ -3620,7 +3825,11 @@
    "kill_condition": "China tightens Dy/Tb licences further, or the ex-China dysprosium price sets a new high, after Jun 30, 2027 (a halving would then need under five months).",
    "kill_check": "Fastmarkets or Argus dysprosium oxide, Rotterdam, monthly; MOFCOM licence notices",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "D9",
@@ -3677,7 +3886,10 @@
    "kill_condition": "Treasury's refunding statements in Feb, May and Aug 2027 keep long-bond auction sizes unchanged or larger, and the Fed's balance sheet keeps shrinking through Aug 2027.",
    "kill_check": "Treasury quarterly refunding statements; Federal Reserve H.4.1 weekly balance sheet",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes"
+   ]
   },
   {
    "id": "O6",
@@ -3741,7 +3953,11 @@
    "kill_condition": "Golden Pass and Port Arthur both slip their first LNG cargo past Jun 30, 2027.",
    "kill_check": "EIA monthly LNG exports; ExxonMobil, QatarEnergy and Sempra start-up announcements; FERC filings",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "O7",
@@ -3799,7 +4015,11 @@
    "kill_condition": "Hormuz traffic stays under half of normal through Jul 31, 2027.",
    "kill_check": "IMF PortWatch Hormuz transits; ICE Brent monthly average",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market",
+    "pace"
+   ]
   },
   {
    "id": "BB1",
@@ -3845,7 +4065,11 @@
    "kill_condition": "Moderna and Merck have not filed the melanoma vaccine (intismeran autogene) with the FDA by Mar 31, 2027.",
    "kill_check": "Moderna and Merck press releases; FDA approvals database",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "BB5",
@@ -3891,7 +4115,11 @@
    "kill_condition": "No trial readout that names a listed company's revenue line is scheduled before Sep 30, 2027, and none lands unscheduled through Jun 30, 2027.",
    "kill_check": "ClinicalTrials.gov readout dates; company event calendars; daily stock moves",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "market"
+   ]
   },
   {
    "id": "D7",
@@ -3938,7 +4166,10 @@
    "kill_condition": "No joint intervention against the dollar is announced and the dollar index never falls 2.5% or more in a week through Feb 28, 2027.",
    "kill_check": "ICE US Dollar Index weekly closes; G7 and Treasury statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "R3",
@@ -3986,7 +4217,11 @@
    "kill_check": "G20 Miami leaders' declaration; White House and MOFCOM readouts",
    "date_state": "SCHEDULED",
    "date_catalyst": "G20 leaders' summit, Miami, Dec 14 to 15 (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "C10",
@@ -4033,7 +4268,10 @@
    "kill_condition": "No single crypto or exchange theft tops $2B and no top-ten exchange freezes withdrawals for 24 hours through Aug 31, 2027.",
    "kill_check": "Chainalysis and Elliptic theft data; CoinGecko exchange rankings; exchange status pages",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "BB4",
@@ -4079,7 +4317,11 @@
    "kill_condition": "The first lung and first-line pancreatic readouts for the RAS drug (daraxonrasib) and the personalized vaccine slip past Sep 30, 2027 or miss their survival endpoints.",
    "kill_check": "Revolution Medicines, Moderna and Merck releases; ClinicalTrials.gov; ASCO and ESMO abstracts",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "T2",
@@ -4128,7 +4370,10 @@
    "kill_condition": "PLA daily air and naval activity around Taiwan stays below its 2025 monthly average every month through Aug 2027 with no large named exercise.",
    "kill_check": "Taiwan Ministry of National Defense daily PLA activity reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "B4",
@@ -4175,7 +4420,10 @@
    "kill_condition": "No non-traded credit fund fully suspends withdrawals and no big private-credit manager reports a quarter of net outflows above 5% through Jun 30, 2027.",
    "kill_check": "Fund tender filings (SEC EDGAR); Federal Reserve and Treasury releases on emergency facilities",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes"
+   ]
   },
   {
    "id": "BT4",
@@ -4220,7 +4468,10 @@
    "kill_condition": "No human-to-human H5N1 cluster is confirmed anywhere through Jun 30, 2027 and CDC's risk assessment stays low.",
    "kill_check": "WHO avian influenza situation reports; CDC H5N1 updates",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "D8",
@@ -4277,7 +4528,11 @@
    "kill_condition": "Congress suspends or raises the debt limit through at least the end of 2028 before Jul 1, 2027, with no bill yield spike before then.",
    "kill_check": "Congress.gov; Treasury debt-limit statements; daily Treasury bill yields",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "BB2",
@@ -4333,7 +4588,10 @@
    "kill_condition": "Lilly has not filed retatrutide with the FDA by Jun 30, 2027 (a standard review then runs past Nov 2027).",
    "kill_check": "Lilly press releases and quarterly reports; FDA approvals",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "C11",
@@ -4411,7 +4669,10 @@
    "kill_condition": "CISA's Known Exploited Vulnerabilities catalogue adds more entries in Jan to Jun 2027 than in Jan to Jun 2026.",
    "kill_check": "CISA Known Exploited Vulnerabilities catalogue (dated entries); Google Threat Intelligence yearly zero-day review",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "BT5",
@@ -4459,7 +4720,10 @@
    "kill_condition": "No deliberate or accidental release incident of any size is reported by WHO or national health agencies through Feb 28, 2027.",
    "kill_check": "WHO Disease Outbreak News; national public health agencies",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "BB6",
@@ -4507,7 +4771,11 @@
    "kill_condition": "No aging trial with all-cause mortality or another hard outcome as its primary endpoint has a readout scheduled before Nov 2027.",
    "kill_check": "ClinicalTrials.gov; journal publications",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "F8",
@@ -4535,7 +4803,10 @@
    "hit": null,
    "what_changed": "A symptom more than a cause. It sets Day 0 on no ticket: the financing collisions key off F1, F2, F3, B1 and B2, not the index.",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 2A FIRED",
-   "model_layer": "board"
+   "model_layer": "board",
+   "judgment_tags": [
+    "market"
+   ]
   },
   {
    "id": "W1",
@@ -4585,7 +4856,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 0.2
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "W2",
@@ -4640,7 +4915,10 @@
    "kill_condition": "The NY Fed recent-graduate unemployment rate prints 5.0% or lower in its Feb or May 2027 update.",
    "kill_check": "New York Fed, The Labor Market for Recent College Graduates (quarterly)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "W3",
@@ -4680,7 +4958,10 @@
    "kill_condition": "Information, financial activities and professional and business services payrolls together are above their year-earlier level in every jobs report from Feb to Jul 2027.",
    "kill_check": "BLS Employment Situation, table B-1",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "W4",
@@ -4719,7 +5000,11 @@
    "kill_condition": "NACE's spring 2027 update shows employers plan to hire 3% or more new graduates than the year before.",
    "kill_check": "NACE Job Outlook spring update (April 2027)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "W5",
@@ -4769,7 +5054,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": -2.0
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "W6",
@@ -4850,7 +5139,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": -0.6
-   }
+   },
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "W7",
@@ -4899,7 +5192,10 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 0.2
-   }
+   },
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "W8",
@@ -4938,7 +5234,10 @@
    "kill_condition": "TCS, Infosys, HCLTech, Wipro and Tech Mahindra all report revenue up year on year in constant currency and headcount up in the Dec 2026, Mar 2027 and Jun 2027 quarters.",
    "kill_check": "Quarterly results of the five firms (mid Jan, mid Apr, mid Jul 2027)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "BT6",
@@ -5009,7 +5308,11 @@
    "kill_condition": "The court filings in the Ohio case end with charges that exclude a working agent or toxin, and no new case is charged, through Aug 31, 2027.",
    "kill_check": "DOJ press releases and court filings (PACER); FBI statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "BT6a",
@@ -5049,7 +5352,11 @@
    "kill_condition": "No case confirmed under BT6 through Aug 31, 2027 shows AI use in its court record.",
    "kill_check": "DOJ court filings; lab system cards and incident reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "27-1",
@@ -5106,7 +5413,10 @@
    "kill_condition": "By Aug 31, 2027 no frontier lab or G7 government has made a written AGI claim and METR's best published task horizon is still under 40 hours.",
    "kill_check": "Lab releases and model cards; METR task-horizon updates; G7 government releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "27-2",
@@ -5148,7 +5458,10 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 2.2
-   }
+   },
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "27-3",
@@ -5199,7 +5512,10 @@
    "kill_condition": "By Aug 31, 2027 no federal statute or binding rule limiting frontier model release or training has passed either chamber or appeared as a proposed rule.",
    "kill_check": "Congress.gov; Federal Register; Commerce BIS rules",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "27-4",
@@ -5256,7 +5572,11 @@
    "kill_condition": "CoreWeave and the other big neoclouds refinance their 2027 maturities at yields under 10% by Jun 30, 2027 and all three agencies affirm Oracle at investment grade.",
    "kill_check": "Neocloud bond and loan pricing (Bloomberg, FINRA TRACE); 8-K filings; Moody's, S&P and Fitch actions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "27-5",
@@ -5308,7 +5628,11 @@
    "kill_condition": "The 10-year Treasury closes under 4.25% on any day in June 2027 (the 10-year leg, needed with the yen leg, then has five months to climb 125 bp).",
    "kill_check": "US Treasury daily par yields; FRED DGS10; USD/JPY",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "market"
+   ]
   },
   {
    "id": "27-6",
@@ -5355,7 +5679,11 @@
    "kill_condition": "China grants Western and Japanese magnet makers general Dy/Tb licences covering 2027 and the ex-China to China price ratio falls under 3 times, both before May 31, 2027.",
    "kill_check": "MOFCOM licence notices; Fastmarkets or Argus Dy/Tb price ratio; automaker production notices",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "28-1",
@@ -5413,7 +5741,10 @@
    "kill_condition": "By May 31, 2028 no top-five lab has stated in writing that AI does most of its AI research and METR's measured capability doubling time is still above four months.",
    "kill_check": "Lab official documents and system cards; METR reports; UN scientific panel on AI",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "28-2",
@@ -5464,7 +5795,11 @@
    "kill_condition": "Bank and BDC filings through the Q4 2027 results (early 2028) show AI and data-center loan losses under $500M in total and no private-credit fund gates withdrawals.",
    "kill_check": "Bank 10-K and 10-Q filings; BDC filings and tender results (SEC EDGAR)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "28-3",
@@ -5511,7 +5846,10 @@
    "kill_condition": "No 4+ hour halt at a top exchange, bank or payment network and no $1B+ single theft from Jun 1, 2027 through May 31, 2028.",
    "kill_check": "Exchange and payment network notices; SEC Regulation SCI notices; Chainalysis and Elliptic theft data",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing"
+   ]
   },
   {
    "id": "28-4",
@@ -5558,7 +5896,11 @@
    "kill_condition": "NACE's fall 2027 and spring 2028 outlooks both show planned graduate hiring up on the year and the NY Fed recent-graduate unemployment rate is under 5% in its mid-2028 update.",
    "kill_check": "NACE Job Outlook; New York Fed recent graduates data; BLS Employment Situation",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "28-5",
@@ -5599,7 +5941,11 @@
    "kill_condition": "No authority confirms a person or group held a working agent or toxin with intent to attack at scale from Jun 1, 2027 through May 31, 2028.",
    "kill_check": "DOJ and FBI releases; court filings; WHO and national agency statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "28-6",
@@ -5647,7 +5993,10 @@
    "kill_condition": "Taiwan's January 2028 national election passes with no China coast guard boarding, island isolation or named PLA exercise between Nov 1, 2027 and Jan 31, 2028.",
    "kill_check": "Taiwan Ministry of National Defense and Coast Guard Administration reports; Central Election Commission",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "29-1",
@@ -5690,7 +6039,11 @@
    "kill_condition": "No government attributes a physical or nationwide effect to an AI-run attack, or confirms a military command compromise, from Jun 1, 2028 through May 31, 2029.",
    "kill_check": "CISA, NCSC, DoD and NATO statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "29-2",
@@ -5732,7 +6085,10 @@
    "kill_condition": "The 10-year Treasury stays under 4.0% every day from Jun 1 to Dec 31, 2028 and the Fed's balance sheet keeps shrinking over that span.",
    "kill_check": "FRED DGS10; Federal Reserve H.4.1; Treasury refunding statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes"
+   ]
   },
   {
    "id": "29-3",
@@ -5784,7 +6140,10 @@
    "kill_condition": "By May 31, 2029 no frontier lab or G7 government has claimed in writing that a system beats the best humans across essentially all cognitive work.",
    "kill_check": "Lab releases and model cards; G7 government releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "29-4",
@@ -5826,7 +6185,11 @@
    "kill_condition": "A court ruling or settlement announced before Dec 31, 2028 keeps pembrolizumab biosimilars off the US and EU markets until 2030 or later (the copies leg then fails).",
    "kill_check": "FDA Purple Book; EMA approvals; Merck 10-K patent litigation notes",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "29-5",
@@ -5868,7 +6231,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 6.0
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "29-6",
@@ -5920,7 +6287,11 @@
    "kill_condition": "No $10B+ compute borrower defaults or is sold under distress from Jun 1, 2028 through May 31, 2029, and neocloud bond yields stay under 10%.",
    "kill_check": "Rating agency default reports; neocloud bond pricing (FINRA TRACE); 8-K filings",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "RM1",
@@ -19045,7 +19416,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 3.0
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "E03",
@@ -19086,7 +19461,10 @@
    "kill_condition": "No written AGI claim from a frontier lab or G7 government by Jun 30, 2028 (an ASI claim would then have under five months to follow).",
    "kill_check": "Lab releases; G7 government releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "E04",
@@ -19126,7 +19504,10 @@
    "kill_condition": "By Mar 31, 2027 no frontier-model bill has passed either chamber and no binding federal rule is proposed.",
    "kill_check": "Congress.gov; Federal Register",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "E05",
@@ -19245,7 +19626,10 @@
    "kill_condition": "No China coast guard boarding, island isolation, quarantine or named large PLA exercise around Taiwan from May 19 to Sep 30, 2027.",
    "kill_check": "Taiwan Ministry of National Defense and Coast Guard Administration; US government statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "E08",
@@ -19286,7 +19670,10 @@
    "kill_condition": "McKinsey's 2027 State of AI survey reports under 45% of respondents at $1B+ organizations scaling agents.",
    "kill_check": "McKinsey State of AI survey",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "E09",
@@ -19327,7 +19714,11 @@
    "kill_condition": "NY Fed recent-graduate unemployment is under 5.0% in its mid-2028 update and office payrolls are above a year earlier in the June 2028 jobs report.",
    "kill_check": "New York Fed recent graduates data; BLS Employment Situation",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "E10",
@@ -19405,7 +19796,11 @@
    "kill_condition": "CoreWeave's $4B loan funds by Jan 31, 2027, no $1B+ neocloud or miner-host default or distressed exchange through Apr 15, 2027, and Oracle is affirmed investment grade.",
    "kill_check": "CoreWeave 8-K filings; rating agency actions; bankruptcy dockets",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "brakes"
+   ]
   },
   {
    "id": "E14",
@@ -19483,7 +19878,10 @@
    "kill_condition": "Through Jun 30, 2028 the Fed makes no purchases outside reserve management, Treasury keeps long-bond sizes unchanged and no emergency facility opens.",
    "kill_check": "Federal Reserve H.4.1 and press releases; Treasury refunding statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes"
+   ]
   },
   {
    "id": "E18",
@@ -19638,7 +20036,11 @@
    "kill_condition": "No government attribution of a physical or nationwide AI-run attack effect and no confirmed military command compromise through Jun 30, 2028.",
    "kill_check": "CISA, NCSC, DoD and NATO statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "E29",
@@ -19716,7 +20118,11 @@
    "kill_condition": "Before Jun 30, 2028 the RAS drug's second-tumor pivotal trial and the personalized vaccine's lung trial both read out negative or slip past Nov 2028.",
    "kill_check": "Company releases; ClinicalTrials.gov; ASCO and ESMO abstracts",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "E32",
@@ -20848,7 +21254,10 @@
    "kill_condition": "Verified AI-contributed new proofs on the Erdos problems database fall below 44 a quarter (the Q2 2026 pace) in two quarters before Jun 30, 2028.",
    "kill_check": "Erdos problems database (erdosproblems.com); Terence Tao's AI contributions log",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M14",
@@ -22019,7 +22428,10 @@
    "kill_condition": "Cumulative global humanoid robot deliveries are under 200,000 at the end of 2028 on Counterpoint, TrendForce or IFR counts.",
    "kill_check": "Counterpoint, TrendForce and IFR humanoid trackers",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M40",
@@ -22545,7 +22957,10 @@
    "kill_condition": "No public, verified break of RSA-2048 or 256-bit elliptic curve keys by any method by May 31, 2029.",
    "kill_check": "NIST and NSA advisories; IACR ePrint; peer-reviewed reports",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M53",
@@ -22595,7 +23010,10 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 0.3
-   }
+   },
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "M54",
@@ -22635,7 +23053,10 @@
    "kill_condition": "No frontier lab reports using a quantum computer in training a production model by May 31, 2028.",
    "kill_check": "Lab technical reports and model cards",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M55",
@@ -22675,7 +23096,10 @@
    "kill_condition": "Gallup's 2027 reading of US adults currently depressed is at or below its 2025 level.",
    "kill_check": "Gallup depression and well-being surveys; CDC data",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M56",
@@ -22715,7 +23139,11 @@
    "kill_condition": "No party classed as far right or far left leads or joins a G7 national government through Aug 31, 2027, including after France's 2027 presidential election.",
    "kill_check": "Official election results (French Interior Ministry and peers); G7 government compositions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "M57",
@@ -22755,7 +23183,10 @@
    "kill_condition": "No AI-discovered battery or magnet material reaches pilot production or an independent replication by May 31, 2029.",
    "kill_check": "Peer-reviewed journals; company pilot-line announcements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M58",
@@ -22795,7 +23226,11 @@
    "kill_condition": "No aging therapy shows a hard-outcome benefit in a human trial by May 31, 2029.",
    "kill_check": "ClinicalTrials.gov; journal publications",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "pace"
+   ]
   },
   {
    "id": "M59",
@@ -22835,7 +23270,10 @@
    "kill_condition": "US and EU 2026 birth data published before Nov 2027 show fertility within 2% of 2025.",
    "kill_check": "CDC NCHS provisional births; Eurostat fertility statistics",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "M60",
@@ -22875,7 +23313,11 @@
    "kill_condition": "No G7 government enacts a pension benefit cut or emergency restructuring and no large US public plan falls below 50% funded by May 31, 2029.",
    "kill_check": "G7 legislation; Pew and Milliman public pension funding studies",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "M61",
@@ -22915,7 +23357,10 @@
    "kill_condition": "No top-50 US university or G7 education ministry announces a shortened degree or an AI-era overhaul of career education by Aug 31, 2027.",
    "kill_check": "University announcements; education ministry releases",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "M62",
@@ -22955,7 +23400,10 @@
    "kill_condition": "The Fed's Distributional Financial Accounts show the top 1% share of US household wealth falling in two straight quarters of 2027.",
    "kill_check": "Federal Reserve Distributional Financial Accounts (quarterly)",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "DS1",
@@ -24046,7 +24494,11 @@
    "kill_condition": "PJM's next capacity auctions clear at or above the reliability requirement and ERCOT's large-load queue shrinks for four straight quarters, both before Dec 31, 2028.",
    "kill_check": "PJM auction reports; ERCOT large-load interconnection reports; NERC reliability assessments",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "timing",
+    "actor"
+   ]
   },
   {
    "id": "PG2",
@@ -24374,7 +24826,10 @@
    "kill_condition": "A federal law preempting state limits on data centers is enacted and upheld in court before Dec 31, 2027.",
    "kill_check": "Congress.gov; federal court rulings; state utility commission orders",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "JB2",
@@ -24988,7 +25443,11 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 0.6
-   }
+   },
+   "judgment_tags": [
+    "actor",
+    "pace"
+   ]
   },
   {
    "id": "RU1",
@@ -25026,7 +25485,10 @@
    "kill_condition": "A Ukraine ceasefire takes effect and holds 12 months, with no NATO member reporting a Russian drone or sabotage attack on its territory, before Nov 2028.",
    "kill_check": "NATO statements; member government attributions",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "actor"
+   ]
   },
   {
    "id": "RU2",
@@ -25135,7 +25597,11 @@
    "kill_condition": "No leaders' meeting, ceasefire text or framework talks between Russia and Ukraine are held through Dec 31, 2028.",
    "kill_check": "Kremlin and Ukrainian presidential office statements; UN and mediator readouts",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "actor"
+   ]
   },
   {
    "id": "RU5",
@@ -25242,7 +25708,11 @@
    "kill_condition": "France's 10-year spread over Germany stays under 100 bp through Dec 31, 2027, across the 2027 presidential and any legislative elections.",
    "kill_check": "French OAT and German Bund 10-year yields; ECB statements",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "judgment_tags": [
+    "brakes",
+    "market"
+   ]
   },
   {
    "id": "RU8",
@@ -26531,7 +27001,10 @@
    "last_move": {
     "date": "2026-11-25",
     "delta": 0.6
-   }
+   },
+   "judgment_tags": [
+    "pace"
+   ]
   },
   {
    "id": "FD01",

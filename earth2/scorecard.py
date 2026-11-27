@@ -673,12 +673,12 @@ def compute_score(questions):
     pace_rows = [q for q in settled if "pace" in q.get("tags", [])]
 
     def sooner(qs):
-        return {"n": len(qs), "share_sooner": half_up(sum(1 for q in qs if q["outcome"] == "YES") / len(qs) * 100, 1) if qs else None}
+        return {"n": len(qs), "share_sooner": half_up(sum(1 for q in qs if q["outcome"] == q.get("script_side", "YES")) / len(qs) * 100, 1) if qs else None}
 
     pace = sooner(pace_rows)
     pace["by_arm"] = {a: sooner([q for q in pace_rows if q.get("arm") == a])
                       for a in sorted({q.get("arm") for q in pace_rows if q.get("arm")})}
-    pace["rule"] = "share of settled pace questions answered YES; write a pace question so YES means sooner or larger than the consensus"
+    pace["rule"] = "share of settled pace questions answered on the script side; write a pace question so the script side means sooner or larger than the recorded consensus"
     live = [q for q in questions if q.get("kind") == "live"]
     counts = {"total": len(questions),
               "open": sum(1 for q in questions if q.get("status") == "OPEN"),

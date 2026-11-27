@@ -117,4 +117,4 @@ Questions are how the graph gets graded. They are added through the same code as
 | `odds_locked` | Earth2's odds of YES, a whole percent from 1 to 99. Locked the day the question is written. |
 | `odds_basis` | Where those odds come from. |
 | `market` | `null`, or `{"odds": 31, "source": "...", "as_of": "YYYY-MM-DD"}`: the market's odds of YES. Required when the tags include `market`. |
-| `consensus` | `null`, or `{"value": "...", "source": "...", "as_of": "YYYY-MM-DD"}`: the analyst estimate, agency forecast or market-implied date. Required when the tags include `pace`. Write a pace question so that YES means sooner or larger than the consensus. |
+| `consensus` | `null`, or `{"value": "...", "source": "...", "as_of": "YYYY-MM-DD"}`: the analyst estimate, agency forecast or market-implied date. Required when the tags include `pace`. Write a pace question so that its `script_side` is the answer that means sooner or larger than the consensus; the pace share counts answers that land on the script side. |
