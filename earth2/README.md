@@ -156,3 +156,23 @@ Added Nov 25 (session 1)
 
 The page also accepts `?data=<url>` to load another graph file and `?scorecard=<url>` to load another scorecard file. Save data downloads the current state.
 Not financial advice.
+
+## Collision queue scorer (rebase of Nov 25, applied Nov 26, 2026)
+
+A node counts toward a collision only if it rose 3 or more points this run, sat under 90 before the move, and is not FIRED or SCHEDULED. Score = joint odds x arms pushing x unpriced share. The unpriced share is the measured gap |ours - market| / 100 where the node carries a like-for-like market (`market` on the node), else the proxy 1 - odds/100 after the move. So the queue ranks by the gap wherever a market exists, and a near-certain calendar event that barely moved (the old D1 x WF1 at 92%) no longer leads it. `cascade.py` and the page run the same rule.
+
+## Rebase mode
+
+`cascade.py --rebase --updates FILE` is for a one-time level correction, not news: zero hops (nothing cascades), every reason starts with "REBASE", every row has a source, the log entry is tagged `kind: rebase`, status is left alone, no collisions queue is written, and a second rebase is refused. The Nov 25 rebase is logged; its report, script and updates are in `earth2/views/2026-11-26/`.
+
+## Structure imports (import-seed)
+
+Besides questions, backfilled answers, `event_tags` and `legacy_base_rates`, a seed file can carry:
+- `legacy_settlement_tests`: `{"<main event id>": "test"}`. Replacing an existing test needs `{"text": "...", "replace_reason": "..."}`; the old text is kept in `settlement_test_history`.
+- `event_markets`: `{"<main event id>": {"odds", "venue", "contract", "url", "as_of", "match_note"}}`. Like for like only: same event, threshold and deadline (within about 31 days, said in match_note). Real money or a traded instrument; Manifold, Metaculus and other forecast sites are refused. Shown on the page beside our odds, with a gap table ranked by size.
+- `company_lenses`: `{"CO:XXX": {"lens": "commanding_heights", "class": "holds a chokepoint" | "sells intelligence by the unit", "basis", "source"}}`. Structure only: no helped, hurt, long or short wording, no odds change.
+All three are structure only; the import refuses to write if any odds value would change, and the validator checks their shape.
+
+## Ticket guard
+
+`python3 earth2/ticket_guard.py REGISTER.json` checks every PLANNED, OPEN, DAY0 or SALVAGE ticket against its node: WARN when it expires before the node's 50% date plus a quarter (three weeks for a SCHEDULED or LOCKED date, which has no timing error), when the node's odds fell 10 or more points since entry, when the node looks killed, or when the expiry has passed. Notes when the node fired or the date it leans on is an estimate. Read only; exit 1 on any WARN. THIS REPO IS PUBLIC: real tickets live outside it (the Project); `earth2/tickets.json` is gitignored. Example shape: `earth2/templates/tickets_example.json`. The scorecard lock does not block the guard, because a guard on live money must run even when a question is overdue.

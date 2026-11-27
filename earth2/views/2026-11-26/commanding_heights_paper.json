@@ -1,0 +1,646 @@
+{
+ "fetched": "Read https://commanding-heights.com/ (the full HTML essay, about 300,000 characters, downloaded with curl and read end to end), cross-checked against https://commanding-heights.com/commanding-heights.md and https://commanding-heights.com/commanding-heights.pdf. Full text: YES. Sections: Ravi; Overture (Intelligence Adolescent); Part I Genesis; Part II The Line (The Rate; A Reserve of Riches; The Totalization); Part III Principalities and Powers (The Artifact; From the Other Side of the Pacific; The Shrinking Aperture; Of Last Resort; Two Sovereigns, One System; Peculiar Laboratories; A Fearful Symmetry); Part IV Superscription (The Neo-Dollar; East/West of Eden; Constant Currency); Part V The World to Come (The Bottom K; Emigration No More; Absorption; Towers of Ivory, Houses of Gold; The Private Commons; Measurement; The Guild); Part VI The Commanding Heights (der Russenzug; Margin); Part VII The Firm (Guinness; Settlements; Labor Leaves the Firm; No-Collar Labor; Occident; Orient; Jurisdiction; The Vanishing Point); Part VIII Alpha and Omega; Closing. KEY FINDING: the paper never names a present-day public company as a Commanding Height. In Part VIII the only two company names that point at new Heights are deliberately redacted in all three formats (placeholders of 11 and 8 X characters; the X count may or may not match the real names, so do not treat it as an identification). Viral-list check: Stripe, ICE, Shopify, Coinbase, Ramp, Cloudflare and WorkOS do not appear anywhere in the text. Meta appears, but as a Genesis capex spender and talent buyer, not as a Height (its WhatsApp is named as a rail of diffusion). Circle appears only in a footnote, cited for stablecoin reserve income. The word hyperliquid appears once, lowercase, as wordplay in the venture capital section. The Ravi sections and the Closing are fiction framing.",
+ "thesis": "As with printing, railroads and the transistor, the people who invent and build machine intelligence (labs, hyperscalers, chip and compute suppliers, which the authors call Genesis) will not keep most of the wealth it creates, because any released model is copied or distilled within months and its unit price falls toward the cost of compute, with Chinese open-weight models setting the floor. Genesis will keep spending anyway, because falling behind the frontier is fatal for each firm and because US growth, stock prices and retirement savings now ride on AI capex, so Washington will backstop it with Treasury, Fed and retirement money and will quietly take control of frontier labs, walling off a sovereign frontier that is no longer for sale. The durable gains will go to whoever owns the scarce, controllable crossings that intelligence must pass through to reach economic use, chiefly distribution networks with population-scale installed bases and the dollar itself as it spreads abroad through stablecoins and their carriers, and not to those who sell intelligence. Labor leaves the firm (offshore back offices first, then young entrants, while licensed US workers are shielded), firms shrink to a few operators paid like capital, the K-shaped split widens, and investors must sell the last era's Heights and buy the new ones before the market prices them.",
+ "definitions": {
+  "chokepoint": "The paper defines a Commanding Height as a scarce, controllable position of economic power whose holder durably captures the gains of increasingly capable and widely diffused intelligence. It sets the terms on which intelligence becomes economic activity, and unlike a passing bottleneck it takes a share of the activity it enables, so growth in that activity entrenches it further; its cash flows can multiply without its valuation rising. Criteria it uses (Part VI Margin, Part IV Constant Currency, Part VIII): (1) scarcity is necessary but not enough, since scarcity only shows a margin exists in principle; (2) durability: there is no cheap next-best route, whereas passing scarcities (power, then transmission, then chips) draw capital in and get competed away; (3) control: the nature of ownership, contract length and terms decide whether the position holds; (4) the political test of last resort: who else can claim the rent (regulators, ratepayer advocates, local opposition, antitrust, the sovereign), with very high margins inviting state action; (5) revenue that grows with the nominal value of activity flowing through it without matching capital spending, which also protects against inflation; (6) model-agnostic: the owner does not care which model wins; (7) a toll every participant in the era must pay, used more as the era grows. Its examples: rails of diffusion such as a global messaging app (WhatsApp) and the owner of the digital distribution network; the Neo-Dollar (USDT, its carriers, issuer reserve income); a population-scale installed base or everything apps (plural); licensed guilds (Fitch). Historical Heights: Standard Oil's pipelines, railroads, AT&T, Google Ads and Alphabet search, dominant local newspapers. The sovereign keeps a claim on gains wherever they land.",
+  "unit_seller": "The paper does not use the term unit seller; the matching idea is Genesis, the industry that designs, trains, evaluates, hosts and serves models (labs, hyperscalers, neoclouds, chip suppliers) and sells the output as subscriptions and metered API tokens. Why it says they do not durably capture gains: the price of a unit of intelligence has fallen about thirteenfold a year since GPT-3 and about 47% a quarter at fixed capability; fast followers and distillation commoditize the frontier within months (open models lag by about four months); a commodity token ends up priced at the compute cost; Chinese labs can publish cheap open-weight models because their state is not answerable to a 401(k) class, so the US commercial frontier premium becomes a visible spread over the Chinese benchmark under permanent customer audit; trillions of capex cannot be repaid in twenty-dollar subscriptions; and competition forces labs and hyperscalers to keep spending as returns fall, destroying capital in aggregate. Its inverted thesis is that intelligence is the giveaway, a loss leader, and margins come from being the conduit; nothing that depends on model pricing margins escapes Genesis. Caveats it gives: frontier tokens stay worth far more than commodity ones; US inference margins are positive for now; Genesis revenue will keep growing; in its end state the lab splits into a commercial company that meters intelligence at whatever margin the Chinese floor allows and a sovereign frontier run cost-plus. Chips are the current crossing for a few more years, but not much longer. The paper does not discuss per-seat software vendors by name; it says firms will push the cost of wages and applications toward the cost of compute and shrink to a few operators."
+ },
+ "named_companies": [
+  {
+   "name": "[redacted company, 11-character placeholder]",
+   "how_the_paper_classes_it": "chokepoint",
+   "short_quote_or_paraphrase": "Said to take a Google Ads-like enduring cut from a far larger intelligence economy; name redacted.",
+   "section": "Part VIII Alpha and Omega"
+  },
+  {
+   "name": "[redacted company, 8-character placeholder]",
+   "how_the_paper_classes_it": "chokepoint (implied, unpriced)",
+   "short_quote_or_paraphrase": "A staid listed company trading at a sleepy valuation priced for the old world; name redacted.",
+   "section": "Part VIII Alpha and Omega"
+  },
+  {
+   "name": "WhatsApp",
+   "how_the_paper_classes_it": "chokepoint (rail of diffusion, example)",
+   "short_quote_or_paraphrase": "The global messaging app that intelligence and stablecoin pay ride on; widely used rails become inventories of human activity.",
+   "section": "Overture (Intelligence Adolescent)"
+  },
+  {
+   "name": "Meta Platforms",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Hyperscaler funding Genesis capex; 26% one-day drop in 2022; Scale AI deal as a $15B acquihire; legacy firm using JVs to pay key staff. Never called a Height.",
+   "section": "Overture; Part II; Part VII"
+  },
+  {
+   "name": "Tether (USDT)",
+   "how_the_paper_classes_it": "chokepoint (core of the Neo-Dollar, example)",
+   "short_quote_or_paraphrase": "The Neo-Dollar is USDT, its carriers and its spread; owners of these channels collect a toll that rises with inflation.",
+   "section": "Overture (Intelligence Adolescent); Part IV"
+  },
+  {
+   "name": "Circle Internet Group",
+   "how_the_paper_classes_it": "chokepoint (by implication, footnote only)",
+   "short_quote_or_paraphrase": "Its 10-Q is cited for stablecoin reserve income accruing to the issuer at rates Washington sets.",
+   "section": "Part IV (East/West of Eden), note 100"
+  },
+  {
+   "name": "OpenRouter",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "An American router where users pay for Chinese-model tokens with stablecoins; data source for Chinese token share.",
+   "section": "Part III (The Shrinking Aperture); Part IV"
+  },
+  {
+   "name": "Alphabet / Google",
+   "how_the_paper_classes_it": "other (last era's Height, also Genesis hyperscaler)",
+   "short_quote_or_paraphrase": "buy DoubleClick and Android, not Alphabet or Anthropic",
+   "section": "Part VIII Alpha and Omega"
+  },
+  {
+   "name": "DoubleClick",
+   "how_the_paper_classes_it": "example only (historical Height bought before it was priced)",
+   "short_quote_or_paraphrase": "Held up as the kind of toll asset to buy now, by analogy.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "Android",
+   "how_the_paper_classes_it": "example only (historical Height bought before it was priced)",
+   "short_quote_or_paraphrase": "Bought for about $50M in 2005; such chances come rarely.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "Anthropic",
+   "how_the_paper_classes_it": "unit seller (Genesis lab)",
+   "short_quote_or_paraphrase": "Revenue, margins and IPO cited as Genesis success; value under pressure from distillation; Founder LLC voting control.",
+   "section": "Part I; Part III; Part VII; Part VIII"
+  },
+  {
+   "name": "OpenAI",
+   "how_the_paper_classes_it": "unit seller (Genesis lab)",
+   "short_quote_or_paraphrase": "ARR, valuation and its DeployCo services arm cited; DeployCos judged too small and slow to diffuse AI.",
+   "section": "Part I Genesis"
+  },
+  {
+   "name": "DeepSeek",
+   "how_the_paper_classes_it": "unit seller (Chinese commodity floor)",
+   "short_quote_or_paraphrase": "Stays open-weight and aims only for a reasonable profit, per leaked investor call.",
+   "section": "Part III"
+  },
+  {
+   "name": "Moonshot AI (Kimi K3)",
+   "how_the_paper_classes_it": "unit seller (Chinese commodity floor)",
+   "short_quote_or_paraphrase": "Open-weight 2.8T model rivaling the US commercial frontier; valued near $50B before IPO.",
+   "section": "Part III"
+  },
+  {
+   "name": "Alibaba",
+   "how_the_paper_classes_it": "unit seller (Chinese commodity floor)",
+   "short_quote_or_paraphrase": "Named with DeepSeek as a supplier of low-cost open-weight models worldwide.",
+   "section": "Part III"
+  },
+  {
+   "name": "MiniMax",
+   "how_the_paper_classes_it": "unit seller (Chinese lab)",
+   "short_quote_or_paraphrase": "Beijing will not prop up its share price.",
+   "section": "Part III (From the Other Side of the Pacific)"
+  },
+  {
+   "name": "Zhipu",
+   "how_the_paper_classes_it": "unit seller (Chinese lab)",
+   "short_quote_or_paraphrase": "Beijing will not prop up its share price.",
+   "section": "Part III (From the Other Side of the Pacific)"
+  },
+  {
+   "name": "Microsoft",
+   "how_the_paper_classes_it": "unit seller (Genesis hyperscaler), example",
+   "short_quote_or_paraphrase": "Copilot cited as underpowered diffusion; one of the hyperscalers whose free cash flow is squeezed.",
+   "section": "Overture; Part I; Part II"
+  },
+  {
+   "name": "Amazon",
+   "how_the_paper_classes_it": "unit seller (Genesis hyperscaler)",
+   "short_quote_or_paraphrase": "Named only in the hyperscaler free cash flow chart.",
+   "section": "Part II (The Rate)"
+  },
+  {
+   "name": "Nvidia",
+   "how_the_paper_classes_it": "other (chips are a passing crossing)",
+   "short_quote_or_paraphrase": "Its chips, Groq deal and financing platform cited; the paper says chips stay the crossing a few years but not much longer (Nvidia not named in that line).",
+   "section": "Part II; Part III; Part VI; Part VII"
+  },
+  {
+   "name": "CoreWeave",
+   "how_the_paper_classes_it": "example only (Genesis financing)",
+   "short_quote_or_paraphrase": "Its $8.5B GPU-backed facility cited as part of the credit buildout.",
+   "section": "Part I, note 18"
+  },
+  {
+   "name": "Apollo Global Management",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Private credit financier of the buildout; one of the firms holding state capacity.",
+   "section": "Part I; Part II; Part VII"
+  },
+  {
+   "name": "Goldman Sachs",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Capex forecasts cited; one of the firms holding state capacity.",
+   "section": "Overture; Part VII"
+  },
+  {
+   "name": "Citadel",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "One of the firms holding state capacity.",
+   "section": "Part VII (The Vanishing Point)"
+  },
+  {
+   "name": "Blackstone, BlackRock, Brookfield, KKR",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Financing partners of the AI compute buildout, footnotes only.",
+   "section": "Part I, note 18 and note 32"
+  },
+  {
+   "name": "Palantir",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "A Palantir-style future: state capacity expressed as a firm.",
+   "section": "Part VII (The Vanishing Point)"
+  },
+  {
+   "name": "Tata Consultancy Services",
+   "how_the_paper_classes_it": "example only (back office turned margin)",
+   "short_quote_or_paraphrase": "FY2026 headcount fell 23,460 while adjusted operating profit rose 7.5%.",
+   "section": "Part V (The Bottom K)"
+  },
+  {
+   "name": "Scale AI",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Meta's half stake framed as buying its CEO to run superintelligence.",
+   "section": "Part VII (No-Collar Labor)"
+  },
+  {
+   "name": "Spirit Airlines",
+   "how_the_paper_classes_it": "example only (firm as data source)",
+   "short_quote_or_paraphrase": "Google and Mercor bid for its operational data in bankruptcy.",
+   "section": "Part VII (No-Collar Labor)"
+  },
+  {
+   "name": "Mercor",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Bidder for Spirit Airlines' operational data.",
+   "section": "Part VII (No-Collar Labor)"
+  },
+  {
+   "name": "Thrive Capital",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "No longer venture capital; drifting to a holding company.",
+   "section": "Part VII (Occident)"
+  },
+  {
+   "name": "Berkshire Hathaway",
+   "how_the_paper_classes_it": "loser (anchored to last era's Height)",
+   "short_quote_or_paraphrase": "Bought newspapers through 2012, sold in 2020 for under half the cost.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "Hearst",
+   "how_the_paper_classes_it": "example only (renewed its Height)",
+   "short_quote_or_paraphrase": "Used newspaper cash to buy Fitch, now its biggest profit source.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "Fitch Ratings",
+   "how_the_paper_classes_it": "chokepoint (licensed guild, example)",
+   "short_quote_or_paraphrase": "The licensed guild that renewed Hearst's position.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "Pennsylvania Railroad",
+   "how_the_paper_classes_it": "loser (old Height)",
+   "short_quote_or_paraphrase": "World's most valuable firm in 1912; bankrupt in 1970.",
+   "section": "Part VIII"
+  },
+  {
+   "name": "AT&T / Bell Labs",
+   "how_the_paper_classes_it": "other (historical Height; inventor that lost the invention)",
+   "short_quote_or_paraphrase": "Forced to license the transistor; held the crown by 1922.",
+   "section": "Overture; Part VIII"
+  },
+  {
+   "name": "Standard Oil",
+   "how_the_paper_classes_it": "chokepoint (historical)",
+   "short_quote_or_paraphrase": "Broken up for owning the means of moving oil, not for finding it.",
+   "section": "Overture"
+  },
+  {
+   "name": "ASML",
+   "how_the_paper_classes_it": "other (inventor that did not capture most value)",
+   "short_quote_or_paraphrase": "The lone Dutch EUV maker; most value went to chip designers instead (named in a footnote).",
+   "section": "Overture; Part III, note 60"
+  },
+  {
+   "name": "Intel",
+   "how_the_paper_classes_it": "example only (sovereign stake)",
+   "short_quote_or_paraphrase": "Largest federal stake: $8.9B for 9.9%.",
+   "section": "Part VII (The Vanishing Point), chart"
+  },
+  {
+   "name": "U.S. Steel / Nippon Steel",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "The golden share as a model for state control of a firm.",
+   "section": "Part III (Of Last Resort); Part VII"
+  },
+  {
+   "name": "SpaceX",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Musk pledging SpaceX shares to Trump Accounts; founder voting control chart.",
+   "section": "Part II; Part VII"
+  },
+  {
+   "name": "Tesla",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Musk pay package fight drives jurisdiction choice.",
+   "section": "Part VII (Jurisdiction)"
+  },
+  {
+   "name": "Huawei",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Chinese mass-scale computing that eases chip limits.",
+   "section": "Part III, note 72"
+  },
+  {
+   "name": "Ant Group",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "IPO canceled after Jack Ma's speech: party above capital.",
+   "section": "Part IV (East/West of Eden)"
+  },
+  {
+   "name": "Hyperliquid",
+   "how_the_paper_classes_it": "other (lowercase wordplay only)",
+   "short_quote_or_paraphrase": "Used once as a pun about SPVs; not called a Height.",
+   "section": "Part VII (Occident)"
+  },
+  {
+   "name": "WeChat",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Everyday Chinese payment rail.",
+   "section": "Part III"
+  },
+  {
+   "name": "Gulfstream (General Dynamics)",
+   "how_the_paper_classes_it": "example only (indicator)",
+   "short_quote_or_paraphrase": "Its order backlog is a gauge of wealth at the top of the K.",
+   "section": "Part V (Towers of Ivory; Measurement)"
+  },
+  {
+   "name": "PJT Partners",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Restructuring work expected after Genesis credit losses.",
+   "section": "Part II (The Totalization)"
+  },
+  {
+   "name": "Lockheed",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Polaris as a sovereign-commissioned private program.",
+   "section": "Part III (Two Sovereigns, One System)"
+  },
+  {
+   "name": "Guinness / Diageo",
+   "how_the_paper_classes_it": "example only",
+   "short_quote_or_paraphrase": "Case study of how firm ownership settlements change.",
+   "section": "Part VII (Guinness)"
+  }
+ ],
+ "testable_claims": [
+  {
+   "claim": "US hyperscaler capex is about $800B in 2026 and passes $1T in 2027; spending keeps rising even as returns fall, with no market signal to stop.",
+   "date_or_horizon": "2026 and 2027",
+   "observable": "Capex lines in 10-K and 10-Q filings of Microsoft, Alphabet, Amazon, Meta (and Oracle); guidance on Q4 2026 calls.",
+   "section": "Overture; Part I; Part II"
+  },
+  {
+   "claim": "Hyperscaler cash capex (growing about 70% a year) overtakes operating cash flow (about 23% a year); 2027 is a dry year with combined free cash flow near zero, then about $120B in 2028, $300B in 2029 and $400B in 2030.",
+   "date_or_horizon": "2027 to 2030",
+   "observable": "Operating cash flow minus capex in the 10-Q and 10-K cash flow statements of Alphabet, Amazon, Meta and Microsoft.",
+   "section": "Part II (The Rate)"
+  },
+  {
+   "claim": "Frontier training costs grow about 3.5x a year: roughly $1B runs in 2026, $3.5B runs in 2027, $10B runs in 2028.",
+   "date_or_horizon": "2027 and 2028",
+   "observable": "Epoch AI training cost data; training compute spend disclosed in lab S-1, 10-K and 10-Q filings.",
+   "section": "Part II (The Rate)"
+  },
+  {
+   "claim": "The price per unit of intelligence keeps collapsing (about 13x a year; about 47% a quarter at fixed capability) and new frontier capabilities are commoditized within months.",
+   "date_or_horizon": "ongoing",
+   "observable": "Epoch AI price-per-performance series; published API price lists; Epoch open-versus-closed lag estimates.",
+   "section": "Overture; Part I; Part II"
+  },
+  {
+   "claim": "Chinese labs stay open-weight and keep winning global token share (already a majority of OpenRouter volume by summer 2026); Beijing will not curb overseas access to its top models in the short term.",
+   "date_or_horizon": "short term",
+   "observable": "OpenRouter model rankings by token volume; Cyberspace Administration of China notices; Hugging Face releases.",
+   "section": "Part III (The Shrinking Aperture)"
+  },
+  {
+   "claim": "The best US models withdraw from the commercial market into a sovereign frontier behind pre-release review; one day the frontier will no longer be for sale.",
+   "date_or_horizon": null,
+   "observable": "Executive orders and rules in the Federal Register; lab release notes and filings disclosing withheld models.",
+   "section": "Overture; Part III (The Artifact)"
+  },
+  {
+   "claim": "Washington takes control of frontier labs without calling it nationalization: joint stock offered to the state, a golden share, or a licence for frontier training runs, with the lab split into a commercial arm and a cost-plus sovereign lab.",
+   "date_or_horizon": null,
+   "observable": "Federal Register; agency press releases; Anthropic SEC filings; Department of War contract notices.",
+   "section": "Part II; Part III (Of Last Resort); Part VII (The Vanishing Point)"
+  },
+  {
+   "claim": "The Fed reverses the 1951 Treasury-Fed Accord, capping Treasury yields and buying what is needed to fund the frontier, even if Congress must change its mandate; this takes priority over price stability.",
+   "date_or_horizon": null,
+   "observable": "FOMC statements and implementation notes; Fed H.4.1 balance sheet; Treasury quarterly refunding statements.",
+   "section": "Part III (Of Last Resort)"
+  },
+  {
+   "claim": "Retirement savings become an AI backstop: Trump Accounts are expanded toward all pre-retirement Americans and used to pass frontier equity to taxpayers.",
+   "date_or_horizon": null,
+   "observable": "Congress.gov legislation; Treasury and IRS Trump Account guidance.",
+   "section": "Part II (The Totalization); Part VII (The Vanishing Point)"
+  },
+  {
+   "claim": "The dollar's global role expands through dollar stablecoins held by people outside the US banking system; issuers keep reserve income; the dollar stays above all other reserve currencies combined.",
+   "date_or_horizon": null,
+   "observable": "USDC in circulation and reserve income in Circle 10-Q filings; Tether attestations; IMF COFER; BIS Triennial Survey.",
+   "section": "Part IV Superscription"
+  },
+  {
+   "claim": "America debases its currency at home: the price of intelligence hits a floor while the cost of everything else rises substantially.",
+   "date_or_horizon": "near future",
+   "observable": "BLS CPI; Epoch AI token price series.",
+   "section": "Part IV (The Neo-Dollar; East/West of Eden)"
+  },
+  {
+   "claim": "The 10-year Treasury yield sitting above its roughly 4.5% long-run average marks the end of the 40-year bond bull market and a new regime lasting decades, with a higher cost of capital.",
+   "date_or_horizon": "decades",
+   "observable": "FRED DGS10 daily 10-year yield.",
+   "section": "Part VII (Orient)"
+  },
+  {
+   "claim": "Hyperscaler capex reaches about 3% of GDP by 2027, and AI firms move toward a supermajority of S&P 500 value and most of GDP growth.",
+   "date_or_horizon": "2027 for the capex share",
+   "observable": "BEA NIPA table 1.5.2 contributions to GDP growth; company capex over BEA nominal GDP; S&P 500 sector weights.",
+   "section": "Part II (The Totalization)"
+  },
+  {
+   "claim": "The first big job losses hit the rich world's offshore back office (India first); Indian IT headcount falls while profits rise, a gap Goldman projects to widen through FY2030.",
+   "date_or_horizon": "through FY2030",
+   "observable": "TCS, Infosys, HCLTech, Wipro, Tech Mahindra quarterly headcount and operating profit; Nasscom reviews.",
+   "section": "Part V (The Bottom K)"
+  },
+  {
+   "claim": "Licensing and labor law shield most US knowledge workers, so the US avoids mass upheaval, but hiring of 22 to 25 year-olds in AI-exposed jobs keeps falling behind (19% shortfall by mid-2026).",
+   "date_or_horizon": null,
+   "observable": "NY Fed recent-graduate unemployment; BLS payrolls for information, finance and professional services; Stanford Digital Economy Lab updates.",
+   "section": "Part V (The Guild)"
+  },
+  {
+   "claim": "Anti-migration parties have a good chance of a governing share in Britain and France, and an AfD win in Germany is even more likely, in elections within three years.",
+   "date_or_horizon": "within three years of Oct 2026",
+   "observable": "Official election results in the UK, France and Germany.",
+   "section": "Part V (Emigration No More)"
+  },
+  {
+   "claim": "Local governments block data-center buildouts and popular backlash raises their cost; grid interconnection is the input now holding up finished data centers.",
+   "date_or_horizon": null,
+   "observable": "County board votes; state statutes; grid operator large-load notices.",
+   "section": "Part IV (East/West of Eden); Part VI (Margin)"
+  },
+  {
+   "claim": "AI agents move household deposits to the best yield, eroding big-bank deposit franchises, lifting neobank deposits and raising funding costs for systemically important banks.",
+   "date_or_horizon": "soon",
+   "observable": "FDIC Quarterly Banking Profile deposit costs; interest-bearing deposit costs in large-bank 10-Q filings.",
+   "section": "Part VI (Margin)"
+  },
+  {
+   "claim": "The number of public companies falls sharply, with a wave of take-privates, roll-ups and a new kind of private equity that diffuses AI; seed stops being an institutional product.",
+   "date_or_horizon": null,
+   "observable": "Count of US listed companies (WFE, CRSP); PitchBook take-private, continuation fund and seed fund data.",
+   "section": "Part VII (Occident; Orient)"
+  },
+  {
+   "claim": "Wealth piles up at the top of the K: Gulfstream backlog, elite school places, prime land and private security rise in price, and inequality in leading OECD economies passes Brazil and Mexico; labor-to-capital transfer in the next decade matches the past forty years.",
+   "date_or_horizon": "next decade",
+   "observable": "General Dynamics Aerospace backlog; Fed Distributional Financial Accounts top 1% share; executive protection disclosures in proxies.",
+   "section": "Part V (Towers of Ivory; The Private Commons; Measurement)"
+  },
+  {
+   "claim": "Data-center and AI credit will take heavy losses at some point, with recoveries far below what ratings imply because defaults are correlated, while intelligence keeps diffusing.",
+   "date_or_horizon": "no date given",
+   "observable": "Defaults and distressed exchanges in rating agency reports; bankruptcy filings; bank and BDC loss disclosures.",
+   "section": "Part I; Part II (The Totalization)"
+  },
+  {
+   "claim": "Labs will buy operating businesses as training environments for their data and drift toward chaebol-like conglomerates.",
+   "date_or_horizon": null,
+   "observable": "Acquisition announcements and 8-K filings by OpenAI, Anthropic and Alphabet.",
+   "section": "Part VII (No-Collar Labor)"
+  }
+ ],
+ "graph_agrees": [
+  {
+   "main_event_id": "29-2",
+   "how": "Paper expects the Fed to cap yields and buy Treasuries to keep funding the frontier; 65% by 2029 fits."
+  },
+  {
+   "main_event_id": "E17",
+   "how": "Same backstop claim; paper says the AI financing cascade ends against the sovereign."
+  },
+  {
+   "main_event_id": "27-4",
+   "how": "Paper expects impairments throughout Genesis credit while spending goes on (no date)."
+  },
+  {
+   "main_event_id": "29-6",
+   "how": "Paper expects correlated data-center defaults with recoveries far below rating-implied levels."
+  },
+  {
+   "main_event_id": "28-2",
+   "how": "Paper expects AI losses to land on a diffuse base of lenders, insurers and retail private credit."
+  },
+  {
+   "main_event_id": "F6",
+   "how": "Paper says distillation and the Chinese open-weight floor compress lab value and advises against owning Anthropic."
+  },
+  {
+   "main_event_id": "JB1",
+   "how": "Paper expects local governments to block data-center buildouts (Loudoun, Pittsylvania)."
+  },
+  {
+   "main_event_id": "PG1",
+   "how": "Paper names grid interconnection as the scarce input now holding up finished data centers."
+  },
+  {
+   "main_event_id": "W2",
+   "how": "Paper cites a 19% hiring shortfall for 22 to 25 year-olds in AI-exposed jobs."
+  },
+  {
+   "main_event_id": "28-4",
+   "how": "Same junior squeeze: firms hire fewer young workers rather than fire."
+  },
+  {
+   "main_event_id": "W3",
+   "how": "Low odds fit the paper's view that licensing and labor law shield US office workers."
+  },
+  {
+   "main_event_id": "W7",
+   "how": "Paper says efforts to protect against mass labor displacement will likely succeed."
+  },
+  {
+   "main_event_id": "M62",
+   "how": "Paper expects the K to widen with gains pooling at the very top."
+  },
+  {
+   "main_event_id": "M56",
+   "how": "Paper gives anti-migration parties a good chance in UK and France and an AfD win as even more likely."
+  },
+  {
+   "main_event_id": "D7",
+   "how": "Low odds fit the paper's view that the dollar's global role expands via stablecoins."
+  },
+  {
+   "main_event_id": "27-3",
+   "how": "Paper's most likely sovereign step is a licence for frontier training runs (though it expects much control to stay informal)."
+  },
+  {
+   "main_event_id": "E04",
+   "how": "Same licence-for-training-runs claim as 27-3."
+  }
+ ],
+ "graph_disagrees": [
+  {
+   "main_event_id": "F7",
+   "how": "Paper expects US hyperscaler capex above $1T in 2027 and rising regardless of returns; 56% odds of a cut runs against it."
+  },
+  {
+   "main_event_id": "F9",
+   "how": "Paper's base case is that Washington keeps the AI-heavy market rising; 34% odds of a bear market is high by its lights (no date given)."
+  },
+  {
+   "main_event_id": "29-5",
+   "how": "Paper expects US knowledge workers shielded by licensing, with displacement abroad and among new entrants; 62% is high by its lights."
+  },
+  {
+   "main_event_id": "W8",
+   "how": "Paper expects Indian IT headcount to keep falling as profits rise; 22% looks low for the headcount leg."
+  },
+  {
+   "main_event_id": "B4",
+   "how": "Paper expects the AI financing cascade to end at the sovereign backstop; 8% by Nov 2027 is low by its lights (no date given)."
+  }
+ ],
+ "company_classes": [
+  {
+   "company_id": "CO:META",
+   "class": "holds a chokepoint",
+   "basis": "Paper names WhatsApp as the global messaging rail intelligence and stablecoin pay ride on and cites an unnamed behemoth owning the distribution network; tying this to Meta is an application. Paper also treats Meta as a Genesis capex spender."
+  },
+  {
+   "company_id": "CO:CRCL",
+   "class": "holds a chokepoint",
+   "basis": "Named in a footnote as evidence that stablecoin reserve income accrues to the issuer; paper says Neo-Dollar channel owners collect a toll that rises with inflation. Classing Circle itself is an application."
+  },
+  {
+   "company_id": "CO:ANT",
+   "class": "sells intelligence by the unit",
+   "basis": "Named directly as a Genesis lab selling subscriptions and metered tokens; paper advises owning new Heights rather than Anthropic."
+  },
+  {
+   "company_id": "CO:MSFT",
+   "class": "sells intelligence by the unit",
+   "basis": "Named as a hyperscaler, which the paper places in Genesis (makes and serves models); Azure tokens and Copilot seats are metered intelligence. Application of its Genesis definition."
+  },
+  {
+   "company_id": "CO:GOOGL",
+   "class": "sells intelligence by the unit",
+   "basis": "Named as a hyperscaler in Genesis and as the last era's Height (search) at risk; its cloud and model API sales are metered intelligence. Application of its Genesis definition."
+  },
+  {
+   "company_id": "CO:AMZN",
+   "class": "sells intelligence by the unit",
+   "basis": "Named only in the hyperscaler cash flow chart; AWS hosts and serves models by the unit, which the paper places in Genesis. Application."
+  },
+  {
+   "company_id": "CO:ORCL",
+   "class": "sells intelligence by the unit",
+   "basis": "Not named; sells AI compute capacity to labs, the hosting layer the paper places in Genesis. Application."
+  },
+  {
+   "company_id": "CO:CRWV",
+   "class": "sells intelligence by the unit",
+   "basis": "Named in a footnote on GPU-backed financing; a neocloud renting GPU compute by the hour, inside Genesis. Application."
+  },
+  {
+   "company_id": "CO:NBIS",
+   "class": "sells intelligence by the unit",
+   "basis": "Not named; neocloud renting GPU compute, inside the paper's Genesis. Application."
+  },
+  {
+   "company_id": "CO:IREN",
+   "class": "sells intelligence by the unit",
+   "basis": "Not named; miner turned GPU cloud host selling compute capacity, inside the paper's Genesis. Application."
+  }
+ ],
+ "candidate_questions": [
+  {
+   "text": "Will Microsoft, Alphabet, Amazon and Meta together report more than $250B of capex for the quarter ended March 31, 2027?",
+   "test": "YES if the sum of purchases of property and equipment (Microsoft: additions to property and equipment for Jan to Mar 2027, derived as nine-month minus six-month year-to-date figures; Amazon: gross purchases before proceeds) in each company's 10-Q cash flow statement for the three months ended March 31, 2027 exceeds $250.0B; NO otherwise.",
+   "source": "Form 10-Q filings on SEC EDGAR (Microsoft FY2027 Q3; Alphabet, Amazon, Meta Q1 2027)",
+   "due": "2027-05-15",
+   "claim_ref": "US hyperscaler capex passes $1T in 2027"
+  },
+  {
+   "text": "Will the combined free cash flow of Alphabet, Amazon, Meta and Microsoft for the quarter ended March 31, 2027 be below $10B?",
+   "test": "For each company take net cash from operating activities minus purchases of (additions to) property and equipment for the three months ended March 31, 2027 (Microsoft derived from year-to-date figures). YES if the four-company sum is below $10.0B; NO otherwise.",
+   "source": "Form 10-Q filings on SEC EDGAR",
+   "due": "2027-05-15",
+   "claim_ref": "2027 is a dry year with hyperscaler free cash flow near zero"
+  },
+  {
+   "text": "Will models from China-based developers take more than 50% of tokens on OpenRouter in March 2027?",
+   "test": "On OpenRouter's AI Model Rankings for the month of March 2027, sum the token share of models whose developer is headquartered in mainland China (DeepSeek, Moonshot AI, Alibaba Qwen, Zhipu Z.ai, MiniMax, ByteDance, Tencent, Baidu, StepFun, Xiaomi, Meituan and any other China-based lab). YES if the sum is above 50%; NO if 50% or below.",
+   "source": "OpenRouter AI Model Rankings (openrouter.ai/rankings), read between Apr 1 and Apr 10, 2027",
+   "due": "2027-04-10",
+   "claim_ref": "Chinese labs stay open-weight and keep winning token share"
+  },
+  {
+   "text": "Will USDC in circulation at March 31, 2027 be at least 15% higher than at September 30, 2026?",
+   "test": "Compare the period-end USDC in circulation figure in Circle Internet Group's 10-Q for Q1 2027 with the period-end figure in its 10-Q for Q3 2026. YES if the ratio is 1.15 or more; NO otherwise.",
+   "source": "Circle Internet Group (CRCL) Form 10-Q filings on SEC EDGAR",
+   "due": "2027-05-31",
+   "claim_ref": "The dollar's global role expands through dollar stablecoins"
+  },
+  {
+   "text": "Will TCS end fiscal 2027 with fewer employees than a year earlier while its full-year operating profit rises?",
+   "test": "From TCS's Q4 FY2027 results release and fact sheet: YES if total workforce at March 31, 2027 is below workforce at March 31, 2026 AND consolidated FY2027 operating income (EBIT, INR, excluding exceptional items as TCS reports it) is above FY2026; NO otherwise.",
+   "source": "Tata Consultancy Services Q4 FY2027 results and fact sheet filed with BSE and NSE",
+   "due": "2027-04-30",
+   "claim_ref": "Indian IT headcount falls while profits rise"
+  },
+  {
+   "text": "By June 30, 2027, will the US government take or agree to take equity, warrants or a golden share in OpenAI, Anthropic, xAI or Alphabet?",
+   "test": "YES if between Nov 26, 2026 and Jun 30, 2027 a federal department or agency release, a Federal Register notice, or a company SEC filing discloses that the US government holds, or has signed a binding agreement or letter of intent to acquire, any equity, warrant, convertible instrument or special voting share in OpenAI, Anthropic, xAI or Alphabet. Grants, contracts and compute purchases without equity do not count. NO otherwise.",
+   "source": "Federal Register; department press releases; SEC EDGAR filings of Anthropic and Alphabet",
+   "due": "2027-06-30",
+   "claim_ref": "Washington takes control of frontier labs via joint stock, golden share or licence"
+  },
+  {
+   "text": "By June 30, 2027, will any federal law, executive order or rule require a licence or prior approval before a frontier AI training run?",
+   "test": "YES if by Jun 30, 2027 an enacted statute, a signed executive order, or an interim or final rule in effect requires developers to obtain a licence, permit or prior federal approval before starting training runs above a stated compute or capability threshold. Notice-only or reporting-only rules do not count. NO otherwise.",
+   "source": "Federal Register and Congress.gov",
+   "due": "2027-06-30",
+   "claim_ref": "Washington takes control of frontier labs via joint stock, golden share or licence"
+  },
+  {
+   "text": "Will General Dynamics report a larger Aerospace backlog at the end of Q1 2027 than at the end of Q1 2026?",
+   "test": "YES if the Aerospace segment backlog (dollars) in General Dynamics' Q1 2027 earnings release or 10-Q exceeds the Aerospace backlog reported for the end of Q1 2026; NO otherwise.",
+   "source": "General Dynamics Q1 2027 earnings release and Form 10-Q on SEC EDGAR",
+   "due": "2027-05-15",
+   "claim_ref": "Wealth piles up at the top of the K (Gulfstream backlog)"
+  }
+ ]
+}

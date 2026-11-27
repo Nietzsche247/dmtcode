@@ -24,6 +24,14 @@ OPTIONS
   --report PATH       also write this run's log entry to its own JSON file
   --collisions        list the standing collisions (every arm counted) and stop if no update is given
   --restamp --reason "..."   reset the odds stamp by hand after a real repair; the reason goes into cascade_log
+  --rebase            the one-time level correction: see THE REBASE below
+
+THE REBASE (one time only)
+  python3 earth2/cascade.py GRAPH.json --rebase --updates updates.json
+  A rebase corrects levels; it is not news. It forces max hops to 0 (nothing cascades), reads its re-rates from
+  --updates FILE only (no --set, no --reason, no --date: every row carries its own date, a reason that starts
+  with "REBASE" and a source), writes no collisions queue, leaves each node's status as it was, and tags its
+  cascade_log entry "kind": "rebase". It refuses to run if cascade_log already holds a rebase entry.
 
 THE SCORECARD LOCK (earth2/scorecard.py)
   Every mode of this script stops, with the list and the commands to fix it, while any scorecard question
@@ -59,11 +67,15 @@ THE RULE (same rule the page runs live)
   Links with no strength are display only and never carry a move.
 
 COLLISIONS (rule 8), listed after every run
-  (a) a node that rose this run, pushed by two or more different arms
-  (b) two risen nodes from different arms whose windows overlap or sit within 120 days
-  (c) a company that sits on two or more risen nodes
-  Each is scored: joint odds x number of arms pushing. Ties go to the shortest window.
-  The top 5 is THE NEXT COLLISIONS QUEUE.
+  A node counts only if it rose 3 or more points this run, sat under 90 before the move, and is neither FIRED
+  (before or after the move) nor dated SCHEDULED (a known release or meeting is a calendar, not a collision).
+  (a) a counted node pushed by two or more different arms
+  (b) two counted nodes from different arms whose windows overlap or sit within 120 days
+  (c) a company that sits on two or more counted nodes
+  Each is scored: joint odds x number of arms pushing x unpriced share, where a node's unpriced share is
+  1 - odds/100 after the move (averaged over the nodes in the item), so a move that is already priced near
+  certain weighs little. Where a node carries a like-for-like market (node "market"), its unpriced share is the
+  measured gap |ours - market| / 100 instead, so the queue ranks by the gap wherever a market exists. Ties go to the shortest window. The top 5 is THE NEXT COLLISIONS QUEUE.
 
 STANDING COLLISIONS (every arm counted; no arm list is written into this file)
   A live node pushed by links that carry a move from two or more different arms, where each pushing
@@ -82,6 +94,10 @@ import tempfile
 
 ODDS_MIN, ODDS_MAX = 1.0, 99.0
 MIN_STEP = 0.01
+COLLISION_MIN_RISE = 3.0     # points a node must rise this run to count in a collision
+COLLISION_MAX_BEFORE = 90.0  # a node at 90 or more before the move is already priced
+COLLISION_RULE = ("a node counts if it rose 3+ points this run, sat under 90 before the move, and is not FIRED or "
+                  "SCHEDULED; score = joint odds x arms x unpriced share (the gap to a like-for-like market where one exists, else 1 - odds/100 after the move; averaged)")
 
 
 def load_scorecard():
@@ -309,17 +325,42 @@ def window_gap(a, b):
     return max(0, (max(a0, b0) - min(a1, b1)).days)
 
 
+def collision_counts(n, rise, after_odds):
+    """A node counts toward a collision only if it rose 3+ points this run, sat under 90 before the move, is not
+    FIRED (before or after the move) and is not dated SCHEDULED. n is the node as it was before the move."""
+    before = float(n.get("odds_now") or 0)
+    return (rise >= COLLISION_MIN_RISE and before < COLLISION_MAX_BEFORE and not is_fired(n) and after_odds < 100
+            and str(n.get("date_state") or "").upper() != "SCHEDULED")
+
+
+def unpriced(after_odds, node=None):
+    """The share of the event not yet priced in. Where the node carries a like-for-like market (node["market"],
+    written by scorecard.py import-seed), it is the measured gap |ours - market| / 100, so the queue ranks by the
+    gap wherever one exists. Elsewhere it is the proxy 1 - odds/100 after the move."""
+    m = (node or {}).get("market") or {}
+    if isinstance(m.get("odds"), (int, float)):
+        return abs(float(after_odds) - float(m["odds"])) / 100.0
+    return max(0.0, 1.0 - float(after_odds) / 100.0)
+
+
+def market_gap(node, after_odds):
+    m = (node or {}).get("market") or {}
+    return round(float(after_odds) - float(m["odds"]), 1) if isinstance(m.get("odds"), (int, float)) else None
+
+
 def collisions(nodes, companies, rose, after, pushers, limit_days):
     far = dt.date(2100, 1, 1)
     end_of = lambda nid: parse_date(nodes[nid].get("window_end"), end=True) or far
+    counted = {nid: r for nid, r in rose.items() if collision_counts(nodes[nid], r, after[nid])}
     items = []
     for nid, arms in pushers.items():
         arms = {a for a in arms if a}
-        if nid in rose and len(arms) >= 2:
+        if nid in counted and len(arms) >= 2:
+            u = unpriced(after[nid], nodes[nid])
             items.append({"kind": "a", "what": f"{nid} rose {rose[nid]:+.1f}, pushed by {len(arms)} arms", "nodes": [nid],
-                          "arms": sorted(arms), "joint_odds": round(after[nid], 1),
-                          "score": round(after[nid] / 100 * len(arms), 3), "window_end": end_of(nid).isoformat()})
-    ids = sorted(rose)
+                          "arms": sorted(arms), "joint_odds": round(after[nid], 1), "unpriced": round(u, 3),
+                          "score": round(after[nid] / 100 * len(arms) * u, 3), "window_end": end_of(nid).isoformat()})
+    ids = sorted(counted)
     for i in range(len(ids)):
         for j in range(i + 1, len(ids)):
             a, b = nodes[ids[i]], nodes[ids[j]]
@@ -329,21 +370,31 @@ def collisions(nodes, companies, rose, after, pushers, limit_days):
             if gap is None or gap > limit_days:
                 continue
             joint = after[a["id"]] / 100 * after[b["id"]] / 100
+            u = (unpriced(after[a["id"]], a) + unpriced(after[b["id"]], b)) / 2
             shared = sorted(set(a.get("layers_hit") or []) & set(b.get("layers_hit") or []))
             items.append({"kind": "b", "what": f"{a['id']} ({rose[a['id']]:+.1f}) x {b['id']} ({rose[b['id']]:+.1f})" + (f", same layer: {', '.join(shared)}" if shared else ""),
                           "nodes": [a["id"], b["id"]], "arms": sorted({a.get("arm"), b.get("arm")}),
                           "gap_days": gap, "shared_layers": shared, "joint_odds": round(joint * 100, 1),
-                          "score": round(joint * 2, 3), "window_end": min(end_of(a["id"]), end_of(b["id"])).isoformat()})
+                          "unpriced": round(u, 3), "score": round(joint * 2 * u, 3),
+                          "window_end": min(end_of(a["id"]), end_of(b["id"])).isoformat()})
     for co in companies or []:
-        on = [x for x in co.get("event_nodes", []) if x in rose]
+        on = [x for x in co.get("event_nodes", []) if x in counted]
         if len(on) >= 2:
             top = sorted(on, key=lambda x: -after[x])[:2]
             joint = after[top[0]] / 100 * after[top[1]] / 100
+            u = sum(unpriced(after[x], nodes[x]) for x in on) / len(on)
             arms = sorted({nodes[x].get("arm") for x in on})
             items.append({"kind": "c", "what": f"{co['ticker']} sits on {len(on)} risen nodes: {', '.join(on)}",
                           "nodes": on, "company": co["ticker"], "arms": arms, "joint_odds": round(joint * 100, 1),
-                          "score": round(joint * len(arms), 3), "window_end": min(end_of(x) for x in on).isoformat(),
+                          "unpriced": round(u, 3), "score": round(joint * len(arms) * u, 3),
+                          "window_end": min(end_of(x) for x in on).isoformat(),
                           "listed_options": co.get("listed_options"), "verified": co.get("verified")})
+    for h in items:
+        gaps = {x: market_gap(nodes[x], after[x]) for x in h["nodes"]}
+        gaps = {x: v for x, v in gaps.items() if v is not None}
+        if gaps:
+            h["market_gap"] = gaps
+            h["what"] += " [market gap " + ", ".join(f"{x} {v:+.1f}" for x, v in gaps.items()) + "]"
     items.sort(key=lambda h: (-h["score"], h["window_end"]))
     return items
 
@@ -421,6 +472,7 @@ def main(argv=None):
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--collisions", action="store_true")
     p.add_argument("--restamp", action="store_true")
+    p.add_argument("--rebase", action="store_true")
     a = p.parse_args(argv)
 
     sc = load_scorecard()
@@ -432,11 +484,33 @@ def main(argv=None):
     if stamp_issue:
         print("CASCADE REFUSED. " + stamp_issue)
         return 4
+    if a.rebase:
+        why = []
+        if a.set:
+            why.append("--rebase reads its re-rates from --updates FILE only; --set is refused.")
+        if a.reason or a.date:
+            why.append("--rebase takes no --reason or --date: every row in the updates file carries its own date, reason and source.")
+        if not a.updates:
+            why.append("--rebase needs --updates FILE.")
+        done = [(i + 1, e.get("date")) for i, e in enumerate(g["cascade_log"]) if e.get("kind") == "rebase"]
+        if done:
+            why.append(f"cascade_log already holds a rebase entry (entry {done[0][0]}, {done[0][1]}). The rebase runs once.")
+        if why:
+            print("REBASE REFUSED. " + " ".join(why))
+            return 5
+        if a.max_hops != 0:
+            print(f"REBASE: max hops forced to 0 (was {a.max_hops}). A rebase corrects levels; it does not cascade.")
+        a.max_hops = 0
     if a.collisions and not (a.set or a.updates):
         today = parse_date(a.date) if a.date else dt.date.today()
         print_standing(g, nodes, links, a.collision_days, today)
         return 0
     ups = read_updates(a, nodes, alias_map(g))
+    if a.rebase:
+        bad = [k for k, u in ups.items() if not str(u["reason"]).startswith("REBASE") or not str(u["source"]).strip()]
+        if bad:
+            print("REBASE REFUSED. Every row needs a reason that starts with 'REBASE' and a source: " + ", ".join(bad))
+            return 5
     run_date = max(parse_date(u["date"]) for u in ups.values())
     deltas = {k: u["new"] - float(nodes[k]["odds_now"]) for k, u in ups.items()}
     totals, routes, pushers, skipped, stats = cascade(nodes, links, deltas, run_date, a.max_hops, a.fade)
@@ -469,21 +543,26 @@ def main(argv=None):
     for nid in list(skipped):
         if nid in totals:
             del skipped[nid]
-    coll = collisions(nodes, g.get("companies"), rose, after, pushers, a.collision_days)
+    # a rebase corrects levels, so its moves are not collisions
+    coll = [] if a.rebase else collisions(nodes, g.get("companies"), rose, after, pushers, a.collision_days)
     queue = coll[:5]
 
     entry = {"date": run_date.isoformat(), "run_at": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
              "trigger": [{"id": k, "before": float(nodes[k]["odds_now"]), "after": u["new"], "date": u["date"],
                           "reason": u["reason"], "source": u["source"]} for k, u in ups.items()],
              "rule": {"move": "d x strength x sign", "fade": a.fade, "max_hops": a.max_hops, "visit": "once per run",
-                      "clamp": [ODDS_MIN, ODDS_MAX], "fired_pinned": True, "collision_days": a.collision_days},
+                      "clamp": [ODDS_MIN, ODDS_MAX], "fired_pinned": True, "collision_days": a.collision_days,
+                      "collision_rule": COLLISION_RULE},
              "moved": moved, "skipped": [{"id": k, "reason": v} for k, v in sorted(skipped.items())], "stats": stats,
              "collisions": {"a_multi_arm_nodes": [c for c in coll if c["kind"] == "a"],
                             "b_cross_arm_pairs": [c for c in coll if c["kind"] == "b"][:40],
                             "c_companies": [c for c in coll if c["kind"] == "c"]},
              "queue": queue}
+    if a.rebase:
+        entry = {"kind": "rebase", **entry}
+        entry["rule"]["collision_rule"] = "none: a rebase corrects levels and is not news, so it opens no collisions"
 
-    print(f"EARTH2 CASCADE  {entry['date']}  hops {a.max_hops}  fade {a.fade}")
+    print(f"EARTH2 {'REBASE' if a.rebase else 'CASCADE'}  {entry['date']}  hops {a.max_hops}  fade {a.fade}")
     for t in entry["trigger"]:
         print(f"SET {t['id']} {t['before']} -> {t['after']}  ({t['date']}) {t['reason']}")
     print(f"\n{'ID':<14}{'ARM':<24}{'BEFORE':>7}{'AFTER':>7}{'MOVE':>7}  HOW")
@@ -492,7 +571,7 @@ def main(argv=None):
         print(f"{m['id']:<14}{(m['arm'] or '')[:23]:<24}{m['before']:>7.1f}{m['after']:>7.1f}{m['delta']:>+7.1f}  {how}")
     print(f"\nLINKS USED {stats['links_used']}, closed windows {stats['dropped_window_closed']}, "
           f"blocked at fired or hand-set nodes {stats['blocked_fired_or_hand_set']}, too small {stats['dropped_tiny']}")
-    print("\nTHE NEXT COLLISIONS QUEUE")
+    print("\nTHE NEXT COLLISIONS QUEUE" + ("  (none: a rebase opens no collisions)" if a.rebase else f"  ({COLLISION_RULE})"))
     for i, c in enumerate(queue, 1):
         print(f"  {i}. [{c['kind']}] {c['what']}  arms: {', '.join(c['arms'])}  joint {c['joint_odds']}%  score {c['score']}  window ends {c['window_end']}")
     run_arms = {x: 0 for x in all_arms(g)}
@@ -531,7 +610,7 @@ def main(argv=None):
         n["odds_as_of"] = run_date.isoformat()
         n.setdefault("odds_history", []).append({"date": run_date.isoformat(), "odds": m["after"],
                                                  "note": (m.get("reason") or "") if m["role"] == "set by hand" else "cascade from " + ", ".join(ups)})
-        if m["role"] == "set by hand":
+        if m["role"] == "set by hand" and not a.rebase:  # a rebase leaves status as it was: a level correction is not news
             if m["after"] == 100:
                 n["status"] = "FIRED " + m["date"]
             elif m["delta"] > 0:

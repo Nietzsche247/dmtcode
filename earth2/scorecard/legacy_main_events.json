@@ -9,235 +9,98 @@
  ],
  "events": {
   "27-1": [
-   "settlement_test",
    "base_rate"
   ],
-  "27-2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "27-3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "27-4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "27-5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "27-6": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "27-2": [],
+  "27-3": [],
+  "27-4": [],
+  "27-5": [],
+  "27-6": [],
   "28-1": [
-   "settlement_test",
    "base_rate"
   ],
   "28-2": [
-   "settlement_test",
    "base_rate"
   ],
-  "28-3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "28-4": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "28-3": [],
+  "28-4": [],
   "28-5": [
-   "settlement_test",
    "base_rate"
   ],
-  "28-6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "29-1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "29-2": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "28-6": [],
+  "29-1": [],
+  "29-2": [],
   "29-3": [
-   "settlement_test",
    "base_rate"
   ],
   "29-4": [
-   "settlement_test",
    "base_rate"
   ],
-  "29-5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "29-6": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "29-5": [],
+  "29-6": [],
   "B1": [
    "base_rate"
   ],
-  "B2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "B3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "B4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "BB1": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "B2": [],
+  "B3": [],
+  "B4": [],
+  "BB1": [],
   "BB2": [
-   "settlement_test",
    "base_rate"
   ],
-  "BB3": [
-   "base_rate"
-  ],
+  "BB3": [],
   "BB4": [
-   "settlement_test",
    "base_rate"
   ],
-  "BB5": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "BB5": [],
   "BB6": [
-   "settlement_test",
    "base_rate"
   ],
   "BT1": [
-   "settlement_test",
    "base_rate"
   ],
-  "BT2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "BT3": [
-   "settlement_test"
-  ],
-  "BT4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "BT5": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "BT2": [],
+  "BT3": [],
+  "BT4": [],
+  "BT5": [],
   "BT6": [
    "base_rate"
   ],
   "BT6a": [
-   "settlement_test",
    "base_rate"
   ],
-  "C1": [
-   "base_rate"
-  ],
-  "C10": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C11": [
-   "base_rate"
-  ],
-  "C2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C4": [
-   "base_rate"
-  ],
-  "C5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C7": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "C8": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "C1": [],
+  "C10": [],
+  "C11": [],
+  "C2": [],
+  "C3": [],
+  "C4": [],
+  "C5": [],
+  "C6": [],
+  "C7": [],
+  "C8": [],
   "C9": [
-   "settlement_test",
    "base_rate"
   ],
-  "D1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D4": [
-   "base_rate"
-  ],
-  "D5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D7": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D8": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "D9": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "D1": [],
+  "D2": [],
+  "D3": [],
+  "D4": [],
+  "D5": [],
+  "D6": [],
+  "D7": [],
+  "D8": [],
+  "D9": [],
   "E02": [
    "base_rate"
   ],
   "E03": [
    "base_rate"
   ],
-  "E04": [
-   "base_rate"
-  ],
-  "E07": [
-   "base_rate"
-  ],
-  "E08": [
-   "base_rate"
-  ],
-  "E09": [
-   "base_rate"
-  ],
+  "E04": [],
+  "E07": [],
+  "E08": [],
+  "E09": [],
   "E12": [
    "base_rate"
   ],
@@ -247,262 +110,100 @@
   "E26": [
    "base_rate"
   ],
-  "E31": [
-   "base_rate"
-  ],
-  "F1": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "E31": [],
+  "F1": [],
   "F10": [
-   "settlement_test",
    "base_rate"
   ],
-  "F11": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "F2": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "F11": [],
+  "F2": [],
   "F3": [
-   "settlement_test",
    "base_rate"
   ],
-  "F4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "F5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "F6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "F7": [
-   "base_rate"
-  ],
-  "F8": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "F9": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "J6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "JB1": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "F4": [],
+  "F5": [],
+  "F6": [],
+  "F7": [],
+  "F8": [],
+  "F9": [],
+  "J1": [],
+  "J2": [],
+  "J3": [],
+  "J4": [],
+  "J5": [],
+  "J6": [],
+  "JB1": [],
   "M13": [
-   "settlement_test",
    "base_rate"
   ],
   "M39": [
-   "settlement_test",
    "base_rate"
   ],
-  "M52": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "M53": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "M52": [],
+  "M53": [],
   "M54": [
-   "settlement_test",
    "base_rate"
   ],
-  "M55": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "M56": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "M55": [],
+  "M56": [],
   "M57": [
-   "settlement_test",
    "base_rate"
   ],
   "M58": [
-   "settlement_test",
    "base_rate"
   ],
-  "M59": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "M60": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "M59": [],
+  "M60": [],
   "M61": [
-   "settlement_test",
    "base_rate"
   ],
-  "M62": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "O1": [
-   "base_rate"
-  ],
-  "O2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "O3": [
-   "base_rate"
-  ],
-  "O4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "O5": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "O6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "O7": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "P1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "P6": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "PG1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "R1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "R2": [
-   "settlement_test"
-  ],
-  "R3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "R4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "R5": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "M62": [],
+  "O1": [],
+  "O2": [],
+  "O3": [],
+  "O4": [],
+  "O5": [],
+  "O6": [],
+  "O7": [],
+  "P1": [],
+  "P6": [],
+  "PG1": [],
+  "R1": [],
+  "R2": [],
+  "R3": [],
+  "R4": [],
+  "R5": [],
   "R6": [
    "base_rate"
   ],
-  "R7": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "R7": [],
   "R8": [
-   "settlement_test",
    "base_rate"
   ],
-  "RU1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "RU4": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "RU7": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "RU1": [],
+  "RU4": [],
+  "RU7": [],
   "T1": [
-   "settlement_test",
    "base_rate"
   ],
-  "T2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "W1": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "W2": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "W3": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "W4": [
-   "settlement_test",
-   "base_rate"
-  ],
+  "T2": [],
+  "W1": [],
+  "W2": [],
+  "W3": [],
+  "W4": [],
   "W5": [
-   "settlement_test",
    "base_rate"
   ],
   "W6": [
    "base_rate"
   ],
   "W7": [
-   "settlement_test",
    "base_rate"
   ],
-  "W8": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "WF8": [
-   "settlement_test",
-   "base_rate"
-  ],
-  "X1": [
-   "base_rate"
-  ],
-  "X2": [
-   "settlement_test",
-   "base_rate"
-  ]
+  "W8": [],
+  "WF8": [],
+  "X1": [],
+  "X2": []
  },
  "refreshed_on": "2026-11-26"
 }

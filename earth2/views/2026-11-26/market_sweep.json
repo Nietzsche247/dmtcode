@@ -1,0 +1,120 @@
+{
+  "markets": {
+    "D1": {
+      "odds": 96,
+      "venue": "Kalshi",
+      "contract": "KXFEDDECISION-26DEC-H25 (Hike 25bps) plus KXFEDDECISION-26DEC-H26 (Hike >25bps), December 2026 FOMC meeting",
+      "url": "https://kalshi.com/markets/kxfeddecision",
+      "as_of": "2026-11-26",
+      "match_note": "Same meeting (Dec 9, 2026), same event (any hike). Sum of the two hike buckets: 25bp bid/ask 0.92/0.93 plus >25bp 0.03/0.04, about 96%. Polymarket 'Fed Decision in December?' gives 93.5% (25bp) plus 2.2% (50bp+), about 96%, in agreement. Kalshi KXFED-26DEC-T4.00 (upper bound above 4.00%) also 0.95/0.96."
+    },
+    "D2": {
+      "odds": 59,
+      "venue": "Kalshi",
+      "contract": "KXFEDDECISION-27JAN-H25 (Hike 25bps) plus KXFEDDECISION-27JAN-H26 (Hike >25bps), January 2027 FOMC meeting",
+      "url": "https://kalshi.com/markets/kxfeddecision",
+      "as_of": "2026-11-26",
+      "match_note": "Same meeting (Jan 27, 2027), any hike: 25bp bid/ask 0.56/0.57 plus >25bp 0.02/0.03, about 59%. The market is the unconditional odds of a January hike; our event also needs the Dec 9 hike, which the market prices at 96%, so the gap is about 2 points at most. Polymarket 'Fed Decision in January?' prices the 25bp hike at 54.5%."
+    },
+    "D3": {
+      "odds": 24,
+      "venue": "Polymarket",
+      "contract": "Will the Fed hike-hike-hike in the next three decisions (Dec-Jan-Mar)?",
+      "url": "https://polymarket.com/event/fed-decisions-dec-mar",
+      "as_of": "2026-11-26",
+      "match_note": "Same three meetings (Dec 9, Jan 27, Mar 17) and same path: three straight hikes take the upper bound from 4.00% to 4.75%. Bid/ask 0.23/0.24, mid 23.5%. Only difference: a path that reaches 4.75% with one 50bp move and one pause would count for us and not here (priced near zero). Kalshi KXFED-27MAR-T4.50 is too wide to use (bid 0.10, ask 0.61)."
+    },
+    "J5": {
+      "odds": 79,
+      "venue": "Kalshi",
+      "contract": "KXCBDECISIONJAPAN-26DEC17-H25 (Hike 25bps) plus KXCBDECISIONJAPAN-26DEC17-H25P (Hike more than 25bps), December 2026 BoJ meeting",
+      "url": "https://kalshi.com/markets/kxcbdecisionjapan",
+      "as_of": "2026-11-26",
+      "match_note": "Same meeting (Dec 17 to 18, 2026, decision Dec 18), same event (any hike). 25bp bid/ask 0.78/0.79 plus more-than-25bp about 0.5%. Polymarket 'Bank of Japan Decision in December?' gives 77% (25bp) plus 0.7% (50bp+), about 78%."
+    },
+    "O4": {
+      "odds": 51,
+      "venue": "Polymarket",
+      "contract": "US announces end of Iranian blockade by March 31, 2027?",
+      "url": "https://polymarket.com/event/us-announces-end-of-iranian-blockade-byptptpt-20260713152715080",
+      "as_of": "2026-11-26",
+      "match_note": "Same event and deadline (Mar 31, 2027). Resolves on an official US announcement ending or suspending the naval blockade of Iranian ships and customers; partial exemptions do not count. Bid/ask 0.50/0.51, volume about $0.96M. Small wording gap: the market keys on the announcement, our event on the blockade ending."
+    },
+    "F4": {
+      "odds": 29,
+      "venue": "Polymarket",
+      "contract": "Oracle downgraded to junk by Moody's or S&P by June 30, 2027?",
+      "url": "https://polymarket.com/event/oracle-downgraded-to-junk-by-moodys-or-sp-by",
+      "as_of": "2026-11-26",
+      "match_note": "Same event and deadline (Jun 30, 2027): issuer or senior unsecured rating cut to BB+/Ba1 or lower. Bid/ask 0.28/0.29, thin (volume about $7.6K). Small scope gap: the market counts Moody's or S&P only, our event counts any agency, so a Fitch-only cut would count for us and not here."
+    },
+    "F9": {
+      "odds": 51,
+      "venue": "Polymarket",
+      "contract": "Will the S&P 500 close in a bear market by June 30, 2027?",
+      "url": "https://polymarket.com/event/sp-500-bear-market-by",
+      "as_of": "2026-11-26",
+      "match_note": "Same threshold: an official close at least 20% below the record close (record 7,818.93 on Oct 6, 2026, line 6,255.14). Deadline is Jun 30, 2027, 30 days after our May 31. Very thin and wide (bid 0.40, ask 0.62, volume about $180), so treat as weak. The Mar 31, 2027 contract is 36.5%."
+    },
+    "D5": {
+      "odds": 27,
+      "venue": "Polymarket",
+      "contract": "Government shutdown by December 12?",
+      "url": "https://polymarket.com/event/government-shutdown-by",
+      "as_of": "2026-11-26",
+      "match_note": "Same event and deadline (a lapse in appropriations with agencies suspending operations by Dec 12, 2026; partial shutdowns count). Bid/ask 0.26/0.27. The Dec 31 contract is 31.5%, against our 30% by Dec 31. Kalshi KXGOVTSHUTDOWN-26DEC12 (shut down at 10:00 am ET on Dec 12) trades 0.24/0.25."
+    },
+    "BB1": {
+      "odds": 63,
+      "venue": "Polymarket",
+      "contract": "Skin cancer vaccine FDA approved by December 31, 2027?",
+      "url": "https://polymarket.com/event/skin-cancer-vaccine-fda-approved-by-december-31-2027",
+      "as_of": "2026-11-26",
+      "match_note": "Same product: FDA approval of intismeran autogene (mRNA-4157/V940, Moderna and Merck) for any indication. Deadline is Dec 31, 2027, 31 days after our Nov 30, 2027. Bid/ask 0.62/0.63, volume about $198K. The Sep 30, 2027 contract is 35%."
+    },
+    "BB2": {
+      "odds": 72,
+      "venue": "Kalshi",
+      "contract": "KXFDARETATRUTIDE-RET-28JAN01: When will the FDA approve retatrutide (LY3437943)? Before Jan 1, 2028",
+      "url": "https://kalshi.com/markets/kxfdaretatrutide",
+      "as_of": "2026-11-26",
+      "match_note": "Same event, FDA approval of retatrutide; our kill test is also about the FDA filing. Deadline is Dec 31, 2027, 31 days after our Nov 30, 2027. Bid/ask 0.71/0.72. Gap in scope: the market counts any first FDA approval, while our label names obesity, sleep apnea and knee pain together. If our event needs all three indications, read this as an upper bound. The Jul 1, 2027 contract is 6.5%."
+    }
+  },
+  "forecasts": {},
+  "rejects": {
+    "X1": "Kalshi KXAGICO-COMP-27Q2 'Will any company announce that it has achieved AGI before Jul 1, 2027?' (21%). Rejected on scope: the market needs a company to say explicitly that it has achieved AGI and rules out 'AGI-level' wording. Our event also counts G7 governments and written 'expert-level general intelligence' statements.",
+    "27-1": "Kalshi KXAGICO-COMP-27Q4 'any company announces AGI before Jan 1, 2028' (52%). Rejected on scope: our major also fires on the METR leg (task horizon of 40+ hours) and counts G7 governments, and the market needs an explicit company AGI claim. The deadline is also 31 days later.",
+    "O3": "Kalshi KXHORMUZNORM-26MAR17-B270601 'IMF PortWatch 7-day average of Hormuz transit calls above 60 before Jun 1, 2027' (15.5%). Rejected on threshold: one 7-day average above 60 against our full month at 69+ ships a day. Polymarket 'Strait of Hormuz traffic returns to normal by June 30, 2027?' (22.5%) was rejected too: its 'normal' bar is higher than our half of normal, and its deadline is 30 days later.",
+    "T2": "Polymarket 'Will China blockade Taiwan by December 31, 2027?' (15.5%). Rejected: the deadline is 39 days after our Nov 22, 2027, and the market has no more-than-7-days rule. The Jun 30, 2027 contract (13%) is 5 months early.",
+    "T1": "Polymarket 'China blockades Taiwan by...' contracts. Rejected: a blockade is a different event from a coast guard boarding or a 48-hour isolation of an outlying island.",
+    "BT2": "Polymarket 'Will the United States have an Ebola case in 2026?' (4.5%). Rejected: the deadline is Dec 31, 2026 against our Mar 31, 2027, and our 12% also counts other promotion triggers.",
+    "BT3": "Polymarket 'Will the WHO declare a PHEIC for plague by December 31?' (1.5%) covers one disease and ends 2026. Rejected on scope and deadline (ours is any new WHO emergency by Nov 2027). Kalshi's new-PHEIC series (KXPHEIC, KXNEWOUTBREAK-PHEIC) had no open contract.",
+    "F5": "Polymarket 'What will NVIDIA (NVDA) hit in December 2026?' LOW $120 (25.5%, no volume) and 'NVIDIA below pre-Jensen return closing low ($125.53) by Dec 18' (23.5%). Rejected: intraday or different threshold, and the deadlines are Dec 2026, not Mar 31, 2027.",
+    "F6": "Polymarket 'Anthropic: Above IPO Price at End of First Month?' (42.5% above). Rejected: it is one reading on about Dec 1, 2026, not a close under $83 at any time through Mar 31, 2027.",
+    "F10": "Kalshi KXNVDACHARGE 'Will Nvidia face U.S. criminal charges before Jul 1, 2027?' (10.5%), Polymarket 'DOJ criminally charges NVIDIA by December 31?' (6.75%) and 'Nvidia hit with a BIS export-control penalty by March 31, 2027?' (22.5%). Rejected: each is narrower than any formal DOJ or SEC action, and the BIS contract is a different agency.",
+    "F2": "Polymarket 'Will CoreWeave or any subsidiary default before 2028?' (32.5%) and 'CoreWeave announces bankruptcy by Dec 31, 2027' (17.5%). Rejected: one company only, against our sector-wide event (any neocloud or data-center vehicle), and the deadline is 7 months later.",
+    "J4": "Polymarket 'Will SoftBank Group get a credit rating downgrade by June 30, 2027?' (52.5%, zero volume). Rejected: the deadline is 5 months after our Jan 31, 2027, it covers only the downgrade leg (not CDS above 600 or forced sales), and it has no trades.",
+    "D4": "Polymarket 'Will the 10-year Treasury yield hit 5.5% before 2027?' (2.75%). Rejected: the deadline is Dec 31, 2026 against our May 31, 2027. No 2027 contract was found.",
+    "J1": "Polymarket 'US announces yen intervention by December 31, 2026?' (44.5%, $29 volume). Rejected: it is US, not Tokyo, intervention, with no 160 level and an earlier deadline. Kalshi KXJPYINT had no open contract.",
+    "O1": "Kalshi KXBRENTMON contracts only settle on the Brent close at one date (Nov 30, 2026). No Brent above-$100-by-May-31 contract exists on Kalshi or Polymarket (Polymarket lists WTI only), and no dated source gives an options-implied probability.",
+    "O2": "Same as O1: no Brent above-$110-by-May-31 contract. Kalshi KXBRENTMON is Nov 30, 2026 month-end only, and no dated options-implied probability was found.",
+    "O5": "Kalshi KXCRUDEEXPORTBAN-27 'US crude oil export ban in effect before Jan 1, 2027' (3.5%). Rejected on scope: an outright crude ban in effect, against our 'announces or enacts any curb on crude or fuel exports'. The deadline is also 30 days early.",
+    "D6": "Kalshi KXRECSSNBER-27 'Will there be a recession in 2027?' (21.5%) and Polymarket 'US recession by end of 2027?' (35.5%). Rejected: they cover a recession at any point in 2027, judged after year end, not a recession call by May 31, 2027.",
+    "C5": "Kalshi KXAIKILLSWITCH 'U.S. enacts an AI kill switch law before Jul 1, 2027' (about 25%, thin) and Polymarket 'Comprehensive federal AI framework becomes US law before 2028' (41.5%). Rejected: different measures from binding limits on cyber-capable models, and different deadlines from Mar 31, 2027.",
+    "E04": "Polymarket 'Comprehensive federal AI framework becomes US law before 2028' (41.5%) and Kalshi AI kill switch law contracts. Rejected on scope: neither is the same as Washington binding AI models.",
+    "27-3": "Polymarket 'Comprehensive federal AI framework becomes US law before 2028' (41.5%). Rejected: a framework law is not the same test as our major, which combines two legs.",
+    "JB1": "Polymarket state data-center moratorium contracts (Texas, Indiana, Ohio and others, latest Dec 31, 2028, about 29 to 35%) and 'any state enacts a data center moratorium by December 31' (26%, 2026). Rejected: single states or a 2026 deadline, against a top-5 state or federal limit by Nov 19, 2029.",
+    "RU1": "Polymarket 'NATO article 5 before 2027?' (2%) and 'Another NATO Article 4 invocation by December 31, 2026?' (6.5%). Rejected: the deadline is 2026 against our Nov 19, 2029.",
+    "RU4": "Polymarket 'Russia x Ukraine ceasefire agreement by December 31, 2027?' (69.5%) and 'Russia x Ukraine ceasefire by December 31, 2027?' (45.5%). Rejected: the latest deadline is 2027 against our Nov 19, 2029, and our event needs the ceasefire to hold 30 days or a signed framework.",
+    "WF8": "Kalshi KXFAOFPI 'FAO Food Price Index in [month]' covers single months only. Rejected: no contract for a record above 160.2 by Nov 2029, and no export-ban leg.",
+    "P6": "Kalshi KXSCFI is the Shanghai Containerized Freight Index, not the Drewry World Container Index. Rejected: different index and threshold.",
+    "P1": "Polymarket and Kalshi Panama Canal traffic contracts (7-day average ship counts, weekly transits). Rejected: ship counts are not daily slot or Neopanamax draft limits.",
+    "W1": "Kalshi KXCHCUTS 'US Challenger job cuts for November 2026 above X'. Rejected: it covers total monthly cuts, not cuts attributed to AI, and only one month.",
+    "X2": "Kalshi 'Tesla Optimus on sale before 2027?' (1.5%) and Polymarket 'Will Tesla release Optimus by December 31, 2026?' (3.8%). Rejected: a sale or release is not 1,000+ built or 10,000+ humanoids deployed.",
+    "F7": "Polymarket 'Amazon 2026 capex above ___?' Rejected: one company's 2026 capex level, against a capex cut versus guide by any big-four hyperscaler by May 31, 2027.",
+    "D8": "Polymarket 'Another US debt downgrade before 2027?' (3.75%). Rejected: it ends in 2026 against our Nov 2027, and it covers only the rating leg, not a spike in bill yields.",
+    "D9": "Kalshi KXBALANCESHEET 'Size of Fed balance sheet on Dec 30, 2026'. Rejected: a balance-sheet level at one date is not Fed bond buying, or a Treasury cap on long-bond sales, while inflation is above target, by Nov 2027.",
+    "M52": "Polymarket 'Quantum breaks Bitcoin by December 31, 2027?' (12%). Rejected: a narrower event (Bitcoin only) with different deadlines from our Nov 2027/2028/2029 ladder."
+  }
+}

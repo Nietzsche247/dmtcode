@@ -1,0 +1,205 @@
+[
+ {
+  "id": "27-4",
+  "new_odds": 55,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): BASE RATE telecom 2000 to 2002 (after the Mar 2000 peak: ICG filed Nov 2000, Winstar Apr 2001, PSINet Jun 2001, Global Crossing Jan 2002). Rescues come first (Meta-backed CoreWeave loan at 7 to 7.5%, about $9B of prepayments) and Oracle to junk is only about 15 to 18% by mid-2027, so the first $1B+ default most likely lands Q2 to Q3 2027. Curve 15 Feb, 35 May, 55 Nov 2027. E12 is folded into 27-4.",
+  "source": "G1_report.md section 2.1 steps 3, 4 and 7; section 2.2 row 27-4 and E12. Primary: CoreWeave Q3 2026 8-K (sec.gov, Nov 10, 2026)"
+ },
+ {
+  "id": "F4",
+  "new_odds": 18,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT S&P rates Oracle BBB- with a stable outlook, Moody's affirmed Baa2 on the November notes, Fitch BBB stable; Oracle already chose equity in November ($10B of stock). A cut to junk by Jun 30, 2027 is about 18%.",
+  "source": "G1_report.md section 1 F-19 and F-20, section 2.1 step 4, section 6 Other precursor views. Primary: Oracle 8-K Nov 4, 2026 (sec.gov); ratings via Macrostream and Newsquawk (secondary)"
+ },
+ {
+  "id": "J5",
+  "new_odds": 75,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT swaps price a Dec 18 hike at about 70% (USD/JPY about 159.20; Reuters poll 61 of 71 expect a hike). BASE RATE Aug 2024: after the carry unwind the BOJ said it would not hike in unstable markets. About 75, not 85.",
+  "source": "G1_report.md section 1 F-38 and F-39, section 3.1 step 3, section 6 Other precursor views"
+ },
+ {
+  "id": "J3",
+  "new_odds": 20,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT the Jul 30 to 31, 2026 joint intervention moved USD/JPY from 163.86 to 155.20 in two days, 5.3%, so a 5% weekly yen rise is at least about 0.45 times J1 (33), plus carry-unwind paths.",
+  "source": "G1_report.md section 4(a) item 7; section 1 F-36 (MOF totals via macrosetup, secondary)"
+ },
+ {
+  "id": "D4",
+  "new_odds": 22,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): JUDGMENT: flight to quality is working (10-year 5.15% on Nov 13 to 4.85% on Nov 25; 2026 high 5.31%) and the 2-year at 4.61% with the Fed hiking anchors the curve. 10-year above 5.50% by May 31 about 22.",
+  "source": "G1_report.md section 3.2 row E16 and D4, section 6 Other precursor views. Primary: Treasury daily par yield curve Nov 2026 (F-6); FRED DGS10 (F-7)"
+ },
+ {
+  "id": "HP02",
+  "new_odds": 25,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT SOFR 3.94% against interest on reserves 3.90% (4 bp) and Standing Repo use about $0 on Nov 25; even the Dec 31, 2025 record of $74.6B missed the $75B line.",
+  "source": "G1_report.md section 4(e) HP grades and section 3.2 row HP02. Primary: FRED SOFR, IORB, RPONTTLD"
+ },
+ {
+  "id": "HP03",
+  "new_odds": 85,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT the Meta-backed CoreWeave loan of up to $4.5B is talked at 7 to 7.5% and expected investment grade against 18% on CoreWeave's bonds, plus about $9B of customer prepayments expected in the Q3 8-K: the cheapest rescue.",
+  "source": "G1_report.md section 4(e) HP grades and section 2.2 row HP03. Primary: CoreWeave Q3 2026 8-K (sec.gov); loan via TipRanks and investinglive (secondary, Bloomberg report)"
+ },
+ {
+  "id": "HP06",
+  "new_odds": 35,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): JUDGMENT with FACT 2-year 4.61%: the Fed hiking anchors the front end, so a 10-year close under 4.50% needs priced cuts and waits on HP12 or a credit event.",
+  "source": "G1_report.md section 4(e) HP grades and section 3.2 row HP06. Primary: Treasury daily par yield curve (F-6)"
+ },
+ {
+  "id": "HP09",
+  "new_odds": 40,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): Storage leg about 28% (needs 0.42 points a day, double the recent pace; ENTSOG end-March 29% in a normal winter with optimal LNG, 13% with tight LNG); Germany has been at early warning since Jul 1, 2025, so that level cannot settle it; the ban-suspension leg is double-locked; union with heavy overlap about 40. Test rewritten and window opened Nov 25.",
+  "source": "G2_report.md section 2e. Primary: ENTSOG Winter Supply Outlook 2026/27; Bundesnetzagentur gas situation Nov 24, 2026; Commission Gas Coordination Group Nov 20, 2026"
+ },
+ {
+  "id": "HP11",
+  "new_odds": 40,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): Two funding deadlines at roughly 20 to 25% each and most recent shutdowns ran 5 days or more (BASE RATE 2013, Dec 2018 to Jan 2019, Oct to Nov 2025). Aligned with D5, whose curve now reads at least 40 by Jun 30, 2027.",
+  "source": "G1_report.md section 4(e) HP grades, section 3.2 row HP11, section 4(a) item 1"
+ },
+ {
+  "id": "HP13",
+  "new_odds": 30,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): Market leg about 50% (S&P 500 8.1% below its record on Nov 25 and across the 8% line four times in five sessions); cut leg about 50% (AI-named cuts fell from 38,579 in May to 1,265 in October, NACE: 1% of employers plan AI replacement of entry-level staff); joint with positive correlation about 30.",
+  "source": "G4_report.md section 4. Primary: FRED SP500; Challenger October 2026 report; NACE Job Outlook 2027 (Nov 18, 2026)"
+ },
+ {
+  "id": "HP16",
+  "new_odds": 35,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT Strategy's $4.83B USD reserve covers about 3.4 years of dividends and interest (Oct 29 8-K), so the dividend leg is near zero; the 2026 bitcoin sale pace (about $431.8M, roughly 6,000 BTC in 10 months) is far below 10,000 a month.",
+  "source": "G1_report.md section 4(e) HP grades and section 2.2 row HP16. Primary: Strategy 8-K Oct 29, 2026 (sec.gov)"
+ },
+ {
+  "id": "HP14",
+  "new_odds": 20,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): Test rewritten without 'adds to' (more pledged shares after Oracle's 58% fall is defence, not a crack); as rewritten about 20 by Nov 30, 2027: a Skydance distressed exchange or $5B forced sale, or an Ellison sale on Form 4.",
+  "source": "G1_report.md section 4(e) HP grades and section 2.2 row HP14. Primary: Oracle proxy filed Sep 25, 2026 (pledged shares 346M to 413M, via Family Capital, secondary)"
+ },
+ {
+  "id": "E07",
+  "new_odds": 18,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): BASE RATE no Taiwan-bound merchant ship has ever been boarded and no island has been isolated for 48 hours (CCG boardings near Kinmen in 2024 were Taiwanese boats, not Taiwan-bound shipping); in a detente year Beijing's cheapest coercion is drills and coast guard patrols.",
+  "source": "G2_report.md section 1A behaviour and table rows T1 and E07; section 2b E07 / T1 kill conditions"
+ },
+ {
+  "id": "T1",
+  "new_odds": 18,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): BASE RATE no Taiwan-bound merchant ship has ever been boarded and no island has been isolated for 48 hours; in a detente year Beijing's cheapest coercion is drills and coast guard patrols, and it is waiting for the 2028 vote.",
+  "source": "G2_report.md section 1A behaviour and table row T1"
+ },
+ {
+  "id": "O4",
+  "new_odds": 18,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): The blockade is the US price for a deal, and the graph prices a verified deal at 18% by May 31; current signals point to escalation (Iran ordered Hormuz closed 'further day by day' on Nov 23; Trump said strikes could resume after the New Year). About 18 by Mar 31.",
+  "source": "G2_report.md section 1B behaviour and table row O4; section 2a item 1. Euronews Nov 24, 2026 (secondary)"
+ },
+ {
+  "id": "27-6",
+  "new_odds": 50,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT civilian magnet exports are flowing (China's October magnet exports 5,693 t, up 4% y/y, SMM citing Customs, secondary); the likelier stop is yttrium or DFARS, not magnets, and line stops are rarely announced by name. R6 is folded into 27-6.",
+  "source": "G2_report.md section 1A where it stands and table rows R6, E20 and 27-6"
+ },
+ {
+  "id": "27-1",
+  "new_odds": 28,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): JUDGMENT nobody is forced to declare AGI: labs gain more from capability claims without the word, a declaration now hands ammunition to the new Congress and triggers the Microsoft-OpenAI expert panel. 10 by May, 28 by Nov 2027.",
+  "source": "G3_report.md section 1.2 and section 1.3 rows E01 and 27-1"
+ },
+ {
+  "id": "X1",
+  "new_odds": 14.1,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): JUDGMENT nobody is forced to declare AGI (same event as 27-1; E01 is folded into X1). Curve set to 10 by May 19 and 28 by Nov 19, 2027, which reads 14.1 at X1's Jun 30, 2027 deadline.",
+  "source": "G3_report.md section 1.2 and section 1.3 row E01 (X1 identical in meaning to E01)"
+ },
+ {
+  "id": "PG9",
+  "new_odds": 55,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): Both thresholds sit inside one year's normal change: the median wait is 61 months against the 60-month line, and 2,061 GW queued (down about 10% a year) against the 1,800 GW line.",
+  "source": "G3_report.md section 5 (ARM) POWER AND THE GRID, end event table row PG9. LBNL Queued Up 2026 edition (Reslink summary, secondary)"
+ },
+ {
+  "id": "PG5",
+  "new_odds": 87,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT GE Vernova said on Oct 28 it now anticipates reaching at least 130 GW of gas backlog plus slot reservations by year-end 2026 (122 GW at Q3).",
+  "source": "G3_report.md section 5 (ARM) POWER AND THE GRID, end event table row PG5. Primary: GE Vernova Q3 2026 8-K exhibit (sec.gov)"
+ },
+ {
+  "id": "C1",
+  "new_odds": 45,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): JUDGMENT the test needs an official attribution of an AI-run attack and a listed-company disclosure; listed firms do not name the attacker's tooling in 8-Ks and the FBI names tools but not victims, so both sides avoid the conjunction.",
+  "source": "G3_report.md section 2.2 item 3 and section 2.3 precursor paragraph"
+ },
+ {
+  "id": "W2",
+  "new_odds": 16,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT NY Fed recent-graduate unemployment 5.6% in Q2 2026 (5.2% in Q3, secondary); BASE RATE moves of 1 point or more within a year came only in recessions (2001 to 2002, 2008 to 2009), and the recession call is 20%.",
+  "source": "G4_report.md section 1b row W2. Primary: NY Fed college labor market page"
+ },
+ {
+  "id": "W3",
+  "new_odds": 7,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT BLS office payrolls are UP 51k on the year (professional and business services +269k, information -119k, financial -99k); the divergence the test needs, with total payrolls higher, is rare.",
+  "source": "G4_report.md section 1b row W3. Primary: BLS Employment Situation Table B-1 (Nov 6, 2026)"
+ },
+ {
+  "id": "W4",
+  "new_odds": 10,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT NACE Job Outlook 2027 (Nov 18): employers project a median 14% increase in hiring for the Class of 2027 and only 1% consider replacing entry-level workers with AI; two shots remain (April update, Job Outlook 2028).",
+  "source": "G4_report.md section 1b row W4. Primary: NACE Job Outlook 2027"
+ },
+ {
+  "id": "E09",
+  "new_odds": 40,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): E09 is W2 OR W3 and follows them: P(downturn by mid-2028) about 35% times 75%, plus 65% times 20%, is about 39%. 40 by Nov 2028; the Nov 2027 point goes 30 to 20 (FACT BLS office payrolls up, NACE hiring up, Challenger AI-named cuts at a 2026 low).",
+  "source": "G4_report.md section 1b row E09 and section 1c. Primary: BLS, NACE Job Outlook 2027, Challenger October 2026 report"
+ },
+ {
+  "id": "BB4",
+  "new_odds": 25,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): FACT Revolution Medicines (Nov 4): RASolve 301 (lung) enrollment closes by end of November 2026 with an initial readout anticipated in 2027; docetaxel is a weak comparator and the drug doubled survival in pancreatic cancer.",
+  "source": "G4_report.md section 3b row BB4. Primary: Revolution Medicines Q3 2026 release (ir.revmed.com)"
+ },
+ {
+  "id": "28-5",
+  "new_odds": 37,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): A3 contradiction fix: 28-5 is a conjunction (a bio case with intent AND the rules that follow) and cannot exceed its component BT6 (E28 folded in on Nov 25) at Nov 2028, where BT6's curve reads 37. Smallest move: 40 to 37.",
+  "source": "G4_report.md section 3b row 28-5 and section 7 Settlement fixes"
+ },
+ {
+  "id": "29-1",
+  "new_odds": 78,
+  "date": "2026-11-25",
+  "reason": "REBASE (Nov 25 proposals): A3 containment fix after the E26 fold. 29-1 now carries E26's test, which contains C9 (77.3 by Nov 2029, 59.5 by Nov 2028), so 29-1 must be at least C9 at every date; G3 puts the E26 test at 74 by Nov 2029. Smallest move that restores the logic: 50 to 78. The Nov 2027 point stays 40 (proposal B).",
+  "source": "G3_report.md section 1.3 row E26 and the C9 curve on graph v5.4; rule: a part is at most its whole"
+ }
+]

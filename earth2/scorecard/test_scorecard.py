@@ -817,8 +817,8 @@ class Test7bStructureImports(unittest.TestCase):
         stamp = g["meta"]["odds_stamp"]
         sc = module(root)
         main = [n for n in g["nodes"] if sc.is_main_event(n)]
-        bare = next(n for n in main if not n.get("settlement_test"))
-        tested = next(n for n in main if n.get("settlement_test"))
+        bare = main[0]  # every main event has a test since Nov 26; bare is used for the market row
+        tested = next(n for n in main if n.get("settlement_test") and n["id"] != bare["id"])
         co = g["companies"][0]["id"]
         good_mkt = {"odds": 30, "venue": "Kalshi", "contract": "KXTEST-27", "url": "https://kalshi.com/x",
                     "as_of": day(0), "match_note": "same threshold, same deadline"}
@@ -833,14 +833,13 @@ class Test7bStructureImports(unittest.TestCase):
         self.assertIn("replace_reason", out)
         # accepted: all three, and no odds move
         import_seed(self, root, legacy_settlement_tests={
-            bare["id"]: "YES if the named agency reports the threshold met by the deadline. NO otherwise.",
             tested["id"]: {"text": "YES if the reworded rule is met by the deadline. NO otherwise.", "replace_reason": "test wording fix"}},
             event_markets={bare["id"]: good_mkt}, company_lenses={co: lens})
         g2 = load(root, GRAPH)
         nodes = {n["id"]: n for n in g2["nodes"]}
         self.assertEqual(g2["meta"]["odds_stamp"], stamp)
         self.assertEqual(nodes[bare["id"]]["market"]["odds"], 30)
-        self.assertTrue(nodes[bare["id"]]["settlement_test"].startswith("YES if the named agency"))
+        self.assertTrue(nodes[tested["id"]]["settlement_test"].startswith("YES if the reworded rule"))
         self.assertEqual(nodes[tested["id"]]["settlement_test_history"][0]["old"], tested["settlement_test"])
         self.assertEqual(next(c for c in g2["companies"] if c["id"] == co)["lenses"]["commanding_heights"]["class"],
                          "holds a chokepoint")
@@ -1092,7 +1091,7 @@ class Test9RealFiles(unittest.TestCase):
         sc = module(root)
         py_ids = sorted(n["id"] for n in load(REPO, GRAPH)["nodes"] if sc.is_main_event(n))
         self.assertEqual(json.loads(r.stdout), py_ids)
-        self.assertGreaterEqual(len(py_ids), 130)
+        self.assertGreaterEqual(len(py_ids), 126)
 
     def test_zz_the_repo_files_were_not_written(self):
         self.assertEqual(tree_hashes(), START)

@@ -209,7 +209,7 @@ function init(data, name){
   aliasOf={}; for(const m of (G.merges||[])){ for(const [o,v] of Object.entries(m.alias_map||{})) aliasOf[o]=(v&&v.survivor)||v; for(const x of (m.nodes_mapped_to_v5||[])) if(x.deepdive_id&&x.v5_id&&!aliasOf[x.deepdive_id]) aliasOf[x.deepdive_id]=x.v5_id; }
   $("drop").style.display="none";
   $("status").textContent=`${G.nodes.length} nodes, ${G.links.length} links, ${G.companies.length} companies. Data: ${name}`;
-  const runs=G.cascade_log.filter(e=>e.kind!=="restamp"); lastEntry=runs.length?runs[runs.length-1]:null; setHeat(lastEntry);
+  const runs=G.cascade_log.filter(e=>e.kind!=="restamp"&&e.kind!=="rebase"); lastEntry=runs.length?runs[runs.length-1]:null; setHeat(lastEntry);
   checkStamp(); buildFilters(); setTimelineFromToday(); rebuild(); renderColl(); renderLog(); renderAbout(); renderScore();
 }
 
@@ -534,18 +534,23 @@ function cascade(deltas, runDate, maxHops=4, fade=0.5){
 function gapDays(a,b){ if(!a.window_start||!a.window_end||!b.window_start||!b.window_end) return null;
   const a0=new Date(a.window_start),a1=new Date(a.window_end),b0=new Date(b.window_start),b1=new Date(b.window_end);
   return Math.max(0,Math.round((Math.max(a0,b0)-Math.min(a1,b1))/864e5)); }
-function collisions(rose, after, pushers, limit=120){
+function unpricedShare(id, a){ const m=byId[id].market; return (m&&typeof m.odds==="number")?Math.abs(a-m.odds)/100:Math.max(0,1-a/100); }
+function collisions(rose0, after, pushers, limit=120){
+  // same rule as cascade.py: a node counts if it rose 3+ points, sat under 90 before the move, is not FIRED or SCHEDULED;
+  // score = joint odds x arms x unpriced share (the gap to a like-for-like market where one exists, else 1 - odds/100)
+  const rose={}; for(const id in rose0){ const n=byId[id], before=n.odds_now==null?0:+n.odds_now;
+    if(rose0[id]>=3&&before<90&&after[id]<100&&!String(n.status||"").toUpperCase().startsWith("FIRED")&&String(n.date_state||"").toUpperCase()!=="SCHEDULED") rose[id]=rose0[id]; }
   const items=[]; const endOf=id=>byId[id].window_end||"2100-01-01";
   for(const id in pushers){ const arms=[...pushers[id]].filter(Boolean); if(rose[id]&&new Set(arms).size>=2){ const A=[...new Set(arms)];
-    items.push({kind:"a",what:`${id} rose ${rose[id]>0?"+":""}${rose[id].toFixed(1)}, pushed by ${A.length} arms`,nodes:[id],arms:A,joint_odds:+after[id].toFixed(1),score:after[id]/100*A.length,window_end:endOf(id)}); } }
+    items.push({kind:"a",what:`${id} rose ${rose[id]>0?"+":""}${rose[id].toFixed(1)}, pushed by ${A.length} arms`,nodes:[id],arms:A,joint_odds:+after[id].toFixed(1),score:after[id]/100*A.length*unpricedShare(id,after[id]),window_end:endOf(id)}); } }
   const ids=Object.keys(rose).sort();
   for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++){ const a=byId[ids[i]], b=byId[ids[j]];
     if(a.arm===b.arm) continue; const g=gapDays(a,b); if(g==null||g>limit) continue;
     const joint=after[a.id]/100*after[b.id]/100; const shared=(a.layers_hit||[]).filter(x=>(b.layers_hit||[]).includes(x));
-    items.push({kind:"b",what:`${a.id} (+${rose[a.id].toFixed(1)}) x ${b.id} (+${rose[b.id].toFixed(1)})${shared.length?", same layer: "+shared.join(", "):""}`,nodes:[a.id,b.id],arms:[a.arm,b.arm],gap_days:g,joint_odds:+(joint*100).toFixed(1),score:joint*2,window_end:endOf(a.id)<endOf(b.id)?endOf(a.id):endOf(b.id)}); }
+    items.push({kind:"b",what:`${a.id} (+${rose[a.id].toFixed(1)}) x ${b.id} (+${rose[b.id].toFixed(1)})${shared.length?", same layer: "+shared.join(", "):""}`,nodes:[a.id,b.id],arms:[a.arm,b.arm],gap_days:g,joint_odds:+(joint*100).toFixed(1),score:joint*2*(unpricedShare(a.id,after[a.id])+unpricedShare(b.id,after[b.id]))/2,window_end:endOf(a.id)<endOf(b.id)?endOf(a.id):endOf(b.id)}); }
   for(const c of G.companies){ const on=(c.event_nodes||[]).filter(x=>rose[x]); if(on.length<2) continue;
     const top=on.slice().sort((x,y)=>after[y]-after[x]).slice(0,2); const joint=after[top[0]]/100*after[top[1]]/100; const arms=[...new Set(on.map(x=>byId[x].arm))];
-    items.push({kind:"c",what:`${c.ticker} sits on ${on.length} risen nodes: ${on.join(", ")}`,nodes:on,company:c.ticker,arms,joint_odds:+(joint*100).toFixed(1),score:joint*arms.length,window_end:on.map(endOf).sort()[0]}); }
+    items.push({kind:"c",what:`${c.ticker} sits on ${on.length} risen nodes: ${on.join(", ")}`,nodes:on,company:c.ticker,arms,joint_odds:+(joint*100).toFixed(1),score:joint*arms.length*on.reduce((t,x)=>t+unpricedShare(x,after[x]),0)/on.length,window_end:on.map(endOf).sort()[0]}); }
   items.sort((x,y)=>(y.score-x.score)||(x.window_end<y.window_end?-1:1));
   return items;
 }
@@ -634,7 +639,7 @@ function renderColl(){
 }
 function renderLog(){
   if(!G) return; const L=G.cascade_log;
-  $("pLog").innerHTML=`<h3>Cascade log (${L.length})</h3>`+(L.length?L.slice().reverse().map((e,i)=>e.kind==="restamp"?`<div class="q"><b>${esc(e.date)}</b> Odds stamp reset by hand<div class="small">${esc(e.reason||"")}</div><div class="small muted">${esc(e.stamp_before||"none")} to ${esc(e.stamp_after||"")}</div></div>`:`<div class="q"><b>${esc(e.date)}</b> ${e.trigger.map(t=>`${esc(t.id)} ${t.before} to ${t.after}`).join(", ")}<div class="small">${e.trigger.map(t=>esc(t.reason)).join("; ")}</div><div class="small muted">${e.moved.length} nodes moved${e.run_by?" . "+esc(e.run_by):""}</div><details><summary class="small">What moved</summary>${movedTable(e)}</details></div>`).join(""):'<div class="muted small">Empty.</div>');
+  $("pLog").innerHTML=`<h3>Cascade log (${L.length})</h3>`+(L.length?L.slice().reverse().map((e,i)=>e.kind==="restamp"?`<div class="q"><b>${esc(e.date)}</b> Odds stamp reset by hand<div class="small">${esc(e.reason||"")}</div><div class="small muted">${esc(e.stamp_before||"none")} to ${esc(e.stamp_after||"")}</div></div>`:`<div class="q"><b>${esc(e.date)}</b> ${e.kind==="rebase"?'<span class="pill">REBASE: one time, levels only, no cascade</span> ':""}${e.trigger.map(t=>`${esc(t.id)} ${t.before} to ${t.after}`).join(", ")}<div class="small">${e.trigger.map(t=>esc(t.reason)).join("; ")}</div><div class="small muted">${e.moved.length} nodes moved${e.run_by?" . "+esc(e.run_by):""}</div><details><summary class="small">What moved</summary>${movedTable(e)}</details></div>`).join(""):'<div class="muted small">Empty.</div>');
 }
 function renderAbout(){
   const m=G.meta||{};
