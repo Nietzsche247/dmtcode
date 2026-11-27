@@ -88,7 +88,7 @@
    "kill_condition and kill_check on 162 main events (every END EVENT, board row and tree trigger with a board reference).",
    "date_state on every live event node (LOCKED 15, SCHEDULED 35, ESTIMATED 576); peak_placeholder true on 565."
   ],
-  "odds_stamp": "87da5217",
+  "odds_stamp": "3103cf37",
   "odds_stamp_rule": "FNV-1a 32-bit hex over the text built from every node sorted by id as 'id:T;' where T = floor(odds_now * 10 + 0.5) as an integer and null odds give 'x'. Set by earth2/cascade.py after every run and by earth2/deepdives/merge_nodes.py after a merge. A mismatch means odds were edited outside the engine; earth2/validate_graph.py fails on it and the page shows a red banner.",
   "v5_4_changes": [
    "Rebase Nov 25 (structure): 4 duplicates folded into the 62-event majors (alias map in merges; 28-3 and C4 not folded, they are not the same event).",
@@ -105,7 +105,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 83.5,
+   "odds_now": 85.1,
    "odds_text": "85% by May 31",
    "odds_history": [
     {
@@ -142,6 +142,11 @@
      "date": "2026-11-25",
      "odds": 83.5,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 85.1,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -167,10 +172,10 @@
    "if_it_fires": "Banks: loss disclosure 33 to about 40. Neocloud default 42 to about 50. Japan megabanks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 1",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.5
+    "date": "2026-11-26",
+    "delta": 1.6
    },
    "kill_condition": "Every AI data-center financing of $1B or more launched from Dec 1, 2026 to Apr 30, 2027 prices at or inside its talk, none is pulled, cut or sold at a discount, and CoreWeave's $4B loan funds.",
    "kill_check": "Bloomberg and Reuters deal coverage; LSEG LPC loan data; CoreWeave and Blue Owl 8-K filings",
@@ -497,7 +502,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 77.2,
+   "odds_now": 76.8,
    "odds_text": "70% through May 31",
    "odds_history": [
     {
@@ -519,6 +524,11 @@
      "date": "2026-11-25",
      "odds": 77.2,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 76.8,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -543,10 +553,10 @@
    "if_it_fires": "Carmakers, defense, robots; Fed + (goods prices)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 5",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -2.8
+    "date": "2026-11-26",
+    "delta": -0.4
    },
    "kill_condition": "The Europe (Rotterdam) to China price ratio for dysprosium or terbium oxide falls under 3 times in any assessment before May 31, 2027.",
    "kill_check": "Fastmarkets or Argus Dy and Tb oxide assessments, Rotterdam versus China; Platts North America",
@@ -644,7 +654,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 41.7,
+   "odds_now": 42.1,
    "odds_text": "42% by May 31",
    "odds_history": [
     {
@@ -676,6 +686,11 @@
      "date": "2026-11-25",
      "odds": 41.7,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 42.1,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -701,10 +716,10 @@
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 7",
    "model_layer": "board",
    "base_note": "Loaded at the Nov 19 value (39%). The sample cascade run applies the Nov 22 update (42%).",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.2
+    "date": "2026-11-26",
+    "delta": 0.4
    },
    "kill_condition": "CoreWeave's $4B loan prices and funds by Jan 31, 2027, and no neocloud or data-center vehicle with $1B+ of debt misses a payment or launches a distressed exchange through Apr 30, 2027.",
    "kill_check": "CoreWeave 8-K filings; Moody's, S&P and Fitch actions; bankruptcy court dockets",
@@ -1162,7 +1177,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "TRIGGER",
-   "odds_now": 35.0,
+   "odds_now": 37.0,
    "odds_text": "45% on Jan 10",
    "odds_history": [
     {
@@ -1189,6 +1204,11 @@
      "date": "2026-11-25",
      "odds": 35.0,
      "note": "MOFCOM Announcement No. 59 extended the gallium, germanium and antimony suspension with no gap to Jan 27, 2027, its second two-month roll in two weeks; Beijing is staggering deadlines past Jan 10 and has let none of four truce deadlines lapse"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 37.0,
+     "note": "USTR proposed Section 301 tariffs on Nov 25 (up to 20% on most Chinese goods, up to 40% if talks fail; comments Jan 5, hearings from Jan 25) and MOFCOM said on Nov 26 it firmly opposes them and reserves the right to respond. That raises the chance of a partial snap-back or new licence limit on Jan 10 by about 2 points (board read 5 moved its row 38 to 40 on the same facts). The Nov 24 gallium roll (No. 59) is NOT counted again: the Nov 25 rebase already moved R2 45.5 to 35 on it, and setting R2 by hand stops the R1 settle from cutting it a second time."
     }
    ],
    "odds_by": {
@@ -1207,17 +1227,17 @@
     "JOBS"
    ],
    "least_capability": "Beijing choosing not to roll the Jan 10 pause",
-   "status": "BEHIND",
+   "status": "AHEAD",
    "hit": 4,
    "next_watch": "Nov 27 lapse test; G20 Dec 14 to 15; Jan 1 Pentagon magnet ban; Jan 10",
    "what_changed": "Shenzhen ended with no extension and no rare-earth pledge, only a plan to draft a stability plan. CAUTION: a thin Kalshi market prices an extension before Jan 11 at 75 to 85; Earth2's 45% includes a partial snap-back (S2)",
    "if_it_fires": "AI financing + (chips, magnets); Fed + (goods prices); cyber + (tit for tat); Japan +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 14",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -10.5
+    "date": "2026-11-26",
+    "delta": 2.0
    },
    "kill_condition": "Before Jan 10, 2027 MOFCOM extends the rare-earth pause in full past Jan 10 with no new licence limits.",
    "kill_check": "MOFCOM announcements; G20 Miami leaders' readouts",
@@ -1293,7 +1313,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "FED AND RATES",
    "type": "TRIGGER",
-   "odds_now": 54.4,
+   "odds_now": 54.5,
    "odds_text": "60% on Jan 27 (market 62)",
    "odds_history": [
     {
@@ -1320,6 +1340,11 @@
      "date": "2026-11-25",
      "odds": 54.4,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 54.5,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -1344,10 +1369,10 @@
    "if_it_fires": "Japan ++: yen through 160 35 to about 42. AI financing and banks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 16",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.2
+    "date": "2026-11-26",
+    "delta": 0.1
    },
    "kill_condition": "The Fed does not hike on Dec 9, 2026 (so Jan 27 cannot be the second straight hike), or it holds on Jan 27, 2027.",
    "kill_check": "FOMC statements, Dec 9, 2026 and Jan 27, 2027",
@@ -1379,7 +1404,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 60.6,
+   "odds_now": 60.7,
    "odds_text": "60% by May 31",
    "odds_history": [
     {
@@ -1406,6 +1431,11 @@
      "date": "2026-11-25",
      "odds": 60.6,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 60.7,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -1430,10 +1460,10 @@
    "if_it_fires": "AI financing ++ (these funds are the marginal lender). Banks +",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 17",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.3
+    "date": "2026-11-26",
+    "delta": 0.1
    },
    "kill_condition": "BCRED and Blue Owl's non-traded credit funds meet every redemption request in full at the Dec 2026 and Mar 2027 windows with no NAV markdown of 2% or more.",
    "kill_check": "Fund tender offer results (SEC EDGAR, SC TO-I/A); monthly NAV releases",
@@ -1539,7 +1569,7 @@
    "arm": "CYBER",
    "board_arm": "CYBER",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 29.5,
+   "odds_now": 29.6,
    "odds_text": "30% by Mar 31 (the three-year run reads nearer 20%)",
    "odds_history": [
     {
@@ -1556,6 +1586,11 @@
      "date": "2026-11-25",
      "odds": 29.5,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 29.6,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -1584,10 +1619,10 @@
    "kill_check": "CISA and FBI joint advisories; DOJ indictments; Treasury OFAC cyber sanctions",
    "date_state": "ESTIMATED",
    "peak_placeholder": true,
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.5
+    "date": "2026-11-26",
+    "delta": 0.1
    },
    "judgment_tags": [
     "actor"
@@ -1803,7 +1838,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 33.3,
+   "odds_now": 33.7,
    "odds_text": "33% by May 31",
    "odds_history": [
     {
@@ -1840,6 +1875,11 @@
      "date": "2026-11-25",
      "odds": 33.3,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 33.7,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -1864,10 +1904,10 @@
    "if_it_fires": "AI financing ++: credit freeze 85 to about 92; neocloud default 42 to about 52. Third hike 35 to about 28",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 23",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.1
+    "date": "2026-11-26",
+    "delta": 0.4
    },
    "folded_from": [
     {
@@ -2018,7 +2058,7 @@
    "arm": "AI FINANCING AND BANKS",
    "board_arm": "AI FINANCING",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 69.5,
+   "odds_now": 100.0,
    "odds_text": "65% by Mar 31",
    "odds_history": [
     {
@@ -2040,6 +2080,11 @@
      "date": "2026-11-23",
      "odds": 69.5,
      "note": "cascade from 27-1, 27-3, 27-5, 28-1, 28-3, 28-5, 28-6, 29-1, 29-2, 29-4"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 100.0,
+     "note": "FIRED. Anthropic (Nasdaq: ANT) closed at $81.91 on Nov 24, 2026, its first close below the $83 IPO price, and at $82.79 on Nov 25. It closed back at $91.88 on Nov 27. The test needs one close below $83 from Nov 22 to Mar 31, 2027."
     }
    ],
    "odds_by": {
@@ -2057,17 +2102,17 @@
     "CREDIT"
    ],
    "least_capability": "Lockup selling after the first unlock into a falling AI tape",
-   "status": "AHEAD",
+   "status": "FIRED 2026-11-24",
    "hit": 2,
    "next_watch": "Dec 15 first unlock",
    "what_changed": "Closed $88.91 Nov 20 (first day $97.17). Up to 1.6B shares unlock within 76 days (Dec 15, Jan 5, Jan 19, Feb 2). Options planned to list on Cboe Nov 23 (S1, S7, S10)",
    "if_it_fires": "Equity window narrows for every other AI issuer: credit freeze +. If Washington limits models: 65 to 80",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 25",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": -0.5
+    "date": "2026-11-26",
+    "delta": 30.5
    },
    "kill_condition": "Anthropic closes above $83 on every trading day from the Dec 15, 2026 first unlock through the Feb 2, 2027 release.",
    "kill_check": "ANT daily close (exchange data); lock-up schedule in the IPO prospectus",
@@ -2182,7 +2227,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "TRIGGER",
-   "odds_now": 40.0,
+   "odds_now": 1.0,
    "odds_text": "35% on Nov 27 (EST)",
    "odds_history": [
     {
@@ -2199,6 +2244,11 @@
      "date": "2026-11-23",
      "odds": 40.0,
      "note": "Nov 27 lapse: still no MOFCOM extension notice"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 1.0,
+     "note": "SETTLED NO. MOFCOM Announcement No. 59 of 2026 (dated Nov 24) keeps paragraph 2 of Announcement No. 46 of 2024 suspended from Nov 28, 2026 to Jan 27, 2027, with no gap after Nov 27: gallium, germanium, antimony and superhard material exports to the US stay licensable and the stricter graphite end-use review stays off. Paragraph 1 (no dual-use exports to US military users) and general licensing stay in force. Heavy rare earths (dysprosium, terbium) are not covered. Replaced by a two-month roll that lands 17 days after the Jan 10 truce deadline."
     }
    ],
    "odds_by": {
@@ -2216,17 +2266,17 @@
     "SHIPPING"
    ],
    "least_capability": "MOFCOM publishing nothing before Nov 27",
-   "status": "AHEAD",
+   "status": "BEHIND",
    "hit": 4,
    "next_watch": "Nov 27",
    "what_changed": "The suspension ends by default on Nov 27; Beijing threatened countermeasures on Nov 17 over the new chip rule; no renewal signal (S2, S8)",
    "if_it_fires": "The first hard tell for Jan 10: fork 45 to about 65 if it lapses, about 35 if renewed. Chips and defense electronics; US price floor 45 to about 65",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 27",
    "model_layer": "board",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-23",
-    "delta": 5.0
+    "date": "2026-11-26",
+    "delta": -39.0
    },
    "folded_from": [
     {
@@ -2647,7 +2697,7 @@
    "arm": "FED RATES AND JAPAN",
    "board_arm": "JAPAN",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 21.0,
+   "odds_now": 21.1,
    "odds_text": "20% by May 31, leaning up",
    "odds_history": [
     {
@@ -2669,6 +2719,11 @@
      "date": "2026-11-25",
      "odds": 21.0,
      "note": "Japan 40-year JGB auction (JPY 300bn) drew bid-to-cover 2.63x vs 3.10x prior and a 12-month average near 2.75; highest accepted yield 4.090% vs 4.125%; called underwhelming. Third straight long auction with thinner demand. The 40-year at about 4.145% is still below the May record 4.355%, so no record yet"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 21.1,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "odds_by": {
@@ -2693,10 +2748,10 @@
    "if_it_fires": "The megabank hinge: neocloud default 42 to about 50; lender loss 33 to about 38. US long rates ++",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 33",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": 1.4
+    "date": "2026-11-26",
+    "delta": 0.1
    },
    "kill_condition": "Every Japanese 30-year auction from Dec 2026 to Apr 2027 clears with bid-to-cover above 3 and no megabank announces a cap on data-center lending.",
    "kill_check": "Japan Ministry of Finance auction results; megabank releases (MUFG, SMFG, Mizuho)",
@@ -2863,7 +2918,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "board_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 46.2,
+   "odds_now": 40.0,
    "odds_text": "45% by May 31, 60% by Nov 2027 (call confirmed Nov 23: counts only a new US floor, tariff or stockpile purchase after Nov 19)",
    "odds_history": [
     {
@@ -2885,6 +2940,11 @@
      "date": "2026-11-25",
      "odds": 46.2,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 40.0,
+     "note": "Two dated events. (a) MOFCOM No. 59 (Nov 24) removed the Nov 27 lapse that was this row's trigger; the R1 link alone takes R5 from 46.2 to about 34. (b) USTR's Nov 25 Section 301 proposal on China (up to 20%, and up to 10% on an annex that tracks a baseline list with ores, concentrates and unwrought metals) is a live route to a new tariff inside the May 31 window; it is a proposal only, and whether it reaches gallium, germanium, antimony or Dy/Tb lines is not confirmed. About 45% final by May 31 times about 35% that these lines are not exempted adds about 6. Net 40, equal to the board's read 5 hold. No new DLA, DoD, DOE or Commerce floor, purchase or award found Nov 20 to 27 (the DLA $2B is a fiscal 2026 recap disclosed about Nov 5)."
     }
    ],
    "odds_by": {
@@ -2902,17 +2962,17 @@
     "CREDIT"
    ],
    "least_capability": "Congress or the Pentagon setting a price floor or buying a stockpile",
-   "status": "ON TRACK",
+   "status": "BEHIND",
    "hit": 2,
    "next_watch": "Nov 27; year-end defense bill",
    "what_changed": "No new floor or purchase found; the Nov 27 lapse is the trigger. The US made about 300 tons of magnets against 48,000 used in 2025 (S2, S8)",
    "if_it_fires": "Banks + (state-backed project loans)",
    "source": "EARTH2_EVENT_BOARD_read2_2026-11-22.md, section 4 row 36",
    "model_layer": "board",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.3
+    "date": "2026-11-26",
+    "delta": -6.2
    },
    "kill_condition": "The FY2027 defense bill is signed without a heavy rare-earth, antimony, gallium or germanium price floor or stockpile purchase, and no DLA, DOE or Commerce award or tariff is announced by Apr 30, 2027.",
    "kill_check": "NDAA text (Congress.gov); Defense Logistics Agency and DOE award notices; Commerce Section 232 actions",
@@ -5988,7 +6048,7 @@
    "label": "The ai debt break",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 55.0,
+   "odds_now": 55.2,
    "odds_text": "about 55% by Nov 2027",
    "odds_history": [
     {
@@ -6020,6 +6080,11 @@
      "date": "2026-11-25",
      "odds": 55.0,
      "note": "REBASE (Nov 25 proposals): BASE RATE telecom 2000 to 2002 (after the Mar 2000 peak: ICG filed Nov 2000, Winstar Apr 2001, PSINet Jun 2001, Global Crossing Jan 2002). Rescues come first (Meta-backed CoreWeave loan at 7 to 7.5%, about $9B of prepayments) and Oracle to junk is only about 15 to 18% by mid-2027, so the first $1B+ default most likely lands Q2 to Q3 2027. Curve 15 Feb, 35 May, 55 Nov 2027. E12 is folded into 27-4."
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 55.2,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "window_start": "2026-11-22",
@@ -6035,10 +6100,10 @@
    "description": "10 triggers at lift 3 or more, 8 of them new.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +15): Oracle moves closer to junk; refinancing gets harder.\nMR4 Neocloud chip-backed debt hits its refinancing wall (M, 35%, +12): A big AI borrower defaults.\nGR1 Statewide data center pauses spread from Texas to more states (M, FIRED, +6): Paused sites earn nothing against debt already drawn.\nGR3 Chips and announced capacity sit idle waiting for power (U, 40%, +6): Idle chips lose value while the debt on them accrues.\nMR3 Treasury auctions clear badly as the 10-year nears 5.50% (M, 45%, +4): Higher base rates lift AI refinancing costs.\nWK2 Software loans go bad as lenders price AI disruption (M, 35%, +5): The same funds are the marginal lender to AI borrowers.\nGR5 Local opposition blocks or delays projects, counted in dollars (M, 55%, +3): Cancelled sites strand land deposits and bridge loans. ALSO: MR5 (+4), RM5 (+3), WK8 (+3). WEAK LINKS (under 3 points): RM6, MR2, GR2, GR4, GR6, GR7, GR8, GR9, FC4.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-4",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -3.4
+    "date": "2026-11-26",
+    "delta": 0.2
    },
    "kill_condition": "CoreWeave and the other big neoclouds refinance their 2027 maturities at yields under 10% by Jun 30, 2027 and all three agencies affirm Oracle at investment grade.",
    "kill_check": "Neocloud bond and loan pricing (Bloomberg, FINRA TRACE); 8-K filings; Moody's, S&P and Fitch actions",
@@ -6176,7 +6241,7 @@
    "label": "The rare-earth squeeze stops a factory",
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "type": "END EVENT",
-   "odds_now": 50.0,
+   "odds_now": 50.3,
    "odds_text": "70% by Nov 2027",
    "odds_history": [
     {
@@ -6198,6 +6263,11 @@
      "date": "2026-11-25",
      "odds": 50.0,
      "note": "REBASE (Nov 25 proposals): FACT civilian magnet exports are flowing (China's October magnet exports 5,693 t, up 4% y/y, SMM citing Customs, secondary); the likelier stop is yttrium or DFARS, not magnets, and line stops are rarely announced by name. R6 is folded into 27-6."
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 50.3,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "window_start": "2026-11-22",
@@ -6213,10 +6283,10 @@
    "description": "6 triggers at lift 3 or more, 6 of them new.\nDA3 Rare-earth pause ends Jan 10, 2027; magnets flow on short-leash licences (M, 40%, +14): A lapse is the direct path to a line stop.\nDA2 Heavy rare-earth price outside China hits 16 times the China price (M, 55%, +8): Price rationing comes before a physical line stop.\nDA6 Western rare-earth output grows 41% a year, still far under need (M, 45%, +8): No Western buffer if licences tighten.\nDA7 Rare earths and magnets rerouted through third countries (U, 45%, +6): Closing the leak removes the last buffer.\nDA1 China Coast Guard incursions spread to Pratas, Penghu and Taiwan's east (M, 45%, +3): A squeeze and response invite tighter Chinese export curbs.\nRM7 Smuggled AI chips outrun export-control enforcement (M, 40%, +3): Tighter chip enforcement invites rare-earth retaliation. WEAK LINKS (under 3 points): RM6, DA4.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 27-6",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -20.0
+    "date": "2026-11-26",
+    "delta": 0.3
    },
    "kill_condition": "China grants Western and Japanese magnet makers general Dy/Tb licences covering 2027 and the ex-China to China price ratio falls under 3 times, both before May 31, 2027.",
    "kill_check": "MOFCOM licence notices; Fastmarkets or Argus Dy/Tb price ratio; automaker production notices",
@@ -6414,7 +6484,7 @@
    "label": "The bill reaches the lenders",
    "arm": "AI FINANCING AND BANKS",
    "type": "END EVENT",
-   "odds_now": 58.3,
+   "odds_now": 58.4,
    "odds_text": "58% by Nov 2028",
    "odds_history": [
     {
@@ -6436,6 +6506,11 @@
      "date": "2026-11-25",
      "odds": 58.3,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 58.4,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "window_start": "2027-06-01",
@@ -6450,10 +6525,10 @@
    "description": "11 triggers at lift 3 or more, 9 of them new.\nWK2 Software loans go bad as lenders price AI disruption (M, 62%, +12): Software losses alone can pass $500M at one fund.\nMR1 AI borrowers' bonds outrun their ratings; Oracle one notch above junk (M, FIRED, +8): Marked-down AI bonds force lender loss disclosures.\nMR5 Retail private credit funds ration withdrawals each quarter (M, 50%, +12): A gated fund must mark loans and admit losses.\nMR4 Neocloud chip-backed debt hits its refinancing wall (M, 55%, +10): Lenders must disclose chip-loan losses.\nWK8 Paid seats fall at per-seat software vendors (U, 45%, +10): Falling seats turn loan marks into real defaults.\nFC5 Local boards and voters block data centers faster than builders adapt (M, 72%, +4): Lenders hold loans on projects that cannot open.\nGR1 Statewide data center pauses spread from Texas to more states (M, FIRED, +3): Construction loans on paused sites go bad. ALSO: GR3 (+4), MR3 (+3), MR8 (+5), WK7 (+3). WEAK LINKS (under 3 points): PF4, PF8, GR5.",
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-2",
    "model_layer": "majors",
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.1
+    "date": "2026-11-26",
+    "delta": 0.1
    },
    "kill_condition": "Bank and BDC filings through the Q4 2027 results (early 2028) show AI and data-center loan losses under $500M in total and no private-credit fund gates withdrawals.",
    "kill_check": "Bank 10-K and 10-Q filings; BDC filings and tender results (SEC EDGAR)",
@@ -6634,7 +6709,7 @@
    "label": "Taiwan votes under pressure",
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "type": "END EVENT",
-   "odds_now": 55.0,
+   "odds_now": 54.9,
    "odds_text": "55% by Nov 2028 (majors settled Nov 23; T1 55, T2 14)",
    "odds_history": [
     {
@@ -6651,6 +6726,11 @@
      "date": "2026-11-23",
      "odds": 55.0,
      "note": "Majors settled: one number per major (T1 55, T2 14)"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 54.9,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "window_start": "2027-06-01",
@@ -6667,9 +6747,9 @@
    "source": "EARTH2 1 MAJORS (Drive doc) and EARTH2_GENERATED_v1 graph node 28-6",
    "model_layer": "majors",
    "one_number_rule": "The operative leg is a boarding or island squeeze (T1, 55%); a quarantine (T2) is 14%.",
-   "odds_as_of": "2026-11-23",
+   "odds_as_of": "2026-11-26",
    "last_move": {
-    "date": "2026-11-23",
+    "date": "2026-11-26",
     "delta": -0.1
    },
    "kill_condition": "Taiwan's January 2028 national election passes with no China coast guard boarding, island isolation or named PLA exercise between Nov 1, 2027 and Jan 31, 2028.",
@@ -7765,7 +7845,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "type": "TRIGGER",
    "family": "Drones, robots and gray-zone atoms",
-   "odds_now": 40,
+   "odds_now": 36.9,
    "odds_text": "40 / 58 / 68 by Nov 2027 / 2028 / 2029",
    "odds_by": {
     "2027-11-30": 40,
@@ -7777,6 +7857,11 @@
      "date": "2026-11-19",
      "odds": 40.0,
      "note": "trigger tree v2, sealed Nov 19"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 36.9,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
    "window_start": "2026-11-22",
@@ -7799,7 +7884,12 @@
    "kill_check": "MOFCOM announcements; China General Administration of Customs monthly magnet exports",
    "date_state": "LOCKED",
    "date_catalyst": "China's rare-earth export-control pause expires Jan 10, 2027 (MOFCOM No. 58) (seed list, Nov 25 hard pass)",
-   "peak_placeholder": false
+   "peak_placeholder": false,
+   "odds_as_of": "2026-11-26",
+   "last_move": {
+    "date": "2026-11-26",
+    "delta": -3.1
+   }
   },
   {
    "id": "PF2",
@@ -26854,7 +26944,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "NECESSARY CONDITION",
-   "odds_now": 92.3,
+   "odds_now": 92.4,
    "odds_text": "93% by 2027-11-30 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -26866,9 +26956,14 @@
      "date": "2026-11-25",
      "odds": 92.3,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 92.4,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "window_start": "2026-11-23",
    "window_peak": "2027-03-31",
    "window_end": "2027-11-30",
@@ -26885,8 +26980,8 @@
    "date_state": "ESTIMATED",
    "peak_placeholder": true,
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.7
+    "date": "2026-11-26",
+    "delta": 0.1
    }
   },
   {
@@ -26895,7 +26990,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 30.4,
+   "odds_now": 31.3,
    "odds_text": "35% by 2027-03-31 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -26912,9 +27007,14 @@
      "date": "2026-11-25",
      "odds": 30.4,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 31.3,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "window_start": "2026-12-01",
    "window_peak": "2027-01-10",
    "window_end": "2027-03-31",
@@ -26930,8 +27030,8 @@
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "note": "Renewal timing around Dec 2026 is an inference from one-year validity [unverified].",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -4.7
+    "date": "2026-11-26",
+    "delta": 0.9
    },
    "date_state": "ESTIMATED",
    "date_catalyst": "Deep dive tied the peak to the Jan 10, 2027 pause expiry; the licences' own expiry dates are not confirmed",
@@ -27068,7 +27168,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 54.6,
+   "odds_now": 54.7,
    "odds_text": "55% by 2027-11-30 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -27080,9 +27180,14 @@
      "date": "2026-11-25",
      "odds": 54.6,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 54.7,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "window_start": "2026-12-01",
    "window_peak": "2027-04-30",
    "window_end": "2027-11-30",
@@ -27098,8 +27203,8 @@
    "date_state": "ESTIMATED",
    "peak_placeholder": true,
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -0.4
+    "date": "2026-11-26",
+    "delta": 0.1
    }
   },
   {
@@ -27202,7 +27307,7 @@
    "arm": "RARE EARTHS CHINA AND TAIWAN",
    "deepdive_arm": "RARE EARTHS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 47.3,
+   "odds_now": 47.8,
    "odds_text": "50% by 2027-12-31 (rare-earth deep dive, Nov 23)",
    "odds_history": [
     {
@@ -27219,9 +27324,14 @@
      "date": "2026-11-25",
      "odds": 47.3,
      "note": "cascade from D1, R2, WF1, P1, FC1, E02, W5"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 47.8,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "window_start": "2027-01-10",
    "window_peak": "2027-06-30",
    "window_end": "2027-12-31",
@@ -27236,8 +27346,8 @@
    "model_layer": "deep dive",
    "origin_file": "EARTH2_DEEPDIVE_RARE_EARTHS_2026-11-23_nodes_links.json",
    "last_move": {
-    "date": "2026-11-25",
-    "delta": -2.8
+    "date": "2026-11-26",
+    "delta": 0.5
    },
    "date_state": "ESTIMATED",
    "peak_placeholder": true
@@ -28883,7 +28993,7 @@
    "label": "The credit index catches down: the US high-yield bond spread (ICE BofA) closes at 500 bp or more (372 bp on Nov 24 per FRED, while CoreWeave's default insurance is 1,314 bp and a $500M data-center loan auction failed).",
    "arm": "AI FINANCING AND BANKS",
    "type": "LIKELY PRECURSOR",
-   "odds_now": 42.0,
+   "odds_now": 42.1,
    "odds_text": "42% by 2027-03-31 (hard pass Nov 25, estimate)",
    "odds_by": {
     "2027-01-19": 21.0,
@@ -28895,9 +29005,14 @@
      "date": "2026-11-25",
      "odds": 42.0,
      "note": "hard pass Nov 25, first load"
+    },
+    {
+     "date": "2026-11-26",
+     "odds": 42.1,
+     "note": "cascade from R1, R2, R5, F6"
     }
    ],
-   "odds_as_of": "2026-11-25",
+   "odds_as_of": "2026-11-26",
    "window_start": "2026-11-25",
    "window_peak": "2027-01-15",
    "window_end": "2027-03-31",
@@ -28912,7 +29027,11 @@
    "estimated": true,
    "next_watch": "Dec 1 BCRED window; CoreWeave loan; Jan 14 bank results",
    "date_state": "ESTIMATED",
-   "peak_placeholder": true
+   "peak_placeholder": true,
+   "last_move": {
+    "date": "2026-11-26",
+    "delta": 0.1
+   }
   },
   {
    "id": "HP08",
@@ -64892,6 +65011,452 @@
     "dropped_window_closed": 0,
     "dropped_tiny": 0,
     "cut_at_hop_limit": 0
+   },
+   "collisions": {
+    "a_multi_arm_nodes": [],
+    "b_cross_arm_pairs": [],
+    "c_companies": [],
+    "per_arm": {
+     "AI FINANCING AND BANKS": 0,
+     "FED RATES AND JAPAN": 0,
+     "RARE EARTHS CHINA AND TAIWAN": 0,
+     "OIL AND GULF": 0,
+     "CYBER": 0,
+     "BIO": 0,
+     "AI CAPABILITY": 0,
+     "HUMANOID ROBOTS": 0,
+     "WHITE-COLLAR WORK": 0,
+     "SHIPPING AND CANALS": 0,
+     "DISCOVERIES": 0,
+     "POWER AND THE GRID": 0,
+     "JOBS AND THE BACKLASH": 0,
+     "WEATHER AND FOOD": 0,
+     "RUSSIA AND EUROPE": 0
+    }
+   },
+   "queue": []
+  },
+  {
+   "date": "2026-11-26",
+   "run_at": "2026-11-27T22:20:28+00:00",
+   "trigger": [
+    {
+     "id": "R1",
+     "before": 40.0,
+     "after": 1.0,
+     "date": "2026-11-24",
+     "reason": "SETTLED NO. MOFCOM Announcement No. 59 of 2026 (dated Nov 24) keeps paragraph 2 of Announcement No. 46 of 2024 suspended from Nov 28, 2026 to Jan 27, 2027, with no gap after Nov 27: gallium, germanium, antimony and superhard material exports to the US stay licensable and the stricter graphite end-use review stays off. Paragraph 1 (no dual-use exports to US military users) and general licensing stay in force. Heavy rare earths (dysprosium, terbium) are not covered. Replaced by a two-month roll that lands 17 days after the Jan 10 truce deadline.",
+     "source": "MOFCOM, https://aqygzj.mofcom.gov.cn/qdml/art/2026/art_98ae61c2a60f43638304f2e6a43f952f.html ; VOA Chinese, Nov 26, 2026 ; VOA News, Nov 26, 2026 ; Seoul Economic Daily, Nov 24, 2026"
+    },
+    {
+     "id": "R2",
+     "before": 35.0,
+     "after": 37.0,
+     "date": "2026-11-26",
+     "reason": "USTR proposed Section 301 tariffs on Nov 25 (up to 20% on most Chinese goods, up to 40% if talks fail; comments Jan 5, hearings from Jan 25) and MOFCOM said on Nov 26 it firmly opposes them and reserves the right to respond. That raises the chance of a partial snap-back or new licence limit on Jan 10 by about 2 points (board read 5 moved its row 38 to 40 on the same facts). The Nov 24 gallium roll (No. 59) is NOT counted again: the Nov 25 rebase already moved R2 45.5 to 35 on it, and setting R2 by hand stops the R1 settle from cutting it a second time.",
+     "source": "Xinhua, Nov 26, 2026, https://english.news.cn/20261126/9d9be8e730414538ba58af52d044e80e/c.html ; USTR China notice, https://ustr.gov/sites/default/files/files/Press/Releases/2026/China%20FRN.pdf ; Holland & Knight, Nov 25, 2026"
+    },
+    {
+     "id": "R5",
+     "before": 46.2,
+     "after": 40.0,
+     "date": "2026-11-25",
+     "reason": "Two dated events. (a) MOFCOM No. 59 (Nov 24) removed the Nov 27 lapse that was this row's trigger; the R1 link alone takes R5 from 46.2 to about 34. (b) USTR's Nov 25 Section 301 proposal on China (up to 20%, and up to 10% on an annex that tracks a baseline list with ores, concentrates and unwrought metals) is a live route to a new tariff inside the May 31 window; it is a proposal only, and whether it reaches gallium, germanium, antimony or Dy/Tb lines is not confirmed. About 45% final by May 31 times about 35% that these lines are not exempted adds about 6. Net 40, equal to the board's read 5 hold. No new DLA, DoD, DOE or Commerce floor, purchase or award found Nov 20 to 27 (the DLA $2B is a fiscal 2026 recap disclosed about Nov 5).",
+     "source": "USTR China notice (Nov 25, 2026) via Holland & Knight and Pillsbury, Nov 25, 2026 ; MOFCOM No. 59 as on R1 ; Northern Miner and ExecutiveGov on the DLA recap"
+    },
+    {
+     "id": "F6",
+     "before": 69.5,
+     "after": 100.0,
+     "date": "2026-11-24",
+     "reason": "FIRED. Anthropic (Nasdaq: ANT) closed at $81.91 on Nov 24, 2026, its first close below the $83 IPO price, and at $82.79 on Nov 25. It closed back at $91.88 on Nov 27. The test needs one close below $83 from Nov 22 to Mar 31, 2027.",
+     "source": "FinanceFeeds, Nov 27, 2026, https://financefeeds.com/ant-stock-at-91-88-back-above-its-83-ipo-price-on-black-friday/ ; Motley Fool, Nov 27, 2026 (close $91.88, up $9.09, so prior close $82.79)"
+    }
+   ],
+   "rule": {
+    "move": "d x strength x sign",
+    "fade": 0.5,
+    "max_hops": 4,
+    "visit": "once per run",
+    "clamp": [
+     1.0,
+     99.0
+    ],
+    "fired_pinned": true,
+    "collision_days": 120,
+    "collision_rule": "a node counts if it rose 3+ points this run, sat under 90 before the move, and is not FIRED or SCHEDULED; score = joint odds x arms x unpriced share (the gap to a like-for-like market where one exists, else 1 - odds/100 after the move; averaged)"
+   },
+   "moved": [
+    {
+     "id": "R1",
+     "label": "China lets its suspended ban on gallium, germanium and antimony lapse on Nov 27",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 40.0,
+     "after": 1.0,
+     "delta": -39.0,
+     "role": "set by hand",
+     "reason": "SETTLED NO. MOFCOM Announcement No. 59 of 2026 (dated Nov 24) keeps paragraph 2 of Announcement No. 46 of 2024 suspended from Nov 28, 2026 to Jan 27, 2027, with no gap after Nov 27: gallium, germanium, antimony and superhard material exports to the US stay licensable and the stricter graphite end-use review stays off. Paragraph 1 (no dual-use exports to US military users) and general licensing stay in force. Heavy rare earths (dysprosium, terbium) are not covered. Replaced by a two-month roll that lands 17 days after the Jan 10 truce deadline.",
+     "source": "MOFCOM, https://aqygzj.mofcom.gov.cn/qdml/art/2026/art_98ae61c2a60f43638304f2e6a43f952f.html ; VOA Chinese, Nov 26, 2026 ; VOA News, Nov 26, 2026 ; Seoul Economic Daily, Nov 24, 2026",
+     "date": "2026-11-24"
+    },
+    {
+     "id": "R2",
+     "label": "China's rare-earth pause lapses or partly snaps back on Jan 10",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 35.0,
+     "after": 37.0,
+     "delta": 2.0,
+     "role": "set by hand",
+     "reason": "USTR proposed Section 301 tariffs on Nov 25 (up to 20% on most Chinese goods, up to 40% if talks fail; comments Jan 5, hearings from Jan 25) and MOFCOM said on Nov 26 it firmly opposes them and reserves the right to respond. That raises the chance of a partial snap-back or new licence limit on Jan 10 by about 2 points (board read 5 moved its row 38 to 40 on the same facts). The Nov 24 gallium roll (No. 59) is NOT counted again: the Nov 25 rebase already moved R2 45.5 to 35 on it, and setting R2 by hand stops the R1 settle from cutting it a second time.",
+     "source": "Xinhua, Nov 26, 2026, https://english.news.cn/20261126/9d9be8e730414538ba58af52d044e80e/c.html ; USTR China notice, https://ustr.gov/sites/default/files/files/Press/Releases/2026/China%20FRN.pdf ; Holland & Knight, Nov 25, 2026",
+     "date": "2026-11-26"
+    },
+    {
+     "id": "R5",
+     "label": "Washington sets a price floor, tariff or stockpile purchase for heavy rare earths, antimony, gallium or germanium",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 46.2,
+     "after": 40.0,
+     "delta": -6.2,
+     "role": "set by hand",
+     "reason": "Two dated events. (a) MOFCOM No. 59 (Nov 24) removed the Nov 27 lapse that was this row's trigger; the R1 link alone takes R5 from 46.2 to about 34. (b) USTR's Nov 25 Section 301 proposal on China (up to 20%, and up to 10% on an annex that tracks a baseline list with ores, concentrates and unwrought metals) is a live route to a new tariff inside the May 31 window; it is a proposal only, and whether it reaches gallium, germanium, antimony or Dy/Tb lines is not confirmed. About 45% final by May 31 times about 35% that these lines are not exempted adds about 6. Net 40, equal to the board's read 5 hold. No new DLA, DoD, DOE or Commerce floor, purchase or award found Nov 20 to 27 (the DLA $2B is a fiscal 2026 recap disclosed about Nov 5).",
+     "source": "USTR China notice (Nov 25, 2026) via Holland & Knight and Pillsbury, Nov 25, 2026 ; MOFCOM No. 59 as on R1 ; Northern Miner and ExecutiveGov on the DLA recap",
+     "date": "2026-11-25"
+    },
+    {
+     "id": "F6",
+     "label": "Anthropic (ANT) closes under its $83 IPO price",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 69.5,
+     "after": 100.0,
+     "delta": 30.5,
+     "role": "set by hand",
+     "reason": "FIRED. Anthropic (Nasdaq: ANT) closed at $81.91 on Nov 24, 2026, its first close below the $83 IPO price, and at $82.79 on Nov 25. It closed back at $91.88 on Nov 27. The test needs one close below $83 from Nov 22 to Mar 31, 2027.",
+     "source": "FinanceFeeds, Nov 27, 2026, https://financefeeds.com/ant-stock-at-91-88-back-above-its-83-ipo-price-on-black-friday/ ; Motley Fool, Nov 27, 2026 (close $91.88, up $9.09, so prior close $82.79)",
+     "date": "2026-11-24"
+    },
+    {
+     "id": "DA3",
+     "label": "Rare-earth pause ends Jan 10, 2027; magnets flow on short-leash licences",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 40.0,
+     "after": 36.9,
+     "delta": -3.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-15",
+     "paths": [
+      {
+       "path": "R1 > DA3",
+       "points": -3.12
+      }
+     ]
+    },
+    {
+     "id": "F1",
+     "label": "Another $1B+ AI data-center financing is pulled, cut or sold at a discount",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 83.5,
+     "after": 85.1,
+     "delta": 1.6,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-26",
+     "paths": [
+      {
+       "path": "F6 > F1",
+       "points": 1.53
+      },
+      {
+       "path": "R2 > F1",
+       "points": 0.1
+      }
+     ]
+    },
+    {
+     "id": "RD05",
+     "label": "China does not renew, or narrows, the one-year general licences held by 3 Chinese magnet makers",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 30.4,
+     "after": 31.3,
+     "delta": 0.9,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-11-26",
+     "paths": [
+      {
+       "path": "R2 > RD05",
+       "points": 0.9
+      }
+     ]
+    },
+    {
+     "id": "RD14",
+     "label": "Western magnet plants slip 6+ months on furnace and diffusion equipment (one GBD vendor outside China; ULVAC over 70% of furnaces)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 47.3,
+     "after": 47.8,
+     "delta": 0.5,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-25",
+     "paths": [
+      {
+       "path": "R2 > RD14",
+       "points": 0.54
+      }
+     ]
+    },
+    {
+     "id": "F2",
+     "label": "A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 41.7,
+     "after": 42.1,
+     "delta": 0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-09",
+     "paths": [
+      {
+       "path": "F6 > F1 > F2",
+       "points": 0.43
+      }
+     ]
+    },
+    {
+     "id": "R4",
+     "label": "Dysprosium and terbium outside China stay above 3 times the China price",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 77.2,
+     "after": 76.8,
+     "delta": -0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-10",
+     "paths": [
+      {
+       "path": "R5 > R4",
+       "points": -0.93
+      },
+      {
+       "path": "R2 > R4",
+       "points": 0.54
+      }
+     ]
+    },
+    {
+     "id": "B1",
+     "label": "A bank or credit fund discloses $500M+ of AI or data-center losses, or gates withdrawals because of them",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 33.3,
+     "after": 33.7,
+     "delta": 0.4,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-09",
+     "paths": [
+      {
+       "path": "F6 > F1 > B1",
+       "points": 0.38
+      }
+     ]
+    },
+    {
+     "id": "27-6",
+     "label": "The rare-earth squeeze stops a factory",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 50.0,
+     "after": 50.3,
+     "delta": 0.3,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-25",
+     "paths": [
+      {
+       "path": "R2 > 27-6",
+       "points": 0.3
+      }
+     ]
+    },
+    {
+     "id": "27-4",
+     "label": "The ai debt break",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 55.0,
+     "after": 55.2,
+     "delta": 0.2,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-11",
+     "paths": [
+      {
+       "path": "F6 > F1 > F2 > 27-4",
+       "points": 0.17
+      }
+     ]
+    },
+    {
+     "id": "28-6",
+     "label": "Taiwan votes under pressure",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 55.0,
+     "after": 54.9,
+     "delta": -0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-08-05",
+     "paths": [
+      {
+       "path": "R1 > DA3 > 28-6",
+       "points": -0.15
+      }
+     ]
+    },
+    {
+     "id": "RD03",
+     "label": "Chinese Dy/Tb or Dy/Tb magnets to the affected buyer are slowed, denied or legally barred (China licence or US DFARS)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 92.3,
+     "after": 92.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-06",
+     "paths": [
+      {
+       "path": "R2 > RD03",
+       "points": 0.14
+      }
+     ]
+    },
+    {
+     "id": "28-2",
+     "label": "The bill reaches the lenders",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 58.3,
+     "after": 58.4,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-11",
+     "paths": [
+      {
+       "path": "F6 > F1 > B1 > 28-2",
+       "points": 0.12
+      }
+     ]
+    },
+    {
+     "id": "HP07",
+     "label": "The credit index catches down: the US high-yield bond spread (ICE BofA) closes at 500 bp or more (372 bp on Nov 24 per FRED, while CoreWeave's default insurance is 1,314 bp and a $500M data-center loan auction failed).",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 42.0,
+     "after": 42.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-02-16",
+     "paths": [
+      {
+       "path": "F6 > F1 > F2 > HP07",
+       "points": 0.1
+      }
+     ]
+    },
+    {
+     "id": "D2",
+     "label": "A second straight hike on Jan 27",
+     "arm": "FED RATES AND JAPAN",
+     "before": 54.4,
+     "after": 54.5,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-25",
+     "paths": [
+      {
+       "path": "R2 > D2",
+       "points": 0.1
+      }
+     ]
+    },
+    {
+     "id": "C6",
+     "label": "The US formally attributes a destructive attack by Iran or China on a listed company, utility, water or health system",
+     "arm": "CYBER",
+     "before": 29.5,
+     "after": 29.6,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-26",
+     "paths": [
+      {
+       "path": "R2 > C6",
+       "points": 0.1
+      }
+     ]
+    },
+    {
+     "id": "RD10",
+     "label": "Japanese magnet makers run out of Dy stock and ration (Shin-Etsu, Proterial, TDK)",
+     "arm": "RARE EARTHS CHINA AND TAIWAN",
+     "before": 54.6,
+     "after": 54.7,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2026-12-26",
+     "paths": [
+      {
+       "path": "R2 > RD05 > RD10",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "J2",
+     "label": "Japan's 30-year yield breaks its record on a weak auction, or a megabank caps data-center lending",
+     "arm": "FED RATES AND JAPAN",
+     "before": 21.0,
+     "after": 21.1,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-01-25",
+     "paths": [
+      {
+       "path": "F6 > F1 > J2",
+       "points": 0.07
+      }
+     ]
+    },
+    {
+     "id": "B2",
+     "label": "Private-credit funds mark down and face redemption queues (Blue Owl under $7 by May 21 is 40%)",
+     "arm": "AI FINANCING AND BANKS",
+     "before": 60.6,
+     "after": 60.7,
+     "delta": 0.1,
+     "role": "cascade",
+     "clamped": false,
+     "first_arrival": "2027-03-11",
+     "paths": [
+      {
+       "path": "F6 > F1 > F2 > B2",
+       "points": 0.06
+      }
+     ]
+    }
+   ],
+   "skipped": [],
+   "stats": {
+    "links_used": 28,
+    "blocked_fired_or_hand_set": 6,
+    "dropped_window_closed": 0,
+    "dropped_tiny": 29,
+    "cut_at_hop_limit": 4
    },
    "collisions": {
     "a_multi_arm_nodes": [],

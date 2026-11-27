@@ -1,13 +1,13 @@
 {
  "version": 1,
- "generated_on": "2026-11-26",
+ "generated_on": "2026-11-27",
  "rule": "corrected odds = raw odds_now minus the mean signed error of the event's active judgment tags, held between 1 and 99. odds_now is never overwritten; the raw number keeps getting scored.",
  "min_n": 10,
  "overall": {
-  "n": 2,
-  "mean_signed_error": 40.0,
-  "brier": 0.16,
-  "backfilled": 2,
+  "n": 3,
+  "mean_signed_error": 16.7,
+  "brier": 0.1367,
+  "backfilled": 3,
   "coin_flip": 0.25
  },
  "market": {
@@ -20,12 +20,12 @@
  },
  "tags": {
   "timing": {
-   "n": 1,
-   "mean_signed_error": 40.0,
-   "brier": 0.16,
+   "n": 2,
+   "mean_signed_error": 5.0,
+   "brier": 0.125,
    "active": false,
-   "needs": 9,
-   "backfilled": 1
+   "needs": 8,
+   "backfilled": 2
   },
   "brakes": {
    "n": 1,
@@ -70,12 +70,12 @@
    "backfilled": 0
   },
   "AI FINANCING AND BANKS": {
-   "n": 0,
-   "mean_signed_error": null,
-   "brier": null,
+   "n": 1,
+   "mean_signed_error": -30.0,
+   "brier": 0.09,
    "active": false,
-   "needs": 10,
-   "backfilled": 0
+   "needs": 9,
+   "backfilled": 1
   },
   "BIO": {
    "n": 0,

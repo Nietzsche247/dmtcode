@@ -1481,6 +1481,38 @@
    "evidence": null,
    "evidence_source": null,
    "void_reason": null
+  },
+  {
+   "id": "Q-0047",
+   "event_id": "F6",
+   "path_node": null,
+   "arm": "AI FINANCING AND BANKS",
+   "text": "Does Anthropic (Nasdaq: ANT) close below its $83 IPO price on any trading day from Nov 22, 2026 through Mar 31, 2027?",
+   "test": "YES if Anthropic (Nasdaq: ANT) closes below its $83 IPO price on any trading day from Nov 22, 2026 through Mar 31, 2027 (Nasdaq official closing price). NO otherwise.",
+   "source": "Nasdaq official closing prices for ANT",
+   "tags": [
+    "timing"
+   ],
+   "script_side": "YES",
+   "written": "2026-11-27",
+   "due": "2027-03-31",
+   "odds_locked": 70,
+   "odds_basis": "graph F6 odds_history: 70 recorded 2026-11-23 (market calibration ahead of the Dec 15 unlock; 69.5 after that day's cascade), the last number before the Nov 24 close. The graph expected the break near the Dec 15 unlock; it came three weeks early.",
+   "market": null,
+   "consensus": null,
+   "kind": "backfilled",
+   "odds_date": "2026-11-23",
+   "lock": "a854f6458022319092a073d9a8321c1db7f16c740755faa265b2d91170c307d0",
+   "status": "SETTLED",
+   "due_current": "2027-03-31",
+   "deferrals": [],
+   "outcome": "YES",
+   "settled_as_of": "2026-11-24",
+   "answered_on": "2026-11-27",
+   "late": false,
+   "evidence": "ANT closed at $81.91 on Tue Nov 24, 2026, its first close below the $83 IPO price, and at $82.79 on Wed Nov 25 (Motley Fool's Nov 27 close of $91.88, up $9.09, implies the same $82.79 prior close). It closed back above the IPO price at $91.88 on Fri Nov 27.",
+   "evidence_source": "FinanceFeeds, Nov 27, 2026, https://financefeeds.com/ant-stock-at-91-88-back-above-its-83-ipo-price-on-black-friday/ ; Motley Fool, Nov 27, 2026, https://www.fool.com/coverage/stock-market-today/2026/11/27/stock-market-today-nov-27-anthropic-jumps-11-reclaiming-its-usd83-ipo-price-as-wall-street-rallies/ (secondary; Nasdaq's own close not read)",
+   "void_reason": null
   }
  ]
 }
