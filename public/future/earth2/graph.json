@@ -87,7 +87,9 @@
    "26 display-only links wired with strength and delay; 163 kept display-only (driver curves, challenger links, shared curves).",
    "kill_condition and kill_check on 162 main events (every END EVENT, board row and tree trigger with a board reference).",
    "date_state on every live event node (LOCKED 15, SCHEDULED 35, ESTIMATED 576); peak_placeholder true on 565."
-  ]
+  ],
+  "odds_stamp": "1dcadadd",
+  "odds_stamp_rule": "FNV-1a 32-bit hex over the text built from every node sorted by id as 'id:T;' where T = floor(odds_now * 10 + 0.5) as an integer and null odds give 'x'. Set by earth2/cascade.py after every run and by earth2/deepdives/merge_nodes.py after a merge. A mismatch means odds were edited outside the engine; earth2/validate_graph.py fails on it and the page shows a red banner."
  },
  "nodes": [
   {

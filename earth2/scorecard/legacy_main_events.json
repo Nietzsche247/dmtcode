@@ -1,0 +1,639 @@
+{
+ "version": 1,
+ "as_of": "2026-11-26",
+ "what": "The main events (type END EVENT, or model_layer board) that were in the graph before the new-event gate, with the gaps each one may keep. Any main event that is not on this list must pass the gate. This list never grows. python3 earth2/scorecard.py legacy-refresh can only remove gaps.",
+ "gap_fields": [
+  "settlement_test",
+  "base_rate",
+  "judgment_tags"
+ ],
+ "events": {
+  "27-1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "27-2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "27-3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "27-4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "27-5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "27-6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "28-6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "29-6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "B1": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "B2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "B3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "B4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB3": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BB6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT6": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "BT6a": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C1": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C10": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C11": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C4": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "C9": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D4": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "D9": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E02": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E03": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E04": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E07": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E08": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E09": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E12": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E17": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E26": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "E31": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F10": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F11": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F7": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "F9": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "J6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "JB1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M13": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M39": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M52": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M53": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M54": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M55": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M56": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M57": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M58": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M59": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M60": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M61": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "M62": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O1": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O3": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "O7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "P1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "P6": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "PG1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R6": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "R8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "RU1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "RU4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "RU7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "T1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "T2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W1": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W3": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W4": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W5": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W6": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W7": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "W8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "WF8": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ],
+  "X1": [
+   "base_rate",
+   "judgment_tags"
+  ],
+  "X2": [
+   "settlement_test",
+   "base_rate",
+   "judgment_tags"
+  ]
+ }
+}

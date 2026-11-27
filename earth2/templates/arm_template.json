@@ -1,0 +1,103 @@
+{
+ "_how_to_use": "Copy this file. Replace every FILL IN and every null. Then run: python3 earth2/deepdives/merge_nodes.py public/future/earth2/graph.json YOUR_FILE.json --dry-run . The merge refuses and lists exactly what is still missing. One line of guidance per field: earth2/templates/README.md",
+ "graph": {
+  "short_name": "FILL IN: a short name for this load, for example water arm Dec 3",
+  "origin": "FILL IN: where the link strengths come from, for example water arm Dec 3 (A to about B, estimate)",
+  "created": "FILL IN: YYYY-MM-DD, the date of this load",
+  "note": "FILL IN: one line on what this adds and why",
+  "model_layer": "new arm",
+  "new_arms": [
+   "FILL IN: THE ARM NAME IN CAPITALS (delete this list when the arm already exists)"
+  ]
+ },
+ "nodes": [
+  {
+   "id": "FILL IN END EVENT ID",
+   "label": "FILL IN: the end event as one plain sentence with its threshold and date",
+   "arm": "FILL IN: THE ARM NAME IN CAPITALS",
+   "type": "END EVENT",
+   "odds_now": null,
+   "status": "FILL IN: ON TRACK for a new event",
+   "window_start": "FILL IN: YYYY-MM-DD, the first day it could happen",
+   "window_peak": "FILL IN: YYYY-MM-DD, the most likely day",
+   "window_end": "FILL IN: YYYY-MM-DD, the day the odds are measured to",
+   "date_state": "FILL IN: LOCKED, SCHEDULED or ESTIMATED",
+   "date_catalyst": "FILL IN: the dated catalyst behind the peak, or delete this line",
+   "peak_placeholder": null,
+   "layers_hit": [],
+   "least_capability": "FILL IN: the least thing that has to be true for this to become easy",
+   "source": "FILL IN: where this event and its odds come from",
+   "estimated": true,
+   "next_watch": "FILL IN: the next dated thing to watch",
+   "settlement_test": "FILL IN: the exact, checkable fact that settles this event yes or no",
+   "judgment_tags": [],
+   "base_rate": {
+    "value": null,
+    "reference_class": "FILL IN: the group of past cases this event belongs to",
+    "source": "FILL IN: where the base rate was counted"
+   },
+   "kill_condition": "FILL IN: one dated, observable fact that would rule this event out",
+   "kill_check": "FILL IN: the named data series, filing or official source to check for that fact"
+  },
+  {
+   "id": "FILL IN PRECURSOR ID",
+   "label": "FILL IN: the step on the way, as one plain sentence",
+   "arm": "FILL IN: THE ARM NAME IN CAPITALS",
+   "type": "LIKELY PRECURSOR",
+   "odds_now": null,
+   "status": "FILL IN: ON TRACK for a new event",
+   "window_start": "FILL IN: YYYY-MM-DD",
+   "window_peak": "FILL IN: YYYY-MM-DD",
+   "window_end": "FILL IN: YYYY-MM-DD",
+   "date_state": "FILL IN: LOCKED, SCHEDULED or ESTIMATED",
+   "peak_placeholder": null,
+   "layers_hit": [],
+   "least_capability": "FILL IN: the least thing that has to be true for this step to become easy",
+   "source": "FILL IN: where this step and its odds come from",
+   "estimated": true,
+   "settlement_test": "FILL IN: the exact, checkable fact that settles this step yes or no"
+  },
+  {
+   "id": "CO:FILL IN TICKER",
+   "type": "COMPANY",
+   "ticker": "FILL IN: the ticker",
+   "name": "FILL IN: the company name",
+   "exchange": "FILL IN: the exchange",
+   "listed_options": "FILL IN: yes or no",
+   "listed_options_basis": "FILL IN: where and when listed options were checked",
+   "nodes_on": [
+    "FILL IN END EVENT ID"
+   ],
+   "other_listings": []
+  }
+ ],
+ "links": [
+  {
+   "source": "FILL IN PRECURSOR ID",
+   "target": "FILL IN END EVENT ID",
+   "sign": null,
+   "strength": null,
+   "delay_days": null,
+   "kind": "FILL IN: NECESSARY, LIKELY, MAGNIFIES or OPPOSES",
+   "reason": "FILL IN: why the source moves the target, with the three numbers (A now, B now, B if A fires)",
+   "estimated": true,
+   "delay_estimated": true
+  }
+ ],
+ "questions": [
+  {
+   "event_id": "FILL IN END EVENT ID",
+   "path_node": "FILL IN PRECURSOR ID",
+   "text": "FILL IN: a yes or no question about a dated step, answerable from one source",
+   "test": "FILL IN: the exact rule that makes the answer YES; anything else is NO",
+   "source": "FILL IN: the named primary source the answer will be read from",
+   "tags": [],
+   "script_side": "FILL IN: YES or NO, the answer that moves toward the end event",
+   "due": "FILL IN: YYYY-MM-DD, the day the answer can be read; it never changes",
+   "odds_locked": null,
+   "odds_basis": "FILL IN: where the odds of YES come from",
+   "market": null,
+   "consensus": null
+  }
+ ]
+}

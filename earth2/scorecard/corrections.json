@@ -1,0 +1,70 @@
+{
+ "version": 1,
+ "generated_on": "2026-11-26",
+ "rule": "corrected odds = raw odds_now minus the mean signed error of the event's active judgment tags, held between 1 and 99. odds_now is never overwritten; the raw number keeps getting scored.",
+ "min_n": 10,
+ "overall": {
+  "n": 0,
+  "mean_signed_error": null,
+  "brier": null,
+  "backfilled": 0,
+  "coin_flip": 0.25
+ },
+ "market": {
+  "n": 0,
+  "earth2_brier": null,
+  "market_brier": null,
+  "earth2_closer": 0,
+  "market_closer": 0,
+  "ties": 0
+ },
+ "tags": {
+  "timing": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "brakes": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "actor": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "market": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "pace": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  }
+ },
+ "arms": {},
+ "pace": {
+  "n": 0,
+  "share_sooner": null,
+  "by_arm": {},
+  "rule": "share of settled pace questions answered YES; write a pace question so YES means sooner or larger than the consensus"
+ }
+}

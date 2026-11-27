@@ -23,6 +23,22 @@ OPTIONS
   --collision-days 120  how close two windows must be to count as a collision
   --report PATH       also write this run's log entry to its own JSON file
   --collisions        list the standing collisions (every arm counted) and stop if no update is given
+  --restamp --reason "..."   reset the odds stamp by hand after a real repair; the reason goes into cascade_log
+
+THE SCORECARD LOCK (earth2/scorecard.py)
+  Every mode of this script stops, with the list and the commands to fix it, while any scorecard question
+  is past due and not answered, or while earth2/scorecard/questions.json fails its checks. Run
+  python3 earth2/scorecard.py due first. No flag and no environment variable skips this.
+
+THE ODDS STAMP
+  meta.odds_stamp is a short hash of every node's odds_now. A real run restamps the graph. If the stamp does
+  not match the odds, someone edited odds outside this engine, and this script refuses to run until the
+  edit is undone or recorded with --restamp --reason "...". validate_graph.py and the page check the same stamp.
+
+CORRECTED ODDS
+  For a main event with judgment_tags, the run also prints corrected odds: raw odds_now minus the mean signed
+  error of its active tags (a tag is active at 10 answers), held between 1 and 99. Printed only. odds_now is
+  never overwritten with a corrected number; the raw number is what keeps getting scored.
 
 OLD IDS (folded duplicates)
   When two ids were the same real event, the copy was folded into the survivor and recorded in
@@ -60,11 +76,73 @@ import calendar
 import datetime as dt
 import json
 import os
+import shutil
 import sys
 import tempfile
 
 ODDS_MIN, ODDS_MAX = 1.0, 99.0
 MIN_STEP = 0.01
+
+
+def load_scorecard():
+    """Load earth2/scorecard.py from beside this file. Without it the lock cannot be checked, so nothing runs."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scorecard.py")
+    if not os.path.exists(path):
+        raise SystemExit("EARTH2 IS LOCKED. earth2/scorecard.py is missing, so the scorecard lock cannot be checked. Restore it from git.")
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location("earth2_scorecard", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def write_graph(g, target):
+    folder = os.path.dirname(os.path.abspath(target))
+    fd, tmp = tempfile.mkstemp(dir=folder, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(g, f, indent=1, ensure_ascii=False)
+        if os.path.exists(target):
+            shutil.copymode(target, tmp)
+        else:
+            os.chmod(tmp, 0o644)
+        os.replace(tmp, target)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
+
+
+def restamp(sc, g, a):
+    """--restamp: reset meta.odds_stamp by hand and log why. The scorecard lock has already passed."""
+    if a.set or a.updates:
+        raise SystemExit("--restamp runs alone. Do not combine it with --set or --updates.")
+    if not (a.reason or "").strip():
+        raise SystemExit('--restamp needs --reason "why the odds changed outside the engine". The reason is logged.')
+    have = (g.get("meta") or {}).get("odds_stamp")
+    want = sc.odds_stamp(g["nodes"])
+    if have == want:
+        print(f"ODDS STAMP {have} already matches the odds. Nothing written.")
+        return 0
+    off = sc.odds_off_history(g)
+    now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
+    entry = {"date": sc.today().isoformat(), "run_at": now.isoformat(), "kind": "restamp",
+             "reason": a.reason.strip(), "source": a.source or "", "stamp_before": have, "stamp_after": want,
+             "odds_not_matching_history": off, "trigger": [], "moved": [], "skipped": [], "queue": []}
+    print(f"ODDS STAMP reset by hand: {have or 'none'} -> {want}")
+    print(f"  reason: {entry['reason']}")
+    if off:
+        print(f"  nodes whose odds_now does not match their last odds_history row: {', '.join(off[:30])}")
+    if a.dry_run:
+        print("DRY RUN: nothing written.")
+        return 0
+    g.setdefault("meta", {})["odds_stamp"] = want
+    g["cascade_log"].append(entry)
+    target = a.out or a.graph
+    write_graph(g, target)
+    print(f"WROTE {target}  (the reset is in cascade_log, entry {len(g['cascade_log'])})")
+    return 0
 
 
 def parse_date(value, end=False):
@@ -342,9 +420,18 @@ def main(argv=None):
     p.add_argument("--collision-days", type=int, default=120)
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--collisions", action="store_true")
+    p.add_argument("--restamp", action="store_true")
     a = p.parse_args(argv)
 
+    sc = load_scorecard()
     g, nodes, links = load(a.graph)
+    sc.enforce_lock(g, tool="cascade.py")  # every mode; exits 3 while a question is overdue
+    if a.restamp:
+        return restamp(sc, g, a)
+    stamp_issue = sc.stamp_problem(g, a.graph)
+    if stamp_issue:
+        print("CASCADE REFUSED. " + stamp_issue)
+        return 4
     if a.collisions and not (a.set or a.updates):
         today = parse_date(a.date) if a.date else dt.date.today()
         print_standing(g, nodes, links, a.collision_days, today)
@@ -415,6 +502,19 @@ def main(argv=None):
                 run_arms[x] = run_arms.get(x, 0) + 1
     entry["collisions"]["per_arm"] = run_arms
     print("ARMS IN THIS RUN'S COLLISIONS (every arm in the data): " + ", ".join(f"{x} {k}" for x, k in run_arms.items()))
+    tag_stats = sc.live_tag_stats()
+    mains = [m for m in moved if sc.is_main_event(nodes[m["id"]])]
+    if mains:
+        print("\nCORRECTED ODDS (main events that moved; raw odds are what is stored and scored)")
+        shown = 0
+        for m in mains:
+            fixed = sc.corrected_odds(dict(nodes[m["id"]], odds_now=m["after"]), tag_stats)
+            if fixed:
+                shown += 1
+                print(f"  {m['id']:<12} raw {m['after']:>5.1f}  corrected {fixed[0]:>5.1f}  ("
+                      + ", ".join(f"{t} {e:+.1f}" for t, e in fixed[1]) + " points off)")
+        if not shown:
+            print(f"  none: no judgment tag on these events has {sc.MIN_N} answers yet")
     if a.collisions:
         print()
         print_standing(g, nodes, links, a.collision_days, run_date)
@@ -440,13 +540,10 @@ def main(argv=None):
                 n["status"] = "BEHIND"
         n["last_move"] = {"date": run_date.isoformat(), "delta": m["delta"]}
     g["cascade_log"].append(entry)
+    g.setdefault("meta", {})["odds_stamp"] = sc.odds_stamp(g["nodes"])
     target = a.out or a.graph
-    folder = os.path.dirname(os.path.abspath(target))
-    fd, tmp = tempfile.mkstemp(dir=folder, suffix=".tmp")
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        json.dump(g, f, indent=1, ensure_ascii=False)
-    os.replace(tmp, target)
-    print(f"\nWROTE {target}  (cascade_log entries: {len(g['cascade_log'])})")
+    write_graph(g, target)
+    print(f"\nWROTE {target}  (cascade_log entries: {len(g['cascade_log'])}, odds stamp {g['meta']['odds_stamp']})")
     return 0
 
 

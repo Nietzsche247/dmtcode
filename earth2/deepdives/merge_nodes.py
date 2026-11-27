@@ -14,7 +14,15 @@ THE INPUT "graph" BLOCK
   origin       required. Written to the origin field of every link added.
   created      required ISO date. The merge date (odds_history, odds_as_of, merges entry).
   note         optional. Goes into the merges entry notes, with the block name.
-  model_layer  optional. Defaults to "deep dive", the value the earlier merges used.
+  model_layer  optional. Defaults to "deep dive", the value the earlier merges used. A node may carry its
+               own model_layer, which then wins for that node.
+  new_arms     optional list of arm names (capitals) this file adds. Each is appended to meta.arms.
+
+THE INPUT "questions" LIST (optional)
+  Scorecard questions for the new events, in the seed format of earth2/scorecard.py (event_id, path_node,
+  text, test, source, tags, script_side, due, odds_locked, odds_basis, market, consensus). They are added
+  through the same code path as scorecard.py add, so the same rules apply. A blank file to start from:
+  earth2/templates/arm_template.json (guide: earth2/templates/README.md).
 
 WHAT IT DOES
   1. Event nodes (type other than COMPANY) are added as graph nodes. The arm must already be a graph
@@ -34,13 +42,27 @@ WHAT IT DOES
      and is added with the standard company fields.
   4. One entry is appended to graph["merges"]: date, source_file, short_name, nodes_added,
      links_added (count), links_skipped, companies_added, companies_extended, notes.
+  5. The questions in the file are added to earth2/scorecard/questions.json, the score files are
+     rewritten, and the graph's odds stamp (meta.odds_stamp) is set again. Questions are only written
+     when the merge writes the repo's own graph (public/future/earth2/graph.json), not with --out elsewhere.
+
+THE GATE ON NEW MAIN EVENTS
+  A new node that is a main event (type END EVENT, or model_layer "board", whether the node says so or
+  the graph block does) must carry
+  settlement_test, judgment_tags, base_rate {value, reference_class, source}, kill_condition and
+  kill_check, and must have at least one scorecard question (in this file or already in questions.json).
+  The merge refuses and prints exactly what is missing for each node. validate_graph.py applies the same gate.
 
 SAFETY
+  - Stops (exit 3) while any scorecard question is past due and not answered (python3 earth2/scorecard.py due).
+  - Refuses when meta.odds_stamp does not match the odds in the graph (odds edited outside the engine).
   - Refuses (exit 2) on: a missing short_name, origin or created date; a node id duplicated in the
     file, already used by a graph node that did not come from this file, or colliding with a company
     id; an arm that is not in meta.arms; a link endpoint that is in neither the graph nor the file
     (dangling); a link pair repeated in the file; a strength outside 0..1; a sign that is not +1 or
-    -1; an unknown kind; a self loop; a window that is not ISO dated in order.
+    -1; an unknown kind; a self loop; a window that is not ISO dated in order; a live node with no
+    date_state; an id or field still holding a template placeholder ("FILL IN ..."); a new main event
+    that fails the gate; a question that fails the scorecard rules.
   - Never changes odds_now of a node the graph already has (checked again before writing).
   - Idempotent: a second run with the same files adds nothing and writes nothing.
   - Writes atomically (temp file in the same folder, then rename). --dry-run writes nothing.
@@ -58,17 +80,33 @@ ODDS_MIN, ODDS_MAX = 1.0, 99.0
 DEFAULT_MODEL_LAYER = "deep dive"
 DEFAULT_LINK_KINDS = ["NECESSARY", "LIKELY", "MAGNIFIES", "OPPOSES"]
 EXPOSURE_TAIL = " Sign shows the node moves the stock, not which way."
-KEEP_WHEN_PRESENT = ("estimated", "next_watch", "settlement_test", "current_fact")
+KEEP_WHEN_PRESENT = ("estimated", "next_watch", "settlement_test", "current_fact", "board_reference",
+                     "judgment_tags", "base_rate", "kill_condition", "kill_check", "date_state", "date_catalyst",
+                     "peak_placeholder")
+DATE_STATES = ("LOCKED", "SCHEDULED", "ESTIMATED")
+
+
+def load_scorecard():
+    """Load earth2/scorecard.py (one folder up). Without it the lock and the gate cannot be checked."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scorecard.py")
+    if not os.path.exists(path):
+        raise SystemExit("EARTH2 IS LOCKED. earth2/scorecard.py is missing, so the scorecard lock cannot be checked. Restore it from git.")
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location("earth2_scorecard", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def fail(msgs):
     if isinstance(msgs, str):
         msgs = [msgs]
     print("MERGE REFUSED:")
-    for m in msgs[:40]:
+    for m in msgs[:200]:
         print("  - " + m)
-    if len(msgs) > 40:
-        print(f"  ... and {len(msgs) - 40} more")
+    if len(msgs) > 200:
+        print(f"  ... and {len(msgs) - 200} more")
     sys.exit(2)
 
 
@@ -105,6 +143,11 @@ def main(argv=None):
         fail("GRAPH.json needs 'nodes' and 'links'.")
     if not isinstance(dd, dict) or "nodes" not in dd or "links" not in dd:
         fail("NODES_LINKS.json needs 'nodes' and 'links'.")
+    sc = load_scorecard()
+    qdoc = sc.enforce_lock(g, tool="merge_nodes.py")  # exits 3 while a question is overdue
+    stamp_issue = sc.stamp_problem(g, a.graph)
+    if stamp_issue:
+        fail(stamp_issue)
 
     source_file = os.path.basename(a.nodes_links)
     block = dd.get("graph") or {}
@@ -113,18 +156,29 @@ def main(argv=None):
     created = iso(block.get("created"))
     model_layer = str(block.get("model_layer") or DEFAULT_MODEL_LAYER)
     head = []
-    if not short_name:
+    if not sc.filled(short_name):
         head.append("the input graph block has no short_name")
-    if not origin:
+    if not sc.filled(origin):
         head.append("the input graph block has no origin")
     if created is None:
         head.append("the input graph block has no ISO 'created' date")
     graph_arms = set(g.get("meta", {}).get("arms", []))
     if not graph_arms:
         head.append("GRAPH.json meta.arms is empty, so arms cannot be checked")
-    if head:
-        fail(head)
-    merge_date = created.isoformat()
+    new_arms = block.get("new_arms") or []
+    if not isinstance(new_arms, list):
+        head.append("new_arms must be a list of arm names")
+        new_arms = []
+    for arm in new_arms:
+        if not (isinstance(arm, str) and sc.filled(arm) and arm == arm.upper().strip()):
+            head.append(f"new_arms: {arm!r} is not an arm name in capitals")
+    new_arms = [x for x in new_arms if isinstance(x, str) and sc.filled(x) and x == x.upper().strip() and x not in graph_arms]
+    graph_arms |= set(new_arms)
+    merge_date = created.isoformat() if created else None
+
+    def layer_of(n):
+        """The model_layer a node will carry in the graph: its own when it has one, else the graph block's."""
+        return str(n.get("model_layer") or model_layer)
     link_kinds = set(g.get("meta", {}).get("link_kinds", DEFAULT_LINK_KINDS))
     g.setdefault("companies", [])
     g.setdefault("merges", [])
@@ -145,7 +199,15 @@ def main(argv=None):
             errs.append(f"duplicate id inside the input file: {nid}")
         seen.add(nid)
     if errs:
-        fail(errs)
+        fail(head + errs)
+    errs = list(head)
+    q_rows = dd.get("questions") or []
+    if not isinstance(q_rows, list):
+        errs.append("questions must be a list")
+        q_rows = []
+    asked = {q.get("event_id") for q in q_rows + qdoc["questions"] if isinstance(q, dict) and isinstance(q.get("event_id"), str)}
+    # questions belong with the graph they describe: they are only written when the merge writes the repo's own graph
+    own_graph = os.path.realpath(a.out or a.graph) == os.path.realpath(sc.PATHS["graph"])
     ev_nodes = [n for n in dd["nodes"] if n.get("type") != "COMPANY"]
     co_nodes = [n for n in dd["nodes"] if n.get("type") == "COMPANY"]
     ev_ids = {n["id"] for n in ev_nodes}
@@ -162,9 +224,17 @@ def main(argv=None):
             else:
                 errs.append(f"node id {nid} already exists in the graph and did not come from {source_file}")
             continue
+        if str(nid).upper().startswith("FILL IN"):
+            errs.append(f"{nid}: the id is still the template placeholder")
         for k in ("label", "type", "status"):
-            if not n.get(k):
+            if not sc.filled(n.get(k)):
                 errs.append(f"{nid}: no {k}")
+        if not is_fired(n.get("status")) and n.get("date_state") not in DATE_STATES:
+            errs.append(f"{nid}: date_state must be one of {', '.join(DATE_STATES)}")
+        if sc.is_main_event(dict(n, model_layer=layer_of(n))):
+            miss = sc.gate_missing(n, nid in asked)
+            if miss:
+                errs.append(f"{nid}: new main event is missing: " + "; ".join(miss))
         if n.get("arm") not in graph_arms:
             errs.append(f"{nid}: arm '{n.get('arm')}' is not a graph arm (meta.arms)")
         ws, wp, we = iso(n.get("window_start")), iso(n.get("window_peak")), iso(n.get("window_end"))
@@ -179,11 +249,16 @@ def main(argv=None):
         if not isinstance(n.get("layers_hit", []), list):
             errs.append(f"{nid}: layers_hit must be a list")
         new_nodes.append(n)
+    for arm in new_arms:
+        if not any(n.get("arm") == arm for n in new_nodes):
+            errs.append(f"new_arms lists {arm!r} but no new node uses it")
     for c in co_nodes:
         if c["id"] in gnodes:
             errs.append(f"company id {c['id']} collides with a graph node id")
         if not str(c["id"]).startswith("CO:"):
             errs.append(f"company id {c['id']} must start with CO:")
+        if "FILL IN" in str(c["id"]).upper() or (c["id"] not in gcos and not (sc.filled(c.get("ticker")) and sc.filled(c.get("name", c.get("label"))))):
+            errs.append(f"company {c['id']}: the id, ticker or name is missing or still a template placeholder")
 
     known = set(gnodes) | ev_ids
     pairs = set()
@@ -213,8 +288,15 @@ def main(argv=None):
             errs.append(f"{tag}: kind {l.get('kind')} not in {sorted(link_kinds)}")
         if s == t:
             errs.append(f"link {i}: self loop on {s}")
+    # questions are checked against the graph as it will be after the merge, through the scorecard's own code
+    g_after = dict(g)
+    g_after["nodes"] = g["nodes"] + [dict(n, model_layer=layer_of(n)) for n in new_nodes]
+    new_qs, q_errs, q_notes = sc.add_questions(q_rows, [], g_after, qdoc, on_duplicate="skip")
+    errs.extend(q_errs)
     if errs:
         fail(errs)
+    for note in q_notes:
+        print(note)
 
     # ---------- build additions ----------
     nodes_added, clamped = [], []
@@ -238,7 +320,7 @@ def main(argv=None):
             "layers_hit": [str(x).upper() for x in n.get("layers_hit", [])],
             "least_capability": n.get("least_capability"),
             "status": n["status"],
-            "source": n.get("source"), "model_layer": model_layer, "origin_file": source_file,
+            "source": n.get("source"), "model_layer": layer_of(n), "origin_file": source_file,
         })
         for k in KEEP_WHEN_PRESENT:
             if n.get(k) is not None:
@@ -315,11 +397,24 @@ def main(argv=None):
     # ---------- idempotency ----------
     prior = [m for m in g["merges"] if m.get("source_file") == source_file]
     if not nodes_added and not links_added and not co_records:
+        if new_qs and not a.dry_run and own_graph:
+            qdoc["questions"].extend(new_qs)
+            sc.write_json(sc.PATHS["questions"], qdoc)
+            sc.write_score(qdoc["questions"])
+            print(f"ALREADY MERGED: {source_file} is in this graph. Added {len(new_qs)} questions that were missing "
+                  f"({', '.join(q['id'] for q in new_qs)}).")
+            return 0
+        if new_qs and own_graph:
+            print(f"ALREADY MERGED: {source_file} is in this graph. {len(new_qs)} of its questions are not in "
+                  "questions.json yet and would be added. DRY RUN: nothing written.")
+            return 0
         print(f"ALREADY MERGED: {source_file} is in this graph ({len(already_nodes)} nodes present, "
               f"{len(prior)} merges entry). Nothing to add; nothing written.")
         return 0
 
     # ---------- apply ----------
+    for arm in new_arms:
+        g["meta"]["arms"].append(arm)
     g["nodes"].extend(nodes_added)
     g["links"].extend(links_added)
     flipped = []
@@ -365,6 +460,10 @@ def main(argv=None):
     print(f"  collision candidates among them (3+ event nodes, 2+ graph arms): {', '.join(co_flag) or 'none'}")
     print(f"  newly flagged by this merge: {', '.join(flipped) or 'none'}")
     print(f"  totals now: {len(g['nodes'])} nodes, {len(g['links'])} links, {len(g['companies'])} companies, {len(g['merges'])} merges")
+    gated = [n["id"] for n in nodes_added if sc.is_main_event(n)]
+    print(f"  new arms           {len(new_arms):>4}   ({', '.join(new_arms) or 'none'})")
+    print(f"  new main events    {len(gated):>4}   ({', '.join(gated) or 'none'}; each passed the gate)")
+    print(f"  questions added    {len(new_qs):>4}   ({', '.join(q['id'] for q in new_qs) or 'none'})")
 
     # ---------- final integrity check (same checks cascade.py runs on load, plus the odds guard) ----------
     ids = {n["id"] for n in g["nodes"]}
@@ -382,6 +481,7 @@ def main(argv=None):
     if a.dry_run:
         print("DRY RUN: nothing written.")
         return 0
+    g.setdefault("meta", {})["odds_stamp"] = sc.odds_stamp(g["nodes"])
     target = a.out or a.graph
     folder = os.path.dirname(os.path.abspath(target))
     fd, tmp = tempfile.mkstemp(dir=folder, suffix=".tmp")
@@ -395,7 +495,16 @@ def main(argv=None):
         if os.path.exists(tmp):
             os.unlink(tmp)
         raise
-    print(f"WROTE {target}")
+    print(f"WROTE {target}  (odds stamp {g['meta']['odds_stamp']})")
+    if not own_graph:
+        if new_qs:
+            print(f"NOTE: {len(new_qs)} questions were NOT added, because this merge did not write {sc.GRAPH_REL}. "
+                  "Run the merge on the repo's own graph to add them.")
+        return 0
+    if new_qs:
+        qdoc["questions"].extend(new_qs)
+        sc.write_json(sc.PATHS["questions"], qdoc)
+    sc.write_score(qdoc["questions"])
     return 0
 
 

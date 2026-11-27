@@ -39,3 +39,12 @@ Keep supplier part numbers and self-assembly costs in internal kit data and supp
 
 ## Bibliography relation definitions
 - Keep relation vocabulary and exact definitions in the pure shared function module imported by triage and the Netlify data export, so model classification and machine descriptions cannot drift.
+
+## Earth2 graph
+- Before any Earth2 work run `python3 earth2/scorecard.py due` and settle everything it lists; while a question is overdue, `earth2/cascade.py`, `earth2/validate_graph.py` and `earth2/deepdives/merge_nodes.py` refuse to run, and no flag skips that.
+- Questions live in `earth2/scorecard/questions.json` and are changed only through the CLI (`earth2/scorecard.py`), never by hand, so every lock hash stays valid.
+- Odds move only through `earth2/cascade.py` on dated, sourced events; a hand edit to `odds_now` breaks the odds stamp and fails the validator.
+- One writer at a time: pull first, and run `python3 earth2/validate_graph.py public/future/earth2/graph.json` before every push.
+- A main event is a node of type END EVENT or with model_layer "board" (one definition: `is_main_event` in `earth2/scorecard.py`). New main events enter only through `earth2/deepdives/merge_nodes.py` with `earth2/templates/arm_template.json`, so each one arrives with a settlement test, judgment tags, a base rate, a kill condition and a question.
+- Log any big real event the graph had no node for with `python3 earth2/scorecard.py miss add`.
+- Full rules: `earth2/README.md`.

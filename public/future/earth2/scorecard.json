@@ -1,0 +1,111 @@
+{
+ "version": 1,
+ "generated_on": "2026-11-26",
+ "rules": {
+  "min_n": 10,
+  "coin_flip": 0.25,
+  "max_deferrals": 2,
+  "max_defer_days": 21,
+  "today_is": "the date in America/Phoenix (UTC minus 7)",
+  "overdue": "status OPEN and due_current before today",
+  "corrected": "corrected odds = raw odds_now minus the mean signed error of the event's active judgment tags, held between 1 and 99. odds_now is never overwritten; the raw number keeps getting scored.",
+  "tag_meanings": {
+   "timing": "did a dated step arrive when the graph said",
+   "brakes": "did someone step in to stop or soften it (rescue, extension, waiver, backstop)",
+   "actor": "did a government or company do the dramatic thing or the routine thing",
+   "market": "Earth2's odds differ from a recorded market number; who was right",
+   "pace": "did it arrive sooner or larger than the recorded consensus"
+  }
+ },
+ "counts": {
+  "total": 0,
+  "open": 0,
+  "settled": 0,
+  "answered_on_time": 0,
+  "answered_late": 0,
+  "backfilled": 0,
+  "deferred": 0,
+  "deferrals": 0,
+  "void": 0
+ },
+ "overall": {
+  "n": 0,
+  "mean_signed_error": null,
+  "brier": null,
+  "backfilled": 0,
+  "coin_flip": 0.25
+ },
+ "market": {
+  "n": 0,
+  "earth2_brier": null,
+  "market_brier": null,
+  "earth2_closer": 0,
+  "market_closer": 0,
+  "ties": 0
+ },
+ "tags": {
+  "timing": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "brakes": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "actor": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "market": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  },
+  "pace": {
+   "n": 0,
+   "mean_signed_error": null,
+   "brier": null,
+   "active": false,
+   "needs": 10,
+   "backfilled": 0
+  }
+ },
+ "arms": {},
+ "pace": {
+  "n": 0,
+  "share_sooner": null,
+  "by_arm": {},
+  "rule": "share of settled pace questions answered YES; write a pace question so YES means sooner or larger than the consensus"
+ },
+ "questions": [],
+ "legacy": {
+  "main_events": 130,
+  "with_gaps": 130,
+  "gaps": {
+   "settlement_test": 107,
+   "base_rate": 130,
+   "judgment_tags": 130
+  },
+  "as_of": "2026-11-26"
+ },
+ "misses": {
+  "total": 0,
+  "by_area": {},
+  "recent": []
+ }
+}
