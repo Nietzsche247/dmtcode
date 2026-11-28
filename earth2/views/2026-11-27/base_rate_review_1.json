@@ -1,0 +1,122 @@
+[
+ {
+  "id": "29-5",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "MOVE",
+  "new_odds": 33,
+  "why_different": null,
+  "dated_fact": "For the gap: BLS payroll data (pulled from FRED on Nov 27, 2026, data through Oct 2026) show the test was met in 18 months between Nov 2023 and Dec 2025 and never before in the series, so the event is possible outside a recession. Against the gap: the last hit was Dec 2025; in Oct 2026 office payrolls were 51,000 above a year earlier; and the BLS Employment Projections 2025 to 2035 (table dated Aug 27, 2026) project growth in information (+5.3%), finance and insurance (+2.3%) and professional, scientific and technical services (+8.6%). No official forecast or filed figure points to a 200,000 fall in 2028 to 2029.",
+  "source": "BLS CES via FRED, series USINFO, USFIRE, USPBS, PAYEMS, https://fred.stlouisfed.org/series/USPBS ; BLS Employment Projections, employment by major industry sector, https://www.bls.gov/emp/tables/employment-by-major-industry-sector.htm",
+  "confidence": "medium",
+  "note": "I rebuilt the stored base rate from FRED and got the same count: 36 of 1,025 rolling 18-month windows (4%); since 1990 it is 36 of 425 (8%); for windows that start 18 months after the origin date, as this one does, 36 of 407 since 1990 (9%). Same test, same window length, so it is comparable. Two cautions: (1) the test reads each report as released, but the base rate uses today's revised series, and benchmark revisions made 2024 look worse than the first prints did; (2) a fixed 200,000 threshold was a far bigger share of office jobs before 1990, so 8 to 9 is the fairer comparator than 4. Halfway from 62 is 33 against 4, or 35 to 36 against 8 to 9. The recent run justifies part of the gap, not all of it, so I use the default 33. The odds_text still says 56% while odds_now is 62."
+ },
+ {
+  "id": "29-2",
+  "base_rate_comparable": false,
+  "corrected_base_rate": {
+   "value": 41,
+   "reference_class": "Same six qualifying years as the stored class (2001, 2007, 2008, 2009, 2020, 2023), but counted over three years, the span from today to Nov 30, 2029 that our odds curve covers: rolling three-calendar-year windows starting 1990 to 2023 (34 windows), 14 hold at least one qualifying year = 41%. Cross-check by the stored formula at three years: 1 - (30/36)^3 = 42%. Counted directly because the years cluster; no rule of succession needed with 34 windows.",
+   "source": "Federal Reserve, funding, credit, liquidity and loan facilities, https://www.federalreserve.gov/monetarypolicy/bst_lendingother.htm ; US Treasury, Oct 31, 2001 30-year bond suspension, https://home.treasury.gov/news/press-releases/po740"
+  },
+  "verdict": "KEEP",
+  "new_odds": null,
+  "why_different": "Not needed to close the gap, but there is a dated pointer to the Treasury leg: dealers expect cuts to 20-year and 30-year auction sizes in 2027 while core inflation is above 2%, and Treasury says it is still weighing future changes to auction sizes.",
+  "dated_fact": "Nov 2, 2026: Reuters reported that primary dealers broadly expect cuts to 20-year and 30-year auction sizes in 2027. Nov 4, 2026: Treasury's quarterly refunding statement said it expects to hold coupon sizes for the next several quarters and continues to evaluate potential future changes.",
+  "source": "Reuters via KFGO, Nov 2, 2026, https://kfgo.com/2026/11/02/us-treasury-auction-changes-loom-in-2027-dealers-eye-long-end-cuts/ ; US Treasury refunding statement, Nov 4, 2026, https://home.treasury.gov/news/press-releases/sb0678",
+  "confidence": "medium",
+  "note": "FIX BASE RATE: 24 to 41. The stored rate used an 18-month window (Jun 2028 to Nov 2029), but our 65 is cumulative from today (the curve already shows 26 by Nov 2027 and 51 by Nov 2028), which is three years. Gap is now 24 points, under 30, so no move is forced; verdict KEEP means no change. If only Jun 2028 to Nov 2029 is meant to count, say so in the test: then 24 is the right comparator and the gap is 41. Test wording is loose in three places: which core inflation measure; what counts as 'caps' (a size cut like the dealers expect, or a stated ceiling); and where routine reserve management ends, given the Fed has bought Treasury bills under that label since Dec 12, 2025 (NY Fed operating policy statement, Dec 10, 2025, https://www.newyorkfed.org/markets/opolicy/operating_policy_251210a). A looser reading of the Treasury leg that also counts earlier cuts to 30-year auctions (1993 and 2000, not verified here) would lift the base rate toward 50."
+ },
+ {
+  "id": "27-5",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "MOVE",
+  "new_odds": 26,
+  "why_different": null,
+  "dated_fact": "Yen leg: Japan's Ministry of Finance bought yen on six days in 2026 (Apr 30, May 4, May 6, Jul 30, Jul 31, Aug 3), and the dollar was at 158.76 yen on Nov 20, 2026 against 163.86 on Jul 29, the day before the last round. 10-year leg: the 10-year closed at 5.31% on Oct 5, 2026 and 4.85% on Nov 25, 2026, and the Fed raised its target range on Sep 17, 2026 (upper bound 3.75% to 4.00%). These lift each leg above its history, but they do not make the joint event as likely as its weaker leg.",
+  "source": "Japan MOF intervention history, https://www.mof.go.jp/english/policy/international_policy/reference/feio/foreign_exchange_intervention_operations.csv ; FRED DGS10, https://fred.stlouisfed.org/series/DGS10 ; FRED DFEDTARU, https://fred.stlouisfed.org/series/DFEDTARU ; FRED DEXJPUS, https://fred.stlouisfed.org/series/DEXJPUS",
+  "confidence": "medium",
+  "note": "Rebuilt from FRED and the MOF file with a 368-day horizon (Nov 27, 2026 to Nov 30, 2027): joint event in 716 of 8,669 starts since Apr 1991 (8%), all from the 1990s when the 10-year already sat above 5.50%. From starts with the 10-year within 25 bp of today's 4.85%: 10-year leg 149 of 708 (21%), joint 0 of 708. A plain 65 bp climb within the horizon happened in 40% of all starts since 1991, so our 43 for the 10-year leg is inside the range of history. The fault is the rule 'the lower leg binds': a joint event equals its lower leg only if the other leg is certain whenever the first fires. Our own legs (43 and 65) give 28 if independent, more if a yield spike drags the yen down with it. Default halfway from 43.1 to 8 is 26, close to that 28, so I keep the default. The one_number_rule text on the node should be changed."
+ },
+ {
+  "id": "M56",
+  "base_rate_comparable": false,
+  "corrected_base_rate": {
+   "value": 14,
+   "reference_class": "ACLED monthly count of US political violence events, Jan 2020 to Nov 20, 2026 (file dated Nov 25, 2026). Calendar-year totals: 287 (2020), 153, 195, 158, 133, 115 (2025), 116 so far in 2026. Full-year changes: -47%, +27%, -19%, -16%, -14%. None of the 5 full-year changes reached +50%, and none of the 60 rolling 12-month comparisons did either (largest +37%, the 12 months to Jan 2023). Horizon: one more year of data, published by Nov 30, 2027. Shown as 14 by the rule of succession, (0+1)/(5+2), on the 5 non-overlapping yearly changes.",
+   "source": "ACLED via Humanitarian Data Exchange, United States political violence events and fatalities by month-year, as of Nov 25, 2026, https://data.humdata.org/dataset/united-states-acled-conflict-data"
+  },
+  "verdict": "MOVE",
+  "new_odds": 20,
+  "why_different": null,
+  "dated_fact": "ACLED file dated Nov 25, 2026: the latest 12 months (Dec 2025 to Nov 20, 2026) hold 123 events against 117 in the 12 months before, up 5%. Meeting the test by Nov 30, 2027 needs about 185 events in a 12-month span, a level last reached in 2022 (195). Other trackers did rise in 2025 (Bridging Divides: targeted violence up at least 34%; Capitol Police threat cases up 58%, both as cited by Just Security on Apr 28, 2026), but ACLED's own count fell 14% that year.",
+  "source": "ACLED via HDX, https://data.humdata.org/dataset/united-states-acled-conflict-data ; Just Security, Apr 28, 2026, https://www.justsecurity.org/137299/rising-political-violence-early-warning-infrastructure/",
+  "confidence": "medium",
+  "note": "FIX BASE RATE: 19 to 14. The stored 19 measured far-right or far-left parties entering G7 governments, which is the kill condition, not the settlement test. Gap against 14 is still 41 points. Default halfway would be 35. I propose 20 instead, for a stated reason: the 55 was set on Nov 19, before this node had the ACLED test, so none of the gap was ever reasoned against this measure, and ACLED's latest file shows the count nearly flat. The kill condition (G7 governments) and the test (ACLED US counts) describe two different events; pick one. The test should also say whether the 12-month period must end inside the window (I assumed yes; no past period qualifies anyway). The 70 and 80 in odds_by for 2028 and 2029 have no test behind them, since this one ends Nov 30, 2027."
+ },
+ {
+  "id": "28-6",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "MOVE",
+  "new_odds": 37,
+  "why_different": null,
+  "dated_fact": "For the gap: China has held five named exercises around Taiwan since 2023 (Joint Sword Apr 8 to 10, 2023; Joint Sword-2024A May 23 to 24, 2024; Joint Sword-2024B Oct 14, 2024; Strait Thunder-2025A Apr 1 to 2, 2025; Justice Mission 2025 Dec 29 to 30, 2025), a tool not in routine use during the 2000 to 2020 elections, and the last one fell inside a Nov to Jan span. Against the gap: none came in the window around the Jan 13, 2024 vote, when the tool already existed, and I found no named exercise in 2026.",
+  "source": "ASPI tracker of China's military exercises around Taiwan, https://www.pressurepoints.aspi.org.au/taiwan-and-the-taiwan-strait/chinas-military-coercion/chinas-large-scale-exercises-since-2022 ; USNI News, Dec 29 and Dec 31, 2025, https://news.usni.org/2025/12/31/china-wraps-justice-mission-taiwan-blockade-drills",
+  "confidence": "medium",
+  "note": "Stored base rate (1 of 8 election windows, 20 by rule of succession) matches the test and its window, so it is comparable. The recent record justifies part of the gap: taking every 92-day span (the length of Nov 1 to Jan 31) from Apr 1, 2023 to Nov 27, 2026, 30% held a named exercise (376 of 1,246) and 41% held a named exercise or one of the two coast guard boardings of Taiwanese boats I could confirm (Feb 19 and Jul 2, 2024). That supports the high 30s, not 55, because Beijing has held back just before every vote since 1996. Default halfway is 37, which sits inside that 30 to 41 range. Taiwan's election commission has not yet set the 2028 date; the test assumes January."
+ },
+ {
+  "id": "F7",
+  "base_rate_comparable": true,
+  "corrected_base_rate": {
+   "value": 42,
+   "reference_class": "Same class as stored (Jan-to-May guidance rounds of Microsoft, Alphabet, Amazon and Meta, 2017 to 2026, 10 rounds), recounted: 4 rounds held a lowered capex guide, not 2. Added: Apr 24, 2019 (Facebook cut 2019 capex to $17-19B from $18-20B) and Apr 28, 2021 (Facebook cut 2021 capex to $19-21B from $21-23B). Already counted: Apr 2020 and Feb 2023. Shown as 42 by the rule of succession, (4+1)/(10+2). All four cuts are Meta's; the other three gave no numeric ranges before 2022.",
+   "source": "Facebook Q1 2021 8-K exhibit 99.1, https://www.sec.gov/Archives/edgar/data/1326801/000132680121000031/fb-03312021xexhibit991.htm ; Motley Fool, Apr 25, 2019, https://www.fool.com/investing/2019/04/25/facebook-earnings-what-you-should-know.aspx ; plus the two SEC exhibits in the stored source"
+  },
+  "verdict": "KEEP",
+  "new_odds": null,
+  "why_different": null,
+  "dated_fact": "Oct 28 to 29, 2026 calls, both directions. Against a January flat-or-down guide: Alphabet said it expects capex to 'increase significantly', Amazon expects 'to spend meaningfully more in 2027', and Microsoft expects capex to accelerate in the first half of 2027. For the lowered-guide leg: Microsoft put calendar 2026 at about $170B on Oct 28, down from about $175B in July, citing third-party capacity delays.",
+  "source": "FourWeekMBA summary of the Oct 2026 calls (SECONDARY; not checked against the transcripts), https://fourweekmba.com/ai-big-tech-and-spacex-guide-q4-capex-up-to-270b-above-q3/",
+  "confidence": "medium",
+  "note": "FIX BASE RATE: 25 to 42. The class was right; the count was low. The stored note called the 2019 cut unconfirmed; it is confirmed, and the 2021 cut was missed. Gap is now 14 points, under 30, so no move is forced; verdict KEEP means no change. Two things to know: (1) the Oct calls make the '2027 flat or down in January' leg look weak, so the stored 25 for that leg is hard to defend; most of the 56 has to come from an April trim; (2) the test wording counts small timing trims. Microsoft's Oct 28 trim would have settled this YES had the window been open. Decide whether trims for delivery timing count, and state the window start in the test."
+ },
+ {
+  "id": "F5",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "MOVE",
+  "new_odds": 45,
+  "why_different": null,
+  "dated_fact": "Nov 17, 2026: the Wall Street Journal reported that the SEC is investigating Nvidia, including whether its disclosures misled investors. Nvidia did not file its 10-Q with its Nov 17 results (the CFO said 'in the coming weeks'; due Dec 4). The CEO resigned Nov 11 and the earlier G1 report has him reinstated Nov 23. The stock closed at $125.53 on Nov 20, $165.05 on Nov 23 and $149.30 on Nov 25.",
+  "source": "Reuters via Korea JoongAng Daily, Nov 18, 2026, https://www.koreajoongangdaily.com/business/huang-pitches-nvidia-comeback-wsj-reports-sec-probing-the-chipmaker/12978169 ; FourWeekMBA on the 10-Q (SECONDARY), https://fourweekmba.com/ai-nvidia-holds-its-10-q-after-9-same-day-filings-due-dec-4/ ; Nasdaq NVDA historical closes, https://www.nasdaq.com/market-activity/stocks/nvda/historical",
+  "confidence": "medium",
+  "note": "Rebuilt the stored base rate from Yahoo daily closes and got the same figure: 1,978 of 6,681 windows of 85 trading days since 2000 = 30% (21% since 2010). Same test and horizon, so comparable. The dated facts put this case in a rougher class than an average window, and Nvidia's own history prices that class: after a one-day fall of 10% or more, 9 of 22 episodes since 2000 went on to close a further 19.6% lower within 85 trading days (42% by rule of succession), and starts within five days of such a fall hit 50% of the time since 2000 and 42% since 2010. That supports 42 to 50, not 60. Default halfway is 45, inside that range. Next dated checks: House interviews Dec 1 and 2, 10-Q deadline Dec 4."
+ },
+ {
+  "id": "C11",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "KEEP",
+  "new_odds": null,
+  "why_different": "Both named counts are already running above last year, and the only yearly comparisons that can be published before Nov 30, 2027 are 2026 against 2025. A fall would need Google's final 2026 tally to come in under 90 after its own eight-month count pointed well above that.",
+  "dated_fact": "Sep 30, 2026: Google's threat intelligence group reported 141 exploited flaws in Jan to Aug 2026 against 127 in all of 2025; exploited zero-days ran at about 11 a month in 2026 against about 8 a month in 2025 (as reported Oct 6, 2026). Nov 27, 2026: CISA's catalogue shows 324 entries added in 2026 against 245 in all of 2025.",
+  "source": "The Record, Sep 30, 2026, https://therecord.media/google-vulnerabilities-cyberattacks-ai ; CSO Online, Oct 6, 2026, https://www.csoonline.com/article/4230247/ai-accelerates-n-day-attacks-as-flaw-disclosures-and-exploits-double.html ; CISA KEV feed, version 2026.11.27, https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+  "confidence": "high",
+  "note": "Stored base rate (50, one fall in two Google year-on-year moves) matches the test and is comparable; Google's own review (Mar 5, 2026) says the yearly total has moved inside a 60 to 100 band, so falls are common in normal years. This year is not normal: the dated counts justify the whole gap and would support going lower than 10, to about 5. Curve problem: once Google's yearly review is out (the last one came Mar 5), nothing else can settle before Nov 30, 2027, so the climb from 2 in May 2027 to 10 in Nov 2027 has no publication behind it. The Google zero-day rate is second-hand (CSO quoting Google); The Record quotes Google as saying the rise is not driven by 'a flood of new zero-days'. The test should name which Google count settles it: the zero-day review (90 in 2025) or the wider exploited-flaw count (127 in 2025)."
+ },
+ {
+  "id": "W4",
+  "base_rate_comparable": true,
+  "corrected_base_rate": null,
+  "verdict": "MOVE",
+  "new_odds": 20,
+  "why_different": "The fall 2026 survey is strongly positive, and a spring update has only turned negative after a negative fall reading, so the April 2027 shot is nearly closed. The fall 2027 report is a separate draw that this fact says little about.",
+  "dated_fact": "Nov 18, 2026: NACE Job Outlook 2027 reports 35.6% of employers plan to hire more new graduates, over half plan to hold steady, about 10% plan to cut, and the projected median increase is 14%.",
+  "source": "NACE, Nov 18, 2026, https://www.naceweb.org/job-market/trends-and-predictions/employers-expect-hiring-salaries-to-climb-for-the-class-of-2027",
+  "confidence": "medium",
+  "note": "Stored base rate (3 of 7 report pairs, 44) matches the test and window, so it is comparable; adding the pair just completed (spring 2026 +5.6%, fall 2026 positive) makes it 3 of 8, or 40. The dated fact justifies most of the gap but not all. Default halfway would be 27. I propose 20, for a stated reason: the spring 2027 shot is worth about 5 after a strong fall, while the fall 2027 report (Job Outlook 2028) keeps roughly its plain rate of a negative reading (2 of 8 fall reports, 2020 and 2023) and must also land by Nov 19, 2027; the last two came out Nov 12, 2025 and Nov 18, 2026, so it could miss the window by days. The Nov 25 cut from 22 to 10 priced the fact into both shots. Test wording: the Nov 18 article leads with shares of employers and a median increase, not the single overall percent change NACE gave in earlier years; say which figure counts. The odds_text still reads 22%."
+ }
+]

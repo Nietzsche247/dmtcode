@@ -840,7 +840,7 @@ class Test7bStructureImports(unittest.TestCase):
         self.assertEqual(g2["meta"]["odds_stamp"], stamp)
         self.assertEqual(nodes[bare["id"]]["market"]["odds"], 30)
         self.assertTrue(nodes[tested["id"]]["settlement_test"].startswith("YES if the reworded rule"))
-        self.assertEqual(nodes[tested["id"]]["settlement_test_history"][0]["old"], tested["settlement_test"])
+        self.assertEqual(nodes[tested["id"]]["settlement_test_history"][-1]["old"], tested["settlement_test"])
         self.assertEqual(next(c for c in g2["companies"] if c["id"] == co)["lenses"]["commanding_heights"]["class"],
                          "holds a chokepoint")
         code, out = run(root, VALIDATE, GRAPH)
@@ -887,6 +887,500 @@ class Test7cTicketGuard(unittest.TestCase):
         self.assertIn("E16 was folded into D4", rows["C"]["notes"])
         self.assertEqual(rows["D"]["level"], "WARN")
         self.assertEqual(sha(REPO, GRAPH), before)
+
+
+def pymod(root, rel):
+    """Load one of the copied scripts as a module (the cascade engine or the validator)."""
+    spec = importlib.util.spec_from_file_location("m_%d" % next(_n), os.path.join(root, rel))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def board_pool(g, low=20, high=70):
+    """Live board rows with odds in the middle and a dated window: fixtures the tests can move either way."""
+    return [n for n in g["nodes"] if n.get("model_layer") == "board" and live_mid(n, low, high)
+            and len(str(n.get("window_end"))) == 10]
+
+
+def updates_file(root, rows):
+    path = os.path.join(root, "updates_%d.json" % next(_n))
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(rows, f)
+    return path
+
+
+def half_up_whole(x):
+    return int((x * 10 + 5) // 10)
+
+
+class Test7dCurvesAndText(unittest.TestCase):
+    """Curves (odds_by) and odds_text follow odds_now on every real run. Neither is part of the odds stamp."""
+
+    def test_curves_and_odds_text_follow_a_real_run(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        cas = pymod(root, CASCADE)
+        pool = board_pool(g)
+        self.assertGreaterEqual(len(pool), 6, "not enough live board rows for the fixtures")
+        rise, fall, first, between, gone, done = pool[:6]
+        off = lambda n, days: (dt.date.fromisoformat(n["window_end"]) + dt.timedelta(days=days)).isoformat()
+        o = {n["id"]: float(n["odds_now"]) for n in pool[:6]}
+        # a rising curve with a point on the deadline, a null point, and a market note in the text
+        rise["odds_by"] = {off(rise, -200): o[rise["id"]] / 2, rise["window_end"]: o[rise["id"]],
+                           off(rise, 365): o[rise["id"]] + 20, off(rise, 730): None}
+        rise["odds_text"] = "60% on Jan 27 (market 62)"
+        # a curve that falls by design keeps its shape
+        fall["odds_by"] = {fall["window_end"]: o[fall["id"]], off(fall, 365): o[fall["id"]] * 0.8, off(fall, 730): o[fall["id"]] * 0.5}
+        fall["odds_text"] = "about 55% by Nov 2027"
+        # the deadline is before every point: the first point covers it
+        first["odds_by"] = {off(first, 40): o[first["id"]], off(first, 400): o[first["id"]] + 10}
+        first["odds_text"] = "35% on Nov 27 (EST)"
+        # the deadline sits between two points; the text does not start with a percent
+        between["odds_by"] = {off(between, -60): o[between["id"]] - 10, off(between, 60): o[between["id"]] + 10}
+        between["odds_text"] = "70 / 85 / 92 by Nov 2027 / 2028 / 2029"
+        # a node that fires and a node that settles at 1 keep the curve they had
+        for n in (gone, done):
+            n["odds_by"] = {n["window_end"]: o[n["id"]], off(n, 365): o[n["id"]] + 5}
+        gone["odds_text"], done["odds_text"] = "45% by May 31", "35% on Nov 27 (EST)"
+        save(root, GRAPH, g)
+        self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)  # hand edits to curves and text do not touch the stamp
+        want = {rise["id"]: round(o[rise["id"]] + 10, 1), fall["id"]: round(o[fall["id"]] - 10, 1),
+                first["id"]: round(o[first["id"]] + 5, 1), between["id"]: round(o[between["id"]] + 6, 1),
+                gone["id"]: 100, done["id"]: 1}
+        ups = updates_file(root, [{"id": k, "new_odds": v, "date": day(0), "reason": "test event", "source": "test"}
+                                  for k, v in want.items()])
+        before = sha(root, GRAPH)
+        code, out = run(root, CASCADE, GRAPH, "--updates", ups, "--dry-run")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(sha(root, GRAPH), before)  # a dry run moves no curve and no text
+        code, out = run(root, CASCADE, GRAPH, "--updates", ups)
+        self.assertEqual(code, 0, out)
+        self.assertRegex(out, r"CURVES RESCALED \d+")
+        self.assertRegex(out, r"ODDS TEXT REWRITTEN \d+")
+        left = re.search(r"odds_text not rewritten \(\d+\): (.*)", out).group(1).split(", ")
+        self.assertIn(between["id"], left)
+        self.assertIn("CONTRADICTIONS:", out)
+        g2 = load(root, GRAPH)
+        by = {n["id"]: n for n in g2["nodes"]}
+        entry = g2["cascade_log"][-1]
+        scaled = lambda v, nid: round(min(99.0, max(1.0, v * (want[nid] / o[nid]))), 1)
+        # rising: the deadline point is the new odds, the others scale by the same ratio, null stays null
+        r = by[rise["id"]]
+        self.assertEqual(r["odds_now"], want[rise["id"]])
+        self.assertEqual(r["odds_by"][rise["window_end"]], want[rise["id"]])
+        self.assertAlmostEqual(r["odds_by"][off(rise, -200)], scaled(o[rise["id"]] / 2, rise["id"]), delta=0.051)
+        self.assertAlmostEqual(r["odds_by"][off(rise, 365)], scaled(o[rise["id"]] + 20, rise["id"]), delta=0.051)
+        self.assertIsNone(r["odds_by"][off(rise, 730)])
+        self.assertEqual(r["odds_text"], "%d%% on Jan 27" % half_up_whole(want[rise["id"]]))  # the market note is dropped
+        # falling by design: scaled, not forced upward
+        f = by[fall["id"]]
+        self.assertEqual(f["odds_by"][fall["window_end"]], want[fall["id"]])
+        self.assertAlmostEqual(f["odds_by"][off(fall, 365)], scaled(o[fall["id"]] * 0.8, fall["id"]), delta=0.051)
+        self.assertLess(f["odds_by"][off(fall, 730)], f["odds_by"][off(fall, 365)])
+        self.assertEqual(f["odds_text"], "about %d%% by Nov 2027" % half_up_whole(want[fall["id"]]))
+        # first point covers an earlier deadline
+        self.assertEqual(by[first["id"]]["odds_by"][off(first, 40)], want[first["id"]])
+        self.assertEqual(by[first["id"]]["odds_text"], "%d%% on Nov 27 (EST)" % half_up_whole(want[first["id"]]))
+        # between two points: the straight line at the deadline reads the new odds; the text is left alone
+        b = by[between["id"]]
+        self.assertAlmostEqual((b["odds_by"][off(between, -60)] + b["odds_by"][off(between, 60)]) / 2, want[between["id"]], delta=0.11)
+        self.assertEqual(b["odds_text"], "70 / 85 / 92 by Nov 2027 / 2028 / 2029")
+        self.assertIn(between["id"], entry["odds_text"]["not_rewritten"])
+        # FIRED and settled at 1: the curve stays, the text follows
+        self.assertEqual((by[gone["id"]]["odds_now"], by[gone["id"]]["odds_by"]), (100, gone["odds_by"]))
+        self.assertTrue(by[gone["id"]]["status"].startswith("FIRED"))
+        self.assertEqual(by[gone["id"]]["odds_text"], "100% by May 31")
+        self.assertEqual((by[done["id"]]["odds_now"], by[done["id"]]["odds_by"]), (1, done["odds_by"]))
+        self.assertEqual(by[done["id"]]["odds_text"], "1% on Nov 27 (EST)")
+        rescaled = {c["id"] for c in entry["curves_rescaled"]}
+        self.assertTrue({rise["id"], fall["id"], first["id"], between["id"]} <= rescaled)
+        self.assertFalse({gone["id"], done["id"]} & rescaled)
+        # every moved node, cascaded ones too: a live curve reads the node's odds at its deadline, inside 1..99,
+        # and a curve that rose still rises
+        old = {n["id"]: n for n in g["nodes"]}
+        checked = 0
+        for m in entry["moved"]:
+            n = by[m["id"]]
+            pts = cas.curve_points(n.get("odds_by"))
+            if not pts or not cas.curve_follows(n, n["odds_now"]) or m["after"] == m["before"]:
+                continue
+            vals = [x[2] for x in pts]
+            self.assertTrue(all(1 <= v <= 99 for v in vals), m["id"])
+            was = [x[2] for x in cas.curve_points(old[m["id"]].get("odds_by"))]
+            if all(x <= y + 1e-9 for x, y in zip(was, was[1:])):
+                self.assertTrue(all(x <= y for x, y in zip(vals, vals[1:])), m["id"])
+            if 1 < min(vals) and max(vals) < 99:
+                value = cas.curve_deadline(cas.parse_date(n["window_end"], end=True), pts)[1]
+                self.assertAlmostEqual(value, n["odds_now"], delta=0.11, msg=m["id"])
+                checked += 1
+        self.assertGreaterEqual(checked, 3)
+        self.assertEqual(g2["meta"]["odds_stamp"], module(root).odds_stamp(g2["nodes"]))
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        # a rebase run carries the curve and the text too (the logged rebase is taken out of this copy first)
+        g2["cascade_log"] = [e for e in g2["cascade_log"] if e.get("kind") != "rebase"]
+        save(root, GRAPH, g2)
+        status = by[first["id"]]["status"]
+        level = round(want[first["id"]] + 7, 1)
+        ups = updates_file(root, [{"id": first["id"], "new_odds": level, "date": day(0),
+                                   "reason": "REBASE test level", "source": "test"}])
+        code, out = run(root, CASCADE, GRAPH, "--rebase", "--updates", ups)
+        self.assertEqual(code, 0, out)
+        n = next(x for x in load(root, GRAPH)["nodes"] if x["id"] == first["id"])
+        self.assertEqual((n["odds_by"][off(first, 40)], n["status"]), (level, status))
+        self.assertEqual(n["odds_text"], "%d%% on Nov 27 (EST)" % half_up_whole(level))
+
+    def test_fix_odds_text_is_structure_only(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        stamp, log_len = g["meta"]["odds_stamp"], len(g["cascade_log"])
+        a, b, c = board_pool(g)[:3]
+        a["odds_text"], b["odds_text"] = "60% on Jan 27 (market 62)", "about 55% by Nov 2027"
+        c["odds_text"] = "70 / 85 / 92 by Nov 2027 / 2028 / 2029"
+        save(root, GRAPH, g)
+        self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)  # odds_text is not part of the odds stamp
+        before = sha(root, GRAPH)
+        code, out = run(root, CASCADE, GRAPH, "--fix-odds-text", "--set", "%s=50" % a["id"])
+        self.assertNotEqual(code, 0, out)
+        self.assertIn("runs alone", out)
+        code, out = run(root, CASCADE, GRAPH, "--fix-odds-text", "--dry-run")
+        self.assertEqual(code, 0, out)
+        self.assertIn("DRY RUN", out)
+        self.assertEqual(sha(root, GRAPH), before)
+        code, out = run(root, CASCADE, GRAPH, "--fix-odds-text")
+        self.assertEqual(code, 0, out)
+        self.assertIn("structure only; odds stamp unchanged " + stamp, out)
+        left = re.search(r"odds_text not rewritten \(\d+\): (.*)", out).group(1).split(", ")
+        self.assertIn(c["id"], left)
+        g2 = load(root, GRAPH)
+        by = {n["id"]: n for n in g2["nodes"]}
+        self.assertEqual(by[a["id"]]["odds_text"], "%d%% on Jan 27" % half_up_whole(a["odds_now"]))
+        self.assertEqual(by[b["id"]]["odds_text"], "about %d%% by Nov 2027" % half_up_whole(b["odds_now"]))
+        self.assertEqual(by[c["id"]]["odds_text"], c["odds_text"])
+        # structure only: same stamp, same odds everywhere, nothing in cascade_log, one note in meta
+        self.assertEqual(g2["meta"]["odds_stamp"], stamp)
+        self.assertEqual({n["id"]: n.get("odds_now") for n in g2["nodes"]}, {n["id"]: n.get("odds_now") for n in g["nodes"]})
+        self.assertEqual(len(g2["cascade_log"]), log_len)
+        key = g2["meta"]["version"].replace(".", "_") + "_changes"
+        self.assertEqual(len(g2["meta"][key]), len(g["meta"].get(key, [])) + 1)
+        self.assertIn("odds_text", g2["meta"][key][-1])
+        self.assertNotIn(chr(8212), g2["meta"][key][-1])  # house rule: no em dash in anything the engine writes
+        # every text that starts with a percent now reads its node's odds as a whole number, with no market note
+        for n in g2["nodes"]:
+            m = re.match(r"\s*(?:about\s+)?(\d+(?:\.\d+)?)\s*%", n.get("odds_text") or "", re.I)
+            if m and n.get("odds_now") is not None:
+                self.assertEqual(m.group(1), str(half_up_whole(n["odds_now"])), n["id"])
+                self.assertIsNone(re.search(r"\(market[^()]*\)\s*$", n["odds_text"]), n["id"])
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        after = sha(root, GRAPH)
+        code, out = run(root, CASCADE, GRAPH, "--fix-odds-text")
+        self.assertEqual(code, 0, out)
+        self.assertIn("Nothing to rewrite", out)
+        self.assertEqual(sha(root, GRAPH), after)
+
+
+class Test7eContradictions(unittest.TestCase):
+    """The CONTRADICTIONS list warns and never fails: NECESSARY links and the pairs in meta.contains."""
+
+    def count(self, out):
+        return int(re.search(r"^CONTRADICTIONS: (\d+)$", out, re.M).group(1))
+
+    def test_validator_warns_like_for_like_and_still_passes(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        by = {n["id"]: n for n in g["nodes"]}
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        base = self.count(out)
+        # fixtures stay clear of the graph's own NECESSARY links, so each step changes the count by exactly one
+        tied = {x for e in g["links"] if e.get("kind") == "NECESSARY" for x in (e["source"], e["target"])}
+        ok = lambda n: live_mid(n, 5, 95) and len(str(n.get("window_end"))) == 10 and n["id"] not in tied
+        # (a) a link relabelled NECESSARY whose source is less likely than its target
+        link = next(e for e in g["links"] if e.get("kind") == "LIKELY" and e.get("sign") == 1 and not e.get("display_only")
+                    and ok(by[e["source"]]) and ok(by[e["target"]])
+                    and by[e["source"]]["odds_now"] < by[e["target"]]["odds_now"] - 5)
+        s, t = by[link["source"]], by[link["target"]]
+        link["kind"] = "NECESSARY"
+        s.pop("odds_by", None)
+        t.pop("odds_by", None)
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)  # warn only
+        self.assertIn("ALL CHECKS PASS", out)
+        self.assertIn("WARN necessary link %s -> %s: source %.1f (odds now) is below target %.1f" % (s["id"], t["id"], s["odds_now"], t["odds_now"]), out)
+        self.assertEqual(self.count(out), base + 1)
+        # like for like: with curves on both, the source is read on its curve at the target's deadline
+        t["odds_by"] = {t["window_end"]: t["odds_now"]}
+        s["odds_by"] = {"2026-12-31": 1.5, "2031-12-31": 99}
+        s["odds_by"][t["window_end"]] = t["odds_now"] + 10
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.count(out)), (0, base), out)
+        s["odds_by"][t["window_end"]] = t["odds_now"] - 0.9  # inside the 1 point of slack
+        save(root, GRAPH, g)
+        self.assertEqual(self.count(run(root, VALIDATE, GRAPH)[1]), base)
+        s["odds_by"][t["window_end"]] = t["odds_now"] - 4
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.count(out)), (0, base + 1), out)
+        self.assertIn("WARN necessary link %s -> %s: source %.1f (its curve at %s) is below target %.1f"
+                      % (s["id"], t["id"], t["odds_now"] - 4, t["window_end"], t["odds_now"]), out)
+        link["kind"] = "LIKELY"
+        # (b) a containment pair, both curves: the whole is below the part at one shared date
+        rest = [n for n in board_pool(g, 10, 90) if n["id"] not in (s["id"], t["id"]) and n["id"] not in tied]
+        w, p = rest[:2]
+        w["odds_by"] = {"2027-06-30": 10, "2028-06-30": 30}
+        p["odds_by"] = {"2027-06-30": 12.5, "2028-06-30": 20}
+        g["merges"][-1].setdefault("alias_map", {})["OLD-WHOLE"] = {"survivor": w["id"], "reason": "test fold", "date": day(0)}
+        g["meta"]["contains"] = [{"whole": "OLD-WHOLE", "part": p["id"], "note": "test pair."}]  # an old id resolves
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.count(out)), (0, base + 1), out)
+        self.assertIn("WARN contains %s >= %s: whole 10.0 is below part 12.5 at 2027-06-30 (both curves). test pair." % (w["id"], p["id"]), out)
+        self.assertIn("1 containment pairs", out)
+        p["odds_by"]["2027-06-30"] = 10.9  # inside the slack
+        save(root, GRAPH, g)
+        self.assertEqual(self.count(run(root, VALIDATE, GRAPH)[1]), base)
+        # only the whole has a curve: its value at the part's deadline against the part's odds
+        del p["odds_by"]
+        w["odds_by"] = {p["window_end"]: p["odds_now"] - 5}
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.count(out)), (0, base + 1), out)
+        self.assertIn("WARN contains %s >= %s: whole %.1f is below part %.1f at %s (the whole's curve at the part's deadline)"
+                      % (w["id"], p["id"], p["odds_now"] - 5, p["odds_now"], p["window_end"]), out)
+        # the engine prints the same list after a real run
+        mover = next(n for n in rest[2:] if n["id"] not in (w["id"], p["id"]))
+        code, out = run(root, CASCADE, GRAPH, "--set", "%s=%s" % (mover["id"], mover["odds_now"] + 1), "--date", day(0),
+                        "--reason", "test event", "--source", "test", "--max-hops", "0")
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN contains %s >= %s" % (w["id"], p["id"]), out.split("WROTE")[1])
+        self.assertRegex(out, r"(?m)^CONTRADICTIONS: \d+$")
+        # no curves: odds against odds when the whole's deadline is the same or later, else not compared
+        g = load(root, GRAPH)
+        pool = board_pool(g, 10, 90)
+        lo, hi = next((x, y) for x in pool for y in pool if x["odds_now"] < y["odds_now"] - 2 and x["window_end"] > y["window_end"])
+        for n in (lo, hi):
+            n.pop("odds_by", None)
+        g["meta"]["contains"] = [{"whole": lo["id"], "part": hi["id"], "note": "test pair."}]
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN contains %s >= %s: whole %.1f is below part %.1f at %s (odds now)"
+                      % (lo["id"], hi["id"], lo["odds_now"], hi["odds_now"], hi["window_end"]), out)
+        g["meta"]["contains"] = [{"whole": hi["id"], "part": lo["id"], "note": "test pair."}]
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        self.assertIn("NOTE not compared: %s contains %s" % (hi["id"], lo["id"]), out)
+        # a row that names no node is a broken reference, and that does fail
+        g["meta"]["contains"] = [{"whole": "NOPE-1", "part": lo["id"], "note": "test pair."}]
+        save(root, GRAPH, g)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 1, out)
+        self.assertIn("meta.contains[0]: unknown node NOPE-1", out)
+
+
+class Test7fCalibration(unittest.TestCase):
+    """--calibration: a level correction that is not news. No hops, no queue, status left alone, one per 30 days."""
+
+    def test_calibration_rules(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        by = {n["id"]: n for n in g["nodes"]}
+        # a node a normal run would cascade from
+        node = None
+        for e in sorted((e for e in g["links"] if not e.get("display_only") and (e.get("strength") or 0) >= 0.3 and e.get("sign") == 1
+                         and live_mid(by[e["source"]], 20, 70) and live_mid(by[e["target"]], 5, 85)
+                         and len(str(by[e["source"]].get("window_end"))) == 10), key=lambda e: -e["strength"]):
+            code, out = run(root, CASCADE, GRAPH, "--set", "%s=%s" % (e["source"], by[e["source"]]["odds_now"] + 10),
+                            "--date", day(0), "--reason", "test", "--dry-run")
+            if code == 0 and re.search(r"^\S+\s.*\s%s > " % re.escape(e["source"]), out, re.M):
+                node = by[e["source"]]
+                break
+        self.assertIsNotNone(node, "no live node cascades in this graph")
+        other = next(n for n in board_pool(g) if n["id"] != node["id"])
+        o = float(node["odds_now"])
+        node["odds_by"] = {node["window_end"]: o, "2031-12-31": min(98.0, o + 20)}
+        node["odds_text"] = "%d%% by May 31" % o
+        save(root, GRAPH, g)
+        up10, up12 = round(o + 10, 1), round(o + 12, 1)
+        row = {"id": node["id"], "new_odds": up10, "date": day(0), "reason": "CALIBRATION base rate review: test class",
+               "source": "test count", "basis": "BASE RATE"}
+        before = sha(root, GRAPH)
+
+        def refused(rows, *extra, flags=("--calibration",)):
+            args = list(flags) + (["--updates", updates_file(root, rows)] if rows is not None else []) + list(extra)
+            code, out = run(root, CASCADE, GRAPH, *args)
+            self.assertEqual(code, 5, out)
+            self.assertIn("CALIBRATION REFUSED", out)
+            self.assertEqual(sha(root, GRAPH), before)
+            return out
+
+        refused(None)  # no --updates
+        refused([row], "--set", "%s=50" % node["id"])
+        refused([row], "--date", day(0))
+        refused([row], flags=("--calibration", "--rebase"))
+        self.assertIn("must start with 'CALIBRATION'", refused([dict(row, reason="base rate review")]))
+        self.assertIn("no source", refused([dict(row, source="")]))
+        self.assertIn("basis None", refused([{k: v for k, v in row.items() if k != "basis"}]))
+        self.assertIn("basis 'NEWS'", refused([dict(row, basis="NEWS")]))
+        self.assertIn("outside 1 to 99", refused([dict(row, new_odds=100)]))
+        self.assertIn("after today", refused([dict(row, date=day(1))]))
+        code, out = run(root, CASCADE, GRAPH, "--calibration", "--updates", updates_file(root, [row]))
+        self.assertEqual(code, 0, out)
+        self.assertIn("EARTH2 CALIBRATION", out)
+        self.assertIn("max hops forced to 0", out)
+        self.assertIn("none: a calibration opens no collisions", out)
+        g2 = load(root, GRAPH)
+        entry = g2["cascade_log"][-1]
+        n2 = next(n for n in g2["nodes"] if n["id"] == node["id"])
+        self.assertEqual((entry["kind"], entry["rule"]["max_hops"], entry["queue"]), ("calibration", 0, []))
+        self.assertEqual([m["id"] for m in entry["moved"]], [node["id"]])  # nothing cascades
+        self.assertEqual((entry["trigger"][0]["basis"], entry["trigger"][0]["reason"]), ("BASE RATE", row["reason"]))
+        self.assertEqual((n2["odds_now"], n2["status"]), (up10, node["status"]))  # status is left alone
+        self.assertEqual(n2["odds_by"][node["window_end"]], up10)  # the curve follows
+        self.assertEqual(n2["odds_text"], "%d%% by May 31" % half_up_whole(up10))  # and the text
+        self.assertEqual({n["id"]: n.get("odds_now") for n in g2["nodes"] if n["id"] != node["id"]},
+                         {n["id"]: n.get("odds_now") for n in g["nodes"] if n["id"] != node["id"]})
+        self.assertEqual(g2["meta"]["odds_stamp"], module(root).odds_stamp(g2["nodes"]))
+        self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)
+        # one calibration move per node in 30 days; another node may still be calibrated the same day
+        before = sha(root, GRAPH)
+        out = refused([dict(row, new_odds=up12, basis="TEST AUDIT")])
+        self.assertIn("%s: already had a calibration move on %s" % (node["id"], day(0)), out)
+        self.assertIn("allowed from " + day(30), out)
+        row2 = {"id": other["id"], "new_odds": other["odds_now"] - 5, "date": day(0), "reason": "CALIBRATION test audit",
+                "source": "test", "basis": "TEST AUDIT"}
+        out = refused([row2, dict(row, new_odds=up12)])  # one blocked row stops the whole file
+        self.assertIn(node["id"], out)
+        code, out = run(root, CASCADE, GRAPH, "--calibration", "--updates", updates_file(root, [row2]))
+        self.assertEqual(code, 0, out)
+        g3 = load(root, GRAPH)
+        self.assertEqual([e.get("kind") for e in g3["cascade_log"][-2:]], ["calibration", "calibration"])
+        # once the earlier move is 30 days old the node may be calibrated again
+        first = g3["cascade_log"][-2]
+        first["date"] = first["trigger"][0]["date"] = day(-30)
+        save(root, GRAPH, g3)
+        code, out = run(root, CASCADE, GRAPH, "--calibration", "--updates",
+                        updates_file(root, [dict(row, new_odds=up12, basis="CONTRADICTION")]))
+        self.assertEqual(code, 0, out)
+        self.assertEqual(next(n for n in load(root, GRAPH)["nodes"] if n["id"] == node["id"])["odds_now"], up12)
+        self.assertEqual(run(root, VALIDATE, GRAPH)[0], 0)
+        # the page treats a calibration entry as it treats the rebase: out of the queue, with its own pill
+        with open(os.path.join(root, "public/future/earth2/index.html"), encoding="utf-8") as f:
+            html = f.read()
+        self.assertIn('e.kind!=="restamp"&&e.kind!=="rebase"&&e.kind!=="calibration"', html)
+        self.assertIn("CALIBRATION: levels only, no cascade", html)
+
+
+class Test7gBaseRateReasons(unittest.TestCase):
+    """Why this time is different: a written reason for a main event far from its base rate. Structure only."""
+
+    def far(self, out):
+        m = re.search(r"NOTE: main events 30\+ points from their base rate with no written reason: (\d+)(?: \((.*)\))?", out)
+        self.assertTrue(m, out)
+        return int(m.group(1)), (m.group(2) or "").split(", ") if m.group(2) else []
+
+    def test_gap_reason_note_and_base_rate_replace(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        stamp = g["meta"]["odds_stamp"]
+        sc = module(root)
+        ev, ev2 = [n for n in g["nodes"] if sc.is_main_event(n) and live_mid(n, 45, 80)][:2]
+        rate = {"value": 5, "reference_class": "test class", "source": "test count"}
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.far(out)), (0, (0, [])), out)
+        import_seed(self, root, legacy_base_rates={ev["id"]: rate, ev2["id"]: rate})
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.far(out)), (0, (2, [ev["id"], ev2["id"]])), out)
+        why = {"text": "The buyer of last resort has left.", "dated_fact": "The facility closed on Nov 20, 2026.",
+               "source": "Test release", "date": day(-7)}
+        # refused: a missing field, a bad date, a node that is not a main event, an unknown id
+        out = import_seed(self, root, expect=2, base_rate_reasons={ev["id"]: {k: v for k, v in why.items() if k != "dated_fact"}})
+        self.assertIn("missing dated_fact", out)
+        self.assertIn("date must be a date", import_seed(self, root, expect=2, base_rate_reasons={ev["id"]: dict(why, date="Nov 20")}))
+        self.assertIn("'DA1' is not a main event", import_seed(self, root, expect=2, base_rate_reasons={"DA1": why}))
+        self.assertIn("'NOPE-1' is not a node", import_seed(self, root, expect=2, base_rate_reasons={"NOPE-1": why}))
+        self.assertNotIn("base_rate_gap_reason", next(n for n in load(root, GRAPH)["nodes"] if n["id"] == ev["id"]))
+        # accepted, and an old folded id lands on its survivor
+        g = load(root, GRAPH)
+        g["merges"][-1].setdefault("alias_map", {})["OLD-EV2"] = {"survivor": ev2["id"], "reason": "test fold", "date": day(0)}
+        save(root, GRAPH, g)
+        out = import_seed(self, root, base_rate_reasons={ev["id"]: why, "OLD-EV2": dict(why, text="  A second reason.  ")})
+        self.assertIn("'OLD-EV2' was folded into '%s'" % ev2["id"], out)
+        g2 = load(root, GRAPH)
+        by = {n["id"]: n for n in g2["nodes"]}
+        self.assertEqual(by[ev["id"]]["base_rate_gap_reason"], why)
+        self.assertEqual(by[ev2["id"]]["base_rate_gap_reason"]["text"], "A second reason.")
+        self.assertEqual(g2["meta"]["odds_stamp"], stamp)  # structure only
+        self.assertEqual({n["id"]: n.get("odds_now") for n in g2["nodes"]}, {n["id"]: n.get("odds_now") for n in g["nodes"]})
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.far(out)), (0, (0, [])), out)
+        # replacing a base rate needs a reason, and the old one is kept
+        out = import_seed(self, root, expect=2, legacy_base_rates={ev["id"]: dict(rate, value=12)})
+        self.assertIn("replace_reason", out)
+        self.assertEqual(next(n for n in load(root, GRAPH)["nodes"] if n["id"] == ev["id"])["base_rate"], rate)
+        new = dict(rate, value=12, reference_class="a better class")
+        for _ in range(2):  # the same row twice changes nothing the second time
+            import_seed(self, root, legacy_base_rates={ev["id"]: dict(new, replace_reason="the first class was too wide")})
+        n = next(x for x in load(root, GRAPH)["nodes"] if x["id"] == ev["id"])
+        self.assertEqual(n["base_rate"], new)
+        self.assertEqual(n["base_rate_history"][-1], {"date": day(0), "old": rate, "reason": "the first class was too wide"})  # live nodes may already carry history
+        self.assertEqual(load(root, GRAPH)["meta"]["odds_stamp"], stamp)
+        # the note counts live events only: without its reason the event is listed again, and not once it has FIRED
+        g3 = load(root, GRAPH)
+        del next(x for x in g3["nodes"] if x["id"] == ev["id"])["base_rate_gap_reason"]
+        next(x for x in g3["nodes"] if x["id"] == ev2["id"])["base_rate_gap_reason"].pop("source")
+        save(root, GRAPH, g3)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 1, out)  # a note with a field missing is a broken record
+        self.assertIn("%s: base_rate_gap_reason: missing source" % ev2["id"], out)
+        self.assertEqual(self.far(out), (2, [ev["id"], ev2["id"]]))
+        next(x for x in g3["nodes"] if x["id"] == ev2["id"])["base_rate_gap_reason"]["source"] = "Test release"
+        save(root, GRAPH, g3)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.far(out)), (0, (1, [ev["id"]])), out)
+        code, out = run(root, CASCADE, GRAPH, "--set", ev["id"] + "=100", "--date", day(0), "--reason", "test: it fired", "--source", "test")
+        self.assertEqual(code, 0, out)
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual((code, self.far(out)), (0, (0, [])), out)
+        with open(os.path.join(root, "public/future/earth2/index.html"), encoding="utf-8") as f:
+            self.assertIn("Why this time is different:", f.read())
+
+
+class Test7hSharedDriver(unittest.TestCase):
+    """A cross-arm pair fed by one upstream node is scored at half: not two independent pushes."""
+
+    def test_shared_driver_flag_and_weight(self):
+        root = fresh(self)
+        cas = pymod(root, CASCADE)
+        self.assertEqual(cas.COLLISION_SHARED_DRIVER_WEIGHT, 0.5)
+        node = lambda i, arm: {"id": i, "arm": arm, "odds_now": 45, "status": "ON TRACK", "window_start": "2027-01-01", "window_end": "2027-06-30"}
+        nodes = {i: node(i, arm) for i, arm in (("A", "ARM 1"), ("B", "ARM 2"), ("C", "ARM 3"), ("D", "ARM 4"), ("drv", "ARM 5"),
+                                                ("mid", "ARM 5"), ("far", "ARM 5"), ("opp", "ARM 5"))}
+        link = lambda s_, t_, **kw: dict({"source": s_, "target": t_, "kind": "LIKELY", "sign": 1, "strength": 0.5, "delay_days": 0}, **kw)
+        links = [link("drv", "mid"), link("mid", "A"),  # drv is two hops above A
+                 link("drv", "B", display_only=True, strength=None),  # a display-only driver curve still counts
+                 link("opp", "A", kind="OPPOSES", sign=-1), link("opp", "C", kind="OPPOSES", sign=-1),  # a lowering link does not
+                 link("far", "drv"), link("far", "D")]  # far is three hops above A: too far
+        rose = {i: 5.0 for i in "ABCD"}
+        after = {i: 50.0 for i in "ABCD"}
+        items = {tuple(c["nodes"]): c for c in cas.collisions(nodes, [], rose, after, {}, 120, links) if c["kind"] == "b"}
+        self.assertEqual(len(items), 6)
+        ab = items[("A", "B")]
+        self.assertEqual((ab["shared_driver"], ab["score"]), (["drv"], 0.125))  # 0.5 x 0.5 joint, x 2 arms, x 0.5 unpriced, x 0.5
+        self.assertTrue(ab["what"].endswith(" [shared driver: drv]"), ab["what"])
+        for pair in (("A", "C"), ("A", "D"), ("B", "C"), ("C", "D")):
+            self.assertNotIn("shared_driver", items[pair], pair)
+            self.assertEqual(items[pair]["score"], 0.25, pair)
+        self.assertEqual(items[("B", "D")]["shared_driver"], ["far"])  # far > drv > B and far > D
+        self.assertLess(ab["score"], items[("A", "C")]["score"])
+        # without the links nothing is marked, as before
+        plain = [c for c in cas.collisions(nodes, [], rose, after, {}, 120) if c["kind"] == "b"]
+        self.assertTrue(all("shared_driver" not in c and c["score"] == 0.25 for c in plain))
 
 
 class Test8Page(unittest.TestCase):
@@ -949,7 +1443,9 @@ class Test8Page(unittest.TestCase):
                 question(due=day(7), tags=("actor",)),
                 question(due=day(12), tags=("pace",), path_node="D4", consensus={"value": "2027-06-30", "source": "Test survey", "as_of": day(0)})]
         import_seed(self, root, questions=live, backfilled=timing_ten(), event_tags={EVENT: ["timing", "brakes"]},
-                    legacy_base_rates={EVENT: {"value": 15, "reference_class": "test class", "source": "test count"}})
+                    legacy_base_rates={EVENT: {"value": 15, "reference_class": "test class", "source": "test count"}},
+                    base_rate_reasons={EVENT: {"text": "The usual brake is gone.", "dated_fact": "It closed on Nov 20, 2026.",
+                                               "source": "Test release", "date": day(-7)}})
         steps = [("settle", "Q-0004", "--outcome", "YES", "--as-of", day(0), "--source", "Test source", "--evidence", "It arrived."),
                  ("settle", "Q-0005", "--outcome", "NO", "--as-of", day(-2), "--source", "Test source", "--evidence", "It did not."),
                  ("void", "Q-0006", "--reason", "The series was discontinued."),
@@ -1038,7 +1534,8 @@ class Test8Page(unittest.TestCase):
         raw = next(n for n in blank_graph["nodes"] if n["id"] == EVENT)["odds_now"]
         self.assertIn("corrected", c["node"])
         self.assertIn("corrected %g%%" % module(root).half_up(min(99.0, max(1.0, raw - 12.0)), 1), c["node"])
-        for text in ("timing +12.0", "Judgment tags:", "Base rate:", "15%", "test class", "Open questions: 4", "answered: 12", "Q-0001"):
+        for text in ("timing +12.0", "Judgment tags:", "Base rate:", "15%", "test class", "Open questions: 4", "answered: 12", "Q-0001",
+                     "Why this time is different:", "The usual brake is gone.", "It closed on Nov 20, 2026."):
             self.assertIn(text, c["node"], text)
         self.assertEqual(c["nodeTooWide"], 0)
         # a hand edit to odds shows the red banner; D4 is a path node and lists its question

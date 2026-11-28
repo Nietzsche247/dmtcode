@@ -10,7 +10,8 @@ RUN THIS FIRST, EVERY SESSION
 COMMANDS
   due                              overdue questions and the next 10 open, each with its exact settle command
   add ...                          add one question (see: add --help)
-  import-seed FILE [--dry-run]     add questions, backfilled answers, event tags and base rates from a seed file
+  import-seed FILE [--dry-run]     add questions, backfilled answers, event tags, base rates and the other
+                                   structure-only keys (tests, market odds, lens marks, base rate gap reasons)
   settle ID --outcome YES|NO --as-of DATE --source "..." --evidence "..."
   defer ID --to DATE --reason "..."      at most 2 per question, each at most 21 days
   void ID --reason "..."                 for a test that became impossible; left out of the score
@@ -303,6 +304,8 @@ def base_rate_missing(v):
     return out
 
 
+GAP_REASON_FIELDS = ["text", "dated_fact", "source", "date"]
+BASE_RATE_GAP_POINTS = 30  # a live main event this far from its base rate needs a written reason
 MARKET_FIELDS = ["odds", "venue", "contract", "url", "as_of", "match_note"]
 MARKET_NEEDED = ["odds", "venue", "contract", "as_of", "match_note"]
 PLAY_MONEY = ("manifold", "metaculus", "good judgment", "gjopen")
@@ -324,6 +327,34 @@ def market_problem(m):
     if iso(m["as_of"]) is None:
         return "as_of must be a date, YYYY-MM-DD"
     return None
+
+
+def gap_reason_problem(row):
+    """None when row is a full "why this time is different" note for a main event, else a short reason.
+    All four fields are needed: text (the reason), dated_fact (the fact it rests on), source and date."""
+    if not isinstance(row, dict):
+        return "must be an object with " + ", ".join(GAP_REASON_FIELDS)
+    miss = [k for k in GAP_REASON_FIELDS if not (isinstance(row.get(k), str) and filled(row.get(k)))]
+    if miss:
+        return "missing " + ", ".join(miss)
+    if iso(row["date"].strip()) is None:
+        return "date must be a date, YYYY-MM-DD"
+    return None
+
+
+def base_rate_gaps(g):
+    """Ids of live main events (not FIRED, odds above 1) that sit BASE_RATE_GAP_POINTS or more from their base
+    rate and carry no written reason (base_rate_gap_reason)."""
+    out = []
+    for n in g.get("nodes", []):
+        br, o = n.get("base_rate"), n.get("odds_now")
+        if not is_main_event(n) or is_fired(n) or not is_num(o) or o <= 1:
+            continue
+        if not isinstance(br, dict) or not is_num(br.get("value")):
+            continue
+        if abs(o - br["value"]) >= BASE_RATE_GAP_POINTS and gap_reason_problem(n.get("base_rate_gap_reason")):
+            out.append(n["id"])
+    return out
 
 
 def lens_problem(row):
@@ -921,6 +952,14 @@ def validator_checks(g, graph_rel=GRAPH_REL):
                 fails.append(f"{c_['id']}: lenses.{lens}: {p}")
             n_lens += 1
     notes.append(f"NOTE: market odds on {n_mkt} main events; company lens marks {n_lens}.")
+    for n in g.get("nodes", []):
+        if n.get("base_rate_gap_reason") is not None:
+            p = gap_reason_problem(n["base_rate_gap_reason"]) if is_main_event(n) else "the note belongs on main events only"
+            if p:
+                fails.append(f"{n['id']}: base_rate_gap_reason: {p}")
+    far = base_rate_gaps(g)
+    notes.append(f"NOTE: main events {BASE_RATE_GAP_POINTS}+ points from their base rate with no written reason: "
+                 f"{len(far)}" + (f" ({', '.join(far)})" if far else ""))
     c = compute_score(doc["questions"])["counts"]
     notes.append(f"NOTE: scorecard has {c['total']} questions: {c['open']} open, {c['settled']} settled "
                  f"({c['backfilled']} backfilled), {c['void']} void.")
@@ -1177,7 +1216,7 @@ def cmd_import_seed(a):
     if not isinstance(seed, dict):
         raise SystemExit(f"Seed file not found or not an object: {a.file}")
     known = ("questions", "backfilled", "event_tags", "legacy_base_rates", "legacy_settlement_tests",
-             "event_markets", "company_lenses")
+             "event_markets", "company_lenses", "base_rate_reasons")
     skipped = [k for k in seed if k not in known and not k.startswith("_")]
     nodes = {n["id"]: n for n in g["nodes"]}
     aliases = alias_map(g)
@@ -1187,7 +1226,8 @@ def cmd_import_seed(a):
     for k in ("questions", "backfilled"):
         if not isinstance(seed.get(k, []), list):
             errs.append(f"{k} must be a list")
-    for k in ("event_tags", "legacy_base_rates", "legacy_settlement_tests", "event_markets", "company_lenses"):
+    for k in ("event_tags", "legacy_base_rates", "legacy_settlement_tests", "event_markets", "company_lenses",
+              "base_rate_reasons"):
         if not isinstance(seed.get(k, {}), dict):
             errs.append(f"{k} must be an object")
     if errs:
@@ -1226,9 +1266,31 @@ def cmd_import_seed(a):
             errs.append(f"legacy_base_rates {raw_id}: missing or bad {', '.join(miss)} (value is a percent from 0 to 100)")
             continue
         clean = {"value": br["value"], "reference_class": br["reference_class"].strip(), "source": br["source"].strip()}
-        if nodes[nid].get("base_rate") not in (None, clean):
-            notes.append(f"NOTE legacy_base_rates {nid}: base_rate changes from {nodes[nid].get('base_rate')} to {clean}.")
-        rate_writes.append((nid, clean))
+        old, why = nodes[nid].get("base_rate"), br.get("replace_reason")
+        if old is not None and old != clean and not (isinstance(why, str) and filled(why)):
+            errs.append(f"legacy_base_rates {nid}: already has a base rate; replacing it needs "
+                        f'"replace_reason": "..." in the row (the old one is kept in base_rate_history)')
+            continue
+        if old is not None and old != clean:
+            notes.append(f"NOTE legacy_base_rates {nid}: base_rate replaced, {old.get('value') if isinstance(old, dict) else old} "
+                         f"to {clean['value']} ({why.strip()}).")
+        rate_writes.append((nid, clean, why.strip() if old is not None and old != clean else None))
+    reason_writes = []
+    for raw_id, row in (seed.get("base_rate_reasons") or {}).items():
+        nid = resolve(raw_id, nodes, aliases)
+        if nid is None:
+            errs.append(f"base_rate_reasons: {raw_id!r} is not a node in the graph")
+            continue
+        if nid != raw_id:
+            notes.append(f"NOTICE base_rate_reasons: '{raw_id}' was folded into '{nid}'; using {nid}.")
+        if not is_main_event(nodes[nid]):
+            errs.append(f"base_rate_reasons: {nid!r} is not a main event ({MAIN_EVENT_RULE})")
+            continue
+        p = gap_reason_problem(row)
+        if p:
+            errs.append(f"base_rate_reasons {raw_id}: {p} (all four are needed: {', '.join(GAP_REASON_FIELDS)})")
+            continue
+        reason_writes.append((nid, {k: row[k].strip() for k in GAP_REASON_FIELDS}))
     test_writes, market_writes, lens_writes = [], [], []
     for raw_id, row in (seed.get("legacy_settlement_tests") or {}).items():
         nid = resolve(raw_id, nodes, aliases)
@@ -1286,7 +1348,8 @@ def cmd_import_seed(a):
     live = sum(1 for q in new if q["kind"] == "live")
     print(f"SEED OK: live questions {live}, backfilled answers {len(new) - live}, events given judgment tags "
           f"{len(tag_writes)}, events given a base rate {len(rate_writes)}, settlement tests {len(test_writes)}, "
-          f"market odds {len(market_writes)}, company lens marks {len(lens_writes)}.")
+          f"market odds {len(market_writes)}, company lens marks {len(lens_writes)}, base rate gap reasons "
+          f"{len(reason_writes)}.")
     if a.dry_run:
         print("DRY RUN: nothing written.")
         return 0
@@ -1297,11 +1360,18 @@ def cmd_import_seed(a):
         if nodes[nid].get("judgment_tags") != tags:
             nodes[nid]["judgment_tags"] = tags
             changed += 1
-    for nid, br in rate_writes:
+    stamp_day = today().isoformat()
+    for nid, br, why in rate_writes:
         if nodes[nid].get("base_rate") != br:
+            if why:
+                nodes[nid].setdefault("base_rate_history", []).append(
+                    {"date": stamp_day, "old": nodes[nid]["base_rate"], "reason": why})
             nodes[nid]["base_rate"] = br
             changed += 1
-    stamp_day = today().isoformat()
+    for nid, row in reason_writes:
+        if nodes[nid].get("base_rate_gap_reason") != row:
+            nodes[nid]["base_rate_gap_reason"] = row
+            changed += 1
     for nid, text, why in test_writes:
         if nodes[nid].get("settlement_test") != text:
             if why:
@@ -1322,8 +1392,8 @@ def cmd_import_seed(a):
         raise SystemExit("Refusing to write: an odds value would change. This command writes structure only.")
     if changed:
         write_json(PATHS["graph"], g)
-        print(f"Graph: structure written ({changed} fields: tags, base rates, tests, market odds, company lenses; "
-              f"no odds moved).")
+        print(f"Graph: structure written ({changed} fields: tags, base rates, base rate gap reasons, tests, market "
+              f"odds, company lenses; no odds moved).")
     if new:
         print("ADDED")
         _apply_new(doc, new)

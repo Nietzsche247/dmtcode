@@ -1,0 +1,353 @@
+[
+ {
+  "id": "O1",
+  "verdict": "ALREADY MET",
+  "evidence": "Front-month Brent futures settled above $100 on 80 trading days between Mar 12, 2026 ($100.46) and Nov 3, 2026 ($103.60); highest settle $118.35 on Mar 31, 2026. EIA Brent spot was above $100 on 96 days from Mar 12 to Nov 3, 2026 (peak $138.21 on Apr 7, 2026). Since the window opened on Nov 22 the settles are $89.37 (Nov 23), $91.40 (Nov 24) and $94.61 (Nov 25), so it has not fired inside the window. The test as written has no start date, no deadline and no named source, so every one of those 2026 days counts.",
+  "source": "Yahoo Finance BZ=F front-month Brent daily closes https://finance.yahoo.com/quote/BZ=F/history ; EIA Brent spot via FRED DCOILBRENTEU https://fred.stlouisfed.org/series/DCOILBRENTEU ; World Oil, Mar 13, 2026 https://www.worldoil.com/news/2026/3/13/brent-crude-settles-above-100-for-second-straight-session",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if front-month ICE Brent settles above $100 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.",
+  "note": "Older occurrence, last one Nov 3, 2026, 19 days before the window. Brent is now about $91 to $95."
+ },
+ {
+  "id": "F5",
+  "verdict": "ALREADY MET",
+  "evidence": "Nvidia closed below $120 (split-adjusted) on 218 sessions since Nov 27, 2023: every session up to Jun 4, 2024, stretches between Jun and Oct 2024 (for example $98.91 on Aug 7, 2024), and 49 sessions in 2025 from Jan 27, 2025 ($118.42) to May 9, 2025 ($116.65), with the 2025 low at $94.31 on Apr 4, 2025. The test says 'by Mar 31, 2027' with no start date, so those count. Not met inside the window: closes were $165.05 (Nov 23), $155.38 (Nov 24) and $149.30 (Nov 25, 2026). Lowest close since May 2025 is $125.53 on Nov 20, 2026, a Yahoo print that looks like an outlier against $145.98 the day before and was not confirmed on Nasdaq; it is still above $120. No stock split found in 2026.",
+  "source": "Yahoo Finance NVDA daily closes https://finance.yahoo.com/quote/NVDA/history (Nasdaq official closes at https://www.nasdaq.com/market-activity/stocks/nvda/historical as the check); GoTrade, Nov 19, 2026 (Nov 18 close $150.96) https://www.heygotrade.com/en/news/nvidia-nvda-stock-news-november-19-2026/",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if Nvidia (NVDA) closes below $120.00 a share in any regular Nasdaq session from Nov 28, 2026 to Mar 31, 2027 (Nasdaq official closing price, adjusted for any stock split that takes effect after Nov 27, 2026). NO otherwise.",
+  "note": "Older occurrence; the last close under $120 was May 9, 2025. Today's Nov 27 half session was not yet available."
+ },
+ {
+  "id": "D1",
+  "verdict": "OK",
+  "evidence": "The FOMC meets Dec 8 to 9, 2026 (Fed calendar). The target range upper bound has been 4.00% since the Sept 17, 2026 hike from 3.75% and was held on Oct 28. The test is tied to one dated statement, so earlier hikes cannot count.",
+  "source": "Federal Reserve FOMC calendar https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm ; FRED DFEDTARU https://fred.stlouisfed.org/series/DFEDTARU",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": null
+ },
+ {
+  "id": "J1",
+  "verdict": "TOO EASY",
+  "evidence": "Both legs together were met three times in three years, twice in 2026. (1) 2024: dollar closed above 160 yen on 10 days from Jun 26 to Jul 10, 2024 (high 161.73) and Tokyo bought 5.53 trillion yen on Jul 11 and 12, 2024. (2) Spring 2026: close of 160.23 on Apr 29, 2026 and 11.73 trillion yen bought on Apr 30, May 4 and May 6, 2026. (3) Summer 2026: closes above 160 on every reported day from Jun 5 to Jul 29, 2026 (high 163.86) and 15.40 trillion yen bought on Jul 30, Jul 31 and Aug 3, 2026. Inside the window nothing yet: closes for Nov 23 to 27, 2026 were 158.93 to 159.28, the last close above 160 was Sept 1, 2026 (160.03), and the Ministry of Finance monthly figure for Sept 29 to Oct 28 is zero. The Oct 29 to Nov 26 monthly figure was not yet posted on Nov 27.",
+  "source": "Japan Ministry of Finance, Foreign Exchange Intervention Operations https://www.mof.go.jp/english/policy/international_policy/reference/feio/index.html and https://www.mof.go.jp/english/policy/international_policy/reference/feio/quarter/2026_3Qe.html ; Federal Reserve H.10 via FRED DEXJPUS https://fred.stlouisfed.org/series/DEXJPUS ; Yahoo Finance JPY=X for Nov 23 to 27",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and Mar 31, 2027, the dollar closes above 160.00 yen on at least one trading day (Federal Reserve H.10 noon buying rate, FRED series DEXJPUS; Bank of Japan 17:00 Tokyo rate as the check) and Japan's Ministry of Finance reports a total of 5 trillion yen or more of dollar-selling, yen-buying intervention on operation dates inside that same period (MOF Foreign Exchange Intervention Operations monthly and quarterly releases). Operations dated before Nov 28, 2026 do not count. NO otherwise.",
+  "note": "Base rate is three hits in three years. If the label is meant as a rarer event than the Apr to May and Jul to Aug 2026 episodes, the yen amount needs to be above the 15.4 trillion of Jul to Aug 2026."
+ },
+ {
+  "id": "D2",
+  "verdict": "OK",
+  "evidence": "The Fed's revised 2027 schedule (Nov 12, 2026) keeps the Jan 26 to 27, 2027 meeting. Two hikes in a row have not happened in the last three years: the only hike was Sept 17, 2026 and the Oct 28, 2026 meeting held.",
+  "source": "Federal Reserve press release, Nov 12, 2026 https://www.federalreserve.gov/newsevents/pressreleases/monetary20261112a.htm ; FRED DFEDTARU https://fred.stlouisfed.org/series/DFEDTARU",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": null
+ },
+ {
+  "id": "C6",
+  "verdict": "TOO EASY",
+  "evidence": "Met before the window at least twice in three years. On Apr 7, 2026 the FBI, CISA, NSA, EPA, DOE and US Cyber Command issued a joint advisory (AA26-097A) attributing attacks on programmable logic controllers at US water and energy sites to Iranian-affiliated APT actors and stating that some victims had operational disruption and financial loss; it was updated Jul 23, 2026. The same agencies blamed the IRGC-affiliated CyberAv3ngers for the 2023 to 2024 attacks on US water systems. Inside the window nothing found: DHS Secretary Mullin's written testimony of Nov 18 to 19, 2026 said Iran-backed actors targeted US energy, health and water systems but did not attribute a specific disruptive attack.",
+  "source": "The Register, Apr 7, 2026 https://www.theregister.com/2026/04/07/iran_hackers_disrupting_us_water_energy/ ; EPA release https://www.epa.gov/newsreleases/epa-fbi-cisa-nsa-issue-joint-cybersecurity-advisory-water-system-regarding-iranian ; AHA copy of the Jul 23, 2026 update https://www.aha.org/cybersecurity-government-intelligence-reports/2026-07-23-joint-cybersecurity-advisory-tlp-clear-iranian-affiliated-cyber-actors ; Bloomberg Government, Nov 19, 2026 https://news.bgov.com/bloomberg-government-news/mullin-says-iran-hit-key-infrastructure-not-behind-tech-outages",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and Mar 31, 2027, the FBI, CISA or NSA (alone or jointly) or the White House publishes a new attribution to Iran or China, or to actors it names as affiliated with either government, of a cyberattack that destroyed or encrypted data, damaged equipment or disrupted operations at a US listed company, utility, water system or health system, where the attack took place or was first disclosed after Nov 27, 2026 (a CISA advisory with a new AA number, or an FBI, NSA or White House press release). Updates or reissues of advisories first published before Nov 28, 2026, including AA26-097A, do not count. Espionage-only or pre-positioning reports do not count. NO otherwise.",
+  "note": "The current test is windowed but would be satisfied by a rerun of the Apr 2026 advisory. The in-window sweep was by search only."
+ },
+ {
+  "id": "O2",
+  "verdict": "ALREADY MET",
+  "evidence": "Front-month Brent futures settled above $110 on 17 trading days between Mar 20, 2026 ($112.19) and Oct 30, 2026 ($117.64), for example $113.88 on Oct 27, 2026. EIA Brent spot was above $110 on 69 days, the last being Oct 30, 2026 ($120.15). The test says 'by May 31, 2027' with no start date, so these count, and the label's own word 'again' shows they are the spikes it means to exclude. Since Nov 22 the settles are $89.37 to $94.61.",
+  "source": "Yahoo Finance BZ=F front-month Brent daily closes https://finance.yahoo.com/quote/BZ=F/history ; Nation Thailand, Oct 28, 2026 https://www.nationthailand.com/news/world/40072812 ; EIA Brent spot via FRED DCOILBRENTEU https://fred.stlouisfed.org/series/DCOILBRENTEU",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if front-month ICE Brent settles above $110 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.",
+  "note": "Older occurrence, last one Oct 30, 2026. Only the start date is missing."
+ },
+ {
+  "id": "D3",
+  "verdict": "OK",
+  "evidence": "Upper bound is 4.00% today, so three 25 basis point hikes on Dec 9, 2026, Jan 27, 2027 and Mar 17, 2027 give 4.75%, matching the label. All three meeting dates are on the Fed's calendar (2027 schedule revised Nov 12, 2026). Three hikes in a row have not happened in the last three years.",
+  "source": "Federal Reserve FOMC calendar https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm ; FRED DFEDTARU https://fred.stlouisfed.org/series/DFEDTARU",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": null
+ },
+ {
+  "id": "J6",
+  "verdict": "OK",
+  "evidence": "Japan's holdings were $1,063.1B in Sept 2026, the lowest of the 13 months in the current table (peak $1,239.3B in Feb 2026). The three-year low is $1,061.5B (Dec 2024). The last month under $1,000B was Sept 2011 ($984.0B).",
+  "source": "US Treasury TIC Table 5 https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table5.txt ; historical file https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/mfhhis01.txt",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Not met, but it is $63B away after a $176B fall since Feb 2026. To shut out old data, add 'for any reference month from October 2026 on'."
+ },
+ {
+  "id": "J2",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "Auction leg is clear and was not met: of the eleven 30-year auctions of 2026, only Jun 10, 2026 cleared at or under 3.0 (2.94), and the 30-year yield record had been set in May 2026, not that day or the next; Jan 8 (3.14) and Apr 7 (3.12) were near misses; Nov 10, 2026 was 3.36. The megabank leg cannot be settled as written because 'a cap or limit' has no definition. On Nov 13, 2026 SMFG's chief executive said the bank had 'adopted stricter standards on extending credit for data centre financing' and was limiting it to highly rated hyperscalers. A strict reader could call that a limit; it came 9 days before the window opened.",
+  "source": "Japan Ministry of Finance auction results, for example https://www.mof.go.jp/english/policy/jgbs/auction/calendar/eresul/eresul20260610.htm ; Bloomberg Linea, Jun 10, 2026 https://www.bloomberglinea.com/mercados/la-demanda-por-bonos-a-30-anos-de-japon-cae-a-su-nivel-mas-bajo-desde-junio-2025/ ; New Straits Times (Reuters), Nov 13, 2026 https://www.nst.com.my/amp/business/corporate/2026/11/1576909/japans-megabanks-raise-annual-earnings-forecasts-flag-data",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and May 31, 2027, either (a) a 30-year JGB auction has a bid-to-cover ratio of 3.00 or less (competitive bids divided by accepted competitive bids, Ministry of Finance auction results) and the 30-year JGB yield closes at an all-time high on the auction day or the next trading day (Japan Bond Trading Co. closing yield; Bloomberg generic 30-year as the check), or (b) MUFG, SMFG or Mizuho discloses, in an earnings release, securities filing or on-record executive statement dated in that period, a numeric cap, a freeze on new commitments or a planned cut in its data-center or AI-infrastructure lending. General statements of tighter credit standards, including SMFG's remarks of Nov 13, 2026, do not count. NO otherwise.",
+  "note": "Missing: a definition of the bank cap. 2025 auctions were checked from memory only (Jun 5, 2025 at 2.92 was not on a record-yield day)."
+ },
+ {
+  "id": "R5",
+  "verdict": "TOO EASY",
+  "evidence": "Actions of this kind happen several times a year. Verified example: on Sept 24, 2025 the Defense Logistics Agency awarded US Antimony a five-year contract of up to $245 million for antimony ingots for the national defense stockpile. Others seen at headline level only: the Jan 14, 2026 Section 232 proclamation on processed critical minerals (Proclamation 11001), the 2026 federal critical-minerals stockpile, a Pentagon award of nearly $30 million to ElementUSA for gallium and scandium. On Aug 7, 2026 Treasury said the planned Agreement on Trade in Critical Minerals 'seeks to establish phased-in, mineral-specific price floors adjusted at the border', which is still a framework. Nothing new found for Nov 20 to 27, 2026 in a limited search. The test also starts counting on Nov 20, two days before the event window and a week before today.",
+  "source": "Mining Technology, Sept 24, 2025 https://www.mining-technology.com/news/usac-secures-245m-us-defence-contract-for-antimony-supply/ ; Federal Register, Proclamation 11001 https://www.federalregister.gov/documents/full_text/html/2026/01/20/2026-01045.html ; US Treasury statement, Aug 7, 2026 https://home.treasury.gov/news/press-releases/sb0600",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and May 31, 2027, the US government puts into legal effect or awards (not only proposes, studies or negotiates) any of these, naming dysprosium, terbium or another heavy rare earth, antimony, gallium or germanium: (a) a price floor or border price mechanism, by Federal Register notice, proclamation or signed agreement; (b) a new or higher tariff, by proclamation or Federal Register notice; or (c) a stockpile purchase or offtake award of $50 million or more by DLA, DoD, DOE, Commerce, DFC or EXIM (Federal Register; DLA and DoD contract announcements; agency press releases). Awards, proclamations and agreements dated before Nov 28, 2026, and later deliveries or option exercises under them, do not count. NO otherwise.",
+  "note": "The $50 million floor is my suggestion; without a size floor any small DLA order settles it. 40% odds look low for a test this loose."
+ },
+ {
+  "id": "BT2",
+  "verdict": "OK",
+  "evidence": "CDC's Ebola situation page, updated Nov 25, 2026: 'To date, no Ebola cases associated with this outbreak have been reported in the United States.' The Bundibugyo outbreak stood at 11,986 confirmed cases on Nov 23, 2026 across DRC, Kenya, Nigeria, Uganda and France. A US citizen tested positive in DRC in July 2026, which is a diagnosis abroad and does not count. The last Ebola diagnosis on US soil was in 2014.",
+  "source": "CDC Ebola situation summary https://www.cdc.gov/ebola/situation-summary/index.html",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Test differs from the label on purpose: the label's 'or another promotion trigger' is not covered, and the test says so. Either define those triggers or drop them from the label."
+ },
+ {
+  "id": "J3",
+  "verdict": "ALREADY MET",
+  "evidence": "On the series the test names, the dollar fell 6.5% against the yen over five trading days from Jul 29, 2024 (153.96) to Aug 5, 2024 (143.95), and 5.6% from Jul 30 to Aug 6, 2024. The test says 'over any five consecutive trading days by Mar 31, 2027' with no start date, so the Aug 2024 move that the label cites as its model already settles it. Largest moves since then fell short of 4.76%: 4.12% (Jul 27 to Aug 3, 2026, the intervention days) and 4.08% (Sept 1 to 9, 2026). Nothing inside the window.",
+  "source": "Federal Reserve H.10 via FRED DEXJPUS https://fred.stlouisfed.org/series/DEXJPUS",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if, on any trading day from Nov 28, 2026 to Mar 31, 2027, USD/JPY is 4.76% or more below its level five trading days earlier, which is a yen gain of 5% or more (Federal Reserve H.10 noon buying rates, FRED series DEXJPUS; Bloomberg closing USD/JPY as the check). NO otherwise.",
+  "note": "Older occurrence. Even 27 trillion yen of intervention in 2026 did not produce a 4.76% five-day move, so the fixed test is a real hurdle."
+ },
+ {
+  "id": "P1",
+  "verdict": "TOO EASY",
+  "evidence": "Both thresholds were breached in the 2023 to 2024 drought, which reaches into the three-year lookback: daily slots were cut to 24 and then 22 in Nov and Dec 2023 and stayed under 30 into spring 2024, and the Neopanamax draft limit was 44 feet until mid Jun 2024 (authority advisories, partly from memory; gCaptain confirms the 22-a-day low). In 2026 the El Nino limits bottomed at 48 feet (from Sept 2; a planned step to 47.5 feet was postponed and never took effect) and 32 to 33 slots a day. On Nov 9, 2026 the authority restored 50 feet and raised slots to 34. So neither threshold was touched in 2026 and conditions are easing into the window.",
+  "source": "gCaptain, Nov 11, 2026 https://gcaptain.com/panama-canal-raises-daily-transit-capacity-as-water-conditions-improve/ ; Panama Canal Authority, Aug 20, 2026 https://pancanal.com/en/panama-canal-adopts-additional-measures-to-address-reduced-precipitation-in-the-canal-watershed ; Marine Insight, Nov 12, 2026 https://www.marineinsight.com/panama-canal-raises-daily-transits-to-34-and-restores-50-foot-neopanamax-draft-as-water-levels-recover/",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, on any day from Jan 1 to May 31, 2027, the Panama Canal Authority has in effect, because of low water in Gatun Lake, either fewer than 30 total daily transit slots or a Neopanamax maximum authorized draft below 47.0 feet (14.33 m), per its Advisories to Shipping on pancanal.com. Limits for lock maintenance or other reasons do not count. NO otherwise.",
+  "note": "One prior episode (2023 to 2024), the same kind of event, so this is a base-rate flag and not a wording fault. With 50 feet and 34 slots restored on Nov 9, 45% odds look high."
+ },
+ {
+  "id": "C7",
+  "verdict": "OK",
+  "evidence": "No DOJ charge or OFAC sanction found that describes a China-based campaign as AI-run. Anthropic's Nov 2025 report of an AI-orchestrated Chinese state campaign drew no DOJ or OFAC action. The DOJ and FBI action of Aug 26, 2026 against the QScan and QTRouter platforms was a domain seizure and did not mention AI.",
+  "source": "bdnews24 (Reuters), Aug 27, 2026 https://bdnews24.com/world/1ec47775af46 ; Al Jazeera, Nov 14, 2025 https://www.aljazeera.com/economy/2025/11/14/anthropic-warns-of-ai-driven-hacking-campaign-linked-to-china",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "The test has no start date ('by Jan 10, 2027'); nothing earlier qualifies, but add 'between Nov 28, 2026 and Jan 10, 2027'. Checked by search only."
+ },
+ {
+  "id": "O5",
+  "verdict": "OK",
+  "evidence": "No mandatory US curb on crude or fuel exports was found in the last three years or inside the window. During the 2026 price spikes the administration publicly ruled out an export ban (Bloomberg Law and E&E News headlines; Interior Secretary Burgum on Sept 14, 2026).",
+  "source": "Bloomberg Law https://news.bloomberglaw.com/environment-and-energy/white-house-not-planning-to-ban-oil-gas-exports-official-says ; BOE Report, Sept 14, 2026 https://boereport.com/2026/09/14/us-oil-export-ban-unlikely-to-lower-energy-prices-interior-secretary-says/",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Headline-level check only; the window includes Nov 22 to 27 and nothing was found for those days."
+ },
+ {
+  "id": "R8",
+  "verdict": "OK",
+  "evidence": "Not met as of the latest figure seen: Benchmark's Q3 2026 review puts ex-China dysprosium oxide (CIF Europe) at an average of $3,500/kg in Sept 2026, up about 150% in the quarter and 16.3 times the China price. Prints for Oct and Nov 2026 and the 2025 path were not seen because Argus and Fastmarkets are subscription only.",
+  "source": "Benchmark Mineral Intelligence, Q3 2026 Rare Earths Price Review https://source.benchmarkminerals.com/article/ex-china-heavy-rare-earths-continue-to-surge-q3-2026-rare-earths-price-review ; Fastmarkets MB-DY-0004 https://www.fastmarkets.com/commodity-prices/MB-DY-0004/",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Three weak points: name one series (the Fastmarkets Rotterdam assessment began only on Aug 7, 2025, so it cannot give a high 'since Apr 2025'); both sources are paywalled; and after a 150% jump in one quarter a halving only returns the price to about its Jun 2026 level, which is weaker than the label's 'bust'."
+ },
+ {
+  "id": "O7",
+  "verdict": "TOO EASY",
+  "evidence": "EIA's monthly Brent spot average was under $75 in 15 of the last 36 months: Sept 2024 ($74.02), Nov 2024 ($74.35), Dec 2024 ($73.86) and every month from Mar 2025 ($72.73) to Feb 2026 ($70.89), with a low of $62.54 in Dec 2025. Since the war spike it has been far above: $103.13 in Mar 2026, $123.93 in Oct 2026, and daily prints of $90 to $107 through Nov 24, so November 2026 will not qualify.",
+  "source": "EIA Europe Brent Spot Price FOB, monthly, via FRED MCOILBRENTEU https://fred.stlouisfed.org/series/MCOILBRENTEU ; EIA https://www.eia.gov/dnav/pet/hist/RBRTEM.htm",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if EIA's monthly average Europe Brent spot price FOB (series RBRTE) is below $75.00 a barrel for any calendar month from December 2026 through November 2027, as published by EIA by Dec 15, 2027 (EIA petroleum spot price data; FRED MCOILBRENTEU as the check). NO otherwise.",
+  "note": "Under $75 was the normal state before Mar 2026, so this is a return to the old range and not a new event. The wording is sound; the rewrite only drops November 2026, which started before today."
+ },
+ {
+  "id": "D7",
+  "verdict": "OK",
+  "evidence": "The worst five-trading-day fall in the ICE dollar index since Nov 2023 is 3.51% (Apr 7 to 14, 2025). The Fed broad dollar index's worst is 2.65% (Apr 9 to 16, 2025). The index closed near 104.0 on Nov 27, 2026 after 103.67 to 104.32 inside the window.",
+  "source": "Yahoo Finance DX-Y.NYB daily closes https://finance.yahoo.com/quote/DX-Y.NYB/history ; FRED DTWEXBGS https://fred.stlouisfed.org/series/DTWEXBGS",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": null
+ },
+ {
+  "id": "BB4",
+  "verdict": "OK",
+  "evidence": "No qualifying readout found. Daraxonrasib lung cancer data reported in Sept 2026 were early-trial response rates (42%), not a Phase 3 survival result. The intismeran Phase 3 success reported in Aug 2026 was outside lung; the lung trials (INTerpath-002 and others) have not reported.",
+  "source": "OncLive, Sept 3, 2026 https://www.onclive.com/view/daraxonrasib-yields-durable-responses-in-previously-treated-ras-mutant-nsclc ; Merck and Moderna INTerpath backgrounder, Aug 2026 https://www.merck.com/wp-content/uploads/sites/124/2026/08/Merck-Moderna_INTerpath_Clinical-Program-Backgrounder.pdf",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Headline-level check. The test has no start date but nothing earlier qualifies. A lung trial win on progression-free survival alone would not settle the daraxonrasib leg, which requires overall survival."
+ },
+ {
+  "id": "BT4",
+  "verdict": "OK",
+  "evidence": "ECDC's Nov 9, 2026 update on H5N1, covering the Oct 15, 2026 human case in Washington State: 'No evidence of sustained human-to-human transmission has been identified.' No WHO emergency declaration for H5N1 found.",
+  "source": "ECDC public health event update, Nov 9, 2026 https://www.ecdc.europa.eu/en/public-health-events/2024-irv-00003/2026-11-09",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": null
+ },
+ {
+  "id": "C11",
+  "verdict": "ALREADY MET",
+  "evidence": "Read literally this has already happened. Google's count of zero-days exploited in the wild fell from 100 in 2023 to 78 in 2024 (figures as restated in Google's 2025 review of Mar 5, 2026; the original Apr 29, 2025 report gave 98 and 75), then rose to 90 in 2025. The test also has no deadline, does not say which count (Google's zero-days and CISA's Known Exploited Vulnerabilities catalog measure different things) and drops the label's cause, 'because AI patching outruns AI attack'.",
+  "source": "Google Threat Intelligence Group, 2025 zero-day review, Mar 5, 2026 https://cloud.google.com/blog/topics/threat-intelligence/2025-zero-day-review/",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if both hold in data published by Nov 30, 2027: Google Threat Intelligence Group's annual zero-day review for 2026 reports fewer zero-days exploited in the wild in 2026 than it reports for 2025 (90 in the Mar 2026 review; the restated 2025 figure in the new review governs) (Google Cloud threat intelligence blog), and CISA's Known Exploited Vulnerabilities catalog has fewer entries with a 2026 date added than with a 2025 date added (cisa.gov KEV catalog file). NO otherwise.",
+  "note": "Older occurrence: the 2024 dip was noise, with no AI cause. I changed 'or' to 'and' so one noisy series cannot settle it alone; revert to 'either' if you want the looser reading. CISA yearly counts were not pulled."
+ },
+ {
+  "id": "W3",
+  "verdict": "ALREADY MET",
+  "evidence": "On current BLS data the three sectors together were 200,000 or more below a year earlier, with total payrolls higher, in 18 of the last 36 months: every month from Nov 2023 (minus 248,000) to Nov 2024, with the worst at minus 360,000 in Apr 2024, then Jan to Mar 2025, Jun 2025 and Dec 2025 (minus 206,000). The gap has since closed: Oct 2026 is 51,000 above a year earlier. The test says 'any report released by Nov 19, 2027' with no start date, so those prints count. No Employment Situation report has been released inside the window yet.",
+  "source": "BLS Current Employment Statistics via FRED: USINFO, USFIRE, USPBS, PAYEMS https://fred.stlouisfed.org/series/USPBS https://fred.stlouisfed.org/series/USINFO https://fred.stlouisfed.org/series/USFIRE https://fred.stlouisfed.org/series/PAYEMS",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if any BLS Employment Situation report released from Nov 28, 2026 to Nov 19, 2027 shows, for that report's own reference month (November 2026 or later) and using the levels in that report, information, financial activities and professional and business services payrolls combined 200,000 or more below the same month a year earlier while total nonfarm payrolls are above their year-earlier level (BLS CES seasonally adjusted series CES5000000001, CES5500000001, CES6000000001 and CES0000000001). Revised figures for reference months before November 2026 do not count. NO otherwise.",
+  "note": "Older occurrence. This is the same leg as the E09 suspect: it printed for most of Nov 2023 to Dec 2025. Counts use today's revised data, not first prints."
+ },
+ {
+  "id": "W6",
+  "verdict": "ALREADY MET",
+  "evidence": "The first leg was exceeded less than two years ago: Fitch's private credit default rate for software and technology borrowers was 7.5% (trailing twelve months) in Jan 2025, 1.9% in Jan 2026, 1.2% in Jul 2026 and 0.6% in Aug 2026. The test says 'reaches 3%' with no start date and no deadline. The second leg has no baseline or source: Medallia, with about $2B of debt, was handed to a Blackstone-led lender group in Jun 2026, and 'two more' does not say more than what, counted by whom.",
+  "source": "Funds Society report on Fitch's US Private Credit Default Rate, Mar 2, 2026 https://www.fundssociety.com/en/news/alternatives/u-s-private-credit-default-rate-continues-to-climb/ ; Tiger Brokers report of Fitch's Aug 2026 release https://www.itiger.com/news/1121162991 ; With Intelligence, Jun 18, 2026 https://www.withintelligence.com/insights/thoma-bravo-hands-medallia-to-lenders-in-one-of-biggest-private-equity-restructurings-ever/",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if either happens between Nov 28, 2026 and Nov 19, 2027: (a) a Fitch Ratings US Private Credit Default Rate report published in that period gives a trailing twelve-month default rate of 3.0% or higher for the software (or software and technology) sector (Fitch Ratings releases at fitchratings.com); or (b) at least two sponsor-owned software companies, each with $1 billion or more of funded debt, are announced in that period as passing to lender ownership by debt-for-equity exchange, foreclosure or agreed handover, as stated by the company or its lenders or reported by Bloomberg, Reuters or the Financial Times. Handovers announced before Nov 28, 2026, including Medallia, do not count. NO otherwise.",
+  "note": "Older occurrence, plus no deadline and no source for the handover leg. Fitch figures are from press reports of its releases, not the releases themselves."
+ },
+ {
+  "id": "BT6",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "No case found in the last three years that clearly meets both parts. Closest: India's National Investigation Agency charge sheet (announced May 5, 2026) says an ISIS-linked cell led by a doctor planned 'mass poisoning in public spaces' with ricin and set up a home lab, but only castor oil was reported recovered. A US case in Ohio (Oct 2026) charges ricin possession with no stated intent to harm many people.",
+  "source": "Deccan Herald (PTI), May 6, 2026 https://www.deccanherald.com/amp/story/india/nia-chargesheets-doctor-2-others-in-isis-linked-bioterror-plot-to-carry-out-mass-poisoning-3992443 ; US Attorney, Northern District of Ohio https://justice.gov/usao-ndoh/pr/ohio-man-charged-possessing-dangerous-biological-weapon",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and Nov 19, 2027, a national or state prosecutor, a court or a national law enforcement agency states in charging papers, a verdict or an official release that a named person or non-state group actually possessed a biological agent or toxin confirmed by laboratory testing (not only precursors, equipment or instructions) and intended to use it to harm many people (published release or court record from the US Department of Justice, the FBI, Europol or the equivalent national authority). Cases first announced before Nov 28, 2026 do not count. NO otherwise.",
+  "note": "Missing: deadline, start date, which authorities count, a named source, and what 'working' and 'at scale' mean. The rewrite follows the wording already used for 28-5. Limited search."
+ },
+ {
+  "id": "27-2",
+  "verdict": "OK",
+  "evidence": "McKinsey does publish this cut. Its 2026 State of AI report (Aug 25, 2026) says 40% of respondents at organizations with more than $1 billion in revenue report scaling AI agents, up from 27% a year earlier, and 22% at smaller organizations. So 45% has not been reached.",
+  "source": "McKinsey, The state of AI in 2026 https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Same series as E08 with a lower bar (45% here, 55% there). Add 'NO if the 2027 report does not give this cut'."
+ },
+ {
+  "id": "27-5",
+  "verdict": "OK",
+  "evidence": "The 10-year Treasury yield's high of the last three years is 5.31% (Oct 5, 2026); it was 4.85% on Nov 25, 2026 and has never closed at 5.50%. The yen leg is easy on its own (Tokyo bought yen in Jul 2024, Apr to May 2026 and Jul to Aug 2026), so in practice the test is the 5.50% yield leg. Neither leg has occurred since Nov 22.",
+  "source": "FRED DGS10 https://fred.stlouisfed.org/series/DGS10 ; Japan Ministry of Finance intervention data https://www.mof.go.jp/english/policy/international_policy/reference/feio/index.html",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "The window opens Nov 22, before today, but nothing counted in those days."
+ },
+ {
+  "id": "28-2",
+  "verdict": "ALREADY MET",
+  "evidence": "The second leg has already happened. Blue Owl Capital Corporation II, a non-traded BDC, paused its quarterly 5% tender offers in Nov 2025 and on Feb 18, 2026 ended them for good, moving to occasional capital returns. The test says 'by Nov 30, 2028' with no start date. Other 2026 cases (BlackRock's HPS Corporate Lending Fund in Mar 2026, Barings, Vista) paid out at the normal 5% limit, which is not 'below its normal quarterly offer'. The first leg cannot be read off filings: banks and BDCs do not report a category for 'AI or data-center borrowers'.",
+  "source": "Crowdfund Insider, Feb 2026 https://www.crowdfundinsider.com/2026/02/262797-red-flags-in-private-credit-blue-owl-capitals-obdc-ii-moves-highlight-liquidity-risks-for-retail-investors/ ; ThinkAdvisor, Mar 6, 2026 https://www.thinkadvisor.com/amp/2026/03/06/blackrock-26b-private-credit-fund-limits-withdrawals/",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if either happens between Jun 1, 2027 and Nov 30, 2028: (a) US banks or BDCs disclose in SEC filings (10-K, 10-Q, 8-K) realized losses or charge-offs recognized in that period that sum to $500 million or more on loans to borrowers the filing itself identifies as data-center, AI-infrastructure or AI-compute businesses, with the settler listing each filing; or (b) a non-traded BDC or interval fund that invests mainly in private credit and has $1 billion or more of net assets suspends its periodic tender or repurchase offer, or sets one below the level stated in its prospectus (normally 5% of shares a quarter), as shown in its SEC filings (Schedule TO, 8-K, Rule 23c-3 notice) or shareholder notice. Paying requests pro rata at the normal limit does not count. Suspensions or cuts announced before Jun 1, 2027, including Blue Owl Capital Corporation II, do not count. NO otherwise.",
+  "note": "Older occurrence (Nov 2025 and Feb 2026), well before the Jun 2027 window. The $1 billion fund size floor is my suggestion."
+ },
+ {
+  "id": "28-5",
+  "verdict": "OK",
+  "evidence": "No case found in the last three years that clearly meets both parts. Closest: India's NIA ricin case (charge sheet announced May 5, 2026: home lab and castor oil, no ricin reported recovered, 'mass poisoning in public spaces' alleged) and a US ricin possession case in Ohio (Oct 2026) with no intent to harm many alleged.",
+  "source": "Deccan Herald (PTI), May 6, 2026 https://www.deccanherald.com/amp/story/india/nia-chargesheets-doctor-2-others-in-isis-linked-bioterror-plot-to-carry-out-mass-poisoning-3992443 ; US Attorney, Northern District of Ohio https://justice.gov/usao-ndoh/pr/ohio-man-charged-possessing-dangerous-biological-weapon",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "Test covers only half the label: 'the rules that follow' is not tested. Define 'working' as laboratory-confirmed agent, or the NIA-type case will be argued both ways. Limited search."
+ },
+ {
+  "id": "29-2",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "No new Fed or Treasury emergency facility was found in 2026 in a limited check. The last one for banks, the Bank Term Funding Program, opened in Mar 2023, outside the three-year lookback (from memory).",
+  "source": "Federal Reserve Section 13(3) reports page https://federalreserve.gov/publications/reports-to-congress-in-response-to-covid-19.htm",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if any of these happens between Jun 1, 2028 and Nov 30, 2029: (a) the FOMC announces purchases of Treasury coupon securities or agency mortgage-backed securities that its statement or implementation note does not describe as reserve management purchases, while the latest 12-month core PCE inflation rate published by BEA is above 2.0%; (b) a Treasury quarterly refunding statement cuts the auction size of the 20-year or 30-year bond by 10% or more from the prior quarter, or says long-bond issuance is being held down to limit yields, while the latest 12-month core PCE rate is above 2.0%; or (c) the Federal Reserve Board announces a new lending facility under Section 13(3) of the Federal Reserve Act, or Treasury announces a new guarantee or backstop program, for banks, money funds, BDCs or private credit funds (federalreserve.gov press releases; home.treasury.gov refunding statements; BEA). Facilities and programs announced before Jun 1, 2028 do not count. NO otherwise.",
+  "note": "Missing: deadline and start date, an inflation measure and reading date, what 'outside routine reserve management' and 'caps long-bond sales' mean, what counts as an emergency facility, and any source. The 10% cut size is my suggestion."
+ },
+ {
+  "id": "29-5",
+  "verdict": "TOO EASY",
+  "evidence": "The same condition printed in 18 of the last 36 months on current BLS data: every month from Nov 2023 to Nov 2024 (worst minus 360,000 in Apr 2024), Jan to Mar 2025, Jun 2025 and Dec 2025. A 200,000 gap is about 0.6% of the roughly 34 million jobs in these three sectors, the size of an ordinary soft patch, while the label says 'mass cognitive displacement'.",
+  "source": "BLS Current Employment Statistics via FRED: USINFO, USFIRE, USPBS, PAYEMS https://fred.stlouisfed.org/series/USPBS https://fred.stlouisfed.org/series/PAYEMS",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if any BLS Employment Situation report released between Jun 1, 2028 and Nov 30, 2029 shows, for that report's own reference month and using the levels in that report, information, financial activities and professional and business services payrolls combined 750,000 or more (about 2%) below the same month a year earlier while total nonfarm payrolls outside those three sectors are above their year-earlier level (BLS CES seasonally adjusted series CES5000000001, CES5500000001, CES6000000001 and CES0000000001). NO otherwise.",
+  "note": "The 750,000 figure is my suggestion: about twice the worst print of the last three years, and a size last seen only in recessions. At the old threshold, 62% odds for a 2028 to 2029 window describe something that already happens."
+ },
+ {
+  "id": "E03",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "No such written claim found. The Sept 29, 2026 item the test excludes is a US executive order that renames AI 'Super Intelligence' in official documents, with no capability claim (newsletter of Sept 30, 2026 citing The Verge). A Sept 2026 remark by Nvidia's chief executive that 'AGI has arrived' (headline only) is not a lab or government statement about exceeding the best humans.",
+  "source": "The Hallucination HQ newsletter, Sept 30, 2026 https://buttondown.com/hallucinationhq/archive/ai-is-now-officially-super/ ; The Next Web, Sept 7, 2026 https://thenextweb.com/news/jensen-huang-agi-has-arrived-gpt-6-astra",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 19, 2027 and Nov 19, 2028, OpenAI, Anthropic, Google DeepMind, Meta, xAI, Microsoft or Safe Superintelligence, or the national government of a G7 country, publishes an official written statement (press release, blog post, system card, regulatory filing or government document) asserting that a named AI system outperforms the best human experts across essentially all cognitive work. Renaming or branding with no capability claim (such as the Sept 29, 2026 US 'Super Intelligence' label), forecasts, and claims limited to named fields or benchmarks do not count. NO otherwise.",
+  "note": "Missing: deadline and start date in the text, a list of who counts as a frontier lab, and where the statement must appear. The lab list is my suggestion. Limited check."
+ },
+ {
+  "id": "E08",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "The numbers in the test are right: McKinsey's 2026 report (Aug 25, 2026) gives 40% for organizations with more than $1 billion in revenue, up from 27%. Not met. What is missing is small: the test names no edition and no deadline.",
+  "source": "McKinsey, The state of AI in 2026 https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if McKinsey's State of AI report for 2027, published between May 19, 2027 and Nov 19, 2027, states that 55% or more of respondents at organizations with more than $1 billion in annual revenue report scaling AI agents in at least one business function (40% in the Aug 2026 report, 27% in 2025) (McKinsey, The state of AI, mckinsey.com). NO if the share is lower, no report is published in that period, or the report does not give this cut.",
+  "note": "Minor fix only. Duplicates 27-2 on the same series (45% there by Nov 30, 2027)."
+ },
+ {
+  "id": "M13",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "erdosproblems.com tracks each problem's status (565 solved and 652 open on Aug 3, 2026 per Quanta) and no published quarterly count of verified AI-contributed results was found, so the '44 a quarter' baseline and the 440 target are the forecaster's own tally. 440 in one quarter would be two thirds of all problems still open. For leg 2 no G7 agency was found that publishes yearly counts of results it credits mainly to AI.",
+  "source": "Quanta Magazine, Aug 3, 2026 https://www.quantamagazine.org/how-ai-tore-through-a-mathematical-community-20260803/",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if either happens: (a) in any calendar quarter from Q1 2027 through Q3 2028, the number of Erdos problems newly marked solved, proved or disproved on erdosproblems.com with an AI system credited on the problem's page or in the site's linked list of AI contributions is at least 10 times the number for Q2 2026 counted the same way, with the Q2 2026 count and its problem numbers recorded now and frozen (erdosproblems.com; dated Internet Archive snapshots as the check); or (b) by Nov 30, 2028 a science agency of a G7 government (for example NSF, the DOE Office of Science, UKRI or JST) publishes a report giving a count of peer-reviewed results it credits mainly to AI systems for a year after 2026 that is at least 10 times the count the same report or series gives for 2026. A declaration with no stated count does not settle it. NO otherwise.",
+  "note": "Missing: a source that publishes the count, a frozen baseline, a start date. If the frozen Q2 2026 count really is 44, leg (a) needs 440 in a quarter against about 650 open problems, so check it is reachable. The GitHub wiki of AI contributions (github.com/teorth/erdosproblems/wiki) could not be opened: the fetch was blocked."
+ },
+ {
+  "id": "M53",
+  "verdict": "OK",
+  "evidence": "No bill creating a standing program has passed a chamber in the cases checked: Illinois SB2811 is a two-year pilot sitting in Senate Appropriations since Feb 3, 2026, and California AB 2585 amends a pilot that ends Jan 1, 2028 and was in Assembly Appropriations in Apr 2026.",
+  "source": "Illinois General Assembly, SB2811 https://ilga.gov/ftp/legislation/104/BillStatus/HTML/10400SB2811.html ; CalMatters Digital Democracy, AB 2585 https://calmatters.digitaldemocracy.org/bills/ca_202520260ab2585",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "The test has no start date ('by Nov 30, 2029'). Add 'between Nov 28, 2026 and Nov 30, 2029' so that standing laws such as Alaska's Permanent Fund Dividend cannot be argued in. Limited search."
+ },
+ {
+  "id": "M57",
+  "verdict": "UNSETTLEABLE",
+  "evidence": null,
+  "source": null,
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, between Nov 28, 2026 and Nov 30, 2029, at least three distinct materials each meet both conditions: (a) a peer-reviewed paper with a DOI, published in that period, states the composition was first proposed by an AI or machine-learning system, and the developer says the same in a press release or filing; and (b) either a company press release or regulatory filing reports production of 100 kg or more or a named pilot line, or a peer-reviewed paper by a group that shares no authors with the developer reports making the material and confirming its key property. At least one of the three must be a battery electrode or electrolyte material or a permanent magnet material. The settler lists the three materials with DOIs and links. NO otherwise.",
+  "note": "Missing: a named public source (there is no register of AI-discovered materials), a definition of pilot scale, and a start date, so pre-2026 materials can be argued in. The 100 kg figure is my suggestion. Lookback for past cases was not run: the web search budget ran out."
+ },
+ {
+  "id": "M61",
+  "verdict": "ALREADY MET",
+  "evidence": "Read literally the first leg is already true. Purdue, tied at No. 46 in the U.S. News 2026 rankings, has offered 'Degree in 3' three-year bachelor's tracks since 2017, now in nearly 60 majors, and restated this on its newsroom on Oct 29, 2026. The test says 'by Nov 30, 2027' with no start date and does not require the degree to be new. Three-year bachelor's degrees are also the standard length in the UK, France, Germany and Italy, so the 'G7 education ministry' wording is met by default, and 'formal overhaul of career education' has no definition. In the lookback: the UNC System board approved a three-year degree pilot on Apr 27, 2026 (pilot campuses are not top-50) and the US Education Department counts nearly 60 colleges with three-year options. Nothing found inside the window.",
+  "source": "Purdue newsroom, Oct 29, 2026 https://www.purdue.edu/newsroom/2026/Q4/purdue-leads-on-affordability-with-frozen-tuition-accelerated-degree-pathways ; Purdue rankings page https://marcom.purdue.edu/contentpkg/u-s-news-world-report-rankings-2026 ; Black Enterprise, May 6, 2026 https://www.blackenterprise.com/unc-three-year-degrees-college/",
+  "inside_window_and_meant": false,
+  "replacement_test": "YES if, between Nov 28, 2026 and Nov 30, 2027, a university in the top 50 of the U.S. News Best National Universities list current on Nov 27, 2026, or the national education ministry of a G7 country, officially announces, in a press release or policy document that names AI as a reason, either (a) a bachelor's degree format designed for completion in three years or less (for example a 90-credit degree) that it did not offer before Nov 28, 2026, or (b) a university-wide or nationwide change to degree length, required curriculum or career preparation. Programs announced before Nov 28, 2026, such as Purdue's Degree in 3, and countries where three-year bachelor's degrees are already standard do not count under (a). NO otherwise.",
+  "note": "Older occurrence (2017, still running). The rewrite ties both legs to AI and to something new; the original tied only the overhaul leg to AI."
+ },
+ {
+  "id": "JB1",
+  "verdict": "UNSETTLEABLE",
+  "evidence": "Not met today. Texas: Governor Abbott's Aug 3, 2026 directive paused all data center interconnection advancement in ERCOT pending an audit; ERCOT's audit reports are due Dec 10 and the Public Utility Commission meets Dec 17, 2026, the earliest date the pause can lift, so it may end before the Feb 3, 2027 six-month mark. Governor-elect Hinojosa has pledged a moratorium from Jan 19, 2027. New York's one-year pause on projects of 50 MW or more (Jul 14, 2026) is described as Executive Order 62, not a statute, and New York is not a top-five state. The gap: the 'five states with the most planned capacity on Nov 22, 2026 (Cleanview tracker)' is not a published, dated figure. Cleanview's public US page, updated Nov 27, 2026, ranks states by building count (Virginia 902, Texas 855, Pennsylvania 316, Georgia 304, Ohio 284), not planned capacity, and changes daily. A Jan 2026 Reuters column using Cleanview data had Virginia (about 35 GW), Texas (about 27 GW), Pennsylvania (about 14 GW), then New Mexico, Indiana, Arizona and Utah without separate figures.",
+  "source": "Gibson Dunn, Nov 18, 2026 https://www.gibsondunn.com/texas-data-center-critical-dates-and-procedures-following-the-2026-elections/ ; DLA Piper, Aug 11, 2026 https://www.dlapiper.com/en/insights/publications/2026/08/texas-data-center-directive ; Cleanview US data center tracker https://www.cleanview.co/data-centers/us ; Linklaters on New York https://sustainablefutures.linklaters.com/post/102nc7q/new-york-becomes-first-u-s-state-to-impose-a-statewide-data-center-moratorium ; Reuters column via Zawya https://www.zawya.com/en/news/insights/charting-the-data-center-development-roadmap-in-key-us-states-maguire-ahuzuaau",
+  "inside_window_and_meant": null,
+  "replacement_test": "YES if, at any time from Nov 28, 2026 to Nov 19, 2029, Virginia, Texas, Pennsylvania, Georgia or Ohio (the five states with the most data center buildings on Cleanview's public US tracker on Nov 27, 2026), or the federal government, has in force a binding statewide or national limit on new large data centers (a pause on approvals or grid connections, a hard cap, or a dedicated large-load tax) that was enacted by statute or has stayed in force for 6 consecutive months or more. Texas's Aug 3, 2026 pause on ERCOT interconnections counts as statewide and settles YES if it is still in force on Feb 3, 2027 (state session laws; governor's orders; PUC and ERCOT orders and market notices; Federal Register). NO otherwise.",
+  "note": "Missing: a frozen list of the five states. I named the five Cleanview shows publicly today, by building count; if you hold Cleanview's planned-capacity ranking for Nov 22, write those five names in instead. Texas is on both lists, so the main path is unchanged."
+ },
+ {
+  "id": "RU4",
+  "verdict": "OK",
+  "evidence": "No ceasefire is in force and nothing has been signed. The Nov 10 to 12, 2026 talks in Abu Dhabi, Moscow and Dublin produced only a prisoner exchange and a promise of another round; Kyiv officials said Russia refused to discuss a ceasefire on Nov 11; on Nov 17 Al Jazeera's headline had the conflict escalating. Earlier truces in the lookback lasted hours or days, far short of 30 days.",
+  "source": "Meduza, Nov 13, 2026 https://meduza.io/en/feature/2026/11/13/three-days-of-ukraine-peace-talks-from-abu-dhabi-to-moscow-to-dublin-who-met-with-whom-and-what-did-they-actually-agree-on ; Al Jazeera, Nov 17, 2026 https://www.aljazeera.com/amp/news/2026/11/17/ukraine-holds-peace-talks-with-us-europe-as-conflict-escalates",
+  "inside_window_and_meant": null,
+  "replacement_test": null,
+  "note": "The test has no start date but nothing earlier qualifies. Say that a 'peace framework' means one document signed by authorized representatives of both governments, so a US and Ukraine text alone does not count."
+ }
+]

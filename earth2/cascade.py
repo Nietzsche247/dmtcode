@@ -25,6 +25,8 @@ OPTIONS
   --collisions        list the standing collisions (every arm counted) and stop if no update is given
   --restamp --reason "..."   reset the odds stamp by hand after a real repair; the reason goes into cascade_log
   --rebase            the one-time level correction: see THE REBASE below
+  --calibration       a level correction that is not news: see THE CALIBRATION below
+  --fix-odds-text     one time, structure only: bring every node's odds_text in line with its odds_now
 
 THE REBASE (one time only)
   python3 earth2/cascade.py GRAPH.json --rebase --updates updates.json
@@ -32,6 +34,40 @@ THE REBASE (one time only)
   --updates FILE only (no --set, no --reason, no --date: every row carries its own date, a reason that starts
   with "REBASE" and a source), writes no collisions queue, leaves each node's status as it was, and tags its
   cascade_log entry "kind": "rebase". It refuses to run if cascade_log already holds a rebase entry.
+
+THE CALIBRATION (level corrections that are not news)
+  python3 earth2/cascade.py GRAPH.json --calibration --updates updates.json
+  For a base-rate review, a test audit or a contradiction fix. Like the rebase it forces max hops to 0, reads
+  its rows from --updates FILE only, writes no collisions queue and leaves each node's status as it was. Its
+  cascade_log entry is tagged "kind": "calibration". Every row needs id, new_odds (1 to 99), date (today or
+  earlier), a reason that starts with "CALIBRATION", a source, and a "basis" that is one of "BASE RATE",
+  "TEST AUDIT" or "CONTRADICTION". It may run more than once, but the whole run is refused, with the list,
+  if any row names a node that already had a calibration move in the 30 days before the row's date.
+
+CURVES FOLLOW THE ODDS
+  A node's date curve (odds_by) says what the odds are by each date. Whenever a real run changes a node's
+  odds_now (set by hand or cascaded; normal, rebase and calibration runs), the curve is rescaled so the point
+  at the node's deadline (window_end) equals the new odds_now. Every other point is multiplied by the same
+  ratio, a curve that rose over time stays non-decreasing (a curve that falls by design keeps its shape), and
+  every value is held between 1 and 99. The deadline point is found with the rule of the Nov 25 rebase
+  (earth2/views/2026-11-26/apply_rebase.py): the curve point in the deadline month on or before the deadline;
+  else the straight line between the two points around it; if the deadline is before every point, the first
+  point; if it is after every point, a new point is added at the deadline. Nodes that FIRED, and nodes that sit
+  at 1 after the move, keep the curve they had. A dry run changes nothing. The run prints the count.
+
+ODDS TEXT FOLLOWS THE ODDS
+  odds_text is the short phrase beside the number, such as "35% on Nov 27 (EST)". On every real run, for each
+  node whose odds_now changed, the leading percent is rewritten to the new odds_now as a whole number; the rest
+  of the phrase stays, "about" stays, and a closing "(market ...)" note is dropped, because market odds live in
+  node["market"]. A string that does not start with a percent is left alone and its id is printed under
+  "odds_text not rewritten". odds_text is not part of the odds stamp.
+  python3 earth2/cascade.py GRAPH.json --fix-odds-text [--dry-run]
+  does the same for every node in one pass. It is structure only: no odds move, the stamp must come out
+  unchanged, and the change is noted in meta beside the other structure changes.
+
+CONTRADICTIONS (printed after every real run; warn only)
+  The list validate_graph.py prints: a NECESSARY link whose source is less likely than its target, and a pair
+  in meta.contains whose whole is less likely than its part. A run can create one; the next read fixes it.
 
 THE SCORECARD LOCK (earth2/scorecard.py)
   Every mode of this script stops, with the list and the commands to fix it, while any scorecard question
@@ -76,6 +112,10 @@ COLLISIONS (rule 8), listed after every run
   1 - odds/100 after the move (averaged over the nodes in the item), so a move that is already priced near
   certain weighs little. Where a node carries a like-for-like market (node "market"), its unpriced share is the
   measured gap |ours - market| / 100 instead, so the queue ranks by the gap wherever a market exists. Ties go to the shortest window. The top 5 is THE NEXT COLLISIONS QUEUE.
+  SHARED DRIVER: a kind (b) pair whose two nodes share an upstream node within 2 hops along positive links
+  (sign +1, any kind but OPPOSES, display-only links included, so measured driver curves count) is marked
+  "shared_driver" with the ids, and its score is multiplied by COLLISION_SHARED_DRIVER_WEIGHT = 0.5, because
+  two arms fed by one driver are not two independent pushes. 0.5 is a judgment constant, not a measured one.
 
 STANDING COLLISIONS (every arm counted; no arm list is written into this file)
   A live node pushed by links that carry a move from two or more different arms, where each pushing
@@ -87,7 +127,9 @@ import argparse
 import calendar
 import datetime as dt
 import json
+import math
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -96,8 +138,14 @@ ODDS_MIN, ODDS_MAX = 1.0, 99.0
 MIN_STEP = 0.01
 COLLISION_MIN_RISE = 3.0     # points a node must rise this run to count in a collision
 COLLISION_MAX_BEFORE = 90.0  # a node at 90 or more before the move is already priced
+COLLISION_SHARED_DRIVER_WEIGHT = 0.5  # judgment constant: a cross-arm pair fed by one upstream node is not two independent pushes
+COLLISION_SHARED_DRIVER_HOPS = 2      # how far upstream, along positive links, a shared driver is looked for
 COLLISION_RULE = ("a node counts if it rose 3+ points this run, sat under 90 before the move, and is not FIRED or "
-                  "SCHEDULED; score = joint odds x arms x unpriced share (the gap to a like-for-like market where one exists, else 1 - odds/100 after the move; averaged)")
+                  "SCHEDULED; score = joint odds x arms x unpriced share (the gap to a like-for-like market where one exists, else 1 - odds/100 after the move; averaged); "
+                  "a cross-arm pair that shares an upstream node within 2 hops along positive links is scored at half (shared driver weight 0.5, a judgment constant)")
+CALIBRATION_BASES = ("BASE RATE", "TEST AUDIT", "CONTRADICTION")
+CALIBRATION_GAP_DAYS = 30             # a node takes one calibration move in any 30 days
+CURVE_TOL = 0.05                      # a curve already reads its node's odds at the deadline when it is this close
 
 
 def load_scorecard():
@@ -108,6 +156,20 @@ def load_scorecard():
         raise SystemExit("EARTH2 IS LOCKED. earth2/scorecard.py is missing, so the scorecard lock cannot be checked. Restore it from git.")
     sys.dont_write_bytecode = True
     spec = importlib.util.spec_from_file_location("earth2_scorecard", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def load_validator():
+    """Load earth2/validate_graph.py from beside this file: it owns the contradictions list this engine prints
+    after a real run. Returns None when the file is missing, so a run that is already written still ends cleanly."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "validate_graph.py")
+    if not os.path.exists(path):
+        return None
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location("earth2_validate_graph", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -173,6 +235,175 @@ def parse_date(value, end=False):
 
 def is_fired(n):
     return str(n.get("status", "")).upper().startswith("FIRED") or n.get("odds_now") == 100
+
+
+# ---------------------------------------------------------------- curves follow the odds
+def curve_points(ob):
+    """(date, key, value) for every curve point that holds a number, in date order. Null points are left out."""
+    out = []
+    for k, v in (ob or {}).items():
+        if v is None or isinstance(v, bool) or not isinstance(v, (int, float)):
+            continue
+        try:
+            out.append((parse_date(k), k, float(v)))
+        except ValueError:
+            continue
+    return sorted(out)
+
+
+def curve_deadline(day, pts):
+    """Where a deadline sits on a curve: (mode, value, key). The rule of the Nov 25 rebase (apply_rebase.py).
+      key     a curve point in the deadline month, on or before the deadline (the last such point)
+      first   the deadline is before every point, so the first point covers it
+      append  the deadline is after every point, so the curve has no value there yet
+      interp  the deadline sits between two points; the value is the straight line between them"""
+    same = [x for x in pts if (x[0].year, x[0].month) == (day.year, day.month) and x[0] <= day]
+    if same:
+        return "key", same[-1][2], same[-1][1]
+    if pts[0][0] > day:
+        return "first", pts[0][2], pts[0][1]
+    if pts[-1][0] < day:
+        return "append", None, None
+    for (d0, _, v0), (d1, _, v1) in zip(pts, pts[1:]):
+        if d0 <= day <= d1:
+            return "interp", v0 + (v1 - v0) * (day - d0).days / max(1, (d1 - d0).days), None
+    return "append", None, None
+
+
+def rescale_curve(n, target):
+    """The node's curve (odds_by) rescaled so its value at the node's deadline (window_end) equals target.
+    Every other point is multiplied by the same ratio. A curve that rose over time stays non-decreasing (points
+    before the deadline are held at or under the target, points after it at or over); a curve that falls by
+    design keeps its shape. Every value is held between 1 and 99 and rounded to one decimal; null points stay
+    null. A curve that already reads the target at its deadline (within CURVE_TOL) comes back as it was.
+    Returns (new curve, mode, value at the deadline before), or None when the node has no curve to move
+    (no points, or no window_end to read the deadline from)."""
+    ob = n.get("odds_by")
+    pts = curve_points(ob)
+    try:
+        day = parse_date(n.get("window_end"), end=True)
+    except ValueError:
+        day = None
+    if not pts or day is None:
+        return None
+    rising = all(a[2] <= b[2] + 1e-9 for a, b in zip(pts, pts[1:]))
+    mode, before, dkey = curve_deadline(day, pts)
+    if before is not None and abs(before - float(target)) <= CURVE_TOL:
+        return dict(ob), mode, before  # the curve already reads the target at the deadline
+    new = dict(ob)
+    if mode == "append":
+        dkey = day.isoformat()
+        new[dkey] = float(target)
+    else:
+        ratio = float(target) / before if before else 1.0
+        for _, k, v in pts:
+            new[k] = v * ratio
+        if dkey is not None:
+            new[dkey] = float(target)
+    if rising:
+        for d, k, v in curve_points(new):
+            if k == dkey:
+                continue
+            if d < day:
+                new[k] = min(v, float(target))
+            elif d > day:
+                new[k] = max(v, float(target))
+        run = None
+        for _, k, v in curve_points(new):
+            run = v if run is None else max(run, v)
+            new[k] = run
+    for k, v in new.items():
+        if v is not None and not isinstance(v, bool) and isinstance(v, (int, float)):
+            new[k] = round(min(ODDS_MAX, max(ODDS_MIN, float(v))), 1)
+    return dict(sorted(new.items())), mode, before
+
+
+def curve_follows(n, after):
+    """True when a move to `after` should carry the node's curve with it: the node is live after the move.
+    A node that FIRED, or that sits at 1 after the move (settled or floored), keeps the curve it had."""
+    return not is_fired(n) and ODDS_MIN < float(after) < 100
+
+
+# ---------------------------------------------------------------- odds text follows the odds
+ODDS_TEXT_HEAD = re.compile(r"^(\s*)(about\s+)?(\d+(?:\.\d+)?)\s*%(.*)$", re.I | re.S)
+MARKET_TAIL = re.compile(r"\s*\(market[^()]*\)\s*$", re.I)
+SECOND_PERCENT = re.compile(r"\d\s*%")
+
+
+def odds_text_for(text, odds):
+    """odds_text with its leading percent rewritten to odds as a whole number (half rounds up, as the stamp does).
+    The rest of the phrase stays, "about" stays, and a closing "(market ...)" note is dropped, because market odds
+    live in node["market"]. Returns None when the text does not start with a percent (the caller leaves it)."""
+    if not isinstance(text, str):
+        return None
+    m = ODDS_TEXT_HEAD.match(text)
+    if not m:
+        return None
+    whole = int(math.floor(float(odds) + 0.5))
+    return f"{m.group(1)}{m.group(2) or ''}{whole}%{MARKET_TAIL.sub('', m.group(4))}"
+
+
+def has_second_percent(text):
+    """True when a rewritten odds_text still carries another percent after the leading one (left as written)."""
+    m = ODDS_TEXT_HEAD.match(text or "")
+    return bool(m and SECOND_PERCENT.search(m.group(4)))
+
+
+def structure_log(g):
+    """The list in meta where structure changes are noted for the graph's version (meta.v5_4_changes today)."""
+    meta = g.setdefault("meta", {})
+    key = str(meta.get("version") or "v").replace(".", "_") + "_changes"
+    if not isinstance(meta.get(key), list):
+        meta[key] = []
+    return meta[key]
+
+
+def fix_odds_text(sc, g, a):
+    """--fix-odds-text: bring every node's odds_text in line with its odds_now. Structure only: no odds move,
+    the stamp must come out unchanged, and the change is noted in meta. The lock and the stamp check have passed."""
+    if a.set or a.updates or a.rebase or a.calibration or a.reason or a.date:
+        raise SystemExit("--fix-odds-text runs alone. Do not combine it with --set, --updates, --rebase, --calibration, --reason or --date.")
+    odds_before = {n["id"]: n.get("odds_now") for n in g["nodes"]}
+    stamp_before = sc.odds_stamp(g["nodes"])
+    rewritten, in_line, left, second = [], 0, [], []
+    for n in g["nodes"]:
+        if n.get("odds_now") is None or not n.get("odds_text"):
+            continue
+        new = odds_text_for(n["odds_text"], n["odds_now"])
+        if new is None:
+            left.append(n["id"])
+            continue
+        if has_second_percent(new):
+            second.append(n["id"])
+        if new == n["odds_text"]:
+            in_line += 1
+            continue
+        rewritten.append((n["id"], n["odds_text"], new))
+        n["odds_text"] = new
+    print(f"FIX ODDS TEXT: {len(rewritten)} rewritten, {in_line} already in line, {len(left)} not rewritten "
+          f"(the text does not start with a percent), nodes with no odds skipped")
+    for nid, old, new in rewritten:
+        print(f"  {nid}: {old!r} -> {new!r}")
+    print(f"odds_text not rewritten ({len(left)}): " + (", ".join(left) or "none"))
+    if second:
+        print(f"odds_text with a second percent left as written ({len(second)}): " + ", ".join(second))
+    if {n["id"]: n.get("odds_now") for n in g["nodes"]} != odds_before or sc.odds_stamp(g["nodes"]) != stamp_before:
+        raise SystemExit("Refusing to write: an odds value would change. --fix-odds-text writes structure only.")
+    if a.dry_run:
+        print("DRY RUN: nothing written.")
+        return 0
+    if not rewritten:
+        print("Nothing to rewrite. Nothing written.")
+        return 0
+    structure_log(g).append(
+        f"{sc.today().strftime('%b')} {sc.today().day}, {sc.today().year}: odds_text brought in line with odds_now on "
+        f"{len(rewritten)} nodes (cascade.py --fix-odds-text), structure only, no odds moved: the leading percent now "
+        f"reads the node's odds_now as a whole number and closing market notes were dropped (market odds live in "
+        f"node market). {len(left)} strings that do not start with a percent were left as written.")
+    target = a.out or a.graph
+    write_graph(g, target)
+    print(f"WROTE {target}  (structure only; odds stamp unchanged {stamp_before})")
+    return 0
 
 
 def load(path):
@@ -259,7 +490,56 @@ def read_updates(args, nodes, aliases=None):
         if nid in out and out[nid]["new"] != v:
             raise SystemExit(f"'{nid}' is set twice with different odds ({out[nid]['new']} and {v}); an old id may resolve to it.")
         out[nid] = {"new": v, "date": str(u["date"]), "reason": u["reason"], "source": u.get("source") or ""}
+        if u.get("basis") is not None:
+            out[nid]["basis"] = str(u["basis"]).strip()
     return out
+
+
+def last_calibrations(g, nodes, aliases):
+    """node id -> the latest date of a calibration move on it, read from cascade_log (old ids resolved)."""
+    out = {}
+    for e in g.get("cascade_log", []):
+        if e.get("kind") != "calibration":
+            continue
+        for t in e.get("trigger", []) or []:
+            if t.get("before") == t.get("after"):
+                continue
+            nid = resolve_id(str(t.get("id")), nodes, aliases)[0]
+            try:
+                day = parse_date(t.get("date") or e.get("date"))
+            except ValueError:
+                day = None
+            if day is not None and (nid not in out or day > out[nid]):
+                out[nid] = day
+    return out
+
+
+def calibration_problems(sc, g, nodes, ups):
+    """Why a calibration file is refused: one line per bad row. An empty list means every row passes."""
+    bad = []
+    last = last_calibrations(g, nodes, alias_map(g))
+    today = sc.today()
+    for nid, u in ups.items():
+        if not str(u["reason"]).startswith("CALIBRATION"):
+            bad.append(f"{nid}: the reason must start with 'CALIBRATION'")
+        if not str(u["source"]).strip():
+            bad.append(f"{nid}: no source")
+        if u.get("basis") not in CALIBRATION_BASES:
+            bad.append(f"{nid}: basis {u.get('basis')!r} is not one of " + ", ".join(CALIBRATION_BASES))
+        if not ODDS_MIN <= u["new"] <= ODDS_MAX:
+            bad.append(f"{nid}: new_odds {u['new']:g} is outside 1 to 99 (a calibration corrects a level; it cannot fire or settle an event)")
+        try:
+            day = parse_date(u["date"])
+        except ValueError:
+            bad.append(f"{nid}: date {u['date']!r} is not a date")
+            continue
+        if day > today:
+            bad.append(f"{nid}: date {day} is after today ({today})")
+        prev = last.get(nid)
+        if prev is not None and (day - prev).days < CALIBRATION_GAP_DAYS:
+            bad.append(f"{nid}: already had a calibration move on {prev}; the next one is allowed from "
+                       f"{prev + dt.timedelta(days=CALIBRATION_GAP_DAYS)} (one per {CALIBRATION_GAP_DAYS} days)")
+    return bad
 
 
 def cascade(nodes, links, deltas, run_date, max_hops, fade):
@@ -348,8 +628,38 @@ def market_gap(node, after_odds):
     return round(float(after_odds) - float(m["odds"]), 1) if isinstance(m.get("odds"), (int, float)) else None
 
 
-def collisions(nodes, companies, rose, after, pushers, limit_days):
+def upstream_sets(links, hops=COLLISION_SHARED_DRIVER_HOPS):
+    """A function id -> the set of nodes upstream of it within `hops` steps along positive links: sign +1 (or no
+    sign) and any kind but OPPOSES. Display-only links count too, so a measured driver curve that feeds two
+    nodes is seen. The node itself is never in its own set. Each set is worked out once."""
+    parents = {}
+    for e in links or []:
+        if e.get("sign", 1) == -1 or str(e.get("kind") or "").upper() == "OPPOSES":
+            continue
+        parents.setdefault(e["target"], set()).add(e["source"])
+    cache = {}
+
+    def up(nid):
+        if nid not in cache:
+            seen, frontier = set(), {nid}
+            for _ in range(hops):
+                frontier = {p for x in frontier for p in parents.get(x, ())} - seen
+                seen |= frontier
+            seen.discard(nid)
+            cache[nid] = seen
+        return cache[nid]
+    return up
+
+
+def collisions(nodes, companies, rose, after, pushers, limit_days, links=None):
+    """The collisions this run opens, best first. See COLLISIONS in the file header for the three kinds and the score.
+    SHARED DRIVER (kind b only, and only when links are given): when the two nodes of a cross-arm pair share an
+    upstream node within COLLISION_SHARED_DRIVER_HOPS (2) hops along positive links, the item carries
+    "shared_driver" (the ids), its "what" text ends " [shared driver: X, Y]", and its score is multiplied by
+    COLLISION_SHARED_DRIVER_WEIGHT (0.5). Two arms fed by one driver are not two independent pushes. The 0.5 is a
+    judgment constant: it says such a pair is worth about half an independent one. It was not fitted to data."""
     far = dt.date(2100, 1, 1)
+    up = upstream_sets(links) if links else None
     end_of = lambda nid: parse_date(nodes[nid].get("window_end"), end=True) or far
     counted = {nid: r for nid, r in rose.items() if collision_counts(nodes[nid], r, after[nid])}
     items = []
@@ -372,11 +682,18 @@ def collisions(nodes, companies, rose, after, pushers, limit_days):
             joint = after[a["id"]] / 100 * after[b["id"]] / 100
             u = (unpriced(after[a["id"]], a) + unpriced(after[b["id"]], b)) / 2
             shared = sorted(set(a.get("layers_hit") or []) & set(b.get("layers_hit") or []))
-            items.append({"kind": "b", "what": f"{a['id']} ({rose[a['id']]:+.1f}) x {b['id']} ({rose[b['id']]:+.1f})" + (f", same layer: {', '.join(shared)}" if shared else ""),
-                          "nodes": [a["id"], b["id"]], "arms": sorted({a.get("arm"), b.get("arm")}),
-                          "gap_days": gap, "shared_layers": shared, "joint_odds": round(joint * 100, 1),
-                          "unpriced": round(u, 3), "score": round(joint * 2 * u, 3),
-                          "window_end": min(end_of(a["id"]), end_of(b["id"])).isoformat()})
+            item = {"kind": "b", "what": f"{a['id']} ({rose[a['id']]:+.1f}) x {b['id']} ({rose[b['id']]:+.1f})" + (f", same layer: {', '.join(shared)}" if shared else ""),
+                    "nodes": [a["id"], b["id"]], "arms": sorted({a.get("arm"), b.get("arm")}),
+                    "gap_days": gap, "shared_layers": shared, "joint_odds": round(joint * 100, 1),
+                    "unpriced": round(u, 3), "score": round(joint * 2 * u, 3),
+                    "window_end": min(end_of(a["id"]), end_of(b["id"])).isoformat()}
+            drivers = sorted(up(a["id"]) & up(b["id"])) if up else []
+            if drivers:
+                item["shared_driver"] = drivers
+                item["shared_driver_weight"] = COLLISION_SHARED_DRIVER_WEIGHT
+                item["what"] += " [shared driver: " + ", ".join(drivers[:4]) + (f" and {len(drivers) - 4} more" if len(drivers) > 4 else "") + "]"
+                item["score"] = round(joint * 2 * u * COLLISION_SHARED_DRIVER_WEIGHT, 3)
+            items.append(item)
     for co in companies or []:
         on = [x for x in co.get("event_nodes", []) if x in counted]
         if len(on) >= 2:
@@ -473,6 +790,8 @@ def main(argv=None):
     p.add_argument("--collisions", action="store_true")
     p.add_argument("--restamp", action="store_true")
     p.add_argument("--rebase", action="store_true")
+    p.add_argument("--calibration", action="store_true")
+    p.add_argument("--fix-odds-text", action="store_true")
     a = p.parse_args(argv)
 
     sc = load_scorecard()
@@ -484,7 +803,25 @@ def main(argv=None):
     if stamp_issue:
         print("CASCADE REFUSED. " + stamp_issue)
         return 4
-    if a.rebase:
+    if a.fix_odds_text:
+        return fix_odds_text(sc, g, a)
+    if a.calibration:
+        why = []
+        if a.rebase:
+            why.append("--calibration and --rebase do not run together.")
+        if a.set:
+            why.append("--calibration reads its rows from --updates FILE only; --set is refused.")
+        if a.reason or a.date:
+            why.append("--calibration takes no --reason or --date: every row in the updates file carries its own date, reason, source and basis.")
+        if not a.updates:
+            why.append("--calibration needs --updates FILE.")
+        if why:
+            print("CALIBRATION REFUSED. " + " ".join(why))
+            return 5
+        if a.max_hops != 0:
+            print(f"CALIBRATION: max hops forced to 0 (was {a.max_hops}). A calibration corrects levels; it does not cascade.")
+        a.max_hops = 0
+    elif a.rebase:
         why = []
         if a.set:
             why.append("--rebase reads its re-rates from --updates FILE only; --set is refused.")
@@ -511,6 +848,17 @@ def main(argv=None):
         if bad:
             print("REBASE REFUSED. Every row needs a reason that starts with 'REBASE' and a source: " + ", ".join(bad))
             return 5
+    if a.calibration:
+        bad = calibration_problems(sc, g, nodes, ups)
+        if bad:
+            print("CALIBRATION REFUSED. Nothing was written. Every row needs id, new_odds (1 to 99), date, a reason that "
+                  "starts with 'CALIBRATION', a source and a basis (" + ", ".join(CALIBRATION_BASES) + "), and a node takes "
+                  f"one calibration move in any {CALIBRATION_GAP_DAYS} days:")
+            for line in bad:
+                print("  - " + line)
+            return 5
+    levels_only = a.rebase or a.calibration  # a level correction: no hops, no collisions, status left alone
+    mode = "calibration" if a.calibration else "rebase" if a.rebase else None
     run_date = max(parse_date(u["date"]) for u in ups.values())
     deltas = {k: u["new"] - float(nodes[k]["odds_now"]) for k, u in ups.items()}
     totals, routes, pushers, skipped, stats = cascade(nodes, links, deltas, run_date, a.max_hops, a.fade)
@@ -543,13 +891,14 @@ def main(argv=None):
     for nid in list(skipped):
         if nid in totals:
             del skipped[nid]
-    # a rebase corrects levels, so its moves are not collisions
-    coll = [] if a.rebase else collisions(nodes, g.get("companies"), rose, after, pushers, a.collision_days)
+    # a rebase or a calibration corrects levels, so its moves are not collisions
+    coll = [] if levels_only else collisions(nodes, g.get("companies"), rose, after, pushers, a.collision_days, links)
     queue = coll[:5]
 
     entry = {"date": run_date.isoformat(), "run_at": dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat(),
-             "trigger": [{"id": k, "before": float(nodes[k]["odds_now"]), "after": u["new"], "date": u["date"],
-                          "reason": u["reason"], "source": u["source"]} for k, u in ups.items()],
+             "trigger": [dict({"id": k, "before": float(nodes[k]["odds_now"]), "after": u["new"], "date": u["date"],
+                               "reason": u["reason"], "source": u["source"]},
+                              **({"basis": u["basis"]} if a.calibration else {})) for k, u in ups.items()],
              "rule": {"move": "d x strength x sign", "fade": a.fade, "max_hops": a.max_hops, "visit": "once per run",
                       "clamp": [ODDS_MIN, ODDS_MAX], "fired_pinned": True, "collision_days": a.collision_days,
                       "collision_rule": COLLISION_RULE},
@@ -558,11 +907,11 @@ def main(argv=None):
                             "b_cross_arm_pairs": [c for c in coll if c["kind"] == "b"][:40],
                             "c_companies": [c for c in coll if c["kind"] == "c"]},
              "queue": queue}
-    if a.rebase:
-        entry = {"kind": "rebase", **entry}
-        entry["rule"]["collision_rule"] = "none: a rebase corrects levels and is not news, so it opens no collisions"
+    if levels_only:
+        entry = {"kind": mode, **entry}
+        entry["rule"]["collision_rule"] = f"none: a {mode} corrects levels and is not news, so it opens no collisions"
 
-    print(f"EARTH2 {'REBASE' if a.rebase else 'CASCADE'}  {entry['date']}  hops {a.max_hops}  fade {a.fade}")
+    print(f"EARTH2 {mode.upper() if mode else 'CASCADE'}  {entry['date']}  hops {a.max_hops}  fade {a.fade}")
     for t in entry["trigger"]:
         print(f"SET {t['id']} {t['before']} -> {t['after']}  ({t['date']}) {t['reason']}")
     print(f"\n{'ID':<14}{'ARM':<24}{'BEFORE':>7}{'AFTER':>7}{'MOVE':>7}  HOW")
@@ -571,7 +920,7 @@ def main(argv=None):
         print(f"{m['id']:<14}{(m['arm'] or '')[:23]:<24}{m['before']:>7.1f}{m['after']:>7.1f}{m['delta']:>+7.1f}  {how}")
     print(f"\nLINKS USED {stats['links_used']}, closed windows {stats['dropped_window_closed']}, "
           f"blocked at fired or hand-set nodes {stats['blocked_fired_or_hand_set']}, too small {stats['dropped_tiny']}")
-    print("\nTHE NEXT COLLISIONS QUEUE" + ("  (none: a rebase opens no collisions)" if a.rebase else f"  ({COLLISION_RULE})"))
+    print("\nTHE NEXT COLLISIONS QUEUE" + (f"  (none: a {mode} opens no collisions)" if levels_only else f"  ({COLLISION_RULE})"))
     for i, c in enumerate(queue, 1):
         print(f"  {i}. [{c['kind']}] {c['what']}  arms: {', '.join(c['arms'])}  joint {c['joint_odds']}%  score {c['score']}  window ends {c['window_end']}")
     run_arms = {x: 0 for x in all_arms(g)}
@@ -597,20 +946,41 @@ def main(argv=None):
     if a.collisions:
         print()
         print_standing(g, nodes, links, a.collision_days, run_date)
-    if a.report:
-        with open(a.report, "w", encoding="utf-8") as f:
-            json.dump(entry, f, indent=1, ensure_ascii=False)
     if a.dry_run:
+        if a.report:
+            with open(a.report, "w", encoding="utf-8") as f:
+                json.dump(entry, f, indent=1, ensure_ascii=False)
         print("\nDRY RUN: nothing written.")
         return 0
 
+    curves, text_new, text_left, text_second = [], [], [], []
     for m in moved:
         n = nodes[m["id"]]
+        if m["after"] != n["odds_now"]:
+            # curves follow the odds: the curve point at the node's deadline becomes the new odds_now
+            if curve_follows(n, m["after"]):
+                fit = rescale_curve(n, m["after"])
+                if fit is not None and fit[0] != n.get("odds_by"):
+                    curves.append({"id": m["id"], "deadline_read_as": fit[1],
+                                   "deadline_value_before": None if fit[2] is None else round(fit[2], 1),
+                                   "deadline_value_after": m["after"]})
+                    n["odds_by"] = fit[0]
+            # odds text follows the odds: the leading percent becomes the new odds_now as a whole number
+            if n.get("odds_text"):
+                text = odds_text_for(n["odds_text"], m["after"])
+                if text is None:
+                    text_left.append(m["id"])
+                else:
+                    if text != n["odds_text"]:
+                        n["odds_text"] = text
+                        text_new.append(m["id"])
+                    if has_second_percent(text):
+                        text_second.append(m["id"])
         n["odds_now"] = m["after"]
         n["odds_as_of"] = run_date.isoformat()
         n.setdefault("odds_history", []).append({"date": run_date.isoformat(), "odds": m["after"],
                                                  "note": (m.get("reason") or "") if m["role"] == "set by hand" else "cascade from " + ", ".join(ups)})
-        if m["role"] == "set by hand" and not a.rebase:  # a rebase leaves status as it was: a level correction is not news
+        if m["role"] == "set by hand" and not levels_only:  # a rebase or a calibration leaves status as it was: a level correction is not news
             if m["after"] == 100:
                 n["status"] = "FIRED " + m["date"]
             elif m["delta"] > 0:
@@ -618,11 +988,28 @@ def main(argv=None):
             elif m["delta"] < 0:
                 n["status"] = "BEHIND"
         n["last_move"] = {"date": run_date.isoformat(), "delta": m["delta"]}
+    entry["curves_rescaled"] = curves
+    entry["odds_text"] = {"rewritten": text_new, "not_rewritten": text_left}
+    print(f"\nCURVES RESCALED {len(curves)}  (each curve now reads its node's new odds at the deadline; FIRED nodes and nodes at 1 keep their curve)")
+    print(f"ODDS TEXT REWRITTEN {len(text_new)}")
+    print(f"odds_text not rewritten ({len(text_left)}): " + (", ".join(text_left) or "none"))
+    if text_second:
+        print(f"odds_text with a second percent left as written ({len(text_second)}): " + ", ".join(text_second))
+    if a.report:
+        with open(a.report, "w", encoding="utf-8") as f:
+            json.dump(entry, f, indent=1, ensure_ascii=False)
     g["cascade_log"].append(entry)
     g.setdefault("meta", {})["odds_stamp"] = sc.odds_stamp(g["nodes"])
     target = a.out or a.graph
     write_graph(g, target)
     print(f"\nWROTE {target}  (cascade_log entries: {len(g['cascade_log'])}, odds stamp {g['meta']['odds_stamp']})")
+    # the contradictions list validate_graph.py prints: warn only, a run can create one and the next read fixes it
+    vg = load_validator()
+    if vg is None or not hasattr(vg, "print_contradictions"):
+        print("\nCONTRADICTIONS: not listed (earth2/validate_graph.py is missing or old). Run the validator.")
+    else:
+        print()
+        vg.print_contradictions(g)
     return 0
 
 

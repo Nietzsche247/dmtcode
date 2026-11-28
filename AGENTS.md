@@ -48,3 +48,6 @@ Keep supplier part numbers and self-assembly costs in internal kit data and supp
 - A main event is a node of type END EVENT or with model_layer "board" (one definition: `is_main_event` in `earth2/scorecard.py`). New main events enter only through `earth2/deepdives/merge_nodes.py` with `earth2/templates/arm_template.json`, so each one arrives with a settlement test, judgment tags, a base rate, a kill condition and a question.
 - Log any big real event the graph had no node for with `python3 earth2/scorecard.py miss add`.
 - Full rules: `earth2/README.md`.
+- Level corrections that are not news (base-rate review, test audit, a contradiction) go through `earth2/cascade.py --calibration --updates FILE` (zero hops, logged as kind calibration, one move per node per 30 days); never use it for news.
+- The validator prints a CONTRADICTIONS list (a NECESSARY source under its target; a part above its whole in `meta.contains`). It warns and does not fail: fix every line at the next read.
+- A main event 30 or more points from its base rate needs a written reason (`base_rate_reasons` in import-seed) or a calibration move. Every settlement test counts only events from its own start date.

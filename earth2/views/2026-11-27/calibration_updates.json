@@ -1,0 +1,90 @@
+[
+ {
+  "id": "29-5",
+  "new_odds": 33,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 62.0 and the base rate of 4; moved to 33. For the gap: BLS payroll data (pulled from FRED on Nov 27, 2026, data through Oct 2026) show the test was met in 18 months between Nov 2023 and Dec 2025 and never before in the series, so the event is possible outside a recession. Against the gap: the last hit was Dec 2025; in Oct 2026 office payrolls were 51,000 above a year earlier; and the BLS Employment Projections 2025 to 203",
+  "source": "BLS CES via FRED, series USINFO, USFIRE, USPBS, PAYEMS, https://fred.stlouisfed.org/series/USPBS ; BLS Employment Projections, employment by major industry sector, https://www.bls.gov/emp/tables/employment-by-major-industry-sector.htm"
+ },
+ {
+  "id": "27-5",
+  "new_odds": 26,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 43.1 and the base rate of 8; moved to 26. Yen leg: Japan's Ministry of Finance bought yen on six days in 2026 (Apr 30, May 4, May 6, Jul 30, Jul 31, Aug 3), and the dollar was at 158.76 yen on Nov 20, 2026 against 163.86 on Jul 29, the day before the last round. 10-year leg: the 10-year closed at 5.31% on Oct 5, 2026 and 4.85% on Nov 25, 2026, and the Fed raised its target range on Sep 17, 2026 (upper bound 3.75% to 4.00%",
+  "source": "Japan MOF intervention history, https://www.mof.go.jp/english/policy/international_policy/reference/feio/foreign_exchange_intervention_operations.csv ; FRED DGS10, https://fred.stlouisfed.org/series/DGS10 ; FRED DFEDTARU, https://fred.stlouisfed.org/series/DFEDTARU ; FRED DEXJPUS, https://fred.stlou"
+ },
+ {
+  "id": "M56",
+  "new_odds": 20,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 55.0 and the base rate of 14; moved to 20. ACLED file dated Nov 25, 2026: the latest 12 months (Dec 2025 to Nov 20, 2026) hold 123 events against 117 in the 12 months before, up 5%. Meeting the test by Nov 30, 2027 needs about 185 events in a 12-month span, a level last reached in 2022 (195). Other trackers did rise in 2025 (Bridging Divides: targeted violence up at least 34%; Capitol Police threat cases up 58%, both as c",
+  "source": "ACLED via HDX, https://data.humdata.org/dataset/united-states-acled-conflict-data ; Just Security, Apr 28, 2026, https://www.justsecurity.org/137299/rising-political-violence-early-warning-infrastructure/"
+ },
+ {
+  "id": "28-6",
+  "new_odds": 37,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 54.9 and the base rate of 20; moved to 37. For the gap: China has held five named exercises around Taiwan since 2023 (Joint Sword Apr 8 to 10, 2023; Joint Sword-2024A May 23 to 24, 2024; Joint Sword-2024B Oct 14, 2024; Strait Thunder-2025A Apr 1 to 2, 2025; Justice Mission 2025 Dec 29 to 30, 2025), a tool not in routine use during the 2000 to 2020 elections, and the last one fell inside a Nov to Jan span. Against the gap:",
+  "source": "ASPI tracker of China's military exercises around Taiwan, https://www.pressurepoints.aspi.org.au/taiwan-and-the-taiwan-strait/chinas-military-coercion/chinas-large-scale-exercises-since-2022 ; USNI News, Dec 29 and Dec 31, 2025, https://news.usni.org/2025/12/31/china-wraps-justice-mission-taiwan-blo"
+ },
+ {
+  "id": "F5",
+  "new_odds": 45,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 60.4 and the base rate of 30; moved to 45. Nov 17, 2026: the Wall Street Journal reported that the SEC is investigating Nvidia, including whether its disclosures misled investors. Nvidia did not file its 10-Q with its Nov 17 results (the CFO said 'in the coming weeks'; due Dec 4). The CEO resigned Nov 11 and the earlier G1 report has him reinstated Nov 23. The stock closed at $125.53 on Nov 20, $165.05 on Nov 23 and $149.",
+  "source": "Reuters via Korea JoongAng Daily, Nov 18, 2026, https://www.koreajoongangdaily.com/business/huang-pitches-nvidia-comeback-wsj-reports-sec-probing-the-chipmaker/12978169 ; FourWeekMBA on the 10-Q (SECONDARY), https://fourweekmba.com/ai-nvidia-holds-its-10-q-after-9-same-day-filings-due-dec-4/ ; Nasda"
+ },
+ {
+  "id": "W4",
+  "new_odds": 20,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 10.0 and the base rate of 44; moved to 20. Nov 18, 2026: NACE Job Outlook 2027 reports 35.6% of employers plan to hire more new graduates, over half plan to hold steady, about 10% plan to cut, and the projected median increase is 14%.",
+  "source": "NACE, Nov 18, 2026, https://www.naceweb.org/job-market/trends-and-predictions/employers-expect-hiring-salaries-to-climb-for-the-class-of-2027"
+ },
+ {
+  "id": "C2",
+  "new_odds": 42,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 59.6 and the base rate of 24; moved to 42. Nine outages hit US systems Nov 12 to 17, 2026 (Microsoft 365 down about 23 hours 50 minutes; FAA ground stop 254 minutes). None met this test and the Homeland Security Secretary called them individually unrelated (Nov 16). DNI Clayton tied the NSA network outage to a PHP patch (Nov 17). Howden Re, Nov 5, 2026: newly found flaws up 105% in Jan to Sep 2026 against the same months ",
+  "source": "Implicator https://www.implicator.ai/us-tech-outages-ai-patch-rush/ ; FourWeekMBA outage table https://fourweekmba.com/ai-the-november-outage-wave-explained-9-failures-7-causes/ ; Howden Re via Reinsurance News https://www.reinsurancene.ws/us-cyber-pricing-stabilising-but-tech-risks-and-privacy-clai"
+ },
+ {
+  "id": "C1",
+  "new_odds": 28,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 45.0 and the base rate of 10; moved to 28. FBI FLASH alert of Nov 13, 2026 (ic3.gov/CSA/2026/261113.pdf) says criminals and state actors run the AI-driven ARTEX framework against ten sectors; one campaign through a ConnectWise product reached more than 2,250 downstream Microsoft 365 tenants. No listed victim is named, no dollar loss is given and no SEC 8-K is tied to it.",
+  "source": "SecureWorld on the FBI FLASH https://www.secureworld.io/industry-news/fbi-artex-flash-ai-attacks ; BleepingComputer https://www.bleepingcomputer.com/news/security/fbi-warns-artex-ai-hacking-tool-is-powering-global-cyberattacks/"
+ },
+ {
+  "id": "J6",
+  "new_odds": 37,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 54.9 and the base rate of 20; moved to 37. Japan's Ministry of Finance reported zero currency intervention for Sep 29 to Oct 28, 2026, and the securities in Japan's reserves rose to $834.6B at end October from $821.7B (reported Nov 8, 2026). TIC table released Nov 2026: Japan $1,239.3B in Feb 2026 to $1,063.1B in Sep 2026, down 14.2% in seven months.",
+  "source": "US Treasury TIC https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table5.txt and https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/mfhhis01.txt ; Trading Economics https://tradingeconomics.com/japan/foreign-exchange-reserves/news/599288 ; New"
+ },
+ {
+  "id": "C8",
+  "new_odds": 37,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 54.4 and the base rate of 20; moved to 37. Marsh index for Q3 2026, released Oct 21, 2026: global cyber rates down 4% (13th straight fall, same as Q2); US cyber flat for the first time in the run; every other region still falling. Howden Re, Nov 5, 2026: the pace of reduction 'has materially decelerated', with no rise forecast. WTW, Oct 2026: 2027 cyber range of -5% to +5%, trend neutral.",
+  "source": "Marsh https://www.marsh.com/en/corp/about/news/global-commercial-insurance-falls-5-percent-q3-2026.html ; Howden Re via Reinsurance News https://www.reinsurancene.ws/us-cyber-pricing-stabilising-but-tech-risks-and-privacy-claims-loom-howden-re/ ; WTW https://www.wtwco.com/en-us/insights/2026/10/insu"
+ },
+ {
+  "id": "J4",
+  "new_odds": 20,
+  "date": "2026-11-27",
+  "basis": "BASE RATE",
+  "reason": "CALIBRATION (base-rate review, Nov 27, 2026): no dated fact justifies the full gap between our 35.0 and the base rate of 4; moved to 20. S&P affirmed SoftBank Group at BB+ and cut the outlook to negative in early March 2026 (reported Mar 5, 2026), saying pressure on the rating rises without swift measures such as selling holdings. The 5-year CDS reached 466 bp on Nov 6, 2026 (Markit via Reuters), the widest since Oct 2022; the test line is 600.",
+  "source": "Bloomberg https://news.bgov.com/private-equity/softbank-group-cds-rises-to-near-year-high-on-s-p-outlook-cut and https://finance.yahoo.com/news/softbank-30-billion-openai-bet-091742980.html ; Reuters via The Star https://www.thestar.com.my/tech/tech-news/2026/11/06/softbank-credit-risk-jumps-to-4-ye"
+ }
+]

@@ -40,6 +40,8 @@ These rules are enforced by code, not by memory. The sections below say how.
 3. `python3 earth2/validate_graph.py public/future/earth2/graph.json`
 4. Commit and push to main. Netlify builds main, so the page shows the new odds after the deploy.
 
+A real run also carries each moved node's date curve and odds text with its odds, and prints the contradictions list (see the sections "Curves follow the odds", "Odds text follows the odds" and "Contradictions" below). A level correction that is not news goes through `--calibration`, not through a daily update.
+
 ## The scorecard
 
 Why: the graph makes hundreds of calls and none had ever been scored. The scorecard turns the main events into dated yes or no questions, locks Earth2's odds on the day each question is written, and grades the answers.
@@ -80,7 +82,7 @@ python3 earth2/scorecard.py list | show Q-0001 | check
 
 Every command that changes something runs `score` itself.
 
-A seed file for `import-seed` is `{"questions": [...], "backfilled": [...], "event_tags": {"<main event id>": ["tag"]}, "legacy_base_rates": {"<id>": {"value": 12, "reference_class": "...", "source": "..."}}}`. Question rows carry the fields from `event_id` through `kind`; the CLI gives the id, the lock and the status. Backfilled rows add `outcome`, `settled_as_of`, `evidence`, `evidence_source` and `odds_date`; they are stored SETTLED with kind backfilled, count in the score, and are flagged everywhere. `event_tags` and `legacy_base_rates` write `judgment_tags` and `base_rate` onto graph nodes: structure only, never odds. Anything that fails a rule stops the whole import with the list.
+A seed file for `import-seed` is `{"questions": [...], "backfilled": [...], "event_tags": {"<main event id>": ["tag"]}, "legacy_base_rates": {"<id>": {"value": 12, "reference_class": "...", "source": "..."}}}`. Question rows carry the fields from `event_id` through `kind`; the CLI gives the id, the lock and the status. Backfilled rows add `outcome`, `settled_as_of`, `evidence`, `evidence_source` and `odds_date`; they are stored SETTLED with kind backfilled, count in the score, and are flagged everywhere. `event_tags` and `legacy_base_rates` write `judgment_tags` and `base_rate` onto graph nodes: structure only, never odds. Replacing a base rate a node already has needs `"replace_reason": "..."` in the row; the old one is kept in `base_rate_history` with the date and the reason. Anything that fails a rule stops the whole import with the list.
 
 ### Settling
 
@@ -140,6 +142,12 @@ Old ids still work. When two ids were the same real event, the copy was folded i
 
 ## Node fields
 
+Added Nov 27 (curves, odds text, contradictions, calibration)
+- `base_rate_gap_reason` (main events): `{text, dated_fact, source, date}`. Why the odds sit far from the base rate.
+- `base_rate_history` (main events): the base rates that were replaced, each with the date and the reason.
+- `meta.contains`: the containment pairs the contradictions list reads.
+- In a `cascade_log` entry: `curves_rescaled` (id, how the deadline was read, the deadline value before and after), `odds_text` (ids rewritten and not rewritten), `kind: calibration` with a `basis` on each trigger row, and `shared_driver` on a cross-arm collision.
+
 Added Nov 26 (scorecard)
 - `judgment_tags` (main events): which kinds of judgment the odds lean on, from timing, brakes, actor, market, pace. They pick which corrections apply to the event.
 - `base_rate` (main events): `{value, reference_class, source}`. How often events of this kind have happened, in percent.
@@ -161,9 +169,56 @@ Not financial advice.
 
 A node counts toward a collision only if it rose 3 or more points this run, sat under 90 before the move, and is not FIRED or SCHEDULED. Score = joint odds x arms pushing x unpriced share. The unpriced share is the measured gap |ours - market| / 100 where the node carries a like-for-like market (`market` on the node), else the proxy 1 - odds/100 after the move. So the queue ranks by the gap wherever a market exists, and a near-certain calendar event that barely moved (the old D1 x WF1 at 92%) no longer leads it. `cascade.py` and the page run the same rule.
 
+### Shared driver (added Nov 27, 2026)
+
+Two arms fed by one driver are not two independent pushes. For a cross-arm pair (kind b), `cascade.py` looks upstream of both nodes, up to 2 hops along positive links (sign +1, any kind but OPPOSES; display-only links count, so a measured driver curve that feeds both is seen). If the two share an upstream node, the item carries `shared_driver` (the ids), its text ends ` [shared driver: X, Y]`, and its score is multiplied by `COLLISION_SHARED_DRIVER_WEIGHT` = 0.5. The 0.5 is a judgment constant: it says such a pair is worth about half an independent one. It was not fitted to data. Kinds a and c are not changed. The page's live what-if run does not apply this weight yet; the queue it shows after a real run comes from `cascade_log`, so it carries the flag and the halved score.
+
 ## Rebase mode
 
 `cascade.py --rebase --updates FILE` is for a one-time level correction, not news: zero hops (nothing cascades), every reason starts with "REBASE", every row has a source, the log entry is tagged `kind: rebase`, status is left alone, no collisions queue is written, and a second rebase is refused. The Nov 25 rebase is logged; its report, script and updates are in `earth2/views/2026-11-26/`.
+
+## Calibration mode
+
+`cascade.py GRAPH --calibration --updates FILE` is for a level correction that is not news: a base-rate review, a test audit or a contradiction fix. It works like the rebase (zero hops, nothing cascades, status left alone, no collisions queue) with these differences:
+
+- Every row needs `id`, `new_odds` (1 to 99: a calibration cannot fire or settle an event), `date` (today or earlier), a `reason` that starts with "CALIBRATION", a `source`, and a `basis` that is one of "BASE RATE", "TEST AUDIT" or "CONTRADICTION".
+- The log entry is tagged `kind: calibration` and each trigger row keeps its `basis`. The page shows the entry with the pill "CALIBRATION: levels only, no cascade" and leaves it out of the collisions queue, as it does the rebase.
+- It may run more than once, but a node takes one calibration move in any 30 days. If any row names a node whose last calibration move is less than 30 days before the row's date, the whole file is refused and the rows are listed. Nothing is half applied.
+- Curves and odds text follow, as in every real run.
+
+Row shape: `{"id": "D4", "new_odds": 18, "date": "2026-11-28", "reason": "CALIBRATION base rate review: ...", "source": "...", "basis": "BASE RATE"}`
+
+## Curves follow the odds
+
+A node's date curve (`odds_by`: date to percent) says what the odds are by each date. Before Nov 27 a cascade run moved `odds_now` and never the curve, so curves drifted. Now every real run (normal, rebase, calibration) rescales the curve of each node it moves:
+
+- The point at the node's deadline (`window_end`) becomes the new `odds_now`.
+- Every other point is multiplied by the same ratio.
+- A curve that rose over time stays non-decreasing. A curve that falls by design (a "condition still holds" node such as PG5, PG9 or R4) keeps its shape.
+- Every value is held between 1 and 99. Null points stay null.
+- The deadline point is found with the rule of the Nov 25 rebase: the curve point in the deadline month on or before the deadline; else the straight line between the two points around it; if the deadline is before every point, the first point; if it is after every point, a new point is added at the deadline.
+- A node that FIRED, and a node that sits at 1 after the move, keeps the curve it had.
+
+A dry run changes nothing. The run prints `CURVES RESCALED n` and the log entry lists them in `curves_rescaled`. Known limit: the scaling is proportional, so far horizons move a lot, and a point pushed onto the 1 or 99 edge loses its shape there. A curve whose node has not moved since Nov 26 may still be off its odds; it is brought in line the next time the node moves.
+
+## Odds text follows the odds
+
+`odds_text` is the short phrase beside the number, such as "35% on Nov 27 (EST)". It is not part of the odds stamp. On every real run, for each node whose `odds_now` changed, the leading percent is rewritten to the new `odds_now` as a whole number (half rounds up). The rest of the phrase stays, "about" stays, and a closing "(market ...)" note is dropped, because market odds live in the node's `market` field. A string that does not start with a percent (for example "70 / 85 / 92 by Nov 2027 / 2028 / 2029") is left alone and its id is printed under "odds_text not rewritten". A second percent later in the phrase is left as written and the id is printed.
+
+`python3 earth2/cascade.py public/future/earth2/graph.json --fix-odds-text [--dry-run]` does the same for every node in one pass. It is structure only: no odds move, the stamp must come out unchanged or nothing is written, nothing is added to `cascade_log`, and the change is noted in `meta` beside the other structure changes. A second run finds nothing to do.
+
+## Contradictions (warn only)
+
+`validate_graph.py` prints a CONTRADICTIONS list, and `cascade.py` prints the same list after every real run. Each line is a WARN with both numbers; the list ends with a count. It never changes the exit code: a cascade run can create a contradiction, and the next read fixes it. Numbers are compared like for like, with 1 point of slack.
+
+- A NECESSARY link whose source is less likely than its target. When both nodes carry a live curve, the source's curve value at the target's deadline is set against the target's `odds_now`; otherwise `odds_now` against `odds_now`. FIRED nodes are skipped.
+- A containment pair whose whole is less likely than its part. The pairs live in `meta.contains`: `{"whole": id, "part": id, "note": "..."}`, meaning the whole happens whenever the part does. With curves on both, the two curves are compared at every curve date inside both spans. With a curve on the whole only, its value at the part's deadline is set against the part's `odds_now`. With a curve on the part only, the whole's `odds_now` is set against the part's curve at the whole's deadline. With no curves, `odds_now` against `odds_now` when the whole's deadline is the same or later; else the pair is listed as not compared. A pair with a FIRED node or a node at 1 is skipped.
+
+A curve value between two points is the straight line between them; before the first point it is the first point, and after the last point the last point. Old ids in `meta.contains` resolve through the alias map. A row that names no node, or names one node twice, fails the validator like any other broken reference. Add a pair only when the two settlement tests justify it, and say how in the note. The first pairs are the "part of a whole" fixes of the Nov 25 rebase.
+
+## Why this time is different (base rate gap reasons)
+
+A main event that sits far from its base rate should say why. `import-seed` takes `base_rate_reasons`: `{"<main event id>": {"text": "...", "dated_fact": "...", "source": "...", "date": "YYYY-MM-DD"}}`, written to the node as `base_rate_gap_reason`. Structure only, main events only, old ids resolve, and all four fields are required. The validator prints a NOTE: "main events 30+ points from their base rate with no written reason: N (ids)". It counts live main events (not FIRED, odds above 1) whose `odds_now` is 30 or more points from `base_rate.value`. The page shows the reason under the base rate line.
 
 ## Structure imports (import-seed)
 
@@ -171,7 +226,8 @@ Besides questions, backfilled answers, `event_tags` and `legacy_base_rates`, a s
 - `legacy_settlement_tests`: `{"<main event id>": "test"}`. Replacing an existing test needs `{"text": "...", "replace_reason": "..."}`; the old text is kept in `settlement_test_history`.
 - `event_markets`: `{"<main event id>": {"odds", "venue", "contract", "url", "as_of", "match_note"}}`. Like for like only: same event, threshold and deadline (within about 31 days, said in match_note). Real money or a traded instrument; Manifold, Metaculus and other forecast sites are refused. Shown on the page beside our odds, with a gap table ranked by size.
 - `company_lenses`: `{"CO:XXX": {"lens": "commanding_heights", "class": "holds a chokepoint" | "sells intelligence by the unit", "basis", "source"}}`. Structure only: no helped, hurt, long or short wording, no odds change.
-All three are structure only; the import refuses to write if any odds value would change, and the validator checks their shape.
+- `base_rate_reasons`: see "Why this time is different" above.
+All of these are structure only; the import refuses to write if any odds value would change, and the validator checks their shape.
 
 ## Ticket guard
 

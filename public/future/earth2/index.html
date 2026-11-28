@@ -209,7 +209,7 @@ function init(data, name){
   aliasOf={}; for(const m of (G.merges||[])){ for(const [o,v] of Object.entries(m.alias_map||{})) aliasOf[o]=(v&&v.survivor)||v; for(const x of (m.nodes_mapped_to_v5||[])) if(x.deepdive_id&&x.v5_id&&!aliasOf[x.deepdive_id]) aliasOf[x.deepdive_id]=x.v5_id; }
   $("drop").style.display="none";
   $("status").textContent=`${G.nodes.length} nodes, ${G.links.length} links, ${G.companies.length} companies. Data: ${name}`;
-  const runs=G.cascade_log.filter(e=>e.kind!=="restamp"&&e.kind!=="rebase"); lastEntry=runs.length?runs[runs.length-1]:null; setHeat(lastEntry);
+  const runs=G.cascade_log.filter(e=>e.kind!=="restamp"&&e.kind!=="rebase"&&e.kind!=="calibration"); lastEntry=runs.length?runs[runs.length-1]:null; setHeat(lastEntry);
   checkStamp(); buildFilters(); setTimelineFromToday(); rebuild(); renderColl(); renderLog(); renderAbout(); renderScore();
 }
 
@@ -294,7 +294,8 @@ function nodeScore(n){
   const cor=correctedOdds(n), br=n.base_rate, jt=n.judgment_tags||[], mk=n.market;
   return `<div class="small" style="margin-top:6px"><span class="muted">Scorecard:</span> ${cor?`raw odds <b>${fmt(n.odds_now)}</b>, corrected <b style="color:#ffd166">${cor.value}%</b> <span class="muted">(${cor.used.map(x=>esc(x[0])+" "+offBy(x[1])).join(", ")} points off; the raw number is what stays stored and scored)</span>`:`raw odds only. <span class="muted">No correction is active${jt.length?"; its tags need 10 answers each":""}.</span>`}</div>
    <div class="small"><span class="muted">Judgment tags:</span> ${jt.length?jt.map(x=>`<span class="pill">${esc(x)}</span>`).join(""):'<span class="muted">none yet</span>'}</div>
-   <div class="small"><span class="muted">Base rate:</span> ${br&&br.value!=null?`<b>${esc(br.value)}%</b> <span class="muted">${esc(br.reference_class||"")} . ${esc(br.source||"")}</span>`:'<span class="muted">none yet</span>'}</div>
+   <div class="small"><span class="muted">Base rate:</span> ${br&&br.value!=null?`<b>${esc(br.value)}%</b> <span class="muted">${esc(br.reference_class||"")} . ${esc(br.source||"")}</span>`:'<span class="muted">none yet</span>'}</div>${n.base_rate_gap_reason?`
+   <div class="small"><span class="muted">Why this time is different:</span> ${esc(n.base_rate_gap_reason.text||"")} <span class="muted">${esc(n.base_rate_gap_reason.dated_fact||"")} . ${esc(n.base_rate_gap_reason.source||"")} . ${esc(n.base_rate_gap_reason.date||"")}</span></div>`:""}
    <div class="small"><span class="muted">Settlement test:</span> ${n.settlement_test?esc(n.settlement_test):'<span class="muted">none yet</span>'}</div>
    <div class="small"><span class="muted">Market:</span> ${mk&&mk.odds!=null?`<b>${esc(mk.odds)}%</b> vs ours <b>${fmt(n.odds_now)}</b> <span style="color:#ffd166">(gap ${gapTxt(n)})</span> <span class="muted">${esc(mk.venue)} . ${esc(mk.contract)} . as of ${esc(mk.as_of)} . ${esc(mk.match_note||"")}</span>`:'<span class="muted">no like-for-like market</span>'}</div>${SC?qList:""}`;
 }
@@ -639,7 +640,7 @@ function renderColl(){
 }
 function renderLog(){
   if(!G) return; const L=G.cascade_log;
-  $("pLog").innerHTML=`<h3>Cascade log (${L.length})</h3>`+(L.length?L.slice().reverse().map((e,i)=>e.kind==="restamp"?`<div class="q"><b>${esc(e.date)}</b> Odds stamp reset by hand<div class="small">${esc(e.reason||"")}</div><div class="small muted">${esc(e.stamp_before||"none")} to ${esc(e.stamp_after||"")}</div></div>`:`<div class="q"><b>${esc(e.date)}</b> ${e.kind==="rebase"?'<span class="pill">REBASE: one time, levels only, no cascade</span> ':""}${e.trigger.map(t=>`${esc(t.id)} ${t.before} to ${t.after}`).join(", ")}<div class="small">${e.trigger.map(t=>esc(t.reason)).join("; ")}</div><div class="small muted">${e.moved.length} nodes moved${e.run_by?" . "+esc(e.run_by):""}</div><details><summary class="small">What moved</summary>${movedTable(e)}</details></div>`).join(""):'<div class="muted small">Empty.</div>');
+  $("pLog").innerHTML=`<h3>Cascade log (${L.length})</h3>`+(L.length?L.slice().reverse().map((e,i)=>e.kind==="restamp"?`<div class="q"><b>${esc(e.date)}</b> Odds stamp reset by hand<div class="small">${esc(e.reason||"")}</div><div class="small muted">${esc(e.stamp_before||"none")} to ${esc(e.stamp_after||"")}</div></div>`:`<div class="q"><b>${esc(e.date)}</b> ${e.kind==="rebase"?'<span class="pill">REBASE: one time, levels only, no cascade</span> ':e.kind==="calibration"?'<span class="pill">CALIBRATION: levels only, no cascade</span> ':""}${e.trigger.map(t=>`${esc(t.id)} ${t.before} to ${t.after}`).join(", ")}<div class="small">${e.trigger.map(t=>esc(t.reason)).join("; ")}</div><div class="small muted">${e.moved.length} nodes moved${e.run_by?" . "+esc(e.run_by):""}</div><details><summary class="small">What moved</summary>${movedTable(e)}</details></div>`).join(""):'<div class="muted small">Empty.</div>');
 }
 function renderAbout(){
   const m=G.meta||{};

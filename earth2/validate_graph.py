@@ -10,6 +10,7 @@ USAGE
   --json               print the counts as JSON (the same families of counts as verification_v5.1.json)
 
 Exit code 0 when every check passes, 1 otherwise, 3 when the scorecard lock is on.
+The CONTRADICTIONS list is warn only and never changes the exit code.
 
 THE SCORECARD LOCK (earth2/scorecard.py)
   While any scorecard question is past due and not answered, this script stops before any check and prints
@@ -23,7 +24,22 @@ CHECKS
   delay_days; every display_only link says why (display_only_reason); sign is +1 or -1; kind is a known kind;
   alias map entries point at a node that exists and the old id no longer exists; company and chain node
   references exist; kill_condition and kill_check on every live END EVENT, board row and tree trigger with a
-  board reference; date_state (LOCKED, SCHEDULED, ESTIMATED) on every live node with a window.
+  board reference; date_state (LOCKED, SCHEDULED, ESTIMATED) on every live node with a window; every row of
+  meta.contains names two different nodes that exist (old ids resolve through the alias map).
+
+CONTRADICTIONS (warn only: a cascade run can create one, and the next read fixes it)
+  Printed as WARN lines with both numbers, then a count. Two kinds, compared like for like, with 1 point of slack:
+  (a) a NECESSARY link whose source is less likely than its target. When both nodes carry a live date curve
+      (odds_by), the source's curve value at the target's deadline (window_end) is set against the target's
+      odds_now; otherwise odds_now against odds_now. FIRED nodes are skipped.
+  (b) a pair in meta.contains, {"whole": id, "part": id, "note": "..."}: the whole happens whenever the part
+      does, so the whole must be at least as likely as the part at every shared date. Both curves: every curve
+      date inside both curves' spans. Only the whole has a curve: its value at the part's deadline against the
+      part's odds_now. Only the part has a curve: the whole's odds_now against the part's curve at the whole's
+      deadline. No curves: odds_now against odds_now when the whole's deadline is the same or later (else the
+      pair cannot be compared and is counted as such). A pair with a FIRED node, or a node at 1, is skipped.
+  A curve value between two points is the straight line between them; before the first point it is the first
+  point and after the last point the last point. A node at 1 or FIRED has no live curve; its odds_now is used.
 
 SCORECARD CHECKS (the rules live in earth2/scorecard.py)
   the odds stamp: meta.odds_stamp must match the odds in the file, so a hand edit to odds_now fails here;
@@ -36,13 +52,16 @@ SCORECARD CHECKS (the rules live in earth2/scorecard.py)
   not lose a field it had. The gaps the older events still carry are printed as a NOTE.
 """
 import argparse
+import calendar
 import collections
+import datetime as dt
 import json
 import os
 import sys
 
 KINDS = {"NECESSARY", "LIKELY", "MAGNIFIES", "OPPOSES"}
 STATES = {"LOCKED", "SCHEDULED", "ESTIMATED"}
+CONTRADICTION_SLACK = 1.0  # points: a gap this small is rounding, not a contradiction
 
 
 def fired(n):
@@ -55,6 +74,161 @@ def aliases(g):
         for old, v in (m.get("alias_map") or {}).items():
             out[old] = v["survivor"] if isinstance(v, dict) else v
     return out
+
+
+# ---------------------------------------------------------------- contradictions (warn only)
+def as_day(value, end=False):
+    """A date from YYYY-MM-DD or YYYY-MM (the first of the month, or the last when end is true), else None."""
+    s = str(value or "").strip()
+    try:
+        if len(s) == 7:
+            y, m = int(s[:4]), int(s[5:7])
+            return dt.date(y, m, calendar.monthrange(y, m)[1] if end else 1)
+        return dt.date.fromisoformat(s[:10])
+    except ValueError:
+        return None
+
+
+def curve_points(n):
+    """(date, value) for every point of the node's curve (odds_by) that holds a number, in date order.
+    A node at 1 or FIRED has no live curve (the engine leaves that curve as it was), so it gives no points."""
+    o = n.get("odds_now")
+    if o is None or fired(n) or o <= 1:
+        return []
+    out = []
+    for k, v in (n.get("odds_by") or {}).items():
+        if isinstance(v, (int, float)) and not isinstance(v, bool) and as_day(k) is not None:
+            out.append((as_day(k), float(v)))
+    return sorted(out)
+
+
+def curve_at(pts, day):
+    """The curve value on a day: the straight line between the two points around it; the first point before
+    the curve starts; the last point after it ends."""
+    if day <= pts[0][0]:
+        return pts[0][1]
+    if day >= pts[-1][0]:
+        return pts[-1][1]
+    for (d0, v0), (d1, v1) in zip(pts, pts[1:]):
+        if d0 <= day <= d1:
+            return v0 + (v1 - v0) * (day - d0).days / max(1, (d1 - d0).days)
+    return pts[-1][1]
+
+
+def contains_rows(g):
+    """(rows, problems) from meta.contains. A row is (whole id, part id, note) with old ids resolved through
+    the alias map. A problem is a row that is not in shape or names a node that does not exist."""
+    by = {n["id"]: n for n in g.get("nodes", [])}
+    al = aliases(g)
+
+    def resolve(nid):
+        seen = set()
+        while nid not in by and nid in al and nid not in seen:
+            seen.add(nid)
+            nid = al[nid]
+        return nid if nid in by else None
+
+    rows, problems = [], []
+    listed = (g.get("meta") or {}).get("contains")
+    if listed is None:
+        return rows, problems
+    if not isinstance(listed, list):
+        return rows, ["meta.contains must be a list of {whole, part, note}"]
+    seen_pairs = set()
+    for i, row in enumerate(listed):
+        if not isinstance(row, dict) or not isinstance(row.get("whole"), str) or not isinstance(row.get("part"), str):
+            problems.append(f"meta.contains[{i}]: needs whole and part (node ids) and a note")
+            continue
+        if not isinstance(row.get("note"), str) or not row["note"].strip():
+            problems.append(f"meta.contains[{i}] {row['whole']} contains {row['part']}: no note saying why")
+            continue
+        w, p_ = resolve(row["whole"]), resolve(row["part"])
+        if w is None or p_ is None:
+            problems.append(f"meta.contains[{i}]: unknown node {row['whole'] if w is None else row['part']}")
+            continue
+        if w == p_:
+            problems.append(f"meta.contains[{i}]: whole and part are the same node {w} (folded together?); remove the row")
+            continue
+        if (w, p_) in seen_pairs:
+            problems.append(f"meta.contains[{i}]: {w} contains {p_} is listed twice")
+            continue
+        seen_pairs.add((w, p_))
+        rows.append((w, p_, row["note"].strip()))
+    return rows, problems
+
+
+def contradictions(g):
+    """(items, not_comparable). Each item is a dict with kind ("necessary" or "contains"), the two ids, the two
+    numbers, where they were read and a ready WARN line. Warn only: nothing here fails the validator."""
+    by = {n["id"]: n for n in g.get("nodes", [])}
+    slack = CONTRADICTION_SLACK
+    items, not_comparable = [], []
+    # (a) a necessary condition is at least as likely as the event it precedes
+    for e in g.get("links", []):
+        if e.get("kind") != "NECESSARY" or e.get("source") not in by or e.get("target") not in by:
+            continue
+        s, t = by[e["source"]], by[e["target"]]
+        if s.get("odds_now") is None or t.get("odds_now") is None or fired(s) or fired(t):
+            continue
+        sp, tp, t_end = curve_points(s), curve_points(t), as_day(t.get("window_end"), end=True)
+        if sp and tp and t_end is not None:
+            sv, how = curve_at(sp, t_end), f"its curve at {t_end}"
+        else:
+            sv, how = float(s["odds_now"]), "odds now"
+        tv = float(t["odds_now"])
+        if sv < tv - slack:
+            items.append({"kind": "necessary", "source": s["id"], "target": t["id"], "source_value": round(sv, 1),
+                          "target_value": round(tv, 1), "read": how,
+                          "line": f"WARN necessary link {s['id']} -> {t['id']}: source {sv:.1f} ({how}) is below "
+                                  f"target {tv:.1f} (odds now)"})
+    # (b) a whole is at least as likely as its part at every shared date
+    for w_id, p_id, note in contains_rows(g)[0]:
+        w, p_ = by[w_id], by[p_id]
+        if w.get("odds_now") is None or p_.get("odds_now") is None:
+            not_comparable.append(f"{w_id} contains {p_id}: a node has no odds")
+            continue
+        if fired(w) or fired(p_) or w["odds_now"] <= 1 or p_["odds_now"] <= 1:
+            continue  # a settled node has no live curve, and a FIRED whole cannot be below its part
+        wp, pp = curve_points(w), curve_points(p_)
+        w_end, p_end = as_day(w.get("window_end"), end=True), as_day(p_.get("window_end"), end=True)
+        checks = []  # (date, whole value, part value, how it was read)
+        if wp and pp:
+            lo, hi = max(wp[0][0], pp[0][0]), min(wp[-1][0], pp[-1][0])
+            for d in sorted({x[0] for x in wp} | {x[0] for x in pp}):
+                if lo <= d <= hi:
+                    checks.append((d, curve_at(wp, d), curve_at(pp, d), "both curves"))
+        elif wp and p_end is not None:
+            checks.append((p_end, curve_at(wp, p_end), float(p_["odds_now"]), "the whole's curve at the part's deadline"))
+        elif pp and w_end is not None:
+            checks.append((w_end, float(w["odds_now"]), curve_at(pp, w_end), "the part's curve at the whole's deadline"))
+        elif w_end is not None and p_end is not None and w_end >= p_end:
+            checks.append((p_end, float(w["odds_now"]), float(p_["odds_now"]), "odds now"))
+        if not checks:
+            not_comparable.append(f"{w_id} contains {p_id}: no shared date (no curve, and the whole's deadline is earlier)")
+            continue
+        broken = [c for c in checks if c[1] < c[2] - slack]
+        if broken:
+            d, wv, pv, how = max(broken, key=lambda c: c[2] - c[1])
+            more = f"; {len(broken)} shared dates broken, the widest shown" if len(broken) > 1 else ""
+            items.append({"kind": "contains", "whole": w_id, "part": p_id, "whole_value": round(wv, 1),
+                          "part_value": round(pv, 1), "date": d.isoformat(), "read": how, "dates_broken": len(broken),
+                          "line": f"WARN contains {w_id} >= {p_id}: whole {wv:.1f} is below part {pv:.1f} at {d} "
+                                  f"({how}{more}). {note}"})
+    return items, not_comparable
+
+
+def print_contradictions(g):
+    """Print the CONTRADICTIONS list and its count. Returns the items. Also called by cascade.py after a real run."""
+    items, not_comparable = contradictions(g)
+    pairs = len(contains_rows(g)[0])
+    print(f"CONTRADICTIONS (warn only; the exit code is not affected). NECESSARY links and {pairs} containment "
+          f"pairs from meta.contains, compared like for like, {CONTRADICTION_SLACK:g} point of slack")
+    for it in items:
+        print("  " + it["line"])
+    for line in not_comparable:
+        print("  NOTE not compared: " + line)
+    print(f"CONTRADICTIONS: {len(items)}")
+    return items
 
 
 def load_scorecard():
@@ -142,6 +316,7 @@ def main(argv=None):
         for x in ch.get("legs", []):
             if x not in by:
                 fails.append(f"chain {ch.get('name')}: unknown leg {x}")
+    fails.extend(contains_rows(g)[1])
     if a.against:
         with open(a.against, encoding="utf-8") as f:
             old = {n["id"]: n.get("odds_now") for n in json.load(f)["nodes"]}
@@ -183,6 +358,8 @@ def main(argv=None):
         "fired_nodes": sum(1 for n in nodes if fired(n)),
         "main_events": sum(1 for n in nodes if sc.is_main_event(n)),
         "odds_stamp": g.get("meta", {}).get("odds_stamp"),
+        "containment_pairs": len(contains_rows(g)[0]),
+        "contradictions": len(contradictions(g)[0]),
     }
     if a.json:
         print(json.dumps(counts, indent=1, ensure_ascii=False))
@@ -195,6 +372,9 @@ def main(argv=None):
     if nec_bad:
         print(f"NOTE: {len(nec_bad)} NECESSARY links have a source less likely than its target (rule: a necessary "
               f"condition is at least as likely as the event it precedes): {nec_bad[:12]}")
+    if not a.json:
+        print()
+        print_contradictions(g)
     if fails:
         print(f"\nFAILED {len(fails)} checks:")
         for x in fails[:200]:

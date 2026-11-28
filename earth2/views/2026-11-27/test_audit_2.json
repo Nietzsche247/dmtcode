@@ -1,0 +1,362 @@
+[
+  {
+    "id": "F7",
+    "verdict": "ALREADY MET",
+    "evidence": "Oct 28, 2026: on Microsoft's fiscal 2027 Q1 earnings call CFO Amy Hood lowered calendar 2026 capex to about $170 billion from about $175 billion, citing third-party capacity delays. That is a big-four hyperscaler lowering its capex guide, 25 days before window_start. No further cut found for Nov 22 to 27 (no big-four earnings in those days). The test also has no start date, no deadline, no threshold and no named source.",
+    "source": "Let's Data Science summary of the Microsoft FY27 Q1 call, https://letsdatascience.com/news/microsoft-cuts-2026-capex-forecast-to-170-billion-on-delayed-741510fe (secondary; same headline at FourWeekMBA and TechSpot; primary is the call transcript on microsoft.com/investor, not fetched)",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to May 31, 2027, Microsoft, Alphabet, Amazon or Meta lowers its most recent full-year capex guidance by 5% or more at the midpoint (or point figure), or guides fiscal or calendar 2027 capex flat or below its 2026 capex (company earnings release, earnings call transcript, or 10-Q or 10-K on its investor relations site or SEC EDGAR). Trims under 5% do not count. NO otherwise.",
+    "note": "The Oct 28 trim was about 3% and blamed on supplier delays, so it is not the demand-driven cut the label means. The 5% floor is my proposal; drop it if any trim should count."
+  },
+  {
+    "id": "R4",
+    "verdict": "OK",
+    "evidence": "Not failed. Benchmark's Q3 2026 review puts dysprosium oxide CIF Europe at 16.3 times the DDP China price at end Q3 2026 (6.8 times at end Q2), with CIF Europe averaging $3,500/kg in September. Fastmarkets on Oct 1, 2026 had terbium oxide CIP global at $5,000 to 8,000/kg and dysprosium oxide at $2,500 to 3,500/kg. The free review gives no terbium ratio and I found no assessment dated Nov 22 to 27.",
+    "source": "Benchmark Mineral Intelligence, https://source.benchmarkminerals.com/article/ex-china-heavy-rare-earths-continue-to-surge-q3-2026-rare-earths-price-review ; Fastmarkets, https://www.fastmarkets.com/insights/us-demand-drives-sharp-increases-in-cip-global-terbium-dysprosium-prices/",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Benchmark's series is called CIF Europe, not CIF Rotterdam, and every-assessment data sit behind subscriptions. Name the exact series and settle on month-end assessments. Latest verified reading is end September 2026."
+  },
+  {
+    "id": "C2",
+    "verdict": "TOO EASY",
+    "evidence": "Not met inside the window: nothing found for Nov 22 to 27, 2026. The Nov 13, 2026 FAA nationwide ground stop lasted about 4 hours 20 minutes and was a router fault during a hardware upgrade, not an attack or a patch, so it does not count. Met at least three times in the last three years (model knowledge, not re-fetched): Feb 21, 2024 Change Healthcare ransomware (pharmacy claims down nationwide for weeks); Jun 19, 2024 CDK Global ransomware (dealer systems down about two weeks; AutoNation, Lithia, Group 1, Sonic and Penske disclosed it in 8-Ks); Jul 19, 2024 CrowdStrike faulty update (Delta down about five days; CISA alert the same day).",
+    "source": "FAA event: Al Jazeera, https://www.aljazeera.com/news/2026/11/15/what-forced-the-us-to-ground-all-planes-a-router-switch-we-now-know . 2024 events: SEC EDGAR 8-K filings of the named dealer groups (June 2024) and the CISA alert 'Widespread IT Outage Due to CrowdStrike Update' (Jul 19, 2024, cisa.gov/news-events/alerts), cited from model knowledge",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Mar 31, 2027, one cyberattack or one software update or patch takes three or more exchange-listed companies, or one industry nationwide in one country, offline for 24 hours or more, as shown in the companies' SEC 8-K or exchange filings or an official statement from CISA, the FAA, DOT or a national regulator. Hardware faults such as the Nov 13, 2026 FAA router failure do not count. NO otherwise.",
+    "note": "Label and test agree; the label itself describes something that happened three times in 2024, so the only fixes are the start date and the hardware carve-out. Check the 59.6% against that base rate."
+  },
+  {
+    "id": "C4",
+    "verdict": "ALREADY MET",
+    "evidence": "Oct 29, 2026: about $6.3 billion was stolen from Binance wallets in roughly 20 minutes (Binance announcement; TRM Labs traced $6.36 billion; TRM and Chainalysis blame North Korea's TraderTraitor). That meets the '$1B or more is stolen in one event' leg 24 days before window_start. Earlier hits in the three-year lookback (model knowledge, not re-fetched): Bybit, Feb 21, 2025, about $1.46 billion; CME Globex halted for more than 10 hours on Nov 27 to 28, 2025 after a data-center cooling failure. Nothing new found for Nov 22 to 27, 2026. The test has no start date, deadline or source, and 'top institution' is undefined.",
+    "source": "Al Jazeera, Oct 30, 2026, https://aljazeera.com/news/2026/10/30/binance-says-6-3bn-stolen-in-biggest-crypto-heist-in-history-what-we-know ; Bybit: Finance Magnates, https://www.financemagnates.com/cryptocurrency/bybit-offers-140m-bounty-as-crypto-industry-rallies-after-historic-hack/ (headline only)",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Mar 31, 2027, (a) payments or trading are halted for 4 hours or more in one incident at a bank on the FSB list of global systemically important banks, at Fedwire, CHIPS, TARGET2, SWIFT, Visa or Mastercard, or at an exchange ranked top ten worldwide by traded value in its asset class (operator status notice, regulator statement or SEC filing), or (b) $1 billion or more is stolen in one theft from a bank, payment network, exchange or crypto platform (victim's own disclosure; Chainalysis or TRM Labs figure as the check). Scheduled closures do not count. NO otherwise.",
+    "note": "The Binance theft is the kind of event the label means but it predates the window, so the test needs the start date."
+  },
+  {
+    "id": "J4",
+    "verdict": "ALREADY MET",
+    "evidence": "Literal reading only: 'by Jan 31, 2027' has no start date, and S&P cut SoftBank Group to BB from BB+ on May 23, 2023 (reversed in 2024, model knowledge). Nothing qualifies in the last three years: 5-year CDS peaked at 466 bp on Nov 6, 2026 (widest since October 2022); S&P moved the outlook to negative in early March 2026 without a downgrade; Moody's Aug 28, 2026 release was a periodic review of its unsolicited rating; no JCR cut or margin-call asset sale found.",
+    "source": "S&P research update, May 23, 2023, https://spglobal.com/ratings/en/research/articles/230523-research-update-softbank-group-downgraded-to-bb-subordinated-bonds-to-b-on-higher-asset-risk-outlook-st-12740156 ; Reuters via The Star, Nov 6, 2026, https://www.thestar.com.my/tech/tech-news/2026/11/06/softbank-credit-risk-jumps-to-4-year-high-as-ai-fears-roil-market ; Bloomberg, Mar 5, 2026, https://news.bgov.com/private-equity/softbank-group-cds-rises-to-near-year-high-on-s-p-outlook-cut ; SoftBank on Moody's, https://group.softbank/en/news/press/20260828_0",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Jan 31, 2027, SoftBank Group's 5-year CDS closes above 600 bp on any day (S&P Global/Markit data as reported by Bloomberg or Reuters), or S&P or JCR lowers SoftBank Group's long-term issuer rating (agency press release; outlook changes do not count), or SoftBank announces an asset sale that it or a rating agency ties to a margin call, loan covenant or loan-to-value limit (TSE timely disclosure). NO otherwise.",
+    "note": "The event has not fired; the only flaw is the missing start date. Moody's rating is unsolicited (SoftBank says only S&P and JCR rate it), so the replacement drops Moody's; add it back if wanted."
+  },
+  {
+    "id": "J5",
+    "verdict": "OK",
+    "evidence": "Policy rate is 1.25% after 25 bp hikes in June and September 2026; the Bank of Japan held 8 to 1 on Oct 30, 2026. The 1.25% threshold in the test is right, and the test is tied to one meeting, so earlier hikes do not count.",
+    "source": "Trading Economics, https://tradingeconomics.com/japan/interest-rate/news/596555 ; Bank of Japan statement of Sep 18, 2026, https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260918a.pdf (listed, not opened)",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Dec 17 to 18 meeting dates not re-verified: the boj.or.jp schedule page was blocked by an unanswered permission prompt. Confirm on boj.or.jp before settling."
+  },
+  {
+    "id": "F3",
+    "verdict": "OK",
+    "evidence": "No qualifying event found. The 2026 stress cases do not fit: NFN8 (a private miner) filed Chapter 11 in February 2026; IREN delivery delays pushed out Microsoft spending in October 2026 but no lease was lost; CoreWeave's distress is at a tenant, not a miner. A stress-event tracker lists no default by a listed AI-hosting miner through October 2026 (nearest: Argo Blockchain's December 2025 bond-for-equity restructuring and Mawson's dismissed December 2024 involuntary petition).",
+    "source": "American Compute stress-event list, https://www.amcompute.com/gpu-risk/defaults ; NFN8: DatacenterDynamics, https://www.datacenterdynamics.com/en/news/cryptominer-nfn8-files-for-bankruptcy-following-data-center-fire-and-bitcoin-price-crash/ (headline only)",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "The 15% yield leg can be tripped by a micro-cap; consider a $500 million market value floor. Not checked day by day for Nov 22 to 27."
+  },
+  {
+    "id": "X1",
+    "verdict": "UNSETTLEABLE",
+    "evidence": "Not met. Sep 3, 2026: at the GPT-6 Astra launch briefing OpenAI president Greg Brockman said 'Welcome to the AGI era'; OpenAI's written launch post makes capability claims only. Spoken remarks are excluded by the test. No written AGI declaration by a listed lab or a G7 government found.",
+    "source": "The Next Web, https://thenextweb.com/news/openai-astra-agi-claim-cybersecurity-containment ; Live Science, https://livescience.com/technology/artificial-intelligence/openai-claims-weve-entered-the-agi-era-has-gpt-6-astra-really-demonstrated-general-intelligence",
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if, from Nov 28, 2026 to Jun 30, 2027, OpenAI, Anthropic, Google DeepMind, xAI or Meta (official blog, model card, press release or SEC filing on its own site) or a G7 national government (official statement or document) states in writing that a named, deployed model is AGI or has expert-level general intelligence across most fields. Spoken remarks such as Greg Brockman's 'Welcome to the AGI era' on Sep 3, 2026, team or product names, and 'approaching AGI' language do not count. NO otherwise.",
+    "note": "Missing: a deadline and start date in the test text, named publication channels, and fixed wording for 'expert-level general intelligence'."
+  },
+  {
+    "id": "F9",
+    "verdict": "OK",
+    "evidence": "Record close of 7,818.93 on Oct 6, 2026 confirmed; the Nov 18, 2026 close was 7,323.63, 6.33% below it. The deepest closing drawdown in the last three years was 18.9% on Apr 8, 2025 (model knowledge), so the 20% line has not been crossed.",
+    "source": "Dow Jones Data Talk via Morningstar, Nov 18, 2026, https://www.morningstar.com/news/dow-jones/202611188038/sp-500-falls-023-to-732363-data-talk",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Threshold arithmetic checks: 7,818.93 x 0.8 = 6,255.14."
+  },
+  {
+    "id": "B3",
+    "verdict": "TOO EASY",
+    "evidence": "Not met in the window: KRE last traded about $69.83 (Nov 27, 2026 quote), was $73.73 on Nov 2, and its 52-week low is $61.80. Met a year ago: closes under $60 on Oct 29, Oct 30, Nov 4 and Nov 17 to 20, 2025 (low close $58.63 on Nov 17, 2025), and for long stretches of 2024 and April 2025 (model knowledge).",
+    "source": "Yahoo Finance history, https://finance.yahoo.com/quote/KRE/history/ ; Fox Business quote, https://www.foxbusiness.com/quote?stockTicker=KRE",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if the SPDR S&P Regional Banking ETF (KRE) closes below $60.00 on any trading day from Nov 28, 2026 to Mar 31, 2027 (NYSE Arca official close; State Street SPDR fund data as the check). NO otherwise.",
+    "note": "Label and test agree; this is a base-rate flag only. KRE needs a fall of about 14% from here. Use $55 if a rarer event is wanted."
+  },
+  {
+    "id": "C3",
+    "verdict": "TOO EASY",
+    "evidence": "Not met in the window (nothing found for Nov 22 to 27, 2026). Met in March 2026: part of the DarkSword iPhone exploit kit was posted on GitHub around Mar 23, 2026 and described by Lookout as plug-and-play, and the Coruna kit, partly built by L3Harris Trenchant for the US government and allies, was found in use by Russian spies and Chinese criminals (Google, iVerify, Lookout and Kaspersky research).",
+    "source": "TechCrunch, Mar 26, 2026, https://techcrunch.com/2026/03/26/a-major-hacking-tool-has-leaked-online-putting-millions-of-iphones-at-risk-heres-what-you-need-to-know/",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Mar 31, 2027, working exploit code or hacking tools that Google, Apple, Microsoft, a national CERT or the owning government attributes to a government agency or its contractor are posted publicly for the first time, or Apple, Google, a national CERT or a major security firm reports one zero-click phone exploit chain that compromised 100,000 or more devices (vendor security advisory or researcher report, confirmed by Reuters, Bloomberg or AP). Re-posts of Coruna or DarkSword do not count. NO otherwise.",
+    "note": "The 100,000-device leg has no confirmed count in either 2026 case."
+  },
+  {
+    "id": "C9",
+    "verdict": "OK",
+    "evidence": "No official attribution of a physical effect or nationwide outage to an AI-run attack found. Nearest: joint advisory AA26-231A (August 2026, NSA, FBI and others) warns of AI-generated malware aimed at Siemens PLCs but reports no AI-run incident; the July 2026 attack on 30 Minnesota water systems showed Iranian involvement, not AI agents.",
+    "source": "TechRadar on advisory AA26-231A, Aug 20, 2026, https://techradar.com/pro/security/hackers-are-using-evolved-capabilities-in-ai-generated-malware-to-hit-us-critical-infrastructure-at-an-unprecedented-scale-active-threat-currently-hitting-energy-water-and-agricultural-industries",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "'By Nov 30, 2027' has no start date; add 'from Nov 28, 2026'. 'Run mainly by AI agents' will turn on agency wording."
+  },
+  {
+    "id": "T1",
+    "verdict": "TOO EASY",
+    "evidence": "Not met in the window (nothing found for Nov 22 to 27, 2026). The boarding leg was met twice in the last three years: Feb 19, 2024, China Coast Guard officers boarded and inspected a Taiwanese tour boat off Kinmen; Jul 2, 2024, they boarded and seized the Penghu-registered fishing boat Da Jin Man No. 88 near Kinmen. Both were reported by Taiwan's Coast Guard Administration.",
+    "source": "Focus Taiwan, https://focustaiwan.tw/politics/202402190022 ; Taipei Times, https://www.taipeitimes.com/News/taiwan/archives/2024/07/03/2003820278",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 30, 2027, Taiwan's Coast Guard Administration or Ministry of National Defense reports that China Coast Guard personnel boarded or tried to board a merchant cargo ship, tanker or scheduled ferry sailing to or from a port on Taiwan's main island or Penghu, or that China Coast Guard ships ringed a Taiwan-held outlying island (Kinmen, Matsu, Penghu, Pratas or Itu Aba) and blocked normal sea or air access for 48 hours or more (CGA or MND press release; Reuters or Focus Taiwan as the check). Boardings of fishing boats or tour boats in waters off Kinmen or Matsu, as on Feb 19, 2024 and Jul 2, 2024, do not count. NO otherwise.",
+    "note": "The 48-hour island isolation leg has not happened. Boardings in 2025 and 2026 not exhaustively checked."
+  },
+  {
+    "id": "D5",
+    "verdict": "OK",
+    "evidence": "The continuing resolution funds the government through Dec 11, 2026 (House passed Sep 1, 2026; signed). As of Nov 24 there was no deal and another stopgap was seen as most likely. The test is tied to the Dec 12 lapse, so the Oct 1 to Nov 12, 2025 shutdown and the 2026 DHS lapse do not count.",
+    "source": "ASTHO summary of the FY27 continuing resolution, https://www.astho.org/advocacy/federal-government-affairs/leg-alerts/2026/summary-of-fy27-continuing-resolution/ ; NerdWallet, updated Nov 24, 2026, https://www.nerdwallet.com/finance/news/government-shutdown-news",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "NerdWallet says the Apr 30, 2026 DHS deal left out ICE and Border Patrol; make sure an existing gap there is not scored as a new lapse."
+  },
+  {
+    "id": "C8",
+    "verdict": "OK",
+    "evidence": "Marsh's Q3 2026 index: global cyber rates fell 4%, the thirteenth straight quarterly decline (so the run began in Q3 2023, as the test says); US cyber was flat. No rise yet.",
+    "source": "Marsh, https://www.marsh.com/en/corp/about/news/global-commercial-insurance-falls-5-percent-q3-2026.html",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Second leg is loose: no ranking source for 'top-10 cyber insurer', 'same period' is undefined, and such exclusions already exist. Name the ranking (NAIC cyber supplement) and require wording or a filing dated after Nov 27, 2026."
+  },
+  {
+    "id": "R7",
+    "verdict": "OK",
+    "evidence": "No MOFCOM or customs rare-earth notice naming a country found. MOFCOM Announcement No. 1 of 2026 (Jan 6, 2026) bans dual-use exports to Japanese military users and does not mention rare earths. On May 26, 2026 Caixin reported that China had suspended some rare-earth exports to Japan, with the Foreign Ministry saying the ban targets military uses. The test's carve-out covers this.",
+    "source": "Caixin, May 26, 2026, https://www.caixinglobal.com/2026-05-26/business-brief-may-26-china-suspends-some-rare-earth-exports-to-japan-102447670.html ; Geopolitechs on MOFCOM Announcement No. 1, https://www.geopolitechs.org/p/china-plans-to-reimpose-rare-earth",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Dispute risk: the Foreign Ministry acknowledgement is official, just not from MOFCOM or customs, and the label reads as already true for Japan. Say that Foreign Ministry remarks and the Jan 6 dual-use ban do not count, and add 'from Nov 28, 2026'."
+  },
+  {
+    "id": "F11",
+    "verdict": "OK",
+    "evidence": "Q3 fiscal 2027, reported in the week of Nov 17, 2026: revenue of $115.8 billion, about $5.7 billion above the top of guidance, with a Q4 guide near $130 billion (headlines of the Nvidia release and coverage; pages not opened). No 15% cut or miss in the last three years; the last was the August 2022 preannouncement (model knowledge).",
+    "source": "Nvidia investor relations, https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2027/ (headline only)",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": null
+  },
+  {
+    "id": "O6",
+    "verdict": "OK",
+    "evidence": "EIA monthly LNG exports have never reached 20 Bcf a day. The record is March 2026 at 573,089 MMcf, or 18.49 Bcf a day; December 2025 was 18.36; the latest posted month, August 2026, is 16.60. The STEO of Nov 10, 2026 forecasts 17.6 Bcf a day for 2026 and 19.0 for 2027.",
+    "source": "EIA, US liquefied natural gas exports, monthly (series N9133US2), https://www.eia.gov/dnav/ng/hist/n9133us2m.htm ; EIA STEO, https://www.eia.gov/outlooks/steo/report/natgas.php",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "The series is published in MMcf per month; the test's divide-by-days rule is the right method."
+  },
+  {
+    "id": "BB5",
+    "verdict": "ALREADY MET",
+    "evidence": "'By Sep 30, 2027' has no start date, so older events count. Jun 24, 2024: ResMed fell about 11% and Inspire Medical 17% in one session after Eli Lilly's tirzepatide sleep-apnea trial data; Bloomberg tied the selloff to the Lilly result. Both are US-listed and worth over $1 billion. Nothing found for Nov 22 to 27, 2026.",
+    "source": "Bloomberg via BNN Bloomberg, Jun 24, 2024, https://bnnbloomberg.ca/lilly-weight-loss-drug-data-spurs-selloff-in-sleep-apnea-stocks-1.2088826",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Sep 30, 2027, a US- or EU-listed company with a market value of $10 billion or more at the prior close falls 10% or more close to close in one session and Reuters or Bloomberg attributes the fall mainly to another company's clinical trial result or drug approval that threatens its revenue (exchange closing prices; Reuters or Bloomberg market report). NO otherwise.",
+    "note": "At a $1 billion floor this happens most years. ResMed (roughly $28 billion then, model knowledge) shows even a $10 billion floor was met in 2024. The $10 billion floor is my proposal."
+  },
+  {
+    "id": "C10",
+    "verdict": "ALREADY MET",
+    "evidence": "Literal reading only: 'by Nov 30, 2027' has no start date, and FTX, then a top-five exchange by volume, filed Chapter 11 on Nov 11, 2022 (model knowledge). Nothing qualifies in the last three years. Nearest: the Oct 29, 2026 Binance theft of about $6.3 billion (under $10 billion); Binance suspended deposits and withdrawals that day and restarted bitcoin, ether and stablecoin withdrawals in stages from Nov 1, about three days later, with full access still pending two weeks on.",
+    "source": "Al Jazeera, https://aljazeera.com/news/2026/10/30/binance-says-6-3bn-stolen-in-biggest-crypto-heist-in-history-what-we-know and https://www.aljazeera.com/news/2026/11/1/binance-restarts-withdrawals-after-6-3bn-heist ; FTX: US Bankruptcy Court, District of Delaware, case 22-11068 (model knowledge)",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 30, 2027, a single crypto theft or hack worth $10 billion or more at the time of theft is confirmed (victim's own disclosure; Chainalysis or TRM Labs as the check), or an exchange ranked top ten by spot volume on CoinGecko or CoinMarketCap on the day before the event halts withdrawals of every asset for 7 consecutive days or more, or files for bankruptcy or insolvency (exchange statements and court filings). The Oct 29, 2026 Binance theft does not count. NO otherwise.",
+    "note": "The event has not fired. 'Halts all withdrawals' needs 'every asset, 7 consecutive days' or the Binance staged restart will be argued both ways."
+  },
+  {
+    "id": "B4",
+    "verdict": "OK",
+    "evidence": "No Fed or Treasury facility, guarantee or loan for private-credit funds found. The Fed's 2026 Section 13(3) reports to Congress cover the legacy COVID facilities only (titles checked, reports not opened). None in the last three years either: the 2023 Bank Term Funding Program lent to banks, not credit funds (model knowledge).",
+    "source": "Federal Reserve, Section 13(3) reports to Congress, https://federalreserve.gov/publications/reports-to-congress-in-response-to-covid-19.htm",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Not checked day by day for Nov 22 to 27; a new 13(3) facility would be headline news."
+  },
+  {
+    "id": "BB2",
+    "verdict": "OK",
+    "evidence": "Not approved. November 2026 coverage says Lilly plans its FDA application for retatrutide in Q1 2027 after further Phase 3 readouts (headlines only, pages not opened).",
+    "source": "Emirates 24/7, https://www.emirates247.com/health/lilly-announces-more-next-gen-obesity-drug-data-plans-q1-2027-fda-application/3887 ; BioPharma Dive, https://biopharmadive.com/news/lilly-retatrutide-fda-application-obesity-drug-results/825987/",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "The test needs all three uses on the label by Nov 30, 2027. A Q1 2027 filing on a standard 10-month review lands after the deadline unless priority review applies, and a first label often carries one use. Check the 45%."
+  },
+  {
+    "id": "W2",
+    "verdict": "ALREADY MET",
+    "evidence": "Literal reading only: the test counts 'any month in an update', and each update republishes the full series back to 1990, which holds months at 6.0% or higher (2009 to 2014 and 2020 to 2021, peaking near 13% in mid 2020; model knowledge). No such print in the last three years on what I could see: the latest is 5.2% for 2026 Q3, the lowest in more than a year, and March 2026 was 5.6%.",
+    "source": "New York Fed, Labor Market for Recent College Graduates, https://www.newyorkfed.org/research/college-labor-market ; FingerLakes1, Nov 10, 2026, https://www.fingerlakes1.com/2026/11/10/college-graduate-unemployment-eases-but-many-still-work-in-jobs-that-dont-require-degrees/",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if the New York Fed's Labor Market for Recent College Graduates data show a recent-graduate (ages 22 to 27) unemployment rate of 6.0% or higher for any reference month from October 2026 onward, in an update published from Nov 28, 2026 to Nov 19, 2027 (unemployment data file at newyorkfed.org/research/college-labor-market). Months before October 2026 do not count. NO otherwise.",
+    "note": "The event has not fired; the flaw is that old months in the same file count as written. The New York Fed updates quarterly (February, May, August, November)."
+  },
+  {
+    "id": "W5",
+    "verdict": "UNCHECKED",
+    "evidence": null,
+    "source": null,
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Search budget ran out before I could check 2026 earnings for a seat or subscription-revenue decline blamed on AI agents; none known through mid 2026 (model knowledge). Separate flaw: the Gartner and IDC top-ten rankings are paywalled, so name the ten vendors in the test."
+  },
+  {
+    "id": "W8",
+    "verdict": "TOO EASY",
+    "evidence": "Not met in the window yet (no results reported Nov 22 to 27). Met repeatedly in the last three years (model knowledge, not re-fetched): Wipro's IT services revenue fell year on year in constant currency in most quarters from fiscal 2024 through fiscal 2026; Tech Mahindra's fell through fiscal 2024; TCS reported constant-currency revenue down 3.1% year on year for Q1 fiscal 2026 on Jul 10, 2025; and the five firms' combined headcount fell in consecutive quarters during fiscal 2024. The latest prints are positive: Wipro's Q2 fiscal 2027 (Oct 15, 2026) was up 0.6% year on year in constant currency, with Q3 guidance of -1.5% to +0.5% sequentially.",
+    "source": "Latest quarter: Goodreturns, https://www.goodreturns.in/news/wipro-q2-results-pat-drops-4-5-qoq-revenue-up-9-yoy-wipro-adr-crashes-3-on-q3-guidance-1541797.html . History: company quarterly releases at tcs.com and wipro.com investor pages, cited from model knowledge",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, in results reported from Nov 28, 2026 to Nov 19, 2027, the combined US-dollar revenue of TCS, Infosys, HCLTech, Wipro and Tech Mahindra for a quarter is lower than in the same quarter a year earlier, or their combined headcount is 5% or more lower than a year earlier (company quarterly results filed with NSE and BSE; Infosys and Wipro SEC 6-K filings as the check). NO otherwise.",
+    "note": "The label's own wording ('a top-five firm reports revenue down') describes a routine print, so the label should change with the test. Thresholds are my proposal; verify the fiscal 2024 headcount fall (roughly 5%) before fixing the headcount bar."
+  },
+  {
+    "id": "27-1",
+    "verdict": "OK",
+    "evidence": "No written AGI declaration found. OpenAI's Sep 3, 2026 'Welcome to the AGI era' was a spoken remark by Greg Brockman at the GPT-6 Astra briefing; the written launch post makes no AGI claim, and ARC Prize wrote 'we are not claiming that it is AGI'.",
+    "source": "The Next Web, https://thenextweb.com/news/openai-astra-agi-claim-cybersecurity-containment ; Analytics India Magazine, https://analyticsindiamag.com/global-tech/openai-says-agi-is-here-but-not-everyone-is-buying-it",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "'By Nov 30, 2027' has no start date; add 'from Nov 28, 2026' and name the Sep 3 briefing as excluded to head off disputes."
+  },
+  {
+    "id": "27-4",
+    "verdict": "ALREADY MET",
+    "evidence": "Literal reading: CoreWeave, a neocloud, breached terms of a $7.6 billion loan in 2024 and triggered technical defaults that it asked Blackstone to waive (Financial Times, reported March 2025). That is a $1B+ neocloud that 'defaults' as the test is worded. No payment default, distressed exchange or bankruptcy at that size found: as of October 2026 no GPU-backed loan had been publicly foreclosed, though CoreWeave's 2030 bonds yielded over 15%. Oracle: S&P cut it to BBB- on Jul 9, 2026, one notch above junk, and kept it investment grade in September 2026. The test also has no deadline, start date or source.",
+    "source": "TipRanks on the FT report, https://www.tipranks.com/news/the-fly/coreweave-triggered-defaults-after-violating-terms-of-loan-ft-says ; Bisnow, Oct 20, 2026, https://www.bisnow.com/news/national/data-center-capital-markets/coreweave-s-debt-troubles-fuel-fears-of-a-neocloud-reckoning ; Computing, https://www.computing.co.uk/news/2026/ai/oracle-under-pressure-after-ratings-downgrade-over-ai-expansion ; https://www.amcompute.com/gpu-risk/defaults",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 30, 2027, a neocloud, bitcoin miner turned AI host or data-center financing vehicle with $1 billion or more of debt misses a scheduled interest or principal payment beyond its grace period, completes an exchange that S&P or Moody's classes as distressed (selective or limited default), or files for bankruptcy (SEC filings, court dockets, S&P or Moody's rating actions), or S&P, Moody's or Fitch lowers Oracle's long-term issuer rating below investment grade (agency press release). Covenant breaches that lenders waive, as at CoreWeave in 2024, do not count. NO otherwise.",
+    "note": "The waived 2024 breach is not what the label means. Not checked day by day for Nov 22 to 27; a CoreWeave payment default would be headline news."
+  },
+  {
+    "id": "28-1",
+    "verdict": "TOO EASY",
+    "evidence": "METR's bar is already cleared in substance. Its Nov 20, 2026 capability update says 'time horizons are doubling roughly every 3.6 months' on the combined TH1.1 plus TH2 suite (3.61 months, 95% CI 2.08 to 4.94; models from GPT-4o to GPT-6 Astra). Its Jan 29, 2026 Time Horizon 1.1 post gave 89 days for models since 2024. Only the 'models released in the prior 12 months' qualifier is unmet, and METR publishes no 12-month-window headline. Lab leg not met: Anthropic reports that Claude 'leads' 26% of its AI R&D work (data to August 2026).",
+    "source": "METR, https://metr.org/blog/2026-11-20-q4-2026-capability-update/ and https://metr.org/blog/2026-01-29-time-horizon-1-1/ ; Anthropic, https://www.anthropic.com/institute/measuring-pace-of-ai-development",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 30, 2028, OpenAI, Anthropic, Google DeepMind, Meta or xAI states in an official written publication that AI systems carry out more than half of its AI research work (for example a 'Claude leads' share above 50% in Anthropic's AI R&D measure), or METR publishes a headline frontier time-horizon doubling time under 2.0 months on its main combined task suite (METR reports at metr.org). Sub-suite figures such as TH2 at 1.65 months do not count. NO otherwise.",
+    "note": "Arguably already met on Nov 20, 2026, depending on how the 12-month qualifier is read. The 2.0 month bar is my proposal and matches E02; move the start to Jun 1, 2027 if early hits should not count."
+  },
+  {
+    "id": "28-4",
+    "verdict": "TOO EASY",
+    "evidence": "Both legs have printed in the last three years. New York Fed recent-graduate unemployment is already at or above 5.0%: 5.2% for 2026 Q3 and 5.6% in March 2026. NACE's spring update of Apr 8, 2024 had employers planning to hire 5.8% fewer class of 2024 graduates. NACE's spring 2026 update shows +5.6% for the class of 2026; the Job Outlook 2027 figure is out but I could not read it.",
+    "source": "New York Fed, https://www.newyorkfed.org/research/college-labor-market ; NACE, https://naceweb.org/job-market/trends-and-predictions/job-outlook-spring-update-overall-hiring-dips-but-most-employers-will-maintain-or-increase-hiring and https://naceweb.org/research/reports/job-outlook/",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if NACE's Job Outlook 2028 (the fall 2027 survey) or its spring 2028 update projects that employers will hire 8% or more fewer new graduates than the year before (NACE Job Outlook releases at naceweb.org), or the New York Fed's recent college graduate (ages 22 to 27) unemployment rate is 7.0% or higher for any reference month from June 2027 to June 2028 (New York Fed Labor Market for Recent College Graduates data file). NO otherwise.",
+    "note": "Thresholds are my proposal: 7.0% was last seen in 2009 to 2013 and 2020 to 2021 (model knowledge), and 8% is beyond the 2024 dip. The fall 2027 survey is titled Job Outlook 2028."
+  },
+  {
+    "id": "29-1",
+    "verdict": "ALREADY MET",
+    "evidence": "The second leg is already met as worded: a DHS memo dated Jun 11, 2025, citing a DOD report, says China's Salt Typhoon extensively compromised a US state's Army National Guard network from March to December 2024. The first leg (an AI-run attack with a physical or nationwide effect) is not met; see C9. The test has no start date, deadline or source.",
+    "source": "Nextgov, Jul 16, 2025, https://www.nextgov.com/cybersecurity/2025/07/salt-typhoon-hacks-national-guard-systems-serious-escalation-experts-warn/406765/",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Jun 1, 2028 to Nov 30, 2029, a national government or its cyber agency officially attributes a physical effect or a nationwide outage at a utility, hospital network, transport system or pipeline to a cyberattack it describes as run mainly by AI agents, or a G7 or NATO government officially confirms that an adversary took control of, or disrupted, an operational military command-and-control or satellite communications system (official advisory, attribution statement, indictment or defence ministry statement). Data theft or espionage access to military networks, as in the 2024 Salt Typhoon breach of a US Army National Guard network, does not count. NO otherwise.",
+    "note": "Dates follow the event window; start at Nov 28, 2026 instead if an early hit should count."
+  },
+  {
+    "id": "29-4",
+    "verdict": "OK",
+    "evidence": "Neither leg met. No pembrolizumab biosimilar launch in the US or EU found (US exclusivity runs to 2028, model knowledge; not re-searched). Daraxonrasib's lung cancer data presented in September 2026 are early-phase (42% response rate), not a pivotal win, and the intismeran lung Phase 3 (INTerpath-002, started December 2023) has no readout that I found.",
+    "source": "Targeted Oncology, Sep 3, 2026, https://www.targetedonc.com/view/daraxonrasib-shows-antitumor-activity-in-ras-mutant-nsclc (headline only) ; Merck, https://www.merck.com/news/merck-and-moderna-initiate-interpath-002-a-phase-3-study-evaluating-v940-mrna-4157-in-combination-with-keytruda-pembrolizumab-for-adjuvant-treatment-of-patients-with-certain-types-of-resect/ (headline only)",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Leg (b) leans on E31 and names no drug. Name daraxonrasib and intismeran autogene and say 'met the primary endpoint of a Phase 3 trial'. The drug identities are my inference."
+  },
+  {
+    "id": "E02",
+    "verdict": "UNSETTLEABLE",
+    "evidence": "Not met on what I could check. METR's headline doubling time is 3.6 months (Nov 20, 2026), not under two. Anthropic says Claude 'leads' 26% of its AI R&D work while more than 90% is at or above 'AI collaborates', which someone could read as 'most'. METR (Nov 5, 2026) guesses that about 80% of Anthropic's current acceleration is due to AI. G7 and UN panel documents not checked.",
+    "source": "METR, https://metr.org/blog/2026-11-20-q4-2026-capability-update/ and https://metr.org/blog/2026-11-05-anthropic-ai-rd-acceleration-assessment ; Anthropic, https://www.anthropic.com/institute/measuring-pace-of-ai-development",
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if, from Nov 28, 2026 to May 19, 2027, any one of these happens: (a) OpenAI, Anthropic, Google DeepMind, Meta or xAI states in an official written publication that AI systems carry out more than half of its AI research work end to end; (b) METR, the UK AI Security Institute or the US Center for AI Standards and Innovation publishes a headline frontier doubling time under 2.0 months on its main combined task suite (METR's TH2 sub-suite at 1.65 months does not count); (c) a G7 national government or the UN Independent International Scientific Panel on AI states as a present-tense finding in an official published document that AI progress is self-accelerating or that recursive self-improvement is under way. Sources: lab publications, metr.org, aisi.gov.uk, nist.gov, un.org. NO otherwise.",
+    "note": "Missing: a deadline and start date in the test text, a meaning for 'most of its AI research', objective wording for the government leg, and named sources."
+  },
+  {
+    "id": "E07",
+    "verdict": "TOO EASY",
+    "evidence": "China Coast Guard boardings of Taiwanese vessels already happened twice: Feb 19, 2024 (a tour boat off Kinmen) and Jul 2, 2024 (the fishing boat Da Jin Man No. 88, seized). Both were reported by Taiwan's Coast Guard Administration rather than its defence ministry, which is the only reason the test is not already met as worded. No 48-hour island isolation, quarantine or blockade has occurred. The test has no start date or deadline and does not define quarantine or blockade.",
+    "source": "Focus Taiwan, https://focustaiwan.tw/politics/202402190022 ; Taipei Times, https://www.taipeitimes.com/News/taiwan/archives/2024/07/03/2003820278",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from May 19, 2027 to Nov 19, 2027, Taiwan's Ministry of National Defense or Coast Guard Administration, or the US government, confirms that China's coast guard or navy boarded or tried to board a merchant cargo ship, tanker or scheduled ferry sailing to or from a port on Taiwan's main island or Penghu, or blocked normal sea or air access to a Taiwan-held outlying island (Kinmen, Matsu, Penghu, Pratas or Itu Aba) for 48 hours or more, or that China has declared or is enforcing a quarantine or blockade of Taiwan or any Taiwan-held island, or that Chinese and Taiwanese forces exchanged fire (official press release or statement; Reuters as the check). Boardings of fishing boats or tour boats off Kinmen or Matsu do not count. NO otherwise.",
+    "note": "Overlaps T1; the two should use the same vessel definition."
+  },
+  {
+    "id": "E31",
+    "verdict": "UNSETTLEABLE",
+    "evidence": "Not met on what I could check: daraxonrasib's lung cancer data (September 2026) are early-phase, and the intismeran lung Phase 3 has not read out.",
+    "source": "Targeted Oncology, https://www.targetedonc.com/view/daraxonrasib-shows-antitumor-activity-in-ras-mutant-nsclc (headline only)",
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 19, 2028, Revolution Medicines reports that daraxonrasib met the primary endpoint of a Phase 3 trial in a cancer other than pancreatic cancer (for example RASolve 301 in non-small cell lung cancer), or Moderna or Merck reports that intismeran autogene met the primary endpoint of a Phase 3 lung cancer trial (for example INTerpath-002) (company topline press release or SEC 8-K; peer-reviewed publication as the check). NO otherwise.",
+    "note": "Missing: drug names, a meaning for 'cure-class' and 'wins', a start date, a deadline and a source. The drug identities are my inference. The replacement starts at Nov 28, 2026, not window_start, because a one-off readout that lands before Nov 19, 2027 would otherwise make the event impossible."
+  },
+  {
+    "id": "M52",
+    "verdict": "OK",
+    "evidence": "No verified break of RSA-2048 or of a 256-bit elliptic-curve key is known; the largest RSA modulus publicly factored is RSA-250 (829 bits, 2020). Model knowledge through mid 2026; not re-searched for late 2026 because the search budget ran out.",
+    "source": null,
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "Label ('Historical Encrypted Data Exposed') and test (a published break) are different events: a break can be published with no data exposed. 'By Nov 30, 2029' has no start date, harmless here."
+  },
+  {
+    "id": "M56",
+    "verdict": "UNSETTLEABLE",
+    "evidence": "ACLED counts not checked (search budget ran out).",
+    "source": null,
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if ACLED data downloaded on or after Nov 15, 2027 show that political violence events in the United States (the 'Political violence' event filter in ACLED's Explorer) from Nov 1, 2026 to Oct 31, 2027 number at least 50% more than from Nov 1, 2025 to Oct 31, 2026 (ACLED Explorer or data export at acleddata.com, country United States). NO otherwise.",
+    "note": "Missing: which 12-month period (as written, any rolling window in the dataset counts, including past ones), ACLED's definition of political violence events, and a data URL."
+  },
+  {
+    "id": "M60",
+    "verdict": "UNCHECKED",
+    "evidence": "Search budget ran out before I could check. From model knowledge only: no G7 law cutting nominal benefits in payment and no US plan of $10 billion or more crossing under 50% funded since November 2023 is known to me.",
+    "source": null,
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 30, 2029, a G7 national government enacts a law cutting the nominal benefits already paid to retirees across its main public pension system or declares an emergency restructuring of it (national legislation records), or a US state or big-city public pension plan with $10 billion or more in assets publishes an actuarial valuation dated after Nov 27, 2026 showing a funded ratio under 50% when its prior valuation showed 50% or more (plan valuations; Equable or Pew data as the check). NO otherwise.",
+    "note": "'By Nov 30, 2029' has no start date, so older cuts and crossings would count as written (for example Japan's 2012 law trimming benefits by 2.5% over 2013 to 2015, unverified)."
+  },
+  {
+    "id": "PG1",
+    "verdict": "UNCHECKED",
+    "evidence": "Search budget ran out before I could check 2026 grid events. Leads from model knowledge, unverified here: AEP Ohio stopped taking new data-center service agreements in central Ohio from March 2023 until a July 2025 PUCO ruling; and in late January 2026 DOE issued Federal Power Act 202(c) orders letting ERCOT, PJM and Duke direct data-center backup generation during a winter storm. Either could be argued as a prior hit.",
+    "source": null,
+    "inside_window_and_meant": null,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 19, 2029, (a) PJM, ERCOT, MISO, SPP or another US grid operator issues an emergency instruction that requires data centers to cut grid load or switch to backup generation during a declared energy emergency (operator emergency notice, or a DOE 202(c) order that the operator confirms it used), or (b) PJM, ERCOT, MISO, SPP, a state utility commission, or one of the ten largest US electric utilities by retail customers (EIA Form 861) stops accepting or approving new large-load connection requests across its whole footprint or a whole state for 90 days or more, citing insufficient generation or transmission capacity (FERC or state commission orders, operator notices, utility filings). Governor-ordered pauses and pauses limited to one metro area do not count. NO otherwise.",
+    "note": "Flaws visible in the text: 'by Nov 19, 2029' has no start date, 'top-10 utility' has no ranking basis, and 'lack of supply' does not say generation or transmission."
+  },
+  {
+    "id": "RU1",
+    "verdict": "TOO EASY",
+    "evidence": "Not met in the window (nothing found for Nov 22 to 27, 2026). Met twice in September 2025: Poland invoked Article 4 on Sep 10, 2025 after Russian drones entered its airspace, and Estonia's request after a Sep 19 MiG-31 incursion led to the North Atlantic Council meeting of Sep 23, 2025. Before that, eight members on Feb 24, 2022. No 2026 invocation found, but NATO's page was last updated in September 2025.",
+    "source": "NATO, The consultation process and Article 4, https://www.nato.int/cps/en/natohq/topics_49187.htm",
+    "inside_window_and_meant": false,
+    "replacement_test": "YES if, from Nov 28, 2026 to Nov 19, 2029, a NATO member formally requests Article 4 consultations, or the North Atlantic Council invokes Article 5, over a Russian attack on or incursion into its territory, airspace, waters, ships or infrastructure (NATO official statement; NATO's Article 4 page as the check). NO otherwise.",
+    "note": "Label and test agree; base-rate flag. Three invocations over Russia since 2022 make 50% for three years look low. If a rarer event is wanted, require Article 5 or an exchange of fire."
+  },
+  {
+    "id": "P6",
+    "verdict": "OK",
+    "evidence": "Not met. Drewry's WCI composite was $4,032 per 40 ft on Nov 26, 2026; $4,639 on Jul 9, 2026 was the highest since September 2024; the three-year high is about $5,937 in July 2024 (model knowledge). All are far under $10,377.",
+    "source": "Drewry, https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry ; Daily Cargo News, https://www.thedcn.com.au/news/world-container-index-9-july-2026",
+    "inside_window_and_meant": null,
+    "replacement_test": null,
+    "note": "The $10,377 record (September 2021) is from model knowledge; Drewry's current page does not restate it."
+  }
+]
