@@ -39,11 +39,12 @@ SC = "earth2/scorecard.py"
 CASCADE = "earth2/cascade.py"
 VALIDATE = "earth2/validate_graph.py"
 MERGE = "earth2/deepdives/merge_nodes.py"
+LINKS = "earth2/link_strengths.py"
 TEMPLATE = "earth2/templates/arm_template.json"
 MISSES = "earth2/scorecard/misses.json"
 CORRECTIONS = "earth2/scorecard/corrections.json"
 LEGACY = "earth2/scorecard/legacy_main_events.json"
-COPY = [SC, CASCADE, VALIDATE, MERGE, QUESTIONS, MISSES, CORRECTIONS, LEGACY, TEMPLATE, "earth2/templates/README.md",
+COPY = [SC, CASCADE, VALIDATE, MERGE, LINKS, QUESTIONS, MISSES, CORRECTIONS, LEGACY, TEMPLATE, "earth2/templates/README.md",
         GRAPH, PUBLIC, "public/future/earth2/index.html"]
 TODAY = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=7)).date()  # America/Phoenix
 _n = itertools.count(1)
@@ -1381,6 +1382,163 @@ class Test7hSharedDriver(unittest.TestCase):
         # without the links nothing is marked, as before
         plain = [c for c in cas.collisions(nodes, [], rose, after, {}, 120) if c["kind"] == "b"]
         self.assertTrue(all("shared_driver" not in c and c["score"] == 0.25 for c in plain))
+
+
+class Test7iLinkStrengths(unittest.TestCase):
+    """link_strengths.py: rank is a read-only what-if on the engine's own cascade function; apply replaces
+    strengths as structure only (no odds move, no cascade), keeps the old values, and one bad row refuses the file."""
+
+    def estimates(self, g):
+        return [e for e in g["links"] if e.get("estimated") and not e.get("display_only") and e.get("strength") is not None]
+
+    def row(self, e, **kw):
+        return dict({"source": e["source"], "target": e["target"], "strength": 0.37 if e["strength"] != 0.37 else 0.38,
+                     "delay_days": None, "evidence": "6 of 11 past cases since 1990", "method": "(B - A) / (100 - S)",
+                     "source_note": "Test archive https://example.org/cases", "date": day(0)}, **kw)
+
+    def test_rank_uses_the_engine_rule_and_writes_nothing(self):
+        root = fresh(self)
+        ls = pymod(root, LINKS)
+        cas, sc = ls.load_engine()
+        self.assertEqual((ls.MAX_HOPS, ls.FADE, ls.STRENGTH_MAX, ls.ESTIMATE_FIELD), (4, 0.5, 1.0, "estimated"))
+        # the arithmetic on a small graph: the source goes up 10 points, the strength is halved and then doubled (capped at 1)
+        node = lambda i, odds, **kw: dict({"id": i, "arm": "ARM 1", "type": "LIKELY PRECURSOR", "odds_now": odds, "status": "ON TRACK",
+                                           "window_start": "2027-01-01", "window_end": "2035-12-31"}, **kw)
+        nodes = {n["id"]: n for n in (node("A", 40), node("B", 30, type="END EVENT"), node("C", 95), node("M", 50, model_layer="board"),
+                                      node("X", 50, status="FIRED 2026-11-01"), node("Y", 1))}
+        link = lambda s_, t_, st, **kw: dict({"source": s_, "target": t_, "kind": "LIKELY", "sign": 1, "strength": st,
+                                              "delay_days": 0, "estimated": True}, **kw)
+        links = [link("A", "B", 0.2),  # 10 x (0.4 - 0.1) = 3.0
+                 link("C", "B", 0.8),  # the push is 4 (95 to 99): 4 x (1.0 - 0.4) = 2.4
+                 link("A", "M", 0.3, sign=-1, kind="OPPOSES"),  # 10 x (0.6 - 0.15) = 4.5, downward
+                 link("X", "B", 0.5), link("Y", "B", 0.5),  # skipped: a FIRED source, and a source settled at 1
+                 link("M", "B", 0.5, estimated=False),  # measured: not ranked
+                 link("B", "M", None, display_only=True)]  # display only: not ranked
+        rows, skipped, mains = ls.rank_links(cas, sc, {"nodes": list(nodes.values()), "links": links}, nodes, links, TODAY)
+        self.assertEqual([(r["link"]["source"], r["link"]["target"], round(r["score"], 6)) for r in rows],
+                         [("A", "M", 4.5), ("A", "B", 3.0), ("C", "B", 2.4)])
+        self.assertEqual((rows[0]["moves"][0][0], round(rows[0]["moves"][0][1], 6)), ("M", -4.5))
+        self.assertEqual((skipped["source FIRED"], skipped["source settled at 1"], len(mains)), (1, 1, 2))
+        self.assertEqual([e["strength"] for e in links], [0.2, 0.8, 0.3, 0.5, 0.5, 0.5, None])  # the what-if changed nothing
+        # the command on the copied graph: it lists, reports the share of the top N, and writes only the file asked for
+        g = load(root, GRAPH)
+        est = self.estimates(g)
+        before = {rel: sha(root, rel) for rel in COPY}
+        report = os.path.join(root, "rank.json")
+        code, out = run(root, LINKS, "rank", GRAPH, "--top", 5, "--json", report)
+        self.assertEqual(code, 0, out)
+        self.assertIn('"estimated": true): %d of ' % len(est), out)
+        ranked, left_out = int(re.search(r"RANKED (\d+)\.", out).group(1)), int(re.search(r"SKIPPED (\d+) ", out).group(1))
+        self.assertEqual(ranked + left_out, len(est))
+        self.assertRegex(out, r"TOP 5 SHARE OF THE TOTAL: \d+\.\d%")
+        self.assertNotIn(chr(8212), out)
+        doc = load(root, "rank.json")
+        self.assertEqual([r["rank"] for r in doc["links"]], [1, 2, 3, 4, 5])
+        self.assertEqual([r["score"] for r in doc["links"]], sorted((r["score"] for r in doc["links"]), reverse=True))
+        self.assertGreater(doc["links"][0]["score"], 0)
+        pairs = {(e["source"], e["target"]) for e in est}
+        for r in doc["links"]:
+            self.assertIn((r["source"]["id"], r["target"]["id"]), pairs)
+            self.assertIn("strength x sign", r["strength_means"])
+        self.assertEqual(doc["counts"]["ranked"] + doc["counts"]["skipped"], doc["counts"]["still_estimated"])
+        for rel in COPY:
+            self.assertEqual(sha(root, rel), before[rel], rel + " was written by rank")
+
+    def test_apply_replaces_keeps_history_and_leaves_the_stamp(self):
+        root = fresh(self)
+        sc = module(root)
+        g = load(root, GRAPH)
+        stamp, log_len = g["meta"]["odds_stamp"], len(g["cascade_log"])
+        key = g["meta"]["version"].replace(".", "_") + "_changes"
+        est = self.estimates(g)
+        carry = sum(1 for e in g["links"] if not e.get("display_only"))
+        ids, aliases, old_of = {n["id"] for n in g["nodes"]}, sc.alias_map(g), {}
+        for old in aliases:
+            old_of.setdefault(sc.resolve(old, ids, aliases), old)
+        a = est[0]
+        b = next(e for e in est[1:] if e["target"] in old_of)  # named below by an old folded id
+        row_a = self.row(a, date=day(-1))
+        row_b = self.row(b, target=old_of[b["target"]], delay_days=b["delay_days"] + 7)
+        path = updates_file(root, [row_a, row_b])
+        before = sha(root, GRAPH)
+        code, out = run(root, LINKS, "apply", GRAPH, path, "--dry-run")
+        self.assertEqual(code, 0, out)
+        self.assertIn("DRY RUN", out)
+        self.assertEqual(sha(root, GRAPH), before)
+        code, out = run(root, LINKS, "apply", GRAPH, path)
+        self.assertEqual(code, 0, out)
+        self.assertIn("structure only; odds stamp unchanged " + stamp, out)
+        self.assertIn("'%s' was folded into '%s'" % (old_of[b["target"]], b["target"]), out)
+        g2 = load(root, GRAPH)
+        find = lambda gg, e: next(x for x in gg["links"] if (x["source"], x["target"]) == (e["source"], e["target"]))
+        a2, b2 = find(g2, a), find(g2, b)
+        # replaced, marked as measured in the field the page and the validator read, and the old values kept with the date
+        self.assertEqual((a2["strength"], a2["delay_days"], a2["estimated"], a2["delay_estimated"]),
+                         (row_a["strength"], a["delay_days"], False, a["delay_estimated"]))
+        self.assertEqual(a2["strength_history"], [{"date": day(-1), "strength": a["strength"], "delay_days": a["delay_days"],
+                                                   "estimated": True, "delay_estimated": a["delay_estimated"]}])
+        self.assertEqual((a2["evidence"], a2["source_note"], a2["method"], a2["strength_date"]),
+                         (row_a["evidence"], row_a["source_note"], row_a["method"], day(-1)))
+        self.assertEqual((b2["strength"], b2["delay_days"], b2["estimated"], b2["delay_estimated"]),
+                         (row_b["strength"], b["delay_days"] + 7, False, False))
+        self.assertEqual((b2["strength_history"][-1]["strength"], b2["strength_history"][-1]["delay_days"]),
+                         (b["strength"], b["delay_days"]))
+        self.assertEqual([x for x in g2["links"] if x not in (a2, b2)], [x for x in g["links"] if x not in (a, b)])
+        # structure only: same stamp, same odds everywhere, nothing in cascade_log, one note in meta
+        self.assertEqual(g2["meta"]["odds_stamp"], stamp)
+        self.assertEqual(g2["nodes"], g["nodes"])
+        self.assertEqual(len(g2["cascade_log"]), log_len)
+        self.assertEqual(len(g2["meta"][key]), len(g["meta"].get(key, [])) + 1)
+        self.assertIn("2 link strengths replaced", g2["meta"][key][-1])
+        self.assertNotIn(chr(8212), g2["meta"][key][-1])
+        code, out = run(root, VALIDATE, GRAPH)
+        self.assertEqual(code, 0, out)
+        self.assertIn("links still estimated: %d of %d" % (len(est) - 2, carry), out)
+        # a second run of the same file finds everything in place and writes nothing
+        after = sha(root, GRAPH)
+        code, out = run(root, LINKS, "apply", GRAPH, path)
+        self.assertEqual(code, 0, out)
+        self.assertIn("Nothing to change", out)
+        self.assertEqual(sha(root, GRAPH), after)
+
+    def test_one_bad_row_refuses_the_whole_file(self):
+        root = fresh(self)
+        g = load(root, GRAPH)
+        a, b = self.estimates(g)[:2]
+        shown = next(e for e in g["links"] if e.get("display_only"))
+        before = sha(root, GRAPH)
+        bad = [(self.row(b, strength=1.5), "strength 1.5 is not a number above 0 and up to 1"),
+               (self.row(b, strength=0), "strength 0 is not a number above 0 and up to 1"),
+               (self.row(b, evidence="  "), "no evidence"),
+               ({k: v for k, v in self.row(b).items() if k != "source_note"}, "no source_note"),
+               (self.row(b, method=""), "no method"),
+               (self.row(b, target="NOT-A-NODE"), "target 'NOT-A-NODE' is not a node in the graph"),
+               (self.row(b, target=b["source"]), "there is no link from"),
+               (self.row(shown), "display only"),
+               (self.row(b, delay_days=-5), "delay_days -5"),
+               (self.row(b, date=day(1)), "is after today"),
+               (self.row(a), "row 1 names the same link")]
+        # one good row and one bad row: nothing is written, not even the good row
+        code, out = run(root, LINKS, "apply", GRAPH, updates_file(root, [self.row(a), bad[0][0]]))
+        self.assertEqual(code, 2, out)
+        self.assertIn("Nothing was written", out)
+        self.assertIn("row 2 ", out)
+        self.assertEqual(sha(root, GRAPH), before)
+        # every bad row is listed with its own reason, and still nothing is written
+        code, out = run(root, LINKS, "apply", GRAPH, updates_file(root, [self.row(a)] + [r for r, _ in bad]))
+        self.assertEqual(code, 2, out)
+        self.assertIn("%d bad rows of %d" % (len(bad), len(bad) + 1), out)
+        lines = {int(m.group(1)): m.group(0) for m in re.finditer(r"^  - row (\d+)\b.*$", out, re.M)}
+        self.assertEqual(sorted(lines), list(range(2, len(bad) + 2)))
+        for k, (_, said) in enumerate(bad, 2):
+            self.assertIn(said, lines[k])
+        self.assertEqual(sha(root, GRAPH), before)
+        self.assertNotEqual(run(root, LINKS, "apply", GRAPH, updates_file(root, {"rows": []}))[0], 0)  # not a list
+        self.assertEqual(sha(root, GRAPH), before)
+        # the good row alone goes through, so the refusals above came from the bad rows
+        code, out = run(root, LINKS, "apply", GRAPH, updates_file(root, [self.row(a)]))
+        self.assertEqual(code, 0, out)
+        self.assertNotEqual(sha(root, GRAPH), before)
 
 
 class Test8Page(unittest.TestCase):

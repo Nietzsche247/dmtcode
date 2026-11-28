@@ -1,0 +1,214 @@
+EARTH2 LINK STRENGTH RANKING  what-if dated 2026-11-27  hops 4  fade 0.5  push +10 points on the source (or to 99)
+LINKS 1337: 1178 carry a move, 159 are display only. Strengths still estimates (link field "estimated": true): 752 of 1178.
+SKIPPED 17 (the source will never push again): source FIRED 12, source settled at 1 5, source has no odds 0
+RANKED 735. Score = sum over the 119 live main events (not FIRED, odds above 1) of |odds with the strength doubled (capped at 1) minus odds with it halved|, in points.
+ALLOWED STRENGTH: above 0, up to 1.
+
+TOP 50
+  1. score 10.96   HP03 -> F2   OPPOSES  sign -1  strength 0.39  delay 0 d  source odds 85
+       from: Survival financing: a neocloud or miner-host under stress closes a lifeline of $1B or more from a customer...
+       to:   A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy
+       moves most: F2 -5.85 (A neocloud or data-center vehicle defaults, s...); 27-4 -2.27 (The ai debt break); B2 -0.76 (Private-credit funds mark down and face redem...)
+  2. score 9.41   WK2 -> W6   LIKELY  sign +1  strength 0.6923  delay 30 d  source odds 35
+       from: Software loans go bad as lenders price AI disruption
+       to:   The credit link fires: software default rate in private credit reaches 3%, or two more $1B+ software firms...
+       moves most: W6 +6.54 (The credit link fires: software default rate...); B2 +1.01 (Private-credit funds mark down and face redem...); B1 +0.60 (A bank or credit fund discloses $500M+ of AI...)
+  3. score 9.33   M22 -> 28-1   LIKELY  sign +1  strength 0.5  delay 60 d  source odds 36.2
+       from: Intelligence Explosion Publicly Recognized
+       to:   The self-improvement year
+       moves most: 28-1 +7.50 (The self-improvement year); 29-3 +1.50 (An asi claim); M13 +0.30 (Scientific Discovery Rate 10x)
+  4. score 8.93   HP04 -> 27-4   LIKELY  sign +1  strength 0.37  delay 30 d  source odds 55
+       from: OpenAI cuts, defers or renegotiates a compute commitment of $10B or more, or a supplier (Oracle, CoreWeave,...
+       to:   The ai debt break
+       moves most: 27-4 +5.55 (The ai debt break); 29-6 +0.83 (The ai shakeout); 28-2 +0.69 (The bill reaches the lenders)
+  5. score 8.61   WK6 -> W1   LIKELY  sign +1  strength 0.5  delay 30 d  source odds 50
+       from: Layoffs blamed on AI return in waves
+       to:   AI-attributed layoffs come back: Challenger counts 25,000+ job cuts blamed on AI in a single month
+       moves most: W1 +7.50 (AI-attributed layoffs come back: Challenger c...); F7 -0.38 (A big-four hyperscaler cuts capex (versus its...); B2 +0.22 (Private-credit funds mark down and face redem...)
+  6. score 8.55   MR2 -> J1   LIKELY  sign +1  strength 0.4867  delay 14 d  source odds 55
+       from: Tokyo sells Treasuries again to defend the yen
+       to:   The yen closes weaker than 160 and Tokyo confirms 5 trillion yen or more of buying
+       moves most: J1 +7.30 (The yen closes weaker than 160 and Tokyo conf...); D4 +0.56 (The 10-year Treasury closes above 5.50%); F1 +0.37 (Another $1B+ AI data-center financing is pull...)
+  7. score 8.34   M6 -> 27-2   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 55
+       from: AI Agents Transform White-Collar Work
+       to:   Ai agents reach white-collar work
+       moves most: 27-2 +5.50 (Ai agents reach white-collar work); 28-4 +0.83 (The hiring freeze goes broad); W1 +0.41 (AI-attributed layoffs come back: Challenger c...)
+  8. score 8.22   RM3 -> C4   LIKELY  sign +1  strength 0.6246  delay 7 d  source odds 35
+       from: Cyber incidents halt exchanges and payment processors
+       to:   Payments or trading halt 4+ hours at a top institution, network or exchange, or $1B+ is stolen
+       moves most: C4 +6.88 (Payments or trading halt 4+ hours at a top in...); B3 +0.57 (Regional bank fund KRE closes under $60); F3 +0.57 (A bitcoin miner turned AI host does a distres...)
+  9. score 8.22   WK8 -> W5   LIKELY  sign +1  strength 0.6909  delay 30 d  source odds 45
+       from: Paid seats fall at per-seat software vendors
+       to:   Seats start to fall: a top-ten application software vendor reports paid seats or subscription revenue down...
+       moves most: W5 +6.55 (Seats start to fall: a top-ten application so...); W6 +0.92 (The credit link fires: software default rate...); B2 +0.42 (Private-credit funds mark down and face redem...)
+ 10. score 8.08   FD04 -> WF8   LIKELY  sign +1  strength 0.553  delay 0 d  source odds 6.3
+       from: Indonesia bans palm oil exports outright (as on Apr 28, 2022) by Jun 30, 2027. This alone settles WF8.
+       to:   World food shock: the FAO Food Price Index sets a new monthly record above 160.2 (March 2022), or a top-3 e...
+       moves most: WF8 +7.23 (World food shock: the FAO Food Price Index se...); M56 +0.35 (Political Extremism Surge); D3 +0.28 (Three straight hikes (upper bound 4.75% by Ma...)
+ 11. score 8.07   RD02 -> 27-6   NECESSARY  sign +1  strength 0.8  delay 0 d  source odds 88
+       from: Ex-China separated Dy+Tb stays far below non-China demand through 2027 (about 92 t a year now vs about 400 t)
+       to:   The rare-earth squeeze stops a factory
+       moves most: 27-6 +6.00 (The rare-earth squeeze stops a factory); R5 +0.99 (Washington sets a price floor, tariff or stoc...); R2 +0.30 (China's rare-earth pause lapses or partly sna...)
+ 12. score 7.88   T2 -> F2   MAGNIFIES  sign +1  strength 0.3  delay 14 d  source odds 10
+       from: A full quarantine or blockade of Taiwan lasting more than 7 days
+       to:   A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy
+       moves most: F2 +4.50 (A neocloud or data-center vehicle defaults, s...); 27-4 +1.75 (The ai debt break); B2 +0.58 (Private-credit funds mark down and face redem...)
+ 13. score 7.87   FD03 -> WF8   LIKELY  sign +1  strength 0.591  delay 0 d  source odds 12.4
+       from: India bans exports of non-basmati white rice outright (as on Jul 20, 2023) by Jun 30, 2027. This alone sett...
+       to:   World food shock: the FAO Food Price Index sets a new monthly record above 160.2 (March 2022), or a top-3 e...
+       moves most: WF8 +7.05 (World food shock: the FAO Food Price Index se...); M56 +0.34 (Political Extremism Surge); D3 +0.27 (Three straight hikes (upper bound 4.75% by Ma...)
+ 14. score 7.83   DA3 -> R2   LIKELY  sign +1  strength 0.7417  delay 0 d  source odds 36.9
+       from: Rare-earth pause ends Jan 10, 2027; magnets flow on short-leash licences
+       to:   China's rare-earth pause lapses or partly snaps back on Jan 10
+       moves most: R2 +6.29 (China's rare-earth pause lapses or partly sna...); R4 +0.85 (Dysprosium and terbium outside China stay abo...); D2 +0.16 (A second straight hike on Jan 27)
+ 15. score 7.77   RD11 -> R7   LIKELY  sign +1  strength 0.5  delay 0 d  source odds 70
+       from: Dy/Tb flow from China to Japan stays near zero through mid-2027
+       to:   China cuts a named country off from rare earths for more than a month
+       moves most: R7 +7.50 (China cuts a named country off from rare eart...); T1 +0.19 (China's coast guard boards a Taiwan-bound shi...); 28-6 +0.08 (Taiwan votes under pressure)
+ 16. score 7.74   RM1 -> C1   LIKELY  sign +1  strength 0.4333  delay 60 d  source odds 70
+       from: AI agents run intrusions with little human direction
+       to:   An AI-run attack is officially attributed and forces a listed company to disclose a material hit, or costs...
+       moves most: C1 +6.50 (An AI-run attack is officially attributed and...); C5 +0.93 (Washington puts binding limits on cyber-capab...); C4 +0.16 (Payments or trading halt 4+ hours at a top in...)
+ 17. score 7.72   MR3 -> D4   LIKELY  sign +1  strength 0.4164  delay 14 d  source odds 45
+       from: Treasury auctions clear badly as the 10-year nears 5.50%
+       to:   The 10-year Treasury closes above 5.50%
+       moves most: D4 +6.25 (The 10-year Treasury closes above 5.50%); F2 +0.42 (A neocloud or data-center vehicle defaults, s...); B3 +0.37 (Regional bank fund KRE closes under $60)
+ 18. score 7.65   D2 -> D3   NECESSARY  sign +1  strength 0.58  delay 50 d  source odds 54.5
+       from: A second straight hike on Jan 27
+       to:   Three straight hikes (upper bound 4.75% by Mar 17)
+       moves most: D3 +7.10 (Three straight hikes (upper bound 4.75% by Ma...); B3 +0.55 (Regional bank fund KRE closes under $60)
+ 19. score 7.62   HP13 -> W1   LIKELY  sign +1  strength 0.43  delay 30 d  source odds 30
+       from: Layoffs find their reason: a Fortune 100 company announces 5,000 or more job cuts and names AI as a cause w...
+       to:   AI-attributed layoffs come back: Challenger counts 25,000+ job cuts blamed on AI in a single month
+       moves most: W1 +6.45 (AI-attributed layoffs come back: Challenger c...); F7 -0.32 (A big-four hyperscaler cuts capex (versus its...); B2 +0.19 (Private-credit funds mark down and face redem...)
+ 20. score 7.37   M11 -> 27-1   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 65
+       from: AGI (Human-Level General Intelligence)
+       to:   Agi is declared
+       moves most: 27-1 +5.50 (Agi is declared); 28-1 +0.83 (The self-improvement year); 29-3 +0.55 (An asi claim)
+ 21. score 7.32   FC3 -> X1   LIKELY  sign +1  strength 0.7  delay 7 d  source odds 40
+       from: AGI gets declared with no referee left to check
+       to:   A frontier lab or G7 government declares expert-level general AI capability
+       moves most: X1 +6.50 (A frontier lab or G7 government declares expe...); F7 -0.33 (A big-four hyperscaler cuts capex (versus its...); C5 +0.26 (Washington puts binding limits on cyber-capab...)
+ 22. score 7.28   HP04 -> F4   LIKELY  sign +1  strength 0.44  delay 30 d  source odds 55
+       from: OpenAI cuts, defers or renegotiates a compute commitment of $10B or more, or a supplier (Oracle, CoreWeave,...
+       to:   A rating agency cuts Oracle to junk
+       moves most: F4 +6.60 (A rating agency cuts Oracle to junk); F1 +0.33 (Another $1B+ AI data-center financing is pull...); J2 +0.17 (Japan's 30-year yield breaks its record on a...)
+ 23. score 7.23   M4 -> 28-4   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 30
+       from: White-Collar Hiring Freeze (Fortune 500)
+       to:   The hiring freeze goes broad
+       moves most: 28-4 +5.50 (The hiring freeze goes broad); 29-5 +0.82 (Mass cognitive displacement begins); W2 +0.33 (The junior squeeze reaches official data: NY...)
+ 24. score 7.13   MR4 -> F2   LIKELY  sign +1  strength 0.3554  delay 45 d  source odds 35
+       from: Neocloud chip-backed debt hits its refinancing wall
+       to:   A neocloud or data-center vehicle defaults, swaps its debt under distress or files for bankruptcy
+       moves most: F2 +5.33 (A neocloud or data-center vehicle defaults, s...); B2 +0.69 (Private-credit funds mark down and face redem...); B1 +0.55 (A bank or credit fund discloses $500M+ of AI...)
+ 25. score 6.85   M12 -> 28-1   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 54.1
+       from: Recursive Learning Algorithms Discovered
+       to:   The self-improvement year
+       moves most: 28-1 +5.50 (The self-improvement year); 29-3 +1.10 (An asi claim); M13 +0.22 (Scientific Discovery Rate 10x)
+ 26. score 6.85   BT6 -> BT6a   NECESSARY  sign +1  strength 0.45  delay 30 d  source odds 20
+       from: Authorities confirm a small group or one person held a working agent or toxin and meant to attack at scale...
+       to:   Same as BT6, with AI use confirmed by authorities
+       moves most: BT6a +6.75 (Same as BT6, with AI use confirmed by authori...); BB3 -0.10 (The FDA approves the first drug widely counte...)
+ 27. score 6.75   C5 -> 27-3   LIKELY  sign +1  strength 0.8  delay 30 d  source odds 24.4
+       from: Washington puts binding limits on cyber-capable AI models (a softer delay at government request is 45%)
+       to:   Washington binds ai
+       moves most: 27-3 +6.00 (Washington binds ai); C8 +0.36 (The insurance turn: cyber rates rise for the...); C9 +0.18 (The first physical or nationwide effect offic...)
+ 28. score 6.65   BT4 -> D2   OPPOSES  sign -1  strength 0.3  delay 14 d  source odds 5
+       from: Sustained person-to-person spread of bird flu (H5N1) somewhere
+       to:   A second straight hike on Jan 27
+       moves most: D2 -4.50 (A second straight hike on Jan 27); D3 -1.30 (Three straight hikes (upper bound 4.75% by Ma...); J1 -0.39 (The yen closes weaker than 160 and Tokyo conf...)
+ 29. score 6.64   RD09 -> 27-6   LIKELY  sign +1  strength 0.33  delay 0 d  source odds 40
+       from: A US defense or aerospace line halts deliveries over a non-compliant Dy/Tb or SmCo magnet (paperwork stop)
+       to:   The rare-earth squeeze stops a factory
+       moves most: 27-6 +4.95 (The rare-earth squeeze stops a factory); R5 +0.82 (Washington sets a price floor, tariff or stoc...); R2 +0.25 (China's rare-earth pause lapses or partly sna...)
+ 30. score 6.61   D6 -> D2   OPPOSES  sign -1  strength 0.3  delay 14 d  source odds 20
+       from: A US recession call
+       to:   A second straight hike on Jan 27
+       moves most: D2 -4.50 (A second straight hike on Jan 27); D3 -1.30 (Three straight hikes (upper bound 4.75% by Ma...); J1 -0.39 (The yen closes weaker than 160 and Tokyo conf...)
+ 31. score 6.61   HP05 -> F4   OPPOSES  sign -1  strength 0.27  delay 0 d  source odds 70
+       from: Oracle defends its rating: it sells $10B or more of new stock or equity-linked paper, or cuts its fiscal 20...
+       to:   A rating agency cuts Oracle to junk
+       moves most: F4 -4.05 (A rating agency cuts Oracle to junk); 27-4 -1.30 (The ai debt break); F1 -0.20 (Another $1B+ AI data-center financing is pull...)
+ 32. score 6.60   D4 -> 27-5   LIKELY  sign +1  strength 0.33  delay 30 d  source odds 22
+       from: The 10-year Treasury closes above 5.50%
+       to:   Money gets dearer
+       moves most: 27-5 +4.95 (Money gets dearer); 27-4 +0.37 (The ai debt break); D3 +0.25 (Three straight hikes (upper bound 4.75% by Ma...)
+ 33. score 6.59   M15 -> 27-3   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 54.8
+       from: Emergency AI Regulation Passed
+       to:   Washington binds ai
+       moves most: 27-3 +5.50 (Washington binds ai); C4 +0.33 (Payments or trading halt 4+ hours at a top in...); C8 +0.33 (The insurance turn: cyber rates rise for the...)
+ 34. score 6.53   FC7 -> W7   LIKELY  sign +1  strength 0.75  delay 30 d  source odds 60
+       from: Job fear turns partisan and gets written into labor law
+       to:   Policy catches up: a second large state, or Congress, enacts an AI layoff notice or reporting law
+       moves most: W7 +6.25 (Policy catches up: a second large state, or C...); W1 +0.28 (AI-attributed layoffs come back: Challenger c...)
+ 35. score 6.53   FC4 -> C5   LIKELY  sign +1  strength 0.3938  delay 60 d  source odds 35
+       from: Washington holds frontier releases and eyes equity in labs
+       to:   Washington puts binding limits on cyber-capable AI models (a softer delay at government request is 45%)
+       moves most: C5 +5.91 (Washington puts binding limits on cyber-capab...); W3 -0.15 (Office payrolls (information, finance, profes...); W1 -0.15 (AI-attributed layoffs come back: Challenger c...)
+ 36. score 6.48   C4 -> 28-3   LIKELY  sign +1  strength 0.4  delay 60 d  source odds 39.4
+       from: Payments or trading halt 4+ hours at a top institution, network or exchange, or $1B+ is stolen
+       to:   The financial plumbing is breached
+       moves most: 28-3 +6.00 (The financial plumbing is breached); C8 +0.30 (The insurance turn: cyber rates rise for the...); 27-3 +0.13 (Washington binds ai)
+ 37. score 6.42   MR5 -> B2   LIKELY  sign +1  strength 0.3708  delay 14 d  source odds 35
+       from: Retail private credit funds ration withdrawals each quarter
+       to:   Private-credit funds mark down and face redemption queues (Blue Owl under $7 by May 21 is 40%)
+       moves most: B2 +5.56 (Private-credit funds mark down and face redem...); F1 +0.33 (Another $1B+ AI data-center financing is pull...); B1 +0.22 (A bank or credit fund discloses $500M+ of AI...)
+ 38. score 6.36   M10 -> 28-5   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 22
+       from: DIY Bio-Attack Major Impact
+       to:   A bio case with intent, and the rules that follow
+       moves most: 28-5 +5.50 (A bio case with intent, and the rules that fo...); C5 +0.55 (Washington puts binding limits on cyber-capab...); 27-3 +0.22 (Washington binds ai)
+ 39. score 6.34   M51 -> 29-2   LIKELY  sign +1  strength 0.4  delay 0 d  source odds 25
+       from: Global Financial System Emergency
+       to:   The backstop
+       moves most: 29-2 +6.00 (The backstop); J6 +0.30 (Japan's Treasury holdings fall under $1,000B); D9 +0.03 (The Fed buys bonds, or Treasury caps long-bon...)
+ 40. score 6.31   HP15 -> F10   LIKELY  sign +1  strength 0.4  delay 0 d  source odds 35
+       from: Nvidia's quarterly report, due Dec 4, is filed late or discloses a formal SEC investigation, a subpoena or...
+       to:   DOJ or SEC takes formal action tied to Nvidia
+       moves most: F10 +6.00 (DOJ or SEC takes formal action tied to Nvidia); F7 +0.25 (A big-four hyperscaler cuts capex (versus its...); F11 +0.04 (Nvidia writes down receivables or cuts guidan...)
+ 41. score 6.30   M37 -> 29-1   LIKELY  sign +1  strength 0.4  delay 0 d  source odds 47
+       from: Military C2 Systems Compromised
+       to:   The networks are not safe
+       moves most: 29-1 +6.00 (The networks are not safe); C10 +0.30 (A record theft: $10B+ stolen, or a top-ten ex...)
+ 42. score 6.18   RD10 -> 27-6   LIKELY  sign +1  strength 0.33  delay 30 d  source odds 54.7
+       from: Japanese magnet makers run out of Dy stock and ration (Shin-Etsu, Proterial, TDK)
+       to:   The rare-earth squeeze stops a factory
+       moves most: 27-6 +4.95 (The rare-earth squeeze stops a factory); R5 +0.82 (Washington sets a price floor, tariff or stoc...); M39 -0.12 (First 1M Humanoid Robots Delivered)
+ 43. score 6.15   HP08 -> 28-2   LIKELY  sign +1  strength 0.31  delay 30 d  source odds 30
+       from: The lenders who felt safe: a US life insurer or annuity writer discloses $1B or more of private-credit or A...
+       to:   The bill reaches the lenders
+       moves most: 28-2 +4.65 (The bill reaches the lenders); 29-2 +0.47 (The backstop); 29-6 +0.46 (The ai shakeout)
+ 44. score 6.05   T1 -> 28-6   LIKELY  sign +1  strength 0.85  delay 0 d  source odds 18
+       from: China's coast guard boards a Taiwan-bound ship or isolates an outlying island for 48 hours
+       to:   Taiwan votes under pressure
+       moves most: 28-6 +5.75 (Taiwan votes under pressure); R7 +0.29 (China cuts a named country off from rare eart...); 27-6 +0.01 (The rare-earth squeeze stops a factory)
+ 45. score 6.00   BB4 -> 29-4   LIKELY  sign +1  strength 0.8  delay 0 d  source odds 25
+       from: A cure-class result in a big tumor (the pancreatic drug wins in a second major cancer, or the vaccine works...
+       to:   The keytruda cliff and cure-class results
+       moves most: 29-4 +6.00 (The keytruda cliff and cure-class results)
+ 46. score 6.00   28-1 -> 29-3   LIKELY  sign +1  strength 0.4  delay 365 d  source odds 61
+       from: The self-improvement year
+       to:   An asi claim
+       moves most: 29-3 +6.00 (An asi claim)
+ 47. score 5.94   M35 -> 28-3   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 34.9
+       from: Global Financial Systems Vulnerable
+       to:   The financial plumbing is breached
+       moves most: 28-3 +5.50 (The financial plumbing is breached); C8 +0.27 (The insurance turn: cyber rates rise for the...); 27-3 +0.12 (Washington binds ai)
+ 48. score 5.93   M19 -> 29-3   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 55.3
+       from: Artificial Superintelligence (ASI)
+       to:   An asi claim
+       moves most: 29-3 +5.50 (An asi claim); M13 +0.41 (Scientific Discovery Rate 10x); M57 +0.02 (Materials Science Breakthrough Wave)
+ 49. score 5.91   M23 -> 29-5   LIKELY  sign +1  strength 0.9  delay 0 d  source odds 38
+       from: Mass Cognitive Worker Displacement Begins
+       to:   Mass cognitive displacement begins
+       moves most: 29-5 +5.50 (Mass cognitive displacement begins); M61 +0.27 (Career Education Timeline Reimagined); M62 +0.14 (Intergenerational Wealth Concentration)
+ 50. score 5.90   HP07 -> F9   LIKELY  sign +1  strength 0.28  delay 14 d  source odds 42.1
+       from: The credit index catches down: the US high-yield bond spread (ICE BofA) closes at 500 bp or more (372 bp on...
+       to:   S&P 500 closes 20% or more below its record
+       moves most: F9 +4.20 (S&P 500 closes 20% or more below its record); J3 +0.63 (The yen jumps 5% in a week (borrowed-yen trad...); D2 -0.32 (A second straight hike on Jan 27)
+
+CONCENTRATION  total score 992.8 points over 735 ranked links
+  top 10 hold 8.9%, top 25 hold 20.3%, top 50 hold 36.3%, top 100 hold 59.1%, top 200 hold 81.8%
+  half the total sits in the top 77 links; 80% needs 189; 90% needs 267
+  136 ranked links score 0: 123 where no live main event moves (the push stops short of one); 9 where the target has FIRED and is never moved; 2 where the effect would land after the target's window closes; 2 where the source is already at 99, so the push is zero
+TOP 50 SHARE OF THE TOTAL: 36.3%
+WROTE /home/claude/work/p2/links/top50.json  (50 rows; the graph was not written)

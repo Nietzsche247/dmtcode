@@ -97,7 +97,8 @@
    "The odds re-rates themselves are one cascade.py --rebase run (no hops), logged in cascade_log with kind rebase.",
    "Nov 26, 2026: 9 lowering links (sign -1) were labelled NECESSARY; relabelled OPPOSES, structure only: PG1->27-1, PG1->28-1, PG3->27-1, PG3->28-1, PG4->27-1, PG4->28-1, PG5->27-1, PG5->28-1, PG9->28-1.",
    "Nov 27, 2026: meta.contains seeded with 12 containment pairs (the whole happens whenever the part does), structure only, no odds moved: 29-1 contains C9, 29-2 contains D9, 29-2 contains B4, 27-4 contains F4, 27-4 contains MR4, E07 contains T1, E07 contains T2, E09 contains W2, E09 contains W3, E31 contains BB4, D5 contains HP11, BT6 contains 28-5. validate_graph.py and cascade.py print a WARN when a whole reads below its part.",
-   "Nov 27, 2026: odds_text brought in line with odds_now on 95 nodes (cascade.py --fix-odds-text), structure only, no odds moved: the leading percent now reads the node's odds_now as a whole number and closing market notes were dropped (market odds live in node market). 169 strings that do not start with a percent were left as written."
+   "Nov 27, 2026: odds_text brought in line with odds_now on 95 nodes (cascade.py --fix-odds-text), structure only, no odds moved: the leading percent now reads the node's odds_now as a whole number and closing market notes were dropped (market odds live in node market). 169 strings that do not start with a percent were left as written.",
+   "Nov 27, 2026: 21 link strengths replaced with sourced numbers (link_strengths.py apply, file apply_rows.json), structure only, no odds moved and no cascade run: FD04 -> WF8: strength 0.553 to 0.549, delay 0 d confirmed, estimate to measured; FD03 -> WF8: strength 0.591 to 0.587, delay 0 d confirmed, estimate to measured; RM1 -> C1: strength 0.4333 to 0.4, delay 60 d kept, estimate to measured; HP13 -> W1: strength 0.43 to 0.354, delay 30 to 12 d, estimate to measured; MR5 -> B2: strength 0.3708 to 0.22, delay 14 d kept, estimate to measured; WK2 -> W6: strength 0.6923 to 0.9323, delay 30 to 0 d, estimate to measured; WK6 -> W1: strength 0.5 to 0.956, delay 30 to 0 d, estimate to measured; RD02 -> 27-6: strength 0.8 to 0.4, delay 0 d kept, estimate to measured; DA3 -> R2: strength 0.7417 to 0.9192, delay 0 d confirmed, estimate to measured; MR3 -> D4: strength 0.4164 to 0.2818, delay 14 d kept, estimate to measured; BT6 -> BT6a: strength 0.45 to 0.2, delay 30 d kept, estimate to measured; RD09 -> 27-6: strength 0.33 to 0.1617, delay 0 d kept, estimate to measured; D4 -> 27-5: strength 0.33 to 0.4705, delay 30 to 190 d, estimate to measured; HP07 -> F9: strength 0.28 to 0.2815, delay 14 d kept, estimate to measured; MR2 -> J1: strength 0.4867 to 0.19, delay 14 to 0 d, estimate to measured; WK8 -> W5: strength 0.6909 to 0.525, delay 30 d kept, estimate to measured; D2 -> D3: strength 0.58 to 0.714, delay 50 to 49 d, estimate to measured; FC3 -> X1: strength 0.7 to 0.598, delay 7 d kept, estimate to measured; MR4 -> F2: strength 0.3554 to 0.304, delay 45 d kept, estimate to measured; D6 -> D2: strength 0.3 to 0.393, delay 14 d kept, estimate to measured; and 1 more. Each link keeps its old strength and delay in strength_history and carries evidence, source_note, method and strength_date. Links still estimated: 731 of 1178."
   ],
   "contains": [
    {
@@ -493,7 +494,15 @@
      "old": "Front-month Brent settles above $100 a barrel on any day.",
      "reason": "Test audit Nov 27, 2026 (ALREADY MET): Older occurrence, last one Nov 3, 2026, 19 days before the window. Brent is now about $91 to $95."
     }
-   ]
+   ],
+   "market": {
+    "odds": 65,
+    "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
+    "contract": "BNO Apr 16 2027 calls, strikes 65, 70, 75 (vol); ICE Brent futures Jan 2027 to Aug 2027 (curve)",
+    "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=BNO&reqId=1",
+    "as_of": "2026-11-27",
+    "match_note": "Stored number is the daily-close version (65); the continuous one-touch figure is 62. TOUCH odds: simulation of the rolling front month, daily settles, above 100 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 46.1% reprices BNO Apr 16 call spreads at the matching strike 72.2, held flat 45 days. Finish above on May 31: 21%. Plain one-touch formula 67%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+   }
   },
   {
    "id": "C1",
@@ -766,7 +775,15 @@
      "old": "YES if Nvidia (NVDA) closes below $120.00 a share in any regular Nasdaq session by Mar 31, 2027 (Nasdaq official closing price, adjusted for any stock split). NO otherwise.",
      "reason": "Test audit Nov 27, 2026 (ALREADY MET): Older occurrence; the last close under $120 was May 9, 2025. Today's Nov 27 half session was not yet available."
     }
-   ]
+   ],
+   "market": {
+    "odds": 52,
+    "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
+    "contract": "NVDA Mar 19 2027 and Apr 16 2027 puts, strikes 115, 120 and 125",
+    "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=NVDA&reqId=1",
+    "as_of": "2026-11-27",
+    "match_note": "Stored number is the daily-close version (52); the continuous one-touch figure is 44. TOUCH odds, closes only: one-touch formula for NVDA closing under 120 on any day by Mar 31, 2027 (124 days). Close 150.49. Vol 50.2% is the one that reprices the 115/120/125 put spreads (finish under 120 on Mar 31: 25%); Mar 19 and Apr 16 expiries sit either side of the deadline, total variance interpolated; drift 4.1%. Plain formula with the 120 strike vol 59.9% gives 56%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+   }
   },
   {
    "id": "F2",
@@ -2028,7 +2045,15 @@
      "old": "YES if front-month ICE Brent settles above $110 a barrel on any day by May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.",
      "reason": "Test audit Nov 27, 2026 (ALREADY MET): Older occurrence, last one Oct 30, 2026. Only the start date is missing."
     }
-   ]
+   ],
+   "market": {
+    "odds": 40,
+    "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
+    "contract": "BNO Apr 16 2027 calls, strikes 75, 80, 85 (vol); ICE Brent futures Jan 2027 to Aug 2027 (curve)",
+    "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=BNO&reqId=1",
+    "as_of": "2026-11-27",
+    "match_note": "Stored number is the daily-close version (40); the continuous one-touch figure is 33. TOUCH odds: simulation of the rolling front month, daily settles, above 110 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 43.1% reprices BNO Apr 16 call spreads at the matching strike 79.4, held flat 45 days. Finish above on May 31: 12%. Plain one-touch formula 44%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+   }
   },
   {
    "id": "B1",
@@ -2702,7 +2727,15 @@
     "reference_class": "S&P 500 declines of 5% or more from a high, Dec 1945 to Jul 2016: 89 (56 pullbacks of 5 to 9.9%, 21 corrections of 10 to 19.9%, 12 bear markets of 20% or more), so 12 of 89 (13%) went on to 20%. The index closed at 7,323.63 on Nov 18, 2026, 6.3% under its record, so it sits at the 5%+ pullback stage. Not every bear market crossed 20% within six months, so 13 is a ceiling for the window to May 31, 2027.",
     "source": "Sam Stovall, Stock Market Retreats and Recoveries, AAII Journal, Oct 2017, S&P Dow Jones Indices data (https://www.aaii.com/journal/article/stock-market-retreats-and-recoveries); Dow Jones via Morningstar, Nov 18, 2026 (https://www.morningstar.com/news/dow-jones/202611188038/sp-500-falls-023-to-732363-data-talk)"
    },
-   "settlement_test": "YES if the S&P 500 closes 20% or more below its record close (at or under 6,255.14 against the current 7,818.93 record, or 20% under any higher record set later) on any trading day by May 31, 2027 (S&P Dow Jones Indices official closing values). NO otherwise."
+   "settlement_test": "YES if the S&P 500 closes 20% or more below its record close (at or under 6,255.14 against the current 7,818.93 record, or 20% under any higher record set later) on any trading day by May 31, 2027 (S&P Dow Jones Indices official closing values). NO otherwise.",
+   "market": {
+    "odds": 38,
+    "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
+    "contract": "SPY Apr 30 2027 610, 620 and 630 puts; SPY Jun 17 2027 620, 625 and 630 puts (SPY stands in for SPX)",
+    "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=SPY&reqId=1",
+    "as_of": "2026-11-27",
+    "match_note": "Stored number is the daily-close version (38); the continuous one-touch figure is 22. TOUCH odds, closes only: one-touch formula for the S&P 500 closing at or under 6,255.14 by May 28, 2027 (last session before May 31; 182 days), priced on SPY at 624.29 (SPY 728.32; SPX quotes were blank). Vol 19.3% reprices the put spreads around the level (finish under on May 28: 12%); Apr 30 and Jun 17 expiries, total variance interpolated; drift 3.5%. Plain formula with the strike vol 26.5% gives 41%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+   }
   },
   {
    "id": "J6",
@@ -2920,7 +2953,15 @@
      "old": "YES if the SPDR S&P Regional Banking ETF (KRE) closes below $60.00 on any trading day from Nov 22, 2026 through Mar 31, 2027 (NYSE Arca official close; State Street SPDR fund data as the check). NO otherwise.",
      "reason": "Test audit Nov 27, 2026 (TOO EASY): Label and test agree; this is a base-rate flag only. KRE needs a fall of about 14% from here. Use $55 if a rarer event is wanted."
     }
-   ]
+   ],
+   "market": {
+    "odds": 21,
+    "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
+    "contract": "KRE Mar 19 2027 60 put and 65 put",
+    "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=KRE&reqId=1",
+    "as_of": "2026-11-27",
+    "match_note": "Continuous one-touch figure; a daily-close version would run a few points lower. TOUCH odds, closes only: one-touch formula for KRE closing under 60 on any day by Mar 31, 2027 (124 days). Close 70.35. Vol 23.0% reprices the 60/65 put spread, held flat 12 days past the Mar 19 expiry (Mar 31 expiry quoted too wide); drift 2.0%. Finish under 60 on Mar 31: 12%. Plain formula with the 60 strike vol 32.1% gives 41%. Weak row: the 60 put is quoted 0.87 to 1.31. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+   }
   },
   {
    "id": "J2",
@@ -30615,13 +30656,26 @@
    "source": "D2",
    "target": "D3",
    "sign": 1,
-   "strength": 0.58,
-   "delay_days": 50,
+   "strength": 0.714,
+   "delay_days": 49,
    "kind": "NECESSARY",
    "reason": "A third hike needs the second (35% / 60% if the second happens)",
-   "estimated": true,
-   "delay_estimated": true,
-   "origin": "estimate from board text"
+   "estimated": false,
+   "delay_estimated": false,
+   "origin": "estimate from board text",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.58,
+     "delay_days": 50,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Reference class: runs of FOMC rate rises at back-to-back scheduled meetings since Feb 1994, when the FOMC began announcing its decisions. 5 runs reached two in a row: Feb and Mar 1994 (then May 1994, a rise), Jun and Aug 1999 (then Oct 1999, a hold), Feb and Mar 2000 (then May 2000, a rise), Jun and Aug 2004 (then Sep 2004, a rise), Mar and May 2022 (then Jun 2022, a rise). 4 of 5 went on to a third straight rise; rule of succession (4+1)/(5+2) = 71.4% = B. Counting every back-to-back pair gives 25 of 30 (83%), most of it the 17 straight of 2004 to 2006 and the 10 straight of 2022 to 2023; the 2015 to 2018 cycle never rose at two meetings in a row. D3 cannot happen without D2, so C = 0 and the strength is B / 100. The first form gives 1.01, above the allowed range: D3 at 25.3 is low against this history (54.5 x 0.714 = 38.9). Markets side with the low level: Polymarket has D3 at 24 and Kalshi has the January rise at 59, a conditional of about 41%. That is a level question for D3, flagged here and not folded into the slope. Three 25 bp rises from 4.00% reach the 4.75% bar. Delay: Jan 27 to Mar 17, 2027 is 49 days.",
+   "source_note": "Federal Reserve target rate history via FRED DFEDTAR (https://fred.stlouisfed.org/series/DFEDTAR) and DFEDTARU (https://fred.stlouisfed.org/series/DFEDTARU), read Nov 27, 2026; Federal Reserve open market operations pages, https://www.federalreserve.gov/monetarypolicy/openmarket.htm and https://www.federalreserve.gov/monetarypolicy/openmarket_archive.htm",
+   "method": "NECESSARY link, C = 0: strength = B / 100 = 71.4 / 100 = 0.714. Check with the first form: (71.4 - 25.3) / (100 - 54.5) = 1.014, over 1, so the B / 100 form is the one used. Odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "B2",
@@ -31311,13 +31365,26 @@
    "source": "D6",
    "target": "D2",
    "sign": -1,
-   "strength": 0.3,
+   "strength": 0.393,
    "delay_days": 14,
    "kind": "OPPOSES",
    "reason": "A recession flips the Fed to cuts",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
-   "origin": "estimate from board text"
+   "origin": "estimate from board text",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.3,
+     "delay_days": 14,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Reference class: real-time Sahm rule triggers (FRED SAHMREALTIME first reaching 0.50), 1960 to 2024, 11 episodes: Aug 1960, Oct 1969, Mar 1974, Nov 1976, Apr 1980, Nov 1981, Nov 1990, Jun 2001, Apr 2008, Apr 2020, Jul 2024. Test matched to this pair: did the Fed raise its policy rate in the band from 3 months before to 2 months after the trigger month? (D2's Jan 27 meeting sits 2 months after a Nov trigger and 3 months before an Apr trigger.) Yes in 2 of 11: the discount rate rises of Apr 1974 and Feb 1980, both in oil-shock inflations. No in the other 9, and 0 of 5 since 1990. Rule of succession (2+1)/(11+2) = 23.1% = B. C: the board's own class for D2 (the first rise of a cycle followed by a rise at the next meeting) is 4 of 6, or 62.5; second form (62.5 - 23.1) / 100 = 0.394, in line with the first. On the cases since 1990 alone B would be 14.3 and the strength 0.50. B is an upper reading, since D2 needs rises at two named meetings and the count takes any rise in a 6-month band. Policy rate: discount rate before 1982, federal funds target after. Timing note: D6 runs to May 31, 2027, four months past D2's Jan 27 date; only a trigger on the Nov or Dec jobs data can come before the meeting.",
+   "source_note": "FRED SAHMREALTIME https://fred.stlouisfed.org/series/SAHMREALTIME ; discount rate INTDSRUSM193N https://fred.stlouisfed.org/series/INTDSRUSM193N ; federal funds target DFEDTAR https://fred.stlouisfed.org/series/DFEDTAR and DFEDTARU https://fred.stlouisfed.org/series/DFEDTARU (all read Nov 27, 2026)",
+   "method": "Sign -1 link: (A - B) / (100 - S) = (54.5 - 23.1) / (100 - 20) = 0.393, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "D6",
@@ -32115,13 +32182,26 @@
    "source": "BT6",
    "target": "BT6a",
    "sign": 1,
-   "strength": 0.45,
+   "strength": 0.2,
    "delay_days": 30,
    "kind": "NECESSARY",
    "reason": "BT6a is BT6 with AI confirmed",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
-   "origin": "estimate from board text"
+   "origin": "estimate from board text",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.45,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class: US prosecutions for possessing a real toxin since ChatGPT's release (Dec 2022 to Nov 2026) found in Justice Department releases: Russell Vane, Virginia (ricin, plea Aug 2024; the release cites ordinary web searches); Jason Clampit, Arkansas (ricin, sentenced Mar 2025); Brandon Baxter, Ohio (ricin, indicted Oct 2026). Officials or filings cited use of an AI model or chatbot in 0 of 3. B = 20 by the rule of succession (0+1)/(3+2). C = 0 because the link is NECESSARY. Wider than BT6 itself: none of the three was charged with intent to harm many people, so the class is a mild stretch. Near miss: in the Gujarat ricin plot (India, Nov 2025) a private assessment, not the authorities, reported chatbot use, and no ricin was made. Small level gap: with BT6 at 20 and B = 20 the target would sit near 4, not 9.",
+   "source_note": "US Department of Justice releases: https://www.justice.gov/usao-edva/pr/vienna-man-pleads-guilty-illegally-possessing-ricin ; https://www.justice.gov/usao-wdar/pr/winslow-man-sentenced-8-years-federal-prison-possession-biological-weapon ; https://justice.gov/usao-ndoh/pr/ohio-man-charged-possessing-dangerous-biological-weapon ; News 5 Cleveland on the Ohio case, https://www.news5cleveland.com/news/local-news/investigations/new-details-uncovered-in-deadly-biological-weapon-case ; GNET on the Gujarat plot, https://gnet-research.org/2026/08/12/from-lab-expertise-to-chat-interface-the-new-risk-of-toxin-level-attacks/",
+   "method": "NECESSARY link, rule 6: strength = B / 100 = 20 / 100 = 0.20. First form (20 - 9) / (100 - 20) = 0.1375; the two differ by 0.06. Odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "X1",
@@ -32571,13 +32651,26 @@
    "source": "D4",
    "target": "27-5",
    "sign": 1,
-   "strength": 0.33,
-   "delay_days": 30,
+   "strength": 0.4705,
+   "delay_days": 190,
    "kind": "LIKELY",
    "reason": "Leg two of money gets dearer",
-   "estimated": true,
-   "delay_estimated": true,
-   "origin": "estimate from majors page"
+   "estimated": false,
+   "delay_estimated": false,
+   "origin": "estimate from majors page",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.33,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "D4 firing meets 27-5's ten-year leg, so B is the chance of the yen leg: a Ministry of Finance yen-buying intervention inside the 373-day window. Reference class: trading-day starts from April 1991 (start of MOF data) to Sep 22, 2025 with the dollar at 140 yen or more (673 starts, in 1991, 1998 and 2022 to 2025; the dollar is 158.76 now). In the 150 starts where the 10-year then closed more than 65 bp above its start within 126 trading days (all in 2022 and 2023), a yen-buying intervention came within 373 days in 94: B = 62.7. In the other 523 starts the joint event (10-year up 65 bp and an intervention, both within 373 days) happened in 53: C = 10.1. Windows overlap heavily: the hits are two episodes (interventions of Sep to Oct 2022 and Apr to May 2024). Yen leg alone by starting level: 62.4% at 140+, 61.0% at 145+, 50.5% at 150+, 57.0% at 155+, so B could be as low as 50 (strength 0.31). With no yen filter B is 18.4% (404 of 2,196) and C 0.8%. Median gap from the yield move to the intervention was 193 days. MOF also bought yen in April to May and July to August 2026, before 27-5's window.",
+   "source_note": "Japan Ministry of Finance, Foreign Exchange Intervention Operations, https://www.mof.go.jp/english/policy/international_policy/reference/feio/foreign_exchange_intervention_operations.csv ; Federal Reserve H.15 and H.10 via FRED, https://fred.stlouisfed.org/series/DGS10 and https://fred.stlouisfed.org/series/DEXJPUS (computed)",
+   "method": "(B - A) / (100 - S) = (62.7 - 26.0) / (100 - 22.0) = 36.7 / 78 = 0.4705, odds as of 2026-11-27. Second form (62.7 - 10.1) / 100 = 0.526, in line.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "O1",
@@ -33496,13 +33589,26 @@
    "source": "BB4",
    "target": "29-4",
    "sign": 1,
-   "strength": 0.8,
+   "strength": 0.2,
    "delay_days": 0,
    "kind": "LIKELY",
    "reason": "BB4 is the cure-class leg of major 29-4",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
-   "origin": "estimate from majors page"
+   "origin": "estimate from majors page",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.8,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. B comes from the two tests side by side. BB4 is the cure-class leg of 29-4 with an earlier date and a stricter bar, so once BB4 fires the major needs only its other leg: a pembrolizumab copy on sale in the US or EU by Nov 30, 2029. B is the odds of that leg, 75 on the graph's own figure (one_number_rule of 29-4). History brackets it at about 60 to 80. Of the 3 cancer antibodies with US copies, Mvasi (Avastin) and Kanjinti (Herceptin) both launched in Jul 2019, as the main US patents ran out (Jul 2019 and Jun 2019 on Roche's stated dates), and Truxima (Rituxan) launched in Nov 2019 under a settlement, a year after its approval: 3 of 3 gives 80 and 2 of 3 gives 60 by the rule of succession. Against that, a study of 32 US biosimilars found the median launch 2.3 to 2.5 years after the primary patent expired, and Merck's 10-K lists the US compound patent to 2028 with two more of the same family to 2029 and EU cover to 2031, so only the US route can meet the date. FDA accepted the first copy filing (Formycon and Zydus, FYB206) in Oct 2026, decision expected Q3 2027. Ceiling: with B = 100 the formula gives 0.533, so the current 0.8 cannot hold (it drives 29-4 to 99 with the copies leg still open). Second form: C = 0.75 x (59 - 25) / (100 - 25) = 34, so B - C = 0.41; the gap is a level issue: 29-4 sits at 60 on a 'lower leg' rule while the two legs multiplied give about 44.",
+   "source_note": "Merck 2025 Form 10-K, patent table, https://www.merck.com/wp-content/uploads/sites/124/2026/02/MRK-12.31.2025-10K-FINAL.pdf ; Tu, Goode, Turner and Van de Wiele, Journal of Law and the Biosciences, Jan 2025, https://pmc.ncbi.nlm.nih.gov/articles/PMC11697977/ ; Amgen release on Mvasi and Kanjinti, Jul 18, 2019, https://www.amgen.com/newsroom/press-releases/2019/07/amgen-and-allergans-mvasi-bevacizumabawwb-and-kanjinti-trastuzumabanns-now-available-in-the-united-states ; Goodwin, US biosimilar launches of 2019, https://www.goodwinlaw.com/en/insights/blogs/2020/01/year-in-review-the-topfive-us-biosimilar-market-developments-of-2019 ; Goodwin on FYB206, https://www.goodwinlaw.com/en/insights/blogs/2026/10/fda-accepts-formycon-and-zydus-proposed-pembrolizumab-biosimilar-for-review",
+   "method": "From comparing the tests: B = odds of the copies leg = 75. (B - A) / (100 - S) = (75 - 60) / (100 - 25) = 0.200, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "BB3",
@@ -41974,14 +42080,27 @@
    "source": "RM1",
    "target": "C1",
    "sign": 1,
-   "strength": 0.4333,
+   "strength": 0.4,
    "delay_days": 60,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: autonomous AI intrusions make an attributed, disclosed AI-run hit more likely (A now 70, B now 65, B if A fires 78).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.4333,
+     "delay_days": 60,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a frequency: there is no past case to count (C1's own base-rate note finds 0 officially attributed AI-run intrusions disclosed as material by a listed company in 8 windows since the SEC incident rule took effect on Dec 18, 2023). The number comes from reading the two tests side by side. C1's test is RM1's test plus two more conditions (the victim is a US-listed company, and it files a material incident or a loss of $100M or more), inside a shorter window (to Mar 31, 2027, against Nov 30, 2027 for RM1). So C1 can hardly happen without RM1: C is about 0 and B = C1's odds / RM1's odds = 28 / 70 = 40. Both forms then give 0.40. The old 0.4333 was set when C1 stood at 65; C1 was cut to 28 on Nov 27. Small leak: C1 also accepts statements by NSA, DOJ, Five Eyes or EU agencies, which RM1's test does not list. If RM1 fires early, inside C1's own window, the same reading on the Nov 2027 curve gives 40.4 / 70 = 58, so 0.40 is the low reading. The link behaves like a NECESSARY link.",
+   "source_note": "Settlement tests and odds of RM1 and C1 in graph.json as of 2026-11-27; SEC final rule on cybersecurity incident disclosure (Form 8-K Item 1.05), https://www.sec.gov/newsroom/press-releases/2023-139 (URL as cited in C1's base-rate note, not re-fetched)",
+   "method": "Comparing the tests: C = 0, B = A / S = 28 / 70 = 40. (B - A) / (100 - S) = (40 - 28) / (100 - 70) = 12 / 30 = 0.40, odds as of 2026-11-27. Second form (NECESSARY rule): B / 100 = 0.40.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "MR1",
@@ -42013,14 +42132,27 @@
    "source": "MR2",
    "target": "J1",
    "sign": 1,
-   "strength": 0.4867,
-   "delay_days": 14,
+   "strength": 0.19,
+   "delay_days": 0,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: Tokyo selling Treasuries to defend the yen is the intervention J1 counts, once the yen is past 160 (A now 55, B now 33.1, B if A fires 55).",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.4867,
+     "delay_days": 14,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class: months in which Japan's reserve securities fell $50B or more after yen-buying intervention (the MR2 test), Sep 2022 to Nov 2026, MOF data: Sep 2022 (down $51.6B), May 2024 (down $50.4B, 978.0 to 927.6), May 2026 (down $75.6B, 1,007.2 to 931.7), Aug 2026 (down $87.8B, 927.3 to 839.6). In 3 of 4 the J1 test (a Fed H.10 close above 160 plus 5 trillion yen or more of intervention) was met within 123 days of the first operation, J1's window length: 2024 yes (closes above 160 from Jun 26 to Jul 10; 9.8T then 5.5T yen), Apr to May 2026 yes (close of 160.23 on Apr 29; 11.7T yen), Jul to Aug 2026 yes (close of 160.03 on Sep 1; 15.4T yen), 2022 no (9.2T yen but the highest close was 149.82). Rule of succession (3+1)/(4+2) = 66.7%. Timing: MR2 can fire on operations through Nov 2027 but J1 closes Mar 31, 2027. The board's own J1 curve puts 33.4 of about 63.3 points (52.8%) by Mar 31; it is used because Tokyo acts near 160 and the yen is at 159 now. If MR2 fires only later, J1 can still be met by a smaller operation: 1 of 12 four-month windows since Sep 2022 (Jul 2024: 5.5T yen, securities down only $17.1B), 14.3% by the rule of succession. B = 0.528 x 66.7 + 0.472 x 14.3 = 41.9. C (no $50B month at all) is about 5 to 14, so the second form gives about 0.28 to 0.37; the gap to 0.19 means J1 at 33.4 is high against MR2 at 55, a level question. With a flat rate of arrival the time share is 42.9% and the strength 0.075. Delay: MOF's month-end intervention total comes out about a week before the reserve data, so J1 is confirmed first; 0 days.",
+   "source_note": "Japan Ministry of Finance, International Reserves and Foreign Currency Liquidity, monthly releases: https://www.mof.go.jp/english/policy/international_policy/reference/official_reserve_assets/e0604.html and e0605.html (Apr, May 2024), e0804.html and e0805.html (Apr, May 2026), e0807.html and e0808.html (Jul, Aug 2026). MOF Foreign Exchange Intervention Operations: https://www.mof.go.jp/english/policy/international_policy/reference/feio/index.html . Sep 2022 securities fall: https://www.nippon.com/en/japan-data/h01474/yen-intervention-japan-reduces-foreign-exchange-reserves-record-amount-in-september.html . 2026 intervention totals: https://english.adnkronos.com/2026/06/05/japans-forex-reserves-drop-at-fastest-pace-in-may/ and https://www.businesstoday.com.my/2026/09/07/japan-reserves-suffer-record-us79-6-billion-drop-after-yen-intervention/ . Yen closes: Federal Reserve H.10 via FRED DEXJPUS, https://fred.stlouisfed.org/series/DEXJPUS",
+   "method": "B = 0.528 x 66.7 + 0.472 x 14.3 = 41.9. (B - A) / (100 - S) = (41.9 - 33.4) / (100 - 55) = 0.190, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "RM2",
@@ -42039,14 +42171,27 @@
    "source": "FC3",
    "target": "X1",
    "sign": 1,
-   "strength": 0.7,
+   "strength": 0.598,
    "delay_days": 7,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: an unrefereed AGI declaration is a written declaration of the kind X1 settles on (A now 40, B now 38, B if A fires 80).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.7,
+     "delay_days": 7,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. No past case to count: no frontier lab or G7 government has made such a declaration (0 in 6 windows since Mar 2023, the board's own base rate for X1). B comes from the two tests side by side. Both settle on an official AGI declaration by one of the same five labs; X1 closes Jun 30, 2027 and FC3 closes Nov 30, 2027. Time share from the board's own X1 curve, set in the Nov 25 rebase: 14.1 by Jun 30 of about 28.2 by Nov 30, 2027 = 50%, so B = 50. The wording differs both ways and is not priced: X1 also counts G7 governments and 'expert-level general intelligence' but needs a named, deployed model in writing. Second form with C near 1 to 2 gives about 0.49. With a flat rate of arrival the time share would be 64% and the strength 0.84. Level note: the tree holds FC3 at 40 by Nov 2027 while the board's curve for the same declaration reads 28.",
+   "source_note": "No outside count exists. Read from the FC3 and X1 settlement tests and X1's odds_by in /home/claude/dmtcode/public/future/earth2/graph.json (read Nov 27, 2026). Background: OpenAI, The next chapter of the Microsoft and OpenAI partnership, Oct 28, 2025, https://openai.com/index/next-chapter-of-microsoft-openai-partnership/ (an expert panel is to verify any OpenAI AGI declaration; none has been made).",
+   "method": "From comparing the tests, not from a count. B = 14.1 / 28.2 x 100 = 50.0. (B - A) / (100 - S) = (50.0 - 14.1) / (100 - 40) = 0.598, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "DA1",
@@ -42065,14 +42210,27 @@
    "source": "MR3",
    "target": "D4",
    "sign": 1,
-   "strength": 0.4164,
+   "strength": 0.2818,
    "delay_days": 14,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: bad auctions as the 10-year nears 5.50% are the usual path through the line (A now 45, B now 37.1, B if A fires 60).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.4164,
+     "delay_days": 14,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class: 10-year and 30-year Treasury auctions that tailed 3 bp or more with bid-to-cover under 2.3, from auction-day reports, Nov 2021 to Nov 2026. Six found: 30-year Nov 10, 2021 (5.2 bp, 2.20); 30-year Dec 9, 2021 (3.2, 2.22); 10-year Nov 9, 2022 (3.4, 2.23); 30-year Dec 13, 2022 (3.1, 2.25); 30-year Feb 9, 2023 (3.2, 2.25); 30-year Nov 9, 2023 (5.3, 2.24). Target-type event: the 10-year closes more than 65 bp above its close on auction day (today 4.85% to above 5.50%) within 126 trading days (D4's window). It did in 2 of 6: after Nov 2021 (+156 bp) and Dec 2021 (+166 bp), both the 2022 hiking run; not after Nov 2022 (-4), Dec 2022 (+57), Feb 2023 (+53) or Nov 2023 (+8). B = 37.5 by the rule of succession (2+1)/(6+2); by cluster 1 of 3. C: any 126-day window since 1990, 2,294 of 9,105 = 25.2% (31.2% since 1962). The list may be incomplete. In the two hits the move took 96 and 131 days, too few to set a delay. The two forms differ by 0.16: A (22) sits below D4's own history (25 to 31).",
+   "source_note": "Auction-day reports at investinglive.com: https://investinglive.com/news/!/us-treasury-sells-25-billion-and-30-year-bonds-at-a-high-yield-of-194-20211110 ; https://investinglive.com/news/us-treasury-auctioned-off-22-billion-of-30-year-bonds-at-a-high-yield-of-1895-20211209/amp ; https://investinglive.com/news/us-treasury-auctions-off-35-billion-of-the-10-year-at-high-yield-of-414-20221109 ; https://investinglive.com/news/us-sells-30-year-bonds-at-3513-vs-3482-wi-20221213/amp ; https://investinglive.com/news/us-treasury-auctions-off-21-billion-of-30-year-bonds-at-a-high-yield-of-3686-20230209 ; https://investinglive.com/news/us-treasury-auctions-off-24-billion-of-30-year-bonds-at-a-high-yield-of-4769-20231109 ; yields from Federal Reserve H.15 via FRED DGS10, https://fred.stlouisfed.org/series/DGS10 (computed)",
+   "method": "(B - A) / (100 - S) = (37.5 - 22.0) / (100 - 45) = 15.5 / 55 = 0.2818, odds as of 2026-11-27. Second form (37.5 - 25.2) / 100 = 0.12.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "RM3",
@@ -42130,14 +42288,27 @@
    "source": "DA3",
    "target": "R2",
    "sign": 1,
-   "strength": 0.7417,
+   "strength": 0.9192,
    "delay_days": 0,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: the pause ending on Jan 10 with short-leash licences is a partial snap-back, which R2 counts (A now 40, B now 45.5, B if A fires 90).",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.7417,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a count of past cases: B is read from the tests (rule 8). DA3's first leg (China lets the pause lapse with no extension) is R2's first leg when it happens on Jan 10, 2027, the one deadline inside R2's window, so a lapse settles both the same day. DA3's other leg (customs data: magnet exports under 4,000 t a month over two months) can fire without R2, but exports were 6,165 t in September 2026 and averaged about 5,340 t a month over January to September, so that route is remote before Jan 10. B = 95. MOFCOM extended the pause on Nov 9, 2026 by two months only, to Jan 10, 2027. ODD: DA3 runs to Nov 30, 2027 but R2 closes Jan 10, 2027. After that date the link is dead, and a lapse at any later deadline moves DA3 but cannot move R2. R2 has ten feeders; pushes add up.",
+   "source_note": "DA3 and R2 settlement tests in batch_2.json; S&P Global, Nov 9, 2026, https://www.spglobal.com/energy/en/news-research/latest-news/metals/110926-china-extends-rare-earth-export-suspension-to-january-2027 ; SMM on September 2026 magnet exports, https://news.metal.com/newscontent/104167093-chinas-rare-earth-magnet-exports-hit-2026-high-up-23-mom-and-67-yoy-amid-trade-progress",
+   "method": "From comparing the tests, not from history. (B - A) / (100 - S) = (95 - 37.0) / (100 - 36.9) = 58 / 63.1 = 0.9192, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "DA4",
@@ -42156,27 +42327,53 @@
    "source": "WK2",
    "target": "W6",
    "sign": 1,
-   "strength": 0.6923,
-   "delay_days": 30,
+   "strength": 0.9323,
+   "delay_days": 0,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: software loans going bad as lenders price AI disruption is the narrative form of W6's default test (A now 35, B now 35, B if A fires 80).",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.6923,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a count of past cases: the two rows are the same event, so B is read from the tests side by side (rule 8). Both settle on the same thing: Fitch's trailing software default rate in private credit at 3% or more, or two more $1B+ sponsor-owned software firms handed to lenders. W6's window (Nov 28, 2026 to Nov 19, 2027) covers 357 of the 368 days of WK2's (to Nov 30, 2027), 97%. Fitch publishes monthly near mid-month (the August 2026 rate came out Sep 14, 2026), so the last report of the period lands inside both windows; only a handover announced Nov 20 to 30, 2027, or a $1B firm with under $1B of funded debt, splits them. B = 95 (97 less 2 points for W6's stricter funded-debt wording, a judgement). C is about 0, since W6 can hardly be met without WK2. Context: Fitch's software rate was 0.6% in August 2026 and 1.2% in July, far from 3%. The old estimate used B = 80.",
+   "source_note": "WK2 and W6 settlement tests in batch_2.json; Fitch Ratings U.S. Private Credit Default Rate report of Sep 14, 2026 as carried by Tiger Brokers news, https://www.itiger.com/news/1121162991",
+   "method": "From comparing the tests, not from history. (B - A) / (100 - S) = (95 - 34.4) / (100 - 35) = 60.6 / 65 = 0.9323, odds as of 2026-11-27. Second form (95 - 0) / 100 = 0.95, in line.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "MR4",
    "target": "F2",
    "sign": 1,
-   "strength": 0.3554,
+   "strength": 0.304,
    "delay_days": 45,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: a refinancing wall on chip-backed debt is the path to a neocloud default or distressed swap (A now 35, B now 41.9, B if A fires 65).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.3554,
+     "delay_days": 45,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. No past GPU cloud default to count; B comes from the two tests side by side plus the board's base rate. A GPU cloud or chip-backed borrower with $1B or more of debt that defaults or files (MR4) also meets F2 if it happens by May 31, 2027; MR4 runs to Nov 30, 2027. Time share with a flat rate of arrival on MR4's 35: 1 - 0.65^(185/368) = 19.5 of 35 = 55.6%. If MR4 fires only after May 31, F2 can still be met by a data-center operator: the board's base rate for that class is 3 of 21 half-years (Sungard AS 2019, Core Scientific 2022, Cyxtera 2023) = 14%. B = 55.6 + 0.444 x 14 = 61.8, close to the 65 the link was wired with, so the estimate is roughly confirmed. Second form: C is at most 14 (F2 through a non-GPU operator only), so B - C is about 0.48; the gap to 0.30 is a level conflict: the board prices the 6-month event (F2, 42.1) above the tree's 12-month event (MR4, 35). Using the board's front-loaded F2 curve for timing (42.1 of 53.7 = 78%) gives B = 81 and a strength of 0.605; that curve's peak is marked a placeholder in the graph and the single 5-year default insurance quote on the row (1,232.6 bp) implies a flat rate, so the flat figure is used. MR4's word 'restructures' is wider than F2's agency-labelled distressed exchange; not priced.",
+   "source_note": "Read from the MR4 and F2 settlement tests and F2's base_rate and odds_by in /home/claude/dmtcode/public/future/earth2/graph.json (read Nov 27, 2026). Base-rate cases: DCD on Cyxtera, https://www.datacenterdynamics.com/en/news/data-center-colocation-company-cyxtera-files-for-chapter-11 ; CryptoSlate on Core Scientific, https://cryptoslate.com/?p=283339 ; StorageNewsletter on Sungard AS, https://www.storagenewsletter.com/?p=200073",
+   "method": "From comparing the tests plus the board's base rate. B = 55.6 + 0.444 x 14 = 61.8. (B - A) / (100 - S) = (61.8 - 42.1) / (100 - 35) = 0.304, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "WK3",
@@ -42234,27 +42431,53 @@
    "source": "MR5",
    "target": "B2",
    "sign": 1,
-   "strength": 0.3708,
+   "strength": 0.22,
    "delay_days": 14,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: retail private credit funds rationing withdrawals each quarter are the redemption queues B2 counts (A now 35, B now 60.9, B if A fires 85).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.3708,
+     "delay_days": 14,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class: a non-traded BDC stops redemptions or cuts NAV 10% or more in a quarter, and whether the largest peer non-traded credit funds then marked NAV down 2% or more or cut repurchases within about 6 months (B2's window). Case 1, at MR5's size: FS KKR Capital Corp. II (non-traded, total assets $8.97B) cut NAV per share from $7.36 to $6.17 in Q1 2020, down 16.2%; in the same quarter BDC NAV per share fell 6% to 30% across the sector and FS Energy and Power Fund suspended its repurchase program (Mar 25, 2020). Case 2, below MR5's $5B line (a stretch): Blue Owl Capital Corporation II ($1.6B portfolio) ended quarterly redemptions on Feb 19, 2026; OCIC's NAV then fell from $9.34 to $9.11 (2.5%) in Q1 2026. 2 of 2; rule of succession (2+1)/(2+2) gives B = 75. C not findable. Reading the tests side by side points higher (a full stop or a 10% NAV cut at BCRED, OCIC or OTIC themselves meets B2 outright), so 0.22 is the low reading; the small sample pulls it toward the middle. Windows differ: MR5 runs to Nov 30, 2027 and B2 to May 31, 2027, so an MR5 hit after May cannot lift B2. B2 has several strong feeders (JB1, W6, F2); pushes add.",
+   "source_note": "FS KKR Capital Corp. II Form 10-Q for Mar 31, 2020 (SEC EDGAR), https://www.sec.gov/Archives/edgar/data/1525759/000119312520140617/d854567d10q.htm ; Bloomberg, May 18, 2020, citing JMP Securities, https://asreport.americanbanker.com/articles/for-private-debts-bdcs-the-worst-may-be-yet-to-come-this-year ; AltsWire, Mar 25, 2020, https://altswire.com/fs-energy-and-power-fund-suspends-share-repurchase-program-and-distributions/ ; AltsWire, Feb 19, 2026, https://altswire.com/blue-owl-sells-1-4b-in-loans-halts-obdc-ii-redemptions-and-shifts-to-capital-returns/ ; OCIC Schedule TO figures as compiled by Crowdfunded Wealth, https://www.crowdfundedwealth.com/articles/blue-owl-credit-income-corp-ocic-redemptions-2026",
+   "method": "B by rule of succession (2+1)/(2+2) = 75. (B - A) / (100 - S) = (75 - 60.7) / (100 - 35) = 14.3 / 65 = 0.22, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "WK6",
    "target": "W1",
    "sign": 1,
-   "strength": 0.5,
-   "delay_days": 30,
+   "strength": 0.956,
+   "delay_days": 0,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: AI-blamed layoffs returning in waves makes a 25,000 month in Challenger likely (A now 50, B now 50, B if A fires 75).",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.5,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a count of past cases: the two rows are the same event, so B is read from the tests (rule 8). WK6 needs a single month after November 2026 with 25,000+ AI-blamed cuts by Nov 30, 2027: the December 2026 to October 2027 reports (11 reports; Challenger publishes in the first week of the next month, the July 2026 report came out Aug 6, so the November 2027 report falls outside). W1 counts any report released Nov 28, 2026 to Nov 19, 2027: the November 2026 to October 2027 reports (12). All 11 months that can settle WK6 also settle W1, so B is 100 less a small allowance for the label (W1 needs the 'Artificial Intelligence' line, not 'Technological Update'): B = 98. C: only the November 2026 report can settle W1 without WK6; 25,000+ months so far are 2 of 42 since May 2023 (Oct 2025 31,039; May 2026 38,579), 6.8% by the rule of succession (2+1)/(42+2). W1 also takes 0.43 from HP13, so the two pushes together can overshoot.",
+   "source_note": "WK6 and W1 settlement tests in batch_2.json; Challenger, Gray & Christmas July 2026 report, published Aug 6, 2026, https://www.challengergray.com/?p=28706 ; monthly AI counts as listed in W1's base rate note (Challenger reports; HCAMag on October 2026, https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129)",
+   "method": "From comparing the tests, not from history. (B - A) / (100 - S) = (98 - 50.2) / (100 - 50) = 47.8 / 50 = 0.956, odds as of 2026-11-27. Second form (98 - 6.8) / 100 = 0.912, in line.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "DA8",
@@ -42286,14 +42509,27 @@
    "source": "WK8",
    "target": "W5",
    "sign": 1,
-   "strength": 0.6909,
+   "strength": 0.525,
    "delay_days": 30,
    "kind": "LIKELY",
    "reason": "The tree's own guess at the matching board row (source labels it a guess to check). Wired Nov 25: paid seats falling at per-seat vendors is W5's test once a top-ten vendor names AI (A now 45, B now 22, B if A fires 60).",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "trigger tree board reference, wired Nov 25 (A to about B, estimate)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.6909,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. No past case to count: no top-ten application software vendor has reported this yet. B comes from the two tests side by side. W5 is WK8's event with an earlier deadline (Nov 19, 2027 against Nov 30, 2028) and a narrower cause (AI agents named; WK8 also counts customer headcount), so W5 cannot be met unless WK8 is, and C = 0. Time share from WK8's own dated odds in the graph: 22 by Nov 2027 of 45 by Nov 2028 = 48.9%, so B = 48.9. Second form: 48.9 / 100 = 0.489, in line. The narrower cause is not priced, so B is a ceiling: the board and tree figures for Nov 2027 (20 against 22) would put B near 44 and the strength near 0.44. With a flat rate of arrival the time share would be 57% and the strength 0.68. Kind: the link behaves as NECESSARY, not LIKELY.",
+   "source_note": "No outside source exists for this pair. Read from the WK8 and W5 settlement tests and WK8's odds_by in /home/claude/dmtcode/public/future/earth2/graph.json (read Nov 27, 2026).",
+   "method": "From comparing the tests, not from a count. B = 22 / 45 x 100 = 48.9. (B - A) / (100 - S) = (48.9 - 20) / (100 - 45) = 0.525, odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "GB7",
@@ -44245,14 +44481,27 @@
    "source": "RD02",
    "target": "27-6",
    "sign": 1,
-   "strength": 0.8,
+   "strength": 0.4,
    "delay_days": 0,
    "kind": "NECESSARY",
    "reason": "If ex-China supply covered demand, no Western line would need Chinese Dy/Tb (A now 88, B now 70, B if A fires 79.5)",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "rare-earth deep dive Nov 23 (A to about B, deep-dive odds)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.8,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class (the same one 27-6's base rate uses): Chinese rare-earth export squeezes since 2010: the 2010 Japan embargo, the April 2025 licence regime, the October 2025 expansion (paused since Nov 2025). The ex-China heavy rare earth gap that RD02 describes held through all three. A US, Canadian, UK or EU car, aircraft or robot maker said it stopped a line for lack of magnets within 12 months in 1 of 3 (Ford's Chicago plant, May 2025; Ford idled more US plants in June 2025, same squeeze). B = 40 by the rule of succession (1+1)/(3+2). C = 0 because the link is NECESSARY. A news search on Nov 27, 2026 found no new maker stoppage in 2026 (Suzuki in Japan and supplier-only stops do not count). Level problem: with RD02 at 88 and B = 40 the target would sit near 35, not 50.3. Three NECESSARY links (RD01, RD02, RD03) feed 27-6 at 0.72 to 0.80 and their pushes add up.",
+   "source_note": "Bloomberg via Mining.com, Jun 13, 2025, https://www.mining.com/web/ford-ceo-says-rare-earth-supply-is-day-to-day-after-plant-halt/ ; Bloomberg, Jun 27, 2025, https://www.bloomberg.com/news/articles/2025-06-27/ford-forced-to-idle-multiple-us-plants-on-china-magnet-shortage ; S&P Global on Suzuki, https://autotechinsight.spglobal.com/news/5282282/suzuki-halts-production-of-swift-models-owing-to-shortage-of-rare-earth-materials-in-japan ; squeeze list, https://en.wikipedia.org/wiki/Rare_earths_trade_dispute",
+   "method": "NECESSARY link, rule 6: strength = B / 100 = 40 / 100 = 0.40. The first form, (40 - 50.3) / (100 - 88), is below 0 only because A (50.3) is above B, a level problem and not a sign problem. Odds as of 2026-11-27.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "RD03",
@@ -44297,14 +44546,27 @@
    "source": "RD09",
    "target": "27-6",
    "sign": 1,
-   "strength": 0.33,
+   "strength": 0.1617,
    "delay_days": 0,
    "kind": "LIKELY",
    "reason": "Under the reading taken, a paperwork stop on a defense line counts as R6 (A now 40, B now 70, B if A fires 90)",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
    "origin": "rare-earth deep dive Nov 23 (A to about B, deep-dive odds)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.33,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. One past paperwork stop fits RD09: the Pentagon halted F-35 deliveries from Sep 7 to Oct 8, 2022 over a Chinese cobalt-samarium magnet alloy in a Honeywell part. 18 jets were held, but Lockheed said it 'continues to manufacture and flight test them without pause', so no production line stopped and 27-6's test (a line or plant stopped for a full shift because magnets could not be had) would not have been met: 0 of 1, shown as 33 by the rule of succession (0+1)/(1+2). When the paperwork stop does not itself count, 27-6 keeps its own chance from the export squeeze: 40 (27-6's base rate, 1 of 3 squeezes). B = 33.3 + 66.7 x 0.40 = 60. C = 40. Built from two small counts, so low confidence. ODD: the link's reason says a paperwork stop 'counts' as the factory stop (old B = 90), but the test as written needs a stopped line, and the one precedent stopped deliveries only.",
+   "source_note": "The War Zone, Sep 2022, https://www.twz.com/f-35-deliveries-halted-after-chinese-alloy-discovered-in-key-component.md ; Air & Space Forces Magazine, Oct 2022, https://www.airandspaceforces.com/deliveries-of-new-f-35s-with-chinese-magnets-resume-with-pentagon-waiver/ ; S&P Global on the Jan 1, 2027 Pentagon magnet ban, https://www.spglobal.com/energy/en/news-research/latest-news/metals/101626-pentagon-magnet-ban-likely-to-require-waivers-as-2027-deadline-nears",
+   "method": "(B - A) / (100 - S) = (60 - 50.3) / (100 - 40) = 9.7 / 60 = 0.1617, odds as of 2026-11-27. Second form (60 - 40) / 100 = 0.20, in line.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "RD10",
@@ -45425,14 +45687,27 @@
    "source": "FD03",
    "target": "WF8",
    "sign": 1,
-   "strength": 0.591,
+   "strength": 0.587,
    "delay_days": 0,
    "kind": "LIKELY",
    "reason": "An outright white-rice ban settles WF8 (A now 12, B now 48, B if A fires 100)",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.591,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a frequency: the two tests are read side by side. FD03 is an outright Indian ban on non-basmati white rice exports ordered by Jun 30, 2027. WF8 counts any new outright ban on rice (whole crop or main grade) by a top-3 exporter ordered between Nov 28, 2026 and Nov 19, 2029, and names this grade as the main grade. India is the largest rice exporter: 21.92 of 58.20 million tons in 2025/26 (38%), ahead of Vietnam 8.10 and Thailand 6.80 (USDA). So every FD03 case is a WF8 case, 1 of 1 by definition: B = 100. C (WF8 with no Indian ban) works out at 41.3 from the odds now, so both forms give the same number. The old 0.591 used rounded odds (12 and 48). WF8 has two feeders that each settle it alone (FD03 and FD04); their pushes add, and the engine holds the result at 99.",
+   "source_note": "USDA World Agricultural Supply and Demand Estimates, WASDE-677, Nov 2026, World Rice Supply and Use, https://esmis.nal.usda.gov/sites/default/release-files/796142/wasde1126.txt ; settlement tests of FD03 and WF8 in graph.json as of 2026-11-27",
+   "method": "Comparing the tests gives B = 100. (B - A) / (100 - S) = (100 - 48.6) / (100 - 12.4) = 51.4 / 87.6 = 0.587, odds as of 2026-11-27. Second form: C = (48.6 - 0.124 x 100) / 0.876 = 41.3, (100 - 41.3) / 100 = 0.587.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "WF2",
@@ -45503,14 +45778,27 @@
    "source": "FD04",
    "target": "WF8",
    "sign": 1,
-   "strength": 0.553,
+   "strength": 0.549,
    "delay_days": 0,
    "kind": "LIKELY",
    "reason": "An outright palm oil ban settles WF8 (A now 6, B now 48, B if A fires 100)",
-   "estimated": true,
-   "delay_estimated": true,
+   "estimated": false,
+   "delay_estimated": false,
    "origin": "food deep dive Nov 23 (A to about B, deep-dive odds)",
-   "display_only": false
+   "display_only": false,
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.553,
+     "delay_days": 0,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Not a frequency: the two tests are read side by side. FD04 is an outright Indonesian palm oil export ban ordered by Jun 30, 2027. WF8 counts any new outright ban on palm oil by a top-3 exporter ordered between Nov 28, 2026 and Nov 19, 2029. Indonesia is the largest palm oil exporter: 25.031 of 46.756 million tons in 2025/26 (54%), ahead of Malaysia 15.709 and Thailand 1.000 (USDA). So every FD04 case is a WF8 case, 1 of 1 by definition: B = 100. C (WF8 with no Indonesian ban) works out at 45.1 from the odds now, so both forms give the same number. The old 0.553 used rounded odds (6 and 48). WF8 has two feeders that each settle it alone (FD03 and FD04); their pushes add, and the engine holds the result at 99.",
+   "source_note": "USDA Foreign Agricultural Service, Oilseeds: World Markets and Trade, Nov 2026, Table 11 (palm oil exports), https://apps.fas.usda.gov/psdonline/circulars/2026/11/oilseeds.pdf ; settlement tests of FD04 and WF8 in graph.json as of 2026-11-27",
+   "method": "Comparing the tests gives B = 100. (B - A) / (100 - S) = (100 - 48.6) / (100 - 6.3) = 51.4 / 93.7 = 0.549, odds as of 2026-11-27. Second form: C = (48.6 - 0.063 x 100) / 0.937 = 45.1, (100 - 45.1) / 100 = 0.549.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "FD20",
@@ -46345,13 +46633,26 @@
    "source": "HP07",
    "target": "F9",
    "sign": 1,
-   "strength": 0.28,
+   "strength": 0.2815,
    "delay_days": 14,
    "kind": "LIKELY",
    "reason": "Wider credit spreads drag stocks (33.7 to about 50)",
-   "estimated": true,
+   "estimated": false,
    "delay_estimated": true,
-   "origin": "hard pass Nov 25 (A to about B, estimate)"
+   "origin": "hard pass Nov 25 (A to about B, estimate)",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.28,
+     "delay_days": 14,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "Confirms the current estimate. Reference class: trading-day starts from Aug 12, 2011 to mid-2026 (no data Aug 2022 to Nov 2023) with the ICE BofA high-yield spread at 400 bp or less and the S&P 500 less than 20% under its record (today 377 bp and 8.1% under). The spread went on to close at 500 bp or more within 85 trading days (HP07's window) in four episodes: Oct 2014, Dec 2018, Feb 2020 and Jun 2022. The S&P closed 20% or more under its record within 128 trading days (F9's window) in 2 of 4: Mar 12, 2020 (13 days after the spread crossed) and Jun 13, 2022 (3 days before it crossed). It missed in 2014 and in Dec 2018 (19.8% under on Dec 24). B = 50 by the rule of succession (2+1)/(4+2); by day count 96 of 210 starts = 45.7. Without the spread crossing: 66 of 1,464 starts = 4.5 (C). The two forms differ by 0.17: A (33.7) sits above what these rates give (about 24). FRED now serves only three years of this series, so 2011 to 2022 comes from a public copy of the FRED file and years before 2011 are not covered.",
+   "source_note": "ICE BofA US High Yield Index option-adjusted spread, FRED series BAMLH0A0HYM2, https://fred.stlouisfed.org/series/BAMLH0A0HYM2 (Nov 2023 to Nov 2026), with Aug 2011 to Aug 2022 from a Datawrapper copy of the same FRED series, https://datawrapper.dwcdn.net/VDi9s/1/ ; S&P 500 daily closes from Yahoo Finance, https://finance.yahoo.com/quote/%5EGSPC/history/ (computed)",
+   "method": "(B - A) / (100 - S) = (50 - 33.7) / (100 - 42.1) = 16.3 / 57.9 = 0.2815, odds as of 2026-11-27. Second form (50 - 4.5) / 100 = 0.455.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "HP07",
@@ -46525,13 +46826,26 @@
    "source": "HP13",
    "target": "W1",
    "sign": 1,
-   "strength": 0.43,
-   "delay_days": 30,
+   "strength": 0.354,
+   "delay_days": 12,
    "kind": "LIKELY",
    "reason": "One big named cut makes AI the standard reason (50 to about 65)",
-   "estimated": true,
-   "delay_estimated": true,
-   "origin": "hard pass Nov 25 (A to about B, estimate)"
+   "estimated": false,
+   "delay_estimated": false,
+   "origin": "hard pass Nov 25 (A to about B, estimate)",
+   "strength_history": [
+    {
+     "date": "2026-11-27",
+     "strength": 0.43,
+     "delay_days": 30,
+     "estimated": true,
+     "delay_estimated": true
+    }
+   ],
+   "evidence": "LOW CONFIDENCE. Reference class: a Fortune 100 company announces 5,000 or more job cuts and names AI as a cause, May 2023 to Oct 2026 (the 42 months in which Challenger has tracked AI as a reason). 2 clean cases: Amazon, Oct 28, 2025 (14,000 corporate jobs, AI named) and Meta, May 20, 2026 (about 8,000, AI named). In both, Challenger's AI count for that same month passed 25,000: 31,039 in Oct 2025 and 38,579 in May 2026. 2 of 2; by the rule of succession (2+1)/(2+2), B = 75. C: none of the other 40 months reached 25,000 (0 of 40; rule of succession 1/42 a month, about 25 over the 12 reports in W1's window). The second form, (75 - 25) / 100 = 0.50, is 0.15 above the first, which says W1 at 50.2 sits above what this history gives (0.30 x 75 + 0.70 x 25 = 40): a level point for calibration. Stretch: the count uses the layoff leg only and ignores HP13's market leg (S&P 500 8% or more below its record). The sample is tiny. W1 has a second strong feeder (WK6 at 0.5); pushes add.",
+   "source_note": "Challenger, Gray & Christmas: Oct 2025 report, published Nov 6, 2025, https://www.challengergray.com/?p=27438 ; May 2026 report, published Jun 4, 2026, https://www.challengergray.com/?p=28164 . Amazon: TechRepublic, https://www.techrepublic.com/article/news-amazon-cuts-thousands-of-jobs-oct-2025/ . Meta: IBTimes UK, https://www.ibtimes.co.uk/us-job-cuts-surge-may-2026-ai-tech-sector-1805876",
+   "method": "B by rule of succession (2+1)/(2+2) = 75. (B - A) / (100 - S) = (75 - 50.2) / (100 - 30) = 24.8 / 70 = 0.354, odds as of 2026-11-27. Delay: 9 days (Oct 28 to the Nov 6, 2025 report) and 15 days (May 20 to the Jun 4, 2026 report), middle 12.",
+   "strength_date": "2026-11-27"
   },
   {
    "source": "F9",

@@ -27,6 +27,10 @@ CHECKS
   board reference; date_state (LOCKED, SCHEDULED, ESTIMATED) on every live node with a window; every row of
   meta.contains names two different nodes that exist (old ids resolve through the alias map).
 
+NOTES (never change the exit code)
+  "links still estimated: N of M": N links that carry a move still have "estimated": true, out of M that carry
+  a move. earth2/link_strengths.py rank lists them by how much the main events lean on them; apply replaces them.
+
 CONTRADICTIONS (warn only: a cascade run can create one, and the next read fixes it)
   Printed as WARN lines with both numbers, then a count. Two kinds, compared like for like, with 1 point of slack:
   (a) a NECESSARY link whose source is less likely than its target. When both nodes carry a live date curve
@@ -369,6 +373,8 @@ def main(argv=None):
     if not a.json:
         for note in sc_notes:
             print(note)
+        print(f"NOTE: links still estimated: {counts['links']['strength_estimated']} of {len(live_links)} links that "
+              f"carry a move (earth2/link_strengths.py rank lists them by weight; apply replaces them with sourced numbers).")
     if nec_bad:
         print(f"NOTE: {len(nec_bad)} NECESSARY links have a source less likely than its target (rule: a necessary "
               f"condition is at least as likely as the event it precedes): {nec_bad[:12]}")

@@ -1,0 +1,130 @@
+{
+ "skipped_rows": [
+  {
+   "link": "HP05->F4",
+   "why": "stretch, no count",
+   "old": 0.27,
+   "proposed": 0.42
+  },
+  {
+   "link": "RM3->C4",
+   "why": "stretch, no past case fits the source",
+   "old": 0.6246,
+   "proposed": 0.1631
+  },
+  {
+   "link": "M4->28-4",
+   "why": "source has no settlement test",
+   "old": 0.9,
+   "proposed": 0.1995
+  },
+  {
+   "link": "M10->28-5",
+   "why": "source has no settlement test",
+   "old": 0.9,
+   "proposed": 0.1667
+  }
+ ],
+ "nulls": [
+  {
+   "link": "HP03->F2",
+   "reason": "No sourced count of customer-backed rescue loans followed by default inside 6 months, and what exists disagrees: Fitch (2023) found 24 of 30 lifeline deals were or led to defaults, Moody's (May 2026) found about a quarter of roughly 1,200 distressed-exchange borrowers ended in hard default, and S&P CCC/C names default at 26.12% a year (about 14% in 6 months), none on F2's window. With HP03 already at 85 the allowed range only fits B between 27.1 and 42.1; the rating-agency rates sit below that (first form above 1), which points to a level problem at F2 (42.1 against its base rate of 14), not a strength. Sources: https://news.bloomberglaw.com/bankruptcy-law/struggling-companies-that-got-debt-lifelines-are-failing-anyway ; https://news.bgov.com/bankruptcy-law/distressed-debt-deals-often-end-in-hard-default-moodys-warns ; https://maalot.co.il/Publications/FTS20250331162126.pdf"
+  },
+  {
+   "link": "HP04->27-4",
+   "reason": "No sourced count of a keystone customer cutting its contracts and the supplier then defaulting or falling to junk within 12 months; the telecom 2000 to 2002 analog in the node has no systematic k of n. HP04 can also fire at AMD, Broadcom or Microsoft, which says little about a neocloud default."
+  },
+  {
+   "link": "M6->27-2",
+   "reason": "M6 has no written test, only a label, so there is no second test to read against 27-2's McKinsey test and no past case to count. Odd: the target (57.2) is rated more likely than the row it sits under (55)."
+  },
+  {
+   "link": "HP04->F4",
+   "reason": "No count found of BBB- issuers cut to junk after losing a main customer. S&P data only bracket B: 5.4 for an average BBB- name over F4's 215 days (8.94% a year, 1981 to 2024) up to S&P's own 50% in 90 days reading of CreditWatch negative. Which end applies is a judgment, and HP04 can fire at a supplier other than Oracle or after F4's window closes (HP04 runs to Nov 30, 2027, F4 to Jun 30, 2027)."
+  },
+  {
+   "link": "M12->28-1",
+   "reason": "M12 has no written test to read against 28-1's two-leg test, and neither event has a past case. Odd: the target (61.0) is rated more likely than the row it sits under (54.1)."
+  },
+  {
+   "link": "BT4->D2",
+   "reason": "Too few cases and they split: the Fed kept tightening through the 1957 and 1968 flu pandemics and cut in 2020 (Fed rate record, from memory, not re-fetched), so B could come out near 20 or near 60 and the sign is in question. Window problem too: D2 settles on Jan 27, 2027 while BT4 runs to Nov 30, 2027 (its own curve gives 1% by Jan 19), so most of BT4's odds cannot touch D2."
+  },
+  {
+   "link": "FC7->W7",
+   "reason": "FC7's test is a Pew poll reading (60% or more of Democrats more concerned than excited about AI); W7's is a signed statute. No past cases pair a poll line with a state law, and the row match is the tree's own guess. The time order also runs the other way: Pew's AI waves came out in late summer (Aug 2023, Sep 2025, from memory), after most 2027 state sessions end."
+  },
+  {
+   "link": "HP15->F10",
+   "reason": "HP15 has three legs and no split between them. A 10-Q that names an SEC or DOJ investigation or subpoena meets F10 outright (B = 100), but a late filing, a material weakness or the California state subpoena fires HP15 without meeting F10. No count was found of late filers that went on to disclose an SEC or DOJ probe within 6 months (Bartov and Konchitchki 2017 only show 534 of 1,048 NT 10-Q filers missing the grace period, https://escholarship.org/content/qt1sp8v8v3/qt1sp8v8v3.pdf)."
+  },
+  {
+   "link": "HP08->28-2",
+   "reason": "No sourced count links a life insurer's credit loss, downgrade or seizure to bank or BDC loss disclosures or fund gates in the 18 months after; in the 1991 and 2008 insurer failures the lender losses came at the same time from a shared cause, not after."
+  },
+  {
+   "link": "28-1->29-3",
+   "reason": "Neither event has ever happened, so there is no past case to count, and the tests are not nested (the link's own reason says a claim can rest on a label alone)."
+  },
+  {
+   "link": "M23->29-5",
+   "reason": "M23 has no written test, and the nearest history gives less than 0, so the link is left out as rule 4 says. BLS payrolls via FRED, Jan 1940 to Oct 2026: office payrolls were 750,000 or more below a year earlier in 33 months (3 episodes: 2001 to 2002, 2008 to 2010, 2020 to 2021) and the rest of payrolls was up in 0 of them. Rule of succession on 0 of 3 gives B = 20, below 29-5's own 33: a level problem at 29-5, not a strength. If 29-5 is read as a stricter test inside M23 the ceiling is 33 / 38 = 0.87, just under the current 0.9. Odd: 29-5's stored base rate (36 of 1,025 windows) was counted at W3's 200,000 line; at 29-5's own 750,000 line the count is 0 of 1,025. Source: https://fred.stlouisfed.org/graph/fredgraph.csv?id=USINFO,USFIRE,USPBS,PAYEMS"
+  },
+  {
+   "link": "M11->27-1",
+   "reason": "No past case to count: no lab or G7 government has declared AGI, and M11 has no settlement test. The board's own legs (65 and 50, with A = 28) imply B of 43 to 50 and a strength of 0.43 to 0.63, so 0.9 looks high."
+  },
+  {
+   "link": "FC4->C5",
+   "reason": "No past case of either FC4 leg (a federal pre-release review law or rule, or a US stake in a frontier lab); C5's own count is 0 of 11 windows. FC4 can fire on an equity stake alone, which C5 does not count, and FC4 runs to Nov 2027 while C5 closes Mar 31, 2027."
+  },
+  {
+   "link": "M37->29-1",
+   "reason": "M37 has no settlement test. If 'compromised' means control or disruption, B is about 99 and (99 - 78) / (100 - 47) = 0.40, the current value. If it also counts espionage access, only 1 of the 4 confirmed cases 2010 to 2025 (Viasat, 2022) meets 29-1's test and the first form is below 0 because A = 78 sits far above that history. Give M37 a test first."
+  },
+  {
+   "link": "T1->28-6",
+   "reason": "No T1-type event has ever happened (no China Coast Guard boarding of a merchant ship bound for Taiwan's main island or Penghu, no 48-hour island isolation), so there is nothing to count. The windows overlap only in Nov 2027, and 28-6's boarding leg needs a Taiwan-flagged vessel detained. 0.85 implies B = 106.7, above the 99 ceiling; the most the arithmetic allows is (99 - 37) / (100 - 18) = 0.756."
+  },
+  {
+   "link": "M35->28-3",
+   "reason": "M35 ('Global Financial Systems Vulnerable') has no settlement test and names a condition, not an event, so no source-type case can be counted. 0.9 implies B = 115.6; the most the arithmetic allows is (99 - 57) / (100 - 34.9) = 0.645. Also, 28-3's base rate of 55 counts seven events, none of which meets its test as now written (it needs a cyber attribution and leaves out hardware, software and cooling faults and crypto thefts)."
+  },
+  {
+   "link": "M22->28-1",
+   "reason": "No reference class: neither event has a past case, and M22 (a 62-scorecard row) has no settlement test to set beside 28-1's, so B cannot be read from the tests either."
+  },
+  {
+   "link": "T2->F2",
+   "reason": "No reference class: 0 blockades of Taiwan in 76 years (the board's own base rate), so nothing to count; also T2 runs to Nov 22, 2027, six months past F2's May 31 close, so more than half of T2's odds (only 4.4 of 10 fall by May on its own curve) cannot reach F2."
+  },
+  {
+   "link": "RD11->R7",
+   "reason": "Too thin to set a number: one clean precedent of a de facto zero flow that China later made an official named-country ban (gallium and germanium to the US: no shipments Jan to Oct 2024, official ban Dec 3, 2024), one that never was (rare earths to Japan, 2010), and the live Japan case; R7's test as rewritten Nov 27 also rules out the de facto halt RD11 measures, so the link's stated reason needs a board ruling."
+  },
+  {
+   "link": "C5->27-3",
+   "reason": "B cannot be pinned: a statute or agency rule that fires C5 also settles 27-3, but an executive order fires C5 and not 27-3, and there is no sound count of which tool comes first (B lands anywhere from about 50 to 100); note the formula's ceiling at today's odds is 0.652 (B = 100), so the current 0.8 overshoots."
+  },
+  {
+   "link": "M15->27-3",
+   "reason": "M15 (a 62-scorecard row) has no settlement test, so the two tests cannot be compared, and there is no past case to count; the estimate stays."
+  },
+  {
+   "link": "C4->28-3",
+   "reason": "Sign or link in question: the windows do not overlap (C4 ends Mar 31, 2027; 28-3 starts Jun 1, 2027) and 28-3 now needs a cyberattack and leaves out crypto thefts; of the 7 C4-type events on the board's own list (2018 to 2025), 0 were followed by a 28-3-type event in the 18 months starting two months later (2 of 7 even on the old wide test), so history shows no carry-over."
+  },
+  {
+   "link": "M51->29-2",
+   "reason": "M51 (a 62-scorecard row) has no settlement test, and the windows do not meet: an emergency by Nov 2027 would draw its backstop then, before 29-2's window opens on Jun 1, 2028 (earlier facilities do not count); the past US emergencies (2008, 2020, 2023) are too few and too mixed to set a slope."
+  },
+  {
+   "link": "RD10->27-6",
+   "reason": "Too thin: the one earlier squeeze on Japanese magnet makers (2010 to 2011) brought no Western line stop, and the one Western stop on record (Ford Chicago, May 2025) came from China's own licence delays, not Japanese rationing; 0 of 1 or 1 of 2 cannot set a slope."
+  },
+  {
+   "link": "M19->29-3",
+   "reason": "M19 (a 62-scorecard row) has no settlement test and there is no past case to count; note the formula's ceiling at today's odds is 0.870 (B = 100), so the current 0.9 overshoots."
+  }
+ ]
+}

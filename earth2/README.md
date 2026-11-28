@@ -26,6 +26,7 @@ These rules are enforced by code, not by memory. The sections below say how.
 - `earth2/scorecard/legacy_main_events.json` . the 130 main events from before the gate, with the gaps each may keep.
 - `earth2/scorecard/test_scorecard.py` . the tests. `python3 earth2/scorecard/test_scorecard.py` (works on temp copies; the page test needs node and Chrome).
 - `earth2/cascade.py` . the cascade engine (Python 3.8+, standard library only).
+- `earth2/link_strengths.py` . ranks the link strengths that are still estimates and replaces them with sourced numbers (see "Link strengths" below).
 - `earth2/validate_graph.py` . structural checks, scorecard checks and counts. Run it before every commit (add `--against OLD.json` to prove no odds moved).
 - `earth2/deepdives/merge_nodes.py` . the only way new nodes enter the graph.
 - `earth2/templates/arm_template.json` and `earth2/templates/README.md` . a blank arm with every required field, and one line of guidance per field.
@@ -228,6 +229,31 @@ Besides questions, backfilled answers, `event_tags` and `legacy_base_rates`, a s
 - `company_lenses`: `{"CO:XXX": {"lens": "commanding_heights", "class": "holds a chokepoint" | "sells intelligence by the unit", "basis", "source"}}`. Structure only: no helped, hurt, long or short wording, no odds change.
 - `base_rate_reasons`: see "Why this time is different" above.
 All of these are structure only; the import refuses to write if any odds value would change, and the validator checks their shape.
+
+## Link strengths (rank and replace)
+
+Most link strengths began as rough estimates. Such a link carries `"estimated": true`; the page shows "estimate" beside it and the validator prints `NOTE: links still estimated: N of M` (M is the links that carry a move). `earth2/link_strengths.py` says which estimates matter most and swaps them for sourced numbers. Both commands obey the scorecard lock and the odds stamp check.
+
+What a strength means in the engine (`cascade` in `earth2/cascade.py`): change at the target in points = change at the source in points x strength x sign, full size on the first hop and halved on each hop after it. The kind of a link (NECESSARY, LIKELY, MAGNIFIES, OPPOSES) does not change that arithmetic. So a strength is a slope. If a source at S percent fires, the target moves (100 - S) x strength points. From history: strength = (B - A) / (100 - S), where A is the target's odds now and B is the percent of past cases in which the target happened inside its window once the source had happened. On a sign -1 link the target falls, so strength = (A - B) / (100 - S). Allowed range: above 0, up to 1.
+
+```
+python3 earth2/link_strengths.py rank public/future/earth2/graph.json --top 50 --json top50.json
+python3 earth2/link_strengths.py apply public/future/earth2/graph.json rows.json --dry-run
+python3 earth2/link_strengths.py apply public/future/earth2/graph.json rows.json
+```
+
+`rank` is read only. For each estimated link it runs a what-if through the engine's own cascade function, in memory: the link's source goes up 10 points (or to 99 if nearer) with the normal 4 hops, once with the strength halved and once doubled (capped at 1), every other link unchanged. The score is the sum, over the live main events (not FIRED, odds above 1), of the gap between the two results in points. Links whose source is FIRED or settled at 1 are skipped and counted. It prints the top N, the three main events each link moves most, and how much of the total the top N hold, so it is plain whether fixing N is enough. `--json` writes the same rows with what a researcher needs (labels, odds, settlement tests, window ends, the link's reason, what the strength means). `--top 0` lists every ranked link. `--date` sets the day of the what-if (default today); it matters only for the rule that drops an effect landing after a window has closed.
+
+`apply` takes a JSON list of rows:
+
+`{"source": "WK2", "target": "W6", "strength": 0.55, "delay_days": null, "evidence": "the historical count or dated facts the number rests on", "source_note": "named source with URL", "method": "how the number was computed", "date": "2026-11-28"}`
+
+- `delay_days` null keeps the link's delay. A number replaces it and sets `delay_estimated` to false.
+- The old strength and delay go into `strength_history` on the link, with the row's date. The link gets the new values, `"estimated": false`, and `evidence`, `source_note`, `method` and `strength_date`.
+- Old folded ids resolve through the alias map, with a NOTICE.
+- A row is refused when its link does not exist or is display only, when the strength is not above 0 and up to 1, when `delay_days` is not null or a whole number of days from 0 up, when `evidence`, `source_note` or `method` is missing, when the date is not YYYY-MM-DD or is after today, or when two rows name one link. One bad row refuses the whole file, and every bad row is listed.
+- Structure only: no cascade runs, nothing is added to `cascade_log`, and nothing is written if any `odds_now` or the odds stamp would change. One line goes into the structure change list in `meta`. A second run of the same file writes nothing.
+- Odds do not move when a strength is replaced. The new strength takes effect from the next real cascade run.
 
 ## Ticket guard
 

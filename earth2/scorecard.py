@@ -1381,6 +1381,8 @@ def cmd_import_seed(a):
             changed += 1
     for nid, m in market_writes:
         if nodes[nid].get("market") != m:
+            if nodes[nid].get("market"):  # keep every earlier reading, so ours can be scored against the market later
+                nodes[nid].setdefault("market_history", []).append(nodes[nid]["market"])
             nodes[nid]["market"] = m
             changed += 1
     for cid, row in lens_writes:

@@ -1,0 +1,392 @@
+EARTH2 MARKET-IMPLIED ODDS FROM LISTED OPTIONS
+Quote date: 2026-11-27 (Friday, US markets closed at 1 PM Eastern). Built by touch.py; no number here was worked by hand.
+
+READ THIS FIRST: ONE CHANGE FROM THE BRIEF
+  The brief asked for the plain one-touch formula with the implied vol at the level's strike. That number is
+  computed and printed for every event (line A in each block) and written to seed_markets_plain_formula.json.
+  It is NOT the number in seed_markets.json, because the quotes themselves show it runs high wherever puts get
+  dearer at lower strikes (skew):
+    - The market's own finish odds can be read straight off put spreads around the level. For the S&P 500 they
+      say 12% for finishing under the level; the strike vol's N(d2) says 21%.
+    - Once a price is sitting on a level it is close to a coin flip whether it ends beyond it, so touch odds are
+      about twice finish odds. The plain formula's 41% touch cannot sit beside a 12% finish.
+    - The same gap shows on Nvidia (56% plain touch against a 25% market finish) and on KRE.
+      It is small on IEF and BNO, where there is little skew.
+  Stored odds (line B) use the same one-touch formula with the vol that reprices those spreads, and they count
+  closes only, because every test reads closing or settlement prices. For Brent the stored number comes from a
+  daily simulation of the rolling front month. To use the brief's plain formula instead, import
+  seed_markets_plain_formula.json (same rows, also passes the dry run).
+
+DATA ROUTES TRIED, IN ORDER
+  1. Cboe delayed quotes JSON (cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json): FAILED. The shell gets a
+     307 to cdn-api.cboe.com and then a 403 Cloudflare block page. WebFetch was not allowed to open the URL (the
+     permission request timed out; blocked URLs: the NVDA.json and KRE.json Cboe links).
+  2. Nasdaq option chain API (api.nasdaq.com): FAILED, no bytes back in 30 seconds (and an HTTP/2 stream error).
+  3. Yahoo Finance option chain: FAILED, HTTP 429 "Too Many Requests" on both the options and the chart endpoints.
+  4. Brent: ICE delayed data page: FAILED (403 Cloudflare). CME settlements: FAILED (timeout). EIA November 2026
+     STEO: reached, but this edition prints only a WTI futures curve (five days to Nov 5) and no option-based
+     confidence interval for Brent, so it was not used.
+  5. Yen: CME FX settlements not reachable (same CME timeout).
+  6. 10-year: Cboe TNX options blocked with the rest of Cboe; CME 10-year note options not reachable.
+  WHAT WORKED
+  A. optionsprofitcalculator.com option chain feed (getOptions and getStockPrice): full listed chains with bid,
+     ask, last, open interest and volume per strike and expiry for NVDA, KRE, SPY, IEF, BNO, FXY, TLT, USO. Its
+     help page says prices are delayed 15 to 30 minutes. Pulled after the close, so these are the Nov 27 closing
+     quotes. The feed gives no implied vol, so every vol is computed here from the quoted bid and ask.
+     Its SPX chain came back with every bid and ask at 0, and it has no TNX chain.
+  B. Treasury daily par yield curve CSV (home.treasury.gov) for the interest rate and the 10-year yield.
+  C. TradingView scanner (scanner.tradingview.com/global/scan), 10 to 15 minute delayed: ICE Brent futures curve by
+     contract with expiry dates, USD/JPY, Japan 3-month yield, and a second check on every closing price.
+  D. Fund pages: iShares (IEF duration, convexity, yield) and State Street (KRE distribution yield). FRED for the
+     H.10 yen rate and EIA Brent spot history.
+
+METHOD
+  Each test below is "closes beyond a level on ANY day by the deadline". That is a touch (barrier hit) chance, not
+  the chance of finishing beyond the level on the last day. Both are computed; the touch number is the one stored.
+    n = m - s*s/2, where s is the vol, m the yearly drift, T the years to the deadline (calendar days / 365)
+    finish below H:  N( (ln(H/S) - n*T) / (s*sqrt(T)) )
+    touch H below S: N( (ln(H/S) - n*T) / (s*sqrt(T)) ) + (H/S)^(2n/s^2) * N( (ln(H/S) + n*T) / (s*sqrt(T)) )
+    touch H above S: N( (ln(S/H) + n*T) / (s*sqrt(T)) ) + (H/S)^(2n/s^2) * N( (ln(S/H) - n*T) / (s*sqrt(T)) )
+    closes only: the same formula with H moved away from S by exp(0.5826 * s * sqrt(T / number of closes))
+  Strike vol: the option mid at the level's strike, inverted with an American binomial tree (400 steps) for puts
+  and Black-Scholes for calls; between two strikes the two vols are joined by a straight line.
+  Spread vol: for each pair of neighbouring strikes that pass the screen, market finish odds at the pair's midpoint
+  = spread price / width (each leg first stripped of its early exercise value, then grossed up for interest); the
+  spread vol is the s at which the finish formula above gives that same number.
+  Expiries: where two expiries sit either side of the deadline and both pass the screen, total variance (s*s*T) is
+  interpolated in a straight line. Where only one passes, its vol is held flat to the deadline and the block says so.
+  Drift m: Treasury par yield at the horizon (2026-11-27 curve: 3 month 4.35%, 4 month 4.38%, 6 month
+  4.46%; source home.treasury.gov daily par yield curve) minus the carry yield. Carry yield comes from put-call
+  parity at the strike nearest spot, or from the fund's published yield where parity quotes are too wide.
+  Liquidity screen: a row is refused if it has no bid, open interest under 50, or a spread wider than half the mid.
+
+KNOWN BIASES (all rows)
+  - Risk-neutral odds. Option prices include a risk premium, so these usually run HIGHER than real-world odds for
+    crash-side levels (stocks down, yields up, oil up in a supply scare).
+  - The touch model assumes one constant volatility and no jumps. Fitting the vol to the spreads removes most of
+    the skew error but not all of it.
+  - Quotes are delayed closing quotes from a half-day session, with wider spreads than usual.
+
+SUMMARY (rows written to seed_markets.json)
+  id      ours  STORED  finish    gap  |  plain    gap  | strike vol spread vol   expiry used
+  F5     45.0%   43.6%   25.0%   -1.4  |  56.2%  +11.2  |      59.9%      50.2%   2027-03-19 and 2027-04-16
+  B3     28.1%   21.4%   12.0%   -6.7  |  41.4%  +13.3  |      32.1%      23.0%   2027-03-19
+  F9     33.7%   22.0%   11.7%  -11.7  |  41.0%   +7.3  |      26.5%      19.3%   2027-04-30 and 2027-06-17
+  D4     22.0%   40.7%   22.6%  +18.7  |  47.4%  +25.4  |       7.3%       6.7%   2027-04-16
+  O1     59.8%   61.6%   20.6%   +1.8  |  67.1%   +7.3  |      49.4%      46.1%   2027-04-16
+  O2     33.0%   33.2%   12.2%   +0.2  |  43.9%  +10.9  |      50.8%      43.1%   2027-04-16
+  STORED = touch odds, closes only, spread vol (the seed's odds). finish = beyond the level on the deadline day only.
+  plain = the brief's formula: one-touch, strike vol, watched all day. gap = market minus ours, in points.
+
+EVERY MAIN EVENT WITH A PRICE OR YIELD TEST (live, not fired, odds above 1)
+  F5    threshold: NVDA close under $120.00; deadline 2027-03-31; ROW
+        test: YES if Nvidia (NVDA) closes below $120.00 a share in any regular Nasdaq session from Nov 28, 2026 to Mar 31, 2027 (Nasdaq official closing price, adjusted for any stock split that takes effect after Nov 27, 2026). NO otherwise.
+  B3    threshold: KRE close under $60.00; deadline 2027-03-31; ROW
+        test: YES if the SPDR S&P Regional Banking ETF (KRE) closes below $60.00 on any trading day from Nov 28, 2026 to Mar 31, 2027 (NYSE Arca official close; State Street SPDR fund data as the check). NO otherwise.
+  F9    threshold: S&P 500 close at or under 6,255.14 (20% under the 7,818.93 record); deadline 2027-05-31; ROW (found in the search; SPY options)
+        test: YES if the S&P 500 closes 20% or more below its record close (at or under 6,255.14 against the current 7,818.93 record, or 20% under any higher record set later) on any trading day by May 31, 2027 (S&P Dow Jones Indices official closing values). NO otherwise.
+  D4    threshold: 10-year Treasury par yield close above 5.50%; deadline 2027-05-31; ROW (IEF options with a stated conversion)
+        test: YES if the 10-year Treasury constant-maturity yield closes above 5.50% on any day from Nov 28, 2026 to May 31, 2027 (Treasury daily par yield curve rates; FRED DGS10 as the check). NO otherwise.
+  O1    threshold: front-month ICE Brent settle above $100; deadline 2027-05-31; ROW (BNO vol, ICE curve)
+        test: YES if front-month ICE Brent settles above $100 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.
+  O2    threshold: front-month ICE Brent settle above $110; deadline 2027-05-31; ROW (BNO vol, ICE curve)
+        test: YES if front-month ICE Brent settles above $110 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.
+  O7    threshold: EIA monthly average Brent spot under $75.00, any month Dec 2026 to Nov 2027; deadline 2027-11-30; NO ROW: monthly average
+        test: YES if EIA's monthly average Europe Brent spot price FOB (series RBRTE) is below $75.00 a barrel for any calendar month from December 2026 through November 2027, as published by EIA by Dec 15, 2027 (EIA petroleum spot price data; FRED MCOILBRENTEU as the check). NO otherwise.
+  J1    threshold: USD/JPY close above 160.00 AND 5 trillion yen of reported intervention; deadline 2027-03-31; NO ROW: second leg not priced
+        test: YES if, between Nov 28, 2026 and Mar 31, 2027, the dollar closes above 160.00 yen on at least one trading day (Federal Reserve H.10 noon buying rate, FRED series DEXJPUS; Bank of Japan 17:00 Tokyo rate as the check) and Japan's Ministry of Finance reports a total of 5 trillion yen or more of dollar-selling, yen-buying intervention on operation dates inside that same period (MOF Foreign Exchange Intervention Operations monthly and quarterly releases). Operations dated before Nov 28, 2026 do not count. NO otherwise.
+  J3    threshold: USD/JPY 4.76% or more below its level five trading days earlier; deadline 2027-03-31; NO ROW: path event
+        test: YES if, on any trading day from Nov 28, 2026 to Mar 31, 2027, USD/JPY is 4.76% or more below its level five trading days earlier, which is a yen gain of 5% or more (Federal Reserve H.10 noon buying rates, FRED series DEXJPUS; Bloomberg closing USD/JPY as the check). NO otherwise.
+  D7    threshold: ICE US Dollar Index close 5% or more below its close five trading days earlier; deadline 2027-03-31; NO ROW: path event (found in the search)
+        test: YES if the ICE US Dollar Index closes 5% or more below its close five trading days earlier on any day from Nov 22, 2026 through Mar 31, 2027 (ICE Futures US daily index settlement; Federal Reserve H.10 broad dollar index as the check). NO otherwise.
+  27-5  threshold: 10-year yield close at or above 5.50% AND a yen-buying intervention; deadline 2027-11-30; NO ROW: second leg not priced (found in the search)
+        test: YES if both happen between Nov 22, 2026 and Nov 30, 2027: the 10-year Treasury yield closes at or above 5.50% on any day (Treasury daily par yield curve; FRED DGS10 as the check), and Japan's Ministry of Finance conducts at least one yen-buying intervention (MOF Foreign Exchange Intervention Operations releases). NO otherwise.
+  BT1   threshold: three of EBS, SIGA, LAKE, APT, NVAX, GOVX each close up 10% in one session, tied to a headline; deadline 2027-03-31; NO ROW: joint one-day jump plus a news test (found in the search)
+        test: YES if, on any trading day from Nov 30, 2026 to Mar 31, 2027, at least three of EBS, SIGA, LAKE, APT, NVAX and GOVX each close 10% or more above their prior close (Nasdaq and NYSE official closing prices) and Reuters, Bloomberg or AP ties the move that day to an outbreak or biothreat headline. NO otherwise.
+  BB5   threshold: a $10B+ company falls 10% in a session on a rival's trial or approval; deadline 2027-09-30; NO ROW: no named stock (found in the search)
+        test: YES if, from Nov 28, 2026 to Sep 30, 2027, a US- or EU-listed company with a market value of $10 billion or more at the prior close falls 10% or more close to close in one session and Reuters or Bloomberg attributes the fall mainly to another company's clinical trial result or drug approval that threatens its revenue (exchange closing prices; Reuters or Bloomberg market report). NO otherwise.
+  J4    threshold: SoftBank 5-year CDS close above 600 bp (or a downgrade, or forced sales); deadline 2027-01-31; NO ROW: CDS has no listed options (found in the search)
+        test: YES if, from Nov 28, 2026 to Jan 31, 2027, SoftBank Group's 5-year CDS closes above 600 bp on any day (S&P Global/Markit data as reported by Bloomberg or Reuters), or S&P or JCR lowers SoftBank Group's long-term issuer rating (agency press release; outlook changes do not count), or SoftBank announces an asset sale that it or a rating agency ties to a margin call, loan covenant or loan-to-value limit (TSE timely disclosure). NO otherwise.
+  RU7   threshold: France 10-year spread over Germany above 200 bp for 5 straight days (or ECB TPI); deadline 2029-11-19; NO ROW: no listed option on the spread (found in the search)
+        test: YES if, by Nov 19, 2029, France's 10-year yield spread over Germany closes above 200 basis points on 5 straight trading days (Banque de France and Bundesbank benchmark yields; Bloomberg generic as the check), or the ECB announces activation of its Transmission Protection Instrument for any member (ECB press release). NO otherwise.
+  D8    threshold: 1-month bill yield 25 bp over the 3-month during extraordinary measures (or a rating action); deadline 2027-11-30; NO ROW: no listed option on bill spreads (found in the search)
+        test: YES if, between Nov 28, 2026 and Nov 30, 2027, S&P, Moody's, Fitch or Morningstar DBRS downgrades the US, or puts it on negative watch or negative outlook, in a release that names the debt limit as a reason (agency press release), or the 1-month Treasury bill par yield closes 25 bp or more above the 3-month on any day on which Treasury is using extraordinary measures (Treasury daily par yield curve rates; Treasury debt-limit letters to Congress for the dates). NO otherwise.
+  J2    threshold: 30-year JGB yield at a record close on a weak auction day (or a megabank lending cap); deadline 2027-05-31; NO ROW: needs an auction result too (found in the search)
+        test: YES if, between Nov 28, 2026 and May 31, 2027, either (a) a 30-year JGB auction has a bid-to-cover ratio of 3.00 or less (competitive bids divided by accepted competitive bids, Ministry of Finance auction results) and the 30-year JGB yield closes at an all-time high on the auction day or the next trading day (Japan Bond Trading Co. closing yield; Bloomberg generic 30-year as the check), or (b) MUFG, SMFG or Mizuho discloses, in an earnings release, securities filing or on-record executive statement dated in that period, a numeric cap, a freeze on new commitments or a planned cut in its data-center or AI-infrastructure lending. General statements of tighter credit standards, including SMFG's remarks of Nov 13, 2026, do not count. NO otherwise.
+  R4    threshold: dysprosium and terbium Europe price at or above 3 times China price in every assessment; deadline 2027-05-31; NO ROW: no listed options
+        test: YES if the Europe (CIF Rotterdam) price of both dysprosium oxide and terbium oxide stays at or above 3 times the China domestic price in every assessment from Nov 22, 2026 through May 31, 2027 (Benchmark Mineral Intelligence rare earth price assessments; Fastmarkets Rotterdam and China prices as the check). NO if either ratio falls under 3 times in any assessment in that period.
+  R8    threshold: Europe dysprosium oxide at or below half its peak; deadline 2027-11-30; NO ROW: no listed options
+        test: YES if the Europe dysprosium oxide (99.5% min) price assessed by Argus Media or Fastmarkets, the ex-China benchmark, prints at or below half of its highest assessment since Apr 2025 on any date by Nov 30, 2027 (Argus or Fastmarkets assessments; Asian Metal China price for the Europe to China ratio). NO otherwise.
+  P6    threshold: Drewry World Container Index above $10,377; deadline 2029-11-30; NO ROW: no listed options
+        test: YES if Drewry's World Container Index composite prints above $10,377 per 40 ft container in any weekly assessment by Nov 30, 2029 (Drewry WCI weekly release on drewry.co.uk). NO otherwise.
+  WF8   threshold: FAO Food Price Index above 160.2 (or an export ban); deadline 2029-11-19; NO ROW: no listed options on the index
+        test: YES if, between Nov 28, 2026 and Nov 19, 2029, the FAO Food Price Index (2014-2016 = 100) prints a monthly value above 160.2 for any month from Nov 2026 on, or the government of a top-3 exporter (by USDA FAS PSD export volume in the latest full marketing year) of rice, wheat, corn, soybeans or palm oil newly orders an outright export ban on that staple, covering the whole crop or its main grade (FAO FFPI monthly release; the exporting government's decree, with IFPRI's export restrictions tracker as the check). Bans already in force on Nov 27, 2026, duties, quotas, minimum export prices and broken-rice curbs do not count. NO otherwise.
+  Not touched (already carry a prediction-market row): B3, BB1, D1, D2, D3, D5, F4, F5, F9, J5, O1, O2, O4.
+  Fired, skipped: F6 (Anthropic under $83), F8 (S&P 500 10% under its record).
+  B2's label mentions Blue Owl under $7, but its test is on fund NAV and tender results, not a price.
+
+====================================================================================================
+F5  (NVDA options)
+====================================================================================================
+  Label: Nvidia closes under $120
+  Test (exact): YES if Nvidia (NVDA) closes below $120.00 a share in any regular Nasdaq session from Nov 28, 2026 to Mar 31, 2027 (Nasdaq official closing price, adjusted for any stock split that takes effect after Nov 27, 2026). NO otherwise.
+  Our odds_now: 45.0%   window_end: 2027-03-31   status: AHEAD
+  Underlying: NVDA close 150.49 on 2026-11-27. Level: 120. Deadline 2027-03-31 (last close in the window 2027-03-31: 124 calendar days, 83 closes).
+  Expiry 2027-03-19 (112 days): Treasury rate 4.3%, carry yield 0.2% (put-call parity at strike 150: call 19.575, put 17.350, early exercise value 0.137)
+    NVDA 2027-03-19 120 put: bid 6.2, ask 6.5, mid 6.350, last 6.35, open interest 11590, volume 494, implied vol 61.0% (bid 60.3%, ask 61.6%)
+    strike vol at the level: 61.0%
+    put spread 115/120: market finish odds beyond 117.5 = 21.6%; vol that reprices it 50.6%
+    put spread 120/125: market finish odds beyond 122.5 = 27.1%; vol that reprices it 52.2%
+    spread vol at the level: 51.4% (two spreads either side of the level, joined by a straight line)
+  Expiry 2027-04-16 (140 days): Treasury rate 4.4%, carry yield 0.3% (put-call parity at strike 150: call 21.225, put 18.600, early exercise value 0.180)
+    NVDA 2027-04-16 120 put: bid 7.1, ask 7.55, mid 7.325, last 7.8, open interest 7263, volume 1060, implied vol 58.7% (bid 57.8%, ask 59.6%)
+    strike vol at the level: 58.7%
+    put spread 115/120: market finish odds beyond 117.5 = 24.7%; vol that reprices it 50.5%
+    put spread 120/125: market finish odds beyond 122.5 = 27.2%; vol that reprices it 47.4%
+    spread vol at the level: 49.0% (two spreads either side of the level, joined by a straight line)
+  Expiry handling: total variance interpolated between the 2027-03-19 and 2027-04-16 expiries (112 and 140 days).
+  Drift: 4.1% a year = Treasury rate 4.4% minus carry yield 0.3%.
+  A. PLAIN FORMULA (strike vol 59.9%, watched all day): touch 56.2%; finish by N(d2) 30.4%
+       bid-side vol 59.1%: 55.6%; ask-side vol 60.7%: 56.8%; closes only: 52.2%
+  B. SPREAD VOL 50.2% (reprices the market's finish odds): touch watched all day 47.3%; FINISH on the deadline day 25.0%
+     STORED: TOUCH, closes only, spread vol: 43.6%   (simulation check, 83 daily closes, 400,000 paths: 43.7%)
+       quote band (every leg at its bid, then every leg at its ask): 43.6% to 43.6%
+  Ours 45%  vs  market touch 43.6%  -> gap (market minus ours) -1.4 points (plain formula 56.2%: +11.2)
+
+====================================================================================================
+B3  (KRE options)
+====================================================================================================
+  Label: Regional bank fund KRE closes under $60
+  Test (exact): YES if the SPDR S&P Regional Banking ETF (KRE) closes below $60.00 on any trading day from Nov 28, 2026 to Mar 31, 2027 (NYSE Arca official close; State Street SPDR fund data as the check). NO otherwise.
+  Our odds_now: 28.1%   window_end: 2027-03-31   status: ON TRACK
+  Weakest row. The 60 put is quoted 0.87 bid, 1.31 ask (spread 40% of mid, inside the screen but wide);
+  the 55 put has no real bid, so the only usable spread is 60/65, which sits above the level.
+  Underlying: KRE close 70.35 on 2026-11-27. Level: 60. Deadline 2027-03-31 (last close in the window 2027-03-31: 124 calendar days, 83 closes).
+  Expiry 2027-03-19 (112 days): Treasury rate 4.3%, carry yield 2.3% (State Street fund distribution yield 2.3%, as of Nov 25 2026; at-the-money KRE quotes are too wide for parity)
+    KRE 2027-03-19 60 put: bid 0.87, ask 1.31, mid 1.090, last 1.11, open interest 9488, volume 21787, implied vol 32.1% (bid 29.6%, ask 34.4%)
+    strike vol at the level: 32.1%
+    put spread 60/65: market finish odds beyond 62.5 = 18.0%; vol that reprices it 23.0%
+    spread vol at the level: 23.0% (nearest spread only, centred at 62.5; the level is outside it)
+  Expiry 2027-03-31 (124 days): Treasury rate 4.4%, carry yield 2.3% (State Street fund distribution yield 2.3%, as of Nov 25 2026; at-the-money KRE quotes are too wide for parity)
+    KRE 2027-03-31 60 put: bid 0.69, ask 1.48, mid 1.085, last 1.33, open interest 5142, volume 0, implied vol 30.6% (bid 26.2%, ask 34.4%)  [FAILS SCREEN: spread 73% of mid]
+    strike vol at the level: 30.6%   REFUSED: 60 put: spread 73% of mid
+  Expiry handling: vol of the 2027-03-19 expiry held flat to the deadline (expiry is 12 days before it; the other expiry failed the screen).
+  Drift: 2.0% a year = Treasury rate 4.4% minus carry yield 2.3%.
+  A. PLAIN FORMULA (strike vol 32.1%, watched all day): touch 41.4%; finish by N(d2) 21.4%
+       bid-side vol 29.6%: 37.2%; ask-side vol 34.4%: 45.0%; closes only: 38.0%
+  B. SPREAD VOL 23.0% (reprices the market's finish odds): touch watched all day 23.8%; FINISH on the deadline day 12.0%
+     STORED: TOUCH, closes only, spread vol: 21.4%   (simulation check, 83 daily closes, 400,000 paths: 21.5%)
+       quote band (every leg at its bid, then every leg at its ask): 19.2% to 23.7%
+  Ours 28.1%  vs  market touch 21.4%  -> gap (market minus ours) -6.7 points (plain formula 41.4%: +13.3)
+
+====================================================================================================
+F9  (SPY options)
+====================================================================================================
+  Label: S&P 500 closes 20% or more below its record
+  Test (exact): YES if the S&P 500 closes 20% or more below its record close (at or under 6,255.14 against the current 7,818.93 record, or 20% under any higher record set later) on any trading day by May 31, 2027 (S&P Dow Jones Indices official closing values). NO otherwise.
+  Our odds_now: 33.7%   window_end: 2027-05-31   status: AHEAD
+  SPX options in this feed show bid 0 and ask 0 on every 2027-05-21 put (checked: True). SPY options, on the fund that tracks the same index, are used instead.
+  May 31, 2027 is Memorial Day, so the last close in the window is Friday May 28, 2027.
+  The test level rises if the index sets a new record first; that is ignored here (the index is 6.7% under its 7,818.93 record).
+  Underlying: SPY close 728.32 on 2026-11-27. Level: SPY 624.29, which is S&P 500 6,255.14 at the Nov 27 closing ratio 10.0196 (SPX 7297.49 / SPY 728.32). Deadline 2027-05-31 (last close in the window 2027-05-28: 182 calendar days, 125 closes).
+  Expiry 2027-04-30 (154 days): Treasury rate 4.4%, carry yield 1.1% (put-call parity at strike 728: call 41.985, put 32.450, early exercise value 0.821)
+    SPY 2027-04-30 620 put: bid 10.12, ask 10.29, mid 10.205, last 11.22, open interest 197, volume 9, implied vol 27.3% (bid 27.3%, ask 27.4%)
+    SPY 2027-04-30 630 put: bid 11.22, ask 11.39, mid 11.305, last 12.5, open interest 67, volume 3, implied vol 26.6% (bid 26.5%, ask 26.6%)
+    strike vol at the level: 27.0%
+    put spread 610/620: market finish odds beyond 615 = 9.8%; vol that reprices it 20.8%
+    put spread 620/630: market finish odds beyond 625 = 10.7%; vol that reprices it 19.7%
+    spread vol at the level: 19.8% (two spreads either side of the level, joined by a straight line)
+  Expiry 2027-06-17 (202 days): Treasury rate 4.4%, carry yield 0.8% (put-call parity at strike 730: call 48.695, put 37.340, early exercise value 1.287)
+    SPY 2027-06-17 620 put: bid 12.76, ask 12.93, mid 12.845, last 13.76, open interest 3655, volume 13, implied vol 26.5% (bid 26.4%, ask 26.5%)
+    SPY 2027-06-17 625 put: bid 13.38, ask 13.53, mid 13.455, last 14.05, open interest 4344, volume 77, implied vol 26.1% (bid 26.1%, ask 26.2%)
+    strike vol at the level: 26.2%
+    put spread 620/625: market finish odds beyond 622.5 = 12.2%; vol that reprices it 19.2%
+    put spread 625/630: market finish odds beyond 627.5 = 12.5%; vol that reprices it 18.6%
+    spread vol at the level: 19.0% (two spreads either side of the level, joined by a straight line)
+  Expiry handling: total variance interpolated between the 2027-04-30 and 2027-06-17 expiries (154 and 202 days).
+  Drift: 3.5% a year = Treasury rate 4.4% minus carry yield 0.9%.
+  A. PLAIN FORMULA (strike vol 26.5%, watched all day): touch 41.0%; finish by N(d2) 20.5%
+       bid-side vol 26.4%: 40.9%; ask-side vol 26.5%: 41.1%; closes only: 38.1%
+  B. SPREAD VOL 19.3% (reprices the market's finish odds): touch watched all day 24.0%; FINISH on the deadline day 11.7%
+     STORED: TOUCH, closes only, spread vol: 22.0%   (simulation check, 125 daily closes, 400,000 paths: 21.9%)
+       quote band (every leg at its bid, then every leg at its ask): 21.8% to 22.2%
+  Ours 33.7%  vs  market touch 22.0%  -> gap (market minus ours) -11.7 points (plain formula 41.0%: +7.3)
+
+====================================================================================================
+D4  (IEF options)
+====================================================================================================
+  Label: The 10-year Treasury closes above 5.50%
+  Test (exact): YES if the 10-year Treasury constant-maturity yield closes above 5.50% on any day from Nov 28, 2026 to May 31, 2027 (Treasury daily par yield curve rates; FRED DGS10 as the check). NO otherwise.
+  Our odds_now: 22.0%   window_end: 2027-05-31   status: BEHIND
+  Yield to price conversion: 10-year par yield 4.94% on 2026-11-27 (Treasury daily par yield curve), so 5.50% is 0.56 points higher.
+  IEF (iShares 7-10 Year Treasury Bond ETF): effective duration 6.79 years, convexity 56, average maturity 8.27 years (iShares page, Nov 25, 2026).
+  The 8.27-year point of the Treasury curve has moved 1.028 points per point of the 10-year (daily changes, all of 2026), so the fund's yield rises about 0.576 points.
+  Price change = -D*dy + 0.5*C*dy^2 = -3.82%, so IEF 91.66 -> 88.16.
+  Cboe TNX options and CME 10-year note options could not be reached (see routes), so IEF options stand in.
+  May 31, 2027 is a holiday; the last Treasury yield in the window is May 28, 2027.
+  Underlying: IEF close 91.66 on 2026-11-27. Level: IEF 88.16, the fund price that matches a 10-year yield of 5.50%. Deadline 2027-05-31 (last close in the window 2027-05-28: 182 calendar days, 125 closes).
+  Expiry 2027-04-16 (140 days): Treasury rate 4.4%, carry yield 4.2% (put-call parity at strike 92: call 1.465, put 1.740, early exercise value 0.010)
+    IEF 2027-04-16 88 put: bid 0.38, ask 0.41, mid 0.395, last 0.39, open interest 10185, volume 30, implied vol 7.3% (bid 7.2%, ask 7.4%)
+    IEF 2027-04-16 89 put: bid 0.57, ask 0.62, mid 0.595, last 0.55, open interest 16752, volume 83, implied vol 7.2% (bid 7.1%, ask 7.4%)
+    strike vol at the level: 7.3%
+    put spread 86/88: market finish odds beyond 87 = 10.6%; vol that reprices it 6.7%
+    put spread 88/89: market finish odds beyond 88.5 = 20.1%; vol that reprices it 6.7%
+    spread vol at the level: 6.7% (two spreads either side of the level, joined by a straight line)
+  Expiry 2027-06-17 (202 days): Treasury rate 4.4%, carry yield 3.9% (put-call parity at strike 92: call 1.920, put 2.010, early exercise value 0.032)
+    IEF 2027-06-17 88 put: bid 0.56, ask 0.64, mid 0.600, last 0.57, open interest 2, volume 30, implied vol 7.4% (bid 7.2%, ask 7.7%)  [FAILS SCREEN: open interest 2]
+    IEF 2027-06-17 89 put: bid 0.79, ask 0.88, mid 0.835, last 0.71, open interest 7138, volume 0, implied vol 7.4% (bid 7.2%, ask 7.6%)
+    strike vol at the level: 7.4%   REFUSED: 88 put: open interest 2
+  Expiry handling: vol of the 2027-04-16 expiry held flat to the deadline (expiry is 42 days before it; the other expiry failed the screen).
+  Drift: -0.4% a year = Treasury rate 4.4% minus the fund's average yield to maturity 4.8% (carry: the fund earns its yield, so the price path with yields unchanged is the reference line; the same as saying forward yields sit a little above today's).
+  A. PLAIN FORMULA (strike vol 7.3%, watched all day): touch 47.4%; finish by N(d2) 24.5%
+       bid-side vol 7.2%: 46.7%; ask-side vol 7.4%: 48.0%; closes only: 44.3%
+  B. SPREAD VOL 6.7% (reprices the market's finish odds): touch watched all day 43.6%; FINISH on the deadline day 22.6%
+     STORED: TOUCH, closes only, spread vol: 40.7%   (simulation check, 125 daily closes, 400,000 paths: 40.7%)
+       quote band (every leg at its bid, then every leg at its ask): 39.3% to 42.1%
+  Conversion check: the 10-year peaked at 5.31% on Oct 5, 2026 and IEF's 52-week low is 88.88; from that anchor 5.50% is IEF 87.70 and the stored odds would be 34.8%. The conversion is worth about that many points.
+  Expiry check: interpolating total variance with the refused 2027-06-17 quotes anyway (strike vol 7.4% there) gives strike vol 7.4% and a plain-formula touch of 47.8% against 47.4%.
+  Ours 22%  vs  market touch 40.7%  -> gap (market minus ours) +18.7 points (plain formula 47.4%: +25.4)
+
+====================================================================================================
+O1  (BNO options for the vol, ICE Brent futures curve for the drift)
+====================================================================================================
+  Label: Brent closes above $100
+  Test (exact): YES if front-month ICE Brent settles above $100 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.
+  Our odds_now: 59.8%   window_end: 2027-05-31   status: ON TRACK
+  ICE Brent futures, delayed close 2026-11-27 (TradingView scanner, 10 minute delayed):
+    Jan 2027 95.44 (expires 2026-11-30); Feb 2027 90.84 (expires 2026-12-30); Mar 2027 88.05 (expires 2027-01-29); Apr 2027 85.94 (expires 2027-02-26); May 2027 84.31 (expires 2027-03-31); Jun 2027 82.95 (expires 2027-04-30); Jul 2027 81.73 (expires 2027-05-28); Aug 2027 80.61 (expires 2027-06-30); Sep 2027 79.58 (expires 2027-07-30)
+  Front month on Nov 30 is still Jan 2027 at 95.44 (its last day); from Dec 1 it is Feb 2027 at 90.84; on the deadline it is Aug 2027 at 80.61. The curve slopes down, so the front-month price is expected to fall as contracts roll.
+  Drift for the formula: straight-line fit of ln(front-month futures price) on time, Dec 1 to May 31: start 91.13, drift -24.4% a year. (Under the risk-neutral measure a futures price has no drift, so the expected path of the front month is today's curve.)
+  Vol source: BNO (United States Brent Oil Fund, holds near-month ICE Brent futures), close 58.93. BNO forward by put-call parity at strike 59: 59.89 for 2027-04-16 (Treasury rate 4.4%, carry yield 0.2%).
+  Strike match: front-month Brent at 100 on 2027-04-16 means BNO at forward * 100 / 82.95 (Jun 2027 futures today) = 72.20.
+    BNO 2027-04-16 70 call: bid 3.6, ask 3.9, mid 3.750, last 3.75, open interest 2293, volume 10, implied vol 49.2% (bid 48.1%, ask 50.3%)
+    BNO 2027-04-16 75 call: bid 2.55, ask 2.9, mid 2.725, last 2.75, open interest 1694, volume 9, implied vol 49.7% (bid 48.2%, ask 51.1%)
+    strike vol at BNO 72.20: 49.4%
+  Second expiry 2027-07-16 (BNO strike match 76.27):
+    BNO 2027-07-16 75 call: bid 3.9, ask 4.3, mid 4.100, last 4.47, open interest 5, volume 0, implied vol 45.7% (bid 44.5%, ask 46.8%)  [FAILS SCREEN: open interest 5]
+    BNO 2027-07-16 80 call: bid 3, ask 3.4, mid 3.200, last 3.53, open interest 1, volume 0, implied vol 46.0% (bid 44.8%, ask 47.3%)  [FAILS SCREEN: open interest 1]
+    strike vol there: 45.8%   REFUSED: 75 call: open interest 5; 80 call: open interest 1
+    BNO 2027-04-16 call spread 65/70: market finish odds beyond 67.5 = 28.5%; vol that reprices it 45.0%
+    BNO 2027-04-16 call spread 70/75: market finish odds beyond 72.5 = 20.8%; vol that reprices it 46.1%
+      (BNO 67.5 on Apr 16 is front-month Brent near 93.5)
+      (BNO 72.5 on Apr 16 is front-month Brent near 100.4)
+    spread vol at BNO 72.20: 46.1% (two spreads either side of the level, joined by a straight line)
+  Expiry handling: vol of the 2027-04-16 expiry held flat to the deadline (expiry is 45 days before it; the 2027-07-16 strikes have almost no open interest).
+  A. PLAIN FORMULA (strike vol 49.4%, watched all day, start 91.13, curve drift): touch 67.1%; finish by N(d2) on the Aug 2027 price 80.61: 21.5%
+       bid-side vol 48.2%: 66.3%; ask-side vol 50.7%: 67.9%; settles only: 61.8%
+  B. SPREAD VOL 46.1%: formula, settles only 59.6%; FINISH above 100 on May 31: 20.6%
+     STORED: TOUCH by rolling-contract simulation, daily settles, exact ICE expiry dates, spread vol, 400,000 paths, fixed seed: 61.6%
+       (inside that: the expiring Jan 2027 contract settling above 100 on Nov 30 alone 5.2%; simulated finish on May 31 20.5%; same simulation with the strike vol 63.9%)
+       quote band (every leg at its bid, then every leg at its ask): 60.1% to 63.3%
+     The simulation is stored because the front month is not one asset: it steps down at each roll, and the
+     formula can only take a smooth drift and cannot see the Jan contract's last day.
+  Expiry check: interpolating total variance with the refused 2027-07-16 quotes anyway gives strike vol 47.2% and a plain-formula touch of 65.6% against 67.1%.
+  Model limits here: BNO is a fund proxy for Brent futures options; all contracts are assumed to move together,
+  and far contracts usually move less than the front, so odds late in the window run a little high.
+  Ours 59.8%  vs  market touch 61.6%  -> gap (market minus ours) +1.8 points (plain formula 67.1%: +7.3)
+
+====================================================================================================
+O2  (BNO options for the vol, ICE Brent futures curve for the drift)
+====================================================================================================
+  Label: Brent closes above $110 again (the second spike, with no cushion)
+  Test (exact): YES if front-month ICE Brent settles above $110 a barrel on any day from Nov 28, 2026 to May 31, 2027 (ICE settlement prices; EIA daily Brent spot as the check). NO otherwise.
+  Our odds_now: 33.0%   window_end: 2027-05-31   status: ON TRACK
+  ICE Brent futures, delayed close 2026-11-27 (TradingView scanner, 10 minute delayed):
+    Jan 2027 95.44 (expires 2026-11-30); Feb 2027 90.84 (expires 2026-12-30); Mar 2027 88.05 (expires 2027-01-29); Apr 2027 85.94 (expires 2027-02-26); May 2027 84.31 (expires 2027-03-31); Jun 2027 82.95 (expires 2027-04-30); Jul 2027 81.73 (expires 2027-05-28); Aug 2027 80.61 (expires 2027-06-30); Sep 2027 79.58 (expires 2027-07-30)
+  Front month on Nov 30 is still Jan 2027 at 95.44 (its last day); from Dec 1 it is Feb 2027 at 90.84; on the deadline it is Aug 2027 at 80.61. The curve slopes down, so the front-month price is expected to fall as contracts roll.
+  Drift for the formula: straight-line fit of ln(front-month futures price) on time, Dec 1 to May 31: start 91.13, drift -24.4% a year. (Under the risk-neutral measure a futures price has no drift, so the expected path of the front month is today's curve.)
+  Vol source: BNO (United States Brent Oil Fund, holds near-month ICE Brent futures), close 58.93. BNO forward by put-call parity at strike 59: 59.89 for 2027-04-16 (Treasury rate 4.4%, carry yield 0.2%).
+  Strike match: front-month Brent at 110 on 2027-04-16 means BNO at forward * 110 / 82.95 (Jun 2027 futures today) = 79.42.
+    BNO 2027-04-16 75 call: bid 2.55, ask 2.9, mid 2.725, last 2.75, open interest 1694, volume 9, implied vol 49.7% (bid 48.2%, ask 51.1%)
+    BNO 2027-04-16 80 call: bid 1.95, ask 2.2, mid 2.075, last 2.05, open interest 2617, volume 73, implied vol 51.0% (bid 49.8%, ask 52.1%)
+    strike vol at BNO 79.42: 50.8%
+  Second expiry 2027-07-16 (BNO strike match 83.90):
+    BNO 2027-07-16 80 call: bid 3, ask 3.4, mid 3.200, last 3.53, open interest 1, volume 0, implied vol 46.0% (bid 44.8%, ask 47.3%)  [FAILS SCREEN: open interest 1]
+    BNO 2027-07-16 85 call: bid 2.35, ask 2.65, mid 2.500, last 2.55, open interest 148, volume 2, implied vol 46.4% (bid 45.3%, ask 47.4%)
+    strike vol there: 46.3%   REFUSED: 80 call: open interest 1
+    BNO 2027-04-16 call spread 75/80: market finish odds beyond 77.5 = 13.2%; vol that reprices it 42.3%
+    BNO 2027-04-16 call spread 80/85: market finish odds beyond 82.5 = 9.7%; vol that reprices it 44.5%
+      (BNO 77.5 on Apr 16 is front-month Brent near 107.3)
+      (BNO 82.5 on Apr 16 is front-month Brent near 114.3)
+    spread vol at BNO 79.42: 43.1% (two spreads either side of the level, joined by a straight line)
+  Expiry handling: vol of the 2027-04-16 expiry held flat to the deadline (expiry is 45 days before it; the 2027-07-16 strikes have almost no open interest).
+  A. PLAIN FORMULA (strike vol 50.8%, watched all day, start 91.13, curve drift): touch 43.9%; finish by N(d2) on the Aug 2027 price 80.61: 14.9%
+       bid-side vol 49.6%: 42.9%; ask-side vol 52.0%: 44.9%; settles only: 40.1%
+  B. SPREAD VOL 43.1%: formula, settles only 32.9%; FINISH above 110 on May 31: 12.2%
+     STORED: TOUCH by rolling-contract simulation, daily settles, exact ICE expiry dates, spread vol, 400,000 paths, fixed seed: 33.2%
+       (inside that: the expiring Jan 2027 contract settling above 110 on Nov 30 alone 0.0%; simulated finish on May 31 12.1%; same simulation with the strike vol 40.5%)
+       quote band (every leg at its bid, then every leg at its ask): 31.1% to 35.3%
+     The simulation is stored because the front month is not one asset: it steps down at each roll, and the
+     formula can only take a smooth drift and cannot see the Jan contract's last day.
+  Expiry check: interpolating total variance with the refused 2027-07-16 quotes anyway gives strike vol 48.1% and a plain-formula touch of 41.4% against 43.9%.
+  Model limits here: BNO is a fund proxy for Brent futures options; all contracts are assumed to move together,
+  and far contracts usually move less than the front, so odds late in the window run a little high.
+  Ours 33%  vs  market touch 33.2%  -> gap (market minus ours) +0.2 points (plain formula 43.9%: +10.9)
+
+====================================================================================================
+O7  (NOTES ONLY, no row)  Brent monthly average under $75, Dec 2026 to Nov 2027
+====================================================================================================
+  Label: Brent averages under $75 for a month
+  Test (exact): YES if EIA's monthly average Europe Brent spot price FOB (series RBRTE) is below $75.00 a barrel for any calendar month from December 2026 through November 2027, as published by EIA by Dec 15, 2027 (EIA petroleum spot price data; FRED MCOILBRENTEU as the check). NO otherwise.
+  Our odds_now: 29.7%   window_end: 2027-11-30   status: QUIET
+  Vanilla options do not price this one to one. The test is on a calendar-month AVERAGE of the EIA Brent spot
+  price in any of twelve months. A listed option pays on one closing price on one day. An average moves less
+  than a daily close, twelve overlapping months are not twelve separate bets, and the spot price is not the
+  futures price. A fair price needs an average-price (Asian) option model and a view on how the months move together.
+  Rough guide only: chance the front-month futures price FINISHES under $75 on each BNO expiry (N(d2), BNO put
+  strike vol at the matching strike, no drift on the futures price):
+    2027-04-16: front month then is Jun 2027, 82.95 today; BNO strike match 54.15; vol 48.7%; finish under 75: 42.7%
+      BNO 2027-04-16 54 put: bid 4.1, ask 4.4, mid 4.250, last 4.4, open interest 71, volume 0, implied vol 48.7% (bid 47.6%, ask 49.9%)
+      BNO 2027-04-16 55 put: bid 4.5, ask 4.8, mid 4.650, last 4.66, open interest 630, volume 0, implied vol 48.4% (bid 47.3%, ask 49.6%)
+    2027-07-16: front month then is Sep 2027, 79.58 today; BNO strike match 57.20; vol 46.2%; finish under 75: 50.9%   [thin: 57 put: open interest 0; 58 put: open interest 0]
+      BNO 2027-07-16 57 put: bid 6.5, ask 7.1, mid 6.800, last 0, open interest 0, volume 0, implied vol 46.2% (bid 44.5%, ask 47.9%)  [FAILS SCREEN: open interest 0]
+      BNO 2027-07-16 58 put: bid 7.1, ask 7.6, mid 7.350, last 0, open interest 0, volume 0, implied vol 46.4% (bid 45.0%, ask 47.8%)  [FAILS SCREEN: open interest 0]
+    2028-01-21: front month then is Mar 2028, 75.09 today; BNO strike match 62.33; vol 45.1%; finish under 75: 59.5%   [thin: 62 put: open interest 14; 63 put: open interest 24]
+      BNO 2028-01-21 62 put: bid 11, ask 12.1, mid 11.550, last 12.5, open interest 14, volume 0, implied vol 45.2% (bid 42.9%, ask 47.5%)  [FAILS SCREEN: open interest 14]
+      BNO 2028-01-21 63 put: bid 11.6, ask 12.6, mid 12.100, last 13.05, open interest 24, volume 0, implied vol 45.0% (bid 42.9%, ask 47.0%)  [FAILS SCREEN: open interest 24]
+  The futures curve itself is 77.02 for Dec 2027 and 76.31 for Jan 2028, so the market's central path already runs close to $75 by late 2027.
+  Our odds_now is 29.7%. The guide numbers say the market leans well above that, but they are not like for like, so no row is written.
+
+====================================================================================================
+J1  (NOTES ONLY, no row)  dollar closes above 160 yen AND Tokyo reports 5 trillion yen of buying, by Mar 31, 2027
+====================================================================================================
+  Label: The yen closes weaker than 160 and Tokyo confirms 5 trillion yen or more of buying
+  Test (exact): YES if, between Nov 28, 2026 and Mar 31, 2027, the dollar closes above 160.00 yen on at least one trading day (Federal Reserve H.10 noon buying rate, FRED series DEXJPUS; Bank of Japan 17:00 Tokyo rate as the check) and Japan's Ministry of Finance reports a total of 5 trillion yen or more of dollar-selling, yen-buying intervention on operation dates inside that same period (MOF Foreign Exchange Intervention Operations monthly and quarterly releases). Operations dated before Nov 28, 2026 do not count. NO otherwise.
+  Our odds_now: 33.4%   window_end: 2027-03-31   status: ON TRACK
+  Price leg only. USD/JPY 159.556 (delayed FX close for the Nov 27 session); Federal Reserve H.10 last print 158.76 for Nov 20 (FRED DEXJPUS). The 160 level is 0.28% away.
+  FXY (Invesco CurrencyShares Japanese Yen Trust) close 57.44; 160 yen matches FXY 57.28, nearest strike 57.
+    FXY 2027-03-19 57 call: bid 1.65, ask 2.05, mid 1.850, last 1.75, open interest 1652, volume 0, implied vol 9.2% (bid 7.4%, ask 10.9%)
+    FXY 2027-03-19 57 put: bid 0.4, ask 0.8, mid 0.600, last 0.6, open interest 91, volume 0, implied vol 8.3% (bid 6.5%, ask 10.0%)  [FAILS SCREEN: spread 67% of mid]
+  Vol 9.2% from the 2027-03-19 57 call (held flat 12 days to Mar 31; quote is wide, bid vol 7.4%, ask vol 10.9%); drift -3.1% a year = Japan 3-month yield 1.3% minus Treasury rate 4.4%.
+  Price leg TOUCH odds (dollar above 160 yen on any day by Mar 31): 94.7% watched all day, 88.3% closes only.  FINISH above 160 on Mar 31: 39.2%.
+  This is an UPPER BOUND for J1, not its odds. J1 also needs Japan's Ministry of Finance to report 5 trillion yen or more
+  of intervention in the window, and no listed option prices that. With the dollar a quarter of a percent from 160, the
+  price leg is close to certain and says almost nothing about the event. Our odds_now is 33.4%. No row is written.
+
+====================================================================================================
+REJECTS
+====================================================================================================
+  O7: Monthly average of spot Brent in any of twelve months. A vanilla option pays on one close on one day. Guide numbers are in the O7 block only.
+  J1: Two legs. Options price only the dollar above 160 yen; the Ministry of Finance intervention report is not priced. The price leg is an upper bound (see the J1 block).
+  J3: A 5% yen gain inside five trading days is a path event (a move over a rolling window). Vanilla options give the spread of the level on one date, not the chance of a fast move at some point in four months. It needs a jump or changing-vol model fitted to short-dated options, and FXY options are too thin for that (most strikes have no bid).
+  D7: Same as J3: a 5% fall in the dollar index inside five trading days is a path event. Not computable from vanilla options.
+  27-5: Two legs (10-year at or above 5.50% and a yen intervention). The second leg is not priced. Also the IEF Dec 2027 strikes needed for a Nov 30, 2027 deadline have open interest of 0 to 5.
+  BT1: Needs three of six small stocks up 10% on the same day and a news link. Single-stock options do not price a joint one-day jump.
+  BB5: No named stock, and a one-day 10% fall tied to a news cause is not priced by listed options.
+  J4: SoftBank CDS is not a listed option market; the other two legs are a rating action and an asset sale.
+  RU7: No listed option on the France minus Germany yield spread; options on each bond future alone do not price the spread.
+  D8: No listed option on the 1-month minus 3-month bill spread; the other leg is a rating action.
+  J2: Needs a 30-year auction result as well as a record yield; no listed option on the 30-year JGB yield.
+  R4, R8, P6, WF8: Price tests on things with no listed options (rare earth oxides, container index, FAO index).
+  KRE 2027-03-31 expiry (inside B3): The Mar 31 60 put matches the deadline exactly but is quoted 0.69 bid, 1.48 ask (spread 73% of mid), so it was refused and the Mar 19 puts were used.
+  SPX options (inside F9): Every SPX row in the feed shows bid 0 and ask 0 after the close. SPY was used.
+  IEF 2027-06-17 88 put (inside D4): Open interest 2. Refused; April vol held flat.
+  BNO 2027-07-16 calls (inside O1, O2): Open interest 1 to 5 at the 75 and 80 strikes. Refused; April vol held flat.
+
+FILES
+  /home/claude/work/p2/opt/seed_markets.json (stored odds)
+  /home/claude/work/p2/opt/seed_markets_plain_formula.json (the brief's plain formula, same rows)
+  /home/claude/work/p2/opt/NOTES.txt
+  /home/claude/work/p2/opt/touch.py (this script)
+  /home/claude/work/p2/opt/results.json
+  /home/claude/work/p2/opt/raw/ (option chains, prices, Treasury curve, futures curve, used_rows.json, source_facts.json)
