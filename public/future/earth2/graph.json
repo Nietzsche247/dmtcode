@@ -98,7 +98,8 @@
    "Nov 26, 2026: 9 lowering links (sign -1) were labelled NECESSARY; relabelled OPPOSES, structure only: PG1->27-1, PG1->28-1, PG3->27-1, PG3->28-1, PG4->27-1, PG4->28-1, PG5->27-1, PG5->28-1, PG9->28-1.",
    "Nov 27, 2026: meta.contains seeded with 12 containment pairs (the whole happens whenever the part does), structure only, no odds moved: 29-1 contains C9, 29-2 contains D9, 29-2 contains B4, 27-4 contains F4, 27-4 contains MR4, E07 contains T1, E07 contains T2, E09 contains W2, E09 contains W3, E31 contains BB4, D5 contains HP11, BT6 contains 28-5. validate_graph.py and cascade.py print a WARN when a whole reads below its part.",
    "Nov 27, 2026: odds_text brought in line with odds_now on 95 nodes (cascade.py --fix-odds-text), structure only, no odds moved: the leading percent now reads the node's odds_now as a whole number and closing market notes were dropped (market odds live in node market). 169 strings that do not start with a percent were left as written.",
-   "Nov 27, 2026: 21 link strengths replaced with sourced numbers (link_strengths.py apply, file apply_rows.json), structure only, no odds moved and no cascade run: FD04 -> WF8: strength 0.553 to 0.549, delay 0 d confirmed, estimate to measured; FD03 -> WF8: strength 0.591 to 0.587, delay 0 d confirmed, estimate to measured; RM1 -> C1: strength 0.4333 to 0.4, delay 60 d kept, estimate to measured; HP13 -> W1: strength 0.43 to 0.354, delay 30 to 12 d, estimate to measured; MR5 -> B2: strength 0.3708 to 0.22, delay 14 d kept, estimate to measured; WK2 -> W6: strength 0.6923 to 0.9323, delay 30 to 0 d, estimate to measured; WK6 -> W1: strength 0.5 to 0.956, delay 30 to 0 d, estimate to measured; RD02 -> 27-6: strength 0.8 to 0.4, delay 0 d kept, estimate to measured; DA3 -> R2: strength 0.7417 to 0.9192, delay 0 d confirmed, estimate to measured; MR3 -> D4: strength 0.4164 to 0.2818, delay 14 d kept, estimate to measured; BT6 -> BT6a: strength 0.45 to 0.2, delay 30 d kept, estimate to measured; RD09 -> 27-6: strength 0.33 to 0.1617, delay 0 d kept, estimate to measured; D4 -> 27-5: strength 0.33 to 0.4705, delay 30 to 190 d, estimate to measured; HP07 -> F9: strength 0.28 to 0.2815, delay 14 d kept, estimate to measured; MR2 -> J1: strength 0.4867 to 0.19, delay 14 to 0 d, estimate to measured; WK8 -> W5: strength 0.6909 to 0.525, delay 30 d kept, estimate to measured; D2 -> D3: strength 0.58 to 0.714, delay 50 to 49 d, estimate to measured; FC3 -> X1: strength 0.7 to 0.598, delay 7 d kept, estimate to measured; MR4 -> F2: strength 0.3554 to 0.304, delay 45 d kept, estimate to measured; D6 -> D2: strength 0.3 to 0.393, delay 14 d kept, estimate to measured; and 1 more. Each link keeps its old strength and delay in strength_history and carries evidence, source_note, method and strength_date. Links still estimated: 731 of 1178."
+   "Nov 27, 2026: 21 link strengths replaced with sourced numbers (link_strengths.py apply, file apply_rows.json), structure only, no odds moved and no cascade run: FD04 -> WF8: strength 0.553 to 0.549, delay 0 d confirmed, estimate to measured; FD03 -> WF8: strength 0.591 to 0.587, delay 0 d confirmed, estimate to measured; RM1 -> C1: strength 0.4333 to 0.4, delay 60 d kept, estimate to measured; HP13 -> W1: strength 0.43 to 0.354, delay 30 to 12 d, estimate to measured; MR5 -> B2: strength 0.3708 to 0.22, delay 14 d kept, estimate to measured; WK2 -> W6: strength 0.6923 to 0.9323, delay 30 to 0 d, estimate to measured; WK6 -> W1: strength 0.5 to 0.956, delay 30 to 0 d, estimate to measured; RD02 -> 27-6: strength 0.8 to 0.4, delay 0 d kept, estimate to measured; DA3 -> R2: strength 0.7417 to 0.9192, delay 0 d confirmed, estimate to measured; MR3 -> D4: strength 0.4164 to 0.2818, delay 14 d kept, estimate to measured; BT6 -> BT6a: strength 0.45 to 0.2, delay 30 d kept, estimate to measured; RD09 -> 27-6: strength 0.33 to 0.1617, delay 0 d kept, estimate to measured; D4 -> 27-5: strength 0.33 to 0.4705, delay 30 to 190 d, estimate to measured; HP07 -> F9: strength 0.28 to 0.2815, delay 14 d kept, estimate to measured; MR2 -> J1: strength 0.4867 to 0.19, delay 14 to 0 d, estimate to measured; WK8 -> W5: strength 0.6909 to 0.525, delay 30 d kept, estimate to measured; D2 -> D3: strength 0.58 to 0.714, delay 50 to 49 d, estimate to measured; FC3 -> X1: strength 0.7 to 0.598, delay 7 d kept, estimate to measured; MR4 -> F2: strength 0.3554 to 0.304, delay 45 d kept, estimate to measured; D6 -> D2: strength 0.3 to 0.393, delay 14 d kept, estimate to measured; and 1 more. Each link keeps its old strength and delay in strength_history and carries evidence, source_note, method and strength_date. Links still estimated: 731 of 1178.",
+   "Nov 27, 2026 (late): removed five option-implied market rows (F5, B3, F9, O1, O2) that were imported at 23:09 from a helper's unfinished first pass; the finished readings were imported in their place. Structure only."
   ],
   "contains": [
    {
@@ -496,12 +497,12 @@
     }
    ],
    "market": {
-    "odds": 65,
+    "odds": 62,
     "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
     "contract": "BNO Apr 16 2027 calls, strikes 65, 70, 75 (vol); ICE Brent futures Jan 2027 to Aug 2027 (curve)",
     "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=BNO&reqId=1",
     "as_of": "2026-11-27",
-    "match_note": "Stored number is the daily-close version (65); the continuous one-touch figure is 62. TOUCH odds: simulation of the rolling front month, daily settles, above 100 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 46.1% reprices BNO Apr 16 call spreads at the matching strike 72.2, held flat 45 days. Finish above on May 31: 21%. Plain one-touch formula 67%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+    "match_note": "TOUCH odds: simulation of the rolling front month, daily settles, above 100 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 46.1% reprices BNO Apr 16 call spreads at the matching strike 72.2, held flat 45 days. Finish above on May 31: 21%. Plain one-touch formula 67%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
    }
   },
   {
@@ -777,12 +778,12 @@
     }
    ],
    "market": {
-    "odds": 52,
+    "odds": 44,
     "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
     "contract": "NVDA Mar 19 2027 and Apr 16 2027 puts, strikes 115, 120 and 125",
     "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=NVDA&reqId=1",
     "as_of": "2026-11-27",
-    "match_note": "Stored number is the daily-close version (52); the continuous one-touch figure is 44. TOUCH odds, closes only: one-touch formula for NVDA closing under 120 on any day by Mar 31, 2027 (124 days). Close 150.49. Vol 50.2% is the one that reprices the 115/120/125 put spreads (finish under 120 on Mar 31: 25%); Mar 19 and Apr 16 expiries sit either side of the deadline, total variance interpolated; drift 4.1%. Plain formula with the 120 strike vol 59.9% gives 56%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+    "match_note": "TOUCH odds, closes only: one-touch formula for NVDA closing under 120 on any day by Mar 31, 2027 (124 days). Close 150.49. Vol 50.2% is the one that reprices the 115/120/125 put spreads (finish under 120 on Mar 31: 25%); Mar 19 and Apr 16 expiries sit either side of the deadline, total variance interpolated; drift 4.1%. Plain formula with the 120 strike vol 59.9% gives 56%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
    }
   },
   {
@@ -2047,12 +2048,12 @@
     }
    ],
    "market": {
-    "odds": 40,
+    "odds": 33,
     "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
     "contract": "BNO Apr 16 2027 calls, strikes 75, 80, 85 (vol); ICE Brent futures Jan 2027 to Aug 2027 (curve)",
     "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=BNO&reqId=1",
     "as_of": "2026-11-27",
-    "match_note": "Stored number is the daily-close version (40); the continuous one-touch figure is 33. TOUCH odds: simulation of the rolling front month, daily settles, above 110 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 43.1% reprices BNO Apr 16 call spreads at the matching strike 79.4, held flat 45 days. Finish above on May 31: 12%. Plain one-touch formula 44%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+    "match_note": "TOUCH odds: simulation of the rolling front month, daily settles, above 110 on any day by May 31, 2027 (185 days). Front month 90.84 after the Jan roll, 80.61 for the deadline contract (curve slopes down). Vol 43.1% reprices BNO Apr 16 call spreads at the matching strike 79.4, held flat 45 days. Finish above on May 31: 12%. Plain one-touch formula 44%. BNO is a fund proxy. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
    }
   },
   {
@@ -2729,12 +2730,12 @@
    },
    "settlement_test": "YES if the S&P 500 closes 20% or more below its record close (at or under 6,255.14 against the current 7,818.93 record, or 20% under any higher record set later) on any trading day by May 31, 2027 (S&P Dow Jones Indices official closing values). NO otherwise.",
    "market": {
-    "odds": 38,
+    "odds": 22,
     "venue": "Option-implied (model): Listed options (US option exchanges, 15 to 30 minute delayed quotes via optionsprofitcalculator.com)",
     "contract": "SPY Apr 30 2027 610, 620 and 630 puts; SPY Jun 17 2027 620, 625 and 630 puts (SPY stands in for SPX)",
     "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=SPY&reqId=1",
     "as_of": "2026-11-27",
-    "match_note": "Stored number is the daily-close version (38); the continuous one-touch figure is 22. TOUCH odds, closes only: one-touch formula for the S&P 500 closing at or under 6,255.14 by May 28, 2027 (last session before May 31; 182 days), priced on SPY at 624.29 (SPY 728.32; SPX quotes were blank). Vol 19.3% reprices the put spreads around the level (finish under on May 28: 12%); Apr 30 and Jun 17 expiries, total variance interpolated; drift 3.5%. Plain formula with the strike vol 26.5% gives 41%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+    "match_note": "TOUCH odds, closes only: one-touch formula for the S&P 500 closing at or under 6,255.14 by May 28, 2027 (last session before May 31; 182 days), priced on SPY at 624.29 (SPY 728.32; SPX quotes were blank). Vol 19.3% reprices the put spreads around the level (finish under on May 28: 12%); Apr 30 and Jun 17 expiries, total variance interpolated; drift 3.5%. Plain formula with the strike vol 26.5% gives 41%, too high because of skew. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
    }
   },
   {
@@ -2960,7 +2961,7 @@
     "contract": "KRE Mar 19 2027 60 put and 65 put",
     "url": "https://www.optionsprofitcalculator.com/ajax/getOptions?stock=KRE&reqId=1",
     "as_of": "2026-11-27",
-    "match_note": "Continuous one-touch figure; a daily-close version would run a few points lower. TOUCH odds, closes only: one-touch formula for KRE closing under 60 on any day by Mar 31, 2027 (124 days). Close 70.35. Vol 23.0% reprices the 60/65 put spread, held flat 12 days past the Mar 19 expiry (Mar 31 expiry quoted too wide); drift 2.0%. Finish under 60 on Mar 31: 12%. Plain formula with the 60 strike vol 32.1% gives 41%. Weak row: the 60 put is quoted 0.87 to 1.31. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
+    "match_note": "TOUCH odds, closes only: one-touch formula for KRE closing under 60 on any day by Mar 31, 2027 (124 days). Close 70.35. Vol 23.0% reprices the 60/65 put spread, held flat 12 days past the Mar 19 expiry (Mar 31 expiry quoted too wide); drift 2.0%. Finish under 60 on Mar 31: 12%. Plain formula with the 60 strike vol 32.1% gives 41%. Weak row: the 60 put is quoted 0.87 to 1.31. Biases: risk-neutral (carries a risk premium, so it usually runs above real-world odds for crash-side levels); constant vol; delayed closing quotes."
    }
   },
   {

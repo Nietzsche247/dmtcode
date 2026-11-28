@@ -11,11 +11,19 @@ READ THIS FIRST: ONE CHANGE FROM THE BRIEF
     - Once a price is sitting on a level it is close to a coin flip whether it ends beyond it, so touch odds are
       about twice finish odds. The plain formula's 41% touch cannot sit beside a 12% finish.
     - The same gap shows on Nvidia (56% plain touch against a 25% market finish) and on KRE.
-      It is small on IEF and BNO, where there is little skew.
+      It is smaller on IEF and on BNO at 100, and it matters again for BNO at 110, where calls get dearer
+      at higher strikes.
   Stored odds (line B) use the same one-touch formula with the vol that reprices those spreads, and they count
   closes only, because every test reads closing or settlement prices. For Brent the stored number comes from a
   daily simulation of the rolling front month. To use the brief's plain formula instead, import
   seed_markets_plain_formula.json (same rows, also passes the dry run).
+
+WARNING ABOUT seed_markets_final.json
+  A file of that name appeared in this folder at 23:06 on Nov 27 (Mountain time) while this work was still
+  running. touch.py did not write it. As found, it carries first-pass numbers (F5 52, F9 38, O1 65, O2 40: the
+  plain strike-vol formula, closes only) glued to notes that describe the final method, so its notes and odds
+  disagree, and its "continuous figure" labels are wrong. The final numbers are the ones in the SUMMARY table
+  below and in seed_markets.json. Rebuild that file from seed_markets.json before importing it.
 
 DATA ROUTES TRIED, IN ORDER
   1. Cboe delayed quotes JSON (cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json): FAILED. The shell gets a
@@ -161,6 +169,8 @@ B3  (KRE options)
   Our odds_now: 28.1%   window_end: 2027-03-31   status: ON TRACK
   Weakest row. The 60 put is quoted 0.87 bid, 1.31 ask (spread 40% of mid, inside the screen but wide);
   the 55 put has no real bid, so the only usable spread is 60/65, which sits above the level.
+  Cross-check with a stale price: the 55 put last traded at 0.69 (bid 0.01, ask 1.49, open interest 63141). Against the 60 put mid, that 55/60 spread says 8.1% for finishing under 57.5;
+  the 60/65 spread says 18.1% for finishing under 62.5. Halfway between is 13.1% for finishing under 60, close to the finish odds the spread vol gives below.
   Underlying: KRE close 70.35 on 2026-11-27. Level: 60. Deadline 2027-03-31 (last close in the window 2027-03-31: 124 calendar days, 83 closes).
   Expiry 2027-03-19 (112 days): Treasury rate 4.3%, carry yield 2.3% (State Street fund distribution yield 2.3%, as of Nov 25 2026; at-the-money KRE quotes are too wide for parity)
     KRE 2027-03-19 60 put: bid 0.87, ask 1.31, mid 1.090, last 1.11, open interest 9488, volume 21787, implied vol 32.1% (bid 29.6%, ask 34.4%)

@@ -519,11 +519,19 @@ down_event("F5", "NVDA", 120.0, "2027-03-31", dt.date(2027, 3, 31), ["2027-03-19
 
 # ================================================================ B3  KRE closes under $60 by Mar 31, 2027
 q_kre = FACTS["KRE_fund_distribution_yield_pct"]["value"] / 100.0
+_T19 = yrs(d_("2027-03-19"))
+_k55, _k60, _k65 = (quote("KRE", "2027-03-19", "p", k) for k in (55.0, 60.0, 65.0))
+_lo = (_k60["mid"] - _k55["last"]) / 5.0 * math.exp(rate(_T19) * _T19)
+_hi = (_k65["mid"] - _k60["mid"]) / 5.0 * math.exp(rate(_T19) * _T19)
 r_b3 = down_event("B3", "KRE", 60.0, "2027-03-31", dt.date(2027, 3, 31), ["2027-03-19", "2027-03-31"], CLOSE["KRE"],
                   q_fixed=q_kre, q_label=f"State Street fund distribution yield {pct(q_kre)}, "
                   f"as of {FACTS['KRE_fund_distribution_yield_pct']['as_of']}; at-the-money KRE quotes are too wide for parity",
                   extra_lines=("  Weakest row. The 60 put is quoted 0.87 bid, 1.31 ask (spread 40% of mid, inside the screen but wide);",
-                               "  the 55 put has no real bid, so the only usable spread is 60/65, which sits above the level."))
+                               "  the 55 put has no real bid, so the only usable spread is 60/65, which sits above the level.",
+                               f"  Cross-check with a stale price: the 55 put last traded at {_k55['last']:g} (bid {_k55['bid']:g}, ask {_k55['ask']:g}, open "
+                               f"interest {_k55['open_interest']}). Against the 60 put mid, that 55/60 spread says {pct(_lo)} for finishing under 57.5;",
+                               f"  the 60/65 spread says {pct(_hi)} for finishing under 62.5. Halfway between is {pct((_lo + _hi) / 2)} for finishing under 60, "
+                               "close to the finish odds the spread vol gives below."))
 
 # ================================================================ F9  S&P 500 closes at or under 6,255.14 by May 31, 2027
 ratio = CLOSE["SPX"] / CLOSE["SPY"]
@@ -794,7 +802,7 @@ def seed_row(eid, contract, url, text, plain_text):
     r = RESULTS[eid]
     for t in (text, plain_text):
         assert len(t) < 600, (eid, len(t), t)
-        assert "—" not in t and "–" not in t
+        assert chr(8212) not in t and chr(8211) not in t
     SEED_ROWS[eid] = {"odds": int(round(100 * r["touch"])), "venue": VENUE, "contract": contract, "url": url,
                       "as_of": AS_OF, "match_note": text}
     PLAIN_ROWS[eid] = {"odds": int(round(100 * r["plain"])), "venue": VENUE, "contract": contract, "url": url,
@@ -932,11 +940,19 @@ READ THIS FIRST: ONE CHANGE FROM THE BRIEF
     - Once a price is sitting on a level it is close to a coin flip whether it ends beyond it, so touch odds are
       about twice finish odds. The plain formula's {p0(_f9['plain'])} touch cannot sit beside a {p0(_f9['finish'])} finish.
     - The same gap shows on Nvidia ({p0(_f5['plain'])} plain touch against a {p0(_f5['finish'])} market finish) and on KRE.
-      It is small on IEF and BNO, where there is little skew.
+      It is smaller on IEF and on BNO at 100, and it matters again for BNO at 110, where calls get dearer
+      at higher strikes.
   Stored odds (line B) use the same one-touch formula with the vol that reprices those spreads, and they count
   closes only, because every test reads closing or settlement prices. For Brent the stored number comes from a
   daily simulation of the rolling front month. To use the brief's plain formula instead, import
   seed_markets_plain_formula.json (same rows, also passes the dry run).
+
+WARNING ABOUT seed_markets_final.json
+  A file of that name appeared in this folder at 23:06 on Nov 27 (Mountain time) while this work was still
+  running. touch.py did not write it. As found, it carries first-pass numbers (F5 52, F9 38, O1 65, O2 40: the
+  plain strike-vol formula, closes only) glued to notes that describe the final method, so its notes and odds
+  disagree, and its "continuous figure" labels are wrong. The final numbers are the ones in the SUMMARY table
+  below and in seed_markets.json. Rebuild that file from seed_markets.json before importing it.
 
 DATA ROUTES TRIED, IN ORDER
   1. Cboe delayed quotes JSON (cdn.cboe.com/api/global/delayed_quotes/options/NVDA.json): FAILED. The shell gets a
@@ -1038,7 +1054,7 @@ json.dump({"_note": f"Every option quote row that fed a number in touch.py. Sour
 
 for name in ("NOTES.txt", "seed_markets.json", "seed_markets_plain_formula.json"):
     txt = open(os.path.join(HERE, name), encoding="utf-8").read()
-    assert "—" not in txt and "–" not in txt, name
+    assert chr(8212) not in txt and chr(8211) not in txt, name
 
 print(open(os.path.join(HERE, "NOTES.txt")).read())
 print(json.dumps(seed, indent=1))
